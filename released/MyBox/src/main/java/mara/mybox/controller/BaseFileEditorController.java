@@ -90,7 +90,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             initPageBar();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

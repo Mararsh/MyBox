@@ -156,13 +156,13 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
-                                                                        <fx:include fx:id="findColor" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="findColor" source="ControlColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <Label minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
-                                                                        <fx:include fx:id="findBgColor" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="findBgColor" source="ControlColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                             </children>
@@ -173,13 +173,13 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
-                                                                        <fx:include fx:id="currentColor" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="currentColor" source="ControlColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <Label minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
-                                                                        <fx:include fx:id="currentBgColor" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="currentBgColor" source="ControlColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                             </children>

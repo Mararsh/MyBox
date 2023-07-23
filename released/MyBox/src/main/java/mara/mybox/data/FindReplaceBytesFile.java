@@ -72,7 +72,7 @@ public class FindReplaceBytesFile {
             findReplaceFile.setCount(count);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -95,7 +95,7 @@ public class FindReplaceBytesFile {
             findReplaceFile.setOuputString(pageText);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -156,7 +156,7 @@ public class FindReplaceBytesFile {
             return found;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -211,7 +211,7 @@ public class FindReplaceBytesFile {
             }
             return found;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceString.setError(e.toString());
             return null;
         }
@@ -235,7 +235,7 @@ public class FindReplaceBytesFile {
             findReplaceFile.setOuputString(pageText);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -293,7 +293,7 @@ public class FindReplaceBytesFile {
             return found;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -360,7 +360,7 @@ public class FindReplaceBytesFile {
             }
             return found;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceString.setError(e.toString());
             return null;
         }
@@ -394,7 +394,7 @@ public class FindReplaceBytesFile {
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -460,7 +460,7 @@ public class FindReplaceBytesFile {
                 outputStream.write(backBytes);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -547,7 +547,7 @@ public class FindReplaceBytesFile {
             }
             csvPrinter.flush();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return false;
         }

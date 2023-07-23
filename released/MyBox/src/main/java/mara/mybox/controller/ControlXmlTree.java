@@ -1,14 +1,10 @@
 package mara.mybox.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -16,19 +12,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -38,11 +29,10 @@ import org.w3c.dom.NodeList;
  * @CreateDate 2023-5-27
  * @License Apache License Version 2.0
  */
-public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
+public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
 
     protected XmlEditorController xmlEditor;
     protected Document doc;
-    protected Transformer transformer;
 
     @FXML
     protected TreeTableColumn<XmlTreeNode, String> typeColumn;
@@ -61,40 +51,82 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             clearTree();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     /*
         tree
      */
-    public TreeItem<XmlTreeNode> makeTree(String xml) {
-        try {
-            if (xml == null) {
-                clearTree();
-                return null;
-            }
-            doc = XmlTreeNode.doc(this, xml);
-            return loadTree(doc);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+    @Override
+    public void setRoot(TreeItem<XmlTreeNode> root) {
+        super.setRoot(root);
+        nodeController.clearNode();
     }
 
-    public TreeItem<XmlTreeNode> loadTree(Node doc) {
-        try {
-            clearTree();
-            if (doc == null) {
-                return null;
-            }
-            TreeItem<XmlTreeNode> xml = makeTreeItem(new XmlTreeNode(doc));
-            treeView.setRoot(xml);
-            return xml;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+    public void makeTree(String xml) {
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        if (xml == null) {
+            clearTree();
+            return;
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            TreeItem<XmlTreeNode> root;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    doc = XmlTools.textToDoc(myController, xml);
+                    root = makeTreeItem(new XmlTreeNode(doc));
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setRoot(root);
+                if (error != null) {
+                    popError(error);
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    public void loadNode(Node doc) {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        if (doc == null) {
+            clearTree();
+            return;
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            TreeItem<XmlTreeNode> root;
+
+            @Override
+            protected boolean handle() {
+                root = makeTreeItem(new XmlTreeNode(doc));
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setRoot(root);
+                if (error != null) {
+                    popError(error);
+                }
+            }
+
+        };
+        start(task);
     }
 
     public TreeItem<XmlTreeNode> makeTreeItem(XmlTreeNode xmlTreeNode) {
@@ -117,7 +149,11 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             }
             return item;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -139,29 +175,11 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             }
             return item;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public TreeItem<XmlTreeNode> updateTreeItem(TreeItem<XmlTreeNode> item) {
-        try {
-            if (item == null) {
-                return null;
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            TreeItem<XmlTreeNode> parentItem = item.getParent();
-            if (parentItem == null) {
-                return loadTree(item.getValue().getNode());
-            }
-            int index = parentItem.getChildren().indexOf(item);
-            if (index < 0) {
-                return null;
-            }
-            parentItem.getChildren().set(index, item);
-            focusItem(item);
-            return item;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
             return null;
         }
     }
@@ -171,16 +189,20 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
         nodeController.editNode(item);
     }
 
-    @FXML
     @Override
-    public void clearTree() {
-        super.clearTree();
-        nodeController.clearNode();
+    public void focusItem(TreeItem<XmlTreeNode> item) {
+        super.focusItem(item);
+        itemClicked(null, item);
     }
 
     /*
         values
      */
+    public Node selectedNode() {
+        TreeItem<XmlTreeNode> selecteItem = selected();
+        return selecteItem == null ? null : selecteItem.getValue().getNode();
+    }
+
     @Override
     public boolean validNode(XmlTreeNode node) {
         return node != null && node.getNode() != null;
@@ -196,42 +218,13 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
         return node == null ? null : node.getValue();
     }
 
+    public String xml(XmlTreeNode node) {
+        return XmlTools.transform(node.getNode());
+    }
+
     @Override
     public String copyTitleMessage() {
         return message("CopyName");
-    }
-
-    public String xml(Node node) {
-        if (node == null) {
-            return null;
-        }
-        String encoding = node instanceof Document
-                ? ((Document) node).getXmlEncoding()
-                : node.getOwnerDocument().getXmlEncoding();
-        if (encoding == null) {
-            encoding = "utf-8";
-        }
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
-            if (transformer == null) {
-                transformer = TransformerFactory.newInstance().newTransformer();
-                transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-                transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-            }
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-                    node instanceof Document ? "no" : "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-            transformer.setOutputProperty(OutputKeys.INDENT,
-                    UserConfig.getBoolean("XmlTransformerIndent", true) ? "yes" : "no");
-            StreamResult streamResult = new StreamResult();
-            streamResult.setOutputStream(os);
-            transformer.transform(new DOMSource(node), streamResult);
-            os.flush();
-            os.close();
-            return os.toString(encoding);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     /*
@@ -272,7 +265,18 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        items.addAll(modifyMenus(treeItem));
+
+        return items;
+    }
+
+    public List<MenuItem> modifyMenus(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             XmlAddNodeController.open(this, treeItem);
         });
@@ -301,6 +305,20 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
         items.add(new SeparatorMenuItem());
 
+        menu = new MenuItem(message("CopyNodeXmlCodes"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, xml(treeItem.getValue()));
+        });
+        menu.setDisable(treeItem.getValue() == null);
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyNodeTextContent"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getNode().getTextContent());
+        });
+        menu.setDisable(treeItem.getValue() == null);
+        items.add(menu);
+
         menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(treeItem.getValue()));
@@ -317,7 +335,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
         if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
             items.add(new SeparatorMenuItem());
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+            menu = new MenuItem(message("RecoverFile"), StyleTools.getIconImageView("iconRecover.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 recoverAction();
             });
@@ -332,7 +350,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             if (treeItem == null) {
                 return;
             }
-            String xml = xml(treeItem.getValue().getNode());
+            String xml = xml(treeItem.getValue());
             if (xml == null || xml.isBlank()) {
                 popInformation(message("NoData"));
             } else {
@@ -405,16 +423,19 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             Node newNode = xmlNode.cloneNode(true);
             Node parentNode = xmlNode.getParentNode();
 
+            TreeItem<XmlTreeNode> newTreeItem;
             if (afterNode && index < parentItem.getChildren().size() - 1) {
                 parentNode.insertBefore(newNode, xmlNode.getNextSibling());
-                addTreeItem(parentItem, index + 1, new XmlTreeNode(newNode));
+                newTreeItem = addTreeItem(parentItem, index + 1, new XmlTreeNode(newNode));
             } else {
                 parentNode.appendChild(newNode);
-                addTreeItem(parentItem, -1, new XmlTreeNode(newNode));
+                newTreeItem = addTreeItem(parentItem, -1, new XmlTreeNode(newNode));
             }
 
+            focusItem(newTreeItem);
+
             xmlEditor.domChanged(true);
-            xmlEditor.popInformation(message("DeletedSuccessfully"));
+            xmlEditor.popInformation(message("CopySuccessfully"));
 
             nodeController.clearNode();
         } catch (Exception e) {
@@ -425,75 +446,13 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     @FXML
     @Override
     public void refreshAction() {
-        loadTree(doc);
+        loadNode(doc);
     }
 
     @FXML
     @Override
     public void recoverAction() {
-        if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
-            xmlEditor.fileChanged = false;
-            xmlEditor.sourceFileChanged(xmlEditor.sourceFile);
-        }
-    }
-
-    @FXML
-    protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
-        }
-    }
-
-    @FXML
-    protected void showHelps(Event event) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menuItem = new MenuItem(message("XmlTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.xmlEnLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("XmlTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.xmlZhLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-
-            menuItem = new MenuItem(message("DomSpecification"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.domSpecification(), true);
-                }
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("XmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
-
-            popEventMenu(event, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        xmlEditor.recoverAction();
     }
 
 }

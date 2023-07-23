@@ -21,7 +21,7 @@ import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -119,7 +119,7 @@ public class ControlImagesBlend extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -160,7 +160,7 @@ public class ControlImagesBlend extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<File> files;
 
             @Override
@@ -178,7 +178,7 @@ public class ControlImagesBlend extends BaseController {
                     float copacity = opacity >= 1f ? 0.5f : 1f;
                     BufferedImage blended = PixelsBlend.blend(foreBI, backBI, x, y,
                             PixelsBlend.blender(ImagesBlendMode.NORMAL, copacity, reversed, ignoreTrans));
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return true;
                     }
                     File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator
@@ -188,13 +188,13 @@ public class ControlImagesBlend extends BaseController {
                         task.setInfo(tmpFile.getAbsolutePath());
                     }
                     for (String name : PixelsBlendFactory.blendModes()) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return true;
                         }
                         PixelsBlend.ImagesBlendMode mode = PixelsBlendFactory.blendMode(name);
                         blended = PixelsBlend.blend(foreBI, backBI, x, y,
                                 PixelsBlend.blender(mode, opacity, reversed, ignoreTrans));
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return true;
                         }
                         tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"

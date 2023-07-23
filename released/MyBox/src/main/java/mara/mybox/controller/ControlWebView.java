@@ -49,6 +49,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
@@ -223,7 +224,7 @@ public class ControlWebView extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -415,7 +416,7 @@ public class ControlWebView extends BaseController {
         try {
             return PopTools.askSure(getTitle(), message);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -629,7 +630,7 @@ public class ControlWebView extends BaseController {
 
             setDocListeners(frame);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -978,7 +979,7 @@ public class ControlWebView extends BaseController {
             Robot robot = new Robot();
             MenuWebviewController.pop(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1107,7 +1108,7 @@ public class ControlWebView extends BaseController {
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1149,7 +1150,7 @@ public class ControlWebView extends BaseController {
             popEventMenu(event, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1214,7 +1215,7 @@ public class ControlWebView extends BaseController {
             return clickMenu;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1473,7 +1474,7 @@ public class ControlWebView extends BaseController {
             popEventMenu(fevent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1785,7 +1786,7 @@ public class ControlWebView extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 File tmpFile = HtmlWriteTools.writeHtml(html);
@@ -1918,7 +1919,7 @@ public class ControlWebView extends BaseController {
             MenuWebviewController.pop(this, null, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

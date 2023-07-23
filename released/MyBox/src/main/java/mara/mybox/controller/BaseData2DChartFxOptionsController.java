@@ -107,7 +107,7 @@ public abstract class BaseData2DChartFxOptionsController extends BaseController 
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -135,7 +135,7 @@ public abstract class BaseData2DChartFxOptionsController extends BaseController 
             chartController.redraw();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -200,7 +200,7 @@ public abstract class BaseData2DChartFxOptionsController extends BaseController 
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

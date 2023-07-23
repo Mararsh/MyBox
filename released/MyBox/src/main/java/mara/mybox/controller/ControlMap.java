@@ -31,7 +31,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -94,7 +94,7 @@ public class ControlMap extends BaseController {
                 mapOptionsController.setParameters(this);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class ControlMap extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -178,7 +178,7 @@ public class ControlMap extends BaseController {
                 mouseMoved(longitude, latitude);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -250,7 +250,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("setLanguage(\"" + mapOptions.getLanguage() + "\");");
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -264,7 +264,7 @@ public class ControlMap extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -292,7 +292,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideStandardLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -310,7 +310,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideSatelliteLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -328,7 +328,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideRoadLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -346,7 +346,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideTrafficLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -464,7 +464,7 @@ public class ControlMap extends BaseController {
                     + ", " + isBold + ");");
             titleLabel.setText(label);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -595,7 +595,7 @@ public class ControlMap extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String html;
 
             @Override
@@ -617,7 +617,7 @@ public class ControlMap extends BaseController {
                             .append("\"  style=\"max-width:95%;\"></div>\n");
                     s.append("<hr>\n");
 
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return false;
                     }
 
@@ -627,7 +627,7 @@ public class ControlMap extends BaseController {
                                 message("Label"), message("Information"), message("CoordinateSystem")));
                         StringTable table = new StringTable(names);
                         for (MapPoint code : mapPoints) {
-                            if (task == null || task.isCancelled()) {
+                            if (task == null || isCancelled()) {
                                 return false;
                             }
                             table.add(code.htmlValues());
@@ -639,7 +639,7 @@ public class ControlMap extends BaseController {
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
 
@@ -663,7 +663,7 @@ public class ControlMap extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<Data2DColumn> columns;
             private List<List<String>> data;
@@ -680,7 +680,7 @@ public class ControlMap extends BaseController {
 
                     data = new ArrayList<>();
                     for (MapPoint code : mapPoints) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         data.add(code.dataValues());

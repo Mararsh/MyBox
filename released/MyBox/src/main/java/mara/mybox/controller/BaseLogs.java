@@ -66,7 +66,7 @@ public class BaseLogs extends BaseController {
 
             clearLogs();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -125,12 +125,12 @@ public class BaseLogs extends BaseController {
                         }
                     }
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

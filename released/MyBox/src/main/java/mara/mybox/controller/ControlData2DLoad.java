@@ -37,6 +37,8 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableComboBoxCell;
@@ -58,7 +60,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-17
  * @License Apache License Version 2.0
  */
-public class ControlData2DLoad extends BaseTableViewController<List<String>> {
+public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
     protected ControlData2D dataController;
     protected Data2D data2D;
@@ -138,7 +140,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             updateStatus();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -158,7 +160,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             validateData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -227,12 +229,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         } else {
             resetStatus();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    data2D.startTask(task, null);
+                    data2D.startTask(this, null);
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
@@ -386,7 +388,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             notifyLoaded();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -395,7 +397,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Data2D targetData;
 
             @Override
@@ -466,7 +468,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (dataTable == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Data2D targetData;
 
             @Override
@@ -542,7 +544,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             tableChanged(true);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -598,7 +600,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     @FXML
-    public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
+    public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
                 message("NewName"), targetData.getDataName() + "m");
         if (newName == null || newName.isBlank()) {
@@ -607,7 +609,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Data2DDefinition def;
 
             @Override
@@ -668,7 +670,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             String text = TextTools.dataText(data, ",", names, null);
             TextClipboardTools.copyToSystemClipboard(this, text);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -680,7 +682,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             }
             toMyBoxClipboard(null, data2D.toColumns(names), data);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -710,7 +712,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             };
             start(copyTask, false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -770,7 +772,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
                 if (tableColumn.isEditable()) {
 
-                    if (dataColumn.isEnumType()) {
+                    if (type == ColumnType.Enumeration) {
                         tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.enumValues(), 12));
 
                     } else if (type == ColumnType.Boolean) {
@@ -856,7 +858,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     @Override
     public List<List<String>> readPageData(Connection conn) {
-        data2D.startTask(task, null);
+        data2D.startFilter(null);
         return data2D.readPageData(conn);
     }
 
@@ -931,6 +933,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
         data2D.setDataSize(0);
         dataSizeLoaded = false;
@@ -940,7 +943,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (saveButton != null) {
             saveButton.setDisable(true);
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1007,7 +1010,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             }
             super.setPagination();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }

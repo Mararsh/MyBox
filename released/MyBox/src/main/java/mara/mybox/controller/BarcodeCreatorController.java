@@ -22,7 +22,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -109,7 +109,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             initDataMatrixParaBox();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -202,7 +202,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     UserConfig.getString("BarcodeType", BarcodeType.QR_Code.name()));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -357,7 +357,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             quietWidthInput.setText(UserConfig.getString("BarcodeQuietWdith", "0.25"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -453,7 +453,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -561,7 +561,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             pdf417ErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getString("PDF417ErrorCorrection", Languages.message("PDF417ErrorCorrection3")));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -608,7 +608,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             dmHeightInput.setText(UserConfig.getInt("DataMatrixHeight", 100) + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -628,7 +628,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             NodeStyleTools.setTooltip(dmHeightInput, Languages.message("Pixels"));
             NodeStyleTools.setTooltip(dmWidthInput, Languages.message("Pixels"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -665,7 +665,7 @@ public class BarcodeCreatorController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private BufferedImage bufferedImage;
 
             @Override
@@ -797,7 +797,7 @@ public class BarcodeCreatorController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

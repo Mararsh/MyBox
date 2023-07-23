@@ -11,8 +11,11 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -61,7 +64,7 @@ public class ColorQueryController extends BaseController {
             );
             paletteButton.disableProperty().bind(queryButton.disableProperty());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -73,7 +76,7 @@ public class ColorQueryController extends BaseController {
             NodeStyleTools.setTooltip(queryButton, message("Query") + "\nF1 / ENTER");
             NodeStyleTools.setTooltip(paletteButton, message("AddInColorPalette"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -99,7 +102,7 @@ public class ColorQueryController extends BaseController {
             color = c;
             htmlController.displayHtml(color.html());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -141,6 +144,18 @@ public class ColorQueryController extends BaseController {
         ColorsManageController.addOneColor(color.getColor());
     }
 
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        popEventMenu(event, HelpTools.colorHelps(true));
+    }
+
     @Override
     public boolean keyEnter() {
         return keyF1();
@@ -153,6 +168,20 @@ public class ColorQueryController extends BaseController {
         }
         queryAction();
         return true;
+    }
+
+    /*
+        static
+     */
+    public static ColorQueryController open() {
+        try {
+            ColorQueryController controller = (ColorQueryController) WindowTools.openStage(Fxmls.ColorQueryFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

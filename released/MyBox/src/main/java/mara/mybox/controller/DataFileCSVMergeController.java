@@ -62,7 +62,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -73,7 +73,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
             csvTargetController.setControls(baseName + "Target", false, false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

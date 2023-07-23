@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
@@ -20,8 +22,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebView;
@@ -35,7 +35,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -51,22 +51,15 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-9-6
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAnalyseController extends BaseController {
+public class ImageAnalyseController extends ImageViewerController {
 
     protected ImageStatistic data;
     protected long nonTransparent;
 
     @FXML
-    protected ImageViewerController sourceController;
-    @FXML
-    protected VBox dataBox;
-    @FXML
-    protected HBox dataOpBox;
-    @FXML
-    protected CheckBox componentsLegendCheck, grayHistCheck, redHistCheck,
+    protected CheckBox sortCheck, componentsLegendCheck, grayHistCheck, redHistCheck,
             greenHistCheck, blueHistCheck, alphaHistCheck,
             hueHistCheck, saturationHistCheck, brightnessHistCheck;
     @FXML
@@ -94,7 +87,7 @@ public class ImageAnalyseController extends BaseController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Html);
+        setFileType(VisitHistory.FileType.Image, VisitHistory.FileType.Html);
     }
 
     @Override
@@ -102,42 +95,55 @@ public class ImageAnalyseController extends BaseController {
         try {
             super.initControls();
 
-            dataOpBox.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
-            dataPane.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
-
             initComponentsTab();
 
             dominantController.analyseController = this;
 
-            sourceController.loadNotify.addListener(new ChangeListener<Boolean>() {
+            maskShapeChanged.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadData();
                 }
             });
 
-            sourceController.rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+            sortCheck.setSelected(UserConfig.getBoolean(baseName + "Sort", true));
+            sortCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadData();
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "Sort", newVal);
+                    showColorData();
                 }
             });
 
             showRightPane();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
+            loadData();
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
     protected void loadData() {
-        if (sourceController.image == null || isSettingValues) {
+        if (image == null || isSettingValues) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        sourceFile = sourceController.sourceFile;
         statisticController.clear();
         colorsBarchart.getData().clear();
         grayView.getEngine().loadContent("");
@@ -158,13 +164,13 @@ public class ImageAnalyseController extends BaseController {
         alphaBarchart.getData().clear();
         dominantController.clear();
         updateStageTitle(sourceFile);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private BufferedImage bufferedImage;
 
             @Override
             protected boolean handle() {
                 try {
-                    bufferedImage = imageToHandle();
+                    bufferedImage = bufferedImageToHandle();
                     if (bufferedImage == null) {
                         return false;
                     }
@@ -196,21 +202,21 @@ public class ImageAnalyseController extends BaseController {
         start(task);
     }
 
-    protected BufferedImage imageToHandle() {
+    public BufferedImage bufferedImageToHandle() {
         try {
             Image aImage = null;
-            if (sourceController.selectAreaCheck.isSelected()) {
-                aImage = sourceController.imageToHandle();
+            if (selectAreaCheck.isSelected()) {
+                aImage = imageToHandle();
             }
             if (aImage == null) {
-                aImage = sourceController.image;
+                aImage = image;
             }
             return SwingFXUtils.fromFXImage(aImage, null);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -221,11 +227,11 @@ public class ImageAnalyseController extends BaseController {
      */
     protected void showStatistic() {
         try {
-            if (sourceController.image == null || data == null) {
+            if (image == null || data == null) {
                 return;
             }
             StringBuilder s = new StringBuilder();
-            long imageSize = (long) (sourceController.image.getWidth() * sourceController.image.getHeight());
+            long imageSize = (long) (image.getWidth() * image.getHeight());
             s.append("<P>").append(message("Pixels")).append(":").append(StringTools.format(imageSize)).append("<BR>")
                     .append(message("NonTransparent")).append(":").append(StringTools.format(nonTransparent))
                     .append("(").append(FloatTools.percentage(nonTransparent, imageSize)).append("%)").append("</P>");
@@ -261,7 +267,7 @@ public class ImageAnalyseController extends BaseController {
             statisticController.loadContents(html);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -284,7 +290,7 @@ public class ImageAnalyseController extends BaseController {
             s.append("</TR>\n");
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -300,7 +306,7 @@ public class ImageAnalyseController extends BaseController {
                     + rgb + "; \">&nbsp;</DIV></DIV>\n"
                     + "</DIV></TD>\n";
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return value + "";
         }
     }
@@ -314,7 +320,7 @@ public class ImageAnalyseController extends BaseController {
     // https://stackoverflow.com/questions/37634769/dynamically-change-chart-colors-using-colorpicker/37646943
     private void updateComponentsLegend() {
         try {
-            if (sourceController.image == null || data == null) {
+            if (image == null || data == null) {
                 return;
             }
             if (!componentsLegendCheck.isSelected()) {
@@ -330,8 +336,8 @@ public class ImageAnalyseController extends BaseController {
                 Label legendLabel = (Label) legendItem;
                 Node legend = legendLabel.getGraphic();
                 if (legend != null) {
-                    String colorString = FxColorTools.color2rgb(ColorComponentTools.componentColor(legendLabel.getText()));
-                    legend.setStyle("-fx-background-color: " + colorString);
+                    legend.setStyle("-fx-background-color: "
+                            + FxColorTools.color2css(ColorComponentTools.componentColor(legendLabel.getText())));
                 }
             }
         } catch (Exception e) {
@@ -457,12 +463,12 @@ public class ImageAnalyseController extends BaseController {
             componentsLegendCheck.setSelected(UserConfig.getBoolean("ImageHistLegend", true));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     protected void showComponentsHistogram() {
-        if (sourceController.image == null || data == null || colorsBarchart.getData() == null) {
+        if (image == null || data == null || colorsBarchart.getData() == null) {
             return;
         }
 
@@ -508,7 +514,7 @@ public class ImageAnalyseController extends BaseController {
     }
 
     protected void showComponentsHistogram(int index, final ColorComponent component) {
-        if (sourceController.image == null || data == null) {
+        if (image == null || data == null) {
             return;
         }
         // https://stackoverflow.com/questions/31774771/javafx-chart-axis-only-shows-last-label?r=SearchResults
@@ -559,15 +565,39 @@ public class ImageAnalyseController extends BaseController {
             StringTable table = new StringTable(names, message(component.name()), 3);
             int[] histogram = data.histogram(component);
 
+            List<List<Integer>> sort = new ArrayList<>();
             for (int i = histogram.length - 1; i >= 0; --i) {
+                List<Integer> dataRow = new ArrayList<>();
+                dataRow.add(i);
+                dataRow.add(histogram[i]);
+                sort.add(dataRow);
+            }
+            if (sortCheck.isSelected()) {
+                Collections.sort(sort, new Comparator<List<Integer>>() {
+                    @Override
+                    public int compare(List<Integer> v1, List<Integer> v2) {
+                        int diff = v1.get(1) - v2.get(1);
+                        if (diff == 0) {
+                            return 0;
+                        } else if (diff > 0) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    }
+                });
+            }
+            for (List<Integer> dataRow : sort) {
                 List<String> row = new ArrayList<>();
-                java.awt.Color aColor = ColorComponentTools.color(component, i);
+                int value = dataRow.get(0);
+                int count = dataRow.get(1);
+                java.awt.Color aColor = ColorComponentTools.color(component, value);
                 int red = aColor.getRed();
                 int green = aColor.getGreen();
                 int blue = aColor.getBlue();
                 Color fColor = ColorConvertTools.converColor(aColor);
-                row.addAll(Arrays.asList(i + "", StringTools.format(histogram[i]),
-                        FloatTools.percentage(histogram[i], nonTransparent) + "%",
+                row.addAll(Arrays.asList(value + "", StringTools.format(count),
+                        FloatTools.percentage(count, nonTransparent) + "%",
                         FxColorTools.color2rgba(fColor), red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",
                         Math.round(fColor.getHue()) + " ",
@@ -576,6 +606,7 @@ public class ImageAnalyseController extends BaseController {
                 ));
                 table.add(row);
             }
+
             final String html = StringTable.tableHtml(table);
             view.getEngine().loadContent​(html);
 
@@ -597,7 +628,7 @@ public class ImageAnalyseController extends BaseController {
             barchart.setLegendVisible(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -605,7 +636,7 @@ public class ImageAnalyseController extends BaseController {
     @Override
     public void saveAsAction() {
         try {
-            if (sourceController.image == null || data == null) {
+            if (image == null || data == null) {
                 return;
             }
             if (task != null && !task.isQuit()) {
@@ -631,11 +662,13 @@ public class ImageAnalyseController extends BaseController {
             final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(dominantTab);
+            dominantController.tabPane.getSelectionModel().select(dominantController.colorTab);
             html = dominantController.colorsController.currentHtml();
             Thread.sleep(50);
             final String dominantViewHml = HtmlReadTools.body(html);
 
             Thread.sleep(50);
+            dominantController.tabPane.getSelectionModel().select(dominantController.pieTab);
             final Image dominantPieSnap = dominantController.dominantPie.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(grayTab);
@@ -704,7 +737,7 @@ public class ImageAnalyseController extends BaseController {
 
             dataPane.getSelectionModel().select(currentTab);
 
-            task = new SingletonTask<Void>(this) {
+            task = new SingletonCurrentTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -722,7 +755,7 @@ public class ImageAnalyseController extends BaseController {
                         if (sourceFile != null) {
                             s.append("<h3  class=\"center\">").append(sourceFile).append("</h3>\n");
                         }
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(sourceController.image, null);
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                         ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "image.jpg");
                         String imageName = subPath + "/image.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\"></div>\n");
@@ -845,7 +878,7 @@ public class ImageAnalyseController extends BaseController {
             start(task);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -853,13 +886,10 @@ public class ImageAnalyseController extends BaseController {
     @Override
     public void refreshAction() {
         try {
-            sourceController.fitSize();
-            sourceController.drawMaskRulerXY();
-            sourceController.checkCoordinate();
-            sourceController.setMaskStroke();
+            fitSize();
             loadData();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

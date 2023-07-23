@@ -45,7 +45,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
             optionsController.setControls(baseName, true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
             mergedHtml.append(head);
             return super.makeMoreParameters();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -90,7 +90,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
             mergedHtml.append(body);
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

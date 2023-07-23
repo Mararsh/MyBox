@@ -106,7 +106,7 @@ public class StyleButton {
             switch (id) {
                 case "clearButton":
                 case "clearCodesButton":
-                    return new StyleData(id, message("Clear"), "CTRL+g", "iconClear.png");
+                    return new StyleData(id, message("Clear"), "CTRL+l(" + message("LowercaseL") + ")", "iconClear.png");
                 default:
                     return new StyleData(id, message("Clear"), "", "iconClear.png");
             }
@@ -252,6 +252,8 @@ public class StyleButton {
             switch (id) {
                 case "nextButton":
                     return new StyleData(id, message("Next"), "PAGE DOWN", "iconNext.png");
+                case "nextFileButton":
+                    return new StyleData(id, message("NextFile"), "", "iconNext.png");
                 default:
                     return new StyleData(id, message("Next"), "", "iconNext.png");
             }
@@ -260,6 +262,8 @@ public class StyleButton {
             switch (id) {
                 case "previousButton":
                     return new StyleData(id, message("Previous"), "PAGE UP", "iconPrevious.png");
+                case "previousFileButton":
+                    return new StyleData(id, message("PreviousFile"), "", "iconPrevious.png");
                 default:
                     return new StyleData(id, message("Previous"), "", "iconPrevious.png");
             }
@@ -347,6 +351,9 @@ public class StyleButton {
         }
         if (id.startsWith("help")) {
             return new StyleData(id, message("HelpMe"), "", "iconClaw.png");
+        }
+        if (id.startsWith("editFrames")) {
+            return new StyleData(id, message("ImagesEditor"), "", "iconEdit.png");
         }
         if (id.startsWith("edit")) {
             return new StyleData(id, message("Edit"), "", "iconEdit.png");
@@ -448,7 +455,7 @@ public class StyleButton {
         if (id.startsWith("go")) {
             switch (id) {
                 case "goButton":
-                    return new StyleData(id, message("Go"), "F1 / CTRL+e / ALT+e", "iconGo.png");
+                    return new StyleData(id, message("Go"), "F9 / CTRL+g / ALT+g", "iconGo.png");
                 default:
                     return new StyleData(id, message("Go"), "", "iconGo.png");
             }
@@ -563,12 +570,17 @@ public class StyleButton {
             return new StyleData(id, message("SendMessage"), "", "iconMessage.png");
         }
         if (id.startsWith("pop")) {
-            return new StyleData(id, message("Pop"), "CTRL+p", "iconPop.png");
+            switch (id) {
+                case "popButton":
+                    return new StyleData(id, message("Pop"), "CTRL+p", "iconPop.png");
+                default:
+                    return new StyleData(id, message("Pop"), "", "iconPop.png");
+            }
         }
         if (id.startsWith("play")) {
             switch (id) {
                 case "playButton":
-                    return new StyleData(id, message("Play"), "F1", "iconPlay.png");
+                    return new StyleData(id, message("Play"), "F1 / CTRL+e / ALT+e", "iconPlay.png");
                 default:
                     return new StyleData(id, message("Play"), "", "iconPlay.png");
             }
@@ -588,7 +600,7 @@ public class StyleButton {
         if (id.startsWith("set")) {
             switch (id) {
                 case "setButton":
-                    return new StyleData(id, message("Set"), "F1", "iconEqual.png");
+                    return new StyleData(id, message("Set"), "F1 / CTRL+e / ALT+e", "iconEqual.png");
                 case "setAllOrSelectedButton":
                     return new StyleData(id, message("SetAllOrSelected"), "", "iconEqual.png");
                 case "setValuesButton":
@@ -651,6 +663,15 @@ public class StyleButton {
         }
         if (id.startsWith("options")) {
             return new StyleData(id, message("Options"), "", "iconSetting.png");
+        }
+        if (id.startsWith("systemWebBrowser")) {
+            return new StyleData(id, message("SystemWebBrowser"), "", "iconWindow.png");
+        }
+        if (id.startsWith("panesMenu")) {
+            return new StyleData(id, message("Panes"), "", "iconPanes.png");
+        }
+        if (id.startsWith("draw")) {
+            return new StyleData(id, message("Draw"), "", "iconDraw.png");
         }
         return null;
     }

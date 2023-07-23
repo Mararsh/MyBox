@@ -15,7 +15,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -45,7 +45,7 @@ public class GeographyCodeSelectorController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private GeographyCode earch;
             private List<GeographyCode> continents, others;
             private List<Long> haveChildren;
@@ -184,7 +184,7 @@ public class GeographyCodeSelectorController extends BaseController {
             task.cancel();
         }
         parent.getChildren().clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<GeographyCode> children;
             private List<Long> haveChildren;
 

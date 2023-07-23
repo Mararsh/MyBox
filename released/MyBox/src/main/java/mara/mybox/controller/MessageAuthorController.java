@@ -11,7 +11,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
@@ -40,7 +40,7 @@ public class MessageAuthorController extends BaseController {
             osInput.setText(SystemTools.os());
             nameInput.setText(System.getProperty("user.name"));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -51,7 +51,7 @@ public class MessageAuthorController extends BaseController {
 
     @FXML
     public void messageAction() {
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

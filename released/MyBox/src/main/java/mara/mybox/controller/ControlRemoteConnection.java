@@ -25,6 +25,7 @@ import mara.mybox.data.FileNode;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
@@ -76,7 +77,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -202,7 +203,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

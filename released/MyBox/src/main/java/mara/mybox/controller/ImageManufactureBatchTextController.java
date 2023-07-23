@@ -41,7 +41,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -56,7 +56,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             BufferedImage target = ImageTextTools.addText(source, optionsController);
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

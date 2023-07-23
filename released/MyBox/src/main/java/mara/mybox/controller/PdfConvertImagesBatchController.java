@@ -79,7 +79,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
             appendDensityCheck.setSelected(UserConfig.getBoolean("PdfConverterAppendDensity"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -145,7 +145,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
         try {
             renderer = new PDFRenderer(doc);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             renderer = null;
         }
         return renderer != null;
@@ -183,7 +183,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
                 return 1;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -217,7 +217,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
 
             return makeTargetFile(namePrefix, nameSuffix, currentParameters.currentTargetPath);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

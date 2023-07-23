@@ -45,7 +45,7 @@ public class ColorPaletteSelectorController extends BaseChildController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -78,7 +78,7 @@ public class ColorPaletteSelectorController extends BaseChildController {
             controller.setParameter(popupController);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -53,7 +53,7 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
             taskController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

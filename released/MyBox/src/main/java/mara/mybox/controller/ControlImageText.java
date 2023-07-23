@@ -22,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -47,7 +46,6 @@ public class ControlImageText extends BaseController {
     protected ImageView imageView;
     protected int margin, lineHeight, x, y, fontSize, shadow, angle, baseX, baseY, textY,
             textWidth, textHeight, bordersStrokeWidth, bordersArc, bordersMargin;
-    protected float bordersOpacity;
     protected String text, fontFamily, fontName;
     protected FontPosture fontPosture;
     protected FontWeight fontWeight;
@@ -61,12 +59,13 @@ public class ControlImageText extends BaseController {
     @FXML
     protected ComboBox<String> lineHeightSelector, fontSizeSelector, fontStyleSelector,
             fontFamilySelector, angleSelector, shadowSelector,
-            bordersStrokeWidthSelector, bordersArcSelector, bordersOpacitySelector;
+            bordersStrokeWidthSelector, bordersArcSelector;
     @FXML
     protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck,
             bordersCheck, bordersFillCheck, bordersStrokeDottedCheck;
     @FXML
-    protected ColorSetController colorSetController, bordersFillColorSetController, bordersStrokeColorSetController;
+    protected ControlColorSet fontColorController, shadowColorController,
+            bordersFillColorController, bordersStrokeColorController;
     @FXML
     protected ToggleGroup positionGroup;
     @FXML
@@ -74,13 +73,11 @@ public class ControlImageText extends BaseController {
     @FXML
     protected ControlImagesBlend blendController;
     @FXML
-    protected VBox baseBox, bordersBox;
+    protected VBox bordersBox;
     @FXML
     protected Label sizeLabel;
     @FXML
-    protected HBox goBox;
-    @FXML
-    protected Button goBordersButton;
+    protected Button goTextButton, goLocationButton, goBordersButton;
 
     public ControlImageText() {
         changeNotify = new SimpleBooleanProperty(false);
@@ -95,19 +92,27 @@ public class ControlImageText extends BaseController {
             parentController = parent;
             this.imageView = imageView;
 
-            initBase();
+            initText();
             initStyle();
             initBorders();
 
+            checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
+            if (checkBaseAtOnce) {
+                sizeLabel.setVisible(false);
+                goTextButton.setVisible(false);
+                goLocationButton.setVisible(false);
+                goBordersButton.setVisible(false);
+            }
+
             checkPositionType();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
-    public void initBase() {
+    public void initText() {
         try {
-            checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
+
             textArea.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
             margin = UserConfig.getInt(baseName + "Margin", 20);
             marginInput.setText(margin + "");
@@ -123,7 +128,6 @@ public class ControlImageText extends BaseController {
             });
 
             if (checkBaseAtOnce) {
-                baseBox.getChildren().removeAll(sizeLabel, goBox);
 
                 textArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
@@ -163,7 +167,7 @@ public class ControlImageText extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -198,8 +202,8 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            colorSetController.init(this, baseName + "TextColor", Color.ORANGE);
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            fontColorController.init(this, baseName + "TextColor", Color.ORANGE);
+            fontColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     notifyChanged();
@@ -301,6 +305,14 @@ public class ControlImageText extends BaseController {
                 }
             });
 
+            shadowColorController.init(this, baseName + "ShadowColor", Color.GREY);
+            shadowColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    notifyChanged();
+                }
+            });
+
             angleSelector.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
             angle = UserConfig.getInt(baseName + "TextAngle", 0);
@@ -381,8 +393,8 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            bordersFillColorSetController.init(this, baseName + "BordersFillColor", Color.WHITE);
-            bordersFillColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            bordersFillColorController.init(this, baseName + "BordersFillColor", Color.WHITE);
+            bordersFillColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (showBorders()) {
@@ -391,8 +403,8 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            bordersStrokeColorSetController.init(this, baseName + "BordersStrokeColor", Color.WHITE);
-            bordersStrokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            bordersStrokeColorController.init(this, baseName + "BordersStrokeColor", Color.WHITE);
+            bordersStrokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (showBorders()) {
@@ -457,34 +469,10 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            bordersOpacity = UserConfig.getInt(baseName + "BordersOpacity", 50) / 100f;
-            bordersOpacity = (bordersOpacity >= 0.0f && bordersOpacity <= 1.0f) ? bordersOpacity : 0.5f;
-            bordersOpacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            bordersOpacitySelector.setValue(bordersOpacity + "");
-            bordersOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    bordersOpacity = 0.5f;
-                    try {
-                        bordersOpacity = Float.parseFloat(newValue);
-                        if (bordersOpacity < 0.0f || bordersOpacity > 1.0f) {
-                            bordersOpacity = 0.5f;
-                        }
-                    } catch (Exception e) {
-                        bordersOpacity = 0.5f;
-                    }
-                    UserConfig.setInt(baseName + "BordersOpacity", (int) (bordersOpacity * 100));
-                    if (showBorders()) {
-                        notifyChanged();
-                    }
-                }
-            });
-
             bordersMargin = UserConfig.getInt(baseName + "BordersMargin", 10);
             bordersMarginInput.setText(bordersMargin + "");
 
             if (checkBaseAtOnce) {
-                goBordersButton.setVisible(false);
                 bordersMarginInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -693,8 +681,16 @@ public class ControlImageText extends BaseController {
     }
 
     @FXML
-    @Override
-    public void goAction() {
+    public void goLocation() {
+        apply();
+    }
+
+    @FXML
+    public void goText() {
+        apply();
+    }
+
+    public void apply() {
         if (!checkParameters()) {
             popError(Languages.message("InvalidParameters"));
             return;
@@ -770,7 +766,11 @@ public class ControlImageText extends BaseController {
     }
 
     public java.awt.Color textColor() {
-        return colorSetController.awtColor();
+        return fontColorController.awtColor();
+    }
+
+    public java.awt.Color shadowColor() {
+        return shadowColorController.awtColor();
     }
 
     public boolean isVertical() {
@@ -817,12 +817,12 @@ public class ControlImageText extends BaseController {
         return bordersFillCheck.isSelected();
     }
 
-    public java.awt.Color bordersStrokeColor() {
-        return bordersStrokeColorSetController.awtColor();
+    public Color bordersStrokeColor() {
+        return bordersStrokeColorController.color();
     }
 
-    public java.awt.Color bordersFillColor() {
-        return bordersFillColorSetController.awtColor();
+    public Color bordersFillColor() {
+        return bordersFillColorController.color();
     }
 
     /*
@@ -894,10 +894,6 @@ public class ControlImageText extends BaseController {
 
     public int getBordersMargin() {
         return bordersMargin;
-    }
-
-    public float getBordersOpacity() {
-        return bordersOpacity;
     }
 
     public boolean isCheckBaseAtOnce() {

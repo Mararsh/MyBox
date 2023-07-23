@@ -38,7 +38,7 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
@@ -73,8 +73,8 @@ public class SettingsController extends BaseController {
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
-            anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
-            commitLoseFocusCheck, copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
+            controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
+            lostFocusCommitCheck, copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
@@ -84,7 +84,6 @@ public class SettingsController extends BaseController {
     protected VBox localBox, dataBox;
     @FXML
     protected ComboBox<String> fontSizeBox, iconSizeBox, scrollSizeSelector,
-            strokeWidthBox, anchorWidthBox, gridWidthSelector, gridIntervalSelector, gridOpacitySelector,
             popSizeSelector, popDurationSelector;
     @FXML
     protected HBox pdfMemBox, imageHisBox, derbyBox;
@@ -98,8 +97,8 @@ public class SettingsController extends BaseController {
     @FXML
     protected Rectangle colorCustomizeRect;
     @FXML
-    protected ColorSetController strokeColorSetController, anchorColorSetController, gridColorSetController, alphaColorSetController,
-            popBgColorController, popInfoColorController, popErrorColorController, popWarnColorController;
+    protected ControlColorSet alphaColorSetController, popBgColorController,
+            popInfoColorController, popErrorColorController, popWarnColorController;
     @FXML
     protected ListView languageList;
     @FXML
@@ -107,6 +106,8 @@ public class SettingsController extends BaseController {
             derbyStatus;
     @FXML
     protected ControlImageRender renderController;
+    @FXML
+    protected ControlImageRulerOptions rulerController;
 
     public SettingsController() {
         baseTitle = message("Settings");
@@ -125,7 +126,7 @@ public class SettingsController extends BaseController {
             initMapTab();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -149,7 +150,7 @@ public class SettingsController extends BaseController {
 
             colorCustomizeRect.setFill(Colors.customizeColorDark());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -194,13 +195,13 @@ public class SettingsController extends BaseController {
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
             popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
             shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
-            commitLoseFocusCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
+            lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
 
             checkLanguage();
             checkPdfMem();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -300,14 +301,13 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            commitLoseFocusCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            lostFocusCommitCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     if (isSettingValues) {
                         return;
                     }
-                    AppVariables.commitModificationWhenDataCellLoseFocus = commitLoseFocusCheck.isSelected();
-                    UserConfig.setBoolean("CommitModificationWhenDataCellLoseFocus", AppVariables.commitModificationWhenDataCellLoseFocus);
+                    AppVariables.lostFocusCommitData(lostFocusCommitCheck.isSelected());
                 }
             });
 
@@ -375,7 +375,7 @@ public class SettingsController extends BaseController {
             popBgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopTextBgColor", popBgColorController.rgb());
+                    UserConfig.setString("PopTextBgColor", popBgColorController.css());
                     popSuccessful();
                 }
             });
@@ -384,7 +384,7 @@ public class SettingsController extends BaseController {
             popInfoColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopInfoColor", popInfoColorController.rgb());
+                    UserConfig.setString("PopInfoColor", popInfoColorController.css());
                     popSuccessful();
                 }
             });
@@ -393,7 +393,7 @@ public class SettingsController extends BaseController {
             popErrorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopErrorColor", popErrorColorController.rgb());
+                    UserConfig.setString("PopErrorColor", popErrorColorController.css());
                     popSuccessful();
                 }
             });
@@ -402,7 +402,7 @@ public class SettingsController extends BaseController {
             popWarnColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopWarnColor", popWarnColorController.rgb());
+                    UserConfig.setString("PopWarnColor", popWarnColorController.css());
                     popSuccessful();
                 }
             });
@@ -431,7 +431,7 @@ public class SettingsController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -464,7 +464,7 @@ public class SettingsController extends BaseController {
                 StyleTools.setConfigStyleColor(this, "Red");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -474,7 +474,7 @@ public class SettingsController extends BaseController {
             UserConfig.setString("InterfaceStyle", style);
             styleAll(style);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -565,7 +565,7 @@ public class SettingsController extends BaseController {
             webReadTimeoutInput.setText(UserConfig.getInt("WebReadTimeout", 10000) + "");
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -583,7 +583,7 @@ public class SettingsController extends BaseController {
                     }
                     MyBox.restart();
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
         });
@@ -703,7 +703,7 @@ public class SettingsController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -719,7 +719,7 @@ public class SettingsController extends BaseController {
             recordFileWritten(directory);
             dataDirInput.setText(directory.getPath());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -744,7 +744,7 @@ public class SettingsController extends BaseController {
                         try {
                             FileDeleteTools.delete(lckFile);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
 
@@ -809,7 +809,7 @@ public class SettingsController extends BaseController {
         DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
         ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
         derbyBox.setDisable(true);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String ret;
 
             @Override
@@ -841,7 +841,7 @@ public class SettingsController extends BaseController {
         try {
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -888,145 +888,6 @@ public class SettingsController extends BaseController {
      */
     public void initImageTab() {
         try {
-            strokeWidthBox.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
-            strokeWidthBox.getSelectionModel().select(UserConfig.getInt("StrokeWidth", 2) + "");
-            strokeWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                UserConfig.setInt("StrokeWidth", v);
-                                ValidationTools.setEditorNormal(strokeWidthBox);
-                                BaseImageController.updateMaskStroke();
-                            } else {
-                                ValidationTools.setEditorBadStyle(strokeWidthBox);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(strokeWidthBox);
-                        }
-                    }
-                }
-            });
-
-            strokeColorSetController.init(this, "StrokeColor", Color.web(BaseImageController.DefaultStrokeColor));
-            strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
-                    BaseImageController.updateMaskStroke();
-                    popSuccessful();
-                }
-            });
-
-            anchorWidthBox.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-            anchorWidthBox.getSelectionModel().select(UserConfig.getInt("AnchorWidth", 10) + "");
-            anchorWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                UserConfig.setInt("AnchorWidth", v);
-                                ValidationTools.setEditorNormal(anchorWidthBox);
-                                BaseImageController.updateMaskStroke();
-                            } else {
-                                ValidationTools.setEditorBadStyle(anchorWidthBox);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(anchorWidthBox);
-                        }
-                    }
-                }
-            });
-
-            anchorColorSetController.init(this, "AnchorColor", Color.web(BaseImageController.DefaultAnchorColor));
-            anchorColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
-                    BaseImageController.updateMaskStroke();
-                    popSuccessful();
-                }
-            });
-
-            anchorSolidCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setBoolean("AnchorSolid", new_toggle);
-                    if (parentController instanceof BaseImageController) {
-                        ((BaseImageController) parentController).setMaskStroke();
-                    }
-                }
-            });
-            anchorSolidCheck.setSelected(UserConfig.getBoolean("AnchorSolid", true));
-
-            gridColorSetController.init(this, "GridLinesColor", Color.LIGHTGRAY);
-            gridColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
-                    BaseImageController.updateMaskGrid();
-                }
-            });
-
-            gridWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
-            gridWidthSelector.getSelectionModel().select(UserConfig.getInt("GridLinesWidth", 1) + "");
-            gridWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                UserConfig.setInt("GridLinesWidth", v);
-                                ValidationTools.setEditorNormal(gridWidthSelector);
-                                BaseImageController.updateMaskGrid();
-                            } else {
-                                ValidationTools.setEditorBadStyle(gridWidthSelector);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(gridWidthSelector);
-                        }
-                    }
-                }
-            });
-
-            gridIntervalSelector.getItems().addAll(Arrays.asList(message("Automatic"), "10", "20", "25", "50", "100", "5", "1", "2", "200", "500"));
-            int gi = UserConfig.getInt("GridLinesInterval", -1);
-            gridIntervalSelector.getSelectionModel().select(gi <= 0 ? message("Automatic") : gi + "");
-            gridIntervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    int v = -1;
-                    try {
-                        if (!message("Automatic").equals(newValue)) {
-                            v = Integer.parseInt(newValue);
-                        }
-                    } catch (Exception e) {
-                    }
-                    UserConfig.setInt("GridLinesInterval", v);
-                    BaseImageController.updateMaskGrid();
-                }
-            });
-
-            gridOpacitySelector.getItems().addAll(Arrays.asList("0.5", "0.2", "1.0", "0.7", "0.1", "0.3", "0.8", "0.9", "0.6", "0.4"));
-            gridOpacitySelector.getSelectionModel().select(UserConfig.getString("GridLinesOpacity", "0.1"));
-            gridOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    float v = 0.1f;
-                    try {
-                        v = Float.parseFloat(newValue);
-                    } catch (Exception e) {
-                    }
-                    UserConfig.setString("GridLinesOpacity", v + "");
-                    BaseImageController.updateMaskGrid();
-                }
-            });
-
             alphaColorSetController.init(this, "AlphaAsColor", Color.WHITE);
             alphaColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
@@ -1064,7 +925,7 @@ public class SettingsController extends BaseController {
             renderController.setParentController(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1103,7 +964,7 @@ public class SettingsController extends BaseController {
             gaodeWebKeyInput.setText(UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapWebKey));
             gaodeServiceKeyInput.setText(UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

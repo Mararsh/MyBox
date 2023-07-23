@@ -13,10 +13,12 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
+import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.ImageViewTools;
@@ -84,8 +86,77 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
+    }
+
+    /*
+        values
+     */
+    public Color strokeColor() {
+        try {
+            return Color.web(UserConfig.getString("StrokeColor", ShapeStyle.DefaultStrokeColor));
+        } catch (Exception e) {
+            return Color.web(ShapeStyle.DefaultStrokeColor);
+        }
+    }
+
+    public float strokeWidth() {
+        float v = UserConfig.getFloat("StrokeWidth", 2);
+        if (v < 0) {
+            v = 2;
+        }
+        return v;
+    }
+
+    public Color anchorColor() {
+        try {
+            return Color.web(UserConfig.getString("AnchorColor", ShapeStyle.DefaultAnchorColor));
+        } catch (Exception e) {
+            return Color.web(ShapeStyle.DefaultAnchorColor);
+        }
+    }
+
+    public float anchorSize() {
+        float v = UserConfig.getFloat("AnchorSize", 10);
+        if (v < 0) {
+            v = 10;
+        }
+        return v;
+    }
+
+    public double viewXRatio() {
+        return viewWidth() / imageWidth();
+    }
+
+    public double viewYRatio() {
+        return viewHeight() / imageHeight();
+    }
+
+    public double imageXRatio() {
+        return imageWidth() / viewWidth();
+    }
+
+    public double imageYRatio() {
+        return imageHeight() / viewHeight();
+    }
+
+    public double maskHandlerX(Shape shape, MouseEvent event) {
+        return (shape.getLayoutX() + event.getX() - imageView.getLayoutX())
+                * imageXRatio();
+    }
+
+    public double maskHandlerY(Shape shape, MouseEvent event) {
+        return (shape.getLayoutY() + event.getY() - imageView.getLayoutY())
+                * imageYRatio();
+    }
+
+    public double imageOffsetX(MouseEvent event) {
+        return (event.getX() - mouseX) * imageXRatio();
+    }
+
+    public double imageOffsetY(MouseEvent event) {
+        return (event.getY() - mouseY) * imageYRatio();
     }
 
     @FXML
@@ -95,7 +166,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-        imageClicked(event, p);
+        paneClicked(event, p);
         event.consume();
     }
 
@@ -104,7 +175,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
 //        MyBoxLog.debug("imageClicked");
     }
 
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
     }
 
     @FXML
@@ -163,7 +234,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean("ImageRulerXY", rulerXCheck.isSelected());
-                        drawMaskRulerXY();
+                        drawMaskRulers();
                     }
                 });
             }
@@ -194,11 +265,11 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
-    public void drawMaskRulerXY() {
+    public void drawMaskRulers() {
         drawMaskGrid();
         drawMaskRulerX();
         drawMaskRulerY();
@@ -210,9 +281,9 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
         clearMaskRulerX();
         if (UserConfig.getBoolean("ImageRulerXY", false)) {
-            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
-            double imageWidth = getImageWidth() / widthRatio();
-            double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
+            Color strokeColor = Color.web(UserConfig.getString("RulerColor", "#FF0000"));
+            double imageWidth = imageWidth() / widthRatio();
+            double ratio = viewWidth() / imageWidth;
             int step = getRulerStep(imageWidth);
             for (int i = step; i < imageWidth; i += step) {
                 double x = i * ratio;
@@ -266,9 +337,9 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
         clearMaskRulerY();
         if (UserConfig.getBoolean("ImageRulerXY", false)) {
-            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
-            double imageHeight = getImageHeight() / heightRatio();
-            double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            Color strokeColor = Color.web(UserConfig.getString("RulerColor", "#FF0000"));
+            double imageHeight = imageHeight() / heightRatio();
+            double ratio = viewHeight() / imageHeight;
             int step = getRulerStep(imageHeight);
             for (int j = step; j < imageHeight; j += step) {
                 double y = j * ratio;
@@ -329,10 +400,10 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
             lineWidth = lineWidth <= 0 ? 1 : lineWidth;
-            double imageWidth = getImageWidth() / widthRatio();
-            double imageHeight = getImageHeight() / heightRatio();
-            double wratio = imageView.getBoundsInParent().getWidth() / imageWidth;
-            double hratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            double imageWidth = imageWidth() / widthRatio();
+            double imageHeight = imageHeight() / heightRatio();
+            double wratio = viewWidth() / imageWidth;
+            double hratio = viewHeight() / imageHeight;
             int istep = getRulerStep(imageWidth);
             int interval = UserConfig.getInt("GridLinesInterval", -1);
             interval = interval <= 0 ? istep : interval;
@@ -385,10 +456,10 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         if (UserConfig.getBoolean("ImageGridLines", false)) {
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
-            double imageWidth = getImageWidth() / widthRatio();
-            double imageHeight = getImageHeight() / heightRatio();
-            double wratio = imageView.getBoundsInParent().getWidth() / imageWidth;
-            double hratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            double imageWidth = imageWidth() / widthRatio();
+            double imageHeight = imageHeight() / heightRatio();
+            double wratio = viewWidth() / imageWidth;
+            double hratio = viewHeight() / imageHeight;
             int istep = getRulerStep(imageHeight);
             int interval = UserConfig.getInt("GridLinesInterval", -1);
             interval = interval <= 0 ? istep : interval;
@@ -465,12 +536,10 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
     protected void checkCoordinate() {
         if (xyText != null) {
             xyText.setText("");
+            xyText.setFill(strokeColor());
         }
     }
 
-    public void clear() {
-
-    }
 
     /*
         static
@@ -483,7 +552,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             if (object != null && object instanceof BaseImageController_Mask) {
                 try {
                     BaseImageController_Mask controller = (BaseImageController_Mask) object;
-                    controller.drawMaskRulerXY();
+                    controller.drawMaskRulers();
                 } catch (Exception e) {
                 }
             }

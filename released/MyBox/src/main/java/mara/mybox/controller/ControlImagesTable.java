@@ -166,7 +166,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                                 row.setDuration(value);
                                 if (!isSettingValues) {
                                     Platform.runLater(() -> {
-                                        updateLabel();
+                                        updateTableLabel();
                                     });
                                 }
                                 return super.setCellValue(value);
@@ -182,7 +182,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -214,12 +214,12 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             metaButton.setDisable(invalid);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     @Override
-    public void updateLabel() {
+    public void updateTableLabel() {
         if (tableLabel == null) {
             return;
         }
@@ -237,7 +237,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         s += MessageFormat.format(Languages.message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         if (viewButton != null) {
-            s += "  " + Languages.message("DoubleClickToView");
+            s += "  " + Languages.message("DoubleClickToOpen");
         }
         tableLabel.setText(s);
     }
@@ -278,7 +278,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             }
             return infos;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -304,7 +304,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 ImageViewerController.openImageInfo(info);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -318,7 +318,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             }
             ImageManufactureController.openImageInfo(info);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -392,9 +392,9 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             }
             isSettingValues = false;
             tableView.refresh();
-            updateLabel();
+            updateTableLabel();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

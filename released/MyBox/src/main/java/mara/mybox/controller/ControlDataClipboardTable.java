@@ -52,7 +52,7 @@ public class ControlDataClipboardTable extends ControlData2DList {
         try {
             browseURI(new File(AppPaths.getDataClipboardPath() + File.separator).toURI());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

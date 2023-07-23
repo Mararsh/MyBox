@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
@@ -46,7 +46,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             resultsController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -75,7 +75,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             regression = null;
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -87,7 +87,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         }
         resultsController.clear();
         namesMap = new HashMap<>();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             List<List<String>> data;
             int n, xLen, yLen;
@@ -95,6 +95,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     data = filteredData(dataColsIndices, false);
                     if (data == null || data.isEmpty()) {
                         error = message("NoData");
@@ -110,6 +111,9 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                     for (int yIndex = 0; yIndex < yLen; yIndex++) {
                         for (int i = 0; i < xLen; i++) {
                             for (int j = i + 1; j <= xLen; j++) {
+                                if (task == null || isCancelled()) {
+                                    return false;
+                                }
                                 List<Integer> xIndices = xList.subList(i, j);
                                 regress(yIndex, xIndices);
                             }
@@ -145,11 +149,14 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                         List<String> row = data.get(r);
                         sy[r] = row.get(yIndex);
                         for (int c = 0; c < k; c++) {
+                            if (task == null || isCancelled()) {
+                                return;
+                            }
                             sx[r][c] = row.get(xIndices.get(c));
                         }
                     }
                     regression = new OLSLinearRegression(interceptCheck.isSelected())
-                            .setTask(task).setScale(scale)
+                            .setTask(this).setScale(scale)
                             .setInvalidAs(invalidAs)
                             .setyName(yName).setxNames(xnames);
                     regression.calculate(sy, sx);
@@ -166,6 +173,9 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            if (task == null || isCancelled()) {
+                                return;
+                            }
                             resultsController.addRow(row);
                         }
                     });
@@ -216,7 +226,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

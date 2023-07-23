@@ -73,7 +73,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                 NodeStyleTools.removeTooltip(csvEditController.inputButton);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -93,7 +93,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                 );
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -188,7 +188,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                 return Languages.message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }
@@ -199,7 +199,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
             conn.commit();
             return ret;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return -1;
     }
@@ -278,7 +278,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                 conn.commit();
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             showLogs(e.toString());
         }
         updateLogs(Languages.message("Imported") + ":" + importCount + "  " + file + "\n"

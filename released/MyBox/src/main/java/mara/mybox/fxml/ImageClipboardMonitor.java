@@ -121,7 +121,7 @@ public class ImageClipboardMonitor extends Timer {
                             }
                         }
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        MyBoxLog.debug(e);
                     }
                 }
             });
@@ -145,7 +145,7 @@ public class ImageClipboardMonitor extends Timer {
                 }
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
     }
 
@@ -217,7 +217,7 @@ public class ImageClipboardMonitor extends Timer {
                         });
                     }
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
         }.start();

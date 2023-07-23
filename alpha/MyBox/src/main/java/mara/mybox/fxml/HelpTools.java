@@ -327,18 +327,6 @@ public class HelpTools {
         }
     }
 
-    public static File interfaceTips() {
-        try {
-            String lang = Languages.getLangName();
-            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_interface_tips_" + lang + ".html",
-                    "doc", "mybox_interface_tips_" + lang + ".html");
-            return file;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public static File makeInterfaceTips(String lang) {
         try {
             StringBuilder s = new StringBuilder();

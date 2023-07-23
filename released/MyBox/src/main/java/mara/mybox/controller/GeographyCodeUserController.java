@@ -23,7 +23,7 @@ public class GeographyCodeUserController extends BaseController {
             selectedCode = null;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -34,7 +34,7 @@ public class GeographyCodeUserController extends BaseController {
             locationController.loadTree(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -45,7 +45,7 @@ public class GeographyCodeUserController extends BaseController {
             }
             selectedCode = code;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

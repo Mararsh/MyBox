@@ -34,7 +34,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -98,7 +98,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             domController.setEditor(this);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -113,7 +113,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             initTextsTab();
             initBackupsTab();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -131,7 +131,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             NodeStyleTools.refreshStyle(thisPane);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -144,7 +144,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -179,7 +179,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -218,7 +218,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -245,7 +245,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -256,7 +256,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -273,7 +273,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             }
             NodeStyleTools.setTooltip(menuButton, message("MenuButtonTips"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -328,6 +328,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }
+        if (browseController != null) {
+            browseController.setCurrentFile(sourceFile);
+        }
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -341,6 +344,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
         } else if (webViewController.contents != null) {
             loadContents(webViewController.contents);
         }
+    }
+
+    @Override
+    public void selectSourceFile(File file) {
+        loadFile(file);
     }
 
     /*
@@ -365,7 +373,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             popError(message("NoData"));
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -473,7 +481,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             }
             return html;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }
@@ -529,7 +537,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             webViewController.writeContents(html);
             viewChanged(updated);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -557,7 +565,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             codesArea.setText(htmlCodes(html));
             codesChanged(updated);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -648,7 +656,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             richEditorController.loadContents(contents);
             richEditorChanged(updated);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -695,7 +703,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             markdownArea.setText(md);
             markdownChanged(changed);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -736,7 +744,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             textsArea.setText(HtmlWriteTools.htmlToText(html));
             textsChanged(updated);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -798,7 +806,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -838,7 +846,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -943,7 +951,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -970,7 +978,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 TextClipboardPopController.open(this, textsArea);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -996,7 +1004,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1011,7 +1019,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             popButton.setDisable(tab == domTab);
             menuButton.setDisable(tab == richEditorTab);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1130,7 +1138,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             NodeStyleTools.refreshStyle(tabPane);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1323,7 +1331,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

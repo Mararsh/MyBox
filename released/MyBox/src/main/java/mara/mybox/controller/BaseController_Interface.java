@@ -242,7 +242,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             setControlsStyle();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -339,7 +339,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -418,7 +418,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }, 1000);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -474,7 +474,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 myStage.centerOnScreen();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -503,7 +503,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 myStage.setAlwaysOnTop(true);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -517,7 +517,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 myStage.setWidth(minWidth);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -528,7 +528,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 scene.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
             }
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -542,7 +542,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 thisPane.getStylesheets().add(BaseController.class.getResource(AppValues.MyBoxStyle).toExternalForm());
             }
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -559,7 +559,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             NodeStyleTools.refreshStyle(node);
             setControlsStyle();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -577,7 +577,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }
             }, 500);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -593,7 +593,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 closePopup();
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -650,12 +650,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }
             }
 
-            if (panesMenuButton != null) {
-                StyleTools.setIconTooltips(panesMenuButton, "iconPanes.png", message("Panes"));
-            }
-
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -687,7 +683,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             b.toFront();
             return b;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return myController;
         }
     }
@@ -735,7 +731,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             return myController;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -755,7 +751,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             return WindowTools.openScene(getOwner(), newFxml);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -779,7 +775,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             getMyStage().setTitle(title);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -798,7 +794,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             leaveScene();
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -908,7 +904,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 thisPane.setUserData(null);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -933,7 +929,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             myWindow = null;
             System.gc();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -987,7 +983,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 refreshStyle(splitPane);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1009,7 +1005,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1031,7 +1027,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1050,7 +1046,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             refreshStyle(splitPane);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1077,15 +1073,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             if (splitPane.getItems().contains(leftPane)) {
                 double defaultv = dividersSize == 1 ? 0.35 : 0.15;
-                try {
-                    String v = UserConfig.getString(interfaceName + "LeftPanePosition", defaultv + "");
-                    splitPane.setDividerPosition(0, Double.parseDouble(v));
-                } catch (Exception e) {
-                    splitPane.setDividerPosition(0, defaultv);
-                }
+                double v = UserConfig.getDouble(interfaceName + "LeftPanePosition", defaultv);
+                splitPane.setDividerPosition(0, v);
                 leftDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    if (!isSettingValues) {
-                        UserConfig.setString(interfaceName + "LeftPanePosition", newValue.doubleValue() + "");
+                    if (!isSettingValues && newValue != null) {
+                        UserConfig.setDouble(interfaceName + "LeftPanePosition", newValue.doubleValue());
                     }
                 };
                 splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
@@ -1093,22 +1085,18 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (splitPane.getItems().contains(rightPane)) {
                 int index = splitPane.getDividers().size() - 1;
                 double defaultv = index > 0 ? 0.85 : 0.65;
-                try {
-                    String v = UserConfig.getString(interfaceName + "RightPanePosition", defaultv + "");
-                    splitPane.setDividerPosition(index, Double.parseDouble(v));
-                } catch (Exception e) {
-                    splitPane.setDividerPosition(index, defaultv);
-                }
+                double v = UserConfig.getDouble(interfaceName + "RightPanePosition", defaultv);
+                splitPane.setDividerPosition(index, v);
                 rightDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    if (!isSettingValues) {
-                        UserConfig.setString(interfaceName + "RightPanePosition", newValue.doubleValue() + "");
+                    if (!isSettingValues && newValue != null) {
+                        UserConfig.setDouble(interfaceName + "RightPanePosition", newValue.doubleValue());
                     }
                 };
                 splitPane.getDividers().get(index).positionProperty().addListener(rightDividerListener);
             }
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1212,7 +1200,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             rightPane.setHvalue(0);
             rightPane.setVvalue(0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

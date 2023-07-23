@@ -13,7 +13,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -70,7 +70,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -120,7 +120,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             isSettingValues = false;
             adjustColumnsPane();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -153,7 +153,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             }
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -218,7 +218,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -228,11 +228,12 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     chartFile = null;
                     outputData = filteredData(dataColsIndices, false);
                     if (outputData == null || outputData.isEmpty()) {
@@ -277,7 +278,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

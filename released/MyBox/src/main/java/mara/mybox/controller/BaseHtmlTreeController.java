@@ -25,7 +25,7 @@ import org.jsoup.select.Elements;
  * @CreateDate 2023-2-14
  * @License Apache License Version 2.0
  */
-public class BaseHtmlTreeController extends BaseTreeViewController<HtmlNode> {
+public class BaseHtmlTreeController extends BaseTreeTableViewController<HtmlNode> {
 
     @FXML
     protected TreeTableColumn<HtmlNode, String> idColumn, classnameColumn, dataColumn, rvalueColumn;
@@ -46,7 +46,7 @@ public class BaseHtmlTreeController extends BaseTreeViewController<HtmlNode> {
             rvalueColumn.setCellFactory(new TreeTableTextTrimCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -79,7 +79,7 @@ public class BaseHtmlTreeController extends BaseTreeViewController<HtmlNode> {
         try {
             clearTree();
             TreeItem<HtmlNode> root = makeTreeItem(element);
-            treeView.setRoot(root);
+            setRoot(root);
             return root;
         } catch (Exception e) {
             MyBoxLog.error(e);

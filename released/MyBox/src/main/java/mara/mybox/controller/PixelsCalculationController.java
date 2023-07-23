@@ -7,6 +7,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -21,13 +22,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.Languages;
+import mara.mybox.tools.DoubleTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -39,20 +38,22 @@ import mara.mybox.value.UserConfig;
 public class PixelsCalculationController extends BaseController {
 
     private List<String> predefinedDiaplayValues, predeinfedPrintValues, predeinfedPhotoValues, predeinfedIconValues;
-
-    private ImageAttributes parentAttributes;
-    private TextField parentXInput, parentYInput;
     private int finalX, finalY, cp_density, cs_density, sourceX, sourceY, selectX, selectY, cs_X, cs_Y, cd_X, cd_Y;
     private float cp_inchX, cp_inchY, cp_cmX, cp_cmY;
     private float cd_inchX, cd_inchY, cd_cmX, cd_cmY;
     private boolean fromSource, cp_useInch, cd_useInch;
 
+    public SimpleBooleanProperty notify = new SimpleBooleanProperty(false);
+
     @FXML
-    protected ToggleGroup cp_sizeGroup, cp_DensityGroup, predefinedGroup, ratioGroup, cs_DensityGroup, cd_sizeGroup;
+    protected ToggleGroup cp_sizeGroup, cp_DensityGroup, predefinedGroup, ratioGroup,
+            cs_DensityGroup, cd_sizeGroup;
     @FXML
-    protected TextField targetLabel, adjustLabel;
-    @FXML
-    protected TextField cp_widthInches, cp_heightInches, cp_widthCM, cp_heightCM, cp_densityInput;
+    protected TextField targetLabel, adjustLabel,
+            cp_widthInches, cp_heightInches, cp_widthCM, cp_heightCM, cp_densityInput,
+            cs_width, cs_height, cs_densityInput,
+            source_width, source_height,
+            cd_width, cd_height, cd_heightInches, cd_widthInches, cd_widthCM, cd_heightCM;
     @FXML
     protected ComboBox<String> predeinfedDisplayList, predeinfedIconList, predeinfedPrintList, predeinfedPhotoList;
     @FXML
@@ -60,19 +61,14 @@ public class PixelsCalculationController extends BaseController {
     @FXML
     protected HBox cd_pixelsBox, sourcePixelsBox, cs_pixelsBox, ratioBox, sourceBox, adjustBox;
     @FXML
-    protected TextField cs_width, cs_height, cs_densityInput;
-    @FXML
-    protected TextField source_width, source_height;
-    @FXML
-    protected TextField cd_width, cd_height, cd_heightInches, cd_widthInches, cd_widthCM, cd_heightCM;
-    @FXML
     protected CheckBox sourceCheck, radioCheck;
     @FXML
     protected Label ratioLabel;
+    @FXML
+    protected RadioButton keepLargerRadio, keepWdithRadio, keepHeightRadio, keepSmallerRadio;
 
     public PixelsCalculationController() {
-        baseTitle = Languages.message("PixelsCalculator");
-
+        baseTitle = message("PixelsCalculator");
     }
 
     @Override
@@ -98,19 +94,19 @@ public class PixelsCalculationController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     private void recalculate() {
         String tab = tabPane.getSelectionModel().getSelectedItem().getText();
-        if (Languages.message("PredefinedPixelsNumber").equals(tab)) {
+        if (message("PredefinedPixelsNumber").equals(tab)) {
             predefined_determineValues();
-        } else if (Languages.message("CalculatePixelsNumber").equals(tab)) {
+        } else if (message("CalculatePixelsNumber").equals(tab)) {
             cp_calculateValues();
-        } else if (Languages.message("CalculateOutputSize").equals(tab)) {
+        } else if (message("CalculateOutputSize").equals(tab)) {
             cs_calculateValues();
-        } else if (Languages.message("CalculateOutputDensity").equals(tab)) {
+        } else if (message("CalculateOutputDensity").equals(tab)) {
             cd_calculateValues();
         }
     }
@@ -191,14 +187,14 @@ public class PixelsCalculationController extends BaseController {
     }
 
     private void definePredefinedPhotoValues() {
-        String inch = Languages.message("inches");
-        String cm = Languages.message("cm");
+        String inch = message("inches");
+        String cm = message("cm");
         predeinfedPhotoValues = new ArrayList<>();
-        predeinfedPhotoValues.add("416x277    " + Languages.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    320dpi");
-        predeinfedPhotoValues.add("416x605    " + Languages.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    320dpi");
+        predeinfedPhotoValues.add("416x277    " + message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    320dpi");
+        predeinfedPhotoValues.add("416x605    " + message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    320dpi");
         predeinfedPhotoValues.add("---------------------------------------------------------");
-        predeinfedPhotoValues.add("208x140    " + Languages.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    160dpi");
-        predeinfedPhotoValues.add("208x304    " + Languages.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    160dpi");
+        predeinfedPhotoValues.add("208x140    " + message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    160dpi");
+        predeinfedPhotoValues.add("208x304    " + message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    160dpi");
         predeinfedPhotoValues.add("---------------------------------------------------------");
         predeinfedPhotoValues.add("320x480       1" + inch + "x1.5" + inch + "   2.5" + cm + "x3.5" + cm + "    320dpi");
         predeinfedPhotoValues.add("480x640    1.5" + inch + "x2" + inch + "   3.5" + cm + "x4.9" + cm + "    320dpi");
@@ -316,7 +312,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceX = Integer.parseInt(newValue);
                     if (sourceY > 0) {
-                        ratioLabel.setText(Languages.message("AspectRatio") + ": "
+                        ratioLabel.setText(message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -335,7 +331,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceY = Integer.parseInt(newValue);
                     if (sourceX > 0) {
-                        ratioLabel.setText(Languages.message("AspectRatio") + ": "
+                        ratioLabel.setText(message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -374,7 +370,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) cp_sizeGroup.getSelectedToggle();
-                cp_useInch = selected.getText().equals(Languages.message("Inches"));
+                cp_useInch = selected.getText().equals(message("Inches"));
                 if (cp_useInch) {
                     if (cp_inchX > 0) {
                         cp_widthCM.setText(Math.round(cp_inchX * 254.0f) / 100.0f + "");
@@ -567,7 +563,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) cd_sizeGroup.getSelectedToggle();
-                cd_useInch = selected.getText().equals(Languages.message("Inches"));
+                cd_useInch = selected.getText().equals(message("Inches"));
                 if (cd_useInch) {
                     if (cd_inchX > 0) {
                         cd_widthCM.setText(Math.round(cd_inchX * 254.0f) / 100.0f + "");
@@ -680,74 +676,70 @@ public class PixelsCalculationController extends BaseController {
     @FXML
     protected void useResult(ActionEvent event) {
         if (finalX <= 0 || finalY <= 0) {
-            alertInformation(Languages.message("Invalid"));
+            alertInformation(message("Invalid"));
             return;
         }
-        if (parentXInput != null) {
-            parentXInput.setText(finalX + "");
-        }
-        if (parentYInput != null) {
-            parentYInput.setText(finalY + "");
-        }
-        closeStage();
+        notify.set(!notify.get());
     }
 
-    public void setSource(final ImageAttributes parentAttributes,
-            final TextField parentXInput, final TextField parentYInput) {
+    public void setSource(int width, int height, int keepType) {
         try {
             fromSource = true;
-            this.parentAttributes = parentAttributes;
-            this.parentXInput = parentXInput;
-            this.parentYInput = parentYInput;
-
             sourceCheck.setSelected(true);
             sourceCheck.setDisable(true);
             sourcePixelsBox.setDisable(true);
             ratioBox.setDisable(true);
 
-            if (parentAttributes != null
-                    && parentAttributes.getSourceWidth() > 0 && parentAttributes.getSourceHeight() > 0) {
-                source_width.setText(parentAttributes.getSourceWidth() + "");
-                source_height.setText(parentAttributes.getSourceHeight() + "");
-                radioCheck.setSelected(parentAttributes.isKeepRatio());
-                if (parentAttributes.isKeepRatio()) {
-                    int rd = parentAttributes.getRatioAdjustion();
-                    switch (rd) {
-                        case KeepRatioType.BaseOnWidth:
-                            NodeTools.setRadioSelected(ratioGroup, Languages.message("BaseOnWidth"));
-                            break;
-                        case KeepRatioType.BaseOnHeight:
-                            NodeTools.setRadioSelected(ratioGroup, Languages.message("BaseOnHeight"));
-                            break;
-                        case KeepRatioType.BaseOnLarger:
-                            NodeTools.setRadioSelected(ratioGroup, Languages.message("BaseOnLarger"));
-                            break;
-                        case KeepRatioType.BaseOnSmaller:
-                            NodeTools.setRadioSelected(ratioGroup, Languages.message("BaseOnSamller"));
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                cs_width.setText(parentAttributes.getSourceWidth() + "");
-                cs_height.setText(parentAttributes.getSourceHeight() + "");
-
-                cd_width.setText(parentAttributes.getSourceWidth() + "");
-                cd_height.setText(parentAttributes.getSourceHeight() + "");
-
-            } else {
-                radioCheck.setSelected(false);
+            source_width.setText(width + "");
+            source_height.setText(height + "");
+            radioCheck.setSelected(false);
+            switch (keepType) {
+                case KeepRatioType.BaseOnWidth:
+                    keepWdithRadio.setSelected(true);
+                    radioCheck.setSelected(true);
+                    break;
+                case KeepRatioType.BaseOnHeight:
+                    keepHeightRadio.setSelected(true);
+                    radioCheck.setSelected(true);
+                    break;
+                case KeepRatioType.BaseOnLarger:
+                    keepLargerRadio.setSelected(true);
+                    radioCheck.setSelected(true);
+                    break;
+                case KeepRatioType.BaseOnSmaller:
+                    keepSmallerRadio.setSelected(true);
+                    radioCheck.setSelected(true);
+                    break;
+                default:
+                    break;
             }
 
-            if (this.parentXInput != null || this.parentYInput != null) {
-                useButton.setVisible(true);
-                useButton.setDisable(true);
-            }
+            cs_width.setText(width + "");
+            cs_height.setText(height + "");
+
+            cd_width.setText(width + "");
+            cd_height.setText(height + "");
+
+            useButton.setVisible(true);
+            useButton.setDisable(true);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
+    }
 
+    public void setSourceNull() {
+        try {
+            fromSource = false;
+            sourceCheck.setSelected(false);
+            sourceCheck.setDisable(true);
+            sourcePixelsBox.setDisable(true);
+            ratioBox.setDisable(true);
+            radioCheck.setSelected(false);
+            useButton.setVisible(true);
+            useButton.setDisable(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private void predefined_determineValues() {
@@ -756,13 +748,13 @@ public class PixelsCalculationController extends BaseController {
             return;
         }
         String v = null;
-        if (selected.getText().equals(Languages.message("Photo"))) {
+        if (selected.getText().equals(message("Photo"))) {
             v = predeinfedPhotoList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(Languages.message("Display"))) {
+        } else if (selected.getText().equals(message("Display"))) {
             v = predeinfedDisplayList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(Languages.message("Print"))) {
+        } else if (selected.getText().equals(message("Print"))) {
             v = predeinfedPrintList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(Languages.message("Icon"))) {
+        } else if (selected.getText().equals(message("Icon"))) {
             v = predeinfedIconList.getSelectionModel().getSelectedItem();
         }
 
@@ -776,8 +768,8 @@ public class PixelsCalculationController extends BaseController {
         }
         selectX = Integer.parseInt(vs[0]);
         selectY = Integer.parseInt(vs[1]);
-        String label = Languages.message("SelectedPixelsNumber") + ": " + v + "  "
-                + Languages.message("AspectRatio") + ": "
+        String label = message("SelectedPixelsNumber") + ": " + v + "  "
+                + message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         useButton.setDisable(false);
@@ -800,7 +792,7 @@ public class PixelsCalculationController extends BaseController {
             } catch (Exception e) {
                 inputValue = -1;
             }
-            if (Languages.message("InputValue").equals(s)) {
+            if (message("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cp_density = inputValue;
                     UserConfig.setString("density", s);
@@ -817,7 +809,7 @@ public class PixelsCalculationController extends BaseController {
 
         } catch (Exception e) {
             cp_density = 0;
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -830,10 +822,10 @@ public class PixelsCalculationController extends BaseController {
             adjustLabel.setText("");
             return;
         }
-        String label = Languages.message("CalculatedPixelsNumber") + ": "
+        String label = message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cp_cmX + "cm x " + cp_cmY + " cm   "
                 + cp_density + "dpi" + "   "
-                + Languages.message("AspectRatio") + ": "
+                + message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -855,7 +847,7 @@ public class PixelsCalculationController extends BaseController {
             } catch (Exception e) {
                 inputValue = -1;
             }
-            if (Languages.message("InputValue").equals(s)) {
+            if (message("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cs_density = inputValue;
                     UserConfig.setString("density", s);
@@ -872,7 +864,7 @@ public class PixelsCalculationController extends BaseController {
 
         } catch (Exception e) {
             cs_density = 0;
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -887,10 +879,10 @@ public class PixelsCalculationController extends BaseController {
         }
         double cmX = DoubleTools.scale2(selectX * 2.54f / cs_density);
         double cmY = DoubleTools.scale2(selectY * 2.54f / cs_density);
-        String label = Languages.message("CalculatedPixelsNumber") + ": "
+        String label = message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cmX + "cm x " + cmY + " cm   "
                 + cs_density + "dpi" + "   "
-                + Languages.message("AspectRatio") + ": "
+                + message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -913,10 +905,10 @@ public class PixelsCalculationController extends BaseController {
         }
         int densityX = Math.round(cd_X / cd_inchX);
         int densityY = Math.round(cd_Y / cd_inchY);
-        String label = Languages.message("CalculatedPixelsNumber") + ": "
+        String label = message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cd_cmX + "cm x " + cd_cmY + " cm   "
                 + densityX + "dpi x " + densityY + "dpi   "
-                + Languages.message("AspectRatio") + ": "
+                + message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -944,20 +936,20 @@ public class PixelsCalculationController extends BaseController {
         if (ratioX <= 0 || ratioY <= 0 || ratioX == ratioY) {
             return;
         }
-
-        RadioButton selected = (RadioButton) ratioGroup.getSelectedToggle();
-        String s = selected.getText();
-        if (Languages.message("BaseOnWidth").equals(s)) {
+        if (keepWdithRadio.isSelected()) {
             finalY = Math.round(sourceY * selectX / sourceX);
-        } else if (Languages.message("BaseOnHeight").equals(s)) {
+
+        } else if (keepHeightRadio.isSelected()) {
             finalX = Math.round(sourceX * selectY / sourceY);
-        } else if (Languages.message("BaseOnLarger").equals(s)) {
+
+        } else if (keepLargerRadio.isSelected()) {
             if (ratioX > ratioY) {
                 finalY = Math.round(sourceY * selectX / sourceX);
             } else {
                 finalX = Math.round(sourceX * selectY / sourceY);
             }
-        } else if (Languages.message("BaseOnSamller").equals(s)) {
+
+        } else if (keepSmallerRadio.isSelected()) {
             if (ratioX > ratioY) {
                 finalX = Math.round(sourceX * selectY / sourceY);
             } else {
@@ -967,9 +959,9 @@ public class PixelsCalculationController extends BaseController {
             return;
         }
 
-        String label = Languages.message("AdjustedPixelsNumber") + ": "
+        String label = message("AdjustedPixelsNumber") + ": "
                 + finalX + "x" + finalY + "   "
-                + Languages.message("AspectRatio") + ": "
+                + message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * finalX / finalY);
         adjustLabel.setText(label);
     }
@@ -990,20 +982,10 @@ public class PixelsCalculationController extends BaseController {
         this.finalY = finalY;
     }
 
-    public TextField getParentXInput() {
-        return parentXInput;
-    }
-
-    public void setParentXInput(TextField parentXInput) {
-        this.parentXInput = parentXInput;
-    }
-
-    public TextField getParentYInput() {
-        return parentYInput;
-    }
-
-    public void setParentYInput(TextField parentYInput) {
-        this.parentYInput = parentYInput;
+    @Override
+    public void cleanPane() {
+        notify = null;
+        super.cleanPane();
     }
 
 }

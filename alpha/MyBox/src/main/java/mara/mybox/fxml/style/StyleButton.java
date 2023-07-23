@@ -106,7 +106,7 @@ public class StyleButton {
             switch (id) {
                 case "clearButton":
                 case "clearCodesButton":
-                    return new StyleData(id, message("Clear"), "CTRL+l(lowercase of 'L')", "iconClear.png");
+                    return new StyleData(id, message("Clear"), "CTRL+l(" + message("LowercaseL") + ")", "iconClear.png");
                 default:
                     return new StyleData(id, message("Clear"), "", "iconClear.png");
             }

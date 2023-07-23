@@ -90,15 +90,6 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </CheckBox>
                                         <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -117,6 +108,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                                        <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
                                     </children>
                                 </HBox>
                                 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
@@ -278,6 +278,15 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                                             <children>
+                                                                <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
                                                                 <Button fx:id="styleViewButton" mnemonicParsing="false" onAction="#showHtmlStyle" onMouseEntered="#popHtmlStyle">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -288,15 +297,6 @@ License:    Apache License Version 2.0
                                                                     </graphic>
                                                                 </Button>
                                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
                                                                 <Button fx:id="popViewButton" mnemonicParsing="false" onAction="#popViewAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -360,6 +360,22 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
+                              <Tab fx:id="browseTab" text="%Browse">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                             <content>
+                                                <fx:include fx:id="browse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBrowse.fxml" />
+                                             </content>
+                                          </ScrollPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
                                     </tabs>
                                 </TabPane>
                             </children>

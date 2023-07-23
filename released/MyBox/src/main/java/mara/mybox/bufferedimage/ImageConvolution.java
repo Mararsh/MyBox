@@ -154,7 +154,7 @@ public class ImageConvolution extends PixelsOperation {
             }
             return color;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

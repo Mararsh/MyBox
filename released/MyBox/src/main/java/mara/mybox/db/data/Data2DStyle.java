@@ -48,7 +48,7 @@ public class Data2DStyle extends BaseData {
             newData.cloneFrom(this);
             return newData;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class Data2DStyle extends BaseData {
             sequence = style.sequence;
             abnoramlValues = style.abnoramlValues;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -163,7 +163,7 @@ public class Data2DStyle extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -206,7 +206,7 @@ public class Data2DStyle extends BaseData {
                     return data.isAbnoramlValues();
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }

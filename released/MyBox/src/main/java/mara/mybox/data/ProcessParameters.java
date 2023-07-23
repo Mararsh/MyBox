@@ -32,7 +32,7 @@ public class ProcessParameters implements Cloneable {
             }
             return newCode;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

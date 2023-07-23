@@ -42,7 +42,7 @@ public class DataInSystemClipboardController extends BaseController {
             boardController.loadContentInSystemClipboard();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

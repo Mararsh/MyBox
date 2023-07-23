@@ -124,7 +124,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -196,7 +196,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 //                }
 //            });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -334,7 +334,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -498,7 +498,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
             double categoryGap = chartMaker.getCategoryGap();
             categoryGapSelector.getItems().addAll(Arrays.asList(
-                    "20", "10", "30", "5", "8", "1", "0", "0.5", "2", "4", "1.5", "40", "50"
+                    "1", "0", "0.5", "2", "4", "5", "8", "20", "10", "30", "1.5", "40", "50"
             ));
             categoryGapSelector.getSelectionModel().select(categoryGap + "");
             categoryGapSelector.getSelectionModel().selectedItemProperty().addListener(
@@ -520,7 +520,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             bubbleStyleInput.setText(chartMaker.getBubbleStyle());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -633,7 +633,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -660,7 +660,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             controller.setParameters(chartController);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

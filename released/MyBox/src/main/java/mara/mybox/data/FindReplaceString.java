@@ -201,7 +201,7 @@ public class FindReplaceString {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             error = e.toString();
             return false;
         }

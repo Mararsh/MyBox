@@ -90,6 +90,21 @@ public class FxColorTools {
                 (int) (color.getBlue() * 255));
     }
 
+    public static String color2RGBA(Color color) {
+        return String.format("#%02X%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255),
+                (int) (color.getOpacity() * 255));
+    }
+
+    public static String color2css(Color color) {
+        return "rgba(" + (int) (color.getRed() * 255) + ","
+                + (int) (color.getGreen() * 255) + ","
+                + (int) (color.getBlue() * 255) + ","
+                + color.getOpacity() + ")";
+    }
+
     public static String color2rgba(Color color) {
         return String.format("0x%02X%02X%02X%02X",
                 (int) (color.getRed() * 255),
@@ -233,24 +248,16 @@ public class FxColorTools {
         }
     }
 
-    public static String color2AlphaHex(Color color) {
-        return String.format("#%02X%02X%02X%02X",
-                (int) (color.getOpacity() * 255),
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
-    }
-
-    public static String color2css(Color color) {
-        return "rgba(" + (int) (color.getRed() * 255) + ","
-                + (int) (color.getGreen() * 255) + ","
-                + (int) (color.getBlue() * 255) + ","
-                + color.getOpacity() + ")";
-    }
-
     public static String color2rgb(java.awt.Color color) {
         return String.format("#%02X%02X%02X",
                 color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    public static String color2css(java.awt.Color color) {
+        return "rgba(" + color.getRed() + ","
+                + color.getGreen() + ","
+                + color.getBlue() + ","
+                + color.getAlpha() / 255f + ")";
     }
 
     public static String hsb2rgba(float h, float s, float b) {

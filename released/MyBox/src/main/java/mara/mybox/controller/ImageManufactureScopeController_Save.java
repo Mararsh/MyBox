@@ -7,10 +7,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -30,7 +31,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -54,7 +55,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         } else {
             scope.setFile("Unknown");
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -93,7 +94,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         }
     }
 
-    public boolean showScopeType(ImageScope scope) {
+    private boolean showScopeType(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
@@ -110,26 +111,14 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             case Rectangle:
                 scopeRectangleRadio.setSelected(true);
                 break;
-            case RectangleColor:
-                scopeRectangleColorRadio.setSelected(true);
-                break;
             case Circle:
                 scopeCircleRadio.setSelected(true);
-                break;
-            case CircleColor:
-                scopeCircleColorRadio.setSelected(true);
                 break;
             case Ellipse:
                 scopeEllipseRadio.setSelected(true);
                 break;
-            case EllipseColor:
-                scopeEllipseColorRadio.setSelected(true);
-                break;
             case Polygon:
                 scopePolygonRadio.setSelected(true);
-                break;
-            case PolygonColor:
-                scopePolygonColorRadio.setSelected(true);
                 break;
             case Outline:
                 scopeOutlineRadio.setSelected(true);
@@ -139,91 +128,82 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
 
     }
 
-    public boolean showAreaData(ImageScope scope) {
+    private boolean showAreaData(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         try {
+            pointsController.clearAction();
             areaExcludedCheck.setSelected(scope.isAreaExcluded());
             switch (scope.getScopeType()) {
                 case Matting: {
                     List<IntPoint> points = scope.getPoints();
                     if (points != null) {
                         for (IntPoint p : points) {
-                            pointsList.getItems().add(p.getX() + "," + p.getY());
+                            pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
                         }
-                        pointsList.getSelectionModel().selectLast();
                     }
                     return true;
                 }
                 case Rectangle:
-                case RectangleColor:
                 case Outline:
-                    setMaskRectangleLineVisible(true);
                     maskRectangleData = scope.getRectangle();
-                    return drawMaskRectangleLineAsData();
+                    return showMaskRectangle();
                 case Circle:
-                case CircleColor:
-                    initMaskCircleLine(true);
                     maskCircleData = scope.getCircle();
-                    return drawMaskCircleLineAsData();
+                    return showMaskCircle();
                 case Ellipse:
-                case EllipseColor:
-                    initMaskEllipseLine(true);
                     maskEllipseData = scope.getEllipse();
-                    return drawMaskEllipseLineAsData();
-                case Polygon:
-                case PolygonColor: {
-                    initMaskPolygonLine(true);
+                    return showMaskEllipse();
+                case Polygon: {
                     List<IntPoint> points = scope.getPoints();
                     if (points != null) {
                         for (IntPoint p : points) {
-                            pointsList.getItems().add(p.getX() + "," + p.getY());
+                            pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
                         }
-                        pointsList.getSelectionModel().selectLast();
                     }
                     maskPolygonData = scope.getPolygon();
-                    return drawMaskPolygonLineAsData();
+                    return showMaskPolygon();
                 }
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
 
-    public boolean showColorData(ImageScope scope) {
+    private boolean showColorData(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         try {
+            colorsList.getItems().clear();
             colorExcludedCheck.setSelected(scope.isColorExcluded());
             switch (scope.getScopeType()) {
                 case Color:
-                case RectangleColor:
-                case CircleColor:
-                case EllipseColor:
-                case PolygonColor:
+                case Rectangle:
+                case Circle:
+                case Ellipse:
+                case Polygon:
                     List<java.awt.Color> colors = scope.getColors();
                     if (colors != null) {
                         List<Color> list = new ArrayList<>();
                         for (java.awt.Color color : colors) {
                             list.add(ColorConvertTools.converColor(color));
                         }
-                        colorsList.getItems().clear();
                         colorsList.getItems().addAll(list);
                         colorsList.getSelectionModel().selectLast();
                     }
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
 
-    protected void showMatchType(ImageScope scope) {
+    private void showMatchType(ImageScope scope) {
         try {
             if (scope == null) {
                 return;
@@ -253,12 +233,12 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
 
-    protected void showDistanceValue(ImageScope scope) {
+    private void showDistanceValue(ImageScope scope) {
         try {
             int distance, max = 255;
             switch (scope.getColorScopeType()) {
@@ -283,7 +263,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             scopeDistanceSelector.getItems().addAll(vList);
             scopeDistanceSelector.getSelectionModel().select(distance + "");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

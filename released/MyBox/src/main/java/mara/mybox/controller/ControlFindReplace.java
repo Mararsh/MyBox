@@ -32,7 +32,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
@@ -79,7 +79,7 @@ public class ControlFindReplace extends BaseController {
                 NodeStyleTools.removeTooltip(historyStringButton);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -99,7 +99,7 @@ public class ControlFindReplace extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -118,7 +118,7 @@ public class ControlFindReplace extends BaseController {
             editType = Edit_Type.Text;
             setControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -128,7 +128,7 @@ public class ControlFindReplace extends BaseController {
             this.editType = editType;
             setControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -224,7 +224,7 @@ public class ControlFindReplace extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -527,7 +527,7 @@ public class ControlFindReplace extends BaseController {
             task.cancel();
         }
         textInput.deselect();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             protected IndexRange lastStringRange;
             private boolean askSave = false;
@@ -634,7 +634,7 @@ public class ControlFindReplace extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             protected IndexRange lastStringRange;
 

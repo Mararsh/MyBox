@@ -88,18 +88,6 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
                                     case Polygon:
                                         icon = "iconStar.png";
                                         break;
-                                    case RectangleColor:
-                                        icon = "iconRectangleFilled.png";
-                                        break;
-                                    case CircleColor:
-                                        icon = "iconCircleFilled.png";
-                                        break;
-                                    case EllipseColor:
-                                        icon = "iconEllipseFilled.png";
-                                        break;
-                                    case PolygonColor:
-                                        icon = "iconStarFilled.png";
-                                        break;
                                     case Color:
                                         icon = "iconColorWheel.png";
                                         break;
@@ -132,7 +120,7 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
             createColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +160,7 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
             checkQueryConditions();
             loadTableData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

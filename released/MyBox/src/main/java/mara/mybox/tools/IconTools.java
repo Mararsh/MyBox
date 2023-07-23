@@ -42,7 +42,7 @@ public class IconTools {
             }
             return file != null && file.exists() ? file : null;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -93,7 +93,7 @@ public class IconTools {
             }
             return actualTarget;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class IconTools {
             }
             return downloadIcon(iconUrl, targetFile);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -131,7 +131,7 @@ public class IconTools {
             FileTools.rename(iconFile, actualTarget);
             return actualTarget;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -166,7 +166,7 @@ public class IconTools {
             }
             return null;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }

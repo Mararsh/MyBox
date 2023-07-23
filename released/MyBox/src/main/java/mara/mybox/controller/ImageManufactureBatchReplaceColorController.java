@@ -44,7 +44,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
     protected CheckBox excludeCheck, ignoreTransparentCheck, squareRootCheck,
             hueCheck, saturationCheck, brightnessCheck;
     @FXML
-    protected ColorSetController originalColorSetController, newColorSetController;
+    protected ControlColorSet originalColorSetController, newColorSetController;
 
     public ImageManufactureBatchReplaceColorController() {
         baseTitle = message("ImageManufactureBatchReplaceColor");
@@ -62,7 +62,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
             checkValues();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

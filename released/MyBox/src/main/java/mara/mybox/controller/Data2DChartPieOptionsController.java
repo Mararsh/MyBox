@@ -39,7 +39,7 @@ public class Data2DChartPieOptionsController extends BaseData2DChartFxOptionsCon
             initPlotTab();
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -61,7 +61,7 @@ public class Data2DChartPieOptionsController extends BaseData2DChartFxOptionsCon
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class Data2DChartPieOptionsController extends BaseData2DChartFxOptionsCon
             controller.setParameters(chartController);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

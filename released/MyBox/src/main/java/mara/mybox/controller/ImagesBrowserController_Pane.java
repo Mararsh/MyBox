@@ -27,11 +27,10 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonBackgroundTask;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
 
@@ -47,118 +46,38 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         if (isSettingValues) {
             return;
         }
-        previousFiles = new ArrayList<>();
-        nextFiles = new ArrayList<>();
         try {
             if (imageFileList != null && !imageFileList.isEmpty() && filesNumber > 0) {
-                loadingController = handling();
-
                 File firstFile = imageFileList.get(0);
-                path = firstFile.getParentFile();
-                List<File> pathFiles = new ArrayList<>();
-                File[] pfiles = path.listFiles();
-                if (pfiles != null) {
-                    for (File file : pfiles) {
-                        if (file.isFile() && FileTools.isSupportedImage(file)) {
-                            pathFiles.add(file);
-                        }
-                    }
-                    FileSortTools.sortFiles(pathFiles, sortMode);
+                List<File> pathFiles = filesController.validFiles(firstFile);
+                int total = pathFiles.size();
+                totalLabel.setText("/" + total);
+
+                filesController.setCurrentFile(firstFile);
+                if (total <= 0 || filesNumber >= total) {
+                    filesController.nextFileButton.setDisable(true);
+                    filesController.previousFileButton.setDisable(true);
+                } else {
+                    filesController.nextFileButton.setDisable(false);
+                    filesController.previousFileButton.setDisable(false);
                 }
-                totalLabel.setText("/" + pathFiles.size());
 
                 if (makeCurrentList) {
                     imageFileList.clear();
-                    int pos = pathFiles.indexOf(firstFile);
-                    if (pos < 0) {
-                        pos = 0;
-                    }
-                    int start;
-                    int end;
-                    if (pathFiles.size() <= filesNumber) {
-                        start = 0;
-                        end = pathFiles.size() - 1;
-                    } else if (pos + filesNumber < pathFiles.size()) {
-                        start = pos;
-                        end = pos + filesNumber - 1;
-                    } else {
-                        start = pathFiles.size() - filesNumber;
-                        end = pathFiles.size() - 1;
-                    }
-                    for (int i = start; i <= end; ++i) {
-                        imageFileList.add(pathFiles.get(i));
+                    if (total > 0) {
+                        if (filesNumber >= total) {
+                            imageFileList.addAll(pathFiles);
+                        } else {
+                            imageFileList.addAll(pathFiles.subList(0, filesNumber));
+                        }
                     }
                 }
-
-                if (pathFiles.size() > filesNumber) {
-
-                    List<String> pathFnames = new ArrayList<>();
-                    for (File f : pathFiles) {
-                        pathFnames.add(f.getAbsolutePath());
-                    }
-                    List<String> iFnames = new ArrayList<>();
-                    for (File f : imageFileList) {
-                        iFnames.add(f.getAbsolutePath());
-                    }
-                    int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-                    for (String f : iFnames) {
-                        int index = pathFnames.indexOf(f);
-                        if (index < 0) {
-                            continue;
-                        }
-                        if (index <= min) {
-                            min = index;
-                        }
-                        if (index >= max) {
-                            max = index;
-                        }
-                    }
-                    if (max < min) {
-                        min = -1;
-                        max = pathFiles.size();
-                    }
-
-                    for (int i = max - 1; i >= 0; --i) {
-                        String fname = pathFnames.get(i);
-                        if (!iFnames.contains(fname)) {
-                            previousFiles.add(0, new File(fname));
-                            if (previousFiles.size() == filesNumber) {
-                                break;
-                            }
-                        }
-                    }
-
-                    for (int i = min + 1; i < pathFnames.size(); ++i) {
-                        String fname = pathFnames.get(i);
-                        if (!iFnames.contains(fname)) {
-                            nextFiles.add(new File(fname));
-                            if (nextFiles.size() == filesNumber) {
-                                break;
-                            }
-                        }
-                    }
-
-                }
-
+            } else {
+                filesController.setCurrentFile(null);
             }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        if (nextFiles.isEmpty()) {
-            nextFiles = null;
-            nextButton.setDisable(true);
-        } else {
-            nextButton.setDisable(false);
-        }
-        if (previousFiles.isEmpty()) {
-            previousFiles = null;
-            previousButton.setDisable(true);
-        } else {
-            previousButton.setDisable(false);
-        }
 
-        if (loadingController != null) {
-            loadingController.closeStage();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
         makeImagesPane();
     }
@@ -194,7 +113,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             refreshStyle(thisPane);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -205,10 +124,11 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         }
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
         makeGridBox();
         tableData.clear();
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
             private List<Integer> mfList;
 
@@ -217,7 +137,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 try {
                     mfList = new ArrayList<>();
                     for (int i = 0; i < imageFileList.size(); ++i) {
-                        if (backgroundTask == null || backgroundTask.isCancelled()) {
+                        if (backgroundTask == null || isCancelled()) {
                             break;
                         }
                         ImageView iView = imageViewList.get(i);
@@ -316,9 +236,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             vbox.setOnMouseClicked((MouseEvent event) -> {
                 File clickedFile = imageFileList.get(index);
                 if (event.getButton() == MouseButton.SECONDARY) {
-                    if (contextMenuCheck.isSelected()) {
-                        popImageMenu(index, iView, event);
-                    }
+                    popImageMenu(index, iView, event);
                     return;
                 } else if (event.getClickCount() > 1) {
                     ImageViewerController.openFile(clickedFile);
@@ -380,14 +298,15 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             }
             if (backgroundTask != null) {
                 backgroundTask.cancel();
+                backgroundTask = null;
             }
-            backgroundTask = new SingletonTask<Void>(this) {
+            backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
                     try {
                         for (int i = 0; i < imageFileList.size(); ++i) {
-                            if (backgroundTask == null || backgroundTask.isCancelled()) {
+                            if (backgroundTask == null || isCancelled()) {
                                 break;
                             }
                             File file = imageFileList.get(i);
@@ -410,7 +329,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             };
             start(backgroundTask, false);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -603,7 +522,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 @Override
                 public void handle(MouseEvent event) {
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        if (isSettingValues || !contextMenuCheck.isSelected()) {
+                        if (isSettingValues) {
                             return;
                         }
                         int index = tableView.getSelectionModel().getSelectedIndex();
@@ -627,7 +546,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

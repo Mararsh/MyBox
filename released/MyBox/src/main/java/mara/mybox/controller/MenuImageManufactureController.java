@@ -23,7 +23,7 @@ public class MenuImageManufactureController extends MenuImageViewController {
             super.setParameters(manufactureController, x, y);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -74,11 +74,11 @@ public class MenuImageManufactureController extends MenuImageViewController {
                 controller.setParameters(manufactureController, x, y);
                 return controller;
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
                 return null;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

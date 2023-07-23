@@ -85,7 +85,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             filtersData = FXCollections.observableArrayList();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -117,7 +117,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             startButton.disableProperty().bind(executableInput.styleProperty().isEqualTo(UserConfig.badStyle()));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -198,7 +198,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             filterCommandColumn.setCellFactory(new TableBooleanCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

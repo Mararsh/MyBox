@@ -21,7 +21,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FFmpegMergeImageFilesController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" 
+            xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FFmpegMergeImageFilesController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -32,7 +33,7 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab fx:id="imagesTab" text="%Images">
                             <content>
-                                <fx:include fx:id="table" source="FFmpegImageControlFilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                <fx:include fx:id="table" source="ControlFilesTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </Tab>
                         <Tab fx:id="audiosTab" text="%Audios">
@@ -77,7 +78,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%MaxCharacters" />
                                                 <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
-                                    <CheckBox fx:id="verboseCheck" mnemonicParsing="false" selected="true" text="%VerboseLogs" />
+                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" selected="true" text="%VerboseLogs" />
                                                 <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

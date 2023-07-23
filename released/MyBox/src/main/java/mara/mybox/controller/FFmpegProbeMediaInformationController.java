@@ -28,6 +28,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.StringTools;
@@ -70,7 +71,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             executableDefault = "win".equals(SystemTools.os()) ? "D:\\Programs\\ffmpeg\\bin\\ffprobe.exe" : "/home/ffprobe";
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -137,7 +138,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(UserConfig.badStyle()));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -321,7 +322,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
         formatArea.clear();
         streamsArea.clear();
         queryArea.clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

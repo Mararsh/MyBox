@@ -32,7 +32,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
     private boolean isPercent;
 
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected ToggleGroup shadowGroup;
     @FXML
@@ -56,7 +56,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             super.setControlsStyle();
             NodeStyleTools.setTooltip(perBox, new Tooltip("1~100"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -109,7 +109,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             colorSetController.init(this, baseName + "Color", Color.BLACK);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -175,7 +175,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             target = ShadowTools.addShadowAlpha(source, value, FxColorTools.toAwtColor(color));
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

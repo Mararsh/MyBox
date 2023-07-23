@@ -74,7 +74,7 @@ public class ImageGray extends PixelsOperation {
             g.dispose();
             return grayImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return srcImage;
         }
     }
@@ -92,7 +92,7 @@ public class ImageGray extends PixelsOperation {
             }
             return grayImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return image;
         }
     }
@@ -103,7 +103,7 @@ public class ImageGray extends PixelsOperation {
             bm = intGray(bm);
             return SwingFXUtils.toFXImage(bm, null);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return image;
         }
     }

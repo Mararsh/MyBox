@@ -24,7 +24,7 @@ import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -75,7 +75,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -85,14 +85,14 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             super.initPane();
 
             rotateAngle = currentAngle = 0;
-            clipsController.setParameters(imageController, true);
+            clipsController.setParameters(editor, true);
 
             enlargeCheck.setSelected(UserConfig.getBoolean(baseName + "EnlargerImageAsClip", true));
             enlargeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     UserConfig.setBoolean(baseName + "EnlargerImageAsClip", enlargeCheck.isSelected());
-                    if (imageController != null) {
+                    if (editor != null) {
                         pasteClip(currentAngle);
                     }
                 }
@@ -102,7 +102,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (imageController != null) {
+                    if (editor != null) {
                         pasteClip(currentAngle);
                     }
                 }
@@ -113,7 +113,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     UserConfig.setBoolean(baseName + "KeepClipRatio", keepRatioCheck.isSelected());
-                    if (imageController != null) {
+                    if (editor != null) {
                         pasteClip(currentAngle);
                     }
                 }
@@ -165,16 +165,15 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             cancelButton.disableProperty().bind(okButton.disableProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
-
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     public void selectClip() {
@@ -185,7 +184,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image clipImage;
 
@@ -218,13 +217,13 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             }
             clipSource = image;
             currentClip = clipSource;
-            imageController.scope = new ImageScope();
-            imageController.maskRectangleData = new DoubleRectangle(0, 0,
+            editor.scope = new ImageScope();
+            editor.maskRectangleData = new DoubleRectangle(0, 0,
                     currentClip.getWidth() - 1, currentClip.getHeight() - 1);
-            imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
+            editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
             pasteClip(0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -232,11 +231,11 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         if (clipSource == null) {
             return;
         }
-        imageController.showRightPane();
+        editor.showRightPane();
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private boolean enlarged;
 
@@ -250,8 +249,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         }
                     }
                     finalClip = ScaleTools.scaleImage(currentClip,
-                            (int) imageController.scope.getRectangle().getWidth(),
-                            (int) imageController.scope.getRectangle().getHeight(),
+                            (int) editor.scope.getRectangle().getWidth(),
+                            (int) editor.scope.getRectangle().getHeight(),
                             keepRatioCheck.isSelected(), keepRatioType);
                     if (task == null || isCancelled()) {
                         return false;
@@ -273,14 +272,14 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         }
                     }
                     blendedImage = blendController.blend(finalClip, bgImage,
-                            (int) imageController.scope.getRectangle().getSmallX(),
-                            (int) imageController.scope.getRectangle().getSmallY());
+                            (int) editor.scope.getRectangle().getSmallX(),
+                            (int) editor.scope.getRectangle().getSmallY());
                     if (task == null || isCancelled()) {
                         return false;
                     }
                     return blendedImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    error = e.toString();
                     return false;
                 }
             }
@@ -289,16 +288,15 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             protected void whenSucceeded() {
                 currentAngle = angle;
                 if (enlarged) {
-                    imageController.setImage(ImageOperation.Margins, bgImage);
+                    editor.setImage(ImageOperation.Margins, bgImage);
                 }
-                imageController.setMaskRectangleLineVisible(true);
-                imageController.maskRectangleData = new DoubleRectangle(
-                        imageController.maskRectangleData.getSmallX(),
-                        imageController.maskRectangleData.getSmallY(),
-                        imageController.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
-                        imageController.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
-                imageController.drawMaskRectangleLineAsData();
-                imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
+                editor.maskRectangleData = new DoubleRectangle(
+                        editor.maskRectangleData.getSmallX(),
+                        editor.maskRectangleData.getSmallY(),
+                        editor.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
+                        editor.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
+                editor.showMaskRectangle();
+                editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
                 maskView.setImage(blendedImage);
                 maskView.setOpacity(1.0);
                 maskView.setVisible(true);
@@ -307,8 +305,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 tabPane.getSelectionModel().select(setPane);
                 okButton.setDisable(false);
                 okButton.requestFocus();
-                imageController.adjustRightPane();
-                imageController.operation = ImageOperation.Paste;
+                editor.adjustRightPane();
+                editor.operation = ImageOperation.Paste;
             }
         };
         start(task);
@@ -328,12 +326,12 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
-        if (imageController.scope == null || imageController.maskRectangleData == null) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
+        if (editor.scope == null || editor.maskRectangleData == null) {
             return;
         }
-        if (!imageController.scope.getRectangle().same(imageController.maskRectangleData)) {
-            imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
+        if (!editor.scope.getRectangle().same(editor.maskRectangleData)) {
+            editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
             pasteClip(0);
         }
     }
@@ -341,8 +339,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     @Override
     public void okAction() {
-        imageController.popSuccessful();
-        imageController.updateImage(ImageOperation.Paste, null, null,
+        editor.popSuccessful();
+        editor.updateImage(ImageOperation.Paste, null, null,
                 maskView.getImage(), -1);
         initOperation();
     }

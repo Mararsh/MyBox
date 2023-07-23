@@ -60,7 +60,7 @@ public class Tag extends BaseData {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

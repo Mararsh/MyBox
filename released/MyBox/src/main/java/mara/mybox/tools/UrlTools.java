@@ -57,7 +57,7 @@ public class UrlTools {
             address = decodeURL(address, charset);
             return address;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return value;
         }
     }
@@ -69,7 +69,7 @@ public class UrlTools {
             }
             return URLDecoder.decode(value, charset);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return value;
         }
     }
@@ -81,7 +81,7 @@ public class UrlTools {
             }
             return decodeURL(file.toURI().toString(), charset);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -93,7 +93,7 @@ public class UrlTools {
             }
             return URLEncoder.encode(value, charset);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return value;
         }
     }
@@ -105,7 +105,7 @@ public class UrlTools {
             }
             return encodeURL(file.toURI().toString(), charset);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
 
@@ -120,7 +120,7 @@ public class UrlTools {
             URL url = fullUrl(baseUrl, address);
             return url.toString();
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return address;
         }
     }

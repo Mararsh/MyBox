@@ -47,7 +47,7 @@ public class HtmlPopController extends BaseWebViewController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -84,7 +84,7 @@ public class HtmlPopController extends BaseWebViewController {
             setAsPop(baseName);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -100,7 +100,7 @@ public class HtmlPopController extends BaseWebViewController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -116,7 +116,7 @@ public class HtmlPopController extends BaseWebViewController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -161,7 +161,7 @@ public class HtmlPopController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -180,7 +180,7 @@ public class HtmlPopController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -194,7 +194,7 @@ public class HtmlPopController extends BaseWebViewController {
             controller.openAddress(parent.baseName, address);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -209,7 +209,7 @@ public class HtmlPopController extends BaseWebViewController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

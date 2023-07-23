@@ -46,7 +46,7 @@ public class ControlTimeTree extends ControlConditionTree {
             s.add(message("AllTime"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

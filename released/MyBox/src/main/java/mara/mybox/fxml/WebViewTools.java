@@ -7,6 +7,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -59,7 +60,7 @@ public class WebViewTools {
                     + "selection.addRange(range);";
             webEngine.executeScript(js);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -68,7 +69,7 @@ public class WebViewTools {
             String js = "window.getSelection().removeAllRanges(); ";
             webEngine.executeScript(js);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -81,7 +82,7 @@ public class WebViewTools {
                     + "selection.addRange(range);";
             webEngine.executeScript(js);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -100,7 +101,7 @@ public class WebViewTools {
                 element.removeAttribute("id");
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -112,7 +113,7 @@ public class WebViewTools {
             }
             return ((String) ret);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -131,7 +132,7 @@ public class WebViewTools {
             }
             return ((String) ret);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -139,7 +140,8 @@ public class WebViewTools {
     // https://blog.csdn.net/weixin_29251337/article/details/117888001
     public static void addStyle(WebEngine webEngine, String style, String styleid) {
         try {
-            if (webEngine == null || style == null || style.isBlank()) {
+            if (webEngine == null || styleid == null || styleid.isBlank()
+                    || style == null || style.isBlank()) {
                 return;
             }
             removeNode(webEngine, styleid);
@@ -147,7 +149,7 @@ public class WebViewTools {
                     + "node.id = \"" + styleid + "\";\n"
                     + "node.type = \"text/css\";\n"
                     + "node.innerHTML = \"" + StringTools.replaceLineBreak(style) + "\";\n"
-                    + "document.getElementsByTagName(\"HEAD\").item(0).appendChild(node);";
+                    + "document.body.appendChild(node);";
             webEngine.executeScript(js);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -283,7 +285,7 @@ public class WebViewTools {
             }
             return m;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -323,8 +325,29 @@ public class WebViewTools {
             }
             return ((int) c);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return -1;
+        }
+    }
+
+    public static Rectangle tagRect(WebEngine webEngine, String tag, int index) {
+        try {
+            Rectangle rect = new Rectangle();
+            String js = "var rect = document.getElementsByTagName('" + tag + "')[" + index + "].getBoundingClientRect();"
+                    + "rect.x + ' ' + rect.y + ' ' + rect.width + ' ' + rect.height ";
+            Object c = webEngine.executeScript(js);
+            if (c == null) {
+                return null;
+            }
+            String[] values = ((String) c).split("\\s+");
+            rect.setX(Double.parseDouble(values[0]));
+            rect.setY(Double.parseDouble(values[1]));
+            rect.setWidth(Double.parseDouble(values[2]));
+            rect.setHeight(Double.parseDouble(values[3]));
+            return rect;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
         }
     }
 

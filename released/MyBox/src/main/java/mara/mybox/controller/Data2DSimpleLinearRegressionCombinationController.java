@@ -6,7 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
@@ -38,7 +38,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             resultsController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -48,17 +48,20 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             task.cancel();
         }
         resultsController.clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     if (otherColsIndices.isEmpty()) {
                         otherColsIndices = data2D.columnIndices();
                     }
                     for (int yIndex : otherColsIndices) {
                         for (int xIndex : checkedColsIndices) {
+                            if (task == null || isCancelled()) {
+                                return false;
+                            }
                             if (xIndex == yIndex) {
                                 continue;
                             }
@@ -97,6 +100,9 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            if (task == null || isCancelled()) {
+                                return;
+                            }
                             resultsController.addRow(row);
                         }
                     });
@@ -136,7 +142,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

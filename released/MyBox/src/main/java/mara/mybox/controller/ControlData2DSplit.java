@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-11-21
  * @License Apache License Version 2.0
  */
-public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
+public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
 
     protected Data2DColumn column;
     protected double size;
@@ -94,7 +94,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -109,7 +109,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             includeEndColumn.setCellValueFactory(new PropertyValueFactory<>("includeEnd"));
             includeEndColumn.setCellFactory(new TableBooleanCell());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -144,7 +144,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             checkSplitType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -155,7 +155,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             checkSplitType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -319,7 +319,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             }
             tableData.removeAll(selected);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

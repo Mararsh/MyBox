@@ -12,7 +12,6 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 
@@ -29,6 +28,7 @@ public class MarkdownToTextController extends BaseBatchFileController {
 
     public MarkdownToTextController() {
         baseTitle = Languages.message("MarkdownToText");
+        targetFileSuffix = "txt";
     }
 
     @Override
@@ -46,21 +46,11 @@ public class MarkdownToTextController extends BaseBatchFileController {
             textCollectingVisitor = new TextCollectingVisitor();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
 
         return super.makeMoreParameters();
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "md".equals(suffix);
     }
 
     @Override
@@ -80,22 +70,8 @@ public class MarkdownToTextController extends BaseBatchFileController {
             targetFileGenerated(target);
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
-        }
-    }
-
-    @Override
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        try {
-            String namePrefix = FileNameTools.prefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                nameSuffix = ".txt";
-            }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
-        } catch (Exception e) {
-            return null;
         }
     }
 

@@ -91,7 +91,7 @@ public class CIEDataTools {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class CIEDataTools {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -126,7 +126,7 @@ public class CIEDataTools {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -146,7 +146,7 @@ public class CIEDataTools {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -159,7 +159,7 @@ public class CIEDataTools {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -205,7 +205,7 @@ public class CIEDataTools {
             }
             return table;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -249,7 +249,7 @@ public class CIEDataTools {
             }
             return null;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -272,7 +272,7 @@ public class CIEDataTools {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -324,7 +324,7 @@ public class CIEDataTools {
             }
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -342,7 +342,7 @@ public class CIEDataTools {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

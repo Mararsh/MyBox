@@ -45,7 +45,7 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
@@ -91,7 +91,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
     @FXML
     protected Button okSizeButton, calculateXYZButton, calculateXYButton, displayDataButton;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected ToggleGroup bgGroup, dotGroup;
     @FXML
@@ -120,7 +120,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             initDiagram();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -130,7 +130,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(YInput, new Tooltip(Languages.message("1-based")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -292,7 +292,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -334,7 +334,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -458,7 +458,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -538,10 +538,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
     }
 
     private void initCIEData() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private StringTable degree2nm1Table, degree10nm1Table, degree2nm5Table, degree10nm5Table;
 
             @Override
@@ -590,10 +590,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String texts;
 
             @Override
@@ -859,10 +859,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (isSettingValues) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image image;
 
             @Override
@@ -900,7 +900,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
                 return image != null;
             }
@@ -930,10 +930,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

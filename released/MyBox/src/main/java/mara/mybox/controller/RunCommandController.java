@@ -8,7 +8,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -39,7 +39,7 @@ public class RunCommandController extends HtmlPopController {
             webViewController.scrollType = ControlWebView.ScrollType.Bottom;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -59,7 +59,7 @@ public class RunCommandController extends HtmlPopController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -149,7 +149,7 @@ public class RunCommandController extends HtmlPopController {
             controller.run(cmd);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

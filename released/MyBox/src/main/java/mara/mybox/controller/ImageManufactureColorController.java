@@ -40,7 +40,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -90,7 +90,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @FXML
     protected ImageView distanceTipsView;
     @FXML
-    protected ColorSetController originalColorSetController, newColorSetController, valueColorSetController;
+    protected ControlColorSet originalColorSetController, newColorSetController, valueColorSetController;
     @FXML
     protected ControlImagesBlend blendController;
 
@@ -185,7 +185,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
             checkDistance();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -239,13 +239,13 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
+        editor.showRightPane();
         checkColorType();
     }
 
     private void checkColorType() {
         try {
-            imageController.resetImagePane();
+            editor.resetImagePane();
             setBox.getChildren().clear();
             opBox.getChildren().clear();
             valueBox.getChildren().clear();
@@ -259,7 +259,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 return;
             }
             if (colorReplaceRadio.isSelected()) {
-                imageController.imageTab();
+                editor.imageTab();
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(colorMatchBox, newColorBox, opBox);
                 opBox.getChildren().addAll(goButton);
@@ -271,7 +271,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 commentsLabel.setText(message("DefineScopeAndManufacture"));
                 scopeCheck.setDisable(false);
                 if (!scopeController.scopeWhole()) {
-                    imageController.scopeTab();
+                    editor.scopeTab();
                     scopeCheck.setSelected(true);
                 }
 
@@ -374,7 +374,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             refreshStyle(setBox);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -406,7 +406,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             valueSelector.getSelectionModel().select(valueList.size() / 2);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -420,8 +420,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
-        if (imageController.isPickingColor) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
+        if (editor.isPickingColor) {
             Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {
                 if (colorReplaceRadio.isSelected()) {
@@ -473,13 +473,13 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     }
 
     private void applyChange() {
-        if (imageController == null || colorOperationType == null || colorActionType == null) {
+        if (editor == null || colorOperationType == null || colorActionType == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -558,8 +558,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Color,
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Color,
                         colorOperationType.name(), colorActionType.name(), newImage, cost);
             }
         };
@@ -571,7 +571,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(message("WaitAndHandling"));
+        editor.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -711,7 +711,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                                     = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
                 });

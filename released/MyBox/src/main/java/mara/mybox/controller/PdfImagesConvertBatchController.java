@@ -71,7 +71,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                 );
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -102,7 +102,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             targetDoc = null;
         }
         return targetDoc != null;
@@ -146,7 +146,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                 targetDoc.addPage(sourcePage);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return count;
 
@@ -169,7 +169,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
             }
             return newObject;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -186,7 +186,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         targetDoc = null;
     }

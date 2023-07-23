@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -13,7 +14,7 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -28,7 +29,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     @FXML
     protected RadioButton includeRadio, excludeRadio, wholeRadio;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected CheckBox clipboardCheck, marginsCheck;
 
@@ -39,34 +40,47 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
 
             colorSetController.init(this, baseName + "CopyColor");
 
+            clipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CopyOpenClipboard", true));
             clipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "CopyOpenClipboard", clipboardCheck.isSelected());
                 }
             });
-            clipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CopyOpenClipboard", true));
 
+            marginsCheck.setSelected(UserConfig.getBoolean(baseName + "CopyCutMargins", true));
             marginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "CopyCutMargins", marginsCheck.isSelected());
                 }
             });
-            marginsCheck.setSelected(UserConfig.getBoolean(baseName + "CopyCutMargins", true));
+
+            copyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkCopyType();
+                }
+            });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void checkCopyType() {
+        if (wholeRadio.isSelected()) {
+            editor.imageTab();
+        } else {
+            showScope(true);
         }
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        if (scopeController != null && !scopeController.scopeWhole()) {
-            imageController.scopeTab();
-        }
+        editor.showRightPane();
+        editor.resetImagePane();
+        checkCopyType();
     }
 
     @FXML
@@ -75,7 +89,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -111,7 +125,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                     }
                     return ImageClipboard.add(newImage, ImageClipboard.ImageSource.Copy) != null;
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     error = e.toString();
                     return false;
                 }
@@ -119,8 +133,8 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateLabel(ImageOperation.Copy);
+                editor.popSuccessful();
+                editor.updateLabel(ImageOperation.Copy);
                 if (clipboardCheck.isSelected()) {
                     if (operationsController.clipboardController != null) {
                         operationsController.clipboardController.clipsController.refreshAction();

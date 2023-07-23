@@ -52,7 +52,7 @@ public class LoadingController extends BaseLogs {
             logsTextArea.requestFocus();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class LoadingController extends BaseLogs {
                 }
             }, 0, 1000);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

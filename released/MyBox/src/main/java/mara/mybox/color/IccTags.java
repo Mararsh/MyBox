@@ -29,7 +29,7 @@ public class IccTags {
             this.data = data;
             this.normalizeLut = normalizeLut;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -81,7 +81,7 @@ public class IccTags {
                 tags.add(tag);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return tags;
     }
@@ -141,7 +141,7 @@ public class IccTags {
 
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

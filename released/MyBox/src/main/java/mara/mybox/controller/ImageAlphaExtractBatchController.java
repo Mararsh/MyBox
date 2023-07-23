@@ -40,7 +40,7 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -68,7 +68,7 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
 
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -27,7 +28,7 @@ import mara.mybox.bufferedimage.ImageCombine.ArrayType;
 import mara.mybox.bufferedimage.ImageCombine.CombineSizeType;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -57,7 +58,7 @@ public class ImagesSpliceController extends ImageViewerController {
     @FXML
     protected ComboBox<String> columnsBox, intervalBox, MarginsBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected HBox opBox;
     @FXML
@@ -98,7 +99,7 @@ public class ImagesSpliceController extends ImageViewerController {
             leftPaneCheck.setSelected(true);
             rightPaneCheck.setSelected(true);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -214,7 +215,7 @@ public class ImagesSpliceController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -327,7 +328,7 @@ public class ImagesSpliceController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -406,7 +407,7 @@ public class ImagesSpliceController extends ImageViewerController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -426,7 +427,7 @@ public class ImagesSpliceController extends ImageViewerController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
@@ -476,7 +477,7 @@ public class ImagesSpliceController extends ImageViewerController {
             Image newImage = CombineTools.combineSingleColumn(imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -488,7 +489,7 @@ public class ImagesSpliceController extends ImageViewerController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             List<ImageInformation> data;
 
@@ -526,6 +527,18 @@ public class ImagesSpliceController extends ImageViewerController {
         saveAsAction();
     }
 
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            if (tableController != null) {
+                return tableController.keyEventsFilter(event);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /*
         static methods
      */
@@ -535,7 +548,7 @@ public class ImagesSpliceController extends ImageViewerController {
             controller.load(imageInfos);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

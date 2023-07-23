@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -43,6 +45,11 @@ public class JavaScriptController extends TreeManageController {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Javascript);
+    }
+
+    @Override
     public void initControls() {
         try {
             nodeController = editorController;
@@ -57,7 +64,7 @@ public class JavaScriptController extends TreeManageController {
                 htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -155,19 +162,31 @@ public class JavaScriptController extends TreeManageController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static JavaScriptController open(String script) {
+    public static JavaScriptController loadScript(String script) {
         try {
             JavaScriptController controller = (JavaScriptController) WindowTools.openStage(Fxmls.JavaScriptFxml);
             controller.edit(script);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static JavaScriptController openFile(File file) {
+        try {
+            JavaScriptController controller = (JavaScriptController) WindowTools.openStage(Fxmls.JavaScriptFxml);
+            controller.selectSourceFile(file);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }

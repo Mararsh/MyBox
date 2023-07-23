@@ -56,7 +56,7 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -86,12 +86,12 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
 
     @FXML
     public void editAction() {
-        JavaScriptController.open(scriptInput.getText());
+        JavaScriptController.loadScript(scriptInput.getText());
     }
 
     @FXML
     public void dataAction() {
-        JavaScriptController.open("");
+        JavaScriptController.loadScript("");
     }
 
     public void clear() {
@@ -121,7 +121,7 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
                     = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
             moreExampleButtons(controller, interfaceName + "Examples");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

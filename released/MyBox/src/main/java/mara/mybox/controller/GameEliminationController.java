@@ -65,7 +65,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageCheckBoxCell;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -135,7 +135,7 @@ public class GameEliminationController extends BaseController {
     @FXML
     protected ControlWebView imageInfoController;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
 
     public GameEliminationController() {
         baseTitle = message("GameElimniation");
@@ -194,7 +194,7 @@ public class GameEliminationController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -206,7 +206,7 @@ public class GameEliminationController extends BaseController {
             NodeStyleTools.setTooltip(helpMeButton, message("HelpMeFindExchange") + "\nh / Ctrl+h");
             NodeStyleTools.setTooltip(catButton, message("AutoPlayGame") + "\np / Ctrl+p");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -217,7 +217,7 @@ public class GameEliminationController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<ImageItem> items;
             private String defaultSelected;
@@ -330,7 +330,7 @@ public class GameEliminationController extends BaseController {
             okChessesAction();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -388,7 +388,7 @@ public class GameEliminationController extends BaseController {
             scoreColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -645,7 +645,7 @@ public class GameEliminationController extends BaseController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -742,7 +742,7 @@ public class GameEliminationController extends BaseController {
             newGame(true);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -848,7 +848,7 @@ public class GameEliminationController extends BaseController {
             }
             selectSoundFile(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -1040,7 +1040,7 @@ public class GameEliminationController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1085,7 +1085,7 @@ public class GameEliminationController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1112,7 +1112,7 @@ public class GameEliminationController extends BaseController {
             findAdjacentAndEliminate();
             countScore = true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1132,7 +1132,7 @@ public class GameEliminationController extends BaseController {
             firstClick = null;
             isEliminating = false;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1224,7 +1224,7 @@ public class GameEliminationController extends BaseController {
             vbox2.getChildren().add(node2);
             return null;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1252,7 +1252,7 @@ public class GameEliminationController extends BaseController {
             }
             return null;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1281,7 +1281,7 @@ public class GameEliminationController extends BaseController {
             }
             return new Adjacent(i1, j, i2, j);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1310,7 +1310,7 @@ public class GameEliminationController extends BaseController {
             }
             return new Adjacent(i, j1, i, j2);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
 
@@ -1414,7 +1414,7 @@ public class GameEliminationController extends BaseController {
             afterElimination((int) node.getUserData(), adjacent.getLength());
             findAdjacentAndEliminate();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1456,7 +1456,7 @@ public class GameEliminationController extends BaseController {
             }
             checkDeadlock();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1540,7 +1540,7 @@ public class GameEliminationController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }
@@ -1585,7 +1585,7 @@ public class GameEliminationController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1631,7 +1631,7 @@ public class GameEliminationController extends BaseController {
             findAdjacentAndEliminate();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1660,7 +1660,7 @@ public class GameEliminationController extends BaseController {
                 popInformation(message("DeadlockDetectChance"));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1746,7 +1746,7 @@ public class GameEliminationController extends BaseController {
             Node node = getImageNode(i, j);
             return (int) (node.getUserData());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return -1;
         }
     }
@@ -1773,7 +1773,7 @@ public class GameEliminationController extends BaseController {
             int index = selectedChesses.get(random.nextInt(boardSize));
             setImageNode(i, j, imagesListview.getItems().get(index));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1785,7 +1785,7 @@ public class GameEliminationController extends BaseController {
             vbox.getChildren().add(node);
             vbox.setStyle(currentStyle);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1802,7 +1802,7 @@ public class GameEliminationController extends BaseController {
             fade.setNode(chessBoard.get(i + "-" + j));
             fade.play();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1824,7 +1824,7 @@ public class GameEliminationController extends BaseController {
             pathTransition.play();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1833,7 +1833,7 @@ public class GameEliminationController extends BaseController {
             VBox vbox = getBox(i, j);
             vbox.setStyle(focusStyle);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1842,7 +1842,7 @@ public class GameEliminationController extends BaseController {
             VBox vbox = getBox(i, j);
             vbox.setStyle(currentStyle);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

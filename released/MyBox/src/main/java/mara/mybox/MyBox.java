@@ -153,7 +153,7 @@ public class MyBox {
 //            System.setProperty("javax.net.debug", "ssl,record, plaintext, handshake,session,trustmanager,sslctx");
 //            System.setProperty("javax.net.debug", "ssl,handshake,session,trustmanager,sslctx");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -177,7 +177,7 @@ public class MyBox {
                 restartJar();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -210,7 +210,7 @@ public class MyBox {
 
             System.exit(0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -251,7 +251,7 @@ public class MyBox {
 
             System.exit(0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

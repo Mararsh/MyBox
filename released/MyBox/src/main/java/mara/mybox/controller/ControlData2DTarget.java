@@ -72,7 +72,7 @@ public class ControlData2DTarget extends BaseController {
             setTarget(target);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -173,7 +173,7 @@ public class ControlData2DTarget extends BaseController {
             UserConfig.setString(baseName + "DataTarget", target);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return target;
     }
@@ -243,7 +243,7 @@ public class ControlData2DTarget extends BaseController {
                     csvRadio.setSelected(true);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -285,7 +285,7 @@ public class ControlData2DTarget extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

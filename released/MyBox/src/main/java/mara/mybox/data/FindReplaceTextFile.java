@@ -92,7 +92,7 @@ public class FindReplaceTextFile {
             findReplaceFile.setCount(count);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -115,7 +115,7 @@ public class FindReplaceTextFile {
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -174,7 +174,7 @@ public class FindReplaceTextFile {
             findReplaceFile.setFileRange(found);
             return found;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return null;
         }
@@ -261,7 +261,7 @@ public class FindReplaceTextFile {
             }
             return found;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceString.setError(e.toString());
             return null;
         }
@@ -284,7 +284,7 @@ public class FindReplaceTextFile {
             findReplaceFile.setOuputString(pageText);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -345,7 +345,7 @@ public class FindReplaceTextFile {
             return found;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -442,7 +442,7 @@ public class FindReplaceTextFile {
             }
             return found;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceString.setError(e.toString());
             return null;
         }
@@ -476,7 +476,7 @@ public class FindReplaceTextFile {
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -558,7 +558,7 @@ public class FindReplaceTextFile {
             }
             findReplaceFile.setCount(total);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -704,7 +704,7 @@ public class FindReplaceTextFile {
             }
             csvPrinter.flush();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             findReplaceString.setError(e.toString());
             return false;
         }

@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="mainBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <HBox fx:id="operationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                        <HBox  alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Button fx:id="helpMeButton" layoutX="1136.0" layoutY="13.0" mnemonicParsing="false" onAction="#helpMeAction">
                                                     <graphic>
@@ -124,7 +124,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                                 <Button fx:id="deleteChessesButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#deleteChessesAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

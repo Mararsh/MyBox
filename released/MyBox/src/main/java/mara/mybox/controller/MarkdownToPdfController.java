@@ -8,7 +8,6 @@ import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
@@ -45,7 +44,7 @@ public class MarkdownToPdfController extends BaseBatchFileController {
             optionsController.setControls(baseName, false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -57,20 +56,10 @@ public class MarkdownToPdfController extends BaseBatchFileController {
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return super.makeMoreParameters();
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "md".equals(suffix);
     }
 
     @Override

@@ -12,7 +12,7 @@ import javafx.scene.control.TextArea;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -76,7 +76,7 @@ public class ControlData2DEditCSV extends BaseController {
             textArea.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -88,7 +88,7 @@ public class ControlData2DEditCSV extends BaseController {
             baseTitle = dataController.baseTitle;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class ControlData2DEditCSV extends BaseController {
             data2D = data;
             checkData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -117,7 +117,7 @@ public class ControlData2DEditCSV extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String text;
 
             @Override
@@ -191,7 +191,7 @@ public class ControlData2DEditCSV extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<List<String>> rows;
 
             @Override
@@ -265,7 +265,7 @@ public class ControlData2DEditCSV extends BaseController {
             isSettingValues = false;
             okAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

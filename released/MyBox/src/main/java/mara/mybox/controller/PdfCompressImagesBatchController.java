@@ -64,7 +64,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
                             .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             }
             return newObject;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

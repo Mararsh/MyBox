@@ -33,7 +33,7 @@ public class ControlData2DStyle extends BaseController {
     @FXML
     protected ToggleGroup colorGroup, bgGroup;
     @FXML
-    protected ColorSetController fontColorController, bgColorController;
+    protected ControlColorSet fontColorController, bgColorController;
     @FXML
     protected ComboBox<String> fontSizeSelector;
     @FXML
@@ -116,7 +116,7 @@ public class ControlData2DStyle extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -128,12 +128,12 @@ public class ControlData2DStyle extends BaseController {
         if (colorDefaultRadio.isSelected()) {
             currentStyle.setFontColor(null);
         } else {
-            currentStyle.setFontColor(fontColorController.rgb());
+            currentStyle.setFontColor(fontColorController.css());
         }
         if (bgDefaultRadio.isSelected()) {
             currentStyle.setBgColor(null);
         } else {
-            currentStyle.setBgColor(bgColorController.rgb());
+            currentStyle.setBgColor(bgColorController.css());
         }
         currentStyle.setFontSize(fontSizeSelector.getValue());
         currentStyle.setBold(boldCheck.isSelected());

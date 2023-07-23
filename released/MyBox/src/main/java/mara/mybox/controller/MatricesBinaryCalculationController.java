@@ -17,7 +17,7 @@ import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
@@ -74,7 +74,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -127,7 +127,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             checkMatrices();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -143,7 +143,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             NodeStyleTools.setTooltip(verticalMergeRadio, new Tooltip(message("VerticalMergeComments")));
             NodeStyleTools.setTooltip(horizontalMergeRadio, new Tooltip(message("HorizontalMergeComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -205,7 +205,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             task.cancel();
         }
         resultLabel.setText("");
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

@@ -22,10 +22,10 @@ public abstract class BaseImageController extends BaseImageController_Actions {
             initImageView();
             initViewControls();
             initMaskPane();
-            initMaskControls(false);
-            initOperationBox();
+            clearMask();
+            initCheckboxs();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -104,6 +104,8 @@ public abstract class BaseImageController extends BaseImageController_Actions {
                 paletteController.closeStage();
                 paletteController = null;
             }
+            maskShapeChanged = null;
+            maskShapeDataChanged = null;
         } catch (Exception e) {
         }
         super.cleanPane();

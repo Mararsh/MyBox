@@ -394,13 +394,13 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <Label text="%PredefinedData" />
-                                                                        <fx:include fx:id="predefinedColorSet" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="predefinedColorSet" source="ControlColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%InputtedData" />
-                                                                        <fx:include fx:id="inputtedColorSet" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="inputtedColorSet" source="ControlColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                             </children>

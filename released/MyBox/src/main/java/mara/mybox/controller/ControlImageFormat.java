@@ -81,7 +81,7 @@ public class ControlImageFormat extends BaseController {
             compressGroup = new ToggleGroup();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -95,7 +95,7 @@ public class ControlImageFormat extends BaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(pcxRadio, message("PcxComments"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class ControlImageFormat extends BaseController {
             checkFileFormat();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -351,7 +351,7 @@ public class ControlImageFormat extends BaseController {
                 attributes.setEmbedProfile(embedProfileCheck.isSelected());
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -443,7 +443,7 @@ public class ControlImageFormat extends BaseController {
                 ValidationTools.setEditorBadStyle(qualitySelector);
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             ValidationTools.setEditorBadStyle(qualitySelector);
         }
     }
@@ -462,7 +462,7 @@ public class ControlImageFormat extends BaseController {
                 ValidationTools.setEditorBadStyle(icoWidthSelector);
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             ValidationTools.setEditorBadStyle(icoWidthSelector);
         }
     }
@@ -477,7 +477,7 @@ public class ControlImageFormat extends BaseController {
             attributes.setIsDithering(binaryController.dither());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -558,7 +558,7 @@ public class ControlImageFormat extends BaseController {
             }
             iccFileSelected(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 

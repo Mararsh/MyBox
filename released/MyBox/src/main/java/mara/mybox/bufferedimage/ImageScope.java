@@ -34,7 +34,6 @@ public class ImageScope extends BaseData {
     protected ScopeType scopeType;
     protected ColorScopeType colorScopeType;
     protected List<Color> colors;
-    protected Color color;
     protected List<IntPoint> points;
     protected DoubleRectangle rectangle;
     protected DoubleCircle circle;
@@ -50,8 +49,7 @@ public class ImageScope extends BaseData {
 
     public enum ScopeType {
         Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon, Color,
-        RectangleColor,
-        CircleColor, EllipseColor, PolygonColor, Outline, Operate
+        Outline, Operate
     }
 
     public enum ColorScopeType {
@@ -272,7 +270,7 @@ public class ImageScope extends BaseData {
                     data.setName(value == null ? null : (String) value);
                     return true;
                 case "scope_type":
-                    data.setScopeType(value == null ? null : ScopeType.valueOf((String) value));
+                    data.setScopeType(value == null ? null : ImageScopeTools.scopeType((String) value));
                     return true;
                 case "color_scope_type":
                     data.setColorScopeType(value == null ? null : ColorScopeType.valueOf((String) value));
@@ -306,7 +304,7 @@ public class ImageScope extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -370,7 +368,6 @@ public class ImageScope extends BaseData {
                 }
                 break;
                 case Rectangle:
-                case RectangleColor:
                 case Outline:
                     DoubleRectangle rect = scope.getRectangle();
                     if (rect != null) {
@@ -379,7 +376,6 @@ public class ImageScope extends BaseData {
                     }
                     break;
                 case Circle:
-                case CircleColor:
                     DoubleCircle circle = scope.getCircle();
                     if (circle != null) {
                         s = (int) circle.getCenterX() + DataSeparator + (int) circle.getCenterY()
@@ -388,7 +384,6 @@ public class ImageScope extends BaseData {
 
                     break;
                 case Ellipse:
-                case EllipseColor:
                     DoubleEllipse ellipse = scope.getEllipse();
                     if (ellipse != null) {
                         DoubleRectangle erect = ellipse.getRectangle();
@@ -399,7 +394,6 @@ public class ImageScope extends BaseData {
                     }
                     break;
                 case Polygon:
-                case PolygonColor:
                     DoublePolygon polygon = scope.getPolygon();
                     if (polygon != null) {
                         for (Double d : polygon.getData()) {
@@ -427,10 +421,10 @@ public class ImageScope extends BaseData {
         try {
             switch (scope.getScopeType()) {
                 case Color:
-                case RectangleColor:
-                case CircleColor:
-                case EllipseColor:
-                case PolygonColor:
+                case Rectangle:
+                case Circle:
+                case Ellipse:
+                case Polygon:
                     List<Color> colors = scope.getColors();
                     if (colors != null) {
                         for (Color color : colors) {
@@ -491,7 +485,6 @@ public class ImageScope extends BaseData {
                 }
                 break;
                 case Rectangle:
-                case RectangleColor:
                 case Outline: {
                     String[] items = areaData.split(DataSeparator);
                     if (items.length == 4) {
@@ -505,8 +498,7 @@ public class ImageScope extends BaseData {
                     }
                 }
                 break;
-                case Circle:
-                case CircleColor: {
+                case Circle: {
                     String[] items = areaData.split(DataSeparator);
                     if (items.length == 3) {
                         DoubleCircle circle = new DoubleCircle(
@@ -519,8 +511,7 @@ public class ImageScope extends BaseData {
                     }
                 }
                 break;
-                case Ellipse:
-                case EllipseColor: {
+                case Ellipse: {
                     String[] items = areaData.split(DataSeparator);
                     if (items.length == 4) {
                         DoubleEllipse ellipse = new DoubleEllipse(
@@ -533,8 +524,7 @@ public class ImageScope extends BaseData {
                     }
                 }
                 break;
-                case Polygon:
-                case PolygonColor: {
+                case Polygon: {
                     String[] items = areaData.split(DataSeparator);
                     DoublePolygon polygon = new DoublePolygon();
                     for (int i = 0; i < items.length / 2; ++i) {
@@ -562,10 +552,10 @@ public class ImageScope extends BaseData {
         try {
             switch (type) {
                 case Color:
-                case RectangleColor:
-                case CircleColor:
-                case EllipseColor:
-                case PolygonColor: {
+                case Rectangle:
+                case Circle:
+                case Ellipse:
+                case Polygon: {
                     List<Color> colors = new ArrayList<>();
                     if (colorData != null && !colorData.isBlank()) {
                         String[] items = colorData.split(DataSeparator);
@@ -602,7 +592,7 @@ public class ImageScope extends BaseData {
             return image != null;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -780,14 +770,6 @@ public class ImageScope extends BaseData {
 
     public void setOutline(BufferedImage outline) {
         this.outline = outline;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 
     public BufferedImage getOutlineSource() {

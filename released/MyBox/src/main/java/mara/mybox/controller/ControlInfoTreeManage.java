@@ -17,7 +17,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.NodeSeparater;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -70,6 +70,9 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             return;
         }
         String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
+        if (clickAction == null) {
+            return;
+        }
         switch (clickAction) {
             case "PopMenu":
                 showItemMenu(item);
@@ -96,7 +99,12 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        editNode(item);
+        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
+        if (nodeExecutable && !"Execute".equals(clickAction)) {
+            executeNode(item);
+        } else if (!"Edit".equals(clickAction)) {
+            editNode(item);
+        }
     }
 
     @Override
@@ -283,6 +291,14 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
         items.add(new SeparatorMenuItem());
 
+        if (nodeExecutable) {
+            menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                executeNode(treeItem);
+            });
+            items.add(menu);
+        }
+
         menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             editNode(treeItem);
@@ -366,7 +382,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private TreeItem<InfoNode> rootItem;
 
@@ -390,8 +406,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             @Override
             protected void whenSucceeded() {
                 if (isRoot) {
-                    treeView.setRoot(rootItem);
-                    rootItem.setExpanded(true);
+                    setRoot(rootItem);
                 } else {
                     targetItem.getChildren().clear();
                     if (targetItem.getParent() != null) {
@@ -399,14 +414,11 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
                     }
                 }
                 popSuccessful();
+                manageController.nodeDeleted(node);
             }
 
         };
         start(task, treeView);
-    }
-
-    protected void nodeDeleted(InfoNode node) {
-        manageController.nodeDeleted(node);
     }
 
     protected void renameNode(TreeItem<InfoNode> item) {
@@ -431,7 +443,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private InfoNode updatedNode;
 
             @Override

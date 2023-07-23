@@ -43,7 +43,7 @@ public class ColorPaletteInputController extends BaseChildController {
                 colorInput.setText(newVal.toString());
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -55,7 +55,7 @@ public class ColorPaletteInputController extends BaseChildController {
             myStage.setX(paletteManager.getMyWindow().getX());
             myStage.setY(paletteManager.getMyWindow().getY() + 60);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -98,7 +98,7 @@ public class ColorPaletteInputController extends BaseChildController {
             TableStringValues.add("ColorQueryColorHistories", value);
             return colorData;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

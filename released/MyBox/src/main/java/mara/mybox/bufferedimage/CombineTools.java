@@ -94,7 +94,7 @@ public class CombineTools {
                     careTotal && (sizeType == ImageCombine.CombineSizeType.TotalHeight));
             return newImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -177,7 +177,7 @@ public class CombineTools {
                     careTotal && (sizeType == ImageCombine.CombineSizeType.TotalHeight));
             return newImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -211,7 +211,7 @@ public class CombineTools {
             Image newImage = SwingFXUtils.toFXImage(target, null);
             return newImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -12,7 +12,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -53,7 +53,7 @@ public class HtmlCodesPopController extends TextPopController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class HtmlCodesPopController extends TextPopController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -124,7 +124,7 @@ public class HtmlCodesPopController extends TextPopController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -168,7 +168,7 @@ public class HtmlCodesPopController extends TextPopController {
             controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -182,7 +182,7 @@ public class HtmlCodesPopController extends TextPopController {
             controller.setWebView(parent.baseName, srcWebView);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

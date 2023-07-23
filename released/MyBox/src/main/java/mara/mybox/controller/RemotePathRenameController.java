@@ -39,7 +39,7 @@ public class RemotePathRenameController extends BaseController {
             }
             newInput.requestFocus();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }
@@ -83,7 +83,7 @@ public class RemotePathRenameController extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

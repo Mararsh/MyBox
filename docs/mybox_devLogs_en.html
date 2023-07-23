@@ -6,6 +6,36 @@
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>Development Logs</h1>
+  <p>2023-7-23 v6.7.5</p>
+  <ul>
+   <li>Added: 
+    <ul>
+     <li>SVG editor</li>
+     <li>Make typesetting of SVG files in batch</li>
+     <li>Convert SVG files to images/PDFs in batch</li>
+    </ul></li>
+   <li>Improved: 
+    <ul>
+     <li>In file interface, provide pane to list files of same types under same directory.</li>
+     <li>When edit image, points of polyline and polygon can be edited and dragged to adjust the shape.</li>
+     <li>WHen edit image, simplify types of scopes: if colors list is empty then match all colors.</li>
+     <li>When analyse image, option to sort colors data.</li>
+     <li>When repeat image, option to crop and scale original image.</li>
+     <li>When edit XML file, XML codes can be inputted to add new node.</li>
+     <li>Function menu in tabs of web browser to close tabs more easily.</li>
+     <li>Shortcuts of button “Go” are F9 and CTRL+g. Shortcut of button “Clear” is CTRL+l(lowercase of ‘L’).</li>
+    </ul></li>
+   <li>Removed: Event “double-click” is not handled for image any more.</li>
+   <li>Solved problems: 
+    <ul>
+     <li>Image OCR fails in last 2 versions.</li>
+     <li>When scale image, the inputted width and height do not work.</li>
+     <li>When edit image, shadow should be behind the text.</li>
+     <li>Dominant pie is not picked in the generated html when analyse image.</li>
+     <li>Frames pane should be always shown for tif/gif file.</li>
+    </ul></li>
+  </ul>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.5">Closed requirements/bugs in this version</a></p>
   <p>2023-6-8 v6.7.4</p>
   <ul>
    <li>Added: 

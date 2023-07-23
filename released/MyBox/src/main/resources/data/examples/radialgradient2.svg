@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="1052.3622047" id="svg2" inkscape:version="0.46" sodipodi:version="0.32" width="744.09448819">
+    <defs id="defs4">
+        <linearGradient id="linearGradient3193">
+            <stop id="stop3195" offset="0" style="stop-color:#0000ff;stop-opacity:1;"/>
+            <stop id="stop3197" offset="1" style="stop-color:#ff0000;stop-opacity:1;"/>
+        </linearGradient>
+        <linearGradient gradientTransform="scale(1.1,1.1) translate(20,20) rotate(10) scale(.9,.9)" gradientUnits="userSpaceOnUse" id="linearGradient3199" x1="128.57143" x2="425.71428" xlink:href="#linearGradient3193" y1="289.50504" y2="289.50504"/>
+        <radialGradient id="radialGradient3193">
+            <stop offset="0" style="stop-color:#0000ff;stop-opacity:1;"/>
+            <stop offset="1" style="stop-color:#ff0000;stop-opacity:1;"/>
+        </radialGradient>
+        <radialGradient cx="300.57143" cy="529.50504" fx="400.57143" fy="529.50504" gradientTransform="scale(1.1,1.1) translate(20,20) rotate(10) scale(.9,.9)" gradientUnits="userSpaceOnUse" id="radialGradient3199" r="100.71428" xlink:href="#radialGradient3193"/>
+    </defs>
+    <g>
+        <rect height="157.14285" id="rect3191" style="fill:url(#linearGradient3199);fill-opacity:1" width="397.14285" x="128.57143" y="160.93361"/>
+        <rect height="157.14285" id="rect3192" style="fill:url(#radialGradient3199);fill-opacity:1" width="397.14285" x="128.57143" y="400.93361"/>
+        <rect height="60" id="myrect" rx="3" ry="3" style="opacity:0.5;fill:#0000FF;stroke:rgb(0, 255, 0);stroke-width:10px;stroke-opacity:0.8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:15;stroke-dasharray:5,3,2;stroke-dashoffset:3" width="60" x="400" y="20"/>
+    </g>
+</svg>

@@ -218,7 +218,7 @@ License:    Apache License Version 2.0
                                                                                                                 <Insets top="20.0" />
                                                                                                             </VBox.margin>
                                                                                                         </Label>
-                                                                                                        <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                                                                        <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                                                                                     </children>
                                                                                                 </HBox>
                                                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">

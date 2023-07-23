@@ -48,7 +48,7 @@ public class DataFileExcel extends DataFile {
             sheetNames = d.sheetNames;
             currentSheetOnly = d.currentSheetOnly;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

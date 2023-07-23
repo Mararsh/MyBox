@@ -7,7 +7,6 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -30,16 +29,6 @@ public class HtmlExtractTablesController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
             List<StringTable> tables = HtmlReadTools.Tables(TextFileTools.readTexts(srcFile), srcFile.getName());
@@ -55,7 +44,7 @@ public class HtmlExtractTablesController extends BaseBatchFileController {
             }
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

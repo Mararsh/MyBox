@@ -39,7 +39,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             recoverButton.setDisable(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -107,11 +107,6 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         loadImage(newImage);
 
         operationsController.marginsPane.setExpanded(true);
-    }
-
-    @FXML
-    public void editFrames() {
-        loadMultipleFramesImage(sourceFile);
     }
 
     @FXML
@@ -188,8 +183,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
     @Override
     protected void popImageMenu(double x, double y) {
-        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
-                || imageView == null || imageView.getImage() == null) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
         MenuImageManufactureController.open((ImageManufactureController) this, x, y);
@@ -264,7 +258,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -292,7 +286,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

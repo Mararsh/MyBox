@@ -9,6 +9,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -60,7 +61,7 @@ public class ImagesEditorController extends BaseImagesListController {
             playButton.disableProperty().bind(Bindings.isEmpty(imageInfos));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -73,7 +74,7 @@ public class ImagesEditorController extends BaseImagesListController {
     }
 
     public void open(File file) {
-        tableController.addFile(sourceFile);
+        tableController.addFile(file);
     }
 
     public void loadImages(List<ImageInformation> infos) {
@@ -88,7 +89,19 @@ public class ImagesEditorController extends BaseImagesListController {
             ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
             controller.loadImages(imageInfos);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            if (tableController != null) {
+                return tableController.keyEventsFilter(event);
+            }
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -101,7 +114,7 @@ public class ImagesEditorController extends BaseImagesListController {
             controller.tableController.addFiles(0, files);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

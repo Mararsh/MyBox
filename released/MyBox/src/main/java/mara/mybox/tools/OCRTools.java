@@ -126,7 +126,7 @@ public class OCRTools {
             UserConfig.setString(TessDataPath, path.getAbsolutePath());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -158,7 +158,7 @@ public class OCRTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return data;
     }

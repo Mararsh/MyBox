@@ -274,7 +274,7 @@ public class TTC {
                     }
                     outputStream.flush();
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     continue;
                 }
                 files.add(ttfFile);

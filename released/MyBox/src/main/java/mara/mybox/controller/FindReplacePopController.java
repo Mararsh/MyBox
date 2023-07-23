@@ -29,7 +29,7 @@ public class FindReplacePopController extends MenuTextBaseController {
             replaceController.setEditInput(parent, textInput);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -48,7 +48,7 @@ public class FindReplacePopController extends MenuTextBaseController {
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

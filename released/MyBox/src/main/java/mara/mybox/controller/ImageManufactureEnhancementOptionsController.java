@@ -27,7 +27,7 @@ import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -113,7 +113,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             checkEnhanceType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -125,7 +125,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
         }
         if (parentController instanceof ImageManufactureEnhancementController) {
             enhancementController = (ImageManufactureEnhancementController) parentController;
-            imageController = enhancementController.imageController;
+            editor = enhancementController.editor;
             scopeController = enhancementController.scopeController;
             imageView = enhancementController.imageView;
             commentsLabel = enhancementController.commentsLabel;
@@ -137,8 +137,8 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
     protected void checkEnhanceType() {
         try {
-            if (imageController != null) {
-                imageController.resetImagePane();
+            if (editor != null) {
+                editor.resetImagePane();
             }
             clearValues();
             if (okButton != null && enhancementGroup.getSelectedToggle() == null) {
@@ -147,9 +147,9 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             }
             RadioButton selected = (RadioButton) enhancementGroup.getSelectedToggle();
             if (ContrastRadio.equals(selected)) {
-                if (imageController != null) {
+                if (editor != null) {
                     commentsLabel.setText(Languages.message("ManufactureWholeImage"));
-                    imageController.imageTab();
+                    editor.imageTab();
                 }
                 enhanceType = OperationType.Contrast;
                 makeContrastBox();
@@ -161,10 +161,10 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 if (enhancementController != null) {
                     enhancementController.scopeCheck.setDisable(false);
                 }
-                if (imageController != null) {
+                if (editor != null) {
                     commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
                     if (scopeController != null && !scopeController.scopeWhole()) {
-                        imageController.scopeTab();
+                        editor.scopeTab();
                     }
                 }
 
@@ -186,7 +186,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             refreshStyle(setBox);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -261,7 +261,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
             checkSmoothAlgorithm();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -297,7 +297,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
             checkSharpenAlgorithm();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -309,7 +309,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             checkContrastAlgorithm();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -319,7 +319,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 if (kernels == null) {
@@ -373,7 +373,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                         }
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
             }
         };

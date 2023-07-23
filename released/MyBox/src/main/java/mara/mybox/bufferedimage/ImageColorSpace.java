@@ -298,7 +298,7 @@ public class ImageColorSpace {
         try {
             return new ICC_ColorSpace(internalProfile(profileName));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -307,7 +307,7 @@ public class ImageColorSpace {
         try {
             return new ICC_ColorSpace(iccProfile(profileName));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

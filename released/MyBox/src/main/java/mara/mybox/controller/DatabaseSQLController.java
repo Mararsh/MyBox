@@ -31,7 +31,7 @@ public class DatabaseSqlController extends TreeManageController {
             super.initControls();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -6,7 +6,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.FileTmpTools;
@@ -74,7 +74,7 @@ public class HtmlTableController extends BaseWebViewController {
             html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), body);
             displayHtml(html);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -157,7 +157,7 @@ public class HtmlTableController extends BaseWebViewController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -210,7 +210,7 @@ public class HtmlTableController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -228,7 +228,7 @@ public class HtmlTableController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

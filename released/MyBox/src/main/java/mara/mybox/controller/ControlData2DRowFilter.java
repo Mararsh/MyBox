@@ -69,7 +69,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

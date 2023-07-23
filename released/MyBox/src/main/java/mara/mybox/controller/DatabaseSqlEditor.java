@@ -29,7 +29,7 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -78,7 +78,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             outputArea.setWrapText(wrapOutputsCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -116,7 +116,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataFileCSV data;
 
@@ -255,7 +255,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             }
             controller.addFlowPane(valueButtons);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -317,7 +317,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             }
             controller.addFlowPane(valueButtons);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

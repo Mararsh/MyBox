@@ -128,7 +128,7 @@ public class ColumnDefinition extends BaseData {
             newData.cloneFrom(this);
             return newData;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -167,7 +167,7 @@ public class ColumnDefinition extends BaseData {
             century = c.century;
             invalidAs = c.invalidAs;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -376,7 +376,7 @@ public class ColumnDefinition extends BaseData {
             ColumnDefinition newColumn = (ColumnDefinition) super.clone();
             return newColumn;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

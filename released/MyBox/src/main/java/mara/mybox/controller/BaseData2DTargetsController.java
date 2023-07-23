@@ -9,7 +9,7 @@ import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -40,7 +40,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -73,7 +73,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -100,7 +100,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             super.refreshControls();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -146,16 +146,16 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         if (targetController == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataFileCSV csvFile;
 
             @Override
             protected boolean handle() {
-                data2D.startTask(task, filterController.filter);
+                data2D.startTask(this, filterController.filter);
                 csvFile = generatedFile();
                 data2D.stopFilter();
                 return csvFile != null;
@@ -169,8 +169,8 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
 
             @Override
             protected void finalAction() {
-                super.finalAction();
                 data2D.stopTask();
+                super.finalAction();
                 task = null;
             }
 
@@ -183,12 +183,12 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     }
 
     public void handleRowsTask() {
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     ok = handleRows();
                     data2D.stopFilter();
                     return ok;
@@ -235,7 +235,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -292,7 +292,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             return true;
         } catch (Exception e) {
             popError(e.toString());
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

@@ -110,4 +110,9 @@ public class AppVariables {
         }
     }
 
+    public static void lostFocusCommitData(boolean auto) {
+        AppVariables.commitModificationWhenDataCellLoseFocus = auto;
+        UserConfig.setBoolean("CommitModificationWhenDataCellLoseFocus", auto);
+    }
+
 }

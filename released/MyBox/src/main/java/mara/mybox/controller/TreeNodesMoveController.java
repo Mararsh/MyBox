@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Window;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -75,7 +75,7 @@ public class TreeNodesMoveController extends ControlInfoTreeSelector {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int count;
 

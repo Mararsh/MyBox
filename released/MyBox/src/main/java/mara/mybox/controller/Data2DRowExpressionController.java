@@ -13,7 +13,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -49,7 +49,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             nameInput.setText(UserConfig.getString(interfaceName + "Name", message("Value")));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -92,7 +92,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -108,12 +108,12 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.setTask(this);
                     List<String> filled = data2D.calculateScriptsStatistic(scripts);
                     if (filled == null) {
                         return false;
@@ -201,7 +201,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -236,7 +236,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -80,7 +80,7 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -130,14 +130,14 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
     }
 
     @FXML
-    public void popPanesMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "PanesPopWhenMouseHovering", false)) {
-            showPanesMenu(event);
+    public void popOptionsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", false)) {
+            showOptionsMenu(event);
         }
     }
 
     @FXML
-    public void showPanesMenu(Event event) {
+    public void showOptionsMenu(Event event) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -171,18 +171,18 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean(baseName + "PanesPopWhenMouseHovering", false));
+            hoverMenu.setSelected(UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", false));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "PanesPopWhenMouseHovering", hoverMenu.isSelected());
+                    UserConfig.setBoolean(baseName + "OptionsPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
             items.add(hoverMenu);
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

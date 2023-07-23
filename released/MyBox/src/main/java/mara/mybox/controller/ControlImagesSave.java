@@ -26,7 +26,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javax.imageio.IIOImage;
@@ -42,9 +41,8 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
@@ -59,7 +57,6 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -106,7 +103,7 @@ public class ControlImagesSave extends BaseController {
     @FXML
     protected ControlPdfWriteOptions pdfOptionsController;
     @FXML
-    protected Button thumbsListButton;
+    protected Button editFramesButton;
     @FXML
     protected ComboBox<String> savedWidthSelector;
     @FXML
@@ -120,16 +117,6 @@ public class ControlImagesSave extends BaseController {
     @Override
     public void setFileType() {
         setFileType(FileType.Image);
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(thumbsListButton, new Tooltip(Languages.message("ImagesEditor")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     public void setParent(BaseImagesListController parent) {
@@ -154,12 +141,12 @@ public class ControlImagesSave extends BaseController {
             imageInfosChanged();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     public void imageInfosChanged() {
-        thumbsListButton.setDisable(imageInfos.isEmpty());
+        editFramesButton.setDisable(imageInfos.isEmpty());
         saveAsButton.setDisable(imageInfos.isEmpty());
     }
 
@@ -200,7 +187,7 @@ public class ControlImagesSave extends BaseController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -249,7 +236,7 @@ public class ControlImagesSave extends BaseController {
             checkGifSizeType();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -306,7 +293,7 @@ public class ControlImagesSave extends BaseController {
                     });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -511,7 +498,7 @@ public class ControlImagesSave extends BaseController {
             parentController.popError(message("InvalidParameters"));
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             List<String> fileNames;
 
             @Override
@@ -520,11 +507,11 @@ public class ControlImagesSave extends BaseController {
                 try {
                     String imagesFilePrefix = targetFile.getParent() + File.separator + FileNameTools.prefix(targetFile.getName());
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         if (bufferedImage == null) {
@@ -533,7 +520,7 @@ public class ControlImagesSave extends BaseController {
                         String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
                         BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
                         ImageFileWriters.writeImageFile(converted, formatController.attributes, filename);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         fileNames.add(filename);
@@ -542,7 +529,7 @@ public class ControlImagesSave extends BaseController {
                         updateLabel(msg, i + 1);
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return !fileNames.isEmpty();
             }
@@ -591,7 +578,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -607,16 +594,16 @@ public class ControlImagesSave extends BaseController {
 
                     int count = 0;
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String sourceFormat = imageInfos.get(i).getImageFormat();
                         PdfTools.writePage(document, sourceFormat, bufferedImage, ++count, imageInfos.size(), pdfOptionsController);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberPageWritten"), (i + 1) + "/" + imageInfos.size());
@@ -661,7 +648,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -673,16 +660,16 @@ public class ControlImagesSave extends BaseController {
                     writer.prepareWriteSequence(null);
                     ImageWriteParam param = ImageTiffFile.getPara(null, writer);
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         IIOMetadata metaData = ImageTiffFile.getWriterMeta(null, bufferedImage, writer, param);
                         writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
@@ -720,7 +707,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -734,11 +721,11 @@ public class ControlImagesSave extends BaseController {
                     gifWriter.setOutput(out);
                     gifWriter.prepareWriteSequence(null);
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         if (!gifKeepSize) {
@@ -746,7 +733,7 @@ public class ControlImagesSave extends BaseController {
                         }
                         ImageGifFile.getParaMeta(imageInfos.get(i).getDuration(), gifLoopCheck.isSelected(), param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
@@ -784,7 +771,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -792,19 +779,19 @@ public class ControlImagesSave extends BaseController {
                 File tmpFile = FileTmpTools.getTempFile();
                 try (HSLFSlideShow ppt = new HSLFSlideShow()) {
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         ppt.setPageSize(new java.awt.Dimension(pptWidth, pptHeight));
                         BufferedImage image = ImageConvertTools.convertToPNG(image(i));
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         HSLFPictureShape shape = MicrosoftDocumentTools.imageShape(ppt, image, "png");
                         shape.setAnchor(new java.awt.Rectangle(pptMargin, pptMargin, image.getWidth(), image.getHeight()));
                         HSLFSlide slide = ppt.createSlide();
                         slide.addShape(shape);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
@@ -812,7 +799,7 @@ public class ControlImagesSave extends BaseController {
                     }
                     ppt.write(tmpFile);
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
                 return FileTools.rename(tmpFile, targetFile);

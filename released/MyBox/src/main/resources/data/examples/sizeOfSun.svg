@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+-->
+<!-- ========================================================================= -->
+<!-- Size of the Sun                                                           -->
+<!-- @author tkormann@apache.org                                               -->
+<!-- @version $Id$ -->
+<!-- ========================================================================= -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="text/ecmascript" contentStyleType="text/css" height="500" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 450 500" width="450" xml:space="preserve" zoomAndPan="magnify">
+<title content="structured text">Size of the Sun</title>
+<rect height="100%" id="background" style="fill:black" width="100%" x="0" y="0"/>
+<style type="text/css" xml:space="preserve">
+<![CDATA[
+    .planet {
+      text-anchor:middle;
+      font-family: Helvetica;
+      font-size: 12;
+    }
+  ]]>
+</style>
+<defs>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="mercuryGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:white"/>
+<stop offset="1" style="stop-color:#444"/>
+</radialGradient>
+<g class="planet" id="mercury" transform="scale(.1)">
+<circle cx="0" cy="0" r="5" style="fill:url(#mercuryGradient)" transform="scale(10)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#mercuryLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="mercuryLegend" style="fill:white" x="0" y="0">Mercury</text>
+</g>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="venusGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:cyan"/>
+<stop offset="1" style="stop-color:blue"/>
+</radialGradient>
+<g class="planet" id="venus" transform="scale(.2)">
+<circle cx="0" cy="0" r="12" style="fill:url(#venusGradient)" transform="scale(5)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#venusLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="venusLegend" style="fill:white" x="0" y="0">Venus</text>
+</g>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="earthGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:white"/>
+<stop offset="1" style="stop-color:blue"/>
+</radialGradient>
+<g class="planet" id="earth" transform="scale(.2)">
+<circle cx="0" cy="0" r="13" style="fill:url(#earthGradient)" transform="scale(5)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#earthLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="earthLegend" style="fill:white" x="0" y="0">Earth</text>
+</g>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="marsGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:orange"/>
+<stop offset="1" style="stop-color:black"/>
+</radialGradient>
+<g class="planet" id="mars" transform="scale(.2)">
+<circle cx="0" cy="0" r="7" style="fill:url(#marsGradient)" transform="scale(5)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#marsLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="marsLegend" style="fill:white" x="0" y="0">Mars</text>
+</g>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="jupiterGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset="0" style="stop-color:red"/>
+<stop offset=".8" style="stop-color:#aa0000"/>
+<stop offset="1" style="stop-color:#660000"/>
+</radialGradient>
+<g class="planet" id="jupiter" transform="scale(2)">
+<circle cx="0" cy="0" r="143" style="fill:url(#jupiterGradient)" transform="scale(.5)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#jupiterLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="jupiterLegend" style="fill:white" x="0" y="0">Jupiter</text>
+</g>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="saturnGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:yellow"/>
+<stop offset="1" style="stop-color:orange"/>
+</radialGradient>
+<radialGradient fx=".5" fy=".5" id="ray" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".3" style="stop-color:yellow"/>
+<stop offset="1" style="stop-color:Sienna"/>
+</radialGradient>
+<g class="planet" id="saturn" transform="scale(2)">
+<g transform="scale(.5)">
+<circle cx="0" cy="0" r="121" style="fill:url(#saturnGradient)"/>
+<g transform="rotate(45)">
+<path d="M-119 -21 L-120 -14 A180 20 180 1 0 120 -14 L119 -21 A240 25 180 1 1 -119 -21" style="fill:url(#ray)"/>
+<path d="M-119 -24 L-120 -22 A250 28 180 1 0 120 -22 L119 -24 A300 30 180 1 1 -119 -24" style="fill:url(#ray)"/>
+</g>
+</g>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#saturnLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="saturnLegend" style="fill:white" x="0" y="0">Saturn</text>
+</g>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="uranusGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:#00aa00"/>
+<stop offset="1" style="stop-color:green"/>
+</radialGradient>
+<g class="planet" id="uranus">
+<circle cx="0" cy="0" r="51" style="fill:url(#uranusGradient)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#uranusLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="uranusLegend" style="fill:white" x="0" y="0">Uranus</text>
+</g>
+<!-- ######################################################################### -->
+<radialGradient fx=".3" fy=".3" id="neptuneGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:CornFlowerBlue"/>
+<stop offset="1" style="stop-color:MediumBlue"/>
+</radialGradient>
+<g class="planet" id="neptune">
+<circle cx="0" cy="0" r="50" style="fill:url(#neptuneGradient)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#neptuneLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="neptuneLegend" style="fill:white" x="0" y="0">Neptune</text>
+</g>
+<!-- ######################################################################### -->
+<g class="planet" id="pluto" transform="scale(.05)">
+<circle cx="0" cy="0" r="2" style="fill:#eeaa88" transform="scale(20)"/>
+<text style="fill:black" x="1" y="1">
+<tref xlink:actuate="onLoad" xlink:href="#plutoLegend" xlink:show="other" xlink:type="simple"/>
+</text>
+<text id="plutoLegend" style="fill:white" x="0" y="0">Pluto</text>
+</g>
+<!-- ######################################################################### -->
+<!--
+        <filter id="blur" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" 
+                x="-10%" y="-25%" width="120%" height="150%" > 
+            <feGaussianBlur stdDeviation="64 48" x="-10%" y="-25%" width="120%" height="150%" /> 
+            <feColorMatrix type="matrix" values="1.1 0 0 0 0   0 1.1 0 0 0   0 0 1.1 0 0   0 0 0 1.1 0" /> 
+        </filter>
+    -->
+<radialGradient fx=".3" fy=".3" id="sunGradient" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
+<stop offset=".1" style="stop-color:white"/>
+<stop offset=".8" style="stop-color:Gold"/>
+<stop offset="1" style="stop-color:orange"/>
+</radialGradient>
+<clipPath id="clip">
+<rect height="1000" width="2780" x="-143" y="-500"/>
+</clipPath>
+<g id="sun">
+<!--
+          <circle cx="1247" cy="0" r="1460" style="filter:url(#blur); fill:#ffb200;"/>
+          <ellipse cx="1247" cy="0" rx="1386" ry="1390" style="fill:black;"/>
+    -->
+<circle cx="1247" cy="0" r="1390" style="fill:url(#sunGradient); clip-path:url(#clip)"/>
+</g>
+<!-- ######################################################################### -->
+<g id="line">
+<use transform="translate(0 0)" xlink:actuate="onLoad" xlink:href="#jupiter" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(264 0)" xlink:actuate="onLoad" xlink:href="#saturn" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(436 0)" xlink:actuate="onLoad" xlink:href="#uranus" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(537 0)" xlink:actuate="onLoad" xlink:href="#neptune" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(600 0)" xlink:actuate="onLoad" xlink:href="#earth" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(625 0)" xlink:actuate="onLoad" xlink:href="#venus" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(644 0)" xlink:actuate="onLoad" xlink:href="#mars" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(656 0)" xlink:actuate="onLoad" xlink:href="#mercury" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(663 0)" xlink:actuate="onLoad" xlink:href="#pluto" xlink:show="embed" xlink:type="simple"/>
+</g>
+</defs>
+<!-- ######################################################################### -->
+<!-- ######################################################################### -->
+<g id="body">
+<g transform="translate(50 280)scale(.14)">
+<use xlink:actuate="onLoad" xlink:href="#sun" xlink:show="embed" xlink:type="simple"/>
+<g style="fill:none; stroke:black">
+<line x1="665" x2="665" y1="-300" y2="0"/>
+<line x1="1473" x2="1473" y1="-300" y2="0"/>
+<line x1="2281" x2="2281" y1="-300" y2="0"/>
+</g>
+<use transform="translate(0 0)" xlink:actuate="onLoad" xlink:href="#line" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(808 0)" xlink:actuate="onLoad" xlink:href="#line" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(1616 0)" xlink:actuate="onLoad" xlink:href="#line" xlink:show="embed" xlink:type="simple"/>
+<g transform="translate(2402 0)">
+<use transform="translate(0 0)" xlink:actuate="onLoad" xlink:href="#saturn" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(134 0)" xlink:actuate="onLoad" xlink:href="#earth" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(160 0)" xlink:actuate="onLoad" xlink:href="#earth" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(186 0)" xlink:actuate="onLoad" xlink:href="#earth" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(212 0)" xlink:actuate="onLoad" xlink:href="#earth" xlink:show="embed" xlink:type="simple"/>
+<use transform="translate(230 0)" xlink:actuate="onLoad" xlink:href="#mercury" xlink:show="embed" xlink:type="simple"/>
+</g>
+</g>
+<g id="legend" style="font-family:Helvetica">
+<text style="font-size:24; text-anchor:middle; fill:white" x="50%" y="50">Size of the Sun</text>
+<g style="font-size:12; text-anchor:middle; fill:white">
+<text x="50%" y="100">You could line up all of the planets along the</text>
+<text x="50%" y="114">Sun's 1,392,000 kilometer equator three times and still have room left</text>
+<text x="50%" y="128">for 1 Saturn, 4 Earths, and a Mercury.</text>
+</g>
+<g style="font-size:12; text-anchor:end; fill:black">
+<text x="144" y="250">One time...</text>
+<text x="257" y="250">Two times...</text>
+<text x="370" y="250">3 times...</text>
+</g>
+</g>
+</g>
+</svg>

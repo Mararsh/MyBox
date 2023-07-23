@@ -40,7 +40,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.StringValues;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -114,7 +114,7 @@ public class GameMineController extends BaseWebViewController {
             historiesNumber = UserConfig.getInt(baseName + "HistoriesNumber", 50);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -148,7 +148,7 @@ public class GameMineController extends BaseWebViewController {
             createAction();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -161,7 +161,7 @@ public class GameMineController extends BaseWebViewController {
             NodeStyleTools.setTooltip(createButton, message("NewGame") + "\nn / Ctrl+n");
             NodeStyleTools.setTooltip(helpMeButton, message("HelpMe") + "\nh / Ctrl+h");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -296,7 +296,7 @@ public class GameMineController extends BaseWebViewController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -413,7 +413,7 @@ public class GameMineController extends BaseWebViewController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private String html;
 
@@ -455,7 +455,7 @@ public class GameMineController extends BaseWebViewController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 TableStringValues.clear("GameMineHistory");
@@ -653,7 +653,7 @@ public class GameMineController extends BaseWebViewController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -737,7 +737,7 @@ public class GameMineController extends BaseWebViewController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 TableStringValues.max("GameMineHistory", historiesNumber);

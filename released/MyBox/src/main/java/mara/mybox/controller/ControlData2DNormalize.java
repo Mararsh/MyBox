@@ -96,7 +96,7 @@ public class ControlData2DNormalize extends BaseController {
             rangePane.visibleProperty().bind(minmaxRadio.selectedProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -142,7 +142,7 @@ public class ControlData2DNormalize extends BaseController {
             }
             return null;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

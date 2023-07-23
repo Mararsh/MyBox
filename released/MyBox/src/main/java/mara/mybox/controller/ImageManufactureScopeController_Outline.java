@@ -24,7 +24,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.ListImageCell;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
@@ -50,12 +50,12 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                 task.cancel();
             }
             outlinesList.getItems().clear();
-            task = new SingletonTask<Void>(this) {
+            task = new SingletonCurrentTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
                     for (ImageItem item : ImageItem.predefined()) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return true;
                         }
                         Image image = item.readImage();
@@ -89,7 +89,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -104,7 +104,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             }
             loadOutlineSource(file);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +172,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private BufferedImage bufferedImage;
 
@@ -182,7 +182,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     bufferedImage = ImageFileReaders.readImage(file);
                     return bufferedImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
@@ -210,8 +210,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         }
         outlineSource = bufferedImage;
         maskRectangleData = rect.cloneValues();
-        setMaskRectangleLineVisible(true);
-        drawMaskRectangleLineAsData();
+        showMaskRectangle();
 
         makeOutline();
     }
@@ -232,14 +231,14 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private BufferedImage[] outline;
 
             @Override
             protected boolean handle() {
                 try {
                     outline = AlphaTools.outline(outlineSource,
-                            maskRectangleData, (int) getImageWidth(), (int) getImageHeight(),
+                            maskRectangleData, (int) imageWidth(), (int) imageHeight(),
                             scopeOutlineKeepRatioCheck.isSelected(),
                             ColorConvertTools.converColor(Color.WHITE), areaExcludedCheck.isSelected());
                     if (task == null || isCancelled()) {
@@ -247,7 +246,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     }
                     return outline != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
@@ -261,7 +260,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                         maskRectangleData.getSmallX(), maskRectangleData.getSmallY(),
                         maskRectangleData.getSmallX() + outline[0].getWidth() - 1,
                         maskRectangleData.getSmallY() + outline[0].getHeight() - 1);
-                drawMaskRectangleLineAsData();
+                drawMaskRectangle();
                 scope.setOutlineSource(outlineSource);
                 scope.setOutline(outline[1]);
                 scope.setRectangle(maskRectangleData.cloneValues());
@@ -279,7 +278,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image outlineImage;
 
             @Override
@@ -288,7 +287,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
                     return outlineImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
@@ -296,13 +295,14 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             @Override
             protected void whenSucceeded() {
                 scopeView.setImage(outlineImage);
-                double radio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+                double xradio = viewXRatio();
+                double yradio = viewYRatio();
                 double offsetX = maskRectangleData.getSmallX() >= 0 ? 0 : maskRectangleData.getSmallX();
                 double offsetY = maskRectangleData.getSmallY() >= 0 ? 0 : maskRectangleData.getSmallY();
-                scopeView.setLayoutX(imageView.getLayoutX() + offsetX * radio);
-                scopeView.setLayoutY(imageView.getLayoutY() + offsetY * radio);
-                scopeView.setFitWidth(outlineImage.getWidth() * radio);
-                scopeView.setFitHeight(outlineImage.getHeight() * radio);
+                scopeView.setLayoutX(imageView.getLayoutX() + offsetX * xradio);
+                scopeView.setLayoutY(imageView.getLayoutY() + offsetY * yradio);
+                scopeView.setFitWidth(outlineImage.getWidth() * xradio);
+                scopeView.setFitHeight(outlineImage.getHeight() * yradio);
             }
         };
         start(task);

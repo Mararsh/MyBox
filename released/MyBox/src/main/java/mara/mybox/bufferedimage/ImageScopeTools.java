@@ -24,8 +24,38 @@ import mara.mybox.value.AppVariables;
  */
 public class ImageScopeTools {
 
-    public static ImageScope.ScopeType type(String type) {
-        return ImageScope.ScopeType.valueOf(type);
+    public static ImageScope.ScopeType scopeType(String type) {
+        if (type == null) {
+            return ImageScope.ScopeType.Invalid;
+        }
+        if ("All".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.All;
+        }
+        if ("Matting".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Matting;
+        }
+        if ("Rectangle".equalsIgnoreCase(type) || "RectangleColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Rectangle;
+        }
+        if ("Circle".equalsIgnoreCase(type) || "CircleColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Circle;
+        }
+        if ("Ellipse".equalsIgnoreCase(type) || "EllipseColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Ellipse;
+        }
+        if ("Polygon".equalsIgnoreCase(type) || "PolygonColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Polygon;
+        }
+        if ("Color".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Color;
+        }
+        if ("Outline".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Outline;
+        }
+        if ("Operate".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Operate;
+        }
+        return ImageScope.ScopeType.Invalid;
     }
 
     public static void cloneValues(ImageScope targetScope, ImageScope sourceScope) {
@@ -55,7 +85,7 @@ public class ImageScopeTools {
             targetScope.setOutline(sourceScope.getOutline());
             targetScope.setEightNeighbor(sourceScope.isEightNeighbor());
         } catch (Exception e) {
-            //            MyBoxLog.debug(e.toString());
+            //            MyBoxLog.debug(e);
         }
     }
 
@@ -84,6 +114,9 @@ public class ImageScopeTools {
     }
 
     public static boolean isColorMatchSquare(List<Color> colors, boolean colorExcluded, int colorDistanceSqure, Color color) {
+        if (colors == null || colors.isEmpty()) {
+            return true;
+        }
         if (colorExcluded) {
             for (Color oColor : colors) {
                 if (ColorMatchTools.isColorMatchSquare(color, oColor, colorDistanceSqure)) {
@@ -102,6 +135,9 @@ public class ImageScopeTools {
     }
 
     public static boolean isRedMatch(List<Color> colors, boolean colorExcluded, int colorDistance, Color color) {
+        if (colors == null || colors.isEmpty()) {
+            return true;
+        }
         if (colorExcluded) {
             for (Color oColor : colors) {
                 if (ColorMatchTools.isRedMatch(color, oColor, colorDistance)) {
@@ -120,6 +156,9 @@ public class ImageScopeTools {
     }
 
     public static boolean isGreenMatch(List<Color> colors, boolean colorExcluded, int colorDistance, Color color) {
+        if (colors == null || colors.isEmpty()) {
+            return true;
+        }
         if (colorExcluded) {
             for (Color oColor : colors) {
                 if (ColorMatchTools.isGreenMatch(color, oColor, colorDistance)) {
@@ -138,6 +177,9 @@ public class ImageScopeTools {
     }
 
     public static boolean isBlueMatch(List<Color> colors, boolean colorExcluded, int colorDistance, Color color) {
+        if (colors == null || colors.isEmpty()) {
+            return true;
+        }
         if (colorExcluded) {
             for (Color oColor : colors) {
                 if (ColorMatchTools.isBlueMatch(color, oColor, colorDistance)) {
@@ -156,6 +198,9 @@ public class ImageScopeTools {
     }
 
     public static boolean isHueMatch(List<Color> colors, boolean colorExcluded, float hsbDistance, Color color) {
+        if (colors == null || colors.isEmpty()) {
+            return true;
+        }
         if (colorExcluded) {
             for (Color oColor : colors) {
                 if (ColorMatchTools.isHueMatch(color, oColor, hsbDistance)) {
@@ -174,6 +219,9 @@ public class ImageScopeTools {
     }
 
     public static boolean isSaturationMatch(List<Color> colors, boolean colorExcluded, float hsbDistance, Color color) {
+        if (colors == null || colors.isEmpty()) {
+            return true;
+        }
         if (colorExcluded) {
             for (Color oColor : colors) {
                 if (ColorMatchTools.isSaturationMatch(color, oColor, hsbDistance)) {
@@ -192,6 +240,9 @@ public class ImageScopeTools {
     }
 
     public static boolean isBrightnessMatch(List<Color> colors, boolean colorExcluded, float hsbDistance, Color color) {
+        if (colors == null || colors.isEmpty()) {
+            return true;
+        }
         if (colorExcluded) {
             for (Color oColor : colors) {
                 if (ColorMatchTools.isBrightnessMatch(color, oColor, hsbDistance)) {
@@ -200,6 +251,7 @@ public class ImageScopeTools {
             }
             return true;
         } else {
+
             for (Color oColor : colors) {
                 if (ColorMatchTools.isBrightnessMatch(color, oColor, hsbDistance)) {
                     return true;
@@ -235,7 +287,7 @@ public class ImageScopeTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -264,7 +316,7 @@ public class ImageScopeTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -293,7 +345,7 @@ public class ImageScopeTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -353,7 +405,7 @@ public class ImageScopeTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }

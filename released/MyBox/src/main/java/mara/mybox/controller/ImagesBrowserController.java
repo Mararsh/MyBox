@@ -24,33 +24,33 @@ import mara.mybox.value.UserConfig;
  * ImagesBrowserController_Load < ImageViewerController
  */
 public class ImagesBrowserController extends ImagesBrowserController_Pane {
-
+    
     public ImagesBrowserController() {
         baseTitle = message("ImagesBrowser");
         TipsLabelKey = "ImagesBrowserTips";
     }
-
+    
     @Override
     public void initValues() {
         try {
             super.initValues();
-
+            
             colsNum = -1;
             displayMode = DisplayMode.ImagesGrid;
             currentIndex = -1;
             thumbWidth = UserConfig.getInt(baseName + "ThumbnailWidth", 100);
             thumbWidth = thumbWidth > 0 ? thumbWidth : 100;
-
+            
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             List<String> cvalues = Arrays.asList("3", "4", "6",
                     message("ThumbnailsList"), message("FilesList"),
                     "2", "5", "7", "8", "9", "10", "16", "25", "20", "12", "15");
@@ -95,7 +95,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                     }
                 }
             });
-
+            
             filesBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue,
@@ -108,7 +108,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                         if (filesNumber > 0) {
                             ValidationTools.setEditorNormal(filesBox);
                             makeImagesNevigator(true);
-
+                            
                         } else {
                             ValidationTools.setEditorBadStyle(filesBox);
                         }
@@ -117,7 +117,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                     }
                 }
             });
-
+            
             thumbWidthSelector.getItems().addAll(Arrays.asList("100", "150", "50", "200", "300"));
             thumbWidthSelector.setValue(thumbWidth + "");
             thumbWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -141,7 +141,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                     }
                 }
             });
-
+            
             saveRotationCheck.setSelected(UserConfig.getBoolean(baseName + "SaveRotation", true));
             saveRotationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -149,27 +149,29 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                     UserConfig.setBoolean(baseName + "SaveRotation", saveRotationCheck.isSelected());
                 }
             });
-
+            
+            filesController.setParameter(this);
+            
             viewPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
             browsePane.disableProperty().bind(Bindings.isEmpty(imageFileList));
-            mainBox.disableProperty().bind(Bindings.isEmpty(imageFileList));
+            buttonsPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
             rightPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
-
+            
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
-
+    
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(selectFileButton, new Tooltip(message("SelectMultipleFilesBrowse")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
-
+    
     @Override
     public ImagesBrowserController refreshInterfaceAndFile() {
         super.refreshInterface();
@@ -188,9 +190,9 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
-
+    
 }

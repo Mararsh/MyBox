@@ -44,7 +44,7 @@ public class ImageEditHistory extends BaseData {
             his.setIehid(-1);
             return his;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -196,7 +196,7 @@ public class ImageEditHistory extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

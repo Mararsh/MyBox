@@ -517,7 +517,7 @@ public class HtmlWriteTools {
                         replaced += "\"" + linkFile.getAbsolutePath() + "\"";
                     }
                 } catch (Exception e) {
-                    //                    MyBoxLog.debug(e.toString());
+                    //                    MyBoxLog.debug(e);
                 }
             }
             replaced += unchecked;

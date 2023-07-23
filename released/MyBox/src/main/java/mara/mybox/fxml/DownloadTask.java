@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.fxml;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -10,8 +10,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.Map;
+import mara.mybox.data.DownloadItem;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.BaseTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlReadTools;

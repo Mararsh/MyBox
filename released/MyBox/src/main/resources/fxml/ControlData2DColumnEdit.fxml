@@ -129,7 +129,7 @@ License:    Apache License Version 2.0
         <FlowPane hgap="2.0" vgap="2.0">
             <children>
                 <Label text="%Color" />
-                <fx:include fx:id="color" source="ColorSet.fxml" />
+                <fx:include fx:id="color" source="ControlColorSet.fxml" />
                 <Label text="%Width">
                     <padding>
                         <Insets left="10.0" />

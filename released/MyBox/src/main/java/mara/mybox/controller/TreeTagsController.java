@@ -13,9 +13,9 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.InfoNodeTag;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTreeNode;
@@ -133,7 +133,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             checkButtons();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -153,7 +153,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             pageSize = Integer.MAX_VALUE;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -278,7 +278,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             isSettingValues = false;
             saveAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

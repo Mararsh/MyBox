@@ -20,7 +20,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -62,7 +61,51 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             NodeStyleTools.setTooltip(passwordInput, new Tooltip(Languages.message("UserPassword")));
             NodeStyleTools.setTooltip(toInput, new Tooltip(Languages.message("ToPageComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            fromInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    try {
+                        Integer.valueOf(newValue);
+                        fromInput.setStyle(null);
+                    } catch (Exception e) {
+                        fromInput.setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+            toInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    try {
+                        if (newValue == null || newValue.trim().isEmpty()) {
+                            toInput.setStyle(null);
+                            return;
+                        }
+                        Integer.valueOf(newValue);
+                        toInput.setStyle(null);
+                    } catch (Exception e) {
+                        toInput.setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+            setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(toInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            );
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -137,51 +180,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             toColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initMore() {
-        try {
-            super.initMore();
-
-            fromInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        Integer.parseInt(newValue);
-                        fromInput.setStyle(null);
-                    } catch (Exception e) {
-                        fromInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            toInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        if (newValue == null || newValue.trim().isEmpty()) {
-                            toInput.setStyle(null);
-                            return;
-                        }
-                        Integer.parseInt(newValue);
-                        toInput.setStyle(null);
-                    } catch (Exception e) {
-                        toInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(UserConfig.badStyle())
-                    .or(toInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -250,11 +249,6 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
         }
         tableView.refresh();
 
-    }
-
-    @Override
-    protected boolean isValidFile(File file) {
-        return PdfTools.isPDF(file);
     }
 
 }

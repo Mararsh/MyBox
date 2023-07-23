@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
@@ -31,7 +32,7 @@ import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantiz
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FloatTools;
@@ -58,6 +59,9 @@ public class ImageAnalyseDominantController extends BaseController {
     @FXML
     protected ComboBox<String> colorsNumberSelectors, regionSizeSelector, weightSelector,
             kmeansLoopSelector;
+
+    @FXML
+    protected Tab colorTab, pieTab;
     @FXML
     protected ControlWebView colorsController;
     @FXML
@@ -67,6 +71,10 @@ public class ImageAnalyseDominantController extends BaseController {
     @FXML
     protected Label actualLoopLabel;
 
+    public ImageAnalyseDominantController() {
+        TipsLabelKey = "ImageQuantizationComments";
+    }
+
     @Override
     public void setControlsStyle() {
         try {
@@ -74,7 +82,7 @@ public class ImageAnalyseDominantController extends BaseController {
             NodeStyleTools.setTooltip(paletteButton, message("AddInColorPalette"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -191,7 +199,7 @@ public class ImageAnalyseDominantController extends BaseController {
             kmeansLoopSelector.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -212,7 +220,7 @@ public class ImageAnalyseDominantController extends BaseController {
             task.cancel();
         }
         clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private ImageQuantization quantization;
             private String html;
 
@@ -221,7 +229,7 @@ public class ImageAnalyseDominantController extends BaseController {
                 try {
                     BufferedImage image = inImage;
                     if (image == null) {
-                        image = analyseController.imageToHandle();
+                        image = analyseController.bufferedImageToHandle();
                     }
                     if (image == null) {
                         return false;
@@ -254,7 +262,7 @@ public class ImageAnalyseDominantController extends BaseController {
                     html = StringTable.tableHtml(table);
                     return true;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
@@ -294,9 +302,8 @@ public class ImageAnalyseDominantController extends BaseController {
             }
             dominantPie.setData(pieChartData);
             for (int i = 0; i < colors.size(); ++i) {
-                String colorString = FxColorTools.color2rgb(colors.get(i));
                 PieChart.Data data = pieChartData.get(i);
-                data.getNode().setStyle("-fx-pie-color: " + colorString + ";");
+                data.getNode().setStyle("-fx-pie-color: " + FxColorTools.color2css(colors.get(i)) + ";");
             }
             dominantPie.setLegendSide(Side.TOP);
             dominantPie.setLegendVisible(true);

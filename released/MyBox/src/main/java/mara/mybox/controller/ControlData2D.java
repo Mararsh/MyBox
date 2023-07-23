@@ -35,7 +35,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -93,7 +93,7 @@ public class ControlData2D extends BaseController {
             csvController = editController.csvController;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class ControlData2D extends BaseController {
             super.setControlsStyle();
             StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -111,7 +111,7 @@ public class ControlData2D extends BaseController {
         try {
             this.manageController = topController;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -136,7 +136,7 @@ public class ControlData2D extends BaseController {
             loadNull();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -178,7 +178,7 @@ public class ControlData2D extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -209,7 +209,7 @@ public class ControlData2D extends BaseController {
             data2D.initFile(file);
             readDefinition();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -450,7 +450,7 @@ public class ControlData2D extends BaseController {
                 targetData.setFile(file);
             }
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -458,9 +458,9 @@ public class ControlData2D extends BaseController {
                     if (backupController != null && backupController.needBackup() && !data2D.isTmpData()) {
                         backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.startTask(task, null);
+                    data2D.startTask(this, null);
                     data2D.savePageData(targetData);
-                    data2D.startTask(task, null);
+                    data2D.startTask(this, null);
                     data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     data2D.cloneAll(targetData);
@@ -494,14 +494,14 @@ public class ControlData2D extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, null);
+                    data2D.startTask(this, null);
                     data2D.savePageData(targetData);
-                    data2D.startTask(task, null);
+                    data2D.startTask(this, null);
                     data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     return true;
@@ -536,7 +536,7 @@ public class ControlData2D extends BaseController {
         start(task);
     }
 
-    public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
+    public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         tableController.renameAction(parent, index, targetData);
     }
 
@@ -554,7 +554,7 @@ public class ControlData2D extends BaseController {
             }
             Data2DLoadContentInSystemClipboardController.open(tableController, text);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -566,7 +566,7 @@ public class ControlData2D extends BaseController {
             setData(Data2D.create(type));
             tableController.loadTmpData(null, data2D.tmpColumns(3), data2D.tmpData(3, 3));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -578,7 +578,7 @@ public class ControlData2D extends BaseController {
             setData(Data2D.create(type));
             tableController.loadTmpData(name, cols, data);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -594,7 +594,7 @@ public class ControlData2D extends BaseController {
             setData(Data2D.create(type));
             tableController.loadCSVData(csvData);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -689,8 +689,7 @@ public class ControlData2D extends BaseController {
             focusMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AppVariables.commitModificationWhenDataCellLoseFocus = focusMenu.isSelected();
-                    UserConfig.setBoolean("CommitModificationWhenDataCellLoseFocus", focusMenu.isSelected());
+                    AppVariables.lostFocusCommitData(focusMenu.isSelected());
                 }
             });
             items.add(focusMenu);
@@ -721,7 +720,7 @@ public class ControlData2D extends BaseController {
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

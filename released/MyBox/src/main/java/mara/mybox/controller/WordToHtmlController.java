@@ -18,12 +18,12 @@ public class WordToHtmlController extends BaseBatchFileController {
 
     public WordToHtmlController() {
         baseTitle = message("WordToHtml");
+        targetFileSuffix = "html";
     }
 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
-        targetFileSuffix = "htm";
         charset = Charset.defaultCharset();
     }
 

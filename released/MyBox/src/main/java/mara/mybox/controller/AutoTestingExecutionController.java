@@ -31,7 +31,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-1-6
  * @License Apache License Version 2.0
  */
-public class AutoTestingExecutionController extends BaseTableViewController<TestCase> {
+public class AutoTestingExecutionController extends BaseTablePagesController<TestCase> {
 
     protected AutoTestingCasesController casesController;
     protected int currentIndex, interval = 2000;
@@ -101,7 +101,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -128,7 +128,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             };
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -145,7 +145,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             startAction();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -203,7 +203,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             tableView.scrollTo(currentCase);
             runCurrentCase();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -240,7 +240,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                 return;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             if (currentCase != null) {
                 currentCase.setStatus(Status.Fail);
                 tableData.set(currentIndex, currentCase);
@@ -274,7 +274,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             controller.setParameters(parent, testCases);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

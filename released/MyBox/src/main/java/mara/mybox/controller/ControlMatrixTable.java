@@ -13,7 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
@@ -51,7 +51,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             loadTableData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -67,7 +67,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             modifyColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -104,7 +104,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             manageController.dataAController.loadDef(selected);
             manageController.tabPane.getSelectionModel().select(manageController.dataATab);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -118,7 +118,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             manageController.dataBController.loadDef(selected);
             manageController.tabPane.getSelectionModel().select(manageController.dataBTab);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -142,7 +142,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Data2DDefinition def;
 
             @Override
@@ -213,7 +213,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

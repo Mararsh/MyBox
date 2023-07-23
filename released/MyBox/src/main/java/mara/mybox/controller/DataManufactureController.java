@@ -29,7 +29,7 @@ public class DataManufactureController extends BaseData2DController {
         try {
             setDataType(Data2D.Type.CSV);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -43,7 +43,7 @@ public class DataManufactureController extends BaseData2DController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

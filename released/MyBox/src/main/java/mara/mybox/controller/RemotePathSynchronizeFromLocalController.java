@@ -30,7 +30,7 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
             remoteController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

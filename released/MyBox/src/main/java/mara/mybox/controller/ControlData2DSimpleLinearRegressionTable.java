@@ -29,7 +29,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
             super.initValues();
             data2D = Data2D.create(Data2DDefinition.Type.Texts);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -46,7 +46,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
 
             return cols;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -59,7 +59,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
             super.makeColumns();
             sortColumn = tableView.getColumns().get(3);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -69,7 +69,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
             makeColumns();
             checkButtons();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -152,7 +152,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
                 controller.okAction();
                 controller.requestMouse();
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
         }
     }

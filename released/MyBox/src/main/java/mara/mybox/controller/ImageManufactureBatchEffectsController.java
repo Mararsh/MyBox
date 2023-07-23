@@ -38,7 +38,7 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
             optionsController.quanDataCheck.setVisible(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -123,7 +123,7 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

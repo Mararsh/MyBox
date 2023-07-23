@@ -2,13 +2,12 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -39,7 +38,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             imageLoaded = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -53,12 +52,9 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             initBackupsTab();
             initEditBar();
 
-            mainBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-
             operationsController.setParameters(this);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -69,7 +65,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             NodeStyleTools.setTooltip(popButton, message("PopTabImage"));
             NodeStyleTools.setTooltip(viewImageButton, message("PopManufacturedImage"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -78,7 +74,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -86,7 +82,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         try {
             hisController.setParameters(this);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -118,7 +114,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -131,7 +127,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             task.cancel();
         }
         File tmpFile = FileTmpTools.generateFile("png");
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -168,7 +164,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

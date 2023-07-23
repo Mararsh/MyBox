@@ -30,7 +30,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PptViewController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PptViewController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -47,25 +47,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox spacing="2.0">
                                                     <children>
-                                                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconSelectFile.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
                                                         <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" />
-                                          <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconOpenPath.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -76,8 +58,8 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="32.0" layoutY="74.0" vgap="2.0">
                                                             <children>
-                                                                <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                                                 <Label text="dpi" />
+                                                                <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                                             </children>
                                                         </FlowPane>
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="32.0" layoutY="132.0" vgap="2.0">
@@ -159,13 +141,13 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="saveAsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SaveAs" VBox.vgrow="ALWAYS">
+                                        <TitledPane fx:id="saveAsPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SaveAs">
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                             <children>
-                                                                <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" />
+                                                                <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" VBox.vgrow="ALWAYS" />
                                                                 <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                                     <children>
                                                                         <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" selected="true" text="%OpenAfterSaveAs">
@@ -194,6 +176,15 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </TitledPane>
+                              <TitledPane fx:id="browsePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <fx:include fx:id="browse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBrowse.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                     </children>
                                 </VBox>
                             </content>
@@ -202,14 +193,36 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="2.0">
                                     <children>
-                                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                            </image>
-                                        </ImageView>
-                                        <HBox fx:id="operationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
+                                            <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
+                                                <graphic>
+                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                        <image>
+                                                            <Image url="@../buttons/Red/iconSelectFile.png" />
+                                                        </image>
+                                                    </ImageView>
+                                                </graphic>
+                                            </Button>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
                                             <children>
                                                 <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " HBox.hgrow="ALWAYS" fx:id="xyLabel" />
+                                    <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </CheckBox>
+                                    <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </CheckBox>
                                                 <CheckBox fx:id="thumbCheck" mnemonicParsing="false">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -221,7 +234,7 @@ License:    Apache License Version 2.0
                                                 </CheckBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
-                                                        <Label text="%Page" />
+                                                        <Label minHeight="-Infinity" text="%Page" wrapText="true" />
                                                         <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
                                                         <Label fx:id="pageLabel" />
                                                         <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
@@ -278,11 +291,6 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                                            </image>
-                                                        </ImageView>
                                                     </children>
                                                 </HBox>
                                             </children>
@@ -384,7 +392,7 @@ License:    Apache License Version 2.0
                                                             <content>
                                                                 <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
                                                                     <children>
-                                                                        <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
+                                                                        <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0"  stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="NONE" />
                                                                             </cursor>
@@ -393,7 +401,7 @@ License:    Apache License Version 2.0
                                                                         </Text>
                                                                         <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
                                                                         </ImageView>
-                                                                        <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                                                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>

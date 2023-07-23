@@ -18,7 +18,7 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -54,7 +54,7 @@ public class ColorPaletteCustomizeController extends BaseChildController {
             NodeStyleTools.setTooltip(saturationToInput, "1~100");
             NodeStyleTools.setTooltip(saturationStepInput, "1~100");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -125,7 +125,10 @@ public class ColorPaletteCustomizeController extends BaseChildController {
             if (!PopTools.askSure(baseTitle, message("Total") + ": " + number)) {
                 return;
             }
-            task = new SingletonTask<Void>(this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonCurrentTask<Void>(this) {
                 private ColorPaletteName newPalatte;
                 private int count = 0;
 

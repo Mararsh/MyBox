@@ -24,7 +24,8 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 
@@ -41,7 +42,7 @@ public class ControlColorsPane extends BaseController {
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
     protected double rectSize;
-    protected SimpleBooleanProperty clickNotify;
+    protected SimpleBooleanProperty clickNotify, loadedNotify;
     protected boolean canDragDrop;
 
     @FXML
@@ -58,11 +59,12 @@ public class ControlColorsPane extends BaseController {
 
             tableColorPalette = new TableColorPalette();
             clickNotify = new SimpleBooleanProperty(false);
+            loadedNotify = new SimpleBooleanProperty(false);
             shadowEffect = new DropShadow();
             rectSize = AppVariables.iconSize * 0.8;
             canDragDrop = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -85,7 +87,7 @@ public class ControlColorsPane extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             List<ColorData> colors;
 
             @Override
@@ -124,8 +126,9 @@ public class ControlColorsPane extends BaseController {
         }
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
             List<Rectangle> rects = new ArrayList<>();
 
             @Override
@@ -148,6 +151,9 @@ public class ControlColorsPane extends BaseController {
                                 return;
                             }
                             colorsPane.getChildren().addAll(display);
+                            if (scrollEnd) {
+                                scrollPane.setVvalue(1.0);
+                            }
                         });
                     }
                 }
@@ -165,6 +171,11 @@ public class ControlColorsPane extends BaseController {
                 if (scrollEnd) {
                     scrollPane.setVvalue(1.0);
                 }
+            }
+
+            @Override
+            protected void finalAction() {
+                loadedNotify.set(!loadedNotify.get());
             }
 
         };
@@ -209,7 +220,7 @@ public class ControlColorsPane extends BaseController {
                             dragboard.setContent(content);
                             event.consume();
                         } catch (Exception e) {
-                            MyBoxLog.debug(e.toString());
+                            MyBoxLog.debug(e);
                         }
                     }
                 });
@@ -221,7 +232,7 @@ public class ControlColorsPane extends BaseController {
                             event.acceptTransferModes(TransferMode.ANY);
                             event.consume();
                         } catch (Exception e) {
-                            MyBoxLog.debug(e.toString());
+                            MyBoxLog.debug(e);
                         }
                     }
                 });
@@ -258,7 +269,7 @@ public class ControlColorsPane extends BaseController {
             rect.setStroke(Color.RED);
             clickedRect = rect;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         isSettingValues = false;
         clickNotify.set(!clickNotify.get());
@@ -302,7 +313,7 @@ public class ControlColorsPane extends BaseController {
             return;
         }
         Color sourceColor = Color.web(event.getDragboard().getString());
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<ColorData> colors = null;
 

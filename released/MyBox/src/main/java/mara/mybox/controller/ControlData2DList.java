@@ -24,7 +24,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.fxml.style.StyleTools;
@@ -49,7 +49,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     @FXML
     protected TableColumn<Data2DDefinition, Date> modifyColumn;
     @FXML
-    protected Button openButton, clearDataButton, deleteDataButton, renameDataButton;
+    protected Button openButton, renameItemButton;
     @FXML
     protected FlowPane buttonsPane;
 
@@ -83,7 +83,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             modifyColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -96,14 +96,14 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             idColumnName = tableDefinition.getIdColumnName();
 
             if (manageController instanceof Data2DSpliceController) {
-                buttonsPane.getChildren().removeAll(renameDataButton);
+                buttonsPane.getChildren().removeAll(renameItemButton);
                 queryConditions = " data_type != " + Data2D.type(Data2DDefinition.Type.InternalTable);
 
             } else if (manageController instanceof Data2DManageController) {
                 queryConditions = " data_type != " + Data2D.type(Data2DDefinition.Type.InternalTable);
 
             } else if (manageController instanceof MyBoxTablesController) {
-                buttonsPane.getChildren().removeAll(openButton, queryButton, clearDataButton, deleteDataButton, renameDataButton);
+                buttonsPane.getChildren().removeAll(openButton, queryButton, clearItemsButton, deleteItemsButton, renameItemButton);
                 queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.InternalTable);
 
             } else if (manageController instanceof DataInMyBoxClipboardController) {
@@ -127,13 +127,13 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             loadList();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     public void loadList() {
         if (manageController instanceof MyBoxTablesController) {
-            task = new SingletonTask<Void>(this) {
+            task = new SingletonCurrentTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -159,7 +159,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             start(task);
 
         } else if (manageController instanceof DataTablesController) {
-            task = new SingletonTask<Void>(this) {
+            task = new SingletonCurrentTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -225,22 +225,22 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                 items.add(menu);
             }
 
-            if (buttonsPane.getChildren().contains(renameDataButton)) {
+            if (buttonsPane.getChildren().contains(renameItemButton)) {
                 menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     renameAction();
                 });
-                menu.setDisable(renameDataButton.isDisable());
+                menu.setDisable(renameItemButton.isDisable());
                 items.add(menu);
 
             }
 
-            if (buttonsPane.getChildren().contains(deleteDataButton)) {
+            if (buttonsPane.getChildren().contains(deleteItemsButton)) {
                 menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteAction();
                 });
-                menu.setDisable(deleteDataButton.isDisable());
+                menu.setDisable(deleteItemsButton.isDisable());
                 items.add(menu);
             }
 
@@ -250,7 +250,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -270,16 +270,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isNoneSelected();
-        if (clearDataButton != null) {
-            clearDataButton.setDisable(isEmpty);
-        }
-        if (deleteDataButton != null) {
-            deleteDataButton.setDisable(none);
-        }
-        if (renameDataButton != null) {
-            renameDataButton.setDisable(none);
+        if (renameItemButton != null) {
+            renameItemButton.setDisable(isNoneSelected());
         }
     }
 
@@ -383,7 +375,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         try {
             load(selectedItem());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -395,7 +387,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             }
             manageController.loadDef(source);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -465,7 +457,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

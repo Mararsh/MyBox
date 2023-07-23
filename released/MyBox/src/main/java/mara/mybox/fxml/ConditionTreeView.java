@@ -61,7 +61,7 @@ public class ConditionTreeView extends TreeView {
             }
             checkSelection(getRoot());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -98,7 +98,7 @@ public class ConditionTreeView extends TreeView {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -128,7 +128,7 @@ public class ConditionTreeView extends TreeView {
                 setSelection(child);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -173,7 +173,7 @@ public class ConditionTreeView extends TreeView {
             }
             checkExpanded(getRoot());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -191,7 +191,7 @@ public class ConditionTreeView extends TreeView {
                 checkExpanded(child);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -207,7 +207,7 @@ public class ConditionTreeView extends TreeView {
             }
             expandNode(getRoot());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -221,7 +221,7 @@ public class ConditionTreeView extends TreeView {
                 expandNode(child);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -232,7 +232,7 @@ public class ConditionTreeView extends TreeView {
             }
             expandNone(getRoot());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -246,7 +246,7 @@ public class ConditionTreeView extends TreeView {
                 expandNode(child);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

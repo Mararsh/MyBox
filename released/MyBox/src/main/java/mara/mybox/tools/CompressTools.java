@@ -411,7 +411,7 @@ public class CompressTools {
                     file.setFileType(entry.isDirectory() ? FileType.Directory : FileType.File);
                     entries.add(file);
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
         } catch (Exception e) {

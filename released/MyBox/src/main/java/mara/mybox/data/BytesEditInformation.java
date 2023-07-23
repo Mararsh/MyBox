@@ -71,7 +71,7 @@ public class BytesEditInformation extends FileEditInformation {
             totalNumberRead = true;
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -127,7 +127,7 @@ public class BytesEditInformation extends FileEditInformation {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
         if (bufHex == null) {
@@ -194,7 +194,7 @@ public class BytesEditInformation extends FileEditInformation {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
         if (pageHex == null) {
@@ -261,7 +261,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             return targetFile;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
 
@@ -279,7 +279,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -334,7 +334,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

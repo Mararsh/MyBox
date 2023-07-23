@@ -13,7 +13,7 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -31,7 +31,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     @FXML
     protected RadioButton includeRadio, excludeRadio;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected CheckBox clipboardCheck, clipMarginsCheck, imageMarginsCheck;
 
@@ -69,19 +69,15 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
             clipMarginsCheck.disableProperty().bind(clipboardCheck.selectedProperty().not());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.scopeTab();
-        if (scopeController.scopeWhole()
-                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
-            scopeController.scopeRectangleRadio.setSelected(true);
-        }
+        editor.showRightPane();
+        editor.resetImagePane();
+        showScope(true);
     }
 
     @FXML
@@ -95,7 +91,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage, cuttedClip;
 
@@ -132,11 +128,11 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
+                editor.popSuccessful();
                 if (excludeRadio.isSelected() && imageMarginsCheck.isSelected()) {
                     scopeController.scopeAllRadio.setSelected(true);
                 }
-                imageController.updateImage(ImageOperation.Crop, newImage, cost);
+                editor.updateImage(ImageOperation.Crop, newImage, cost);
                 if (cuttedClip != null) {
                     if (operationsController.clipboardController != null) {
                         operationsController.clipboardController.clipsController.refreshAction();

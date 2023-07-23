@@ -20,8 +20,7 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.value.UserConfig;
+import mara.mybox.fxml.SingletonCurrentTask;
 
 /**
  * @Author Mara
@@ -37,23 +36,23 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected BufferedImage outlineSource;
 
     @FXML
-    protected ImageView scopeView, scopeTipsView;
+    protected ImageView scopeView;
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
-    protected Tab areaTab, pointsTab, colorsTab, matchTab, pixTab, optionsTab, saveTab;
+    protected Tab areaTab, colorsTab, matchTab, pixTab, optionsTab, saveTab;
     @FXML
-    protected VBox setBox, areaBox, rectangleBox, circleBox;
+    protected VBox setBox, areaBox, rectangleBox, circleBox, pointsBox;
     @FXML
     protected ComboBox<String> scopeDistanceSelector, opacitySelector;
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected ListView<Color> colorsList;
     @FXML
-    protected ListView<String> pointsList;
+    protected ControlPoints pointsController;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
             ignoreTransparentCheck, squareRootCheck;
@@ -61,13 +60,11 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button saveScopeButton, deletePointsButton, clearPointsButton,
-            scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
+    protected Button saveScopeButton, scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
     protected RadioButton scopeAllRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
-            scopePolygonRadio, scopeColorRadio, scopeRectangleColorRadio, scopeCircleColorRadio,
-            scopeEllipseColorRadio, scopePolygonColorRadio, scopeOutlineRadio, scopeEllipseRadio,
+            scopeEllipseRadio, scopePolygonRadio, scopeColorRadio, scopeOutlineRadio,
             colorRGBRadio, colorGreenRadio, colorRedRadio, colorBlueRadio,
             colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
     @FXML
@@ -80,7 +77,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image scopedImage;
 
             @Override
@@ -97,7 +94,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
                     }
                     return scopedImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
@@ -117,8 +114,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
     @Override
     protected void popImageMenu(double x, double y) {
-        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
-                || imageView == null || imageView.getImage() == null) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
         MenuImageScopeController.open((ImageManufactureScopeController) this, x, y);
@@ -132,7 +128,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             MenuImageScopeController.open((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

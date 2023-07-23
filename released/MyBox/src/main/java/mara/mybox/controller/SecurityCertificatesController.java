@@ -18,7 +18,7 @@ import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -31,7 +31,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-11-29
  * @License Apache License Version 2.0
  */
-public class SecurityCertificatesController extends BaseTableViewController<CertificateEntry> {
+public class SecurityCertificatesController extends BaseTablePagesController<CertificateEntry> {
 
     @FXML
     protected TextField passwordInput;
@@ -66,7 +66,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             timeColumn.setCellFactory(new TableTimeCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -107,7 +107,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             super.setControlsStyle();
             NodeStyleTools.setTooltip(recoverButton, Languages.message("RecoverKeyStore"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -141,7 +141,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String texts;
             private List<CertificateEntry> entires;
             private CertificateEntry selectCert;
@@ -245,7 +245,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String result;
 
             @Override
@@ -314,7 +314,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                     = (SecurityCertificatesAddController) openStage(Fxmls.SecurityCertificateAddFxml);
             controller.setCertController(this);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -331,7 +331,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -375,7 +375,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

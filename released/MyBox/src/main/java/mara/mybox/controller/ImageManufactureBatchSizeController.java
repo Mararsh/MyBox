@@ -66,7 +66,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
                     .or(scaleBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
             scaleBox.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -236,20 +236,37 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
     @FXML
     public void pixelsCalculator() {
         try {
+            TextField xInput = null, yInput = null;
             PixelsCalculationController controller
                     = (PixelsCalculationController) openChildStage(Fxmls.PixelsCalculatorFxml, true);
+            controller.setSourceNull();
             if (sizeType == SizeType.Custom) {
-                controller.setSource(null, customWidthInput, customHeightInput);
+                xInput = customWidthInput;
+                yInput = customHeightInput;
             } else if (sizeType == SizeType.Width) {
-                controller.setSource(null, keepWidthInput, null);
+                xInput = keepWidthInput;
             } else if (sizeType == SizeType.Height) {
-                controller.setSource(null, null, keepHeightInput);
+                yInput = keepHeightInput;
             } else if (sizeType == SizeType.Scale) {
-                controller.setSource(null, null, null);
+                controller.useButton.setDisable(true);
+                return;
             }
+            TextField x1Input = xInput, y1Input = yInput;
+            controller.notify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (x1Input != null) {
+                        x1Input.setText(controller.getFinalX() + "");
+                    }
+                    if (y1Input != null) {
+                        y1Input.setText(controller.getFinalY() + "");
+                    }
+                    controller.close();
+                }
+            });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -272,7 +289,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

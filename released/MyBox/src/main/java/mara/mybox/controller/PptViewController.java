@@ -20,7 +20,7 @@ import javafx.scene.image.ImageView;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -81,7 +81,7 @@ public class PptViewController extends BaseFileImagesViewController {
             checkMore();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -124,7 +124,7 @@ public class PptViewController extends BaseFileImagesViewController {
             }
             loadInformation();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -135,7 +135,7 @@ public class PptViewController extends BaseFileImagesViewController {
         if (sourceFile == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 setTotalPages(0);
@@ -163,6 +163,7 @@ public class PptViewController extends BaseFileImagesViewController {
                 initCurrentPage();
                 loadPage();
                 checkThumbs();
+                browseController.setCurrentFile(sourceFile);
             }
 
         };
@@ -186,7 +187,7 @@ public class PptViewController extends BaseFileImagesViewController {
         if (sourceFile == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String slideTexts, notes, master, comments;
 
             @Override
@@ -304,7 +305,7 @@ public class PptViewController extends BaseFileImagesViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

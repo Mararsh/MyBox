@@ -110,7 +110,7 @@ public class ControlData2DView extends BaseController {
         try {
             data2D = data;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -80,7 +80,7 @@ public class TextClipboardMonitor extends Timer {
                             controller.loadClip(clip);
                         }
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        MyBoxLog.debug(e);
                     }
                 }
             });

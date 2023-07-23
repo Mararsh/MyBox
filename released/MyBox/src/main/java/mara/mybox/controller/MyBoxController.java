@@ -40,7 +40,7 @@ public class MyBoxController extends MyBoxController_About {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

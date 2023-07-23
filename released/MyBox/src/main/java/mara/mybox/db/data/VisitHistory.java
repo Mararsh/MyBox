@@ -63,6 +63,8 @@ public class VisitHistory extends BaseData {
         public static int Jar = 31;
         public static int DataFile = 32;
         public static int JSON = 33;
+        public static int SVG = 34;
+        public static int Javascript = 35;
 
         public static int None = 100;
     }
@@ -150,7 +152,7 @@ public class VisitHistory extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

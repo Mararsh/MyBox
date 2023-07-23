@@ -26,6 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -47,7 +48,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             Hyperlink link = (Hyperlink) event.getSource();
             openLink(link.getText());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -70,7 +71,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             browseURI(new File(AppVariables.MyboxDataPath).toURI());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -344,10 +345,10 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(myController) {
+        task = new SingletonCurrentTask<Void>(myController) {
 
             @Override
             protected boolean handle() {
@@ -355,7 +356,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                     UserConfig.clear();
                     return true;
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     return false;
                 }
             }
@@ -384,7 +385,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             browseURI(file.toURI());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -392,7 +393,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             browseURI(new URI(url));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -446,7 +447,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -539,7 +540,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -553,7 +554,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     protected void showHtmlHelps(Event event) {
-        popEventMenu(event, HelpTools.htmlHelps(myController));
+        popEventMenu(event, HelpTools.htmlHelps(true));
     }
 
     public void popEventMenu(Event event, List<MenuItem> menuItems) {

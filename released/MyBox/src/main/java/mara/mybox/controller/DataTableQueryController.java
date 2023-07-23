@@ -44,7 +44,7 @@ public class DataTableQueryController extends TreeManageController {
             tableController.statusNotify.addListener(tableStatusListener);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -71,7 +71,7 @@ public class DataTableQueryController extends TreeManageController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

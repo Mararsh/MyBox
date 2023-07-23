@@ -90,7 +90,7 @@ public class ControlChartXYZ extends BaseController {
             pointSelector.setValue(pointSize + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -161,7 +161,7 @@ public class ControlChartXYZ extends BaseController {
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -201,7 +201,7 @@ public class ControlChartXYZ extends BaseController {
                 for (int i = 0; i < seriesSize; i++) {
                     String color;
                     if (colorColumnsRadio.isSelected()) {
-                        color = FxColorTools.color2rgb(columns.get(i + 2).getColor());
+                        color = FxColorTools.color2css(columns.get(i + 2).getColor());
                     } else {
                         color = FxColorTools.randomRGB();
                     }

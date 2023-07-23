@@ -21,7 +21,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
@@ -52,27 +52,27 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
             optionsController.setValues(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
+        editor.showRightPane();
         optionsController.checkEnhanceType();
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (imageController == null || optionsController.enhanceType == null) {
+        if (editor == null || optionsController.enhanceType == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
             private String value = null;
@@ -151,8 +151,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
             }
         };
         start(task);
@@ -163,7 +163,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(message("WaitAndHandling"));
+        editor.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -290,7 +290,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                                     = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
                 });

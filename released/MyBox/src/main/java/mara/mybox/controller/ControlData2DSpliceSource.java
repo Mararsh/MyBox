@@ -38,7 +38,7 @@ public class ControlData2DSpliceSource extends BaseData2DSourceController {
             readDefinition();
             filterController.setData2D(data2D);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class ControlData2DSpliceSource extends BaseData2DSourceController {
                 setLabel(data2D.displayName());
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

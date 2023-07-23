@@ -378,7 +378,7 @@ public class GeographyCodeTools {
             }
             return geographyCode;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -540,7 +540,7 @@ public class GeographyCodeTools {
             }
             return geographyCode;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1177,7 +1177,7 @@ public class GeographyCodeTools {
             ret.put("code", poiCode);
             return ret;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             ret.put("message", e.toString());
             return ret;
         }
@@ -1199,7 +1199,7 @@ public class GeographyCodeTools {
             try (final Connection conn1 = DerbyBase.getConnection()) {
                 importPredefined(conn1, loading);
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
             return;
         }
@@ -1214,7 +1214,7 @@ public class GeographyCodeTools {
                     String sql = "UPDATE Geography_Code SET comments=null WHERE level=3 AND predefined=1";
                     conn.prepareStatement(sql).executeUpdate();
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
             file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_china_provinces_internal.csv", "data", "Geography_Code_china_provinces_internal.csv");
@@ -1227,7 +1227,7 @@ public class GeographyCodeTools {
             importInternalCSV(conn, loading, file, true);
             conn.commit();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             if (loading != null) {
                 loading.setInfo(e.toString());
             }
@@ -1240,7 +1240,7 @@ public class GeographyCodeTools {
         try (final Connection conn = DerbyBase.getConnection()) {
             importInternalCSV(conn, loading, file, predefined);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1307,7 +1307,7 @@ public class GeographyCodeTools {
                 conn.commit();
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1323,7 +1323,7 @@ public class GeographyCodeTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return codes;
     }
@@ -1454,7 +1454,7 @@ public class GeographyCodeTools {
             }
             return code;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1777,7 +1777,7 @@ public class GeographyCodeTools {
             }
             return code;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

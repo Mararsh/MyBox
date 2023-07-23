@@ -72,7 +72,7 @@ public class ControlHtmlDomNode extends BaseChildController {
             valueColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -137,7 +137,7 @@ public class ControlHtmlDomNode extends BaseChildController {
             }
             attributesData.removeAll(selected);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

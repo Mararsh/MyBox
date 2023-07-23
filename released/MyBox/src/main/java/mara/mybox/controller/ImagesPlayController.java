@@ -28,7 +28,7 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -73,7 +73,7 @@ public class ImagesPlayController extends BaseImagesListController {
     @FXML
     protected CheckBox transparentBackgroundCheck;
     @FXML
-    protected Button goFramesButton, thumbsListButton;
+    protected Button goFramesButton;
     @FXML
     protected VBox fileVBox, imageBox, pdfBox;
     @FXML
@@ -156,7 +156,7 @@ public class ImagesPlayController extends BaseImagesListController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -165,9 +165,8 @@ public class ImagesPlayController extends BaseImagesListController {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(toInput, new Tooltip(message("ToPageComments")));
-            NodeStyleTools.setTooltip(thumbsListButton, new Tooltip(message("ImagesEditor")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -224,7 +223,7 @@ public class ImagesPlayController extends BaseImagesListController {
         }
         sourceFile = file;
         fileFormat = format;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -282,7 +281,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return task != null && !task.isCancelled();
@@ -303,7 +302,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -322,7 +321,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return task != null && !task.isCancelled();
@@ -368,7 +367,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -452,7 +451,7 @@ public class ImagesPlayController extends BaseImagesListController {
         if (infos == null || infos.isEmpty()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -462,7 +461,7 @@ public class ImagesPlayController extends BaseImagesListController {
                     }
                     framesNumber = imageInfos.size();
                     for (int i = 0; i < framesNumber; i++) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         ImageInformation info = imageInfos.get(i);
@@ -508,7 +507,7 @@ public class ImagesPlayController extends BaseImagesListController {
             playController.play(framesNumber, start, end);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -616,13 +615,13 @@ public class ImagesPlayController extends BaseImagesListController {
             thumb = info.getThumbnail();
             return thumb;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
 
     @Override
-    public File imageFile() {
+    public File sourceFile() {
         if (fileFormat == null || fileFormat.equalsIgnoreCase("pdf")
                 || fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
             return null;
@@ -649,11 +648,12 @@ public class ImagesPlayController extends BaseImagesListController {
                 viewAction();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     @FXML
+    @Override
     public void editFrames() {
         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
         controller.loadImages(imageInfos);
@@ -693,7 +693,7 @@ public class ImagesPlayController extends BaseImagesListController {
 
         } catch (Exception e) {
             playController.pauseAction();
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -718,7 +718,7 @@ public class ImagesPlayController extends BaseImagesListController {
 
         } catch (Exception e) {
             playController.clear();
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -749,7 +749,7 @@ public class ImagesPlayController extends BaseImagesListController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

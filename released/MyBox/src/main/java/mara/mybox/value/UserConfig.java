@@ -316,6 +316,70 @@ public class UserConfig {
         }
     }
 
+    public static boolean setFloat(String key, float value) {
+        userConfigValues.put(key, value + "");
+        if (TableUserConf.writeString(key, value + "") > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setFloat(Connection conn, String key, float value) {
+        userConfigValues.put(key, value + "");
+        if (TableUserConf.writeString(conn, key, value + "") > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static float getFloat(String key, float defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                float v = Float.parseFloat(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
+                //                MyBoxLog.console(e.toString());
+            }
+        }
+        try {
+            String v = TableUserConf.readString(key, defaultValue + "");
+            if (v == null) {
+                return defaultValue;
+            }
+            float d = Float.parseFloat(v);
+            userConfigValues.put(key, v);
+            return d;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
+    public static float getFloat(Connection conn, String key, float defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                float v = Float.parseFloat(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
+                //                MyBoxLog.console(e.toString());
+            }
+        }
+        try {
+            String v = TableUserConf.readString(conn, key, defaultValue + "");
+            if (v == null) {
+                return defaultValue;
+            }
+            float d = Float.parseFloat(v);
+            userConfigValues.put(key, v);
+            return d;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
     public static boolean deleteValue(String key) {
         if (TableUserConf.delete(key)) {
             userConfigValues.remove(key);

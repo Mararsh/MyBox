@@ -56,7 +56,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(message("BOMcomments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

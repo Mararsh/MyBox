@@ -63,7 +63,7 @@ public class DataFileTextMergeController extends FilesMergeController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -74,7 +74,7 @@ public class DataFileTextMergeController extends FilesMergeController {
             writeOptionsController.setControls(baseName + "Write", false, true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

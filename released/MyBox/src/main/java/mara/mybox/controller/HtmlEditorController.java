@@ -32,7 +32,7 @@ public class HtmlEditorController extends WebAddressController {
             webView = webViewController.webView;
             webEngine = webViewController.webEngine;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -80,7 +80,6 @@ public class HtmlEditorController extends WebAddressController {
 
     public void panesLoad() {
         sourceFile = editController.sourceFile;
-        openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
     }
 
     @FXML
@@ -117,7 +116,7 @@ public class HtmlEditorController extends WebAddressController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -130,7 +129,7 @@ public class HtmlEditorController extends WebAddressController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -143,7 +142,7 @@ public class HtmlEditorController extends WebAddressController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -156,7 +155,7 @@ public class HtmlEditorController extends WebAddressController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

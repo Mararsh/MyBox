@@ -36,7 +36,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
             NodeStyleTools.setTooltip(clearCodesButton, new Tooltip(message("Clear") + "\nCTRL+g"));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
             ), 6, menuName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

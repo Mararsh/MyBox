@@ -46,7 +46,7 @@ public class TextToHtmlController extends BaseBatchFileController {
             super.initControls();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -70,7 +70,7 @@ public class TextToHtmlController extends BaseBatchFileController {
             targetFileGenerated(target);
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

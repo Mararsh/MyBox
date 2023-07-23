@@ -13,7 +13,7 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -62,7 +62,7 @@ public class Data2DSetStylesController extends BaseController {
             rightPaneControl = listController.rightPaneControl;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class Data2DSetStylesController extends BaseController {
             editController.showLabel = idLabel;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class Data2DSetStylesController extends BaseController {
             sourceChanged();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -140,7 +140,7 @@ public class Data2DSetStylesController extends BaseController {
             loadStyle(currentStyle);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -364,7 +364,7 @@ public class Data2DSetStylesController extends BaseController {
         if (!pickValues()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -420,7 +420,7 @@ public class Data2DSetStylesController extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

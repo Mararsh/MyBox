@@ -47,7 +47,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -60,7 +60,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
             this.data2D = data2D;
             setPlaceholders();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -99,7 +99,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
                 placeholdersList.layout();
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -113,7 +113,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
             PopTools.rowExpressionButtons(controller, scriptInput, col1, menuName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -137,15 +137,15 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     }
 
     @FXML
-    public void showRowExpressionHelps(Event event) {
-        popEventMenu(event, HelpTools.rowExpressionHelps(this));
-    }
-
-    @FXML
     public void popRowExpressionHelps(Event event) {
         if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
             showRowExpressionHelps(event);
         }
+    }
+
+    @FXML
+    public void showRowExpressionHelps(Event event) {
+        popEventMenu(event, HelpTools.rowExpressionHelps(true));
     }
 
 }

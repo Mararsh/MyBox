@@ -1,19 +1,18 @@
 package mara.mybox.controller;
 
-import java.util.List;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
@@ -22,10 +21,9 @@ import org.w3c.dom.Node;
  * @CreateDate 2023-5-16
  * @License Apache License Version 2.0
  */
-public class ControlXmlNodeBase extends BaseController {
+public class ControlXmlNodeBase extends BaseTableViewController<Node> {
 
     protected ControlXmlTree treeController;
-    protected ObservableList<Node> attributesData;
 
     @FXML
     protected VBox setBox, docBox, valueBox, attrBox;
@@ -35,19 +33,15 @@ public class ControlXmlNodeBase extends BaseController {
     @FXML
     protected TextArea valueArea;
     @FXML
-    protected TableView<Node> attributesTable;
-    @FXML
     protected TableColumn<Node, String> attrColumn, valueColumn;
     @FXML
     protected CheckBox standaloneCheck;
 
     @Override
-    public void initControls() {
+    public void initTable() {
         try {
-            super.initControls();
+            super.initTable();
 
-            attributesData = FXCollections.observableArrayList();
-            attributesTable.setItems(attributesData);
             attrColumn.setCellValueFactory(new PropertyValueFactory<>("nodeName"));
             attrColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
             attrColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Node, String>>() {
@@ -61,8 +55,8 @@ public class ControlXmlNodeBase extends BaseController {
                         return;
                     }
                     Attr attr = treeController.doc.createAttribute(e.getNewValue());
-                    attr.setValue(attributesData.get(row).getNodeValue());
-                    attributesData.set(row, attr);
+                    attr.setValue(tableData.get(row).getNodeValue());
+                    tableData.set(row, attr);
                 }
             });
             attrColumn.getStyleClass().add("editable-column");
@@ -84,7 +78,7 @@ public class ControlXmlNodeBase extends BaseController {
             thisPane.getChildren().remove(tabPane);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -98,36 +92,39 @@ public class ControlXmlNodeBase extends BaseController {
         uriInput.clear();
         versionInput.clear();
         encodingInput.clear();
-        attributesData.clear();
+        tableData.clear();
         setBox.getChildren().clear();
     }
 
     @FXML
-    public void addAttribute() {
+    @Override
+    public void addAction() {
         if (treeController == null) {
             return;
         }
         Attr attr = treeController.doc.createAttribute("attr");
         attr.setValue("value");
-        attributesData.add(attr);
+        tableData.add(attr);
     }
 
+    /*
+        value
+     */
     @FXML
-    public void deleteAttributes() {
-        try {
-            List<Node> selected = attributesTable.getSelectionModel().getSelectedItems();
-            if (selected == null || selected.isEmpty()) {
-                return;
-            }
-            attributesData.removeAll(selected);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    protected void popValueHistories(Event event) {
+        if (UserConfig.getBoolean("XmlNodeValueHistoriesPopWhenMouseHovering", false)) {
+            showValueHistories(event);
         }
     }
 
     @FXML
-    public void clearAttributes() {
-        attributesData.clear();
+    protected void showValueHistories(Event event) {
+        PopTools.popStringValues(this, valueArea, event, "XmlNodeValueHistories", false, true);
+    }
+
+    @FXML
+    protected void clearValue() {
+        valueArea.clear();
     }
 
 }

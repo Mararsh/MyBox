@@ -10,7 +10,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
@@ -132,7 +132,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -156,10 +156,10 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
     @Override
     public void outputData() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private String html;
 

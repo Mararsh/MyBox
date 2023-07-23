@@ -42,11 +42,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageManufactureFxml);
         });
 
-        MenuItem EditSVG = new MenuItem(message("SVGEditor"));
-        EditSVG.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.SVGEditorFxml);
-        });
-
         MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));
         imagesBrowser.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImagesBrowserFxml);
@@ -84,9 +79,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(imageViewer, EditImage,
-                //                EditSVG,
                 imageManufactureMenu(), manufactureBatchMenu(),
-                ImageAnalyse, ImagesPlay, imagesBrowser, new SeparatorMenuItem(),
+                ImageAnalyse, ImagesPlay, imagesBrowser, svgMenu(), new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
 
@@ -236,6 +230,33 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, new SeparatorMenuItem(),
                 imageOCRBatch);
         return manufactureBatchMenu;
+
+    }
+
+    private Menu svgMenu() {
+        MenuItem EditSVG = new MenuItem(message("SVGEditor"));
+        EditSVG.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgEditorFxml);
+        });
+
+        MenuItem SvgTypesetting = new MenuItem(message("SvgTypesetting"));
+        SvgTypesetting.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgTypesettingFxml);
+        });
+
+        MenuItem SvgToImage = new MenuItem(message("SvgToImage"));
+        SvgToImage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgToImageFxml);
+        });
+
+        MenuItem SvgToPDF = new MenuItem(message("SvgToPDF"));
+        SvgToPDF.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgToPDFFxml);
+        });
+
+        Menu svgMenu = new Menu(message("SVG"));
+        svgMenu.getItems().addAll(EditSVG, SvgTypesetting, SvgToImage, SvgToPDF);
+        return svgMenu;
 
     }
 

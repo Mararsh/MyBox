@@ -31,7 +31,7 @@ public class ImageManufactureBatchEnhancementController extends BaseImageManufac
             optionsController.setValues(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -116,7 +116,7 @@ public class ImageManufactureBatchEnhancementController extends BaseImageManufac
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

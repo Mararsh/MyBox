@@ -71,7 +71,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             return this;
         }
         initChartOptions();
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
 
             isXY = UserConfig.getBoolean(conn, chartName + "XY", true);
             switch (chartType) {
@@ -117,7 +117,8 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             numberTickRotation = UserConfig.getInt(conn, chartName + "NumberTickRotation", 0);
             lineWidth = UserConfig.getInt(conn, chartName + "LineWidth", 2);
             barGap = UserConfig.getDouble(conn, chartName + "BarGap", 2d);
-            categoryGap = UserConfig.getDouble(conn, chartName + "CategoryGap", 20d);
+            categoryGap = chartType == ChartType.StackedBar ? 1
+                    : UserConfig.getDouble(conn, chartName + "CategoryBarGap", 1d);
 
             bubbleStyle = UserConfig.getString(conn, chartName + "BubbleStyle", DefaultBubbleStyle);
 
@@ -533,13 +534,13 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     }
 
     public double getCategoryGap() {
-        categoryGap = categoryGap < 0 ? 4 : categoryGap;
+        categoryGap = categoryGap < 0 ? 1 : categoryGap;
         return categoryGap;
     }
 
     public void setCategoryGap(double categoryGap) {
         this.categoryGap = categoryGap;
-        UserConfig.setDouble(chartName + "CategoryGap", getCategoryGap());
+        UserConfig.setDouble(chartName + "CategoryBarGap", getCategoryGap());
     }
 
     public XYChart getXyChart() {

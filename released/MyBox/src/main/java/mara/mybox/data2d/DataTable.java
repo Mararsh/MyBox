@@ -58,7 +58,7 @@ public class DataTable extends Data2D {
             }
             tableData2D.setTableName(sheet);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -262,7 +262,7 @@ public class DataTable extends Data2D {
             }
             return data2DRow;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

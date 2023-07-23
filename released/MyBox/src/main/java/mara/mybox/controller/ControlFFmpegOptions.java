@@ -101,7 +101,7 @@ public class ControlFFmpegOptions extends BaseController {
             crf = -1;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -129,7 +129,7 @@ public class ControlFFmpegOptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -151,7 +151,7 @@ public class ControlFFmpegOptions extends BaseController {
                 NodeStyleTools.setTooltip(x264presetSelector, message("X264PresetComments"));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -174,7 +174,7 @@ public class ControlFFmpegOptions extends BaseController {
             }
             executableInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -304,7 +304,7 @@ public class ControlFFmpegOptions extends BaseController {
             process.waitFor();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             popError(e.toString());
         } finally {
             muxerTask = null;
@@ -419,7 +419,7 @@ public class ControlFFmpegOptions extends BaseController {
             process.waitFor();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             popError(e.toString());
         } finally {
             encoderTask = null;
@@ -557,7 +557,7 @@ public class ControlFFmpegOptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -751,7 +751,7 @@ public class ControlFFmpegOptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -790,7 +790,7 @@ public class ControlFFmpegOptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -974,7 +974,7 @@ public class ControlFFmpegOptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -992,7 +992,7 @@ public class ControlFFmpegOptions extends BaseController {
             controller.tabPane.getSelectionModel().select(controller.queryTab);
             controller.goAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

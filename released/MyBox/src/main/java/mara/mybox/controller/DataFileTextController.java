@@ -41,7 +41,7 @@ public class DataFileTextController extends BaseData2DFileController {
             setDataType(Data2D.Type.Texts);
             dataFileText = (DataFileText) dataController.data2D;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -59,7 +59,7 @@ public class DataFileTextController extends BaseData2DFileController {
             writeOptionsController.setControls(baseName + "Write", false, true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

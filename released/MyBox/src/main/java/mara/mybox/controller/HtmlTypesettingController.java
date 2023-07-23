@@ -43,7 +43,7 @@ public class HtmlTypesettingController extends BaseBatchFileController {
                 return message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

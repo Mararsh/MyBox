@@ -11,7 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -53,7 +53,7 @@ public class TextPopController extends BaseChildController {
 
             setControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -64,7 +64,7 @@ public class TextPopController extends BaseChildController {
             setControls();
             textArea.setText(text);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -93,7 +93,7 @@ public class TextPopController extends BaseChildController {
             textArea.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -147,7 +147,7 @@ public class TextPopController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -196,7 +196,7 @@ public class TextPopController extends BaseChildController {
             controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -207,7 +207,7 @@ public class TextPopController extends BaseChildController {
             controller.setText(text);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

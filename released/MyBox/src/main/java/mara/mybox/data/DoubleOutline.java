@@ -60,7 +60,7 @@ public class DoubleOutline extends DoubleRectangle {
             return isValid() && rectangle.contains(x, y)
                     && (image.getRGB((int) (x - offsetX), (int) (y - offsetY)) == insideColor);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }

@@ -47,7 +47,7 @@ public class ControlSplit extends BaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(listInput, new Tooltip(Languages.message("StartEndComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -95,7 +95,7 @@ public class ControlSplit extends BaseController {
             checkSplitType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

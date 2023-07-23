@@ -28,7 +28,7 @@ public class ByteFileTools {
                 data = ByteTools.subBytes(data, 0, readLen);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return data;
     }
@@ -46,7 +46,7 @@ public class ByteFileTools {
                 data = ByteTools.subBytes(data, 0, readLen);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
         return data;
@@ -74,7 +74,7 @@ public class ByteFileTools {
             files.add(file2);
             return mergeBytesFiles(files, targetFile);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -95,7 +95,7 @@ public class ByteFileTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
         return true;

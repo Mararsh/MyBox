@@ -31,7 +31,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
             thisPane.requestFocus();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
             controller.setParameters(handleController, filter);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

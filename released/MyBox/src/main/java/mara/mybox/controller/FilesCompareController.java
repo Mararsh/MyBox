@@ -21,7 +21,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MessageDigestTools;
@@ -122,7 +122,7 @@ public class FilesCompareController extends BaseController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -144,7 +144,7 @@ public class FilesCompareController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -157,7 +157,7 @@ public class FilesCompareController extends BaseController {
             }
             file1Input.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -170,7 +170,7 @@ public class FilesCompareController extends BaseController {
             }
             file2Input.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -193,7 +193,7 @@ public class FilesCompareController extends BaseController {
             }
             openLink(link);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -317,7 +317,7 @@ public class FilesCompareController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private byte[] digest1, digest2;
             private boolean same;

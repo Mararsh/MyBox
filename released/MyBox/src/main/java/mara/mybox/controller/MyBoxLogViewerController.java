@@ -41,7 +41,7 @@ public class MyBoxLogViewerController extends HtmlTableController {
             logTable = new TableMyBoxLog();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -61,7 +61,7 @@ public class MyBoxLogViewerController extends HtmlTableController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

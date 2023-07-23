@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -43,7 +43,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             boardController.load(text);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -56,13 +56,13 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             List<List<String>> data;
 
             @Override
             protected boolean handle() {
                 try {
-                    data = sourceController.selectedData(task);
+                    data = sourceController.selectedData(this);
                     return data != null && !data.isEmpty();
                 } catch (Exception e) {
                     error = e.toString();
@@ -107,7 +107,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

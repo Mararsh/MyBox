@@ -27,7 +27,7 @@ public class BaseData implements Cloneable {
             columnValues.put(column, value);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -36,7 +36,7 @@ public class BaseData implements Cloneable {
         try {
             return columnValues.get(column);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -45,7 +45,7 @@ public class BaseData implements Cloneable {
         try {
             return columnValues.keySet().isEmpty();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return true;
         }
     }
@@ -54,7 +54,7 @@ public class BaseData implements Cloneable {
         try {
             return columnValues.toString();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

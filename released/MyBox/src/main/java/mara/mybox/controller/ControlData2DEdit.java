@@ -38,7 +38,7 @@ public class ControlData2DEdit extends BaseController {
             csvController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -49,7 +49,7 @@ public class ControlData2DEdit extends BaseController {
             csvController.setData(data);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -23,7 +23,8 @@ import mara.mybox.data2d.reader.DataTableGroupStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -119,7 +120,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -129,7 +130,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(displayAllCheck, new Tooltip(message("AllRowsLoadComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -175,7 +176,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         for (StatisticType t : calculation.types) {
             valuesDisplayPane.getChildren().add(new CheckBox(message(t.name())));
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataTableGroup group;
             private DataTableGroupStatistic statistic;
@@ -183,20 +184,25 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     group = groupData(DataTableGroup.TargetType.Table,
                             checkedColsIndices, false, -1, scale);
                     if (!group.run()) {
                         return false;
                     }
-                    if (task != null) {
-                        task.setInfo(message("Statistic") + "...");
+                    if (task == null || isCancelled()) {
+                        return false;
                     }
+                    task.setInfo(message("Statistic") + "...");
                     statistic = new DataTableGroupStatistic()
                             .setGroups(group).setCountChart(true)
                             .setCalculation(calculation)
                             .setCalNames(checkedColsNames)
-                            .setTask(task);
+                            .setTask(this);
                     if (!statistic.run()) {
+                        return false;
+                    }
+                    if (task == null || isCancelled()) {
                         return false;
                     }
                     dataFile = statistic.getChartData();
@@ -242,13 +248,14 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         }
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    dataFile.startTask(backgroundTask, null);
+                    dataFile.startTask(this, null);
 
                     List<List<String>> resultsData;
                     if (displayAllCheck.isSelected()) {
@@ -528,7 +535,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

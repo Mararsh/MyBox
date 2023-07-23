@@ -65,7 +65,7 @@ public class MenuWebviewController extends MenuController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(editableCheck, new Tooltip(message("Editable") + "\n" + message("HtmlEditableComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class MenuWebviewController extends MenuController {
             super.setParameters(webViewController, webView, x, y);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -364,7 +364,7 @@ public class MenuWebviewController extends MenuController {
             controller.setParameters(parent, element, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

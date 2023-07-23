@@ -156,7 +156,6 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%EditImage" />
-                                <!--<MenuItem mnemonicParsing="false" onAction="#openSVGEditor" text="%SVGEditor" />-->
                                 <Menu mnemonicParsing="false" text="%ImageManufacture">
                                     <items>                                       
                                         <MenuItem mnemonicParsing="false" onAction="#ImagesEditor" text="%ImagesEditor" />
@@ -187,12 +186,20 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaExtract" text="%ImageAlphaExtract" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                        <MenuItem fx:id="imageOcrBatchMenu" mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" /> 
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" /> 
                                     </items>
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageAnalyse" text="%ImageAnalyse" />
                                 <MenuItem mnemonicParsing="false" onAction="#ImagesPlay" text="%ImagesPlay" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImagesBrowser" text="%ImagesBrowser" />
+                                <Menu mnemonicParsing="false" text="%SVG">
+                                    <items>                                       
+                                        <MenuItem mnemonicParsing="false" onAction="#openSVGEditor" text="%SVGEditor" />
+                                        <MenuItem mnemonicParsing="false" onAction="#SvgTypesetting" text="%SvgTypesetting" /> 
+                                        <MenuItem mnemonicParsing="false" onAction="#SvgToImage" text="%SvgToImage" /> 
+                                        <MenuItem mnemonicParsing="false" onAction="#SvgToPDF" text="%SvgToPDF" /> 
+                                    </items>
+                                </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />
@@ -258,9 +265,9 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%ScriptAndExperssion">
                                     <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#JavaScript" text="JavaScript" />
                                         <MenuItem mnemonicParsing="false" onAction="#JShell" text="%JShell" />
                                         <MenuItem mnemonicParsing="false" onAction="#JEXL" text="%JEXL" />
-                                        <MenuItem mnemonicParsing="false" onAction="#JavaScript" text="JavaScript" />
                                     </items>
                                 </Menu>   
                                 <MenuItem mnemonicParsing="false" onAction="#MathFunction" text="%MathFunction" />
@@ -372,6 +379,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
                                 <CheckMenuItem fx:id="shortcutsCanNotOmitCheck" mnemonicParsing="false" onAction="#shortcutsCanNotOmitCtrlAlt" text="%ShortcutsCanNotOmitCtrlAlt" />
+                                <CheckMenuItem fx:id="loseFocusCommitDataCheck" mnemonicParsing="false" onAction="#loseFocusCommitData" text="%CommitModificationWhenDataCellLoseFocus" />
                                 <CheckMenuItem fx:id="clearExpiredDataCheck" mnemonicParsing="false" onAction="#clearExpiredDataBeforeExit" text="%ClearExpiredDataBeforeExit" />
                                 <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMouseHovering" />
                                 <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMouseHovering" />
@@ -524,7 +532,15 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxTables" text="%MyBoxTables" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
-                                <MenuItem mnemonicParsing="false" onAction="#makeInterfaceTips" text="%MakeInterfaceTips" />
+                                <Menu mnemonicParsing="false" text="%MakeDocuments">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#makeReadMe" text="%ReadMe" />
+                                        <MenuItem mnemonicParsing="false" onAction="#makeShortcuts" text="%Shortcuts" />
+                                        <MenuItem mnemonicParsing="false" onAction="#makeFunctionsList" text="%FunctionsList" />
+                                        <MenuItem mnemonicParsing="false" onAction="#makeInterfaceTips" text="%InterfaceTips" />
+                                        <MenuItem mnemonicParsing="false" onAction="#makeSomeLinks" text="%SomeLinks" />
+                                    </items>
+                                </Menu> 
                                 <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />

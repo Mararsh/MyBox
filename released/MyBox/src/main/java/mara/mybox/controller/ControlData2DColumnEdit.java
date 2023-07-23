@@ -58,7 +58,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
-    protected ColorSetController colorController;
+    protected ControlColorSet colorController;
     @FXML
     protected TextArea enumInput, descInput;
     @FXML
@@ -76,7 +76,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             NodeStyleTools.setTooltip(tipsView, message("ColumnComments"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -527,7 +527,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             popEventMenu(event, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -542,7 +542,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

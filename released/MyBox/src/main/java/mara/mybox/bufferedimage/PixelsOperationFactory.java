@@ -223,7 +223,7 @@ public class PixelsOperationFactory {
             pixelsOperation.setColorPara2(newColor);
             return pixelsOperation;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -85,7 +85,7 @@ public abstract class BaseController_Attributes {
             addRowsButton, deleteRowsButton, selectButton, selectAllButton, selectNoneButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
             myBoxClipboardButton, systemClipboardButton,
-            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton, panesMenuButton,
+            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
             firstButton, lastButton, previousButton, nextButton,
             pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
             infoButton, metaButton, openSourceButton,
@@ -370,6 +370,13 @@ public abstract class BaseController_Attributes {
 
     }
 
+    public SingletonTask<Void> getBackgroundTask() {
+        return backgroundTask;
+    }
+
+    public void setBackgroundTask(SingletonTask<Void> backgroundTask) {
+        this.backgroundTask = backgroundTask;
+    }
 
     /*
         popup
@@ -492,6 +499,30 @@ public abstract class BaseController_Attributes {
 
     public void popWarn(String text) {
         popWarn(text, UserConfig.textDuration(), UserConfig.textSize());
+    }
+
+    public void displayInfo(String text) {
+        if (task != null && !task.isQuit()) {
+            if (this instanceof BaseLogs) {
+                ((BaseLogs) this).updateLogs(text);
+            } else {
+                task.setInfo(text);
+            }
+        } else {
+            popInformation(text);
+        }
+    }
+
+    public void displayError(String text) {
+        if (task != null && !task.isQuit()) {
+            if (this instanceof BaseLogs) {
+                ((BaseLogs) this).updateLogs(text, true, true);
+            } else {
+                task.setError(text);
+            }
+        } else {
+            popError(text);
+        }
     }
 
     @FXML

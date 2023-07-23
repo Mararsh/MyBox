@@ -63,7 +63,7 @@ public class ControlConditionTree extends BaseController {
             treeView.setRoot(allItem);
             treeView.setSelection();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

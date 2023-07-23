@@ -23,7 +23,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
@@ -46,7 +46,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button useClipButton, thumbsListButton;
+    protected Button useClipButton;
     @FXML
     protected TableColumn<ImageClipboard, Integer> widthColumn, heightColumn;
     @FXML
@@ -107,7 +107,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             sourceColumn.setCellFactory(new TableMessageCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -124,7 +124,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             copyToSystemClipboardButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             refreshAction();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -140,7 +140,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             task.cancel();
         }
         lastSystemClip = clip;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private ImageClipboard clipData;
 
@@ -182,7 +182,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private ImageClipboard clip;
 
@@ -234,6 +234,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
     @Override
     public void updateStatus() {
+        super.updateStatus();
         if (ImageClipboardTools.isMonitoring()) {
             bottomLabel.setText(message("MonitoringImageInSystemClipboard"));
         } else {
@@ -251,7 +252,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image selectedImage;
 
@@ -281,7 +282,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image selectedImage;
 
@@ -310,7 +311,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<ImageClipboard> clips;
 
@@ -318,7 +319,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             protected boolean handle() {
                 clips = new ArrayList<>();
                 for (ImageItem item : ImageItem.predefined()) {
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return true;
                     }
                     Image image = item.readImage();

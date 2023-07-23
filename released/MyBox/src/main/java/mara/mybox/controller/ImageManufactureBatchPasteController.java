@@ -65,7 +65,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -130,7 +130,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             checkPositionType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -253,7 +253,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             BufferedImage target = blendController.blend(clipSource, bgImage, x, y);
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

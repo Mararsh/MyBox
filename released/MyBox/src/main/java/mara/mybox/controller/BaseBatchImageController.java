@@ -4,8 +4,7 @@ import java.io.File;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.FileTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 
 /**
  * @Author Mara
@@ -28,12 +27,12 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
     }
 
     public void loadImageInformation(final File file) {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         sourceFile = file;
         imageInformation = null;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             public Void call() {
@@ -58,11 +57,6 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
 
     public void afterImageInfoLoaded() {
 
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        return FileTools.isSupportedImage(file);
     }
 
 }

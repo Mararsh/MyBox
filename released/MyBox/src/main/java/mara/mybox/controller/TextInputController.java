@@ -38,7 +38,7 @@ public class TextInputController extends BaseInputController {
             textArea.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }
@@ -55,7 +55,7 @@ public class TextInputController extends BaseInputController {
             controller.setParameters(parent, title, initValue);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

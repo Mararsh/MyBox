@@ -16,7 +16,7 @@ import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -51,7 +51,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
             initAdaptation();
             initMatrices();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -211,7 +211,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                     + (String) rgb2rgb.get("procedure");
             webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -220,7 +220,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private StringTable table;
             private String allTexts;

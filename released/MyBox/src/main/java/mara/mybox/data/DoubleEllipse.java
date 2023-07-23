@@ -28,57 +28,15 @@ public class DoubleEllipse implements DoubleShape {
         makeEllipse(rect);
     }
 
-    public DoubleEllipse(DoublePoint focal1, DoublePoint focal2, double length) {
-        if (DoublePoint.distance(focal2, focal2) >= length) {
-            return;
-        }
-        focalsOnX = (focal1.getY() == focal2.getY());
-        longAxis = length / 2;
-        if (focalsOnX) {
-            centerX = (focal1.getX() + focal2.getX()) / 2;
-            centerY = focal1.getY();
-            focalDistance = Math.abs(focal1.getX() - focal2.getX()) / 2;
-            shortAxis = Math.sqrt(longAxis * longAxis - focalDistance * focalDistance);
-            radiusX = longAxis;
-            radiusY = shortAxis;
-            if (focal1.getX() >= focal2.getX()) {
-                focalSmall = new DoublePoint(focal2.getX(), focal2.getY());
-                focalBig = new DoublePoint(focal1.getX(), focal1.getY());
-            } else {
-                focalSmall = new DoublePoint(focal1.getX(), focal1.getY());
-                focalBig = new DoublePoint(focal2.getX(), focal2.getY());
-            }
-            rectangle = new DoubleRectangle(centerX - longAxis, centerY + shortAxis,
-                    centerX + longAxis, centerY + shortAxis);
-        } else {
-            centerX = focal1.getX();
-            centerY = (focal1.getY() + focal2.getY()) / 2;
-            focalDistance = Math.abs(focal1.getY() - focal2.getY()) / 2;
-            shortAxis = Math.sqrt(longAxis * longAxis - focalDistance * focalDistance);
-            radiusX = shortAxis;
-            radiusY = longAxis;
-            if (focal1.getY() >= focal2.getY()) {
-                focalSmall = new DoublePoint(focal2.getX(), focal2.getY());
-                focalBig = new DoublePoint(focal1.getX(), focal1.getY());
-            } else {
-                focalSmall = new DoublePoint(focal1.getX(), focal1.getY());
-                focalBig = new DoublePoint(focal2.getX(), focal2.getY());
-            }
-            rectangle = new DoubleRectangle(centerX - shortAxis, centerY + longAxis,
-                    centerX + shortAxis, centerY + longAxis);
-        }
-
-        sumLength = length;
-    }
-
     private void makeEllipse(DoubleRectangle rect) {
         if (rect == null || !rect.isValid()) {
             return;
         }
         rectangle = rect;
         focalsOnX = rect.getWidth() >= rect.getHeight();
-        centerX = (rect.getSmallX() + rect.getBigX()) / 2;
-        centerY = (rect.getSmallY() + rect.getBigY()) / 2;
+        DoublePoint center = rect.getCenter();
+        centerX = center.getX();
+        centerY = center.getY();
         if (focalsOnX) {
             longAxis = rect.getWidth() / 2;
             shortAxis = rect.getHeight() / 2;
@@ -109,7 +67,10 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     public boolean same(DoubleEllipse ellipse) {
-        return rectangle.same(ellipse.getRectangle());
+        return centerX == ellipse.getCenterX()
+                && centerY == ellipse.getCenterY()
+                && radiusX == ellipse.getRadiusX()
+                && radiusY == ellipse.getRadiusY();
     }
 
     @Override
@@ -148,13 +109,13 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
+    public DoublePoint getCenter() {
+        return new DoublePoint(centerX, centerY);
+    }
+
+    @Override
     public DoubleEllipse move(double offset) {
-        DoubleEllipse nEllipse = new DoubleEllipse(
-                centerX - radiusX + offset,
-                centerY - radiusY + offset,
-                centerX + radiusX + offset,
-                centerY + radiusY + offset);
-        return nEllipse;
+        return move(offset, offset);
     }
 
     @Override
@@ -165,6 +126,12 @@ public class DoubleEllipse implements DoubleShape {
                 centerX + radiusX + offsetX,
                 centerY + radiusY + offsetY);
         return nEllipse;
+    }
+
+    @Override
+    public DoubleEllipse moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoubleEllipse) moved : null;
     }
 
     public DoubleRectangle getRectangle() {

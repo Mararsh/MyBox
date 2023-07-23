@@ -90,7 +90,7 @@ public class HtmlElementsController extends WebAddressController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class HtmlElementsController extends WebAddressController {
             queryElementButton.setDisable(false);
             recoverButton.setDisable(false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -189,7 +189,7 @@ public class HtmlElementsController extends WebAddressController {
             String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
             loadContents(html);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -233,7 +233,7 @@ public class HtmlElementsController extends WebAddressController {
             controller.addFlowPane(buttons);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

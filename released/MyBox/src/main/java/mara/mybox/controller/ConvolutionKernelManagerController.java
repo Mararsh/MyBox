@@ -33,7 +33,7 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
@@ -47,7 +47,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ConvolutionKernelManagerController extends BaseTableViewController<ConvolutionKernel> {
+public class ConvolutionKernelManagerController extends BaseTablePagesController<ConvolutionKernel> {
 
     private int width, height, type, edge_Op;
     private boolean matrixValid;
@@ -91,7 +91,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             initEditFields();
             loadList();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -108,7 +108,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             desColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -205,7 +205,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             actionBox.setDisable(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -236,7 +236,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
 
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -254,7 +254,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
                 edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -465,7 +465,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -498,7 +498,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -589,7 +589,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -646,7 +646,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

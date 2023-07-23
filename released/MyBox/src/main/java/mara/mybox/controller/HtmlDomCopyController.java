@@ -7,7 +7,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -97,7 +97,7 @@ public class HtmlDomCopyController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

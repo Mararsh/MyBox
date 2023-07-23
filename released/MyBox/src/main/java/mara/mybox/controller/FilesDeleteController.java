@@ -33,7 +33,7 @@ public class FilesDeleteController extends BaseBatchFileController {
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -46,7 +46,7 @@ public class FilesDeleteController extends BaseBatchFileController {
                     Bindings.isEmpty(tableView.getItems())
             );
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -74,7 +74,7 @@ public class FilesDeleteController extends BaseBatchFileController {
                 return message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }
@@ -95,7 +95,7 @@ public class FilesDeleteController extends BaseBatchFileController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -123,7 +123,7 @@ public class FilesDeleteController extends BaseBatchFileController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

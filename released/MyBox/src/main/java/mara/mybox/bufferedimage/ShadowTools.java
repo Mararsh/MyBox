@@ -79,7 +79,7 @@ public class ShadowTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -139,7 +139,7 @@ public class ShadowTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

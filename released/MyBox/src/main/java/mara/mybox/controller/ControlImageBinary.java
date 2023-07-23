@@ -91,7 +91,7 @@ public class ControlImageBinary extends BaseController {
             checkThreshold();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -130,7 +130,7 @@ public class ControlImageBinary extends BaseController {
             int v = ImageBinary.calculateThreshold(((BaseImageController) parentController).imageView.getImage());
             thresholdInput.setText(v + "");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

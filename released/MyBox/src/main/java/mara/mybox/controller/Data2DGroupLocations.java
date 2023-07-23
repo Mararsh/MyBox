@@ -27,7 +27,7 @@ public class Data2DGroupLocations extends Data2DLocationDistributionController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

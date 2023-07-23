@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
@@ -37,7 +38,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
+public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode> {
 
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll, nodeExecutable;
@@ -63,7 +64,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                 okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -76,7 +77,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             timeColumn.setCellFactory(new TreeTableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -89,12 +90,11 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
     }
 
     public void loadTree(InfoNode selectNode) {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        treeView.setRoot(null);
-        focusNode = null;
-        task = new SingletonTask<Void>(this) {
+        clearTree();
+        task = new SingletonCurrentTask<Void>(this) {
             private TreeItem<InfoNode> rootItem;
 
             @Override
@@ -102,7 +102,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     InfoNode rootNode = root(conn);
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return false;
                     }
                     rootItem = new TreeItem(rootNode);
@@ -111,7 +111,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                     if (size < 1) {
                         return true;
                     }
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return false;
                     }
                     rootItem.getChildren().add(new TreeItem(new InfoNode()));
@@ -120,16 +120,13 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                     error = e.toString();
                     return false;
                 }
-                return task != null && !task.isCancelled();
+                return task != null && !isCancelled();
             }
 
             @Override
             protected void whenSucceeded() {
-                treeView.setRoot(rootItem);
-                loadedNotify.set(!loadedNotify.get());
-                if (selectNode != null) {
-                    focusNode(selectNode);
-                }
+                focusNode = selectNode;
+                setRoot(rootItem);
             }
 
         };
@@ -180,6 +177,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
         return equalNode(item1.getValue(), item2.getValue());
     }
 
+    @Override
     public boolean equalNode(InfoNode node1, InfoNode node2) {
         if (node1 == null || node2 == null) {
             return false;
@@ -269,10 +267,10 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private InfoNode newNode;
 
             @Override
@@ -304,10 +302,10 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
         if (item == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -334,7 +332,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             if (item == null || item.isLeaf()) {
                 return;
             }
-            if (nodeLoaded(item)) {
+            if (isLoaded(item)) {
                 for (TreeItem<InfoNode> childItem : item.getChildren()) {
                     if (task == null || task.isCancelled()) {
                         return;
@@ -362,7 +360,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                         if (!tableTreeNode.childrenEmpty(conn, childNode.getNodeid())) {
                             childItem.expandedProperty().addListener(
                                     (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                        if (newVal && !childItem.isLeaf() && !nodeLoaded(childItem)) {
+                                        if (newVal && !childItem.isLeaf() && !isLoaded(childItem)) {
                                             unfold(childItem, false);
                                         }
                                     });
@@ -408,7 +406,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             case InfoNode.SQL:
                 return DatabaseSqlController.open(false);
             case InfoNode.JavaScript:
-                return JavaScriptController.open("");
+                return JavaScriptController.loadScript("");
             case InfoNode.InformationInTree:
                 return TreeManageController.oneOpen();
             case InfoNode.JEXLCode:

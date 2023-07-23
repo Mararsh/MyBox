@@ -24,6 +24,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDurationCell;
 import mara.mybox.tools.DateTools;
@@ -90,7 +91,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -104,7 +105,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             }
             return info;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             popError(message("FailOpenMedia"));
             return null;
         }
@@ -119,7 +120,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             return info;
         } catch (Exception e) {
             popError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -169,13 +170,13 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                                     @Override
                                     public void run() {
                                         tableView.refresh();
-                                        updateLabel();
+                                        updateTableLabel();
                                     }
                                 });
 
                             } catch (Exception e) {
                                 popError(message("FailOpenMedia"));
-                                MyBoxLog.debug(e.toString());
+                                MyBoxLog.debug(e);
                             }
                         }
                     });
@@ -193,7 +194,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             protected void whenFailed() {
                 popError(error);
                 tableView.refresh();
-                updateLabel();
+                updateTableLabel();
             }
 
         };
@@ -245,11 +246,11 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     @Override
     public void countSize(boolean reset) {
-        updateLabel();
+        updateTableLabel();
     }
 
     @Override
-    public void updateLabel() {
+    public void updateTableLabel() {
         long d = 0;
         totalFilesNumber = totalFilesSize = 0;
         for (MediaInformation m : tableData) {
@@ -299,7 +300,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             addLink(address);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -322,7 +323,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             VisitHistoryTools.visitStreamMedia(address);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -470,7 +471,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             task.cancel();
         }
         tableData.clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             List<File> miaos;
 

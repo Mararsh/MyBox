@@ -19,7 +19,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-3-4
  * @License Apache License Version 2.0
  */
-public class JShellSnippets extends BaseTableViewController<JShellSnippet> {
+public class JShellSnippets extends BaseTablePagesController<JShellSnippet> {
 
     protected JShellController jShellController;
 
@@ -81,7 +81,7 @@ public class JShellSnippets extends BaseTableViewController<JShellSnippet> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class JShellSnippets extends BaseTableViewController<JShellSnippet> {
             checkButtons();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -342,7 +342,7 @@ public class DoubleMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -561,7 +561,7 @@ public class DoubleMatrixTools {
             }
             return minor;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -587,7 +587,7 @@ public class DoubleMatrixTools {
             }
             return adjoint;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -619,7 +619,7 @@ public class DoubleMatrixTools {
             }
             return v;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             throw e;
         }
 
@@ -645,7 +645,7 @@ public class DoubleMatrixTools {
             }
             return det;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             throw e;
         }
 
@@ -666,7 +666,7 @@ public class DoubleMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -687,7 +687,7 @@ public class DoubleMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -726,7 +726,7 @@ public class DoubleMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -753,7 +753,7 @@ public class DoubleMatrixTools {
 
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -796,7 +796,7 @@ public class DoubleMatrixTools {
             }
             return i;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             throw e;
         }
 

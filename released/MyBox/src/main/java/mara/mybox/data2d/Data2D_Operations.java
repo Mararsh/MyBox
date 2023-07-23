@@ -94,7 +94,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -141,7 +141,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -171,7 +171,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

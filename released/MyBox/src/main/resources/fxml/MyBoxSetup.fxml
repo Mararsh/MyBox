@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="650.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxSetupController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="650.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxSetupController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -56,18 +56,18 @@ License:    Apache License Version 2.0
                                                 <Label minHeight="-Infinity" text="%DataDirectory" wrapText="true" />
                                             </children>
                                         </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                                             <children>
                                                 <TextField fx:id="dataDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectDataPath">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSelectFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
+                                    <Button fx:id="selectPathButton" mnemonicParsing="false" onAction="#selectDataPath">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconSelectPath.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                             </children>
                                         </HBox>
                                     </children>

@@ -267,7 +267,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             totalSize = 0;
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -331,7 +331,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             }
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return message("Failed");
         }
 
@@ -353,7 +353,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             return MessageFormat.format(message("DirHandledSummary"),
                     dirFilesNumber, dirFilesHandled);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return message("Failed");
         }
     }
@@ -425,7 +425,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                 FileTools.rename(archiveFile, targetFile);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

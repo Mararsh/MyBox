@@ -52,7 +52,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(verifyButton, new Tooltip(message("VerifyPageData")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -75,14 +75,9 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             saveButton = dataController.saveButton;
 
             initPagination();
-
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
-    }
-
-    public void notifyColumnChanged() {
-        columnChangedNotify.set(!columnChangedNotify.get());
     }
 
     public void dataSaved() {
@@ -196,7 +191,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             }
             Data2DPasteContentInSystemClipboardController.open(this, text);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -208,7 +203,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             }
             Data2DPasteContentInMyBoxClipboardController.open(this);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -305,7 +300,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             }
             dataController.columnsController.setNames(names);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

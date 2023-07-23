@@ -19,7 +19,7 @@ This is desktop application based on JavaFx to provide simple and easy functions
      - When edit XML file, XML codes can be inputted to add new node.                                                        
      - Function menu in tabs of web browser to close tabs more easily.                                                            
      - Shortcuts of button "Go" are F9 and CTRL+g. Shortcut of button "Clear" is CTRL+l(lowercase of 'L').                                                        
-* Removed: When edit image, event "double-click" is not handled any more.                                                                                            
+* Removed: Event "double-click" is not handled for image any more.                                                                                            
 * Solved problems:                                      
      - Image OCR fails in last 2 versions.                                                            
      - When scale image, the inputted width and height do not work.                                                        
@@ -82,14 +82,7 @@ The latest versions and all archived versions can be downloaded in following add
 | --- | --- | --- | 
 | github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme_en.html)     [Chinese](https://mararsh.github.io/MyBox/readme_zh.html) |
 | sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme_en.html)    [Chinese](https://mara-mybox.sourceforge.io/readme_zh.html) |
-| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
-
-## Migration
-1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
-2. Data handled in each version are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
-3. MyBox is backward compatibility: Later version can work on data of previous versions.
-While forward compatibility is not supported: Wrong may happen when old version handles data of new version.
-
+| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |      
 
 ## Configuration 
 Configuration file is under "User Home":        
@@ -102,6 +95,42 @@ Configuration file is under "User Home":
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
+
+## Migration
+1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
+2. Data handled in each version are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
+3. MyBox is backward compatibility: Later version can work on data of previous versions.
+While forward compatibility is not supported: Wrong may happen when old version handles data of new version.          
+
+## Backup and Recover
+1. To backup, copy directories to other places.       
+2. To recover, override current directories with backup directories.
+3. Need not backup each directory under data path.       
+   Predefined directories under data path are listed below. Only directories of "referred by database" need backups:               
+
+|    directory    |         role         | internal referred | read/write automatically | referred by database | cleared automatically |
+|-----------------|----------------------|-------------------|--------------------------|----------------------|-----------------------|
+| AppTemp         | temporary files      | yes               | yes                      |                      | yes                   |
+| buttons         | customized buttons   | yes               | yes                      |                      |                       |
+| data            | internal data        | yes               | yes                      |                      |                       |
+| dataClipboard   | data clipboard       | yes               | yes                      | yes                  |                       |
+| doc             | internal documents   | yes               | yes                      |                      |                       |
+| downloads       | download files       |                   | yes                      |                      |                       |
+| fileBackups     | files' backups       | yes               | yes                      | yes                  |                       |
+| generated       | generated files      |                   | yes                      |                      |                       |
+| ICC             | ICC profiles         | yes               | yes                      |                      |                       |
+| icons           | icon files           | yes               | yes                      |                      |                       |
+| image           | image files          | yes               | yes                      |                      |                       |
+| imageClipboard  | image clipbooard     | yes               | yes                      | yes                  |                       |
+| imageHistories  | image edit histories | yes               | yes                      | yes                  |                       |
+| imageScopes     | image scopes         | yes               | yes                      | yes                  |                       |
+| js              | javascript           | yes               | yes                      |                      |                       |
+| logs            | database logs        |                   | yes                      |                      |                       |
+| map             | map files            | yes               | yes                      |                      |                       |
+| mybox_derby     | database             | yes               | yes                      | yes                  |                       |
+| mybox_languages | customized languages | yes               | yes                      |                      |                       |
+| security        | cert files           | yes               | yes                      |                      |                       |
+| sound           | sound files          | yes               | yes                      |                      |                       |     
 
 # Resource Addresses        
 | Contents | Link |        

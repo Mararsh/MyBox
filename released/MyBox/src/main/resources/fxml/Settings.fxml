@@ -21,7 +21,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
@@ -68,7 +67,7 @@ License:    Apache License Version 2.0
                                                         </Label>
                                                         <ComboBox fx:id="iconSizeBox" editable="true" prefWidth="100.0" />
                                                         <Label text="px" />
-                                          <CheckBox fx:id="icons40pxCheck" mnemonicParsing="false" text="%Icons40px" />
+                                                        <CheckBox fx:id="icons40pxCheck" mnemonicParsing="false" text="%Icons40px" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" spacing="10.0" VBox.vgrow="NEVER">
@@ -134,7 +133,7 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
                                                 <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText" />
-                                    <CheckBox fx:id="commitLoseFocusCheck" layoutX="20.0" layoutY="251.0" mnemonicParsing="false" text="%CommitModificationWhenDataCellLoseFocus" />
+                                                <CheckBox fx:id="lostFocusCommitCheck" layoutX="20.0" layoutY="251.0" mnemonicParsing="false" text="%CommitModificationWhenDataCellLoseFocus" />
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
                                                     <children>
                                                         <Label text="%SelectorScrollSize">
@@ -164,13 +163,13 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                             <children>
                                                                 <Label text="%BackgroundColor" />
-                                                                <fx:include fx:id="popBgColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popBgColor" source="ControlColorSet.fxml" />
                                                                 <Label text="%Information" />
-                                                                <fx:include fx:id="popInfoColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popInfoColor" source="ControlColorSet.fxml" />
                                                                 <Label text="%Error" />
-                                                                <fx:include fx:id="popErrorColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popErrorColor" source="ControlColorSet.fxml" />
                                                                 <Label text="%Warning" />
-                                                                <fx:include fx:id="popWarnColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popWarnColor" source="ControlColorSet.fxml" />
                                                             </children>
                                                         </HBox>
                                                     </children>
@@ -296,7 +295,7 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </HBox>
                                                         <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
-                                          <CheckBox fx:id="copyCurrentDataPathCheck" layoutX="15.0" layoutY="88.0" mnemonicParsing="false" text="%CopyCurrentDataPathToNewPath" />
+                                                        <CheckBox fx:id="copyCurrentDataPathCheck" layoutX="15.0" layoutY="88.0" mnemonicParsing="false" text="%CopyCurrentDataPathToNewPath" />
                                                         <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                             <children>
@@ -420,42 +419,11 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%Stroke" />
-                                                        <Label text="%Color" />
-                                                        <fx:include fx:id="strokeColorSet" source="ColorSet.fxml" />
-                                                        <Label text="%Width" />
-                                                        <ComboBox fx:id="strokeWidthBox" editable="true" prefWidth="100.0" />
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%Anchor" />
-                                                        <Label text="%Color" />
-                                                        <fx:include fx:id="anchorColorSet" source="ColorSet.fxml" />
-                                                        <Label text="%Width" />
-                                                        <ComboBox fx:id="anchorWidthBox" editable="true" prefWidth="100.0" />
-                                                        <CheckBox fx:id="anchorSolidCheck" mnemonicParsing="false" text="%Solid" />
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%GridLines" />
-                                                        <Label text="%Color" />
-                                                        <fx:include fx:id="gridColorSet" source="ColorSet.fxml" />
-                                                        <Label text="%Width" />
-                                                        <ComboBox fx:id="gridWidthSelector" editable="true" prefWidth="100.0" />
-                                                        <Label text="%Interval" />
-                                                        <ComboBox fx:id="gridIntervalSelector" editable="true" prefWidth="100.0" />
-                                                        <Label layoutX="302.0" layoutY="17.0" text="%Opacity" />
-                                                        <ComboBox fx:id="gridOpacitySelector" editable="true" layoutX="348.0" layoutY="13.0" prefWidth="100.0" />
-                                                    </children>
-                                                </FlowPane>
+                                    <fx:include fx:id="ruler" source="ControlImageRulerOptions.fxml" />
                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Label text="%AlphaColor" wrapText="true" />
-                                                        <fx:include fx:id="alphaColorSet" source="ColorSet.fxml" />
+                                                        <fx:include fx:id="alphaColorSet" source="ControlColorSet.fxml" />
                                                         <Label fx:id="alphaLabel" text="%AlphaReplaceComments" />
                                                     </children>
                                                 </HBox>

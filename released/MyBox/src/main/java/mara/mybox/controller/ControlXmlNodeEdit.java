@@ -6,7 +6,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,29 +33,23 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
     }
 
     public void editNode(TreeItem<XmlTreeNode> item) {
+        clearNode();
         treeItem = item;
         if (treeItem == null) {
-            clearNode();
             return;
         }
         XmlTreeNode currentTreeNode = treeItem.getValue();
         if (currentTreeNode == null) {
-            clearNode();
             return;
         }
         thisPane.setDisable(false);
         infoLabel.setText(treeController.hierarchyNumber(item));
 
-        load(currentTreeNode.getNode());
-    }
-
-    public void load(Node node) {
-        clearNode();
-        this.node = node;
+        node = currentTreeNode.getNode();
         if (node == null) {
             return;
         }
-        typeInput.setText(XmlTreeNode.type(node).name());
+        typeInput.setText(XmlTools.type(node).name());
         baseUriInput.setText(node.getBaseURI());
         namespaceInput.setText(node.getNamespaceURI());
 
@@ -70,21 +66,18 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             case Node.COMMENT_NODE:
             case Node.ATTRIBUTE_NODE:
             case Node.PROCESSING_INSTRUCTION_NODE:
-                valueArea.setText(XmlTreeNode.value(node));
+                valueArea.setText(XmlTools.value(node));
                 valueArea.setDisable(false);
                 valueArea.setEditable(true);
                 setBox.getChildren().add(valueBox);
                 VBox.setVgrow(valueBox, Priority.ALWAYS);
+                VBox.setVgrow(valueArea, Priority.ALWAYS);
                 break;
             case Node.ELEMENT_NODE:
-                NamedNodeMap attrs = node.getAttributes();
-                if (attrs != null) {
-                    for (int i = 0; i < attrs.getLength(); i++) {
-                        attributesData.add(attrs.item(i));
-                    }
-                }
+                setAttributes();
                 setBox.getChildren().add(attrBox);
                 VBox.setVgrow(attrBox, Priority.ALWAYS);
+                VBox.setVgrow(tableView, Priority.ALWAYS);
                 break;
             case Node.DOCUMENT_NODE:
                 Document document = (Document) node;
@@ -99,15 +92,29 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             case Node.ENTITY_NODE:
             case Node.ENTITY_REFERENCE_NODE:
             case Node.NOTATION_NODE:
-                valueArea.setText(XmlTreeNode.value(node));
+                valueArea.setText(XmlTools.value(node));
                 valueArea.setDisable(true);
                 valueArea.setEditable(false);
                 setBox.getChildren().add(valueBox);
                 VBox.setVgrow(valueBox, Priority.ALWAYS);
+                VBox.setVgrow(valueArea, Priority.ALWAYS);
                 break;
             default:
         }
+        refreshStyle(setBox);
         thisPane.setDisable(false);
+    }
+
+    public void setAttributes() {
+        if (node == null) {
+            return;
+        }
+        NamedNodeMap attrs = node.getAttributes();
+        if (attrs != null) {
+            for (int i = 0; i < attrs.getLength(); i++) {
+                tableData.add(attrs.item(i));
+            }
+        }
     }
 
     public Node pickValue() {
@@ -121,7 +128,11 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 case Node.COMMENT_NODE:
                 case Node.ATTRIBUTE_NODE:
                 case Node.PROCESSING_INSTRUCTION_NODE:
-                    node.setNodeValue(valueArea.getText());
+                    String s = valueArea.getText();
+                    node.setNodeValue(s);
+                    if (s != null && !s.isBlank()) {
+                        TableStringValues.add("XmlNodeValueHistories", s);
+                    }
                     break;
                 case Node.ELEMENT_NODE:
                     NamedNodeMap attrs = node.getAttributes();
@@ -130,7 +141,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                         for (int i = attrs.getLength() - 1; i >= 0; i--) {
                             element.removeAttribute(attrs.item(i).getNodeName());
                         }
-                        for (Node attr : attributesData) {
+                        for (Node attr : tableData) {
                             element.setAttribute(attr.getNodeName(), attr.getNodeValue());
                         }
                     }
@@ -171,10 +182,11 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             }
             XmlTreeNode updatedTreeNode = new XmlTreeNode()
                     .setNode(updatedNode)
-                    .setType(XmlTreeNode.type(updatedNode))
+                    .setType(XmlTools.type(updatedNode))
                     .setTitle(updatedNode.getNodeName())
-                    .setValue(XmlTreeNode.value(updatedNode));
+                    .setValue(XmlTools.value(updatedNode));
             treeItem.setValue(updatedTreeNode);
+            editNode(treeItem);
             treeController.xmlEditor.domChanged(true);
             treeController.xmlEditor.popInformation(message("UpdateSuccessfully"));
         } catch (Exception e) {

@@ -55,7 +55,7 @@ public class FilesFindController extends BaseBatchFileController {
             done = message("Done");
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -94,7 +94,7 @@ public class FilesFindController extends BaseBatchFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -165,7 +165,7 @@ public class FilesFindController extends BaseBatchFileController {
             }
             return done;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return done;
         }
     }

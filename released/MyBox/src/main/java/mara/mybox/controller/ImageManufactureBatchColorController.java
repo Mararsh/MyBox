@@ -50,7 +50,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
     @FXML
     protected CheckBox ignoreTransparentCheck, hueCheck, saturationCheck, brightnessCheck;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected HBox colorBox;
     @FXML
@@ -75,7 +75,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -137,7 +137,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             checkColorActionType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -333,7 +333,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             BufferedImage target = pixelsOperation.operate();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

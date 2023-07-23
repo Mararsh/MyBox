@@ -19,7 +19,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
@@ -85,7 +85,7 @@ public class MarkdownEditorController extends TextEditorController {
                 super.makeEditContextMenu(node);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -130,7 +130,7 @@ public class MarkdownEditorController extends TextEditorController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -175,7 +175,7 @@ public class MarkdownEditorController extends TextEditorController {
             htmlRenderer = HtmlRenderer.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -211,7 +211,7 @@ public class MarkdownEditorController extends TextEditorController {
         if (mainArea.getText().isEmpty()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private String html;
 
@@ -293,6 +293,16 @@ public class MarkdownEditorController extends TextEditorController {
     }
 
     @FXML
+    public void popHtmlAction() {
+        webViewController.popAction();
+    }
+
+    @FXML
+    public void popCodesAction() {
+        TextPopController.openInput(this, codesArea);
+    }
+
+    @FXML
     @Override
     public boolean menuAction() {
         try {
@@ -301,7 +311,7 @@ public class MarkdownEditorController extends TextEditorController {
             MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -318,7 +328,7 @@ public class MarkdownEditorController extends TextEditorController {
             MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -349,7 +359,7 @@ public class MarkdownEditorController extends TextEditorController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -362,7 +372,7 @@ public class MarkdownEditorController extends TextEditorController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

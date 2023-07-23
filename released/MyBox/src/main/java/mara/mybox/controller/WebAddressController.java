@@ -34,6 +34,7 @@ import mara.mybox.value.UserConfig;
  */
 public class WebAddressController extends BaseWebViewController {
 
+    protected WebBrowserController browser;
     protected TableWebHistory tableWebHistory;
     protected Tab addressTab;
     protected List<String> failedAddress;
@@ -53,11 +54,12 @@ public class WebAddressController extends BaseWebViewController {
                 tableWebHistory = new TableWebHistory();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     public void initTab(WebBrowserController parent, Tab tab) {
+        browser = parent;
         this.baseName = parent.baseName;
         this.addressTab = tab;
     }
@@ -99,6 +101,7 @@ public class WebAddressController extends BaseWebViewController {
         }
         SingletonTask bgTask = new SingletonTask<Void>(this) {
 
+            private String title;
             private ImageView tabImage = null;
 
             @Override
@@ -109,7 +112,7 @@ public class WebAddressController extends BaseWebViewController {
                     WebHistory his = new WebHistory();
                     his.setAddress(address);
                     his.setVisitTime(new Date());
-                    String title = webEngine.getTitle();
+                    title = webEngine.getTitle();
                     his.setTitle(title != null ? title : "");
                     his.setIcon("");
                     if (failedAddress == null || !failedAddress.contains(address)) {
@@ -143,13 +146,17 @@ public class WebAddressController extends BaseWebViewController {
 
             @Override
             protected void whenSucceeded() {
-                if (addressTab != null) {
-                    if (tabImage == null) {
-                        tabImage = StyleTools.getIconImageView("iconMyBox.png");
-                    }
-                    tabImage.setFitWidth(20);
-                    tabImage.setFitHeight(20);
-                    addressTab.setGraphic(tabImage);
+                if (addressTab == null) {
+                    return;
+                }
+                if (tabImage == null) {
+                    tabImage = StyleTools.getIconImageView("iconMyBox.png");
+                }
+                tabImage.setFitWidth(20);
+                tabImage.setFitHeight(20);
+                if (browser != null) {
+                    browser.setHead(addressTab, tabImage,
+                            title != null && !title.isBlank() ? title : address);
                 }
             }
 
@@ -175,7 +182,7 @@ public class WebAddressController extends BaseWebViewController {
             }
             super.pageLoaded();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

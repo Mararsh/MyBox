@@ -1,13 +1,12 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -72,7 +71,7 @@ public class HtmlDomDeleteController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -96,13 +95,9 @@ public class HtmlDomDeleteController extends BaseChildController {
         try {
             count = 0;
             List<TreeItem<HtmlNode>> sourcesItems = sourceController.selectedItems();
-            List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {
                 String sourceNumber = sourceController.hierarchyNumber(sourceItem);
                 TreeItem<HtmlNode> manageItem = manageController.findSequenceNumber(sourceNumber);
-                manageItems.add(manageItem);
-            }
-            for (TreeItem<HtmlNode> manageItem : manageItems) {
                 Element selectedElement = manageItem.getValue().getElement();
                 selectedElement.remove();
                 count++;

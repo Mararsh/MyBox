@@ -1,17 +1,17 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolygon;
+import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.DoubleShape;
 
 /**
  * @Author Mara
@@ -21,7 +21,7 @@ import mara.mybox.data.DoubleRectangle;
 public abstract class BaseImageController_MouseEvents extends BaseImageController_Shapes {
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (p == null || imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -29,11 +29,11 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (isPickingColor) {
             pickColor(p, imageView);
 
-        } else if (event.getClickCount() > 1) {  // Notice: Double click always trigger single click at first
-            imageDoubleClicked(event, p);
-
+//        } else if (event.getClickCount() > 1) {  // Notice: Double click always trigger single click at first
+//            imageDoubleClicked(event, p);
         } else if (event.getClickCount() == 1) {
             imageSingleClicked(event, p);
+
         }
     }
 
@@ -56,134 +56,170 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (event == null || p == null) {
             return;
         }
-        if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            singleClickedPolygonLine(event, p);
-        }
-
-        if (event.getButton() != MouseButton.SECONDARY) {
-            return;
-        }
-        Timer menuTimer = new Timer();
-        menuTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    popImageMenu(event.getScreenX(), event.getScreenY());
-                });
+        if (maskRectangle != null && maskRectangle.isVisible()) {
+            if (singleClickedRectangle(event, p)) {
+                maskShapeDataChanged();
+                return;
             }
-        }, 100);  // double click will be eaten by the menu if not delay
 
+        } else if (maskCircle != null && maskCircle.isVisible()) {
+            if (singleClickedCircle(event, p)) {
+                maskShapeDataChanged();
+                return;
+            }
+
+        } else if (maskEllipse != null && maskEllipse.isVisible()) {
+            if (singleClickedEllipse(event, p)) {
+                maskShapeDataChanged();
+                return;
+            }
+
+        } else if (maskLine != null && maskLine.isVisible()) {
+            if (singleClickedLine(event, p)) {
+                maskShapeDataChanged();
+                return;
+            }
+
+        } else if (maskPolyline != null && maskPolyline.isVisible()) {
+            if (!maskPointDragged) {
+                if (singleClickedPolyline(event, p)) {
+                    maskShapeDataChanged();
+                    return;
+                }
+            }
+
+        } else if (maskPolygon != null && maskPolygon.isVisible()) {
+            if (!maskPointDragged) {
+                if (singleClickedPolygon(event, p)) {
+                    maskShapeDataChanged();
+                    return;
+                }
+            }
+
+        } else if (maskLinesData != null) {
+            if (singleClickedLines(event, p)) {
+                return;
+            }
+
+        }
+
+        maskPointDragged = false;
+        if (event.getButton() == MouseButton.SECONDARY) {
+            popImageMenu(event.getScreenX(), event.getScreenY());
+        }
     }
 
-    protected void singleClickedPolygonLine(MouseEvent event, DoublePoint p) {
-        if (p == null || maskPolygonLine == null || !maskPolygonLine.isVisible()) {
-            return;
+    protected boolean singleClickedRectangle(MouseEvent event, DoublePoint p) {
+        if (p == null || maskRectangle == null || !maskRectangle.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            DoubleRectangle moved = maskRectangleData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskRectangleData = moved;
+                drawMaskRectangle();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean singleClickedCircle(MouseEvent event, DoublePoint p) {
+        if (p == null || maskCircle == null || !maskCircle.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            DoubleCircle moved = maskCircleData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskCircleData = moved;
+                drawMaskCircle();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean singleClickedEllipse(MouseEvent event, DoublePoint p) {
+        if (p == null || maskEllipse == null || !maskEllipse.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            DoubleEllipse moved = maskEllipseData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskEllipseData = moved;
+                drawMaskEllipse();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean singleClickedLine(MouseEvent event, DoublePoint p) {
+        if (p == null || maskLine == null || !maskLine.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            DoubleLine moved = maskLineData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskLineData = moved;
+                drawMaskLine();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean singleClickedPolyline(MouseEvent event, DoublePoint p) {
+        if (p == null || maskPolyline == null || !maskPolyline.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.PRIMARY) {
+            maskPolylineData.add(p.getX(), p.getY());
+            double x = p.getX() * viewXRatio();
+            double y = p.getY() * viewYRatio();
+            addMaskPolylinePoint(maskPolylineData.getSize(), p, x, y);
+            maskShapeChanged();
+            return true;
+
+        } else if (event.getButton() == MouseButton.SECONDARY && maskPolylineData.getSize() > 0) {
+            DoublePolyline moved = maskPolylineData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskPolylineData = moved;
+                drawMaskPolyline();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean singleClickedPolygon(MouseEvent event, DoublePoint p) {
+        if (p == null || maskPolygon == null || !maskPolygon.isVisible()) {
+            return false;
         }
         if (event.getButton() == MouseButton.PRIMARY) {
             maskPolygonData.add(p.getX(), p.getY());
-            drawMaskPolygonLine();
+            double x = p.getX() * viewXRatio();
+            double y = p.getY() * viewYRatio();
+            addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
+            maskShapeChanged();
+            return true;
 
-        } else if (event.getButton() == MouseButton.SECONDARY && maskPolygonData.getSize() > 2) {
-            List<DoublePoint> maskPoints = maskPolygonData.getPoints();
-            DoublePoint p0 = maskPoints.get(0);
-            double offsetX = p.getX() - p0.getX();
-            double offsetY = p.getY() - p0.getY();
-
-            if (offsetX != 0 || offsetY != 0) {
-                maskPolygonData = maskPolygonData.move(offsetX, offsetY);
-                drawMaskPolygonLine();
+        } else if (event.getButton() == MouseButton.SECONDARY && maskPolygonData.getSize() > 0) {
+            DoublePolygon moved = maskPolygonData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskPolygonData = moved;
+                drawMaskPolygon();
+                return true;
             }
         }
-
+        return false;
     }
 
-    public void imageDoubleClicked(MouseEvent event, DoublePoint p) {
-        doubleClickedRectangle(event, p);
-        doubleClickedCircle(event, p);
-        doubleClickedEllipse(event, p);
-    }
-
-    protected void doubleClickedRectangle(MouseEvent event, DoublePoint p) {
-        if (p == null || maskRectangleLine == null || !maskRectangleLine.isVisible()) {
-            return;
+    protected boolean singleClickedLines(MouseEvent event, DoublePoint p) {
+        if (p == null || maskLinesData == null) {
+            return false;
         }
-        double x = p.getX();
-        double y = p.getY();
-        if (event.getButton() == MouseButton.PRIMARY) {
-
-            if (x < maskRectangleData.getBigX() && y < maskRectangleData.getBigY()) {
-                maskRectangleData.setSmallX(x);
-                maskRectangleData.setSmallY(y);
-                drawMaskRectangleLine();
-            }
-
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-
-            if (x > maskRectangleData.getSmallX() && y > maskRectangleData.getSmallY()) {
-                maskRectangleData.setBigX(x);
-                maskRectangleData.setBigY(y);
-                drawMaskRectangleLine();
-            }
-
-        }
-
-    }
-
-    protected void doubleClickedCircle(MouseEvent event, DoublePoint p) {
-        if (p == null || maskCircleLine == null || !maskCircleLine.isVisible()) {
-            return;
-        }
-        double x = p.getX();
-        double y = p.getY();
-        if (event.getButton() == MouseButton.PRIMARY) {
-
-            maskCircleData.setCenterX(x);
-            maskCircleData.setCenterY(y);
-            drawMaskCircleLine();
-
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-
-            if (x != maskCircleData.getCenterX() || y != maskCircleData.getCenterY()) {
-                double dx = x - maskCircleData.getCenterX();
-                double dy = y - maskCircleData.getCenterY();
-                maskCircleData.setRadius(Math.sqrt(dx * dx + dy * dy));
-                drawMaskCircleLine();
-            }
-
-        }
-    }
-
-    protected void doubleClickedEllipse(MouseEvent event, DoublePoint p) {
-        if (p == null || maskEllipseLine == null || !maskEllipseLine.isVisible()) {
-            return;
-        }
-        double x = p.getX();
-        double y = p.getY();
-        if (event.getButton() == MouseButton.PRIMARY) {
-            if (x != maskEllipseData.getCenterX()) {
-                double xr = Math.abs(x - maskEllipseData.getCenterX());
-                maskEllipseData = new DoubleEllipse(
-                        maskEllipseData.getCenterX() - xr,
-                        maskEllipseData.getCenterY() - maskEllipseData.getRadiusY(),
-                        maskEllipseData.getCenterX() + xr,
-                        maskEllipseData.getCenterY() + maskEllipseData.getRadiusY()
-                );
-                drawMaskEllipseLine();
-            }
-
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-            if (y != maskEllipseData.getCenterY()) {
-                double yr = Math.abs(y - maskEllipseData.getCenterY());
-                maskEllipseData = new DoubleEllipse(
-                        maskEllipseData.getCenterX() - maskEllipseData.getRadiusX(),
-                        maskEllipseData.getCenterY() - yr,
-                        maskEllipseData.getCenterX() + maskEllipseData.getRadiusX(),
-                        maskEllipseData.getCenterY() + yr
-                );
-                drawMaskEllipseLine();
-            }
-
-        }
+        return true;
     }
 
     @FXML
@@ -191,126 +227,115 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(false);
         mouseX = event.getX();
         mouseY = event.getY();
-//        MyBoxLog.debug((int) mouseX + " " + (int) mouseY);
     }
 
     @FXML
     public void rectangleReleased(MouseEvent event) {
         if (isPickingColor
-                || maskRectangleLine == null || !maskRectangleLine.isVisible()
-                || !maskPane.getChildren().contains(maskRectangleLine)
+                || maskRectangle == null || !maskRectangle.isVisible()
+                || !maskPane.getChildren().contains(maskRectangle)
                 || (mouseX == event.getX() && mouseY == event.getY())) {
             return;
         }
         scrollPane.setPannable(true);
-        double offsetX = maskRectangleLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = maskRectangleLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
-
-        if (x <= 0 - maskRectangleData.getWidth()) {
-            x = 0 - maskRectangleData.getWidth() + 1;
+        double offsetX = imageOffsetX(event);
+        double offsetY = imageOffsetY(event);
+        if (!DoubleShape.changed(offsetX, offsetY)) {
+            return;
         }
-        if (x >= getImageWidth()) {
-            x = getImageWidth() - 1;
-        }
-        if (y <= 0 - maskRectangleData.getHeight()) {
-            y = 0 - maskRectangleData.getHeight() + 1;
-        }
-        if (y >= getImageHeight()) {
-            y = getImageHeight() - 1;
-        }
-        maskRectangleData = new DoubleRectangle(x, y,
-                x + maskRectangleData.getWidth() - 1, y + maskRectangleData.getHeight() - 1);
-        drawMaskRectangleLine();
+        maskRectangleData = maskRectangleData.move(offsetX, offsetY);
+        drawMaskRectangle();
+        maskShapeDataChanged();
     }
 
     @FXML
     public void circleReleased(MouseEvent event) {
-        if (isPickingColor || maskCircleLine == null || !maskCircleLine.isVisible()
-                || !maskPane.getChildren().contains(maskCircleLine)
+        if (isPickingColor || maskCircle == null || !maskCircle.isVisible()
+                || !maskPane.getChildren().contains(maskCircle)
                 || (mouseX == event.getX() && mouseY == event.getY())) {
             return;
         }
         scrollPane.setPannable(true);
-        double offsetX = maskCircleLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = maskCircleLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
-
-        if (x <= 0 - maskCircleData.getRadius()) {
-            x = 0 - maskCircleData.getRadius() + 1;
+        double offsetX = imageOffsetX(event);
+        double offsetY = imageOffsetY(event);
+        if (!DoubleShape.changed(offsetX, offsetY)) {
+            return;
         }
-        if (x >= getImageWidth() + maskCircleData.getRadius()) {
-            x = getImageWidth() + maskCircleData.getRadius() - 1;
-        }
-        if (y <= 0 - maskCircleData.getRadius()) {
-            y = 0 - maskCircleData.getRadius() + 1;
-        }
-        if (y >= getImageHeight() + maskCircleData.getRadius()) {
-            y = getImageHeight() + maskCircleData.getRadius() - 1;
-        }
-
-        maskCircleData.setCenterX(x);
-        maskCircleData.setCenterY(y);
-        drawMaskCircleLine();
+        maskCircleData = maskCircleData.move(offsetX, offsetY);
+        drawMaskCircle();
+        maskShapeDataChanged();
     }
 
     @FXML
     public void ellipseReleased(MouseEvent event) {
-        if (isPickingColor || maskEllipseLine == null || !maskEllipseLine.isVisible()
-                || !maskPane.getChildren().contains(maskEllipseLine)
+        if (isPickingColor || maskEllipse == null || !maskEllipse.isVisible()
+                || !maskPane.getChildren().contains(maskEllipse)
                 || (mouseX == event.getX() && mouseY == event.getY())) {
             return;
         }
         scrollPane.setPannable(true);
-        double offsetX = maskEllipseLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = maskEllipseLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double offsetX = imageOffsetX(event);
+        double offsetY = imageOffsetY(event);
+        if (!DoubleShape.changed(offsetX, offsetY)) {
+            return;
+        }
+        maskEllipseData = maskEllipseData.move(offsetX, offsetY);
+        drawMaskEllipse();
+        maskShapeDataChanged();
+    }
 
-        double rx = maskEllipseData.getRadiusX();
-        double ry = maskEllipseData.getRadiusY();
+    @FXML
+    public void lineReleased(MouseEvent event) {
+        if (isPickingColor || maskLine == null || !maskLine.isVisible()
+                || !maskPane.getChildren().contains(maskLine)
+                || (mouseX == event.getX() && mouseY == event.getY())) {
+            return;
+        }
+        scrollPane.setPannable(true);
+        double offsetX = imageOffsetX(event);
+        double offsetY = imageOffsetY(event);
+        if (!DoubleShape.changed(offsetX, offsetY)) {
+            return;
+        }
+        maskLineData = maskLineData.move(offsetX, offsetY);
+        drawMaskLine();
+        maskShapeDataChanged();
+    }
 
-        if (x <= 0 - rx) {
-            x = 0 - rx + 1;
+    @FXML
+    public void polylineReleased(MouseEvent event) {
+        if (isPickingColor || maskPolyline == null || !maskPolyline.isVisible()
+                || !maskPane.getChildren().contains(maskPolyline)
+                || (mouseX == event.getX() && mouseY == event.getY())) {
+            return;
         }
-        if (x >= getImageWidth() + rx) {
-            x = getImageWidth() + rx - 1;
+        scrollPane.setPannable(true);
+        double offsetX = imageOffsetX(event);
+        double offsetY = imageOffsetY(event);
+        if (!DoubleShape.changed(offsetX, offsetY)) {
+            return;
         }
-        if (y <= 0 - ry) {
-            y = 0 - ry + 1;
-        }
-        if (y >= getImageHeight() + ry) {
-            y = getImageHeight() + ry - 1;
-        }
-
-        maskEllipseData = new DoubleEllipse(x - rx, y - ry, x + rx, y + ry);
-        drawMaskEllipseLine();
+        maskPolylineData = maskPolylineData.move(offsetX, offsetY);
+        drawMaskPolyline();
+        maskShapeDataChanged();
     }
 
     @FXML
     public void polygonReleased(MouseEvent event) {
-        if (isPickingColor || maskPolygonLine == null || !maskPolygonLine.isVisible()
-                || !maskPane.getChildren().contains(maskPolygonLine)
+        if (isPickingColor || maskPolygon == null || !maskPolygon.isVisible()
+                || !maskPane.getChildren().contains(maskPolygon)
                 || (mouseX == event.getX() && mouseY == event.getY())) {
             return;
         }
         scrollPane.setPannable(true);
-        double offsetX = maskPolygonLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = maskPolygonLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
-
-        List<DoublePoint> maskPoints = maskPolygonData.getPoints();
-        List<DoublePoint> points = new ArrayList<>();
-        for (int i = 0; i < maskPoints.size(); ++i) {
-            DoublePoint mp = maskPoints.get(i);
-            points.add(new DoublePoint(mp.getX() + x, mp.getY() + y));
+        double offsetX = imageOffsetX(event);
+        double offsetY = imageOffsetY(event);
+        if (!DoubleShape.changed(offsetX, offsetY)) {
+            return;
         }
-        maskPolygonData.setAll(points);
-        drawMaskPolygonLine();
-
+        maskPolygonData = maskPolygonData.move(offsetX, offsetY);
+        drawMaskPolygon();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -321,25 +346,31 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
 
-        double offsetX = topLeftHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = topLeftHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+        double x = maskHandlerX(topLeftHandler, event);
+        double y = maskHandlerY(topLeftHandler, event);
+
+        if (maskLine != null && maskLine.isVisible()) {
+
+            maskLineData.setStartX(x);
+            maskLineData.setStartY(y);
+            drawMaskLine();
+            maskShapeDataChanged();
+
+        } else if (maskRectangle != null && maskRectangle.isVisible()) {
 
             if (x < maskRectangleData.getBigX() && y < maskRectangleData.getBigY()) {
-                if (x >= getImageWidth() - 1) {
-                    x = getImageWidth() - 2;
+                if (x >= imageWidth() - 1) {
+                    x = imageWidth() - 2;
                 }
-                if (y >= getImageHeight() - 1) {
-                    y = getImageHeight() - 2;
+                if (y >= imageHeight() - 1) {
+                    y = imageHeight() - 2;
                 }
                 maskRectangleData.setSmallX(x);
                 maskRectangleData.setSmallY(y);
-                drawMaskRectangleLine();
+                drawMaskRectangle();
+                maskShapeDataChanged();
             }
         }
-
     }
 
     @FXML
@@ -348,37 +379,35 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (isPickingColor) {
             return;
         }
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-            double offsetY = topCenterHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-            double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        if (maskRectangle != null && maskRectangle.isVisible()) {
+            double y = maskHandlerY(topCenterHandler, event);
             if (y < maskRectangleData.getBigY()) {
-                if (y >= getImageHeight() - 1) {
-                    y = getImageHeight() - 2;
+                if (y >= imageHeight() - 1) {
+                    y = imageHeight() - 2;
                 }
                 maskRectangleData.setSmallY(y);
-                drawMaskRectangleLine();
+                drawMaskRectangle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            double d = bottomCenterHandler.getLayoutY() - topCenterHandler.getLayoutY() - event.getY() + mouseY;
-            if (d > 0) {
-                d = d * getImageHeight() / imageView.getBoundsInParent().getHeight();
-                maskCircleData.setRadius(d / 2);
-                drawMaskCircleLine();
+        } else if (maskCircle != null && maskCircle.isVisible()) {
+            double r = bottomCenterHandler.getLayoutY() - topCenterHandler.getLayoutY() - event.getY();
+            if (r > 0) {
+                maskCircleData.setRadius(r * imageYRatio() / 2);
+                drawMaskCircle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            double ry = (bottomCenterHandler.getLayoutY() - topCenterHandler.getLayoutY() - event.getY() + mouseY) / 2;
+        } else if (maskEllipse != null && maskEllipse.isVisible()) {
+            double ry = bottomCenterHandler.getLayoutY() - topCenterHandler.getLayoutY() - event.getY();
             if (ry > 0) {
-                ry = ry * getImageHeight() / imageView.getBoundsInParent().getHeight();
+                ry = ry * imageYRatio() / 2;
                 double rx = maskEllipseData.getRadiusX();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
-
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
-                drawMaskEllipseLine();
+                drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 
@@ -391,21 +420,20 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
 
-        double offsetX = topRightHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = topRightHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = maskHandlerX(topRightHandler, event);
+        double y = maskHandlerY(topRightHandler, event);
 
         if (x > maskRectangleData.getSmallX() && y < maskRectangleData.getBigY()) {
             if (x <= 0) {
                 x = 1;
             }
-            if (y >= getImageHeight() - 1) {
-                y = getImageHeight() - 2;
+            if (y >= imageHeight() - 1) {
+                y = imageHeight() - 2;
             }
             maskRectangleData.setBigX(x);
             maskRectangleData.setSmallY(y);
-            drawMaskRectangleLine();
+            drawMaskRectangle();
+            maskShapeDataChanged();
         }
     }
 
@@ -415,22 +443,20 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (isPickingColor) {
             return;
         }
-
-        double offsetX = bottomLeftHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = bottomLeftHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = maskHandlerX(bottomLeftHandler, event);
+        double y = maskHandlerY(bottomLeftHandler, event);
 
         if (x < maskRectangleData.getBigX() && y > maskRectangleData.getSmallY()) {
-            if (x >= getImageWidth() - 1) {
-                x = getImageWidth() - 2;
+            if (x >= imageWidth() - 1) {
+                x = imageWidth() - 2;
             }
             if (y <= 0) {
                 y = 1;
             }
             maskRectangleData.setSmallX(x);
             maskRectangleData.setBigY(y);
-            drawMaskRectangleLine();
+            drawMaskRectangle();
+            maskShapeDataChanged();
         }
     }
 
@@ -441,38 +467,35 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
 
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-            double offsetY = bottomCenterHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-            double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
-
+        if (maskRectangle != null && maskRectangle.isVisible()) {
+            double y = maskHandlerY(bottomCenterHandler, event);
             if (y > maskRectangleData.getSmallY()) {
                 if (y <= 0) {
                     y = 1;
                 }
                 maskRectangleData.setBigY(y);
-                drawMaskRectangleLine();
+                drawMaskRectangle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            double d = bottomCenterHandler.getLayoutY() + event.getY() - mouseY - topCenterHandler.getLayoutY();
-            if (d > 0) {
-                d = d * getImageHeight() / imageView.getBoundsInParent().getHeight();
-                maskCircleData.setRadius(d / 2);
-                drawMaskCircleLine();
+        } else if (maskCircle != null && maskCircle.isVisible()) {
+            double r = bottomCenterHandler.getLayoutY() + event.getY() - topCenterHandler.getLayoutY();
+            if (r > 0) {
+                maskCircleData.setRadius(r * imageYRatio() / 2);
+                drawMaskCircle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            double ry = (bottomCenterHandler.getLayoutY() + event.getY() - mouseY - topCenterHandler.getLayoutY()) / 2;
+        } else if (maskEllipse != null && maskEllipse.isVisible()) {
+            double ry = bottomCenterHandler.getLayoutY() + event.getY() - topCenterHandler.getLayoutY();
             if (ry > 0) {
-                ry = ry * getImageHeight() / imageView.getBoundsInParent().getHeight();
+                ry = ry * imageYRatio() / 2;
                 double rx = maskEllipseData.getRadiusX();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
-
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
-                drawMaskEllipseLine();
+                drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 
@@ -485,12 +508,16 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
 
-        double offsetX = bottomRightHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-        double offsetY = bottomRightHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = maskHandlerX(bottomRightHandler, event);
+        double y = maskHandlerY(bottomRightHandler, event);
 
-        if (x > maskRectangleData.getSmallX() && y > maskRectangleData.getSmallY()) {
+        if (maskLine != null && maskLine.isVisible()) {
+            maskLineData.setEndX(x);
+            maskLineData.setEndY(y);
+            drawMaskLine();
+            maskShapeDataChanged();
+
+        } else if (x > maskRectangleData.getSmallX() && y > maskRectangleData.getSmallY()) {
             if (x <= 0) {
                 x = 1;
             }
@@ -499,7 +526,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
             maskRectangleData.setBigX(x);
             maskRectangleData.setBigY(y);
-            drawMaskRectangleLine();
+            drawMaskRectangle();
+            maskShapeDataChanged();
         }
     }
 
@@ -510,37 +538,35 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
 
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-            double offsetX = leftCenterHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-            double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-
+        if (maskRectangle != null && maskRectangle.isVisible()) {
+            double x = maskHandlerX(leftCenterHandler, event);
             if (x < maskRectangleData.getBigX()) {
-                if (x >= getImageWidth() - 1) {
-                    x = getImageWidth() - 2;
+                if (x >= imageWidth() - 1) {
+                    x = imageWidth() - 2;
                 }
                 maskRectangleData.setSmallX(x);
-                drawMaskRectangleLine();
+                drawMaskRectangle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            double d = rightCenterHandler.getLayoutX() - leftCenterHandler.getLayoutX() - event.getX() + mouseX;
-            if (d > 0) {
-                d = d * getImageWidth() / imageView.getBoundsInParent().getWidth();
-                maskCircleData.setRadius(d / 2);
-                drawMaskCircleLine();
+        } else if (maskCircle != null && maskCircle.isVisible()) {
+            double r = rightCenterHandler.getLayoutX() - leftCenterHandler.getLayoutX() - event.getX();
+            if (r > 0) {
+                maskCircleData.setRadius(r * imageXRatio() / 2);
+                drawMaskCircle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            double rx = (rightCenterHandler.getLayoutX() - leftCenterHandler.getLayoutX() - event.getX() + mouseX) / 2;
+        } else if (maskEllipse != null && maskEllipse.isVisible()) {
+            double rx = rightCenterHandler.getLayoutX() - leftCenterHandler.getLayoutX() - event.getX();
             if (rx > 0) {
-                rx = rx * getImageWidth() / imageView.getBoundsInParent().getWidth();
+                rx = rx * imageYRatio() / 2;
                 double ry = maskEllipseData.getRadiusY();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
-                drawMaskEllipseLine();
+                drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 
@@ -553,37 +579,36 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
 
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-            double offsetX = rightCenterHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-            double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
+        if (maskRectangle != null && maskRectangle.isVisible()) {
+            double x = maskHandlerX(rightCenterHandler, event);
 
             if (x > maskRectangleData.getSmallX()) {
                 if (x <= 0) {
                     x = 1;
                 }
                 maskRectangleData.setBigX(x);
-                drawMaskRectangleLine();
+                drawMaskRectangle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            double d = rightCenterHandler.getLayoutX() + event.getX() - mouseX - leftCenterHandler.getLayoutX();
-            if (d > 0) {
-                d = d * getImageWidth() / imageView.getBoundsInParent().getWidth();
-                maskCircleData.setRadius(d / 2);
-                drawMaskCircleLine();
+        } else if (maskCircle != null && maskCircle.isVisible()) {
+            double r = rightCenterHandler.getLayoutX() + event.getX() - leftCenterHandler.getLayoutX();
+            if (r > 0) {
+                maskCircleData.setRadius(r * imageXRatio() / 2);
+                drawMaskCircle();
+                maskShapeDataChanged();
             }
-        }
 
-        if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            double rx = (rightCenterHandler.getLayoutX() + event.getX() - mouseX - leftCenterHandler.getLayoutX()) / 2;
+        } else if (maskEllipse != null && maskEllipse.isVisible()) {
+            double rx = rightCenterHandler.getLayoutX() + event.getX() - leftCenterHandler.getLayoutX();
             if (rx > 0) {
-                rx = rx * getImageWidth() / imageView.getBoundsInParent().getWidth();
+                rx = rx * imageYRatio() / 2;
                 double ry = maskEllipseData.getRadiusY();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
-                drawMaskEllipseLine();
+                drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 

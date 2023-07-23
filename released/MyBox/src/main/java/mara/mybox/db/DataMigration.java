@@ -174,7 +174,7 @@ public class DataMigration {
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return true;
     }
@@ -1174,7 +1174,7 @@ public class DataMigration {
             TableStringValues.add(conn, "InstalledVersions", "6.3.3");
             conn.setAutoCommit(true);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
     }
 
@@ -1184,7 +1184,7 @@ public class DataMigration {
             String sql = "ALTER TABLE Geography_Code ADD COLUMN gcsource SMALLINT";
             statement.executeUpdate(sql);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
         try (Statement statement = conn.createStatement()) {
@@ -1223,7 +1223,7 @@ public class DataMigration {
             sql = "ALTER TABLE Convolution_Kernel ADD COLUMN is_invert BOOLEAN";
             statement.executeUpdate(sql);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
         try (Statement statement = conn.createStatement()) {
@@ -1252,7 +1252,7 @@ public class DataMigration {
             TableStringValues.add(conn, "InstalledVersions", "6.3.2");
             conn.setAutoCommit(true);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
     }
 
@@ -1274,7 +1274,7 @@ public class DataMigration {
                     + " REFERENCES GEOGRAPHY_CODE (gcid) ON DELETE RESTRICT ON UPDATE RESTRICT";
             update.executeUpdate(sql);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
     }
 
@@ -1295,7 +1295,7 @@ public class DataMigration {
             conn.commit();
             conn.setAutoCommit(true);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
     }
 
@@ -1312,7 +1312,7 @@ public class DataMigration {
             sql = "ALTER TABLE Geography_Code  add column coordinate_system SMALLINT";
             statement.executeUpdate(sql);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return;
         }
         try (Statement statement = conn.createStatement()) {
@@ -1320,7 +1320,7 @@ public class DataMigration {
             String sql = "UPDATE Geography_Code  SET area=area*1000000";
             statement.executeUpdate(sql);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return;
         }
         try (PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
@@ -1343,7 +1343,7 @@ public class DataMigration {
             TableStringValues.add(conn, "InstalledVersions", "6.3.1");
             conn.setAutoCommit(true);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1353,7 +1353,7 @@ public class DataMigration {
             conn.setAutoCommit(true);
             TableStringValues.add(conn, "InstalledVersions", "6.3");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1392,16 +1392,16 @@ public class DataMigration {
                     code.setComments(results.getString("street"));
                     codes.add(code);
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate("DROP TABLE Geography_Code");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         TableGeographyCode tableGeographyCode = new TableGeographyCode();
         tableGeographyCode.createTable(conn);
@@ -1411,7 +1411,7 @@ public class DataMigration {
             statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         GeographyCodeTools.importPredefined(conn);
         try (PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
@@ -1430,7 +1430,7 @@ public class DataMigration {
             conn.commit();
             MyBoxLog.debug("Migrated GeographyCode: " + count);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1516,7 +1516,7 @@ public class DataMigration {
             TableStringValues.add(conn, "InstalledVersions", "6.2.1");
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -1534,7 +1534,7 @@ public class DataMigration {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -1549,7 +1549,7 @@ public class DataMigration {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

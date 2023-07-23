@@ -65,7 +65,7 @@ public class TextFilesMergeController extends FilesMergeController {
             NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(message("BOMcomments")));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

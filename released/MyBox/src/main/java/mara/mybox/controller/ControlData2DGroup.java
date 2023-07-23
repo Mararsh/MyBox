@@ -28,7 +28,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
+public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
 
     protected BaseData2DHandleController handleController;
     protected ChangeListener<Boolean> listener;
@@ -98,7 +98,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             maxColumn.setCellValueFactory(new PropertyValueFactory<>("maxPassed"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -107,7 +107,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             this.handleController = handleController;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -136,7 +136,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
             expressionController.setData2D(handleController.data2D);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -198,7 +198,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -536,7 +536,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             }
             tableData.removeAll(selected);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -40,14 +40,14 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
 
     @Override
     public synchronized void handleRowsTask() {
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             List<List<String>> data;
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     data = new ArrayList<>();
                     filteredRowsIndices = filteredRowsIndices();
                     for (int i = 0; i < tableController.tableData.size(); i++) {
@@ -75,7 +75,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                     tabPane.getSelectionModel().select(dataTab);
                     alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
             }
 
@@ -104,7 +104,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                 return;
             }
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private long count;
 
@@ -115,7 +115,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                             && tableController.dataController.backupController.needBackup()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     count = data2D.deleteRows(errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;
@@ -157,7 +157,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

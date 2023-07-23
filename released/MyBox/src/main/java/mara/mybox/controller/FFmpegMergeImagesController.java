@@ -17,7 +17,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
@@ -79,7 +79,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             processStartTime = new Date();
             totalFilesHandled = 0;
             updateInterface("Started");
-            task = new SingletonTask<Void>(this) {
+            task = new SingletonCurrentTask<Void>(this) {
 
                 @Override
                 public Void call() {
@@ -173,7 +173,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             start(task, false);
         } catch (Exception e) {
             updateInterface("Failed");
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -221,7 +221,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                         s.append("duration  ").append(info.getDuration() / 1000.00f).append("\n");
                     }
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
             if (lastFile == null) {
@@ -233,7 +233,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             TextFileTools.writeFile(imagesListFile, s.toString(), Charset.forName("utf-8"));
             return imagesListFile;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -267,7 +267,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             TextFileTools.writeFile(audiosListFile, s.toString(), Charset.forName("utf-8"));
             return audiosListFile;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -333,7 +333,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             controller.tableController.tableData.setAll(images);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

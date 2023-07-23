@@ -6,12 +6,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -40,13 +37,12 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.util.ImageHelper;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -70,10 +66,9 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     protected BufferedImage lastImage;
     protected ITesseract OCRinstance;
     protected PDFRenderer renderer;
-    protected int threshold, rotate, tesseractVersion;
+    protected int threshold, rotate;
     protected float scale;
     protected long pageStart;
-    protected File configFile;
     protected Process process;
 
     @FXML
@@ -112,7 +107,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -123,7 +118,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             ocrOptionsController.setParameters(this, false, false);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -226,7 +221,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             deskewCheck.setSelected(UserConfig.getBoolean("ImageOCRDeskew", false));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -277,55 +272,18 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         }
         try {
             if (ocrOptionsController.embedRadio.isSelected()) {
-                OCRinstance = new Tesseract();
-                // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-                OCRinstance.setVariable("user_defined_dpi", "96");
-                OCRinstance.setVariable("debug_file", "/dev/null");
-                OCRinstance.setPageSegMode(ocrOptionsController.psm);
-                Map<String, String> p = ocrOptionsController.checkParameters();
-                if (p != null && !p.isEmpty()) {
-                    for (String key : p.keySet()) {
-                        OCRinstance.setVariable(key, p.get(key));
-                    }
-                }
-                String path = UserConfig.getString(OCRTools.TessDataPath, null);
-                if (path != null) {
-                    OCRinstance.setDatapath(path);
-                }
-                if (ocrOptionsController.selectedLanguages != null) {
-                    OCRinstance.setLanguage(ocrOptionsController.selectedLanguages);
-                }
+                OCRinstance = ocrOptionsController.tesseract();
+
             } else {
-                tesseractVersion = ocrOptionsController.tesseractVersion();
-                File tesseract = ocrOptionsController.tesseractPathController.file();
-                if (!tesseract.exists()) {
-                    popError(message("InvalidParameters"));
-                    ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
+
+                if (!ocrOptionsController.checkCommandPamameters(false, false)) {
                     return false;
                 }
-                File dataPath = ocrOptionsController.dataPathController.file();
-                if (!dataPath.exists()) {
-                    popError(message("InvalidParameters"));
-                    ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
-                    return false;
-                }
-                configFile = FileTmpTools.getTempFile();
-                String s = "tessedit_create_txt 1\n";
-                Map<String, String> p = ocrOptionsController.checkParameters();
-                if (p != null) {
-                    for (String key : p.keySet()) {
-                        s += key + "\t" + p.get(key) + "\n";
-                    }
-                }
-                TextFileTools.writeFile(configFile, s, Charset.forName("utf-8"));
-                if (!configFile.exists()) {
-                    popError(message("NotFound") + ":" + configFile);
-                    return false;
-                }
+
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -344,7 +302,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             renderer = new PDFRenderer(doc);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -375,7 +333,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                     = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, ImageType.RGB);    // 0-based
             text = ocr(bufferedImage);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         if (text != null) {
             String s = message("Page") + ":" + currentParameters.currentPage + "   "
@@ -423,7 +381,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         if (!text.isBlank()) {
             String s = message("Page") + ":" + currentParameters.currentPage + "   "
@@ -537,7 +495,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             return lastImage;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -549,33 +507,22 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         try {
             lastImage = preprocess(image);
             if (ocrOptionsController.embedRadio.isSelected()) {
-                return OCRinstance.doOCR(lastImage);
-            }
-            if (configFile == null || !configFile.exists()) {
-                return null;
+                ocrOptionsController.bufferedImageOCR(task, lastImage, false);
+                return ocrOptionsController.texts;
             }
             if (process != null) {
                 process.destroy();
                 process = null;
             }
-            String imageFile = FileTmpTools.getTempFile(".png").getAbsolutePath();
+            File imageFile = FileTmpTools.getTempFile(".png");
             BufferedImage bufferedImage = AlphaTools.removeAlpha(lastImage);
-            ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile);
+            ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile.getAbsolutePath());
 
             String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
-            List<String> parameters = new ArrayList<>();
-            parameters.addAll(Arrays.asList(
-                    ocrOptionsController.tesseractPathController.file().getAbsolutePath(),
-                    imageFile, fileBase,
-                    "--tessdata-dir", ocrOptionsController.dataPathController.file().getAbsolutePath(),
-                    tesseractVersion > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
-            ));
-            if (ocrOptionsController.selectedLanguages != null) {
-                parameters.addAll(Arrays.asList("-l", ocrOptionsController.selectedLanguages));
+            process = ocrOptionsController.process(imageFile, fileBase);
+            if (process == null) {
+                return null;
             }
-            parameters.add(configFile.getAbsolutePath());
-            ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
-            process = pb.start();
             String outputs = "", line;
             try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 while ((line = inReader.readLine()) != null) {
@@ -594,7 +541,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 updateLogs(message("Failed" + ":" + outputs), true, true);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }
@@ -609,7 +556,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 targetFileGenerated(tFile);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

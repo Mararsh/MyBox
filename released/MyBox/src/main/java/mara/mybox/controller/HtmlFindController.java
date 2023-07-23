@@ -19,7 +19,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -44,7 +44,7 @@ public class HtmlFindController extends WebAddressController {
     @FXML
     protected TextField findInput;
     @FXML
-    protected ColorSetController findColorController, findBgColorController, currentColorController, currentBgColorController;
+    protected ControlColorSet findColorController, findBgColorController, currentColorController, currentBgColorController;
     @FXML
     protected Label foundLabel;
     @FXML
@@ -108,7 +108,7 @@ public class HtmlFindController extends WebAddressController {
             examplePopFindButton.disableProperty().bind(regCheck.selectedProperty().not());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -119,7 +119,7 @@ public class HtmlFindController extends WebAddressController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(queryButton, new Tooltip(message("Query") + "\nF1"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -165,7 +165,7 @@ public class HtmlFindController extends WebAddressController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -190,7 +190,7 @@ public class HtmlFindController extends WebAddressController {
         TableStringValues.add("HtmlFindHistories", string);
         reset();
         isQuerying = true;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private StringBuilder results;
 
@@ -311,14 +311,14 @@ public class HtmlFindController extends WebAddressController {
     }
 
     protected String itemsStyle() {
-        return "color:" + findColorController.rgb()
-                + "; background: " + findBgColorController.rgb()
+        return "color:" + findColorController.css()
+                + "; background: " + findBgColorController.css()
                 + "; font-size:" + findFontSelector.getValue() + ";";
     }
 
     protected String currentStyle() {
-        return "color:" + currentColorController.rgb()
-                + "; background: " + currentBgColorController.rgb()
+        return "color:" + currentColorController.css()
+                + "; background: " + currentBgColorController.css()
                 + "; font-size:" + findFontSelector.getValue() + ";";
     }
 

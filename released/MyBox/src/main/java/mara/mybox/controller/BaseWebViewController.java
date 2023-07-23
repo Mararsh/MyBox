@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-18
  * @License Apache License Version 2.0
  */
-public class BaseWebViewController extends BaseController {
+public class BaseWebViewController extends BaseFileController {
 
     protected WebView webView;
     protected WebEngine webEngine;
@@ -40,7 +40,7 @@ public class BaseWebViewController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class BaseWebViewController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

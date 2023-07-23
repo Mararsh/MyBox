@@ -43,6 +43,7 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -167,7 +168,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -190,7 +191,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             timeColumn.setText(timeMsg);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -201,7 +202,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
 
             loadTree();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -341,7 +342,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
     }
 
     public void nodesDeleted() {
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -613,7 +614,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -772,7 +773,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
 
             refreshTimes();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -803,7 +804,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             findNameRadio.setText(nameMsg);
             findValueRadio.setText(valueMsg);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

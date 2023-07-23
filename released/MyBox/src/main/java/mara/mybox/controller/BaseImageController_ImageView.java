@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.Arrays;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -14,7 +15,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -41,9 +41,8 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-10
  * @License Apache License Version 2.0
  */
-public abstract class BaseImageController_ImageView extends BaseController {
+public abstract class BaseImageController_ImageView extends BaseFileController {
 
-    public static final String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
     protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
@@ -73,12 +72,10 @@ public abstract class BaseImageController_ImageView extends BaseController {
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, contextMenuCheck,
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck,
             selectAreaCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthBox;
-    @FXML
-    protected HBox operationBox;
     @FXML
     protected ControlImageRender renderController;
 
@@ -119,7 +116,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -145,7 +142,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(message("ImageLoadWidthCommnets")));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -222,29 +219,14 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 });
             }
 
-            if (contextMenuCheck != null) {
-                contextMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ContextMenu", true));
-                contextMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "ContextMenu", contextMenuCheck.isSelected());
-                    }
-                });
-            }
-
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
-    protected void popImageMenu(double x, double y) {
-        if (imageView == null || imageView.getImage() == null
-                || !UserConfig.getBoolean(baseName + "ContextMenu", true)) {
-            return;
-        }
-        MenuImageBaseController.open((BaseImageController) this, x, y);
-    }
-
+    /*
+        status
+     */
     protected void zoomStepChanged() {
     }
 
@@ -282,70 +264,12 @@ public abstract class BaseImageController_ImageView extends BaseController {
         updateLabelsTitle();
     }
 
-    public double getImageWidth() {
-        if (imageView != null && imageView.getImage() != null) {
-            return imageView.getImage().getWidth();
-        } else if (image != null) {
-            return image.getWidth();
-        } else if (imageInformation != null) {
-            return imageInformation.getWidth();
-        } else {
-            return -1;
-        }
-    }
-
-    public double getImageHeight() {
-        if (imageView != null && imageView.getImage() != null) {
-            return imageView.getImage().getHeight();
-        } else if (image != null) {
-            return image.getHeight();
-        } else if (imageInformation != null) {
-            return imageInformation.getHeight();
-        } else {
-            return -1;
-        }
-    }
-
-    public double widthRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
-            return 1;
-        }
-        double ratio = 1d * getImageWidth() / imageInformation.getWidth();
-        return ratio;
-    }
-
-    public double heightRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
-            return 1;
-        }
-        double ratio = 1d * getImageHeight() / imageInformation.getHeight();
-        return ratio;
-    }
-
-    public int getOperationWidth() {
-        return (int) (getImageWidth() / widthRatio());
-    }
-
-    public int getOperationHeight() {
-        return (int) (getImageHeight() / heightRatio());
-    }
-
-    protected int getRulerStep(double width) {
-        if (width <= 1000) {
-            return 10;
-        } else if (width <= 10000) {
-            return (int) (width / 1000) * 10;
-        } else {
-            return (int) (width / 10000) * 10;
-        }
-    }
-
     public synchronized void updateLabelsTitle() {
         try {
             updateStageTitle();
             updateLabels();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -371,7 +295,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
             }
             getMyStage().setTitle(title);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -379,7 +303,8 @@ public abstract class BaseImageController_ImageView extends BaseController {
         try {
             String imageInfo = "", fileInfo = "", loadInfo = "";
             if (sourceFile != null) {
-                fileInfo = message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
+                fileInfo = message("File") + ":" + sourceFile.getAbsolutePath() + "\n"
+                        + message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
                         + message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified());
             }
             if (framesNumber > 1) {
@@ -411,7 +336,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
             String finalInfo = fileInfo + "\n" + imageInfo + "\n" + loadInfo;
             if (imageInfoLabel != null) {
                 if (imageLabel != null) {
-                    imageLabel.setText(StringTools.replaceLineBreak(finalInfo));
+                    imageLabel.setText(StringTools.replaceLineBreak(loadInfo));
                 }
                 if (imageInformation != null && imageInformation.isIsSampled()) {
                     finalInfo += "\n-------\n" + imageInformation.sampleInformation(image);
@@ -424,8 +349,8 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 if (borderLine != null) {
                     borderLine.setLayoutX(imageView.getLayoutX() - 1);
                     borderLine.setLayoutY(imageView.getLayoutY() - 1);
-                    borderLine.setWidth(imageView.getBoundsInParent().getWidth() + 2);
-                    borderLine.setHeight(imageView.getBoundsInParent().getHeight() + 2);
+                    borderLine.setWidth(viewWidth() + 2);
+                    borderLine.setHeight(viewHeight() + 2);
                 }
                 if (sizeText != null) {
                     sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
@@ -441,7 +366,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -449,6 +374,83 @@ public abstract class BaseImageController_ImageView extends BaseController {
         return "";
     }
 
+    /*
+        values
+     */
+    public File imageFile() {
+        return sourceFile();
+    }
+
+    public double imageWidth() {
+        if (imageView != null && imageView.getImage() != null) {
+            return imageView.getImage().getWidth();
+        } else if (image != null) {
+            return image.getWidth();
+        } else if (imageInformation != null) {
+            return imageInformation.getWidth();
+        } else {
+            return -1;
+        }
+    }
+
+    public double imageHeight() {
+        if (imageView != null && imageView.getImage() != null) {
+            return imageView.getImage().getHeight();
+        } else if (image != null) {
+            return image.getHeight();
+        } else if (imageInformation != null) {
+            return imageInformation.getHeight();
+        } else {
+            return -1;
+        }
+    }
+
+    public double viewWidth() {
+        return imageView.getBoundsInParent().getWidth();
+    }
+
+    public double viewHeight() {
+        return imageView.getBoundsInParent().getHeight();
+    }
+
+    public double widthRatio() {
+        if (!operateOriginalSize || imageInformation == null || image == null) {
+            return 1;
+        }
+        double ratio = imageWidth() / imageInformation.getWidth();
+        return ratio;
+    }
+
+    public double heightRatio() {
+        if (!operateOriginalSize || imageInformation == null || image == null) {
+            return 1;
+        }
+        double ratio = imageHeight() / imageInformation.getHeight();
+        return ratio;
+    }
+
+    public int operationWidth() {
+        return (int) (imageWidth() / widthRatio());
+    }
+
+    public int operationHeight() {
+        return (int) (imageHeight() / heightRatio());
+    }
+
+    protected int getRulerStep(double width) {
+        if (width <= 1000) {
+            return 10;
+        } else if (width <= 10000) {
+            return (int) (width / 1000) * 10;
+        } else {
+            return (int) (width / 10000) * 10;
+        }
+    }
+
+
+    /*
+        action
+     */
     @FXML
     public void paneSize() {
         if (imageView == null || imageView.getImage() == null || scrollPane == null) {
@@ -458,7 +460,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
             ImageViewTools.paneSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -471,7 +473,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
             ImageViewTools.imageSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -480,14 +482,14 @@ public abstract class BaseImageController_ImageView extends BaseController {
             return;
         }
         try {
-            if (scrollPane.getHeight() < getImageHeight()
-                    || scrollPane.getWidth() < getImageWidth()) {
+            if (scrollPane.getHeight() < imageHeight()
+                    || scrollPane.getWidth() < imageWidth()) {
                 paneSize();
             } else {
                 loadedSize();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -529,6 +531,13 @@ public abstract class BaseImageController_ImageView extends BaseController {
         NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
     }
 
+    protected void popImageMenu(double x, double y) {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        MenuImageBaseController.open((BaseImageController) this, x, y);
+    }
+
     /*
         pick color
      */
@@ -543,14 +552,6 @@ public abstract class BaseImageController_ImageView extends BaseController {
     protected void startPickingColor() {
         if (paletteController == null || !paletteController.getMyStage().isShowing()) {
             paletteController = ColorsPickingController.oneOpen(this);
-            if (imageLabel != null) {
-                imageLabelOriginal = new Label(imageLabel.getText());
-                imageLabelOriginal.setStyle(imageLabel.getStyle());
-                imageLabel.setText(message("PickingColorsNow"));
-                imageLabel.setStyle(NodeStyleTools.darkRedTextStyle());
-            } else {
-                popInformation(message("PickingColorsNow"));
-            }
         }
     }
 
@@ -558,16 +559,6 @@ public abstract class BaseImageController_ImageView extends BaseController {
         if (paletteController != null) {
             paletteController.closeStage();
             paletteController = null;
-        }
-        if (imageLabel != null) {
-            if (imageLabelOriginal != null) {
-                imageLabel.setText(imageLabelOriginal.getText());
-                imageLabel.setStyle(imageLabelOriginal.getStyle());
-                imageLabelOriginal = null;
-            } else {
-                imageLabel.setText("");
-                imageLabel.setStyle(null);
-            }
         }
     }
 

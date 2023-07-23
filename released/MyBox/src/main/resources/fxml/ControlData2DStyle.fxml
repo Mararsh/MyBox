@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                     </toggleGroup>
                 </RadioButton>
                 <RadioButton fx:id="colorSetRadio" layoutX="63.0" layoutY="16.0" mnemonicParsing="false" text="%Set" toggleGroup="$colorGroup" />
-                <fx:include fx:id="fontColor" source="ColorSet.fxml" />
+                <fx:include fx:id="fontColor" source="ControlColorSet.fxml" />
             </children>
         </FlowPane>
         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
@@ -43,7 +43,7 @@ License:    Apache License Version 2.0
                     </toggleGroup>
                 </RadioButton>
                 <RadioButton fx:id="bgSetRadio" mnemonicParsing="false" text="%Set" toggleGroup="$bgGroup" />
-                <fx:include fx:id="bgColor" source="ColorSet.fxml" />
+                <fx:include fx:id="bgColor" source="ControlColorSet.fxml" />
             </children>
         </FlowPane>
         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">

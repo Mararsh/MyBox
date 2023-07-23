@@ -71,7 +71,7 @@ public class ControlPlay extends BaseController {
     @FXML
     protected VBox snapBox;
     @FXML
-    protected ColorSetController colorController;
+    protected ControlColorSet colorController;
 
     public ControlPlay() {
         stopped = new SimpleBooleanProperty();
@@ -167,7 +167,7 @@ public class ControlPlay extends BaseController {
             };
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -250,7 +250,7 @@ public class ControlPlay extends BaseController {
             startFrame(currentIndex);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -284,7 +284,7 @@ public class ControlPlay extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -318,7 +318,7 @@ public class ControlPlay extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -335,7 +335,7 @@ public class ControlPlay extends BaseController {
                 snapNode.notifyAll();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -357,7 +357,7 @@ public class ControlPlay extends BaseController {
             });
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -442,7 +442,7 @@ public class ControlPlay extends BaseController {
                 pause();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -451,7 +451,7 @@ public class ControlPlay extends BaseController {
             pause();
             displayFrameTask(frame);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -485,7 +485,7 @@ public class ControlPlay extends BaseController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

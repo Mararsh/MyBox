@@ -56,7 +56,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
                 addHtmlButtons();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -401,7 +401,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             addNode(about);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -488,7 +488,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -501,7 +501,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             Point2D localToScreen = node.localToScreen(node.getWidth() - 80, 80);
             return MenuHtmlCodesController.open(parent, node, localToScreen.getX(), localToScreen.getY());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

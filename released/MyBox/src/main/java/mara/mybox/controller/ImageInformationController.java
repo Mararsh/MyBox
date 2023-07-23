@@ -84,7 +84,7 @@ public class ImageInformationController extends HtmlTableController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class ImageInformationController extends HtmlTableController {
             }
             return StringTable.tableDiv(table);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -242,7 +242,7 @@ public class ImageInformationController extends HtmlTableController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -336,7 +336,7 @@ public class ImageInformationController extends HtmlTableController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -351,7 +351,7 @@ public class ImageInformationController extends HtmlTableController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -372,7 +372,7 @@ public class ImageInformationController extends HtmlTableController {
             controller.externalData(name, iInfo.getIccProfile());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -387,7 +387,7 @@ public class ImageInformationController extends HtmlTableController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -403,7 +403,7 @@ public class ImageInformationController extends HtmlTableController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

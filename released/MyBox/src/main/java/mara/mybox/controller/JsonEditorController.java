@@ -1,16 +1,24 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
@@ -19,8 +27,10 @@ import javafx.stage.Stage;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
@@ -33,14 +43,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-4-30
  * @License Apache License Version 2.0
  */
-public class JsonEditorController extends BaseController {
+public class JsonEditorController extends BaseFileController {
 
     protected boolean domChanged, textsChanged, fileChanged;
     protected String title;
     protected final SimpleBooleanProperty loadNotify;
 
     @FXML
-    protected Tab domTab, textsTab, optionsTab, backupTab;
+    protected Tab domTab, textsTab;
     @FXML
     protected TextArea textsArea;
     @FXML
@@ -77,13 +87,16 @@ public class JsonEditorController extends BaseController {
                 }
             });
             initTextsTab();
+
+            recoverButton.setDisable(true);
+
             domController.jsonEditor = this;
             tabChanged();
 
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -134,15 +147,16 @@ public class JsonEditorController extends BaseController {
 
     public boolean writePanes(String json) {
         fileChanged = false;
-        openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         isSettingValues = true;
         loadDom(json, false);
         loadText(json, false);
         updateTitle();
         isSettingValues = false;
-        if (backupController != null) {
-            backupController.loadBackups(sourceFile);
-        }
+        recordFileOpened(sourceFile);
+        recoverButton.setDisable(true);
+        backupController.loadBackups(sourceFile);
+        browseController.setCurrentFile(sourceFile);
+        fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -156,13 +170,18 @@ public class JsonEditorController extends BaseController {
             }
             sourceFile = null;
             getMyStage().setTitle(getBaseTitle());
-            fileChanged = false;
-            if (backupController != null) {
-                backupController.loadBackups(null);
-            }
             writePanes("{}");
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (sourceFile != null && sourceFile.exists()) {
+            fileChanged = false;
+            sourceFileChanged(sourceFile);
         }
     }
 
@@ -188,7 +207,7 @@ public class JsonEditorController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -238,7 +257,7 @@ public class JsonEditorController extends BaseController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }
@@ -260,6 +279,7 @@ public class JsonEditorController extends BaseController {
     protected void fileChanged() {
         fileChanged = true;
         updateTitle();
+        recoverButton.setDisable(sourceFile == null);
     }
 
     @FXML
@@ -277,7 +297,7 @@ public class JsonEditorController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 File tmpFile = TextFileTools.writeFile(json);
@@ -363,7 +383,7 @@ public class JsonEditorController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -375,7 +395,7 @@ public class JsonEditorController extends BaseController {
             textsArea.setText(json);
             textsChanged(updated);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -421,7 +441,7 @@ public class JsonEditorController extends BaseController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -442,7 +462,7 @@ public class JsonEditorController extends BaseController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -476,7 +496,7 @@ public class JsonEditorController extends BaseController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -490,7 +510,7 @@ public class JsonEditorController extends BaseController {
                 TextClipboardPopController.open(this, textsArea);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -512,7 +532,7 @@ public class JsonEditorController extends BaseController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -522,13 +542,8 @@ public class JsonEditorController extends BaseController {
     public void tabChanged() {
         try {
             TextClipboardPopController.closeAll();
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            menuButton.setDisable(tab == backupTab || tab == optionsTab);
-            synchronizeButton.setDisable(tab == backupTab || tab == optionsTab);
-            clearButton.setDisable(tab == backupTab || tab == optionsTab);
-            saveButton.setDisable(tab == backupTab || tab == optionsTab);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -565,6 +580,63 @@ public class JsonEditorController extends BaseController {
         }
     }
 
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("JsonTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JsonTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JsonSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JsonHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     /*
         static
      */
@@ -575,7 +647,7 @@ public class JsonEditorController extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -587,7 +659,7 @@ public class JsonEditorController extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

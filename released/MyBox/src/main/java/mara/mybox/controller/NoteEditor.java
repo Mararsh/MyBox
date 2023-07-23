@@ -37,7 +37,7 @@ public class NoteEditor extends ControlHtmlEditor {
             webViewController.linkInNewTab = true;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -51,7 +51,7 @@ public class NoteEditor extends ControlHtmlEditor {
             menuButton.setDisable(tab == richEditorTab || tab == attributesTab);
             synchronizeButton.setDisable(tab == attributesTab);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

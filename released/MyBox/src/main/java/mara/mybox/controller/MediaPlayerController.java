@@ -45,7 +45,7 @@ import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -225,7 +225,7 @@ public class MediaPlayerController extends BaseController {
             checkSoundButton();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -242,7 +242,7 @@ public class MediaPlayerController extends BaseController {
             NodeStyleTools.setTooltip(catButton, new Tooltip(message("MiaoSounds")));
             NodeStyleTools.setTooltip(speedSelector, new Tooltip("0~8"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -324,7 +324,7 @@ public class MediaPlayerController extends BaseController {
             tableController.markFileHandling(-1);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -481,7 +481,7 @@ public class MediaPlayerController extends BaseController {
             isSettingValues = false;
             dataChanged();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -516,7 +516,7 @@ public class MediaPlayerController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -573,7 +573,7 @@ public class MediaPlayerController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int index;
             private MediaInformation info;
@@ -659,7 +659,7 @@ public class MediaPlayerController extends BaseController {
         } else {
             popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -879,7 +879,7 @@ public class MediaPlayerController extends BaseController {
                         }
                     });
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     popMediaError(e.toString());
                 }
             }
@@ -975,7 +975,7 @@ public class MediaPlayerController extends BaseController {
             controller.setPlayerController(this);
             controller.loadList(tableController.mediaListName);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1011,7 +1011,7 @@ public class MediaPlayerController extends BaseController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

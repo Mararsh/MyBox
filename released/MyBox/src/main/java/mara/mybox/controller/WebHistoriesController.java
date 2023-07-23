@@ -68,7 +68,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("visitTime"));
             timeColumn.setCellFactory(new TableDateCell());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -92,7 +92,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -114,7 +114,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
             refreshTimes();
             loadTableData();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

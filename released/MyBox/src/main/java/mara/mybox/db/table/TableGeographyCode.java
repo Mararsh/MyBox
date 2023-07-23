@@ -654,7 +654,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             return code;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }

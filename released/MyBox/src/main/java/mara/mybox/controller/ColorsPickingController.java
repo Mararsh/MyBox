@@ -16,7 +16,7 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -43,7 +43,7 @@ public class ColorsPickingController extends BaseChildController {
     protected Label paletteLabel;
 
     public ColorsPickingController() {
-        baseTitle = message("PickingColorsNow");
+        baseTitle = message("PickColors");
     }
 
     @Override
@@ -66,8 +66,16 @@ public class ColorsPickingController extends BaseChildController {
             tableColor = new TableColor();
             tableColorPalette.setTableColor(tableColor);
 
+            colorsController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    paletteLabel.setText(currentPalette.getName() + ": "
+                            + colorsController.colorsPane.getChildren().size());
+                }
+            });
+
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -80,11 +88,10 @@ public class ColorsPickingController extends BaseChildController {
                         paletteSelected();
                     });
 
-            popInformation(message("PickingColorsNow"));
             palettesController.loadPalettes();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -107,10 +114,10 @@ public class ColorsPickingController extends BaseChildController {
         if (color == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

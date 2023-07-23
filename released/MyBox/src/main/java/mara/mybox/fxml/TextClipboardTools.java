@@ -226,7 +226,7 @@ public class TextClipboardTools {
                         conn.commit();
                         TextInMyBoxClipboardController.updateMyBoxClipboard();
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        MyBoxLog.debug(e);
                     }
                 }
             }.start();

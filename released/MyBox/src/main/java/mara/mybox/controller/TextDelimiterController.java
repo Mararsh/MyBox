@@ -44,7 +44,7 @@ public class TextDelimiterController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -79,7 +79,7 @@ public class TextDelimiterController extends BaseController {
             controller.setParameters(parent, initName, isRead, canRegx);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

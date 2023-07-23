@@ -15,7 +15,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlHtmlDomSource">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlHtmlDomSource">
     <children>
         <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="537.0" spacing="5.0">
             <children>
@@ -43,5 +43,6 @@ License:    Apache License Version 2.0
                 <TreeTableColumn fx:id="rvalueColumn" prefWidth="100.0" text="value" />
             </columns>
         </TreeTableView>
+      <Label fx:id="treeLabel" />
     </children>
 </VBox>

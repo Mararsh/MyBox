@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="1052.3622047" id="svg2" inkscape:version="0.46" sodipodi:version="0.32" width="744.09448819">
+    <defs id="defs4">
+        <linearGradient id="linearGradient3193" x1="100.57143" x3="328.57143">
+            <stop id="stop3195" offset="0" style="stop-color:#0000ff;stop-opacity:1;"/>
+            <stop id="stop3197" offset=".5" style="stop-color:#00ff00;stop-opacity:1;"/>
+            <stop id="stop3199" offset="1" style="stop-color:#ff0000;stop-opacity:1;"/>
+        </linearGradient>
+        <linearGradient gradientUnits="userSpaceOnUse" id="linearGradient3199" inkscape:collect="always" x1="128.57143" x2="425.71428" xlink:href="#linearGradient3193" y1="289.50504" y2="289.50504"/>
+        <linearGradient gradientUnits="userSpaceOnUse" id="linearGradient3299" inkscape:collect="always" x1="425.71428" x2="425.71428" xlink:href="#linearGradient3193" y1="250.50504" y2="408.04504"/>
+        <linearGradient id="linearGradient2848">
+            <stop id="stop2850" offset="0" style="stop-color:#5b6879;stop-opacity:1;"/>
+            <stop id="stop2852" offset=".9" style="stop-color:#fc7c90;stop-opacity:1;"/>
+            <stop id="stop2854" offset="1" style="stop-color:#00ff00;stop-opacity:1;"/>
+        </linearGradient>
+        <linearGradient gradientUnits="userSpaceOnUse" id="linearGradient2854" inkscape:collect="always" x1="605.78571" x2="679.82141" xlink:href="#linearGradient2848" y1="693.82843" y2="416.68555"/>
+    </defs>
+    <rect height="157.14285" id="rect3191" style="fill:url(#linearGradient3199);fill-opacity:1" width="397.14285" x="128.57143" y="160.93361"/>
+    <rect height="157.14285" id="rect3192" style="fill:url(#linearGradient3299);fill-opacity:1" width="297.14285" x="528.57143" y="250.93361"/>
+    <rect height="257.14285" id="rect3193" style="fill:url(#linearGradient2854);fill-opacity:1" width="297.14285" x="128.57143" y="460.93361"/>
+    <rect height="257.14285" id="rect3194" style="fill:url(#linearGradient2854);fill-opacity:1" width="297.14285" x="428.57143" y="460.93361"/>
+</svg>

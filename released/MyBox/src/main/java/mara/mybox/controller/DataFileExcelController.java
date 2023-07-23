@@ -20,7 +20,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -58,7 +58,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             setDataType(Data2D.Type.Excel);
             dataFileExcel = (DataFileExcel) dataController.data2D;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -101,7 +101,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             dataFileExcel.initFile(dataFileExcel.getFile(), name);
             dataController.readDefinition();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -187,11 +187,11 @@ public class DataFileExcelController extends BaseData2DFileController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                dataFileExcel.setTask(task);
+                dataFileExcel.setTask(this);
                 return dataFileExcel.newSheet(newName);
             }
 
@@ -231,11 +231,11 @@ public class DataFileExcelController extends BaseData2DFileController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                dataFileExcel.setTask(task);
+                dataFileExcel.setTask(this);
                 return dataFileExcel.renameSheet(newName);
             }
 
@@ -267,7 +267,7 @@ public class DataFileExcelController extends BaseData2DFileController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private int index;
 
             @Override
@@ -330,7 +330,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

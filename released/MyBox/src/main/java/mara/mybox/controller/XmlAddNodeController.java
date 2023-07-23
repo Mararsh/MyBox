@@ -15,8 +15,10 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.data.XmlTreeNode.NodeType;
 import static mara.mybox.data.XmlTreeNode.NodeType.Attribute;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Document;
@@ -39,9 +41,14 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton elementRadio, textRadio, cdataRadio, commentRadio;
+    protected RadioButton elementRadio, textRadio, cdataRadio, commentRadio, xmlRadio;
     @FXML
     protected VBox nameBox;
+
+    @Override
+    public void setStageStatus() {
+        setAsPop(baseName);
+    }
 
     @Override
     public void initControls() {
@@ -58,24 +65,34 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             VBox.setVgrow(setBox, Priority.ALWAYS);
             checkType();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     public void checkType() {
         try {
             setBox.getChildren().clear();
+            valueArea.clear();
 
             if (elementRadio.isSelected()) {
                 setBox.getChildren().addAll(nameBox, attrBox);
                 VBox.setVgrow(attrBox, Priority.ALWAYS);
+                nameInput.requestFocus();
 
             } else {
-                setBox.getChildren().add(valueBox);
+                setBox.getChildren().addAll(valueBox);
                 VBox.setVgrow(valueBox, Priority.ALWAYS);
+                valueArea.requestFocus();
+
+                if (xmlRadio.isSelected()) {
+                    valueArea.setText("<tag attr=\"value\">text</tag>");
+                }
+
             }
+            refreshStyle(setBox);
+
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -120,7 +137,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             indexInput.setText((treeItem.getChildren().size() + 1) + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -137,8 +154,8 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 close();
                 return;
             }
-            Node node = treeNode.getNode();
-            if (node == null) {
+            Node parentNode = treeNode.getNode();
+            if (parentNode == null) {
                 close();
                 return;
             }
@@ -156,10 +173,10 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             }
 
             Document doc;
-            if (node instanceof Document) {
-                doc = (Document) node;
+            if (parentNode instanceof Document) {
+                doc = (Document) parentNode;
             } else {
-                doc = node.getOwnerDocument();
+                doc = parentNode.getOwnerDocument();
             }
             String value = valueArea.getText();
             Node newNode;
@@ -170,7 +187,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                     return;
                 }
                 Element element = doc.createElement(name.trim());
-                for (Node attr : attributesData) {
+                for (Node attr : tableData) {
                     element.setAttribute(attr.getNodeName(), attr.getNodeValue());
                 }
                 newNode = element;
@@ -183,22 +200,30 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
 
             } else if (commentRadio.isSelected()) {
                 newNode = doc.createComment(value);
+
+            } else if (xmlRadio.isSelected()) {
+                newNode = doc.importNode(XmlTools.toElement(myController, value), true);
+
             } else {
                 return;
+            }
+            if (value != null && !value.isBlank()) {
+                TableStringValues.add("XmlNodeValueHistories", value);
             }
             TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
             ObservableList<TreeItem<XmlTreeNode>> children = treeItem.getChildren();
             int tindex = index - 1;
             if (tindex >= 0 && index < children.size()) {
                 Node tnode = children.get(tindex).getValue().getNode();
-                node.insertBefore(newNode, tnode);
+                parentNode.insertBefore(newNode, tnode);
                 children.add(tindex, newItem);
 
             } else {
-                node.appendChild(newNode);
+                parentNode.appendChild(newNode);
                 children.add(newItem);
             }
 
+            treeController.focusItem(newItem);
             treeController.xmlEditor.domChanged(true);
             treeController.xmlEditor.popInformation(message("CreatedSuccessfully"));
 

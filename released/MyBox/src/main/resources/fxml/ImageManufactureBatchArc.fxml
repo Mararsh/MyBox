@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                         <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label text="%Background" />
-                                                <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">

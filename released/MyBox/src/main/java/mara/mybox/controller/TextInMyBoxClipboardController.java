@@ -72,7 +72,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
             timeColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -126,7 +126,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
             refreshAction();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -202,6 +202,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
 
     @Override
     public void updateStatus() {
+        super.updateStatus();
         if (TextClipboardTools.isMonitoring()) {
             bottomLabel.setText(Languages.message("MonitoringTextInSystemClipboard"));
         } else {

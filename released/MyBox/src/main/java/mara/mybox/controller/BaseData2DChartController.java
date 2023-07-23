@@ -16,7 +16,7 @@ import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -103,7 +103,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -128,7 +128,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             super.refreshControls();
             makeOptions();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -169,7 +169,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -210,7 +210,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             groupParameters = null;
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -252,15 +252,15 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         no group
      */
     protected void startNoGroup() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     readData();
                     data2D.stopFilter();
                     return outputData != null && !outputData.isEmpty();
@@ -435,18 +435,19 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         group
      */
     protected void startGroup() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         playController.clear();
         groupDataController.loadNull();
         group = null;
         framesNumber = -1;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     List<Integer> cols = dataColsIndices;
                     List<String> sortNames = sortNames();
                     if (sortNames != null) {
@@ -478,6 +479,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected void finalAction() {
                 super.finalAction();
+                data2D.stopTask();
                 task = null;
                 if (ok) {
                     loadChartData();

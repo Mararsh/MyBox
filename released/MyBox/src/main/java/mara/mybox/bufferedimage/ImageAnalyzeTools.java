@@ -32,7 +32,7 @@ public class ImageAnalyzeTools {
             int[][] h = {red, green, blue};
             return h;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

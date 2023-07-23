@@ -5,9 +5,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -26,6 +26,17 @@ public class ControlXmlOptions extends BaseController {
     public void initControls() {
         super.initControls();
         try (Connection conn = DerbyBase.getConnection()) {
+            initControls(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initControls(Connection conn) {
+        if (conn == null) {
+            return;
+        }
+        try {
             dtdValidationCheck.setSelected(UserConfig.getBoolean(conn, "XmlDTDValidation", false));
             dtdValidationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -39,7 +50,7 @@ public class ControlXmlOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("XmlIgnoreComments", ignoreCommentsCheck.isSelected());
-                    XmlTreeNode.ignoreComment = ignoreCommentsCheck.isSelected();
+                    XmlTools.ignoreComment = ignoreCommentsCheck.isSelected();
                 }
             });
 
@@ -48,7 +59,7 @@ public class ControlXmlOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("XmlIgnoreBlankText", ignoreBlankTextCheck.isSelected());
-                    XmlTreeNode.ignoreBlankText = ignoreBlankTextCheck.isSelected();
+                    XmlTools.ignoreBlankText = ignoreBlankTextCheck.isSelected();
                 }
             });
 
@@ -57,7 +68,7 @@ public class ControlXmlOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("XmlIgnoreBlankCDATA", ignoreBlankCDATACheck.isSelected());
-                    XmlTreeNode.ignoreBlankCDATA = ignoreBlankCDATACheck.isSelected();
+                    XmlTools.ignoreBlankCDATA = ignoreBlankCDATACheck.isSelected();
                 }
             });
 
@@ -66,7 +77,7 @@ public class ControlXmlOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("XmlIgnoreBlankComment", ignoreBlankCommentCheck.isSelected());
-                    XmlTreeNode.ignoreBlankComment = ignoreBlankCommentCheck.isSelected();
+                    XmlTools.ignoreBlankComment = ignoreBlankCommentCheck.isSelected();
                 }
             });
 
@@ -75,7 +86,7 @@ public class ControlXmlOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("XmlIgnoreBlankInstruction", ignoreBlankInstructionCheck.isSelected());
-                    XmlTreeNode.ignoreBlankInstrution = ignoreBlankInstructionCheck.isSelected();
+                    XmlTools.ignoreBlankInstrution = ignoreBlankInstructionCheck.isSelected();
                 }
             });
 

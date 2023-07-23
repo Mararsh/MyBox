@@ -10,7 +10,7 @@ import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.color.Illuminant;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -47,7 +47,7 @@ public class IlluminantsController extends ChromaticityBaseController {
             initData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -83,7 +83,7 @@ public class IlluminantsController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private StringTable table;
 
@@ -131,7 +131,7 @@ public class IlluminantsController extends ChromaticityBaseController {
                     + (String) run.get("procedure");
             webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

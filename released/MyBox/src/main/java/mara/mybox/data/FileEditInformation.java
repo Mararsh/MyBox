@@ -78,7 +78,7 @@ public abstract class FileEditInformation extends FileInformation implements Clo
             newInfo.setFilterType(filterType);
             return newInfo;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -151,7 +151,7 @@ public abstract class FileEditInformation extends FileInformation implements Clo
             charset = Charset.forName(setName);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -181,7 +181,7 @@ public abstract class FileEditInformation extends FileInformation implements Clo
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

@@ -23,7 +23,8 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
@@ -56,7 +57,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     protected TableColumn<GeographyCode, GeoCoordinateSystem> coordinateSystemColumn;
     @FXML
-    protected ColorSetController predefinedColorSetController, inputtedColorSetController;
+    protected ControlColorSet predefinedColorSetController, inputtedColorSetController;
 
     public GeographyCodeController() {
         baseTitle = Languages.message("GeographyCode");
@@ -99,7 +100,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -117,9 +118,9 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (this.isSelected()) {
                 setStyle("-fx-background-color:  #0096C9; -fx-text-background-color: white");
             } else if (GeographyCode.isPredefined(item)) {
-                setStyle("-fx-background-color: " + predefinedColorSetController.rgb());
+                setStyle("-fx-background-color: " + predefinedColorSetController.css());
             } else {
-                setStyle("-fx-background-color: " + inputtedColorSetController.rgb());
+                setStyle("-fx-background-color: " + inputtedColorSetController.css());
             }
         }
     };
@@ -133,7 +134,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             inputtedColorSetController.init(this, baseName + "InputtedColor", Color.WHITE);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -143,7 +144,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             super.afterSceneLoaded();
             mapController.dataController = this;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -211,8 +212,9 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         }
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
             private List<GeographyCode> mapData;
 
             @Override
@@ -255,7 +257,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             controller.load(this, null);
             controller.getMyStage().requestFocus();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -271,7 +273,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             controller.load(this, selected);
             controller.getMyStage().requestFocus();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -296,7 +298,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             LocationInMapController.load(code.getLongitude(), code.getLatitude());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -366,7 +368,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -374,7 +376,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -394,7 +396,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -435,7 +437,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -447,7 +449,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

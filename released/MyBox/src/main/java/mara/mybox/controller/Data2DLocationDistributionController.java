@@ -24,7 +24,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -86,7 +86,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             linkCheck.visibleProperty().bind(accumulateCheck.selectedProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -158,7 +158,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -247,7 +247,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             frameid = -1;
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -258,13 +258,14 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             task.cancel();
         }
         valuesController.loadNull();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataFileCSV csvData;
 
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     csvData = sortedFile(data2D.dataName(), dataColsIndices, false);
                     if (csvData == null) {
                         return false;
@@ -392,7 +393,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         if (dataPoints == null || dataPoints.isEmpty()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<MapPoint> mapPoints;
             private int size;
@@ -542,7 +543,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

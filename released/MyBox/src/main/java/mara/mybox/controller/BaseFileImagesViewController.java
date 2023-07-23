@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
@@ -155,7 +156,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 });
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -205,7 +206,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -265,7 +266,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             mainPane.applyCss();
             mainPane.layout();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -300,8 +301,8 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             setPercent(percent);
         }
         refinePane();
-        setMaskStroke();
         checkSelect();
+        redrawMaskShapes();
         setImageChanged(false);
         updateLabelsTitle();
         imageView.requestFocus();
@@ -344,7 +345,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             }
             getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -373,10 +374,10 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         if (sourceFile == null) {
             return;
         }
-        if (task != null) {
+        if (task != null && !task.isQuit()) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image image;
 
@@ -400,8 +401,8 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
     }
 
     protected void loadThumbs() {
-        if (thumbTask != null) {
-            thumbTask.cancel();
+        if (thumbTask != null && !thumbTask.isQuit()) {
+            return;
         }
         if (thumbBox.getChildren().isEmpty()) {
             for (int i = 0; i < framesNumber; ++i) {
@@ -500,8 +501,8 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
     }
 
     @Override
-    public void setDafultMaskRectangleValues() {
-        if (imageView == null || maskPane == null || maskRectangleLine == null) {
+    public void setMaskRectangleDefaultValues() {
+        if (imageView == null || maskPane == null || maskRectangle == null) {
             return;
         }
         if (maskRectangleData == null
@@ -533,7 +534,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 loading = null;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         super.cleanPane();
     }

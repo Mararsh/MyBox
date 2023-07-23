@@ -294,7 +294,7 @@ public class TableStringValues extends BaseTable<StringValues> {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }

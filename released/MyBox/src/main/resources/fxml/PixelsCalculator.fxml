@@ -6,15 +6,25 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.geometry.*?>
-<?import javafx.collections.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PixelsCalculationController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PixelsCalculationController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -47,14 +57,13 @@ License:    Apache License Version 2.0
                         </CheckBox>
                         <HBox fx:id="adjustBox" alignment="CENTER_LEFT" spacing="10.0">
                             <children>
-                                <RadioButton mnemonicParsing="false" selected="true" text="%BaseOnLarger">
-                                    <toggleGroup>
+                                <RadioButton fx:id="keepWdithRadio" mnemonicParsing="false" selected="true" text="%BaseOnWidth">
+                           <toggleGroup>
                                         <ToggleGroup fx:id="ratioGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton mnemonicParsing="false" text="%BaseOnWidth" toggleGroup="$ratioGroup" />
-                                <RadioButton mnemonicParsing="false" text="%BaseOnHeight" toggleGroup="$ratioGroup" />
-                                <RadioButton mnemonicParsing="false" text="%BaseOnSmaller" toggleGroup="$ratioGroup" />
+                           </toggleGroup></RadioButton>
+                                <RadioButton fx:id="keepHeightRadio" mnemonicParsing="false" text="%BaseOnHeight" toggleGroup="$ratioGroup" />
+                                <RadioButton fx:id="keepLargerRadio" mnemonicParsing="false" text="%BaseOnLarger" toggleGroup="$ratioGroup" />
+                                <RadioButton fx:id="keepSmallerRadio" mnemonicParsing="false" text="%BaseOnSmaller" toggleGroup="$ratioGroup" />
                             </children>
                         </HBox>
                     </children>

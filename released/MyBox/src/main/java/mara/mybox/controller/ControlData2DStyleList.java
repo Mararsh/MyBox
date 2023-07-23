@@ -54,7 +54,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
             moreColumn.setCellValueFactory(new PropertyValueFactory<>("moreStyle"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -69,7 +69,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
             idColumnName = tableDefinition.getIdColumnName();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
 
             loadTableData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

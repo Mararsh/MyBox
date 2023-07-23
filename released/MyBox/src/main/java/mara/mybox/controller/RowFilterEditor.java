@@ -68,7 +68,7 @@ public class RowFilterEditor extends TreeNodeEditor {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -154,7 +154,7 @@ public class RowFilterEditor extends TreeNodeEditor {
             MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
             PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1", interfaceName + "Examples");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -171,15 +171,15 @@ public class RowFilterEditor extends TreeNodeEditor {
     }
 
     @FXML
-    public void showRowExpressionHelps(Event event) {
-        popEventMenu(event, HelpTools.rowExpressionHelps(this));
-    }
-
-    @FXML
     public void popRowExpressionHelps(Event event) {
         if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
             showRowExpressionHelps(event);
         }
+    }
+
+    @FXML
+    public void showRowExpressionHelps(Event event) {
+        popEventMenu(event, HelpTools.rowExpressionHelps(true));
     }
 
 }

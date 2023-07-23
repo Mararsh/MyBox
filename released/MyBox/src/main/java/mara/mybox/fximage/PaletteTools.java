@@ -11,8 +11,8 @@ import javafx.stage.Window;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorPalettePopupController;
-import mara.mybox.controller.ColorSetController;
 import mara.mybox.controller.ControlColorPaletteSelector;
+import mara.mybox.controller.ControlColorSet;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
@@ -42,6 +42,12 @@ public class PaletteTools {
             List<MenuItem> menus = new ArrayList<>();
 
             MenuItem menu;
+
+            menu = new MenuItem(defaultPaletteName());
+            menu.setOnAction((ActionEvent e) -> {
+                importPalette(parent, defaultPaletteName());
+            });
+            menus.add(menu);
 
             menu = new MenuItem(message("WebCommonColors"));
             menu.setOnAction((ActionEvent e) -> {
@@ -140,7 +146,10 @@ public class PaletteTools {
             @Override
             protected boolean handle() {
                 List<ColorData> colors;
-                if (message("WebCommonColors").equals(paletteName)) {
+                if (defaultPaletteName().equals(paletteName)) {
+                    colors = defaultColors();
+
+                } else if (message("WebCommonColors").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv",
                             "data", "ColorsWeb.csv", true);
                     colors = ColorDataTools.readCSV(file, true);
@@ -171,7 +180,6 @@ public class PaletteTools {
                         colors.add(new ColorData(color(style, true).getRGB(), message("MyBoxColor" + style.name() + "Dark")));
                         colors.add(new ColorData(color(style, false).getRGB(), message("MyBoxColor" + style.name() + "Light")));
                     }
-                    colors.addAll(speicalColors());
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
                     String lang = Languages.getLangName();
@@ -204,6 +212,7 @@ public class PaletteTools {
                 if (colors == null || colors.isEmpty()) {
                     return false;
                 }
+                colors.addAll(speicalColors());
                 try (Connection conn = DerbyBase.getConnection()) {
                     ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, paletteName);
                     if (palette == null) {
@@ -321,10 +330,11 @@ public class PaletteTools {
     public static List<ColorData> speicalColors() {
         try {
             List<ColorData> colors = new ArrayList<>();
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GRAY), message("Gray")));
-            colors.add(new ColorData(0, message("Transparent")));
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTGREY), message("LightGrey")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREY), message("Grey")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")).calculate());
+            colors.add(new ColorData(0, message("Transparent")).calculate());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -333,7 +343,29 @@ public class PaletteTools {
     }
 
     public static String defaultPaletteName() {
-        return message("ArtHuesWheel") + "-" + message("Colors24");
+        return message("DefaultPalette");
+    }
+
+    public static List<ColorData> defaultColors() {
+        try {
+            List<ColorData> colors = new ArrayList<>();
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.RED), message("Red")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.ORANGE), message("Orange")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.YELLOW), message("Yellow")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREENYELLOW), message("GreenYellow")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREEN), message("Green")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTSEAGREEN), message("SeaGreen")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.DODGERBLUE), message("Blue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLUE), message("MediumBlue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.PURPLE), message("Purple")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.PINK), message("Pink")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.DEEPSKYBLUE), message("SkyBlue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GOLD), message("GoldColor")).calculate());
+            return colors;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     public static ColorPaletteName defaultPalette(Connection conn) {
@@ -352,13 +384,8 @@ public class PaletteTools {
             long paletteid = palette.getCpnid();
             TableColorPalette tableColorPalette = new TableColorPalette();
             if (tableColorPalette.size(conn, paletteid) == 0) {
-                String lang = Languages.getLangName();
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
-                        "data", "ColorsRYB24_" + lang + ".csv");
-                List<ColorData> colors = ColorDataTools.readCSV(file, true);
-                if (colors == null) {
-                    return null;
-                }
+                List<ColorData> colors = defaultColors();
+                colors.addAll(speicalColors());
                 tableColorPalette.write(conn, palette.getCpnid(), colors, true, false);
                 conn.commit();
             }
@@ -396,8 +423,8 @@ public class PaletteTools {
             UserConfig.setString(controller.getBaseName() + "Palette", paletteName);
             controller.loadPalettes();
             parent.popSuccessful();
-        } else if (parent instanceof ColorSetController) {
-            ColorSetController controller = (ColorSetController) parent;
+        } else if (parent instanceof ControlColorSet) {
+            ControlColorSet controller = (ControlColorSet) parent;
             controller.showColorPalette();
         }
 

@@ -46,7 +46,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
@@ -145,7 +145,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -156,7 +156,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(maxDecodeInput, new Tooltip(message("MaxDecodeComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -188,7 +188,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 //            saveAsButton.disableProperty().bind(saveButton.disableProperty()
 //            );
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -548,7 +548,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -691,7 +691,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             profile = new IccProfile(data);
             displayProfileData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -709,7 +709,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             inputName = message("File") + ": " + name;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private File file;
             private IccProfile p;
@@ -786,7 +786,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
         resetMarkLabel(headerBox);
         inputsValid = true;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private String xml;
 
@@ -892,7 +892,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             summaryArea.setText(s);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
 
@@ -939,7 +939,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             subclassVersionInput.setText(header.value("ProfileSubclassVersion") + "");
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -952,7 +952,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             tagsTable.addAll(tags.getTags());
             tagsTableView.refresh();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }
@@ -1036,7 +1036,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             refreshStyle(tagDataBox);
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }
@@ -1052,7 +1052,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1643,7 +1643,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private String display, bytes;
 
@@ -1767,7 +1767,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1849,14 +1849,14 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             name = embedICCName;
         }
         final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.XML)),
-                name, FileFilters.XmlExtensionFilter);
+                name, FileFilters.XMLExtensionFilter);
         if (file == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1972,7 +1972,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

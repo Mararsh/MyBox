@@ -48,7 +48,7 @@ public class ImageFileWriters {
             BufferedImage image = ImageFileReaders.readImage(srcFile);
             return writeImageFile(image, targetFile);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -65,7 +65,7 @@ public class ImageFileWriters {
         try {
             return writeImageFile(image, targetFile.getAbsolutePath());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -74,7 +74,7 @@ public class ImageFileWriters {
         try {
             return writeImageFile(image, FileNameTools.suffix(targetFile), targetFile);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -102,7 +102,7 @@ public class ImageFileWriters {
             }
             return writeImageFile(image, attributes, targetFile);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -138,7 +138,7 @@ public class ImageFileWriters {
             attributes.setQuality(100);
             return attributes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

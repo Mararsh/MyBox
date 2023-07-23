@@ -40,7 +40,7 @@ public class ColorDataTools {
             }
             printer.printRecord(names);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -59,7 +59,7 @@ public class ColorDataTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -84,7 +84,7 @@ public class ColorDataTools {
                 MyBoxLog.error(e, sql);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -96,7 +96,7 @@ public class ColorDataTools {
                 printRow(printer, row, data, orderNumber);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -137,7 +137,7 @@ public class ColorDataTools {
             }
             printer.printRecord(row);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -191,11 +191,11 @@ public class ColorDataTools {
                     }
                     data.add(item);
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return data;
     }

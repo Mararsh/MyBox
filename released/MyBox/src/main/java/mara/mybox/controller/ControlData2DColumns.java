@@ -39,7 +39,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-16
  * @License Apache License Version 2.0
  */
-public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> {
+public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn> {
 
     protected ControlData2D dataController;
     protected ControlData2DLoad tableController;
@@ -64,7 +64,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button renameColumnsButton, randomColorsButton;
+    protected Button numberColumnsButton, randomColorsButton;
 
     public ControlData2DColumns() {
     }
@@ -73,9 +73,9 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(renameColumnsButton, new Tooltip(message("RenameAllColumns")));
+            NodeStyleTools.setTooltip(numberColumnsButton, new Tooltip(message("RenameAllColumns")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -144,7 +144,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                             @Override
                             protected void setCellValue(int rowIndex, boolean value) {
                                 try {
-                                    if (rowIndex < 0) {
+                                    if (isChanging || rowIndex < 0) {
                                         return;
                                     }
                                     Data2DColumn column = tableData.get(rowIndex);
@@ -152,8 +152,10 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                                         return;
                                     }
                                     if (value != column.isEditable()) {
+                                        isChanging = true;
                                         column.setEditable(value);
                                         status(Status.Modified);
+                                        isChanging = false;
                                     }
                                 } catch (Exception e) {
                                     MyBoxLog.debug(e);
@@ -192,7 +194,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                             @Override
                             protected void setCellValue(int rowIndex, boolean value) {
                                 try {
-                                    if (rowIndex < 0) {
+                                    if (isChanging || rowIndex < 0) {
                                         return;
                                     }
                                     Data2DColumn column = tableData.get(rowIndex);
@@ -200,8 +202,10 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                                         return;
                                     }
                                     if (value != column.isNotNull()) {
+                                        isChanging = true;
                                         column.setNotNull(value);
                                         status(Status.Modified);
+                                        isChanging = false;
                                     }
                                 } catch (Exception e) {
                                     MyBoxLog.debug(e);
@@ -335,7 +339,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             checkButtons();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -344,7 +348,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             this.dataController = dataController;
             tableController = dataController.tableController;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -354,7 +358,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             tableController = convertController.tableController;
             buttonsPane.getChildren().removeAll(cancelButton, okButton);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -365,7 +369,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             tableData2DColumn = tableController.tableData2DColumn;
             setColumns();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -425,7 +429,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                                 @Override
                                 protected void setCellValue(int rowIndex, boolean value) {
                                     try {
-                                        if (rowIndex < 0) {
+                                        if (isChanging || rowIndex < 0) {
                                             return;
                                         }
                                         Data2DColumn column = tableData.get(rowIndex);
@@ -433,8 +437,10 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                                             return;
                                         }
                                         if (value != column.isNotNull()) {
+                                            isChanging = true;
                                             column.setNotNull(value);
                                             status(Status.Modified);
+                                            isChanging = false;
                                         }
                                     } catch (Exception e) {
                                         MyBoxLog.debug(e);
@@ -466,7 +472,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             checkButtons();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -517,7 +523,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @Override
     public void checkButtons() {
         super.checkButtons();
-        renameColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
+        numberColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
         addRowsButton.setDisable(data2D == null || data2D.isInternalTable());
         deleteRowsButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
         randomColorsButton.setDisable(tableData.isEmpty());
@@ -590,7 +596,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
-    public void renameColumns() {
+    public void numberColumns() {
         try {
             String prefix = message(data2D.colPrefix());
             isSettingValues = true;
@@ -602,7 +608,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             popDone();
             status(Status.Modified);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -619,7 +625,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             popDone();
             status(Status.Modified);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -673,7 +679,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             data2D.setColumns(columns);
             return tableController.updateData(newTableData, true);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -715,7 +721,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             status = Status.Modified;
             okAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

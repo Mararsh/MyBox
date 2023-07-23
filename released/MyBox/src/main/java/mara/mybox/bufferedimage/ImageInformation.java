@@ -100,7 +100,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             newInfo.self = newInfo;
             return newInfo;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         try {
             return (ImageInformation) clone();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -272,7 +272,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return targetImage;
     }
@@ -283,7 +283,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             bufferedImage = readPDF(null, new PDFRenderer(pdfDoc), ImageType.RGB, imageInfo, width);
             pdfDoc.close();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return bufferedImage;
     }
@@ -308,7 +308,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             }
             bufferedImage = scaleImage(task, bufferedImage, imageInfo, targetWidth);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             if (task != null) {
                 task.setError(e.toString());
             }
@@ -350,7 +350,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
             return bufferedImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
             }
@@ -363,7 +363,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         try (SlideShow ppt = SlideShowFactory.create(imageInfo.getFile())) {
             bufferedImage = readPPT(null, ppt, imageInfo, width);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return bufferedImage;
     }
@@ -392,7 +392,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             }
             bufferedImage = scaleImage(task, bufferedImage, imageInfo, targetWidth);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             if (task != null) {
                 task.setError(e.toString());
             }
@@ -413,7 +413,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             if (task != null) {
                 task.setError(e.toString());
             }
@@ -469,7 +469,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             }
             imageInfo.setRegionImage(regionImage);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return regionImage;
     }

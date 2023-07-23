@@ -16,7 +16,6 @@ import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -40,6 +39,7 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
 
     public MarkdownToHtmlController() {
         baseTitle = message("MarkdownToHtml");
+        targetFileSuffix = "html";
     }
 
     @Override
@@ -73,7 +73,7 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -85,21 +85,11 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
 
         return super.makeMoreParameters();
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "md".equals(suffix);
     }
 
     @Override
@@ -120,22 +110,8 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
             targetFileGenerated(target);
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
-        }
-    }
-
-    @Override
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        try {
-            String namePrefix = FileNameTools.prefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                nameSuffix = ".html";
-            }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
-        } catch (Exception e) {
-            return null;
         }
     }
 

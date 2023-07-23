@@ -33,7 +33,7 @@ public class Data2DColumnEditController extends BaseChildController {
                     + message("Column") + " " + (index + 1));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -51,7 +51,7 @@ public class Data2DColumnEditController extends BaseChildController {
             close();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -65,7 +65,7 @@ public class Data2DColumnEditController extends BaseChildController {
             controller.setParameters(columnsController, index);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

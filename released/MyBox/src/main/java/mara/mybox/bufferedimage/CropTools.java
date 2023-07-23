@@ -34,7 +34,7 @@ public class CropTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -70,7 +70,7 @@ public class CropTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -103,7 +103,7 @@ public class CropTools {
             bufferedImage = ScaleTools.scaleImageBySize(bufferedImage, width, height);
             return bufferedImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -117,7 +117,7 @@ public class CropTools {
             bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
             return bufferedImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }

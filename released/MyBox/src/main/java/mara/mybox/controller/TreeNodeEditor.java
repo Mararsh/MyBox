@@ -16,11 +16,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.NodeSeparater;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.TextFileTools;
@@ -110,7 +111,7 @@ public class TreeNodeEditor extends TreeTagsController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -151,7 +152,7 @@ public class TreeNodeEditor extends TreeTagsController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -313,7 +314,7 @@ public class TreeNodeEditor extends TreeTagsController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private boolean newData = false;
 
             @Override
@@ -422,7 +423,7 @@ public class TreeNodeEditor extends TreeTagsController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -470,7 +471,7 @@ public class TreeNodeEditor extends TreeTagsController {
             task.cancel();
         }
         valueInput.clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             String codes;
 

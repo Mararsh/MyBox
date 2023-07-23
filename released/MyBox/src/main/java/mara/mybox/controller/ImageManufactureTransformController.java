@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 
 /**
@@ -84,16 +84,16 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             });
             angleBox.getSelectionModel().select(0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     @FXML
@@ -102,7 +102,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -117,8 +117,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
                         newImage, cost);
             }
         };
@@ -131,7 +131,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -146,8 +146,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
                         newImage, cost);
             }
 
@@ -160,7 +160,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -175,8 +175,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
             }
 
         };
@@ -188,7 +188,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -203,8 +203,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
             }
 
         };
@@ -216,7 +216,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -231,8 +231,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
             }
 
         };
@@ -250,7 +250,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int angle;
             private Image newImage;
@@ -267,8 +267,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
             }
         };
         start(task);

@@ -74,7 +74,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -134,7 +134,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
 
             typeController.loadTree();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

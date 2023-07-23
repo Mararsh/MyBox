@@ -68,7 +68,7 @@ public class ControlData2DRowEdit extends BaseController {
 
             makeInputs();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class ControlData2DRowEdit extends BaseController {
             makeInputs();
             loadRow(index);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class ControlData2DRowEdit extends BaseController {
             thisPane.requestFocus();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -135,7 +135,7 @@ public class ControlData2DRowEdit extends BaseController {
             TextField input = (TextField) line.getChildren().get(1);
             inputs.put(column, input);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -151,7 +151,7 @@ public class ControlData2DRowEdit extends BaseController {
 
             return line;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -171,7 +171,7 @@ public class ControlData2DRowEdit extends BaseController {
             valuesBox.getChildren().add(input);
             inputs.put(column, input);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -193,7 +193,7 @@ public class ControlData2DRowEdit extends BaseController {
             inputs.put(column, group);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -227,7 +227,7 @@ public class ControlData2DRowEdit extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -274,7 +274,7 @@ public class ControlData2DRowEdit extends BaseController {
                             popup.getContent().add(pane);
                             LocateTools.locateCenter(paletteButton, popup);
                         } catch (Exception e) {
-                            MyBoxLog.debug(e.toString());
+                            MyBoxLog.debug(e);
                         }
                     }
                 });
@@ -282,7 +282,7 @@ public class ControlData2DRowEdit extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -297,7 +297,7 @@ public class ControlData2DRowEdit extends BaseController {
             inputs.put(column, selector);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -316,7 +316,7 @@ public class ControlData2DRowEdit extends BaseController {
 
             return line;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

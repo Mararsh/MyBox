@@ -32,7 +32,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
     private boolean isPercent;
 
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected ComboBox<String> arcBox, perBox;
     @FXML
@@ -56,7 +56,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             super.setControlsStyle();
             NodeStyleTools.setTooltip(perBox, new Tooltip("1~100"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -107,7 +107,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             colorSetController.init(this, baseName + "Color");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +172,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
                     FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()));
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

@@ -64,7 +64,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <HBox fx:id="colorBox" alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
-                                                        <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                        <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                                     </children>
                                                 </HBox>
                                                 <HBox fx:id="distanceBox" alignment="CENTER_LEFT" spacing="5.0">

@@ -59,7 +59,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             strHandled = message("Handled") + ": ";
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -75,7 +75,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -102,7 +102,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             sourcePath = new File(sourcePathInput.getText());
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -591,7 +591,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
         try {
             browseURI(targetPathInputController.file().toURI());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

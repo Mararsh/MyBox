@@ -26,16 +26,6 @@ public abstract class BaseBatchHtmlController extends BaseBatchFileController {
         setFileType(VisitHistory.FileType.Html);
     }
 
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
-    }
-
     public Charset chartset(File srcFile) {
         return TextFileTools.charset(srcFile);
     }
@@ -56,7 +46,7 @@ public abstract class BaseBatchHtmlController extends BaseBatchFileController {
             targetFileGenerated(target);
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

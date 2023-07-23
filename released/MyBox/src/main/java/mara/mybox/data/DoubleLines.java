@@ -8,56 +8,15 @@ import javafx.scene.shape.Line;
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:29:29
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class DoubleLines implements DoubleShape {
 
-    private List<List<DoublePoint>> lines;
+    private List<List<DoublePoint>> linePoints;
     private List<DoublePoint> currentLine;
 
     public DoubleLines() {
-        lines = new ArrayList<>();
-    }
-
-    public void setCurrentLine() {
-        if (currentLine == null) {
-            return;
-        }
-        if (!lines.contains(currentLine)) {
-            lines.add(currentLine);
-        }
-    }
-
-    public boolean startLine(DoublePoint p) {
-        if (p == null) {
-            return false;
-        }
-        if (currentLine != null) {
-            if (!lines.contains(currentLine)) {
-                lines.add(currentLine);
-            }
-        }
-        currentLine = new ArrayList<>();
-        currentLine.add(p);
-        lines.add(currentLine);
-        return true;
-    }
-
-    public boolean endLine(DoublePoint p) {
-        if (p == null) {
-            return false;
-        }
-        if (currentLine == null) {
-            currentLine = new ArrayList<>();
-        }
-        currentLine.add(p);
-        if (!lines.contains(currentLine)) {
-            lines.add(currentLine);
-        }
-        currentLine = null;
-        return true;
+        linePoints = new ArrayList<>();
     }
 
     public boolean addPoint(DoublePoint p) {
@@ -66,11 +25,15 @@ public class DoubleLines implements DoubleShape {
         }
         if (currentLine == null) {
             currentLine = new ArrayList<>();
+            linePoints.add(currentLine);
         }
         currentLine.add(p);
-        if (!lines.contains(currentLine)) {
-            lines.add(currentLine);
-        }
+        return true;
+    }
+
+    public boolean endLine(DoublePoint p) {
+        addPoint(p);
+        currentLine = null;
         return true;
     }
 
@@ -78,30 +41,28 @@ public class DoubleLines implements DoubleShape {
         if (line == null) {
             return false;
         }
-        if (!lines.contains(line)) {
-            lines.add(line);
-        }
+        linePoints.add(line);
         return true;
     }
 
     public boolean removeLastLine() {
-        if (lines.isEmpty()) {
+        if (linePoints.isEmpty()) {
             return false;
         }
-        lines.remove(lines.size() - 1);
+        linePoints.remove(linePoints.size() - 1);
         currentLine = null;
         return true;
     }
 
     @Override
     public boolean isValid() {
-        return lines != null;
+        return linePoints != null;
     }
 
     @Override
     public DoubleLines cloneValues() {
         DoubleLines np = new DoubleLines();
-        for (List<DoublePoint> line : lines) {
+        for (List<DoublePoint> line : linePoints) {
             List<DoublePoint> newline = new ArrayList<>();
             newline.addAll(line);
             np.addLine(newline);
@@ -109,20 +70,28 @@ public class DoubleLines implements DoubleShape {
         return np;
     }
 
-    public List<Line> directLines() {
+    public List<Line> lines() {
         List<Line> dlines = new ArrayList<>();
         int lastx, lasty = -1, thisx, thisy;
-        for (List<DoublePoint> lineData : lines) {
-            lastx = -1;
-            for (DoublePoint linePoint : lineData) {
+        for (List<DoublePoint> lineData : linePoints) {
+            if (lineData.size() == 1) {
+                DoublePoint linePoint = lineData.get(0);
                 thisx = (int) Math.round(linePoint.getX());
                 thisy = (int) Math.round(linePoint.getY());
-                if (lastx >= 0) {
-                    Line line = new Line(lastx, lasty, thisx, thisy);
-                    dlines.add(line);
+                Line line = new Line(thisx, thisy, thisx, thisy);
+                dlines.add(line);
+            } else {
+                lastx = Integer.MAX_VALUE;
+                for (DoublePoint linePoint : lineData) {
+                    thisx = (int) Math.round(linePoint.getX());
+                    thisy = (int) Math.round(linePoint.getY());
+                    if (lastx != Integer.MAX_VALUE) {
+                        Line line = new Line(lastx, lasty, thisx, thisy);
+                        dlines.add(line);
+                    }
+                    lastx = thisx;
+                    lasty = thisy;
                 }
-                lastx = thisx;
-                lasty = thisy;
             }
         }
         return dlines;
@@ -133,44 +102,10 @@ public class DoubleLines implements DoubleShape {
         if (!isValid()) {
             return false;
         }
-        int lastx, lasty = -1, thisx, thisy;
         Point2D point = new Point2D(x, y);
-        for (List<DoublePoint> lineData : lines) {
-            lastx = -1;
-            for (DoublePoint linePoint : lineData) {
-                thisx = (int) Math.round(linePoint.getX());
-                thisy = (int) Math.round(linePoint.getY());
-                if (lastx >= 0) {
-                    Line line = new Line(lastx, lasty, thisx, thisy);
-                    if (line.contains(point)) {
-                        return true;
-                    }
-                }
-                lastx = thisx;
-                lasty = thisy;
-            }
-        }
-        return false;
-    }
-
-    public boolean include(Point2D point) {
-        if (!isValid()) {
-            return false;
-        }
-        int lastx, lasty = -1, thisx, thisy;
-        for (List<DoublePoint> lineData : lines) {
-            lastx = -1;
-            for (DoublePoint linePoint : lineData) {
-                thisx = (int) Math.round(linePoint.getX());
-                thisy = (int) Math.round(linePoint.getY());
-                if (lastx >= 0) {
-                    Line line = new Line(lastx, lasty, thisx, thisy);
-                    if (line.contains(point)) {
-                        return true;
-                    }
-                }
-                lastx = thisx;
-                lasty = thisy;
+        for (Line line : lines()) {
+            if (line.contains(point)) {
+                return true;
             }
         }
         return false;
@@ -178,31 +113,43 @@ public class DoubleLines implements DoubleShape {
 
     @Override
     public DoubleRectangle getBound() {
-        return null;
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE,
+                maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
+        for (List<DoublePoint> lineData : linePoints) {
+            for (DoublePoint p : lineData) {
+                double x = p.getX();
+                double y = p.getY();
+                if (x < minX) {
+                    minX = x;
+                }
+                if (x > maxX) {
+                    maxX = x;
+                }
+                if (y < minY) {
+                    minY = y;
+                }
+                if (y > maxY) {
+                    maxY = y;
+                }
+            }
+        }
+        return new DoubleRectangle(minX, minY, maxX, maxY);
     }
 
     public void clear() {
-        lines.clear();
+        linePoints.clear();
         currentLine = null;
     }
 
     @Override
     public DoubleLines move(double offset) {
-        DoubleLines np = new DoubleLines();
-        for (List<DoublePoint> line : lines) {
-            List<DoublePoint> newline = new ArrayList<>();
-            for (DoublePoint p : line) {
-                newline.add(new DoublePoint(p.getX() + offset, p.getY() + offset));
-            }
-            np.addLine(newline);
-        }
-        return np;
+        return move(offset, offset);
     }
 
     @Override
     public DoubleLines move(double offsetX, double offsetY) {
         DoubleLines np = new DoubleLines();
-        for (List<DoublePoint> line : lines) {
+        for (List<DoublePoint> line : linePoints) {
             List<DoublePoint> newline = new ArrayList<>();
             for (DoublePoint p : line) {
                 newline.add(new DoublePoint(p.getX() + offsetX, p.getY() + offsetY));
@@ -212,13 +159,25 @@ public class DoubleLines implements DoubleShape {
         return np;
     }
 
+    @Override
+    public DoubleLines moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoubleLines) moved : null;
+    }
+
+    @Override
+    public DoublePoint getCenter() {
+        DoubleRectangle bound = getBound();
+        return bound.getCenter();
+    }
+
     public int getLinesSize() {
-        return lines.size();
+        return linePoints.size();
     }
 
     public int getPointsSize() {
         int count = 0;
-        for (List<DoublePoint> line : lines) {
+        for (List<DoublePoint> line : linePoints) {
             count += line.size();
         }
         return count;
@@ -226,7 +185,7 @@ public class DoubleLines implements DoubleShape {
 
     public DoublePoint getPoint(int index) {
         int count = 0;
-        for (List<DoublePoint> line : lines) {
+        for (List<DoublePoint> line : linePoints) {
             for (DoublePoint p : line) {
                 if (index == count) {
                     return p;
@@ -238,14 +197,6 @@ public class DoubleLines implements DoubleShape {
 
     }
 
-    public List<DoublePoint> getLine(int index) {
-        try {
-            return lines.get(index);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public List<DoublePoint> getCurrentLine() {
         return currentLine;
     }
@@ -254,12 +205,13 @@ public class DoubleLines implements DoubleShape {
         this.currentLine = currentLine;
     }
 
-    public List<List<DoublePoint>> getLines() {
-        return lines;
+    public List<List<DoublePoint>> getLinePoints() {
+        return linePoints;
     }
 
-    public void setLines(List<List<DoublePoint>> lines) {
-        this.lines = lines;
+    public void setLinePoints(List<List<DoublePoint>> linePoints) {
+        this.linePoints = linePoints;
+        currentLine = null;
     }
 
 }

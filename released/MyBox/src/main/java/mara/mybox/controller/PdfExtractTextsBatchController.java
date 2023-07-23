@@ -56,7 +56,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
             stripper = new PDFTextStripper();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             stripper = null;
             return false;
         }
@@ -71,7 +71,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
             tmpFile = FileTmpTools.getTempFile();
             fileWriter = new FileWriter(tmpFile, Charset.forName("utf-8"), false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             fileWriter = null;
         }
         return fileWriter != null;
@@ -97,7 +97,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return len;
     }
@@ -113,7 +113,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         fileWriter = null;
     }

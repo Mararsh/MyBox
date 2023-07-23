@@ -30,8 +30,6 @@ public class TextReplaceBatchController extends FindReplaceBatchController {
             super.initValues();
 
             optionsController = textReplaceOptionsController;
-            MyBoxLog.console(optionsController != null);
-            MyBoxLog.console(editType);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-1-6
  * @License Apache License Version 2.0
  */
-public class AutoTestingCasesController extends BaseTableViewController<TestCase> {
+public class AutoTestingCasesController extends BaseTablePagesController<TestCase> {
 
     @FXML
     protected TableColumn<TestCase, String> typeColumn, operationColumn, objectColumn, versionColumn, stageColumn;
@@ -41,7 +41,7 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
             stageColumn.setCellValueFactory(new PropertyValueFactory<>("stage"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -52,7 +52,7 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
             tableData.setAll(TestCase.testCases());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -67,7 +67,7 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
             }
             AutoTestingExecutionController.open(this, selected);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

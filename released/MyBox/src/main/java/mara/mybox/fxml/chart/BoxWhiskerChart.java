@@ -265,7 +265,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -315,7 +315,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -454,7 +454,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -85,7 +85,7 @@ public class ColorData extends BaseData {
             rgba = FxColorTools.color2rgba(color);  // rgba is saved as upper-case in db
             rgb = FxColorTools.color2rgb(color);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -115,7 +115,7 @@ public class ColorData extends BaseData {
                 colorName = value;
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
     }
 
@@ -561,7 +561,7 @@ public class ColorData extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

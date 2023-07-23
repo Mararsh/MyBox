@@ -9,6 +9,7 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TreeTableColumn?>
@@ -27,15 +28,6 @@ License:    Apache License Version 2.0
                     <children>
                   <HBox spacing="2.0">
                      <children>
-                        <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconClaw.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
                               <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                   <children>
                                       <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
@@ -77,6 +69,7 @@ License:    Apache License Version 2.0
                                 <TreeTableColumn fx:id="valueColumn" prefWidth="300.0" text="%Value" />
                             </columns>
                         </TreeTableView>
+                  <Label fx:id="treeLabel" />
                     </children>
                     <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

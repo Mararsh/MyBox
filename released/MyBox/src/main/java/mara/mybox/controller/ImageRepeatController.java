@@ -5,10 +5,12 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -17,7 +19,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.RepeatTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -29,21 +31,24 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageRepeatController extends ImageViewerController {
 
-    protected int scaleWidth, scaleHeight, canvasWidth, canvasHeight, repeatH, repeatV,
-            interval, margin;
+    protected int canvasWidth, canvasHeight, repeatH, repeatV, interval, margin;
 
     @FXML
-    protected ImageViewerController sourceController;
+    protected ControlImageSize sizeController;
+    @FXML
+    protected ImageViewerController scaleController, repeatController;
+    @FXML
+    protected Tab imageTab, scaleTab, repeatTab, saveTab;
     @FXML
     protected ToggleGroup repeatGroup;
     @FXML
     protected RadioButton repeatRadio, tileRadio;
     @FXML
-    protected TextField widthInput, heightInput, horizontalInput, veriticalInput;
+    protected TextField horizontalInput, veriticalInput;
     @FXML
     protected ComboBox<String> intervalSelector, marginSelector;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected VBox mainBox, optionsBox;
     @FXML
@@ -59,10 +64,14 @@ public class ImageRepeatController extends ImageViewerController {
         try {
             super.initControls();
 
-            mainBox.disableProperty().bind(imageView.imageProperty().isNull());
-            optionsBox.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
-            saveAsBox.disableProperty().bind(imageView.imageProperty().isNull());
+            repeatController.formatController = formatController;
 
+            sizeController.setParameters(scaleController);
+
+            saveTab.disableProperty().bind(repeatController.imageView.imageProperty().isNull());
+            repeatTab.disableProperty().bind(scaleController.imageView.imageProperty().isNull());
+
+            checkRepeatType();
             repeatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
@@ -72,47 +81,24 @@ public class ImageRepeatController extends ImageViewerController {
 
             intervalSelector.getItems().addAll(Arrays.asList("0", "1", "2", "3", "5", "-1", "-3", "-5", "10", "15", "20", "30"));
             intervalSelector.getSelectionModel().select(UserConfig.getString(baseName + "Interval", "5"));
-//            intervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-//                @Override
-//                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
-//                    okAction();
-//                }
-//            });
 
             marginSelector.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
             marginSelector.getSelectionModel().select(UserConfig.getString(baseName + "Margins", "5"));
-//            marginSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-//                @Override
-//                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
-//                    okAction();
-//                }
-//            });
 
             colorSetController.init(this, baseName + "Color");
-//            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-//                @Override
-//                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-//                    drawRepeat();
-//                }
-//            });
-
-            sourceController.loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    initRepeat();
-                }
-            });
-
-            sourceController.rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    originalSize();
-                }
-            });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void maskShapeChanged() {
+        recoverSize();
+    }
+
+    public Image sourceImage() {
+        return scaleController.scopeImage();
     }
 
     public void checkRepeatType() {
@@ -130,79 +116,22 @@ public class ImageRepeatController extends ImageViewerController {
         }
     }
 
-    public void initRepeat() {
-        loadImage(null);
-        originalSize();
-        checkRepeatType();
-        imageLabel.setText("");
-        if (sourceController.sourceFile != null) {
-            myStage.setTitle(baseTitle + " - " + sourceController.sourceFile);
-        } else {
-            myStage.setTitle(baseTitle);
-        }
-    }
-
-    public Image sourceImage() {
-        sourceController.bgColor = colorSetController.color();
-        return sourceController.scopeImage();
+    @FXML
+    public void okSize() {
+        sizeController.scale();
     }
 
     @FXML
-    @Override
-    public void openSourcePath() {
-        sourceController.openSourcePath();
-    }
-
-    @FXML
-    public void originalSize() {
-        Image srcImage = sourceImage();
-        if (srcImage == null) {
+    public void recoverSize() {
+        if (isSettingValues || imageView.getImage() == null) {
             return;
         }
-        widthInput.setText((int) srcImage.getWidth() + "");
-        heightInput.setText((int) srcImage.getHeight() + "");
+        scaleController.loadImage(scopeImage());
     }
 
     @FXML
     @Override
     public void okAction() {
-        Image srcImage = sourceImage();
-        if (srcImage == null) {
-            popError(message("NoData") + ": " + message("Image"));
-            return;
-        }
-        try {
-            int v = Integer.parseInt(widthInput.getText());
-            if (v > 0) {
-                scaleWidth = v;
-                widthInput.setStyle(null);
-                UserConfig.setInt(baseName + "ScaleWidth", scaleWidth);
-            } else {
-                widthInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Width"));
-                return;
-            }
-        } catch (Exception e) {
-            widthInput.setStyle(UserConfig.badStyle());
-            popError(message("InvalidParameter") + ": " + message("Width"));
-            return;
-        }
-        try {
-            int v = Integer.parseInt(heightInput.getText());
-            if (v > 0) {
-                scaleHeight = v;
-                heightInput.setStyle(null);
-                UserConfig.setInt(baseName + "ScaleHeight", scaleHeight);
-            } else {
-                heightInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Height"));
-                return;
-            }
-        } catch (Exception e) {
-            heightInput.setStyle(UserConfig.badStyle());
-            popError(message("InvalidParameter") + ": " + message("Height"));
-            return;
-        }
         if (repeatRadio.isSelected()) {
             try {
                 int v = Integer.parseInt(horizontalInput.getText());
@@ -307,40 +236,57 @@ public class ImageRepeatController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
+            Image repeatImage;
+
             @Override
             protected boolean handle() {
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(sourceImage(), null);
+                Image srcImage = sourceImage();
+                if (srcImage == null) {
+                    error = message("NoData") + ": " + message("Image");
+                    return false;
+                }
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(srcImage, null);
                 if (repeatRadio.isSelected()) {
-                    bufferedImage = RepeatTools.repeat(bufferedImage, scaleWidth, scaleHeight,
+                    bufferedImage = RepeatTools.repeat(bufferedImage,
                             repeatH, repeatV, interval, margin, colorSetController.awtColor());
                 } else {
-                    bufferedImage = RepeatTools.tile(bufferedImage, scaleWidth, scaleHeight,
+                    bufferedImage = RepeatTools.tile(bufferedImage,
                             canvasWidth, canvasHeight, interval, margin, colorSetController.awtColor());
                 }
                 if (bufferedImage == null) {
                     return false;
                 }
-                image = SwingFXUtils.toFXImage(bufferedImage, null);
-                return image != null;
+                repeatImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                return repeatImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                imageView.setImage(image);
-                setZoomStep(image);
-                fitSize();
-                imageLabel.setText((int) image.getWidth() + "x" + (int) image.getHeight());
+                repeatController.loadImage(repeatImage);
+                tabPane.getSelectionModel().select(repeatTab);
             }
 
         };
         start(task);
     }
 
+    @FXML
+    @Override
+    public void pickSaveAs(Event event) {
+        repeatController.pickSaveAs(event);
+    }
+
+    @FXML
+    @Override
+    public void popSaveAs(Event event) {
+        repeatController.popSaveAs(event);
+    }
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (sourceController.thisPane.isFocusWithin()) {
-            if (sourceController.keyEventsFilter(event)) {
+        if (tabPane.getSelectionModel().getSelectedItem() == repeatTab) {
+            if (repeatController.keyEventsFilter(event)) {
                 return true;
             }
         }

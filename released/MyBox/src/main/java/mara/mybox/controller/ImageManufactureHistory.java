@@ -34,6 +34,7 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -52,7 +53,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-2-26
  * @License Apache License Version 2.0
  */
-public class ImageManufactureHistory extends BaseTableViewController<ImageEditHistory> {
+public class ImageManufactureHistory extends BaseTablePagesController<ImageEditHistory> {
 
     protected ImageManufactureController imageController;
     protected TableImageEditHistory tableImageEditHistory;
@@ -128,7 +129,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -185,7 +186,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             setHistoryIndex(-1);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -395,7 +396,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                 his.setThumbnail(SwingFXUtils.toFXImage(thumb, null));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -423,7 +424,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image hisImage;
             private ImageEditHistory his;
 
@@ -475,7 +476,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             return;
         }
         infoLabel.setText(message("Loading..."));
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<ImageEditHistory> list;
             private File currentFile;
 
@@ -486,7 +487,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                     list = tableImageEditHistory.read(conn, currentFile);
                     if (list != null) {
                         for (ImageEditHistory his : list) {
-                            if (task == null || task.isCancelled()
+                            if (task == null || isCancelled()
                                     || !currentFile.equals(imageController.sourceFile)) {
                                 return false;
                             }
@@ -526,7 +527,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (!PopTools.askSure(getTitle(), message("SureClear"))) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -550,7 +551,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (selected == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -578,7 +579,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             popSuccessful();
             refreshHistories();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

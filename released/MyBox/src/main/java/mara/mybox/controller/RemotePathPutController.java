@@ -78,7 +78,7 @@ public class RemotePathPutController extends BaseBatchFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }
@@ -233,7 +233,7 @@ public class RemotePathPutController extends BaseBatchFileController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

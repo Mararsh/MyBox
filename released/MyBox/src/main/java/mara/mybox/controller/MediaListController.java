@@ -23,7 +23,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class MediaListController extends BaseTableViewController<MediaList> {
+public class MediaListController extends BaseTablePagesController<MediaList> {
 
     protected MediaPlayerController playerController;
 
@@ -48,7 +48,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
             loadList(null);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(supportTipsView, new Tooltip(Languages.message("MediaPlayerSupports")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

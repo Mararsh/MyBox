@@ -29,8 +29,8 @@ import static mara.mybox.imagefile.ImageFileReaders.getReader;
 import static mara.mybox.imagefile.ImageFileReaders.readBrokenImage;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.FileExtensions;
 import static mara.mybox.value.Languages.message;
 import thridparty.image4j.ICODecoder;
@@ -116,7 +116,7 @@ public class ImageConvertTools {
             targetImage = ImageBinary.byteBinary(targetImage);
             return targetImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return srcImage;
         }
     }
@@ -169,7 +169,7 @@ public class ImageConvertTools {
             BufferedImage targetImage = c.filter(tmpImage, null);
             return targetImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -195,8 +195,8 @@ public class ImageConvertTools {
             }
             ImageWriteParam param = ImageFileWriters.getWriterParam(attributes, writer);
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(srcFile);
-                     ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(srcFile);
+                    ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 ImageReader reader = ImageFileReaders.getReader(iis, sourceFormat);
                 if (reader == null) {
                     writer.dispose();
@@ -243,9 +243,8 @@ public class ImageConvertTools {
             }
             writer.dispose();
             return FileTools.rename(tmpFile, targetFile);
-
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -263,7 +262,7 @@ public class ImageConvertTools {
             BufferedImage targetImage = c.filter(srcImage, null);
             return targetImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -274,7 +273,7 @@ public class ImageConvertTools {
                 return false;
             }
             List<BufferedImage> images = new ArrayList();
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(srcFile)))) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(srcFile)))) {
                 ImageReader reader = getReader(iis, FileNameTools.suffix(srcFile.getName()));
                 if (reader == null) {
                     return false;
@@ -308,7 +307,7 @@ public class ImageConvertTools {
             ICOEncoder.write(images, targetFile);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -322,7 +321,7 @@ public class ImageConvertTools {
             ICOEncoder.write(icoImage, targetFile);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -342,7 +341,7 @@ public class ImageConvertTools {
             BufferedImage icoImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
             return icoImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -361,7 +360,7 @@ public class ImageConvertTools {
             ImageWriter writer = ImageFileWriters.getWriter(targetFormat);
             ImageWriteParam param = ImageFileWriters.getWriterParam(attributes, writer);
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 int num;
                 if (supportMultiFrames) {
@@ -395,7 +394,7 @@ public class ImageConvertTools {
             return FileTools.rename(tmpFile, targetFile);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

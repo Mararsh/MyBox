@@ -10,7 +10,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.data2d.reader.DataTableGroup.TargetType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -43,13 +43,14 @@ public class Data2DGroupController extends BaseData2DHandleController {
             task.cancel();
         }
         resultsFile = null;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataTableGroup group;
 
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     TargetType targetType;
                     if (fileRadio.isSelected()) {
                         targetType = TargetType.SingleFile;
@@ -112,7 +113,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

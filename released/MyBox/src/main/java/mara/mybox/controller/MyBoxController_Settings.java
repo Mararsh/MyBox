@@ -115,7 +115,7 @@ public abstract class MyBoxController_Settings extends MyBoxController_Recent {
                         popFailed();
                     }
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
                 derbyServer.setDisable(false);
             });

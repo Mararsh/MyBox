@@ -52,7 +52,7 @@ public class ImageSampleController extends ImageViewerController {
             operateOriginalSize = true;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -108,7 +108,7 @@ public class ImageSampleController extends ImageViewerController {
                 }
             });
 
-            initMaskControls(false);
+            clearMask();
 
             okButton.disableProperty().bind(
                     widthScaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
@@ -127,7 +127,7 @@ public class ImageSampleController extends ImageViewerController {
             saveButton.disableProperty().bind(okButton.disabledProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -204,7 +204,7 @@ public class ImageSampleController extends ImageViewerController {
             return rect;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -218,7 +218,7 @@ public class ImageSampleController extends ImageViewerController {
             return;
         }
         infoLabel.setText(Languages.message("ImageSize") + ": "
-                + getOperationWidth() + "x" + getOperationHeight()
+                + operationWidth() + "x" + operationHeight()
                 + "\n" + Languages.message("SamplingSize") + ": "
                 + (int) (maskRectangleData.getWidth() / (widthRatio() * widthScale))
                 + "x" + (int) (maskRectangleData.getHeight() / (heightRatio() * heightScale)));
@@ -226,13 +226,8 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @Override
-    public boolean drawMaskRectangleLineAsData() {
-        if (maskRectangleLine == null || !maskPane.getChildren().contains(maskRectangleLine)
-                || maskRectangleData == null
-                || imageView == null || imageView.getImage() == null) {
-            return false;
-        }
-        if (!super.drawMaskRectangleLineAsData()) {
+    public boolean drawMaskRectangle() {
+        if (!super.drawMaskRectangle()) {
             return false;
         }
         rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX() / widthRatio(), 2) + "");
@@ -253,11 +248,11 @@ public class ImageSampleController extends ImageViewerController {
                 return false;
             }
             fitSize();
-            initMaskRectangleLine(true);
+            showMaskRectangle();
             checkScales();
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
 
@@ -273,11 +268,11 @@ public class ImageSampleController extends ImageViewerController {
             }
             maskRectangleData = rect;
             isSettingValues = true;
-            drawMaskRectangleLineAsData();
+            drawMaskRectangle();
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

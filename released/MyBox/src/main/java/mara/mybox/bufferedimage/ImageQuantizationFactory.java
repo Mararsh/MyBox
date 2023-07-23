@@ -281,7 +281,7 @@ public class ImageQuantizationFactory {
                     rgbPalette.build();
                 }
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
             return this;
         }
@@ -411,7 +411,7 @@ public class ImageQuantizationFactory {
                     counts = new HashMap<>();
                 }
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
             return this;
         }

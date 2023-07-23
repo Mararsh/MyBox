@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.Charset;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -20,19 +23,28 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITessAPI;
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.Word;
 
 /**
  * @Author Mara
@@ -49,9 +61,12 @@ TIFF has the advantage of the ability to contain multiple images (pages) in a fi
  */
 public class ControlOCROptions extends BaseController {
 
-    protected String selectedLanguages;
+    protected String selectedLanguages, texts, html;
+    protected List<Rectangle> rectangles;
+    protected List<Word> words;
     protected int psm, regionLevel, wordLevel, tesseractVersion;
     protected boolean setFormats, setLevels, isVersion3;
+    protected File configFile;
 
     @FXML
     protected ControlFileSelecter tesseractPathController, dataPathController;
@@ -99,7 +114,7 @@ public class ControlOCROptions extends BaseController {
                     .baseName(baseName).savedName(OCRTools.TessDataPath).init();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -163,6 +178,9 @@ public class ControlOCROptions extends BaseController {
             htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean("ImageOCRhtml", htmlCheck.isSelected());
                 }
             });
@@ -171,12 +189,15 @@ public class ControlOCROptions extends BaseController {
             pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean("ImageOCRpdf", pdfCheck.isSelected());
                 }
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -278,7 +299,7 @@ public class ControlOCROptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -301,7 +322,7 @@ public class ControlOCROptions extends BaseController {
             checkEngine();
             setLanguages();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -339,13 +360,14 @@ public class ControlOCROptions extends BaseController {
             }
             dataPathController.checkFileInput();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
     public int tesseractVersion() {
         try {
             if (tesseractPathController.file() == null || !tesseractPathController.file().exists()) {
+                popError(message("InvalidParameters"));
                 return -1;
             }
             List<String> parameters = new ArrayList<>();
@@ -372,11 +394,12 @@ public class ControlOCROptions extends BaseController {
                     }
                 }
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
             process.waitFor();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            popError(e.toString());
+            MyBoxLog.debug(e);
         }
         return -1;
     }
@@ -410,17 +433,17 @@ public class ControlOCROptions extends BaseController {
                 currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
     public Map<String, String> checkParameters() {
-        String texts = optionsArea.getText();
-        if (texts.isBlank()) {
+        String options = optionsArea.getText();
+        if (options.isBlank()) {
             return null;
         }
         Map<String, String> p = new HashMap<>();
-        String[] lines = texts.split("\n");
+        String[] lines = options.split("\n");
         for (String line : lines) {
             String[] fields = line.split("\t");
             if (fields.length < 2) {
@@ -437,6 +460,7 @@ public class ControlOCROptions extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         setLanguages();
     }
@@ -456,7 +480,7 @@ public class ControlOCROptions extends BaseController {
             openHtml(htmFile);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -468,6 +492,157 @@ public class ControlOCROptions extends BaseController {
         controller.hideLeftPane();
         controller.hideRightPane();
         controller.sourceFileChanged(help);
+    }
+
+    public void clearResults() {
+        texts = null;
+        html = null;
+        rectangles = null;
+        words = null;
+    }
+
+    public boolean imageOCR(SingletonTask task, Image image, boolean allData) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        bufferedImage = AlphaTools.removeAlpha(bufferedImage);
+        return bufferedImageOCR(task, bufferedImage, allData);
+    }
+
+    public boolean bufferedImageOCR(SingletonTask task, BufferedImage bufferedImage, boolean allData) {
+        try {
+            clearResults();
+            if (task == null || bufferedImage == null) {
+                return false;
+            }
+            Tesseract instance = tesseract();
+            List<ITesseract.RenderedFormat> formats = new ArrayList<>();
+            formats.add(ITesseract.RenderedFormat.TEXT);
+            if (allData) {
+                formats.add(ITesseract.RenderedFormat.HOCR);
+            }
+
+            File tmpFile = File.createTempFile("MyboxOCR", "");
+            String tmp = tmpFile.getAbsolutePath();
+            FileDeleteTools.delete(tmpFile);
+
+            instance.createDocumentsWithResults​(bufferedImage, tmp,
+                    tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
+            File txtFile = new File(tmp + ".txt");
+            texts = TextFileTools.readTexts(txtFile);
+            FileDeleteTools.delete(txtFile);
+
+            if (allData) {
+                File htmlFile = new File(tmp + ".hocr");
+                html = TextFileTools.readTexts(htmlFile);
+                FileDeleteTools.delete(htmlFile);
+
+                if (wordLevel >= 0) {
+                    words = instance.getWords(bufferedImage, wordLevel);
+                }
+
+                if (regionLevel >= 0) {
+                    rectangles = instance.getSegmentedRegions(bufferedImage, regionLevel);
+                }
+            }
+
+            return texts != null;
+        } catch (Exception e) {
+            error = e.toString();
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    public Tesseract tesseract() {
+        try {
+            Tesseract instance = new Tesseract();
+            // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
+            instance.setVariable("user_defined_dpi", "96");
+            instance.setVariable("debug_file", "/dev/null");
+            instance.setPageSegMode(psm);
+            Map<String, String> p = checkParameters();
+            if (p != null && !p.isEmpty()) {
+                for (String key : p.keySet()) {
+                    instance.setVariable(key, p.get(key));
+                }
+            }
+            instance.setDatapath(dataPathController.file().getAbsolutePath());
+            if (selectedLanguages != null) {
+                instance.setLanguage(selectedLanguages);
+            }
+            return instance;
+        } catch (Exception e) {
+            error = e.toString();
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public boolean checkCommandPamameters(boolean html, boolean pdf) {
+        try {
+            File tesseract = tesseractPathController.file();
+            if (!tesseract.exists()) {
+                popError(message("InvalidParameters"));
+                tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
+                return false;
+            }
+            File dataPath = dataPathController.file();
+            if (!dataPath.exists()) {
+                popError(message("InvalidParameters"));
+                dataPathController.fileInput.setStyle(UserConfig.badStyle());
+                return false;
+            }
+
+            tesseractVersion = tesseractVersion();
+            if (tesseractVersion < 0) {
+                return false;
+            }
+            configFile = FileTmpTools.getTempFile();
+            String s = "tessedit_create_txt 1\n";
+            if (html && htmlCheck.isSelected()) {
+                s += "tessedit_create_hocr 1\n";
+            }
+            if (pdf && pdfCheck.isSelected()) {
+                s += "tessedit_create_pdf 1\n";
+            }
+            Map<String, String> p = checkParameters();
+            if (p != null) {
+                for (String key : p.keySet()) {
+                    s += key + "\t" + p.get(key) + "\n";
+                }
+            }
+            TextFileTools.writeFile(configFile, s, Charset.forName("utf-8"));
+            return true;
+        } catch (Exception e) {
+            popError(e.toString());
+            MyBoxLog.console(e.toString());
+            return false;
+        }
+    }
+
+    public Process process(File file, String prefix) {
+        try {
+            if (file == null || configFile == null) {
+                return null;
+            }
+            List<String> parameters = new ArrayList<>();
+            parameters.addAll(Arrays.asList(
+                    tesseractPathController.file().getAbsolutePath(),
+                    file.getAbsolutePath(), prefix,
+                    "--tessdata-dir", dataPathController.file().getAbsolutePath(),
+                    tesseractVersion > 3 ? "--psm" : "-psm", psm + ""
+            ));
+            if (selectedLanguages != null) {
+                parameters.addAll(Arrays.asList("-l", selectedLanguages));
+            }
+            parameters.add(configFile.getAbsolutePath());
+
+            ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
+            return pb.start();
+        } catch (Exception e) {
+            popError(e.toString());
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

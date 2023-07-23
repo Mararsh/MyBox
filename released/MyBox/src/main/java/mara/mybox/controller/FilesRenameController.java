@@ -94,7 +94,7 @@ public class FilesRenameController extends BaseBatchFileController {
                             .or(tableController.addFilesButton.disableProperty())
             );
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -370,7 +370,7 @@ public class FilesRenameController extends BaseBatchFileController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -394,7 +394,7 @@ public class FilesRenameController extends BaseBatchFileController {
             }
             recordFileOpened(f);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -58,7 +58,7 @@ import mara.mybox.data.Link.FilenameType;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -80,7 +80,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-11
  * @License Apache License Version 2.0
  */
-public class DownloadFirstLevelLinksController extends BaseTableViewController<Link> {
+public class DownloadFirstLevelLinksController extends BaseTablePagesController<Link> {
 
     protected final ObservableList<Link> downloadingData, failedData;
     protected int maxThreadsNumber, maxLogs, maxRetries;
@@ -448,7 +448,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             NodeStyleTools.setTooltip(htmlButton, message("AddressHtml"));
             NodeStyleTools.removeTooltip(equalButton);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -461,7 +461,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -506,7 +506,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String title;
 
             @Override
@@ -560,7 +560,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<Link> links;
 
@@ -1261,7 +1261,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 }
                 checkData();
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
         }
 
@@ -1535,7 +1535,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 }
                 logsTextArea.setScrollTop(0);
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
         });
     }

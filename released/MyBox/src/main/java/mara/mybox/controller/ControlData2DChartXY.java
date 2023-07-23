@@ -28,7 +28,7 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
             chartMaker = new XYChartMaker();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

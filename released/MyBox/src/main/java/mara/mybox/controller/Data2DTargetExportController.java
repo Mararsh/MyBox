@@ -49,7 +49,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             okButton = startButton;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             startAction();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -93,7 +93,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             startAction();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -145,7 +145,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             }, 1000);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -167,7 +167,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -180,7 +180,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

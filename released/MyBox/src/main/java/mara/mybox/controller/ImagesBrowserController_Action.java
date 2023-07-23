@@ -16,7 +16,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
@@ -38,7 +38,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             ImageView iView = imageViewList.get(index);
             ImageViewTools.zoomIn((ScrollPane) iView.getUserData(), iView, 5, 5);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -50,7 +50,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             ImageView iView = imageViewList.get(index);
             ImageViewTools.zoomOut((ScrollPane) iView.getUserData(), iView, 5, 5);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -62,7 +62,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             ImageView iView = imageViewList.get(index);
             ImageViewTools.paneSize((ScrollPane) iView.getUserData(), iView);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -74,7 +74,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             ImageView iView = imageViewList.get(index);
             ImageViewTools.imageSize((ScrollPane) iView.getUserData(), iView);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -88,7 +88,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 ImageInformationController.open(imageInfo);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 ImageMetaDataController.open(imageInfo);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -117,7 +117,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 ImageViewerController.openFile(file);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -135,7 +135,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             makeImagesNevigator(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -255,7 +255,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int handled = 0;
             private boolean hasMultipleFrames = false;
@@ -317,7 +317,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                     ImageInformation newInfo = loadInfo(file);
                     return newInfo;
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     return null;
                 }
             }
@@ -354,34 +354,12 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 }
                 popSaved();
                 if (indexs == null || indexs.isEmpty() || indexs.contains(currentIndex)) {
-                    viewImage(imageController.sourceFile);
+                    viewImage(sourceFile);
                 }
             }
 
         };
         start(task);
-    }
-
-    @FXML
-    @Override
-    public void nextAction() {
-        if (nextFiles != null) {
-            previousFiles = imageFileList;
-            imageFileList.clear();
-            imageFileList.addAll(nextFiles);
-            makeImagesNevigator(false);
-        }
-    }
-
-    @FXML
-    @Override
-    public void previousAction() {
-        if (previousFiles != null) {
-            nextFiles = imageFileList;
-            imageFileList.clear();
-            imageFileList.addAll(previousFiles);
-            makeImagesNevigator(false);
-        }
     }
 
     @Override
@@ -408,7 +386,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 });
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -422,7 +400,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             File file = info.getImageFileInformation().getFile();
-            imageController.changeFile(info, newFile);
+            changeFile(info, newFile);
             tableData.set(index, info);
             imageFileList.set(index, newFile);
             if (displayMode == DisplayMode.ImagesGrid) {
@@ -438,7 +416,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             }
             notifyLoad();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -462,7 +440,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             makeImagesNevigator(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -196,7 +196,7 @@ public class AlarmClockController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -208,7 +208,7 @@ public class AlarmClockController extends BaseController {
 
             NodeStyleTools.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -311,7 +311,7 @@ public class AlarmClockController extends BaseController {
                     try {
                         mediaPlayer = SoundTools.play(currentSound, volumeValue, loopValue);
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.error(e);
                         popError(e.toString());
                     }
                 }
@@ -336,7 +336,7 @@ public class AlarmClockController extends BaseController {
             UserConfig.setString(SystemMediaPathKey, file.getParent());
             sysInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
 
     }
@@ -352,7 +352,7 @@ public class AlarmClockController extends BaseController {
             UserConfig.setString(MusicPathKey, file.getParent());
             localInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 

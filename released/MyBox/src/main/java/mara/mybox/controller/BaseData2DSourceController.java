@@ -84,7 +84,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             sourceChanged();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -137,7 +137,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             filterController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -173,7 +173,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             refreshControls();
             notifyLoaded();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -217,7 +217,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             restoreSelections();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             isSettingValues = false;
         }
     }
@@ -675,7 +675,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -685,7 +685,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             if (data2D == null || checkedColsIndices == null) {
                 return null;
             }
-            data2D.startTask(task, filterController != null ? filterController.filter : null);
+            data2D.startFilter(filterController != null ? filterController.filter : null);
             if (!data2D.fillFilterStatistic()) {
                 return null;
             }

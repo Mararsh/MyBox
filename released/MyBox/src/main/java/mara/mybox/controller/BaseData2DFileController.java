@@ -66,7 +66,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             checkStatus();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -85,7 +85,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             infoLabel.textProperty().bind(dataController.attributesController.infoArea.textProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -121,7 +121,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -153,9 +153,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         } else {
             sourceFile = null;
         }
-        if (openSourceButton != null) {
-            openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
-        }
+        browseController.setCurrentFile(sourceFile);
         leftPane.setDisable(sourceFile == null);
         new Timer().schedule(new TimerTask() {
             @Override

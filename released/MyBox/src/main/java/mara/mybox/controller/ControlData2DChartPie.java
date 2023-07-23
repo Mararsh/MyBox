@@ -28,7 +28,7 @@ public class ControlData2DChartPie extends BaseData2DChartFx {
             pieMaker = new PieChartMaker();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

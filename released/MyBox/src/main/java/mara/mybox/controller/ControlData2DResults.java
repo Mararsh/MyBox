@@ -7,7 +7,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 
 /**
  * @Author Mara
@@ -32,7 +32,7 @@ public class ControlData2DResults extends ControlData2DLoad {
             notUpdateTitle = true;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -45,7 +45,7 @@ public class ControlData2DResults extends ControlData2DLoad {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataFileCSV targetCSV;
 

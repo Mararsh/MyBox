@@ -44,7 +44,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
     @FXML
     protected HBox colorBox, distanceBox, widthBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected TextField distanceInput;
     @FXML
@@ -67,7 +67,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             colorSetController.init(this, baseName + "Color");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -220,7 +220,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
 
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

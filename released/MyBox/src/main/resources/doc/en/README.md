@@ -4,18 +4,30 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## What's New                       
-2023-6-8 v6.7.4                
+2023-7-23 v6.7.5                
                 
 * Added:                                   
-     - XML editor.                                                           
-     - Make typesetting of html/markdown/xml/json files in batch.                                                            
-     - Customize color palette.                                                           
-* Improved: For remote path, display files in order of their names and directories are always displayed in front.                                                                                           
+     - SVG editor                                                        
+     - Make typesetting of SVG files in batch                                                            
+     - Convert SVG files to images/PDFs in batch                                                    
+* Improved:                                                                                            
+     - In file interface, provide pane to list files of same types under same directory.                                                            
+     - When edit image, points of polyline and polygon can be edited and dragged to adjust the shape.                                                        
+     - WHen edit image, simplify types of scopes: if colors list is empty then match all colors.                                                            
+     - When analyse image, option to sort colors data.                                                        
+     - When repeat image, option to crop and scale original image.                                                            
+     - When edit XML file, XML codes can be inputted to add new node.                                                        
+     - Function menu in tabs of web browser to close tabs more easily.                                                            
+     - Shortcuts of button "Go" are F9 and CTRL+g. Shortcut of button "Clear" is CTRL+l(lowercase of 'L').                                                        
+* Removed: Event "double-click" is not handled for image any more.                                                                                            
 * Solved problems:                                      
-     - Options about "existed files" do not work for target files/paths.                                                            
-     - Fail to save profile of remote path when path is blank.                                                          
-                                                                                                                                                                
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.4)                           
+     - Image OCR fails in last 2 versions.                                                            
+     - When scale image, the inputted width and height do not work.                                                        
+     - When edit image, shadow should be behind the text.                                                            
+     - Dominant pie is not picked in the generated html when analyse image.                                                       
+     - Frames pane should be always shown for tif/gif file.                                                            
+                                                                                                                                               
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.5)                           
 
 ## Notice         
 Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
@@ -68,16 +80,9 @@ The latest versions and all archived versions can be downloaded in following add
 
 | address | dowloads | readme | 
 | --- | --- | --- | 
-| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme-en.html)     [Chinese](https://mararsh.github.io/MyBox/readme-zh.html) |
-| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme-en.html)    [Chinese](https://mara-mybox.sourceforge.io/readme-zh.html) |
-| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
-
-## Migration
-1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
-2. Data handled in each version are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
-3. MyBox is backward compatibility: Later version can work on data of previous versions.
-While forward compatibility is not supported: Wrong may happen when old version handles data of new version.
-
+| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme_en.html)     [Chinese](https://mararsh.github.io/MyBox/readme_zh.html) |
+| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme_en.html)    [Chinese](https://mara-mybox.sourceforge.io/readme_zh.html) |
+| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |      
 
 ## Configuration 
 Configuration file is under "User Home":        
@@ -90,6 +95,42 @@ Configuration file is under "User Home":
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
+
+## Migration
+1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
+2. Data handled in each version are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
+3. MyBox is backward compatibility: Later version can work on data of previous versions.
+While forward compatibility is not supported: Wrong may happen when old version handles data of new version.          
+
+## Backup and Recover
+1. To backup, copy directories to other places.       
+2. To recover, override current directories with backup directories.
+3. Need not backup each directory under data path.       
+   Predefined directories under data path are listed below. Only directories of "referred by database" need backups:               
+
+|    directory    |         role         | internal referred | read/write automatically | referred by database | cleared automatically |
+|-----------------|----------------------|-------------------|--------------------------|----------------------|-----------------------|
+| AppTemp         | temporary files      | yes               | yes                      |                      | yes                   |
+| buttons         | customized buttons   | yes               | yes                      |                      |                       |
+| data            | internal data        | yes               | yes                      |                      |                       |
+| dataClipboard   | data clipboard       | yes               | yes                      | yes                  |                       |
+| doc             | internal documents   | yes               | yes                      |                      |                       |
+| downloads       | download files       |                   | yes                      |                      |                       |
+| fileBackups     | files' backups       | yes               | yes                      | yes                  |                       |
+| generated       | generated files      |                   | yes                      |                      |                       |
+| ICC             | ICC profiles         | yes               | yes                      |                      |                       |
+| icons           | icon files           | yes               | yes                      |                      |                       |
+| image           | image files          | yes               | yes                      |                      |                       |
+| imageClipboard  | image clipbooard     | yes               | yes                      | yes                  |                       |
+| imageHistories  | image edit histories | yes               | yes                      | yes                  |                       |
+| imageScopes     | image scopes         | yes               | yes                      | yes                  |                       |
+| js              | javascript           | yes               | yes                      |                      |                       |
+| logs            | database logs        |                   | yes                      |                      |                       |
+| map             | map files            | yes               | yes                      |                      |                       |
+| mybox_derby     | database             | yes               | yes                      | yes                  |                       |
+| mybox_languages | customized languages | yes               | yes                      |                      |                       |
+| security        | cert files           | yes               | yes                      |                      |                       |
+| sound           | sound files          | yes               | yes                      |                      |                       |     
 
 # Resource Addresses        
 | Contents | Link |        
@@ -105,12 +146,12 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 |              Name              | Version |   Time     |                                                                                                                                            English                                                                                                                                            |                                                                                                                                            Chinese                                                                                                                                            |
 |--------------------------------|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Development Logs               | 6.7.4   | 2023-6-8   | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs.html)                                                                                                                                                                                                                                    |
-| Shortcuts                      | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts.html)                                                                                                                                                                                                                                  |
-| Functions list                 | 6.7.4   | 2023-6-8   | [html](https://mara-mybox.sourceforge.io/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_functions.html)                                                                                                                                                                                                                                  |
+| Development Logs               | 6.7.5   | 2023-7-23   | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs.html)                                                                                                                                                                                                                                    |
+| Shortcuts                      | 6.7.5   | 2023-7-23  | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html)                                                                                                                                                                                                                                  |
+| Functions list                 | 6.7.5   | 2023-7-23   | [html](https://mara-mybox.sourceforge.io/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_functions_zh.html)                                                                                                                                                                                                                                  |
 | Packing Steps                  | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mara-mybox.sourceforge.io/pack_steps.html)                                                                                                                                                                                                                                       |
 | Development Guide              | 2.1     | 2020-8-27  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.odt)                                                                                                                                                                                  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf)  [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.odt)                                                                                                                                                                                                                |
-| User Guide - Overview          | 6.7.4   | 2023-6-8   | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt)                     |
+| User Guide - Overview          | 6.7.5   | 2023-7-23   | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt)                     |
 | User Guide - Data Tools        | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DataTools-en/MyBox-DataTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.odt)                 | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DataTools-zh/MyBox-DataTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.odt)                 |
 | User Guide - Document Tools    | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DocumentTools-en/MyBox-DocumentTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.odt) | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DocumentTools-zh/MyBox-DocumentTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.odt) |
 | User Guide - Image Tools       | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-ImageTools-en/MyBox-ImageTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-ImageTools-zh/MyBox-ImageTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.odt)             |
@@ -118,7 +159,7 @@ Function "Settings" can be used to change configuration values.
 | User Guide - Network Tools     | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-NetworkTools-en/MyBox-NetworkTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.odt)     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-NetworkTools-zh/MyBox-NetworkTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.odt)     |
 | User Guide - Media Tools       | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-MediaTools-en/MyBox-MediaTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-MediaTools-zh/MyBox-MediaTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.odt)             |
 | User Guide - Development Tools | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DevTools-en/MyBox-DevTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.odt)                     |
-| Tips in Interfaces             | 6.7.4   | 2023-6-8   | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html)                                                                                                                                                                                                                           | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html)                                                                                                                                                                                                                                    |
+| Tips in Interfaces             | 6.7.5   | 2023-7-23   | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html)                                                                                                                                                                                                                           | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html)                                                                                                                                                                                                                                    |
 | About - Data in Two-dimensional Storage Structure | 6.7.3   | 2023-5-22   | [html](https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html)                                                                                                                                                                                                                                    |
 | About - row expression and row filter             | 6.7.2   | 2023-4-16   | [html](https://mara-mybox.sourceforge.io/mybox_about_row_expression_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_row_expression_zh.html)                                                                                                                                                                                                                                    |
 | About - data grouping          | 6.7.1   | 2023-3-13   | [html](https://mara-mybox.sourceforge.io/mybox_about_grouping_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_grouping_zh.html)                                                                                                                                                                                                                                    |
@@ -151,7 +192,7 @@ Function "Settings" can be used to change configuration values.
 | Palette - MyBox Colors                          | 6.7.3   | 2023-5-22 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all.html)                                                                                                                                                                                                                                   |
 | Palette - Gray scale                            | 6.7.3   | 2023-5-22 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all.html)                                                                                                                                                                                                                                   |
 | Stories of Images                               | 6.7.2   | 2023-4-16 | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt)                     |   
-| Useful links                   | 6.7.4   | 2023-6-8 | [html](https://mara-mybox.sourceforge.io/mybox_useful_link_en.html)                                                                                                                                                                                                                             | [html](https://mara-mybox.sourceforge.io/mybox_useful_link.html)                                                                                                                                                                                                                                    |
+| Useful links                   | 6.7.5   | 2023-7-23 | [html](https://mara-mybox.sourceforge.io/mybox_useful_link_en.html)                                                                                                                                                                                                                             | [html](https://mara-mybox.sourceforge.io/mybox_useful_link_zh.html)                                                                                                                                                                                                                                    |
 
 
 # Implementation        
@@ -220,6 +261,7 @@ MyBox is based on following open sources:
 | RYB hues                            | art colors                      | <https://blog.csdn.net/weixin_44938037/article/details/90599711>                                                                                                                                                                    |
 | jsch                                | sftp                            | <http://www.jcraft.com/jsch/>                                                                                                                                                                                                       |
 | jackson                             | json                            | <https://github.com/FasterXML/jackson>              
+| batik                               | SVG                             | <https://xmlgraphics.apache.org/batik/>              
 
 
 # Features        

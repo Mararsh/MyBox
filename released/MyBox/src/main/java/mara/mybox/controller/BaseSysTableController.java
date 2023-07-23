@@ -10,7 +10,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-12-18
  * @License Apache License Version 2.0
  */
-public abstract class BaseSysTableController<P> extends BaseTableViewController<P> {
+public abstract class BaseSysTableController<P> extends BaseTablePagesController<P> {
 
     protected BaseTable tableDefinition;
 
@@ -44,7 +44,7 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
             setTableDefinition(tableDefinition);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -122,10 +122,10 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -153,10 +153,10 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

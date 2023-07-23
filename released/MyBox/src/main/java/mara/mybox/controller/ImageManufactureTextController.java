@@ -13,7 +13,7 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -46,25 +46,25 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
             goAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     @FXML
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (imageView.getImage() == null || p == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
-        if (imageController.isPickingColor || scopeController.isPickingColor
+        if (editor.isPickingColor || scopeController.isPickingColor
                 || event.getButton() == MouseButton.SECONDARY) {
             return;
         }
@@ -84,7 +84,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -107,8 +107,8 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     imageView.toBack();
 
                 } else {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Text, null, null, newImage, cost);
+                    editor.popSuccessful();
+                    editor.updateImage(ImageOperation.Text, null, null, newImage, cost);
                 }
             }
 
@@ -135,7 +135,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     @Override
     public void cancelAction() {
-        imageController.resetImagePane();
+        editor.resetImagePane();
     }
 
 }

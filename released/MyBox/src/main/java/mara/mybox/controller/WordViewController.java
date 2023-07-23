@@ -4,8 +4,9 @@ import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -16,22 +17,22 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class WordViewController extends BaseWebViewController {
-
+    
     public WordViewController() {
         baseTitle = Languages.message("WordView");
         TipsLabelKey = "WordViewTips";
     }
-
+    
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
     }
-
+    
     @Override
     public void sourceFileChanged(File file) {
         loadFile(file);
     }
-
+    
     @Override
     public boolean loadFile(File file) {
         if (file == null) {
@@ -41,33 +42,35 @@ public class WordViewController extends BaseWebViewController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
-
+        task = new SingletonCurrentTask<Void>(this) {
+            
             private File htmlFile;
-
+            
             @Override
             protected boolean handle() {
                 htmlFile = MicrosoftDocumentTools.word2HtmlFile(file, getCharset());
                 return htmlFile != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 sourceFile = file;
                 getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                 webViewController.loadFile(htmlFile);
+                fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
+                browseController.setCurrentFile(sourceFile);
             }
-
+            
         };
         start(task);
         return true;
     }
-
+    
     @Override
     public void pageLoaded() {
-
+        
     }
-
+    
     @FXML
     @Override
     public void refreshAction() {
@@ -85,11 +88,11 @@ public class WordViewController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public static WordViewController openFile(File file) {
         WordViewController controller = open();
         if (controller != null) {
@@ -97,5 +100,5 @@ public class WordViewController extends BaseWebViewController {
         }
         return controller;
     }
-
+    
 }

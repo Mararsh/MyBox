@@ -17,8 +17,10 @@ import javax.xml.transform.stream.StreamResult;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
@@ -33,6 +35,7 @@ public class XmlTypesettingController extends BaseBatchFileController {
     protected DocumentBuilder builder;
     protected String encoding;
     protected Transformer transformer;
+    protected boolean indent;
 
     @FXML
     protected ControlXmlOptions optionsController;
@@ -54,7 +57,6 @@ public class XmlTypesettingController extends BaseBatchFileController {
 
     @Override
     public void initOptionsSection() {
-
         List<String> setNames = TextTools.getCharsetNames();
         targetEncodingBox.getItems().addAll(setNames);
         targetEncodingBox.getSelectionModel().select(Charset.defaultCharset().name());
@@ -64,7 +66,7 @@ public class XmlTypesettingController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            builder = XmlTreeNode.builder(this);
+            builder = XmlTools.builder(this);
             if (builder == null) {
                 popError(message("Failed") + ": DocumentBuilder");
                 return false;
@@ -74,12 +76,12 @@ public class XmlTypesettingController extends BaseBatchFileController {
             } else {
                 encoding = targetEncodingBox.getSelectionModel().getSelectedItem();
             }
+            indent = UserConfig.getBoolean("XmlTransformerIndent", false);
             transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-            transformer.setOutputProperty(OutputKeys.INDENT,
-                    UserConfig.getBoolean("XmlTransformerIndent", false) ? "yes" : "no");
+            transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
             return super.makeMoreParameters();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -98,7 +100,7 @@ public class XmlTypesettingController extends BaseBatchFileController {
             if (doc == null) {
                 return message("Failed");
             }
-            XmlTreeNode.Strip(this, doc);
+            XmlTools.Strip(this, doc);
             String sourceEncoding = doc.getXmlEncoding();
             if (sourceEncoding == null) {
                 sourceEncoding = "utf-8";
@@ -112,6 +114,9 @@ public class XmlTypesettingController extends BaseBatchFileController {
                 os.flush();
                 os.close();
                 xml = os.toString(sourceEncoding);
+                if (indent) {
+                    xml = xml.replaceAll("><", ">\n<");
+                }
             } catch (Exception e) {
                 updateLogs(e.toString());
                 return message("Failed");

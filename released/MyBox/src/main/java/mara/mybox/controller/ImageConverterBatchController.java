@@ -31,7 +31,6 @@ public class ImageConverterBatchController extends BaseBatchImageController {
     public ImageConverterBatchController() {
         baseTitle = Languages.message("ImageConverterBatch");
         browseTargets = true;
-
     }
 
     @Override
@@ -52,7 +51,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -89,19 +88,14 @@ public class ImageConverterBatchController extends BaseBatchImageController {
             appendQualityCheck.setSelected(UserConfig.getBoolean("ImageConverterAppendQuality"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
     @Override
     public boolean makeActualParameters() {
-        if (!super.makeActualParameters()) {
-            return false;
-        }
-
         attributes = formatController.attributes;
-
-        return true;
+        return super.makeActualParameters();
     }
 
     @Override
@@ -118,7 +112,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
                 return Languages.message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }
@@ -151,7 +145,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
             }
             return makeTargetFile(namePrefix, nameSuffix, targetPath);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

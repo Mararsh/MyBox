@@ -161,7 +161,7 @@ public class MediaInformation extends FileInformation {
             TableMedia.write(this);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             setFinish(true);
             return false;
         }

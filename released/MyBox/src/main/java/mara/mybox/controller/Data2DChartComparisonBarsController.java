@@ -53,7 +53,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -288,7 +288,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

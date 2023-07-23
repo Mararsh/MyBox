@@ -7,7 +7,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -42,7 +42,7 @@ public class MarkdownPopController extends TextPopController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -64,7 +64,7 @@ public class MarkdownPopController extends TextPopController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -99,7 +99,7 @@ public class MarkdownPopController extends TextPopController {
             controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

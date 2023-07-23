@@ -16,7 +16,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
@@ -48,7 +48,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             setDataType(Data2D.Type.CSV);
             dataFileCSV = (DataFileCSV) dataController.data2D;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             csvWriteController.setControls(baseName + "Write", false, false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -115,7 +115,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private File filePath;
             private LinkedHashMap<File, Boolean> files;
@@ -166,7 +166,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

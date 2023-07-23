@@ -14,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -33,14 +32,12 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
-        Text, RichText, Mosaic, Convolution,
-        Effects, Enhancement, Shadow, Scale2, Picture, Transform, Pen, Margins
+        Text, RichText, Convolution,
+        Effects, Enhancement, Shadow, Scale2, Picture, Transform, Shape, Eliminate, Margins
     }
 
     @FXML
     protected TitledPane createPane;
-    @FXML
-    protected VBox mainBox;
     @FXML
     protected Tab imageTab, scopeTab, hisTab, backupTab;
     @FXML
@@ -58,7 +55,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     protected ImageManufactureHistory hisController;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected Button viewImageButton;
 
@@ -80,7 +77,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         maskView.setImage(null);
         maskView.setVisible(false);
         maskView.toBack();
-        initMaskControls(false);
+        clearMask();
     }
 
     public void imageTab() {
@@ -144,7 +141,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -161,7 +158,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -178,7 +175,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -195,7 +192,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -212,7 +209,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -229,15 +226,15 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
-        super.imageClicked(event, p);
-        operationsController.imageClicked(event, p);
+    public void paneClicked(MouseEvent event, DoublePoint p) {
+        super.paneClicked(event, p);
+        operationsController.paneClicked(event, p);
     }
 
     @FXML
@@ -282,7 +279,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             }
             updateImage(newImage, info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -295,7 +292,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             popInformation(info);
             updateLabelString(info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -308,7 +305,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             updateLabelsTitle();
             updateLabel(operation);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -323,7 +320,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             }
             imageLabel.setText(info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

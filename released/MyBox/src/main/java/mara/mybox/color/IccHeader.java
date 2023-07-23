@@ -33,7 +33,7 @@ public class IccHeader {
         try {
             this.header = ByteTools.subBytes(data, 0, 128);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -210,7 +210,7 @@ public class IccHeader {
 
             return fields;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

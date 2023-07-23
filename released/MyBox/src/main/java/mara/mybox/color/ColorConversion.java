@@ -47,7 +47,7 @@ public class ColorConversion {
             BufferedImage target = converter.filter(source, null);
             return target;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

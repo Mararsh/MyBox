@@ -90,7 +90,7 @@ public class ClearExpiredDataController extends BaseTaskController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -169,7 +169,7 @@ public class ClearExpiredDataController extends BaseTaskController {
 
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

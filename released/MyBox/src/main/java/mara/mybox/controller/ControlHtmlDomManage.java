@@ -46,7 +46,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
             this.htmlEditor = htmlEditor;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

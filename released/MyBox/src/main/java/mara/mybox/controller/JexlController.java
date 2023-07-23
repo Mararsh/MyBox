@@ -31,7 +31,7 @@ public class JexlController extends JShellController {
             jexlEditor = (JexlEditorController) editorController;
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

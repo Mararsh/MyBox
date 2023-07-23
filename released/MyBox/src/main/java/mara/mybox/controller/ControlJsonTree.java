@@ -11,10 +11,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -24,19 +21,18 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2023-4-30
  * @License Apache License Version 2.0
  */
-public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
+public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
 
     protected JsonEditorController jsonEditor;
 
@@ -57,36 +53,58 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             clearTree();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     /*
         tree
      */
-    public TreeItem<JsonTreeNode> makeTree(String json) {
+    @Override
+    public void setRoot(TreeItem<JsonTreeNode> root) {
+        super.setRoot(root);
+        nodeController.clearNode();
+    }
+
+    public void makeTree(String json) {
         try {
             if (json == null) {
                 clearTree();
-                return null;
+                return;
             }
-            return loadTree(JsonTreeNode.parseByJackson(json));
+            loadTree(JsonTreeNode.parseByJackson(json));
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
         }
     }
 
-    public TreeItem<JsonTreeNode> loadTree(JsonNode node) {
-        try {
-            clearTree();
-            TreeItem<JsonTreeNode> json = makeTreeItem(new JsonTreeNode("JSON", node));
-            treeView.setRoot(json);
-            return json;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+    public void loadTree(JsonNode node) {
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        if (node == null) {
+            clearTree();
+            return;
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            TreeItem<JsonTreeNode> root;
+
+            @Override
+            protected boolean handle() {
+                root = makeTreeItem(new JsonTreeNode("JSON", node));
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setRoot(root);
+                if (error != null) {
+                    popError(error);
+                }
+            }
+        };
+        start(task);
     }
 
     public TreeItem<JsonTreeNode> makeTreeItem(JsonTreeNode jsonTreeNode) {
@@ -117,7 +135,11 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
 
             return item;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -139,43 +161,41 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             }
             return item;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
 
-    public TreeItem<JsonTreeNode> updateTreeItem(TreeItem<JsonTreeNode> item) {
-        try {
-            return updateTreeItem(item, item.getValue());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+    public void updateTreeItem(TreeItem<JsonTreeNode> item) {
+        updateTreeItem(item, item.getValue());
     }
 
-    public TreeItem<JsonTreeNode> updateTreeItem(TreeItem<JsonTreeNode> item, JsonTreeNode jsonTreeNode) {
+    public void updateTreeItem(TreeItem<JsonTreeNode> item, JsonTreeNode jsonTreeNode) {
         try {
             if (item == null || jsonTreeNode == null) {
-                return null;
+                return;
             }
             TreeItem<JsonTreeNode> parentItem = item.getParent();
             if (parentItem == null) {
-                return loadTree(jsonTreeNode.getJsonNode());
+                loadTree(jsonTreeNode.getJsonNode());
+                return;
             }
             int index = parentItem.getChildren().indexOf(item);
             if (index < 0) {
-                return null;
+                return;
             }
             TreeItem<JsonTreeNode> updated = makeTreeItem(jsonTreeNode);
             if (updated == null) {
-                return null;
+                return;
             }
             parentItem.getChildren().set(index, updated);
             focusItem(updated);
-            return updated;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
         }
     }
 
@@ -184,12 +204,12 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
         nodeController.editNode(item);
     }
 
-    @FXML
     @Override
-    public void clearTree() {
-        super.clearTree();
-        nodeController.clearNode();
+    public void focusItem(TreeItem<JsonTreeNode> item) {
+        super.focusItem(item);
+        nodeController.editNode(item);
     }
+
 
     /*
         values
@@ -338,6 +358,7 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             }
 
             updateTreeItem(parentItem);
+
             jsonEditor.domChanged(true);
             jsonEditor.popInformation(message("DeletedSuccessfully"));
 
@@ -402,8 +423,9 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             }
 
             updateTreeItem(parentItem);
+
             jsonEditor.domChanged(true);
-            jsonEditor.popInformation(message("DeletedSuccessfully"));
+            jsonEditor.popInformation(message("CopySuccessfully"));
 
             nodeController.clearNode();
         } catch (Exception e) {
@@ -428,69 +450,7 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
     @FXML
     @Override
     public void recoverAction() {
-        if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {
-            jsonEditor.fileChanged = false;
-            jsonEditor.sourceFileChanged(jsonEditor.sourceFile);
-        }
-    }
-
-    @FXML
-    protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
-        }
-    }
-
-    @FXML
-    protected void showHelps(Event event) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menuItem = new MenuItem(message("JsonTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.jsonEnLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("JsonTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.jsonZhLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-
-            menuItem = new MenuItem(message("JsonSpecification"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.jsonSpecification(), true);
-                }
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("JsonHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
-
-            popEventMenu(event, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        jsonEditor.recoverAction();
     }
 
 }

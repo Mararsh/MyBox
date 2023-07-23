@@ -123,7 +123,7 @@ public class ImageQuantization extends PixelsOperation {
             }
             return table;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -31,7 +31,7 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -48,7 +48,7 @@ public class ControlColorPaletteSelector extends BaseController {
     protected ColorsManageController manageController;
     protected TableColorPaletteName tableColorPaletteName;
     protected TableColorPalette tableColorPalette;
-    protected ColorPaletteName allColors, defaultPalette, currentPalette;
+    protected ColorPaletteName allColors, currentPalette;
     protected boolean isManager;
     protected String ignore;
     protected SimpleBooleanProperty selectedNotify, doubleClickedNotify, renamedNotify;
@@ -78,7 +78,7 @@ public class ControlColorPaletteSelector extends BaseController {
             isManager = false;
             ignore = null;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -88,7 +88,7 @@ public class ControlColorPaletteSelector extends BaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(customizeButton, message("CustomizeColorPalette"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -155,27 +155,27 @@ public class ControlColorPaletteSelector extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     @FXML
     public void loadPalettes() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         if (isManager) {
             palettesList.getItems().setAll(allColors);
         } else {
             palettesList.getItems().clear();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<ColorPaletteName> palettes;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    defaultPalette = PaletteTools.defaultPalette(conn);
+                    PaletteTools.defaultPalette(conn);
                     palettes = tableColorPaletteName.readAll(conn);
                 } catch (Exception e) {
                     error = e.toString();
@@ -196,6 +196,7 @@ public class ControlColorPaletteSelector extends BaseController {
                     } else {
                         palettesList.getItems().addAll(palettes);
                     }
+                    palettesList.refresh();
                     String s = UserConfig.getString(baseName + "Palette", PaletteTools.defaultPaletteName());
                     for (ColorPaletteName palette : palettes) {
                         if (palette.getName().equals(s)) {
@@ -218,10 +219,10 @@ public class ControlColorPaletteSelector extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private ColorPaletteName newPalatte;
 
             @Override
@@ -386,7 +387,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (!PopTools.askSure(getTitle(), selected.getName(), message("DeletePalette"))) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -411,7 +412,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (!PopTools.askSure(getTitle(), message("DeleteAllPalettes"))) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -444,7 +445,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -485,7 +486,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private ColorPaletteName newPalatte;
 
             @Override
@@ -554,7 +555,7 @@ public class ControlColorPaletteSelector extends BaseController {
             items.add(new SeparatorMenuItem());
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

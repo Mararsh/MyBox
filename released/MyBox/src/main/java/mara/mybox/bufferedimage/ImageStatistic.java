@@ -272,7 +272,7 @@ public class ImageStatistic {
 
             return this;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

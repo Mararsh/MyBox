@@ -21,6 +21,7 @@ public class BaseTask<P> extends Task<P> {
     protected Node disbaleNode;
 
     public BaseTask() {
+        error = null;
         startTime = new Date();
         ok = quit = false;
         self = this;

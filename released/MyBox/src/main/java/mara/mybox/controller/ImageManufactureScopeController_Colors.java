@@ -14,7 +14,7 @@ import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
@@ -24,7 +24,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ImageManufactureScopeController_Colors extends ImageManufactureScopeController_Points {
+public abstract class ImageManufactureScopeController_Colors extends ImageManufactureScopeController_Area {
 
     public void initColorsTab() {
         try {
@@ -63,7 +63,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -90,8 +90,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         scopeTips.setText(tips);
         scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
         NodeStyleTools.setTooltip(scopeTips, tips);
-        NodeStyleTools.setTooltip(scopeTipsView, tips);
-        scopeTipsView.setVisible(!tips.isBlank());
         popInformation(tips);
     }
 
@@ -101,13 +99,10 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             String tips = imageLabelOriginal.getText();
             scopeTips.setText(tips);
             scopeTips.setStyle(imageLabelOriginal.getStyle());
-            NodeStyleTools.setTooltip(scopeTipsView, tips);
             NodeStyleTools.setTooltip(scopeTips, tips);
-            scopeTipsView.setVisible(!tips.isBlank());
             imageLabelOriginal = null;
         } else {
             scopeTips.setText("");
-            scopeTipsView.setVisible(false);
             NodeStyleTools.setTooltip(scopeTips, "");
         }
 
@@ -121,10 +116,10 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         }
         switch (scope.getScopeType()) {
             case Color:
-            case RectangleColor:
-            case CircleColor:
-            case EllipseColor:
-            case PolygonColor:
+            case Rectangle:
+            case Circle:
+            case Ellipse:
+            case Polygon:
                 scope.addColor(ColorConvertTools.converColor(color));
                 colorsList.getItems().add(color);
                 indicateScope();
@@ -169,7 +164,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 return tableColor.writeColors(colors, false) != null;
@@ -177,6 +172,17 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
 
         };
         start(task);
+    }
+
+    public void pickColors() {
+        List<Color> colors = colorsList.getItems();
+        if (colors == null || colors.isEmpty()) {
+            scope.getColors().clear();
+            return;
+        }
+        for (Color color : colors) {
+            scope.addColor(ColorConvertTools.converColor(color));
+        }
     }
 
 }

@@ -8,7 +8,6 @@ import mara.mybox.data.ProcessParameters;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -37,7 +36,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
             super.initValues();
             pdfsTableController = (ControlPdfsTable) tableController;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -70,11 +69,6 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
         currentParameters = previewParameters;
         isPreview = true;
         return true;
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        return PdfTools.isPDF(file);
     }
 
     // page number is 1-based.

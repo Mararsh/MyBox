@@ -47,7 +47,7 @@ public class MenuBytesEditController extends MenuTextEditController {
                 addBytesButton();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -154,7 +154,7 @@ public class MenuBytesEditController extends MenuTextEditController {
             addNode(link);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -226,7 +226,7 @@ public class MenuBytesEditController extends MenuTextEditController {
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

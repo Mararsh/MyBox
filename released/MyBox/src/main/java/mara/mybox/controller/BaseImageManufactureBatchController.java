@@ -76,7 +76,7 @@ public abstract class BaseImageManufactureBatchController extends BaseBatchImage
             }
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

@@ -6,6 +6,7 @@ import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * Reference:
@@ -54,8 +55,12 @@ public class LabeledStackedAreaChart<X, Y> extends StackedAreaChart<X, Y> {
 
     @Override
     protected void layoutPlotChildren() {
-        super.layoutPlotChildren();
-        chartMaker.displayLabels();
+        try {
+            super.layoutPlotChildren();
+            chartMaker.displayLabels();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
 }

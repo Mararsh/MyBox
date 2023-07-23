@@ -53,7 +53,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             checkType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -263,7 +263,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             }
             return CropTools.cropOutside(source, x1, y1, x2, y2);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

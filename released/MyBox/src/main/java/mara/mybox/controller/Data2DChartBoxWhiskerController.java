@@ -85,7 +85,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             NodeStyleTools.setTooltip(e2Check, new Tooltip(message("LowerMildOutlierLine") + "\n E2 = Q1 - 1.5 * ( Q3 - Q1 )"));
             NodeStyleTools.setTooltip(e1Check, new Tooltip(message("LowerExtremeOutlierLine") + "\n E1 = Q1 - 3 * ( Q3 - Q1 )"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -115,7 +115,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             initBoxOptions();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -133,7 +133,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -330,7 +330,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -409,7 +409,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
             return calculation.prepare();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -418,7 +418,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     public void readData() {
         try {
             boolean ok;
-            calculation.setTask(task);
+            calculation.setTask(data2D.getTask());
             if (isAllPages()) {
                 ok = handlePages();
             } else {
@@ -451,7 +451,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (outputData == null) {
                 return false;
             }
-            calculation.setTask(task);
+            calculation.setTask(data2D.getTask());
             return calculation.statisticData(outputData);
         } catch (Exception e) {
             error = e.toString();
@@ -469,15 +469,15 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 if (outputData == null) {
                     return false;
                 }
-                calculation.setTask(task);
+                calculation.setTask(data2D.getTask());
                 return calculation.statisticData(outputData);
             }
-            TmpTable tmpTable = TmpTable.toStatisticTable(data2D, task, dataColsIndices, invalidAs);
+            TmpTable tmpTable = TmpTable.toStatisticTable(data2D, data2D.getTask(), dataColsIndices, invalidAs);
             if (tmpTable == null) {
                 outputData = null;
                 return false;
             }
-            tmpTable.startTask(task, null);
+            tmpTable.startTask(data2D.getTask(), null);
             calculation.setData2D(tmpTable).setInvalidAs(invalidAs)
                     .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                     .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
@@ -545,7 +545,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             chartMaker.setIsXY(!xyReverseCheck.isSelected());
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -701,7 +701,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

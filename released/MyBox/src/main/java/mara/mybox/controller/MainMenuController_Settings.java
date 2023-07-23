@@ -37,7 +37,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected ToggleGroup langGroup;
     @FXML
-    protected CheckMenuItem shortcutsCanNotOmitCheck, clearExpiredDataCheck,
+    protected CheckMenuItem shortcutsCanNotOmitCheck, loseFocusCommitDataCheck, clearExpiredDataCheck,
             closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
             popColorSetCheck, controlPanesCheck, controlTextCheck;
     @FXML
@@ -62,7 +62,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             checkSettings();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -74,7 +74,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             checkSettings();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -88,6 +88,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
         shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
+        loseFocusCommitDataCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
         clearExpiredDataCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
         controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();
@@ -351,6 +352,11 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     }
 
     @FXML
+    public void loseFocusCommitData(ActionEvent event) {
+        AppVariables.lostFocusCommitData(loseFocusCommitDataCheck.isSelected());
+    }
+
+    @FXML
     protected void clearExpiredDataBeforeExit() {
         UserConfig.setBoolean("ClearExpiredDataBeforeExit", clearExpiredDataCheck.isSelected());
     }
@@ -365,7 +371,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             UserConfig.setString("InterfaceStyle", style);
             styleAll(style);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

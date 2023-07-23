@@ -136,13 +136,13 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                         }
 
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        MyBoxLog.debug(e);
                     }
                 }
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

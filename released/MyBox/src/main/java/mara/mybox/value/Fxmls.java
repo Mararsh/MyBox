@@ -128,7 +128,8 @@ public class Fxmls {
     public static final String ImageManufactureEnhancementFxml = "/fxml/ImageManufactureEnhancement.fxml";
     public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
-    public static final String ImageManufacturePenFxml = "/fxml/ImageManufacturePen.fxml";
+    public static final String ImageManufactureShapeFxml = "/fxml/ImageManufactureShape.fxml";
+    public static final String ImageManufactureEliminateFxml = "/fxml/ImageManufactureEliminate.fxml";
     public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
     public static final String ImageManufactureTransformFxml = "/fxml/ImageManufactureTransform.fxml";
     public static final String ImageManufactureMarginsFxml = "/fxml/ImageManufactureMargins.fxml";
@@ -145,7 +146,14 @@ public class Fxmls {
     public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
-    public static final String SVGEditorFxml = "/fxml/SVGEditor.fxml";
+
+    public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
+    public static final String SvgAddShapeFxml = "/fxml/SvgAddShape.fxml";
+    public static final String SvgEditShapeFxml = "/fxml/SvgEditShape.fxml";
+    public static final String SvgTypesettingFxml = "/fxml/SvgTypesetting.fxml";
+    public static final String SvgToImageFxml = "/fxml/SvgToImage.fxml";
+    public static final String SvgToPDFFxml = "/fxml/SvgToPDF.fxml";
+    public static final String SvgTranscodeOptionsFxml = "/fxml/SvgTranscodeOptions.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
@@ -160,7 +168,6 @@ public class Fxmls {
     public static final String ImageRepeatFxml = "/fxml/ImageRepeat.fxml";
 
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
-    public static final String ColorSetFxml = "/fxml/ColorSet.fxml";
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
     public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";

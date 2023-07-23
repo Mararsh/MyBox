@@ -58,7 +58,7 @@ public class FindReplaceBatchOptions extends ControlFindReplace {
                 encodeBox.getSelectionModel().select(Charset.defaultCharset().name());
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

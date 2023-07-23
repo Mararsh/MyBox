@@ -20,15 +20,14 @@
      - 编辑XML时，可直接输入XML代码以添加节点。                                                                                                            
      - 网页浏览器的页签上提供菜单以方便关闭页签。                                                        
      - 按钮“执行”的快捷键为F9和CTRL+g，按钮“清除”的快捷键CTRL+l（小写的"L"）。                                                                                                            
-* 移除：处理图片时，不再处理“双击”事件。                                                                                                                   
+* 移除：对于图片不再处理“双击”事件。                                                                                                                   
 * 解决问题：                                     
      - 图片OCR在上两个版本失效了。                                                          
      - 缩放图片时，输入的宽度、高度未生效。                                                                                                             
      - 编辑图片时，阴影应在文字后面。                                                                                                            
      - 在图片的统计html文件中缺失了主色饼图。                                                          
      - 对于tif/gif文件应总是显示帧面板。                                                                                                            
-     -                                                                                                             
-                                                           
+                                                                                                         
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.5)             
              
 ## 注意       
@@ -85,14 +84,7 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 | --- | --- | --- | 
 | github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [英文](https://mararsh.github.io/MyBox/readme_en.html)   [中文](https://mararsh.github.io/MyBox/readme_zh.html) |
 | sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [英文](https://mara-mybox.sourceforge.io/readme_en.html)  [中文](https://mara-mybox.sourceforge.io/readme_zh.html) |
-| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
-
-
-
-## 迁移
-1. 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
-2. 每个版本处理的所有数据都在它指向的“数据目录”下。多个版本可以指向同一数据目录。
-3. MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。
+| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |     
 
 ## 配置
 配置文件在"用户目录"下:       
@@ -105,6 +97,41 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
+
+## 迁移
+1. 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
+2. 每个版本处理的所有数据都在它指向的“数据目录”下。多个版本可以指向同一数据目录。
+3. MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。    
+
+## 备份与恢复
+1. 将目录复制到别处，即为备份。       
+2. 将备份的目录覆盖当前目录，即为恢复。
+3. 不必备份数据目录的每个子目录。    
+   以下列出数据目录中预定义的子目录，其中只有“被数据库引用”的子目录是必须备份的：      
+
+|       子目录       |     作用     | 内部引用 | 自动读写 | 被数据库引用 | 自动删除 |
+|-----------------|------------|------|------|--------|------|
+| AppTemp         | 临时文件       | 是    | 是    |        | 是    |
+| buttons         | 用户定制的按钮    | 是    | 是    |        |      |
+| data            | 内部数据       | 是    | 是    |        |      |
+| dataClipboard   | 数据粘贴板      | 是    | 是    | 是      |      |
+| doc             | 内部文档       | 是    | 是    |        |      |
+| downloads       | 下载的文件      |      | 是    |        |      |
+| fileBackups     | 备份的文件      | 是    | 是    | 是      |      |
+| generated       | 生成的文件      |      | 是    |        |      |
+| ICC             | 色彩特性文件     | 是    | 是    |        |      |
+| icons           | 图标         | 是    | 是    |        |      |
+| image           | 图片         | 是    | 是    |        |      |
+| imageClipboard  | 图片粘贴板      | 是    | 是    | 是      |      |
+| imageHistories  | 图片编辑历史     | 是    | 是    | 是      |      |
+| imageScopes     | 图片的范围      | 是    | 是    | 是      |      |
+| js              | javascript | 是    | 是    |        |      |
+| logs            | 数据库日志      |      | 是    |        |      |
+| map             | 地图相关的文件    | 是    | 是    |        |      |
+| mybox_derby     | 数据库        | 是    | 是    | 是      |      |
+| mybox_languages | 用户定制的语言    | 是    | 是    |        |      |
+| security        | 安全证书       | 是    | 是    |        |      |
+| sound           | 声音文件       | 是    | 是    |        |      |            
 
 # 资源地址       
 | 内容 | 链接 |       

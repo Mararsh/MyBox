@@ -165,7 +165,7 @@ public class TreeNodeExportController extends BaseTaskController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -245,7 +245,7 @@ public class TreeNodeExportController extends BaseTaskController {
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

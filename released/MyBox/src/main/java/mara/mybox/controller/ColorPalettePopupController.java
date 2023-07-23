@@ -28,6 +28,7 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -88,7 +89,7 @@ public class ColorPalettePopupController extends BaseChildController {
             tableColor = new TableColor();
             tableColorPalette.setTableColor(tableColor);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -99,7 +100,7 @@ public class ColorPalettePopupController extends BaseChildController {
             NodeStyleTools.setTooltip(popCheck, message("PopColorSetWhenMouseHovering"));
             NodeStyleTools.setTooltip(cancelButton, message("PopupClose"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -126,7 +127,7 @@ public class ColorPalettePopupController extends BaseChildController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -139,16 +140,15 @@ public class ColorPalettePopupController extends BaseChildController {
             parentRect = rect;
             loadColors();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     public synchronized void loadColors() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        thisPane.setDisable(true);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             protected List<ColorData> colors;
 
@@ -188,14 +188,8 @@ public class ColorPalettePopupController extends BaseChildController {
             protected void whenFailed() {
             }
 
-            @Override
-            protected void finalAction() {
-                task = null;
-                thisPane.setDisable(false);
-            }
-
         };
-        start(task, false);
+        start(task, thisPane);
     }
 
     public void takeColor(ColorData colorData) {
@@ -210,7 +204,7 @@ public class ColorPalettePopupController extends BaseChildController {
             parentController.closePopup();
             setNotify.set(!setNotify.get());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -248,7 +242,7 @@ public class ColorPalettePopupController extends BaseChildController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -271,7 +265,7 @@ public class ColorPalettePopupController extends BaseChildController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -335,7 +329,7 @@ public class ColorPalettePopupController extends BaseChildController {
             controller.load(parent, rect);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

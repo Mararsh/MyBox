@@ -8,7 +8,7 @@ import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -73,7 +73,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -84,18 +84,19 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             task.cancel();
         }
         modelController.clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     List<List<String>> data = filteredData(dataColsIndices, false);
                     if (data == null || data.isEmpty()) {
                         error = message("NoData");
                         return false;
                     }
                     regression = new OLSLinearRegression(interceptCheck.isSelected())
-                            .setTask(task).setScale(scale)
+                            .setTask(this).setScale(scale)
                             .setInvalidAs(invalidAs)
                             .setyName(yName).setxNames(xNames);
                     int n = data.size();
@@ -106,6 +107,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                         List<String> row = data.get(i);
                         sy[i] = row.get(0);
                         for (int j = 0; j < k; j++) {
+                            if (task == null || isCancelled()) {
+                                return false;
+                            }
                             sx[i][j] = row.get(j + 1);
                         }
                     }
@@ -249,7 +253,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                 alertError(message("InvalidData") + "\n" + message("RegressionFailedNotice"));
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -274,7 +278,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

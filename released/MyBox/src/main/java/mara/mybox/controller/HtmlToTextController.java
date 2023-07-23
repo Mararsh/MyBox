@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
@@ -27,16 +26,6 @@ public class HtmlToTextController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
@@ -49,7 +38,7 @@ public class HtmlToTextController extends BaseBatchFileController {
             targetFileGenerated(target);
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

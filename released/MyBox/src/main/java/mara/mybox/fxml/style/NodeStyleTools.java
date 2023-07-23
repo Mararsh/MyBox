@@ -145,14 +145,18 @@ public class NodeStyleTools {
     }
 
     public static void setTooltip(final Node node, final Tooltip tooltip) {
-        if (node instanceof Control) {
-            removeTooltip((Control) node);
+        try {
+            if (node instanceof Control) {
+                removeTooltip((Control) node);
+            }
+            tooltip.setFont(new Font(AppVariables.sceneFontSize));
+            tooltip.setShowDelay(Duration.millis(10));
+            tooltip.setShowDuration(Duration.millis(360000));
+            tooltip.setHideDelay(Duration.millis(10));
+            Tooltip.install(node, tooltip);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
-        tooltip.setFont(new Font(AppVariables.sceneFontSize));
-        tooltip.setShowDelay(Duration.millis(10));
-        tooltip.setShowDuration(Duration.millis(360000));
-        tooltip.setHideDelay(Duration.millis(10));
-        Tooltip.install(node, tooltip);
     }
 
     public static void removeTooltip(final Control node) {

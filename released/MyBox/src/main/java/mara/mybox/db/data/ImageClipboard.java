@@ -109,7 +109,7 @@ public class ImageClipboard extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -208,7 +208,7 @@ public class ImageClipboard extends BaseData {
                     .setCreateTime(new Date());
             return clip;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -220,7 +220,7 @@ public class ImageClipboard extends BaseData {
             }
             return create(SwingFXUtils.fromFXImage(image, null), source);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -229,7 +229,7 @@ public class ImageClipboard extends BaseData {
         try {
             return add(SwingFXUtils.fromFXImage(image, null), source);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -239,7 +239,7 @@ public class ImageClipboard extends BaseData {
             BufferedImage bufferImage = ImageFileReaders.readImage(file);
             return add(bufferImage, ImageSource.File);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -254,7 +254,7 @@ public class ImageClipboard extends BaseData {
             ControlImagesClipboard.updateClipboards();
             return clip;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -278,7 +278,7 @@ public class ImageClipboard extends BaseData {
             Image image = SwingFXUtils.toFXImage(bfImage, null);
             return image;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -302,7 +302,7 @@ public class ImageClipboard extends BaseData {
             Image thumb = SwingFXUtils.toFXImage(bfImage, null);
             return thumb;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

@@ -27,7 +27,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
             rowEditController.setParameters(dataEditController);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -46,7 +46,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
             }
             return tableViewController.addRows(index, list);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return -2;
         }
     }
@@ -62,7 +62,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
             controller.setParameters(tableViewController);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

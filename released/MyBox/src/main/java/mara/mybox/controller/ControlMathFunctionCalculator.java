@@ -27,7 +27,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
@@ -89,7 +89,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             splits = new ArrayList<>();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             xyzController.colorGradientRadio.setSelected(true);
             xyzController.colorColumnsRadio.setDisable(true);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -133,7 +133,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             xyChartButton.setVisible(false);
             xyzChartBox.setVisible(false);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -175,7 +175,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -223,7 +223,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             return vars + script;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -338,7 +338,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 TableStringValues.add("FunctionDomainHistories", domain);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -357,7 +357,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             return vars + script;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -503,7 +503,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             return vars + script;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -533,7 +533,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataFileCSV data;
 
@@ -560,7 +560,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<List<String>> rows;
             private List<Data2DColumn> columns;
@@ -609,7 +609,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private File chartFile;
 
@@ -657,7 +657,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -12,6 +12,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -45,7 +46,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -108,7 +109,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -116,10 +117,11 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     @Override
     public DataFileCSV generatedFile() {
         try {
+            SingletonTask data2DTask = data2D.getTask();
             Data2D tmp2D = data2D.cloneAll();
-            tmp2D.startTask(task, filterController.filter);
-            if (task != null) {
-                task.setInfo(message("Filter") + "...");
+            tmp2D.startTask(data2DTask, filterController.filter);
+            if (data2DTask != null) {
+                data2DTask.setInfo(message("Filter") + "...");
             }
             TmpTable tmpTable = new TmpTable()
                     .setSourceData(tmp2D)
@@ -130,7 +132,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
                     .setIncludeColName(showColNames())
                     .setIncludeRowNumber(showRowNumber())
                     .setInvalidAs(invalidAs);
-            tmpTable.setTask(task);
+            tmpTable.setTask(data2DTask);
             if (!tmpTable.createTable()) {
                 tmpTable = null;
             }
@@ -161,7 +163,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

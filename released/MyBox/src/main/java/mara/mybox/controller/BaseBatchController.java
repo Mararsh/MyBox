@@ -27,7 +27,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -191,7 +191,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -261,7 +261,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -285,7 +285,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             initTargetSection();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -364,7 +364,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -508,7 +508,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             fileStartTime = new Date();
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -537,14 +537,14 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (currentParameters == null || sourceFiles.isEmpty()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         processStartTime = new Date();
         totalFilesHandled = totalItemsHandled = 0;
         tableController.markFileHandling(-1);
         updateInterface("Started");
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -681,7 +681,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public boolean matchType(File file) {
-        return true;
+        return FileFilters.accept(sourceExtensionFilter, file);
     }
 
     public boolean match(File file) {
@@ -689,7 +689,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             return false;
         }
 
-        if (fileSelectorType == FileSelectorType.All) {
+        if (fileSelectorType == null || fileSelectorType == FileSelectorType.All) {
             return true;
         }
         if (sourceFilesSelector == null) {

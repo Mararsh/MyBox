@@ -20,6 +20,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -101,7 +102,7 @@ public class JShellEditorController extends TreeNodeEditor {
         startButton.applyCss();
         startButton.setUserData("started");
         jShellController.rightPaneCheck.setSelected(true);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 return handleCodes(codes);
@@ -272,7 +273,7 @@ public class JShellEditorController extends TreeNodeEditor {
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "int maxInt = Integer.MAX_VALUE, minInt = Integer.MIN_VALUE;",
-                    "double maxDouble = Double.MAX_VALUE, minDouble = Double.MIN_VALUE;",
+                    "double maxDouble = Double.MAX_VALUE, minDouble = -Double.MAX_VALUE;",
                     "float maxFloat = Float.MAX_VALUE, minFloat = Float.MIN_VALUE;",
                     "long maxLong = Long.MAX_VALUE, minLong = Long.MIN_VALUE;",
                     "short maxShort = Short.MAX_VALUE, minShort = Short.MIN_VALUE;",
@@ -326,7 +327,7 @@ public class JShellEditorController extends TreeNodeEditor {
             controller.addNode(blink);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

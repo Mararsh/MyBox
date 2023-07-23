@@ -92,7 +92,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             checkEffectType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         }
         if (parentController instanceof ImageManufactureEffectsController) {
             ImageManufactureEffectsController pController = (ImageManufactureEffectsController) parentController;
-            imageController = pController.imageController;
+            editor = pController.editor;
             scopeController = pController.scopeController;
             okButton = pController.okButton;
             imageView = pController.imageView;
@@ -117,10 +117,10 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
 
     protected void checkEffectType() {
         try {
-            if (imageController != null) {
-                imageController.resetImagePane();
+            if (editor != null) {
+                editor.resetImagePane();
                 if (scopeController != null && !scopeController.scopeWhole()) {
-                    imageController.scopeTab();
+                    editor.scopeTab();
                 }
             }
 
@@ -170,7 +170,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             refreshStyle(setBox);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -302,7 +302,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -429,7 +429,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             valueCheck.setSelected(true);
             setBox.getChildren().addAll(edgeBox, valueCheck);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -505,7 +505,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -520,7 +520,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             checkPosterizingAlgorithm();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -613,7 +613,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -629,7 +629,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -670,7 +670,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -709,7 +709,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

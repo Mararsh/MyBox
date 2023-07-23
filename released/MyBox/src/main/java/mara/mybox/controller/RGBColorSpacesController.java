@@ -12,7 +12,7 @@ import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -48,7 +48,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
             initAdaptation();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -97,7 +97,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private StringTable table;
 
@@ -158,7 +158,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
                     + (String) adapted.get("procedure");
             webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

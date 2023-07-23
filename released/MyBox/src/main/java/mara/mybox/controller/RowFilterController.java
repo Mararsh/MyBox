@@ -36,7 +36,7 @@ public class RowFilterController extends TreeManageController {
             editorController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -67,7 +67,7 @@ public class RowFilterController extends TreeManageController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -79,7 +79,7 @@ public class RowFilterController extends TreeManageController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

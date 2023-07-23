@@ -63,7 +63,7 @@ public class MarginTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -152,7 +152,7 @@ public class MarginTools {
             BufferedImage target = CropTools.cropOutside(source, left, top, right, bottom);
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -185,7 +185,7 @@ public class MarginTools {
             }
             return CropTools.cropOutside(source, x1, y1, x2, y2);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -237,7 +237,7 @@ public class MarginTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -282,7 +282,7 @@ public class MarginTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

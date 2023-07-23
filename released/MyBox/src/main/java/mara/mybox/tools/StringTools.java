@@ -80,6 +80,13 @@ public class StringTools {
         return string.replaceAll("\r\n|\n|\r", replaceAs);
     }
 
+    public static String trimBlanks(String string) {
+        if (string == null) {
+            return string;
+        }
+        return string.replaceAll("\\s+", " ").trim();
+    }
+
     public static String[] separatedBySpace(String string) {
         String[] ss = new String[2];
         String s = string.trim();
@@ -330,7 +337,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.matches();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -349,7 +356,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.matches();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -364,7 +371,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.find();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

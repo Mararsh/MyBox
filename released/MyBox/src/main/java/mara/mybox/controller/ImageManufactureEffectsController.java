@@ -31,7 +31,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -63,7 +63,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             NodeStyleTools.setTooltip(paletteAddButton, message("AddInColorPalette"));
             NodeStyleTools.setTooltip(htmlButton, message("ShowData"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -75,13 +75,13 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             optionsController.setValues(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
+        editor.showRightPane();
         optionsController.checkEffectType();
         paletteAddButton.setVisible(false);
         htmlButton.setVisible(false);
@@ -96,13 +96,13 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         htmlButton.setVisible(false);
         quanTable = null;
         optionsController.actualLoopLabel.setText("");
-        if (imageController == null || optionsController.effectType == null) {
+        if (editor == null || optionsController.effectType == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
             private String value = null;
@@ -212,12 +212,12 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Effects, optionsController.effectType.name(), value, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Effects, optionsController.effectType.name(), value, newImage, cost);
                 if (quantization != null) {
                     String name = null;
-                    if (imageController.sourceFile != null) {
-                        name = imageController.sourceFile.getName();
+                    if (editor.sourceFile != null) {
+                        name = editor.sourceFile.getName();
                     }
                     quanTable = quantization.countTable(name);
                     if (quanTable != null) {
@@ -260,7 +260,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(message("WaitAndHandling"));
+        editor.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -393,7 +393,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                                     = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
                 });

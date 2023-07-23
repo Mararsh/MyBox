@@ -18,8 +18,9 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -59,7 +60,7 @@ public class ColorInputController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -90,10 +91,10 @@ public class ColorInputController extends BaseController {
     @FXML
     @Override
     public void okAction() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -163,6 +164,18 @@ public class ColorInputController extends BaseController {
     @Override
     public void clearAction() {
         valuesArea.clear();
+    }
+
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        popEventMenu(event, HelpTools.colorHelps(true));
     }
 
     @FXML

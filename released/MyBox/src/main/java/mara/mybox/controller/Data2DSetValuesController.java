@@ -8,7 +8,7 @@ import javafx.scene.control.Tab;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
@@ -42,7 +42,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             valueController.setParameter(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             super.refreshControls();
             showPaginationPane(false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -100,12 +100,12 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.setTask(this);
                     List<String> filled = data2D.calculateScriptsStatistic(scripts);
                     if (filled == null) {
                         return false;
@@ -158,7 +158,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
 
     @Override
     public void handleAllTask() {
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private long count;
 
@@ -169,7 +169,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
                             && tableController.dataController.backupController.needBackup()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     count = data2D.setValue(checkedColsIndices, valueController.setValue, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;
@@ -230,7 +230,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
                 setValue(valueController.value());
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
         tableController.isSettingValues = false;
@@ -258,7 +258,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -276,7 +276,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -294,7 +294,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -317,7 +317,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -340,7 +340,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -361,7 +361,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -389,7 +389,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -421,7 +421,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -449,7 +449,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -477,7 +477,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -505,7 +505,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             }
             updateTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(message(e.toString()));
         }
     }
@@ -521,7 +521,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -25,7 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.Fxmls;
@@ -42,14 +41,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     protected int currentAngle = 0, rotateAngle = 90;
     protected Color bgColor = Color.WHITE;
 
-    protected void initOperationBox() {
+    protected void initCheckboxs() {
         try {
-            if (imageView != null) {
-                if (operationBox != null) {
-                    operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                }
-            }
-
             if (selectAreaCheck != null) {
                 selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
                 selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -72,45 +65,43 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 });
             }
 
-            if (leftPaneCheck != null) {
-                leftPaneCheck.setSelected(true);
-            } else {
-                showLeftPane();
-            }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
     public Image scopeImage() {
         try {
+            if (imageView == null) {
+                return null;
+            }
             Image inImage = imageView.getImage();
             if (inImage == null) {
                 return null;
             }
-            if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-                if (maskRectangleData.getSmallX() == 0
-                        && maskRectangleData.getSmallY() == 0
-                        && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
-                        && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+            if (maskRectangle != null && maskRectangle.isVisible() && maskRectangleData != null) {
+                if ((int) maskRectangleData.getSmallX() == 0
+                        && (int) maskRectangleData.getSmallY() == 0
+                        && (int) maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
+                        && (int) maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
                     return inImage;
                 }
                 return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
 
-            } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
+            } else if (maskCircle != null && maskCircle.isVisible() && maskCircle != null) {
                 return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
 
-            } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
+            } else if (maskEllipse != null && maskEllipse.isVisible() && maskEllipse != null) {
                 return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
 
-            } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
+            } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygon != null) {
                 return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
 
             } else {
                 return inImage;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return image;
         }
     }
@@ -175,7 +166,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void statisticAction() {
         ImageAnalyseController controller = (ImageAnalyseController) openStage(Fxmls.ImageAnalyseFxml);
-        checkImage(controller.sourceController);
+        checkImage(controller);
     }
 
     @FXML
@@ -193,7 +184,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void repeatAction() {
         ImageRepeatController controller = (ImageRepeatController) openStage(Fxmls.ImageRepeatFxml);
-        checkImage(controller.sourceController);
+        checkImage(controller);
     }
 
     @FXML
@@ -229,10 +220,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image areaImage;
 
@@ -256,10 +247,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image areaImage;
 
@@ -281,11 +272,11 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     @Override
     public void selectAllAction() {
-        if (imageView.getImage() == null || maskRectangleLine == null || !maskRectangleLine.isVisible()) {
+        if (imageView.getImage() == null || maskRectangle == null || !maskRectangle.isVisible()) {
             return;
         }
-        maskRectangleData = new DoubleRectangle(0, 0, getImageWidth() - 1, getImageHeight() - 1);
-        drawMaskRectangleLineAsData();
+        maskRectangleData = new DoubleRectangle(0, 0, imageWidth() - 1, imageHeight() - 1);
+        drawMaskRectangle();
     }
 
     @FXML
@@ -310,7 +301,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             return;
         }
         imageController.requestMouse();
-        if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
+        if (maskRectangle == null || !maskRectangle.isVisible()) {
             if (imageChanged) {
                 imageController.loadImage(imageView.getImage());
 
@@ -327,10 +318,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image targetImage;
 
@@ -511,7 +502,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
             popEventMenu(fevent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -542,11 +533,11 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView.getImage() == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         currentAngle = rotateAngle;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -575,7 +566,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
             controller.sourceFileChanged(sourceFile);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -596,10 +587,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (newfile == null || imageToSave == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

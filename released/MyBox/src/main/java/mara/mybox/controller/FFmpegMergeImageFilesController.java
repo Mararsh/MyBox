@@ -18,7 +18,6 @@ import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.imagefile.ImageFileReaders.getReader;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
@@ -75,14 +74,9 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             TextFileTools.writeFile(imagesListFile, imageFileString.toString(), Charset.forName("utf-8"));
             return imagesListFile;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        return FileTools.isSupportedImage(file);
     }
 
     public String handleDirectory(File directory, long duration) {
@@ -106,7 +100,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             }
             return message("Done");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }
@@ -128,7 +122,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 totalFilesHandled++;
                 return message("Done");
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
                 return message("Failed");
             }
         }
@@ -167,7 +161,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             totalFilesHandled++;
             return message("Done");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

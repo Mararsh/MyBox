@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.UserConfig;
 
@@ -26,7 +26,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
     @FXML
     protected ComboBox arcBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
 
     @Override
     public void initPane() {
@@ -60,16 +60,16 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     @FXML
@@ -81,7 +81,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -96,8 +96,8 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Arc, arc + "", null, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Arc, arc + "", null, newImage, cost);
             }
 
         };

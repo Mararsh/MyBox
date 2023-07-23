@@ -25,7 +25,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.IntTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -47,6 +47,8 @@ public class ImageSplitController extends BaseImagesListController {
     @FXML
     protected ToggleGroup splitGroup;
     @FXML
+    protected RadioButton predefinedRadio, sizeRadio, numbersRadio, customizeRadio;
+    @FXML
     protected FlowPane splitPredefinedPane, splitSizePane, splitNumberPane,
             splitCustomized1Pane, splitCustomized2Pane;
     @FXML
@@ -55,12 +57,12 @@ public class ImageSplitController extends BaseImagesListController {
     @FXML
     protected CheckBox displaySizeCheck;
     @FXML
-    protected VBox splitOptionsBox;
+    protected VBox splitOptionsBox, splitCustomizeBox;
     @FXML
     protected Label promptLabel, sizeLabel;
 
     public ImageSplitController() {
-        baseTitle = Languages.message("ImageSplit");
+        baseTitle = message("ImageSplit");
         TipsLabelKey = "ImageSplitTips";
     }
 
@@ -73,7 +75,7 @@ public class ImageSplitController extends BaseImagesListController {
             splitValid = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -84,63 +86,6 @@ public class ImageSplitController extends BaseImagesListController {
 
             rightPane.disableProperty().bind(imageView.imageProperty().isNull());
 
-            initSplitPane();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void initSplitPane() {
-        try {
-            splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-                    checkSplitMethod();
-                }
-            });
-
-            widthInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkSizeValues();
-                }
-            });
-
-            rowsInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (splitMethod == SplitMethod.ByNumber) {
-                        checkNumberValues();
-                    } else if (splitMethod == SplitMethod.BySize) {
-                        checkSizeValues();
-                    }
-                }
-            });
-            colsInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (splitMethod == SplitMethod.ByNumber) {
-                        checkNumberValues();
-                    } else if (splitMethod == SplitMethod.BySize) {
-                        checkSizeValues();
-                    }
-                }
-            });
-
-            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(UserConfig.badStyle())
-                    .or(colsInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    protected void initViewPane() {
-        try {
-            super.initViewPane();
             displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -148,193 +93,17 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             });
 
+            splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+                    checkSplitMethod();
+                }
+            });
+
+            checkSplitMethod();
+
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        checkSplitMethod();
-
-    }
-
-    protected void checkSplitMethod() {
-        splitOptionsBox.getChildren().clear();
-        imageView.setImage(image);
-        List<Node> nodes = new ArrayList<>();
-        nodes.addAll(maskPane.getChildren());
-        for (Node node : nodes) {
-            if (node.getId() != null && node.getId().startsWith("SplitLines")) {
-                maskPane.getChildren().remove(node);
-                node = null;
-            }
-        }
-        sizeLabel.setText("");
-        imageInfos.clear();
-
-        RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-        if (Languages.message("Predefined").equals(selected.getText())) {
-            splitMethod = SplitMethod.Predefined;
-            splitOptionsBox.getChildren().addAll(splitPredefinedPane);
-            promptLabel.setText("");
-        } else if (Languages.message("Customize").equals(selected.getText())) {
-            splitMethod = SplitMethod.Customize;
-            splitOptionsBox.getChildren().addAll(splitCustomized1Pane, splitCustomized2Pane);
-            promptLabel.setText(Languages.message("SplitCustomComments"));
-            checkCustomValues();
-        } else if (Languages.message("ByNumber").equals(selected.getText())) {
-            splitMethod = SplitMethod.ByNumber;
-            splitOptionsBox.getChildren().addAll(splitNumberPane, okButton);
-            promptLabel.setText("");
-            isSettingValues = true;
-            rowsInput.setText("3");
-            colsInput.setText("3");
-            isSettingValues = false;
-            checkNumberValues();
-        } else if (Languages.message("BySize").equals(selected.getText())) {
-            splitMethod = SplitMethod.BySize;
-            splitOptionsBox.getChildren().addAll(splitSizePane, okButton);
-            promptLabel.setText(Languages.message("SplitSizeComments"));
-            isSettingValues = true;
-            widthInput.setText((int) (getImageWidth() / (widthRatio() * 3)) + "");
-            heightInput.setText((int) (getImageHeight() / (heightRatio() * 3)) + "");
-            isSettingValues = false;
-            checkSizeValues();
-        }
-        refreshStyle(splitOptionsBox);
-    }
-
-    protected void checkNumberValues() {
-        if (isSettingValues) {
-            return;
-        }
-        rowsNumber = -1;
-        colsNumber = -1;
-        if (rowsInput.getText().isEmpty()) {
-            rowsNumber = 0;
-            rowsInput.setStyle(null);
-        } else {
-            try {
-                rowsNumber = Integer.parseInt(rowsInput.getText());
-                rowsInput.setStyle(null);
-                if (rowsNumber > 0) {
-                    rowsInput.setStyle(null);
-                } else {
-                    rowsInput.setStyle(UserConfig.badStyle());
-                }
-            } catch (Exception e) {
-                rowsInput.setStyle(UserConfig.badStyle());
-            }
-        }
-
-        if (colsInput.getText().isEmpty()) {
-            colsNumber = 0;
-            colsInput.setStyle(null);
-        } else {
-            try {
-                colsNumber = Integer.parseInt(colsInput.getText());
-                colsInput.setStyle(null);
-                if (colsNumber > 0) {
-                    colsInput.setStyle(null);
-                } else {
-                    colsInput.setStyle(UserConfig.badStyle());
-                }
-            } catch (Exception e) {
-                colsInput.setStyle(UserConfig.badStyle());
-            }
-        }
-    }
-
-    protected void checkSizeValues() {
-        if (isSettingValues) {
-            return;
-        }
-        try {
-            int v = Integer.parseInt(widthInput.getText());
-            if (v > 0 && v < getOperationWidth()) {
-                widthInput.setStyle(null);
-                width = v;
-            } else {
-                widthInput.setStyle(UserConfig.badStyle());
-            }
-        } catch (Exception e) {
-            widthInput.setStyle(UserConfig.badStyle());
-        }
-        try {
-            int v = Integer.parseInt(heightInput.getText());
-            if (v > 0 && v < getOperationHeight()) {
-                heightInput.setStyle(null);
-                height = v;
-            } else {
-                heightInput.setStyle(UserConfig.badStyle());
-            }
-        } catch (Exception e) {
-            heightInput.setStyle(UserConfig.badStyle());
-        }
-    }
-
-    protected void checkCustomValues() {
-        if (isSettingValues) {
-            return;
-        }
-        boolean isValidRows = true, isValidcols = true;
-        rows = new ArrayList<>();
-        rows.add(0);
-        rows.add(getOperationHeight() - 1);
-        cols = new ArrayList<>();
-        cols.add(0);
-        cols.add(getOperationWidth() - 1);
-        customizedRowsInput.setStyle(null);
-        customizedColsInput.setStyle(null);
-
-        if (!customizedRowsInput.getText().isEmpty()) {
-            String[] rowStrings = customizedRowsInput.getText().split(",");
-            for (String row : rowStrings) {
-                try {
-                    int value = Integer.parseInt(row.trim());
-                    if (value < 0 || value > getOperationHeight() - 1) {
-                        customizedRowsInput.setStyle(UserConfig.badStyle());
-                        isValidRows = false;
-                        break;
-                    }
-                    if (!rows.contains(value)) {
-                        rows.add(value);
-                    }
-                } catch (Exception e) {
-                    customizedRowsInput.setStyle(UserConfig.badStyle());
-                    isValidRows = false;
-                    break;
-                }
-            }
-        }
-
-        if (!customizedColsInput.getText().isEmpty()) {
-            String[] colStrings = customizedColsInput.getText().split(",");
-            for (String col : colStrings) {
-                try {
-                    int value = Integer.parseInt(col.trim());
-                    if (value <= 0 || value >= getOperationWidth() - 1) {
-                        customizedColsInput.setStyle(UserConfig.badStyle());
-                        isValidcols = false;
-                        break;
-                    }
-                    if (!cols.contains(value)) {
-                        cols.add(value);
-                    }
-                } catch (Exception e) {
-                    customizedColsInput.setStyle(UserConfig.badStyle());
-                    isValidcols = false;
-                    break;
-                }
-            }
-        }
-
-        if (isValidRows || isValidcols) {
-            indicateSplit();
-        } else {
-            popInformation(Languages.message("SplitCustomComments"));
+            MyBoxLog.error(e);
         }
     }
 
@@ -348,79 +117,59 @@ public class ImageSplitController extends BaseImagesListController {
             cols = new ArrayList<>();
             rows = new ArrayList<>();
             splitValid.set(false);
-            isSettingValues = true;
             clearCols();
             clearRows();
-            isSettingValues = false;
-            checkSplitMethod();
 
-            saveController.thumbsListButton.setVisible(imageInformation == null || !imageInformation.isIsSampled());
+            saveController.editFramesButton.setVisible(imageInformation == null || !imageInformation.isIsSampled());
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
-
     }
 
-    protected void divideImageBySize() {
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-        cols = new ArrayList<>();
-        cols.add(0);
-        int v = width - 1;
-        while (v < getOperationWidth()) {
-            cols.add(v);
-            v += width - 1;
-        }
-        cols.add(getOperationWidth() - 1);
+    protected void checkSplitMethod() {
+        try {
+            initSplit();
 
-        rows = new ArrayList<>();
-        rows.add(0);
-        v = height - 1;
-        while (v < getOperationHeight()) {
-            rows.add(v);
-            v += height - 1;
-        }
-        rows.add(getOperationHeight() - 1);
+            splitOptionsBox.getChildren().clear();
+            if (predefinedRadio.isSelected()) {
+                splitMethod = SplitMethod.Predefined;
+                splitOptionsBox.getChildren().addAll(splitPredefinedPane);
+                promptLabel.setText("");
 
-        indicateSplit();
+            } else if (customizeRadio.isSelected()) {
+                splitMethod = SplitMethod.Customize;
+                splitOptionsBox.getChildren().addAll(splitCustomizeBox, goButton);
+                promptLabel.setText(message("SplitCustomComments"));
+
+            } else if (numbersRadio.isSelected()) {
+                splitMethod = SplitMethod.ByNumber;
+                splitOptionsBox.getChildren().addAll(splitNumberPane, goButton);
+                promptLabel.setText("");
+                rowsInput.setText("3");
+                colsInput.setText("3");
+
+            } else if (sizeRadio.isSelected()) {
+                splitMethod = SplitMethod.BySize;
+                splitOptionsBox.getChildren().addAll(splitSizePane, goButton);
+                promptLabel.setText(message("SplitSizeComments"));
+                widthInput.setText((int) (imageWidth() / (widthRatio() * 3)) + "");
+                heightInput.setText((int) (imageHeight() / (heightRatio() * 3)) + "");
+
+            }
+
+            refreshStyle(splitOptionsBox);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
-    protected void divideImageByNumber() {
-        if (rowsNumber < 0 || colsNumber < 0) {
-            return;
-        }
-        cols = new ArrayList<>();
-        cols.add(0);
-        int w = (int) getOperationWidth();
-        for (int i = 1; i < colsNumber; ++i) {
-            int v = i * w / colsNumber;
-            cols.add(v);
-        }
-        cols.add(w);
-        rows = new ArrayList<>();
-        rows.add(0);
-        int h = (int) getOperationHeight();
-        for (int i = 1; i < rowsNumber; ++i) {
-            int v = i * h / rowsNumber;
-            rows.add(v);
-        }
-        rows.add(h);
-        indicateSplit();
-    }
-
-    protected void divideImageByNumber(int rows, int cols) {
-        isSettingValues = true;
-        rowsInput.setText(rows + "");
-        colsInput.setText(cols + "");
-        isSettingValues = false;
-        checkNumberValues();
-        divideImageByNumber();
-    }
-
+    /*
+        predeined
+     */
     @FXML
     protected void do42Action(ActionEvent event) {
         divideImageByNumber(4, 2);
@@ -497,14 +246,227 @@ public class ImageSplitController extends BaseImagesListController {
 
     }
 
-    @FXML
-    protected void clearRows() {
-        customizedRowsInput.setText("");
+    /*
+        by size
+     */
+    protected void pickSize() {
+        try {
+            int v = Integer.parseInt(widthInput.getText());
+            if (v > 0 && v < operationWidth()) {
+                widthInput.setStyle(null);
+                width = v;
+            } else {
+                widthInput.setStyle(UserConfig.badStyle());
+                popError(message("InvalidParameter") + ": " + message("Width"));
+                return;
+            }
+        } catch (Exception e) {
+            widthInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("Width"));
+            return;
+        }
+        try {
+            int v = Integer.parseInt(heightInput.getText());
+            if (v > 0 && v < operationHeight()) {
+                heightInput.setStyle(null);
+                height = v;
+            } else {
+                heightInput.setStyle(UserConfig.badStyle());
+                popError(message("InvalidParameter") + ": " + message("Height"));
+                return;
+            }
+        } catch (Exception e) {
+            heightInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("Height"));
+            return;
+        }
+        divideImageBySize();
+    }
+
+    protected void divideImageBySize() {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        try {
+            cols = new ArrayList<>();
+            cols.add(0);
+            int v = width;
+            while (v < operationWidth()) {
+                cols.add(v);
+                v += width;
+            }
+            cols.add(operationWidth());
+
+            rows = new ArrayList<>();
+            rows.add(0);
+            v = height;
+            while (v < operationHeight()) {
+                rows.add(v);
+                v += height;
+            }
+            rows.add(operationHeight());
+
+            indicateSplit();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    /*
+        by number
+     */
+    protected void divideImageByNumber(int rows, int cols) {
+        try {
+            rowsInput.setText(rows + "");
+            colsInput.setText(cols + "");
+            pickNumbers();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void pickNumbers() {
+        if (checkNumberValues()) {
+            divideImageByNumber();
+        }
+    }
+
+    protected boolean checkNumberValues() {
+        try {
+            int v = Integer.parseInt(rowsInput.getText());
+            if (v > 0) {
+                rowsNumber = v;
+                rowsInput.setStyle(null);
+            } else {
+                rowsInput.setStyle(UserConfig.badStyle());
+                popError(message("InvalidParameter") + ": " + message("RowsNumber"));
+                return false;
+            }
+        } catch (Exception e) {
+            rowsInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("RowsNumber"));
+            return false;
+        }
+        try {
+            int v = Integer.parseInt(colsInput.getText());
+            if (v > 0) {
+                colsNumber = v;
+                colsInput.setStyle(null);
+            } else {
+                colsInput.setStyle(UserConfig.badStyle());
+                popError(message("InvalidParameter") + ": " + message("ColumnsNumber"));
+                return false;
+            }
+        } catch (Exception e) {
+            colsInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("ColumnsNumber"));
+            return false;
+        }
+        return true;
+    }
+
+    protected void divideImageByNumber() {
+        if (rowsNumber <= 0 || colsNumber <= 0) {
+            return;
+        }
+        try {
+            cols = new ArrayList<>();
+            cols.add(0);
+            int w = (int) operationWidth();
+            for (int i = 1; i < colsNumber; ++i) {
+                int v = i * w / colsNumber;
+                cols.add(v);
+            }
+            cols.add(w);
+            rows = new ArrayList<>();
+            rows.add(0);
+            int h = (int) operationHeight();
+            for (int i = 1; i < rowsNumber; ++i) {
+                int v = i * h / rowsNumber;
+                rows.add(v);
+            }
+            rows.add(h);
+            indicateSplit();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+
+    /*
+        customize
+     */
+    protected void pickCustomize() {
+        try {
+            boolean isValidRows = true, isValidcols = true;
+            rows = new ArrayList<>();
+            rows.add(0);
+            rows.add(operationHeight());
+            cols = new ArrayList<>();
+            cols.add(0);
+            cols.add(operationWidth());
+            customizedRowsInput.setStyle(null);
+            customizedColsInput.setStyle(null);
+
+            if (!customizedRowsInput.getText().isEmpty()) {
+                String[] rowStrings = customizedRowsInput.getText().split(",");
+                for (String row : rowStrings) {
+                    try {
+                        int value = Integer.parseInt(row.trim());
+                        if (value < 0 || value > operationHeight() - 1) {
+                            customizedRowsInput.setStyle(UserConfig.badStyle());
+                            isValidRows = false;
+                            break;
+                        }
+                        if (!rows.contains(value)) {
+                            rows.add(value);
+                        }
+                    } catch (Exception e) {
+                        customizedRowsInput.setStyle(UserConfig.badStyle());
+                        isValidRows = false;
+                    }
+                }
+            }
+
+            if (!customizedColsInput.getText().isEmpty()) {
+                String[] colStrings = customizedColsInput.getText().split(",");
+                for (String col : colStrings) {
+                    try {
+                        int value = Integer.parseInt(col.trim());
+                        if (value <= 0 || value >= operationWidth() - 1) {
+                            customizedColsInput.setStyle(UserConfig.badStyle());
+                            isValidcols = false;
+                            break;
+                        }
+                        if (!cols.contains(value)) {
+                            cols.add(value);
+                        }
+                    } catch (Exception e) {
+                        customizedColsInput.setStyle(UserConfig.badStyle());
+                        isValidcols = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!isValidRows) {
+                popError(message("InvalidParameter") + ": " + message("SplittingRows"));
+            }
+            if (!isValidcols) {
+                popError(message("InvalidParameter") + ": " + message("SplittingColumns"));
+            }
+
+            if (isValidRows && isValidcols) {
+                indicateSplit();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML
-    protected void goRows() {
-        checkCustomValues();
+    protected void clearRows() {
+        customizedRowsInput.setText("");
     }
 
     @FXML
@@ -512,12 +474,30 @@ public class ImageSplitController extends BaseImagesListController {
         customizedColsInput.setText("");
     }
 
+    /*
+        handle
+     */
     @FXML
-    protected void goCols() {
-        checkCustomValues();
+    @Override
+    public void goAction() {
+        try {
+            switch (splitMethod) {
+                case ByNumber:
+                    pickNumbers();
+                    break;
+                case BySize:
+                    pickSize();
+                    break;
+                case Customize:
+                    pickCustomize();
+                    break;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
-    protected void indicateSplit() {
+    protected void initSplit() {
         try {
             List<Node> nodes = new ArrayList<>();
             nodes.addAll(maskPane.getChildren());
@@ -528,21 +508,29 @@ public class ImageSplitController extends BaseImagesListController {
                     node = null;
                 }
             }
-            imageInfos.clear();
+            imageView.setImage(image);
             sizeLabel.setText("");
+            imageInfos.clear();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void indicateSplit() {
+        try {
+            initSplit();
             if (rows == null || cols == null
                     || rows.size() < 2 || cols.size() < 2
                     || (rows.size() == 2 && cols.size() == 2)) {
-                imageView.setImage(image);
                 splitValid.set(false);
                 return;
             }
-            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
-            double strokeWidth = UserConfig.getInt("StrokeWidth", 2);
-            double w = imageView.getBoundsInParent().getWidth();
-            double h = imageView.getBoundsInParent().getHeight();
-            double ratiox = w / getImageWidth();
-            double ratioy = h / getImageHeight();
+            Color strokeColor = strokeColor();
+            double strokeWidth = strokeWidth();
+            double w = viewWidth();
+            double h = viewHeight();
+            double ratiox = w / imageWidth();
+            double ratioy = h / imageHeight();
             for (int i = 0; i < rows.size(); ++i) {
                 double row = rows.get(i) * ratioy * heightRatio();
                 if (row <= 0 || row >= h - 1) {
@@ -595,21 +583,21 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             }
 
-            String comments = Languages.message("SplittedNumber") + ": "
+            String comments = message("SplittedNumber") + ": "
                     + (cols.size() - 1) * (rows.size() - 1);
             if (splitMethod == SplitMethod.ByNumber) {
-                comments += "  " + Languages.message("EachSplittedImageActualSize") + ": "
-                        + getOperationWidth() / (cols.size() - 1)
-                        + " x " + getOperationHeight() / (rows.size() - 1);
+                comments += "  " + message("EachSplittedImageActualSize") + ": "
+                        + operationWidth() / (cols.size() - 1)
+                        + " x " + operationHeight() / (rows.size() - 1);
 
             } else {
-                comments += "  " + Languages.message("EachSplittedImageActualSizeComments");
+                comments += "  " + message("EachSplittedImageActualSizeComments");
             }
             sizeLabel.setText(comments);
             splitValid.set(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             splitValid.set(false);
         }
         makeList();
@@ -643,19 +631,18 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         imageInfos.setAll(infos);
     }
 
     @Override
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        super.imageSingleClicked(event, p);
         if (image == null || splitMethod != SplitMethod.Customize) {
             return;
         }
 //        imageView.setCursor(Cursor.OPEN_HAND);
-        promptLabel.setText(Languages.message("SplitCustomComments"));
+        promptLabel.setText(message("SplitCustomComments"));
 
         if (event.getButton() == MouseButton.PRIMARY) {
 
@@ -667,7 +654,7 @@ public class ImageSplitController extends BaseImagesListController {
                 customizedRowsInput.setText(str + "," + y);
             }
 
-            checkCustomValues();
+            pickCustomize();
 
         } else if (event.getButton() == MouseButton.SECONDARY) {
             int x = (int) Math.round(p.getX() / widthRatio());
@@ -677,24 +664,14 @@ public class ImageSplitController extends BaseImagesListController {
             } else {
                 customizedColsInput.setText(str + "," + x);
             }
-            checkCustomValues();
+            pickCustomize();
         }
     }
 
     @Override
-    public void drawMaskControls() {
-        super.drawMaskControls();
+    public void redrawMaskShapes() {
+        super.redrawMaskShapes();
         indicateSplit();
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        if (splitMethod == SplitMethod.ByNumber) {
-            divideImageByNumber();
-        } else if (splitMethod == SplitMethod.BySize) {
-            divideImageBySize();
-        }
     }
 
     @Override

@@ -24,7 +24,7 @@ import mara.mybox.data.LongRange;
  * @CreateDate 2021-7-29
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditorController_Base extends BaseController {
+public abstract class BaseFileEditorController_Base extends BaseFileController {
 
     protected Edit_Type editType;
     protected final SimpleBooleanProperty fileChanged;

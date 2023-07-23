@@ -32,6 +32,10 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseController_Files extends BaseController_Attributes {
 
+    public File sourceFile() {
+        return sourceFile;
+    }
+
     public boolean checkBeforeNextAction() {
         return true;
     }
@@ -86,7 +90,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
             selectSourceFileDo(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -143,7 +147,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try (Connection conn = DerbyBase.getConnection()) {
             recordFileRead(conn, file, pathType, fileType);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -291,7 +295,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
             selectSourcePath(directory);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -914,7 +918,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             String targetSuffix = FileNameTools.filter(nameSuffix);
             return targetPrefix + targetSuffix;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -932,7 +936,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             target.getParentFile().mkdirs();
             return target;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

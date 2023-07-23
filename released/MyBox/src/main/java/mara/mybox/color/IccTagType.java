@@ -272,7 +272,7 @@ public class IccTagType {
                 values.put("ScriptCode", new String(scriptCode));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
         return values;
@@ -326,7 +326,7 @@ public class IccTagType {
 //                values.put("ScriptCode", new String(scriptCode));
 //            }
 //        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
 //        }
         return values;
     }
@@ -730,7 +730,7 @@ public class IccTagType {
 
             return bytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -747,7 +747,7 @@ public class IccTagType {
             }
             return doubles;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -806,7 +806,7 @@ public class IccTagType {
             System.arraycopy(valueBytes, 0, tagBytes, 8, valueBytes.length);
             return tagBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -820,7 +820,7 @@ public class IccTagType {
             System.arraycopy(valueBytes, 0, tagBytes, 8, Math.min(4, valueBytes.length));
             return tagBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -834,7 +834,7 @@ public class IccTagType {
             System.arraycopy(valueBytes, 0, tagBytes, 8, 12);
             return tagBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -853,7 +853,7 @@ public class IccTagType {
             }
             return doubles;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -874,7 +874,7 @@ public class IccTagType {
             }
             return tagBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -897,7 +897,7 @@ public class IccTagType {
                     12 + newAsciiBytes.length, size - (12 + AsciiLength));
             return tagBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -911,7 +911,7 @@ public class IccTagType {
             }
             return doubles;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -955,7 +955,7 @@ public class IccTagType {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -980,7 +980,7 @@ public class IccTagType {
 
             return tagBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1013,7 +1013,7 @@ public class IccTagType {
 
             return tagBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1027,7 +1027,7 @@ public class IccTagType {
             }
             return doubles;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1050,7 +1050,7 @@ public class IccTagType {
             return tagBytes;
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1090,7 +1090,7 @@ public class IccTagType {
                 s += values.get("ScriptCode");
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
         return s;

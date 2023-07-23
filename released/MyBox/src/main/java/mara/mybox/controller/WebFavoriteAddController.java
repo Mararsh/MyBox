@@ -8,7 +8,7 @@ import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.IconTools;
 import mara.mybox.value.Fxmls;
@@ -42,7 +42,7 @@ public class WebFavoriteAddController extends BaseInfoTreeController {
             loadTree();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -72,7 +72,7 @@ public class WebFavoriteAddController extends BaseInfoTreeController {
             return;
         }
         InfoNode node = selectedItem.getValue();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private InfoNode data;
 

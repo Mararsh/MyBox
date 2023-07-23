@@ -10,6 +10,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
@@ -40,13 +44,12 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             initSplitPane();
             initScopeView();
             initSetBox();
-            initPointsTab();
             initColorsTab();
             initMatchTab();
             initSaveTab();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -56,7 +59,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             super.setControlsStyle();
             NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -73,7 +76,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -120,7 +123,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             opacitySelector.getSelectionModel().select(UserConfig.getString(baseName + "ScopeTransparency", message("ScopeTransparency0.5")));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -163,7 +166,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +175,12 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             matchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkMatchType();
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (checkMatchType()) {
+                        indicateScope();
+                    }
                 }
             });
 
@@ -198,7 +206,9 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                         return;
                     }
                     scope.setEightNeighbor(eightNeighborCheck.isSelected());
-                    indicateScope();
+                    if (checkMatchType()) {
+                        indicateScope();
+                    }
                 }
             });
 
@@ -211,11 +221,12 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                         return;
                     }
                     checkMatchType();
+                    indicateScope();
                 }
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -235,29 +246,17 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             checkScopeType();
             scopeAllRadio.setSelected(true);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
     @Override
     public void viewSizeChanged(double change) {
         super.viewSizeChanged(change);
-        if (isSettingValues || change < sizeChangeAware
-                || imageView == null || imageView.getImage() == null
-                || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
+        if (change < sizeChangeAware) {
             return;
         }
-        // Following handlers can conflict with threads' status changes which must check variables carefully
-        switch (scope.getScopeType()) {
-            case Operate:
-                break;
-            case Outline:
-                makeOutline();
-                break;
-            default:
-                indicateScope();
-                break;
-        }
+        goScope();
     }
 
     @Override
@@ -272,7 +271,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     @Override
     public void paneSizeChanged(double change) {
         refinePane();
-        drawMaskControls();
+        redrawMaskShapes();
     }
 
     @Override
@@ -282,16 +281,16 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
             if (imageChanged) {
                 indicateScope();
-                drawMaskControls();
+                redrawMaskShapes();
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (p == null || imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -305,42 +304,38 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             return;
         }
         if (scope.getScopeType() == ScopeType.Matting) {
-            int ix = (int) Math.round(p.getX());
-            int iy = (int) Math.round(p.getY());
-            scope.addPoint(ix, iy);
-            pointsList.getItems().add(ix + "," + iy);
-            pointsList.getSelectionModel().selectLast();
+            int x = (int) Math.round(p.getX());
+            int y = (int) Math.round(p.getY());
+            pointsController.tableData.add(new DoublePoint(x, y));
+            scope.addPoint(x, y);
             indicateScope();
         } else {
-            super.imageClicked(event, p);
+            super.paneClicked(event, p);
             switch (scope.getScopeType()) {
                 case Rectangle:
-                case RectangleColor:
                     if (!scope.getRectangle().same(maskRectangleData)) {
                         scope.setRectangle(maskRectangleData.cloneValues());
                         indicateScope();
                     }
                     break;
                 case Circle:
-                case CircleColor:
                     if (!scope.getCircle().same(maskCircleData)) {
                         scope.setCircle(maskCircleData.cloneValues());
                         indicateScope();
                     }
                     break;
                 case Ellipse:
-                case EllipseColor:
                     if (!scope.getEllipse().same(maskEllipseData)) {
                         scope.setEllipse(maskEllipseData.cloneValues());
                         indicateScope();
                     }
                     break;
                 case Polygon:
-                case PolygonColor:
                     if (!scope.getPolygon().same(maskPolygonData)) {
-                        pointsList.getItems().clear();
-                        for (DoublePoint mp : maskPolygonData.getPoints()) {
-                            pointsList.getItems().add((int) mp.getX() + "," + (int) mp.getY());
+                        pointsController.tableData.clear();
+                        for (DoublePoint d : maskPolygonData.getPoints()) {
+                            pointsController.tableData.add(
+                                    new DoublePoint(Math.round(d.getX()), Math.round(d.getY())));
                         }
                         scope.setPolygon(maskPolygonData.cloneValues());
                         indicateScope();
@@ -364,6 +359,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         if (task != null) {
             task.cancel();
         }
-        viewSizeChanged(sizeChangeAware + 1);
+        goScope();
     }
+
 }

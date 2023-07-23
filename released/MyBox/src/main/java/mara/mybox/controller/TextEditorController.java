@@ -43,7 +43,7 @@ public class TextEditorController extends BaseFileEditorController {
                 lfRadio.setSelected(true);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -59,7 +59,7 @@ public class TextEditorController extends BaseFileEditorController {
             }
             UserConfig.setString(baseName + "LineBreak", lineBreak.toString());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class TextEditorController extends BaseFileEditorController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -135,6 +135,11 @@ public class TextEditorController extends BaseFileEditorController {
         return true;
     }
 
+    @FXML
+    public void popBytesAction() {
+        BytesPopController.open(this, pairArea);
+    }
+
     /*
         static
      */
@@ -146,7 +151,7 @@ public class TextEditorController extends BaseFileEditorController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

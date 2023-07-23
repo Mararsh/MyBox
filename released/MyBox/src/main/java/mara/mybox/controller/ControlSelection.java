@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class ControlSelection extends BaseTableViewController<List<String>> {
+public class ControlSelection extends BaseTablePagesController<List<String>> {
 
     @FXML
     protected TableColumn<List<String>, String> nameColumn;
@@ -43,7 +43,7 @@ public class ControlSelection extends BaseTableViewController<List<String>> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -54,7 +54,7 @@ public class ControlSelection extends BaseTableViewController<List<String>> {
             setName(name);
             setTitle(title);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

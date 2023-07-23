@@ -20,7 +20,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.NetworkTools;
@@ -69,7 +69,7 @@ public class NetworkQueryAddressController extends BaseController {
             headerController.setParent(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -112,7 +112,7 @@ public class NetworkQueryAddressController extends BaseController {
         ip = null;
         chain = null;
         TableStringValues.add("NetworkQueryURLHistories", address);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private String info, certString, headerTable;
 
@@ -227,7 +227,7 @@ public class NetworkQueryAddressController extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

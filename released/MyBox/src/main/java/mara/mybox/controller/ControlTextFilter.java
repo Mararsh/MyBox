@@ -91,7 +91,7 @@ public class ControlTextFilter extends BaseController {
             NodeStyleTools.setTooltip(filtersTypeBox, new Tooltip(Languages.message("FilterTypesComments")));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -108,7 +108,7 @@ public class ControlTextFilter extends BaseController {
                 NodeStyleTools.setTooltip(filterInput, new Tooltip(Languages.message("SeparateByCommaBlanksInvolved")));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
