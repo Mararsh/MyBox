@@ -734,13 +734,11 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPolyline.getPoints().clear();
             maskPolyline.setLayoutX(imageView.getLayoutX());
             maskPolyline.setLayoutY(imageView.getLayoutY());
-            Color color = anchorColor();
-            Font font = new Font(anchorSize());
             for (int i = 0; i < maskPolylineData.getSize(); ++i) {
                 DoublePoint p = maskPolylineData.get(i);
                 double x = p.getX() * xRatio;
                 double y = p.getY() * yRatio;
-                addMaskPolylinePoint(i + 1, p, x, y, color, font);
+                addMaskPolylinePoint(i + 1, p, x, y);
             }
 
             setMaskPolylineStyle();
@@ -754,15 +752,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
-    public void addMaskPolylinePoint(int index, DoublePoint p, double x, double y,
-            Color color, Font font) {
+    public void addMaskPolylinePoint(int index, DoublePoint p, double x, double y) {
         try {
             maskPolyline.getPoints().add(x);
             maskPolyline.getPoints().add(y);
 
             Text text = new Text(index + "");
-            text.setFill(color);
-            text.setFont(font);
             text.setLayoutX(imageView.getLayoutX() + x);
             text.setLayoutY(imageView.getLayoutY() + y);
             text.setId("PolylinePoint" + index);
@@ -787,14 +782,11 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 }
             });
             NodeStyleTools.setTooltip(text, message("Point") + " " + index + "\n" + p.text(2));
+            setTextStyle(text);
             maskPane.getChildren().add(text);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void addMaskPolylinePoint(int index, DoublePoint p, double x, double y) {
-        addMaskPolylinePoint(index, p, x, y, anchorColor(), new Font(anchorSize()));
     }
 
     public void clearPolylinePoints() {
@@ -907,13 +899,11 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPolygon.getPoints().clear();
             maskPolygon.setLayoutX(imageView.getLayoutX());
             maskPolygon.setLayoutY(imageView.getLayoutY());
-            Color color = anchorColor();
-            Font font = new Font(anchorSize());
             for (int i = 0; i < maskPolygonData.getSize(); ++i) {
                 DoublePoint p = maskPolygonData.get(i);
                 double x = p.getX() * xRatio;
                 double y = p.getY() * yRatio;
-                addMaskPolygonPoint(i + 1, p, x, y, color, font);
+                addMaskPolygonPoint(i + 1, p, x, y);
             }
 
             setMaskPolygonStyle();
@@ -927,15 +917,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
-    public void addMaskPolygonPoint(int index, DoublePoint p,
-            double x, double y, Color color, Font font) {
+    public void addMaskPolygonPoint(int index, DoublePoint p, double x, double y) {
         try {
             maskPolygon.getPoints().add(x);
             maskPolygon.getPoints().add(y);
 
             Text text = new Text(index + "");
-            text.setFill(color);
-            text.setFont(font);
             text.setLayoutX(imageView.getLayoutX() + x);
             text.setLayoutY(imageView.getLayoutY() + y);
             text.setId("PolygonPoint" + index);
@@ -960,14 +947,11 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 }
             });
             NodeStyleTools.setTooltip(text, message("Point") + " " + index + "\n" + p.text(2));
+            setTextStyle(text);
             maskPane.getChildren().add(text);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void addMaskPolygonPoint(int index, DoublePoint p, double x, double y) {
-        addMaskPolygonPoint(index, p, x, y, anchorColor(), new Font(anchorSize()));
     }
 
     public void clearPolygonPoints() {

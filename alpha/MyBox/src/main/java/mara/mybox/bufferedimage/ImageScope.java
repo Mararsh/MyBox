@@ -450,12 +450,12 @@ public class ImageScope extends BaseData {
         }
         String s = "";
         try {
-            String filename = AppPaths.getImageScopePath() + File.separator
-                    + scope.getScopeType() + "_" + (new Date().getTime())
+            String prefix = AppPaths.getImageScopePath() + File.separator
+                    + scope.getScopeType() + "_";
+            String filename = prefix + (new Date().getTime())
                     + "_" + new Random().nextInt(1000) + ".png";
             while (new File(filename).exists()) {
-                filename = AppPaths.getImageScopePath() + File.separator
-                        + scope.getScopeType() + "_" + (new Date().getTime())
+                filename = prefix + (new Date().getTime())
                         + "_" + new Random().nextInt(1000) + ".png";
             }
             if (ImageFileWriters.writeImageFile(scope.getOutlineSource(), "png", filename)) {
