@@ -224,7 +224,6 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
             }
 
         };
@@ -299,7 +298,6 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             protected void finalAction() {
                 super.finalAction();
                 dataFile.stopTask();
-                backgroundTask = null;
             }
 
         };

@@ -169,9 +169,8 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
 
             @Override
             protected void finalAction() {
-                data2D.stopTask();
                 super.finalAction();
-                task = null;
+                data2D.stopTask();
             }
 
         };
@@ -207,7 +206,6 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
                 }

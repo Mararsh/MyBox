@@ -194,12 +194,10 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
             }
 
         };
         start(task);
-
     }
 
     @FXML

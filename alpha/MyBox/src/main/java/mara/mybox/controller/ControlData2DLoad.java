@@ -254,7 +254,6 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 Data2D s = data2D;
                 data2D = null;
                 resetView(false);
@@ -292,6 +291,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 loadNull();
             }
         };
@@ -969,8 +969,8 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 data2D.setBackgroundTask(null);
-                backgroundTask = null;
                 afterLoaded(true);
             }
 

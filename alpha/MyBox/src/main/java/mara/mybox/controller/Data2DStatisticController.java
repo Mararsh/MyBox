@@ -229,7 +229,6 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 super.finalAction();
                 data2D.stopTask();
                 calculation.setTask(null);
-                task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
                 }
@@ -291,7 +290,6 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 super.finalAction();
                 data2D.stopTask();
                 calculation.setTask(null);
-                task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
                 }

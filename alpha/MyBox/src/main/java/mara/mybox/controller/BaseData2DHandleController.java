@@ -383,7 +383,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (ok) {
                     startOperation();
                 }

@@ -66,12 +66,6 @@ public class ControlData2DResults extends ControlData2DLoad {
                 loadDef(data2D);
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
-            }
-
         };
         start(task);
     }

@@ -80,12 +80,6 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
-            }
-
         };
         start(task);
     }

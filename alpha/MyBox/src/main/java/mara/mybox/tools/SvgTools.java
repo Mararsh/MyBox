@@ -22,6 +22,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 import org.w3c.dom.*;
+import thridparty.jankovicsandras.ImageTracer;
 
 /**
  * @Author Mara
@@ -30,9 +31,32 @@ import org.w3c.dom.*;
  */
 public class SvgTools {
 
+    /*
+        from image
+     */
+    public static File fromImage(BaseController controller, File imageFile,
+            float width, float height) {
+        if (imageFile == null || !imageFile.exists()) {
+            return null;
+        }
+        File svgFile = FileTmpTools.generateFile("svg");
+        try {
+            ImageTracer.saveString(
+                    svgFile.getAbsolutePath(),
+                    ImageTracer.imageToSVG(imageFile.getAbsolutePath(), null, null)
+            );
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+        }
+        if (svgFile.exists() && svgFile.length() > 0) {
+            return svgFile;
+        }
+        FileDeleteTools.delete(svgFile);
+        return null;
+    }
 
     /*
-        image
+        to image
      */
     public static File docToImage(BaseController controller, Document doc,
             float width, float height, Rectangle area) {
@@ -97,7 +121,7 @@ public class SvgTools {
     }
 
     /*
-        pdf
+       to pdf
      */
     public static File docToPDF(BaseController controller, Document doc,
             float width, float height, Rectangle area) {

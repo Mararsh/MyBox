@@ -13,7 +13,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" minHeight="30.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlColorsPane">
     <children>
-      <Label fx:id="colorsPaneLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ColorPaletteComments" wrapText="true" />
+        <Label fx:id="colorsPaneLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ColorsPaneComments" wrapText="true" />
         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseExited="#exitPane" pannable="true" VBox.vgrow="ALWAYS">
             <content>
                 <FlowPane fx:id="colorsPane" focusTraversable="true" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="2.0" VBox.vgrow="NEVER" />

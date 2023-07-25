@@ -189,7 +189,6 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                 return;
             }
         }
-        thisPane.setDisable(true);
         SingletonTask tagTask = new SingletonTask<Void>(this) {
             private Tag tag = null;
 
@@ -217,11 +216,6 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                 }
                 treeController.nodeController.nodeChanged(true);
                 popSuccessful();
-            }
-
-            @Override
-            protected void finalAction() {
-                thisPane.setDisable(false);
             }
 
         };

@@ -146,7 +146,6 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.setTask(null);
-                task = null;
                 if (ok) {
                     startOperation();
                 }
@@ -192,7 +191,6 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 valueController.expressionController.calculator.reset();
             }
 

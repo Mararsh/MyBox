@@ -18,7 +18,7 @@ public class BaseTask<P> extends Task<P> {
     protected long cost;
     protected boolean ok, quit;
     protected String error;
-    protected Node disbaleNode;
+    protected Node disableNode;
 
     public BaseTask() {
         error = null;
@@ -49,8 +49,8 @@ public class BaseTask<P> extends Task<P> {
 
     protected boolean initValues() {
         startTime = new Date();
-        if (disbaleNode != null) {
-            disbaleNode.setDisable(true);
+        if (disableNode != null) {
+            disableNode.setDisable(true);
         }
         return true;
     }
@@ -109,12 +109,13 @@ public class BaseTask<P> extends Task<P> {
         endTime = new Date();
         self = null;
         quit = true;
+        if (disableNode != null) {
+            disableNode.setDisable(false);
+        }
     }
 
     protected void finalAction() {
-        if (disbaleNode != null) {
-            disbaleNode.setDisable(false);
-        }
+
     }
 
     public String duration() {
@@ -180,12 +181,12 @@ public class BaseTask<P> extends Task<P> {
         this.quit = quit;
     }
 
-    public Node getDisbaleNode() {
-        return disbaleNode;
+    public Node getDisableNode() {
+        return disableNode;
     }
 
-    public void setDisbaleNode(Node disbaleNode) {
-        this.disbaleNode = disbaleNode;
+    public void setDisableNode(Node disableNode) {
+        this.disableNode = disableNode;
     }
 
 }

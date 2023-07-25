@@ -217,6 +217,7 @@ public class ControlImagesBlend extends BaseController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 demoButton.setVisible(true);
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b

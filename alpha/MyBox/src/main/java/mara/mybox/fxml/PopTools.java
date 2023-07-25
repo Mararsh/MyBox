@@ -258,6 +258,7 @@ public class PopTools {
             } else {
                 Platform.runLater(() -> {
                     controller.alertError(error);
+                    MyBoxLog.debug(error);
                 });
             }
         } else {

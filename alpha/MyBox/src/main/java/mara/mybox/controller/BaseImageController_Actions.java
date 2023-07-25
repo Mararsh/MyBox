@@ -27,6 +27,7 @@ import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.SvgTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -199,6 +200,18 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         File file = imageFile();
         if (file != null) {
             controller.tableController.addFile(file);
+        }
+    }
+
+    @FXML
+    public void svgAction() {
+        File file = imageFile();
+        if (file == null) {
+            return;
+        }
+        File svgFile = SvgTools.fromImage(this, file, -1, -1);
+        if (svgFile != null && svgFile.exists()) {
+            SvgEditorController.open(svgFile);
         }
     }
 
@@ -449,6 +462,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 menu = new MenuItem(message("Convert"), StyleTools.getIconImageView("iconDelimiter.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     convertAction();
+                });
+                handleMenu.getItems().add(menu);
+
+                menu = new MenuItem("SVG", StyleTools.getIconImageView("iconDelimiter.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    svgAction();
                 });
                 handleMenu.getItems().add(menu);
             }

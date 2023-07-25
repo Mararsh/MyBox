@@ -424,6 +424,14 @@ public class ColorData extends BaseData {
         return HtmlWriteTools.html(message("Color"), HtmlStyles.styleValue("Table"), table.body());
     }
 
+    public String title() {
+        if (colorName != null && !colorName.isBlank()) {
+            return colorName + " " + rgba;
+        } else {
+            return rgba;
+        }
+    }
+
     /*
        customzied get/set
      */

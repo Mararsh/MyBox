@@ -147,7 +147,6 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
             }
 
         };

@@ -99,6 +99,7 @@ public class RunCommandController extends HtmlPopController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 cancelCommand();
             }
         };

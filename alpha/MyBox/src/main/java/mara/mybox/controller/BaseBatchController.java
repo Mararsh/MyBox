@@ -589,7 +589,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                task = null;
                 tableController.markFileHandling(-1);
                 afterTask();
             }

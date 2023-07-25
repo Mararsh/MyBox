@@ -263,6 +263,7 @@ MyBox is based on following open sources:
 | jsch                                | sftp                            | <http://www.jcraft.com/jsch/>                                                                                                                                                                                                       |
 | jackson                             | json                            | <https://github.com/FasterXML/jackson>              
 | batik                               | SVG                             | <https://xmlgraphics.apache.org/batik/>              
+| imagetracerjava                     | SVG                             | <https://github.com/jankovicsandras/imagetracerjava>    |
 
 
 # Features        

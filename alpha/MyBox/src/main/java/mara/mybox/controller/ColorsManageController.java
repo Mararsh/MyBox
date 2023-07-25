@@ -132,7 +132,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             super.initControls();
 
             palettesController.setParameter(this, true);
-            colorsController.setParameter(this, true);
+            colorsController.setParameter(this);
 
             palettesController.renamedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -148,15 +148,6 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     refreshPalette();
                 }
             });
-
-            paletteTabPane.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) -> {
-                        if (newTab == dataTab) {
-                            deleteButton.setDisable(isNoneSelected());
-                        } else {
-                            deleteButton.setDisable(colorsController.clickedRect == null);
-                        }
-                    });
 
             refreshPalettes();
 

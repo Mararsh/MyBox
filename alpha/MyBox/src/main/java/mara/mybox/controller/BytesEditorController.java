@@ -240,7 +240,6 @@ public class BytesEditorController extends BaseFileEditorController {
             return;
         }
         sourceInformation.setCharset(Charset.forName(c));
-        pairArea.setDisable(true);
         SingletonTask pairTask = new SingletonTask<Void>(this) {
 
             private String pairText;
@@ -290,12 +289,8 @@ public class BytesEditorController extends BaseFileEditorController {
                 updateNumbers(fileChanged.get());
             }
 
-            @Override
-            protected void finalAction() {
-                pairArea.setDisable(false);
-            }
         };
-        start(pairTask, false, null);
+        start(pairTask, pairArea);
     }
 
     @Override

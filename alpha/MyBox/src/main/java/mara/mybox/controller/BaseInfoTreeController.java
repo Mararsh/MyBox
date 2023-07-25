@@ -288,11 +288,6 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                 popSuccessful();
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-            }
-
         };
         start(task, thisPane);
     }

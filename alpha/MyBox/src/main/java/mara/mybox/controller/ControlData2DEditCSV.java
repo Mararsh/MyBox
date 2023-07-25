@@ -142,12 +142,6 @@ public class ControlData2DEditCSV extends BaseController {
                 isSettingValues = false;
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
-            }
-
         };
         start(task, thisPane);
     }
@@ -236,12 +230,6 @@ public class ControlData2DEditCSV extends BaseController {
                 isSettingValues = false;
                 status(Status.Applied);
                 popInformation(message("UpdateSuccessfully"));
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
             }
 
         };

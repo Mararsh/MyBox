@@ -180,7 +180,6 @@ public class Data2DSpliceController extends BaseData2DController {
                 super.finalAction();
                 dataAController.data2D.stopTask();
                 dataBController.data2D.stopTask();
-                task = null;
             }
 
         };

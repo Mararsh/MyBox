@@ -114,6 +114,7 @@ public class JShellEditorController extends TreeNodeEditor {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 cancelAction();
             }
         };

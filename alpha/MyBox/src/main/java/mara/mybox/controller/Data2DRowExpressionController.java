@@ -150,7 +150,6 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (ok) {
                     startOperation();
                 }

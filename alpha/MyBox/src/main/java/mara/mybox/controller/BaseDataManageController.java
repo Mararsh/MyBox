@@ -724,12 +724,6 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
-            }
-
         };
         start(task);
     }
@@ -766,12 +760,6 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             protected void whenSucceeded() {
                 alertInformation(message("Deleted") + ": " + count);
                 refreshAction();
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
             }
 
         };

@@ -171,6 +171,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 paneSizeAll();
                 imagesPane.applyCss();
                 imagesPane.layout();
