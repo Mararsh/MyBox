@@ -33,7 +33,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
         Text, RichText, Convolution,
-        Effects, Enhancement, Shadow, Scale2, Picture, Transform, Shape, Eliminate, Margins
+        Effects, Enhancement, Shadow, ScaleImage, Picture, Transform, Shape, Eliminate, Margins
     }
 
     @FXML

@@ -27,7 +27,6 @@ import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.SvgTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -209,10 +208,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (file == null) {
             return;
         }
-        File svgFile = SvgTools.fromImage(this, file, -1, -1);
-        if (svgFile != null && svgFile.exists()) {
-            SvgEditorController.open(svgFile);
-        }
+        SvgFromImageController.open(file);
     }
 
     @FXML

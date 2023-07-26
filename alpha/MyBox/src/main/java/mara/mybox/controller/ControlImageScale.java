@@ -116,9 +116,9 @@ public class ControlImageScale extends ControlImageSize {
         editor.popSuccessful();
         String newSize = (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight());
         if (scaleType == ScaleType.Scale) {
-            editor.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, scale + "", newSize, newImage, cost);
+            editor.updateImage(ImageManufactureController_Image.ImageOperation.ScaleImage, scale + "", newSize, newImage, cost);
         } else if (scaleType == ScaleType.Dragging || scaleType == ScaleType.Pixels) {
-            editor.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, "Pixels", newSize, newImage, cost);
+            editor.updateImage(ImageManufactureController_Image.ImageOperation.ScaleImage, "Pixels", newSize, newImage, cost);
         }
 
         String info = message("OriginalSize") + ": " + (int) Math.round(editor.image.getWidth())

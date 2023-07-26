@@ -213,6 +213,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageAlphaExtractBatchFxml);
         });
 
+        MenuItem SvgFromImage = new MenuItem(message("ImageToSvg"));
+        SvgFromImage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgFromImageBatchFxml);
+        });
+
         MenuItem imageConverterBatch = new MenuItem(message("FormatsConversion"));
         imageConverterBatch.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImageConverterBatchFxml);
@@ -227,7 +232,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
                 imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
                 imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
-                imageConverterBatch, imageAlphaExtract, imageAlphaAdd, new SeparatorMenuItem(),
+                imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, new SeparatorMenuItem(),
                 imageOCRBatch);
         return manufactureBatchMenu;
 
@@ -254,8 +259,13 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.SvgToPDFFxml);
         });
 
+        MenuItem SvgFromImage = new MenuItem(message("ImageToSvg"));
+        SvgFromImage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgFromImageBatchFxml);
+        });
+
         Menu svgMenu = new Menu(message("SVG"));
-        svgMenu.getItems().addAll(EditSVG, SvgTypesetting, SvgToImage, SvgToPDF);
+        svgMenu.getItems().addAll(EditSVG, SvgTypesetting, SvgToImage, SvgToPDF, SvgFromImage);
         return svgMenu;
 
     }

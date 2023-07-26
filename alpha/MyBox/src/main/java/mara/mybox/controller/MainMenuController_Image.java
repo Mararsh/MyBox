@@ -167,6 +167,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void ImageToSvg(ActionEvent event) {
+        loadScene(Fxmls.SvgFromImageBatchFxml);
+    }
+
+    @FXML
     protected void openConvolutionKernelManager(ActionEvent event) {
         loadScene(Fxmls.ConvolutionKernelManagerFxml);
     }
