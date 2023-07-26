@@ -240,14 +240,14 @@ public class ImageAnalyseDominantController extends BaseController {
                                 = (KMeansClusteringQuantization) ImageQuantizationFactory
                                         .create(image, null, KMeansClustering, colorNumber,
                                                 regionSize, weight1, weight2, weight3,
-                                                true, false, false);
+                                                true, true, true);
                         kquantization.getKmeans().setMaxIteration(kmeansLoop);
                         quantization = kquantization;
                     } else {
                         quantization = ImageQuantizationFactory.create(image,
                                 null, QuantizationAlgorithm.PopularityQuantization, colorNumber,
                                 regionSize, weight1, weight2, weight3,
-                                true, false, false);
+                                true, true, true);
                     }
                     if (quantization == null) {
                         return false;

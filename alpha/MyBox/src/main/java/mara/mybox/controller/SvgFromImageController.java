@@ -1,15 +1,12 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.SvgTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import thridparty.jankovicsandras.ImageTracer;
 
 /**
  * @Author Mara
@@ -36,15 +33,8 @@ public class SvgFromImageController extends BaseChildController {
             if (!optionsController.pickValues()) {
                 return;
             }
-            BufferedImage image = ImageFileReaders.readImage(sourceFile);
-            if (image == null) {
-                popError(message("InvalidData") + ": " + sourceFile);
-                return;
-            }
-            String svg = ImageTracer.imageToSVG(image, optionsController.options, null);
-            File svgFile = FileTmpTools.generateFile("svg");
-            ImageTracer.saveString(svgFile.getAbsolutePath(), svg);
-            if (svgFile.exists()) {
+            File svgFile = SvgTools.imageToSvgFile(this, sourceFile, optionsController.options);
+            if (svgFile != null && svgFile.exists()) {
                 SvgEditorController.open(svgFile);
                 close();
             } else {

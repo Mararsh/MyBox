@@ -1,6 +1,7 @@
 package mara.mybox.tools;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -9,11 +10,20 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.ImageQuantization;
+import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
+import mara.mybox.bufferedimage.ImageRGBKMeans;
+import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.imagefile.ImageFileReaders;
+import static mara.mybox.value.Languages.message;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -23,6 +33,7 @@ import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 import org.w3c.dom.*;
 import thridparty.jankovicsandras.ImageTracer;
+import static thridparty.jankovicsandras.ImageTracer.bytetrans;
 
 /**
  * @Author Mara
@@ -30,30 +41,6 @@ import thridparty.jankovicsandras.ImageTracer;
  * @License Apache License Version 2.0
  */
 public class SvgTools {
-
-    /*
-        from image
-     */
-    public static File fromImage(BaseController controller, File imageFile,
-            float width, float height) {
-        if (imageFile == null || !imageFile.exists()) {
-            return null;
-        }
-        File svgFile = FileTmpTools.generateFile("svg");
-        try {
-            ImageTracer.saveString(
-                    svgFile.getAbsolutePath(),
-                    ImageTracer.imageToSVG(imageFile.getAbsolutePath(), null, null)
-            );
-        } catch (Exception e) {
-            PopTools.showError(controller, e.toString());
-        }
-        if (svgFile.exists() && svgFile.length() > 0) {
-            return svgFile;
-        }
-        FileDeleteTools.delete(svgFile);
-        return null;
-    }
 
     /*
         to image
@@ -384,6 +371,164 @@ public class SvgTools {
      */
     public static Document document() {
         return GenericDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
+    }
+
+    /*
+        image to svg
+     */
+    public static File imageToSvgFile(BaseController controller, File imageFile,
+            HashMap<String, Float> options) {
+        try {
+            if (imageFile == null || !imageFile.exists()) {
+                return null;
+            }
+            BufferedImage image = ImageFileReaders.readImage(imageFile);
+//            String svg = imageToSvg(controller, image, options);
+            String svg = ImageTracer.imageToSVG(image, options, null);
+            if (svg == null || svg.isBlank()) {
+                return null;
+            }
+            File svgFile = FileTmpTools.generateFile("svg");
+            ImageTracer.saveString(svgFile.getAbsolutePath(), svg);
+            return svgFile;
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String imageToSvg(BaseController controller,
+            BufferedImage image, HashMap<String, Float> options) {
+        try {
+            if (image == null) {
+                PopTools.showError(controller, message("InvalidData"));
+                return null;
+            }
+            options = ImageTracer.checkoptions(options);
+
+            // 1. Color quantization
+//            ImageTracer.ImageData imgd = ImageTracer.loadImageData(image);
+//            ImageTracer.IndexedImage ii = ImageTracer.colorquantization(imgd, null, options);
+            ImageTracer.IndexedImage ii = colorQuantization(controller, image, options);
+
+            // 2. Layer separation and edge detection
+            int[][][] rawlayers = ImageTracer.layering(ii);
+
+            // 3. Batch pathscan
+            ArrayList<ArrayList<ArrayList<Integer[]>>> bps
+                    = ImageTracer.batchpathscan(rawlayers, (int) (Math.floor(options.get("pathomit"))));
+
+            // 4. Batch interpollation
+            ArrayList<ArrayList<ArrayList<Double[]>>> bis = ImageTracer.batchinternodes(bps);
+
+            // 5. Batch tracing
+            ii.layers = ImageTracer.batchtracelayers(bis, options.get("ltres"), options.get("qtres"));
+
+            return ImageTracer.getsvgstring(ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static ImageTracer.IndexedImage colorQuantization(BaseController controller,
+            BufferedImage image, HashMap<String, Float> options) {
+        try {
+            ImageKMeans kmeans = ImageKMeans.create();
+            kmeans.setAlgorithm(KMeansClustering).
+                    setQuantizationSize(options.get("numberofcolors").intValue())
+                    .setRegionSize(1024)
+                    .setWeight1(2).setWeight2(4).setWeight3(3)
+                    .setRecordCount(false).setFirstColor(false)
+                    .setOperationType(PixelsOperation.OperationType.Quantization)
+                    .setImage(image).setScope(null).setIsDithering(false);
+            kmeans.makePalette();
+            kmeans.operate();
+            return new ImageTracer.IndexedImage(kmeans.getColorIndice(), kmeans.paletteBytes);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static class ImageKMeans extends ImageQuantization {
+
+        public int[][] colorIndice;
+        public byte[][] paletteBytes;
+        protected ImageRGBKMeans kmeans;
+        protected List<java.awt.Color> paletteColors;
+
+        public static ImageKMeans create() {
+            return new ImageKMeans();
+        }
+
+        public boolean makePalette() {
+            try {
+                kmeans = ImageRGBKMeans.create();
+                kmeans.setSourceImage(image).setScope(scope).setIsDithering(isDithering)
+                        .setRegionSize(regionSize)
+                        .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                        .setK(quantizationSize);
+                if (kmeans.init().run()) {
+                    kmeans.makeMap();
+                }
+                paletteColors = kmeans.getCenters();
+                int size = paletteColors.size();
+                paletteBytes = new byte[size + 1][4];
+                for (int i = 0; i < size; i++) {
+                    int value = paletteColors.get(i).getRGB();
+                    paletteBytes[i][0] = bytetrans((byte) (value >>> 24));
+                    paletteBytes[i][1] = bytetrans((byte) (value >>> 16));
+                    paletteBytes[i][2] = bytetrans((byte) (value >>> 8));
+                    paletteBytes[i][3] = bytetrans((byte) (value));
+                }
+                int transparent = 0;
+                paletteBytes[size][0] = bytetrans((byte) (transparent >>> 24));
+                paletteBytes[size][1] = bytetrans((byte) (transparent >>> 16));
+                paletteBytes[size][2] = bytetrans((byte) (transparent >>> 8));
+                paletteBytes[size][3] = bytetrans((byte) (transparent));
+
+                int width = image.getWidth();
+                int height = image.getHeight();
+                colorIndice = new int[height + 2][width + 2];
+                for (int j = 0; j < (height + 2); j++) {
+                    colorIndice[j][0] = -1;
+                    colorIndice[j][width + 1] = -1;
+                }
+                for (int i = 0; i < (width + 2); i++) {
+                    colorIndice[0][i] = -1;
+                    colorIndice[height + 1][i] = -1;
+                }
+                return true;
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+                return false;
+            }
+        }
+
+        @Override
+        public java.awt.Color operateColor(java.awt.Color color) {
+            try {
+                java.awt.Color mappedColor = kmeans.map(color);
+                int index = paletteColors.indexOf(mappedColor);
+                colorIndice[currentY + 1][currentX + 1] = index;
+                return mappedColor;
+            } catch (Exception e) {
+                return color;
+            }
+        }
+
+        /*
+            get/set
+         */
+        public int[][] getColorIndice() {
+            return colorIndice;
+        }
+
+        public byte[][] getPaletteBytes() {
+            return paletteBytes;
+        }
+
     }
 
 }

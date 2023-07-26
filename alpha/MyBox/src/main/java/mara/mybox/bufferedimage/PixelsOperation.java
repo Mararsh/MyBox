@@ -30,6 +30,7 @@ public abstract class PixelsOperation {
     protected ImageScope scope;
     protected OperationType operationType;
     protected ColorActionType colorActionType;
+    protected int currentX, currentY;
 
     protected Color[] thisLine, nextLine;
     protected int thisLineY;
@@ -272,6 +273,8 @@ public abstract class PixelsOperation {
     }
 
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
+        currentX = x;
+        currentY = y;
         Color newColor = operateColor(color);
         if (newColor == null) {
             newColor = color;

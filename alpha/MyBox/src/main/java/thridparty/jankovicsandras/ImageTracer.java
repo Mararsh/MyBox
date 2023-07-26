@@ -1,3 +1,5 @@
+// https://github.com/jankovicsandras/imagetracerjava
+
 /*
 	ImageTracer.java
 	(Desktop version with javax.imageio. See ImageTracerAndroid.java for the Android version.)
@@ -48,6 +50,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import javax.imageio.ImageIO;
+import mara.mybox.dev.MyBoxLog;
 
 public class ImageTracer {
 
@@ -500,43 +503,48 @@ public class ImageTracer {
     //     0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15
     //
     public static int[][][] layering(IndexedImage ii) {
-        // Creating layers for each indexed color in arr
-        int val = 0, aw = ii.array[0].length, ah = ii.array.length, n1, n2, n3, n4, n5, n6, n7, n8;
-        int[][][] layers = new int[ii.palette.length][ah][aw];
+        try {
+            // Creating layers for each indexed color in arr
+            int val = 0, aw = ii.array[0].length, ah = ii.array.length, n1, n2, n3, n4, n5, n6, n7, n8;
+            int[][][] layers = new int[ii.palette.length][ah][aw];
 
-        // Looping through all pixels and calculating edge node type
-        for (int j = 1; j < (ah - 1); j++) {
-            for (int i = 1; i < (aw - 1); i++) {
+            // Looping through all pixels and calculating edge node type
+            for (int j = 1; j < (ah - 1); j++) {
+                for (int i = 1; i < (aw - 1); i++) {
 
-                // This pixel's indexed color
-                val = ii.array[j][i];
+                    // This pixel's indexed color
+                    val = ii.array[j][i];
 
-                // Are neighbor pixel colors the same?
-                n1 = ii.array[j - 1][i - 1] == val ? 1 : 0;
-                n2 = ii.array[j - 1][i] == val ? 1 : 0;
-                n3 = ii.array[j - 1][i + 1] == val ? 1 : 0;
-                n4 = ii.array[j][i - 1] == val ? 1 : 0;
-                n5 = ii.array[j][i + 1] == val ? 1 : 0;
-                n6 = ii.array[j + 1][i - 1] == val ? 1 : 0;
-                n7 = ii.array[j + 1][i] == val ? 1 : 0;
-                n8 = ii.array[j + 1][i + 1] == val ? 1 : 0;
+                    // Are neighbor pixel colors the same?
+                    n1 = ii.array[j - 1][i - 1] == val ? 1 : 0;
+                    n2 = ii.array[j - 1][i] == val ? 1 : 0;
+                    n3 = ii.array[j - 1][i + 1] == val ? 1 : 0;
+                    n4 = ii.array[j][i - 1] == val ? 1 : 0;
+                    n5 = ii.array[j][i + 1] == val ? 1 : 0;
+                    n6 = ii.array[j + 1][i - 1] == val ? 1 : 0;
+                    n7 = ii.array[j + 1][i] == val ? 1 : 0;
+                    n8 = ii.array[j + 1][i + 1] == val ? 1 : 0;
 
-                // this pixel"s type and looking back on previous pixels
-                layers[val][j + 1][i + 1] = 1 + (n5 * 2) + (n8 * 4) + (n7 * 8);
-                if (n4 == 0) {
-                    layers[val][j + 1][i] = 0 + 2 + (n7 * 4) + (n6 * 8);
-                }
-                if (n2 == 0) {
-                    layers[val][j][i + 1] = 0 + (n3 * 2) + (n5 * 4) + 8;
-                }
-                if (n1 == 0) {
-                    layers[val][j][i] = 0 + (n2 * 2) + 4 + (n4 * 8);
-                }
+                    // this pixel"s type and looking back on previous pixels
+                    layers[val][j + 1][i + 1] = 1 + (n5 * 2) + (n8 * 4) + (n7 * 8);
+                    if (n4 == 0) {
+                        layers[val][j + 1][i] = 0 + 2 + (n7 * 4) + (n6 * 8);
+                    }
+                    if (n2 == 0) {
+                        layers[val][j][i + 1] = 0 + (n3 * 2) + (n5 * 4) + 8;
+                    }
+                    if (n1 == 0) {
+                        layers[val][j][i] = 0 + (n2 * 2) + 4 + (n4 * 8);
+                    }
 
-            }// End of i loop
-        }// End of j loop
+                }// End of i loop
+            }// End of j loop
 
-        return layers;
+            return layers;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }// End of layering()
 
     // Lookup tables for pathscan
@@ -570,60 +578,66 @@ public class ImageTracer {
     // 0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15
     //
     public static ArrayList<ArrayList<Integer[]>> pathscan(int[][] arr, float pathomit) {
-        ArrayList<ArrayList<Integer[]>> paths = new ArrayList<ArrayList<Integer[]>>();
-        ArrayList<Integer[]> thispath;
-        int px = 0, py = 0, w = arr[0].length, h = arr.length, dir = 0;
-        boolean pathfinished = true, holepath = false;
-        byte[] lookuprow;
+        try {
+            ArrayList<ArrayList<Integer[]>> paths = new ArrayList<ArrayList<Integer[]>>();
+            ArrayList<Integer[]> thispath;
+            int px = 0, py = 0, w = arr[0].length, h = arr.length, dir = 0;
+            boolean pathfinished = true, holepath = false;
+            byte[] lookuprow;
 
-        for (int j = 0; j < h; j++) {
-            for (int i = 0; i < w; i++) {
-                if ((arr[j][i] != 0) && (arr[j][i] != 15)) {
+            for (int j = 0; j < h; j++) {
+                for (int i = 0; i < w; i++) {
 
-                    // Init
-                    px = i;
-                    py = j;
-                    paths.add(new ArrayList<Integer[]>());
-                    thispath = paths.get(paths.size() - 1);
-                    pathfinished = false;
+                    if ((arr[j][i] != 0) && (arr[j][i] != 15)) {
 
-                    // fill paths will be drawn, but hole paths are also required to remove unnecessary edge nodes
-                    dir = pathscan_dir_lookup[arr[py][px]];
-                    holepath = pathscan_holepath_lookup[arr[py][px]];
+                        // Init
+                        px = i;
+                        py = j;
+                        paths.add(new ArrayList<Integer[]>());
+                        thispath = paths.get(paths.size() - 1);
+                        pathfinished = false;
 
-                    // Path points loop
-                    while (!pathfinished) {
+                        // fill paths will be drawn, but hole paths are also required to remove unnecessary edge nodes
+                        dir = pathscan_dir_lookup[arr[py][px]];
+                        holepath = pathscan_holepath_lookup[arr[py][px]];
 
-                        // New path point
-                        thispath.add(new Integer[3]);
-                        thispath.get(thispath.size() - 1)[0] = px - 1;
-                        thispath.get(thispath.size() - 1)[1] = py - 1;
-                        thispath.get(thispath.size() - 1)[2] = arr[py][px];
+                        // Path points loop
+                        while (!pathfinished) {
 
-                        // Next: look up the replacement, direction and coordinate changes = clear this cell, turn if required, walk forward
-                        lookuprow = pathscan_combined_lookup[arr[py][px]][dir];
-                        arr[py][px] = lookuprow[0];
-                        dir = lookuprow[1];
-                        px += lookuprow[2];
-                        py += lookuprow[3];
+                            // New path point
+                            thispath.add(new Integer[3]);
+                            thispath.get(thispath.size() - 1)[0] = px - 1;
+                            thispath.get(thispath.size() - 1)[1] = py - 1;
+                            thispath.get(thispath.size() - 1)[2] = arr[py][px];
 
-                        // Close path
-                        if (((px - 1) == thispath.get(0)[0]) && ((py - 1) == thispath.get(0)[1])) {
-                            pathfinished = true;
-                            // Discarding 'hole' type paths and paths shorter than pathomit
-                            if ((holepath) || (thispath.size() < pathomit)) {
-                                paths.remove(thispath);
+                            // Next: look up the replacement, direction and coordinate changes = clear this cell, turn if required, walk forward
+                            lookuprow = pathscan_combined_lookup[arr[py][px]][dir];
+                            arr[py][px] = lookuprow[0];
+                            dir = lookuprow[1];
+                            px += lookuprow[2];
+                            py += lookuprow[3];
+
+                            // Close path
+                            if (((px - 1) == thispath.get(0)[0]) && ((py - 1) == thispath.get(0)[1])) {
+                                pathfinished = true;
+                                // Discarding 'hole' type paths and paths shorter than pathomit
+                                if ((holepath) || (thispath.size() < pathomit)) {
+                                    paths.remove(thispath);
+                                }
                             }
-                        }
 
-                    }// End of Path points loop
+                        }// End of Path points loop
 
-                }// End of Follow path
+                    }// End of Follow path
 
-            }// End of i loop
-        }// End of j loop
+                }// End of i loop
+            }// End of j loop
 
-        return paths;
+            return paths;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }// End of pathscan()
 
     // 3. Batch pathscan
@@ -703,7 +717,7 @@ public class ImageTracer {
     }// End of internodes()
 
     // 4. Batch interpollation
-    static ArrayList<ArrayList<ArrayList<Double[]>>> batchinternodes(ArrayList<ArrayList<ArrayList<Integer[]>>> bpaths) {
+    public static ArrayList<ArrayList<ArrayList<Double[]>>> batchinternodes(ArrayList<ArrayList<ArrayList<Integer[]>>> bpaths) {
         ArrayList<ArrayList<ArrayList<Double[]>>> binternodes = new ArrayList<ArrayList<ArrayList<Double[]>>>();
         for (int k = 0; k < bpaths.size(); k++) {
             binternodes.add(internodes(bpaths.get(k)));
