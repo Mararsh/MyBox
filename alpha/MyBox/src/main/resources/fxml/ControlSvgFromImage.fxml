@@ -11,6 +11,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -18,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefWidth="600.0" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSvgFromImage">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSvgFromImage">
     <children>
       <Button fx:id="defaultButton" mnemonicParsing="false" onAction="#defaultAction">
          <graphic>
@@ -29,120 +31,171 @@ License:    Apache License Version 2.0
             </ImageView>
          </graphic>
       </Button>
-      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%ColorsNumber" wrapText="true" />
-                  <TextField fx:id="colorsNumberInput" prefWidth="100.0" />
-                  <CheckBox fx:id="colorSamplingCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ColorSampling" wrapText="true" />
-               </children>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%RatioThresholdForColorQuantization" wrapText="true" />
-                  <TextField fx:id="quanRatioInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%CyclesOfColorQuantization" wrapText="true" />
-                  <TextField fx:id="quanCycleInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-         </children>
-      </VBox>
-      <VBox layoutX="15.0" layoutY="15.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%RadiusOfBlur" wrapText="true" />
-                  <RadioButton fx:id="blur0Radio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%NotBlur" wrapText="true">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="blurGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="blur1Radio" layoutX="93.0" layoutY="10.0" mnemonicParsing="false" text="1" toggleGroup="$blurGroup" />
-                  <RadioButton fx:id="blur2Radio" layoutX="165.0" layoutY="10.0" mnemonicParsing="false" text="2" toggleGroup="$blurGroup" />
-                  <RadioButton fx:id="blur3Radio" layoutX="195.0" layoutY="10.0" mnemonicParsing="false" text="3" toggleGroup="$blurGroup" />
-                  <RadioButton fx:id="blur4Radio" layoutX="226.0" layoutY="10.0" mnemonicParsing="false" text="4" toggleGroup="$blurGroup" />
-                  <RadioButton fx:id="blur5Radio" layoutX="257.0" layoutY="10.0" mnemonicParsing="false" text="5" toggleGroup="$blurGroup" />
-               </children>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%DeltaThresholdForBlur" wrapText="true" />
-                  <TextField fx:id="blurDeltaInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-         </children>
-      </VBox>
-      <VBox layoutX="15.0" layoutY="368.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%ErrorThresholdForStraightLines" wrapText="true" />
-                  <TextField fx:id="linesErrorInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%RadiusOfStraightLineControlPoint" wrapText="true" />
-                  <TextField fx:id="lineRadiusInput" prefWidth="100.0" />
-                  <Label minHeight="-Infinity" text="%ControlPointRadiusComments" wrapText="true" />
-               </children>
-            </FlowPane>
-         </children>
-      </VBox>
-      <VBox layoutX="15.0" layoutY="368.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%ErrorThresholdForQuadratic" wrapText="true" />
-                  <TextField fx:id="quadraticErrorInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%RadiusOfQuadraticControlPoint" wrapText="true" />
-                  <TextField fx:id="quadraticRadiusInput" prefWidth="100.0" />
-                  <Label minHeight="-Infinity" text="%ControlPointRadiusComments" wrapText="true" />
-               </children>
-            </FlowPane>
-         </children>
-      </VBox>
-      <VBox layoutX="15.0" layoutY="232.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%OmitThreaholdForEdgePath" wrapText="true" />
-                  <TextField fx:id="pathThresholdInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
-                  <TextField fx:id="decimalInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-         </children>
-      </VBox>
-      <VBox layoutX="15.0" layoutY="368.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <Label text="%ScaleImage" />
-                  <TextField fx:id="scaleInput" prefWidth="100.0" />
-               </children>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-               <children>
-                  <CheckBox fx:id="viewboxCheck" mnemonicParsing="false" text="%ViewBox" />
-                  <CheckBox fx:id="descCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Description" />
-               </children>
-            </FlowPane>
-         </children>
-      </VBox>
+      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="%ColorQuantization">
+               <content>
+                  <VBox fx:id="quantizationBox" spacing="2.0">
+                     <children>
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                           <children>
+                              <RadioButton fx:id="myboxRadio" mnemonicParsing="false" selected="true" text="MyBox">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="algorithmGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="jankovicsandras" toggleGroup="$algorithmGroup" />
+                           </children>
+                        </FlowPane>
+                        <VBox fx:id="jankovicsandrasBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%ColorsNumber" wrapText="true" />
+                                    <TextField fx:id="colorsNumberInput" prefWidth="100.0" />
+                                    <CheckBox fx:id="colorSamplingCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ColorSampling" wrapText="true" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%RatioThresholdForColorQuantization" wrapText="true" />
+                                    <TextField fx:id="quanRatioInput" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%CyclesOfColorQuantization" wrapText="true" />
+                                    <TextField fx:id="quanCycleInput" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="myboxBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <fx:include fx:id="quantization" source="ControlImageQuantization.fxml" />
+                           </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+          <Tab text="%Convert">
+               <content>
+                  <VBox spacing="2.0">
+                     <children>
+                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%RadiusOfBlur" wrapText="true" />
+                                    <RadioButton fx:id="blur0Radio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%NotBlur" wrapText="true">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="blurGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="blur1Radio" layoutX="93.0" layoutY="10.0" mnemonicParsing="false" text="1" toggleGroup="$blurGroup" />
+                                    <RadioButton fx:id="blur2Radio" layoutX="165.0" layoutY="10.0" mnemonicParsing="false" text="2" toggleGroup="$blurGroup" />
+                                    <RadioButton fx:id="blur3Radio" layoutX="195.0" layoutY="10.0" mnemonicParsing="false" text="3" toggleGroup="$blurGroup" />
+                                    <RadioButton fx:id="blur4Radio" layoutX="226.0" layoutY="10.0" mnemonicParsing="false" text="4" toggleGroup="$blurGroup" />
+                                    <RadioButton fx:id="blur5Radio" layoutX="257.0" layoutY="10.0" mnemonicParsing="false" text="5" toggleGroup="$blurGroup" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%DeltaThresholdForBlur" wrapText="true" />
+                                    <TextField fx:id="blurDeltaInput" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%ErrorThresholdForStraightLines" wrapText="true" />
+                                    <TextField fx:id="linesErrorInput" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%RadiusOfStraightLineControlPoint" wrapText="true" />
+                                    <TextField fx:id="lineRadiusInput" prefWidth="100.0" />
+                                    <Label minHeight="-Infinity" text="%ControlPointRadiusComments" wrapText="true" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%ErrorThresholdForQuadratic" wrapText="true" />
+                                    <TextField fx:id="quadraticErrorInput" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%RadiusOfQuadraticControlPoint" wrapText="true" />
+                                    <TextField fx:id="quadraticRadiusInput" prefWidth="100.0" />
+                                    <Label minHeight="-Infinity" text="%ControlPointRadiusComments" wrapText="true" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%OmitThreaholdForEdgePath" wrapText="true" />
+                                    <TextField fx:id="pathThresholdInput" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                    <TextField fx:id="decimalInput" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="SVG">
+               <content>
+                  <VBox spacing="2.0">
+                     <children>
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                           <children>
+                              <Label text="%ScaleImage" />
+                              <TextField fx:id="scaleInput" prefWidth="100.0" />
+                           </children>
+                        </FlowPane>
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                           <children>
+                              <CheckBox fx:id="viewboxCheck" mnemonicParsing="false" text="%ViewBox" />
+                              <CheckBox fx:id="descCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Description" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

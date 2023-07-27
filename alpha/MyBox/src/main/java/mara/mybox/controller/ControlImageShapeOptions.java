@@ -22,7 +22,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-6
  * @License Apache License Version 2.0
  */
-public class ImageManufactureShapeOptionsController extends ControlShapeOptions {
+public class ControlImageShapeOptions extends ControlShapeOptions {
 
     protected ImageManufactureShapeController penController;
     protected ImageManufactureController editor;

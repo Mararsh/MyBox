@@ -38,11 +38,11 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-9-29
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureEnhancementOptionsController extends ImageManufactureOperationController {
+public class ControlImageEnhancementOptions extends BaseController {
 
+    protected ImageManufactureController editor;
     protected ImageManufactureEnhancementController enhancementController;
     protected OperationType enhanceType;
     protected int intPara1, intPara2, intPara3;
@@ -126,8 +126,6 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
         if (parentController instanceof ImageManufactureEnhancementController) {
             enhancementController = (ImageManufactureEnhancementController) parentController;
             editor = enhancementController.editor;
-            scopeController = enhancementController.scopeController;
-            imageView = enhancementController.imageView;
             commentsLabel = enhancementController.commentsLabel;
             okButton = enhancementController.okButton;
         } else {
@@ -163,7 +161,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 }
                 if (editor != null) {
                     commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
-                    if (scopeController != null && !scopeController.scopeWhole()) {
+                    if (!editor.scopeController.scopeWhole()) {
                         editor.scopeTab();
                     }
                 }

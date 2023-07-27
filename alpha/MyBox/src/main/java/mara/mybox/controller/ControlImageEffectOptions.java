@@ -15,10 +15,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.BufferedImageTools.Direction;
-import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
@@ -30,30 +28,27 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-9-2
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureEffectsOptionsController extends ImageManufactureOperationController {
+public class ControlImageEffectOptions extends BaseController {
 
+    protected ImageManufactureController editor;
     protected OperationType effectType;
-    protected int intPara1, intPara2, intPara3, regionSize, weight1, weight2, weight3,
-            quanColors, kmeansLoop;
+    protected int intPara1, intPara2, intPara3;
     protected ConvolutionKernel kernel;
-    protected QuantizationAlgorithm quantizationAlgorithm;
     protected ChangeListener<String> intBoxListener, stringBoxListener, intInputListener,
             intInput2Listener, intInput3Listener;
     protected ChangeListener<Number> numberBoxListener;
     protected Button paletteAddButton, htmlButton;
 
     @FXML
-    protected ToggleGroup effectGroup, quanGroup;
+    protected ToggleGroup effectTypeGroup;
     @FXML
     protected VBox setBox, binrayBox, quanBox, edgeBox;
     @FXML
     protected RadioButton PosterizingRadio, ThresholdingRadio, GrayRadio,
             SepiaRadio, BlackOrWhiteRadio, EdgeDetectionRadio, EmbossRadio,
             effectMosaicRadio, effectFrostedRadio,
-            rgbQuanRadio, hsbQuanRadio, popularQuanRadio, kmeansQuanRadio,
             eightLaplaceRadio, eightLaplaceExcludedRadio, fourLaplaceRadio, fourLaplaceExcludedRadio;
     @FXML
     protected TextField intInput, intInput2, intInput3;
@@ -61,33 +56,29 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected FlowPane stringBoxPane, intBoxPane, intInputPane,
             intInputPane2, intInputPane3, othersPane;
     @FXML
-    protected HBox regionBox, loopBox;
+    protected ComboBox<String> intBox, stringBox;
     @FXML
-    protected ComboBox<String> intBox, stringBox, weightSelector, quanColorsSelector,
-            regionSizeSelector, kmeansLoopSelector;
+    protected CheckBox valueCheck;
     @FXML
-    protected CheckBox valueCheck, quanDitherCheck, quanDataCheck, firstColorCheck;
+    protected Label intBoxLabel, intLabel, intLabel2, intLabel3, stringLabel;
     @FXML
-    protected Label intBoxLabel, intLabel, intLabel2, intLabel3, stringLabel,
-            actualLoopLabel, weightLabel;
+    protected ControlImageQuantization quantizationController;
     @FXML
     protected ControlImageBinary binaryController;
     @FXML
-    protected ImageView imageQuantizationTipsView, imageThresholdTipsView;
+    protected ImageView imageThresholdTipsView;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            effectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            effectTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     checkEffectType();
                 }
             });
-
-            initPosterizing();
 
             checkEffectType();
 
@@ -104,12 +95,10 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         if (parentController instanceof ImageManufactureEffectsController) {
             ImageManufactureEffectsController pController = (ImageManufactureEffectsController) parentController;
             editor = pController.editor;
-            scopeController = pController.scopeController;
             okButton = pController.okButton;
-            imageView = pController.imageView;
             paletteAddButton = pController.paletteAddButton;
             htmlButton = pController.htmlButton;
-            binaryController.setParameters(parentController, imageView);
+            binaryController.setParameters(parentController, pController.imageView);
         } else {
             binaryController.setParameters(parentController, null);
         }
@@ -119,49 +108,48 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         try {
             if (editor != null) {
                 editor.resetImagePane();
-                if (scopeController != null && !scopeController.scopeWhole()) {
+                if (!editor.scopeController.scopeWhole()) {
                     editor.scopeTab();
                 }
             }
 
             clearValues();
-            if (okButton != null && effectGroup.getSelectedToggle() == null) {
+            if (okButton != null && effectTypeGroup.getSelectedToggle() == null) {
                 okButton.setDisable(true);
                 return;
             }
-            RadioButton selected = (RadioButton) effectGroup.getSelectedToggle();
-            if (EdgeDetectionRadio.equals(selected)) {
+            if (EdgeDetectionRadio.isSelected()) {
                 effectType = OperationType.EdgeDetect;
                 makeEdgeBox();
 
-            } else if (EmbossRadio.equals(selected)) {
+            } else if (EmbossRadio.isSelected()) {
                 effectType = OperationType.Emboss;
                 makeEmbossBox();
 
-            } else if (PosterizingRadio.equals(selected)) {
+            } else if (PosterizingRadio.isSelected()) {
                 effectType = OperationType.Quantization;
                 makePosterizingBox();
 
-            } else if (ThresholdingRadio.equals(selected)) {
+            } else if (ThresholdingRadio.isSelected()) {
                 effectType = OperationType.Thresholding;
                 makeThresholdingBox();
 
-            } else if (GrayRadio.equals(selected)) {
+            } else if (GrayRadio.isSelected()) {
                 effectType = OperationType.Gray;
 
-            } else if (BlackOrWhiteRadio.equals(selected)) {
+            } else if (BlackOrWhiteRadio.isSelected()) {
                 effectType = OperationType.BlackOrWhite;
                 makeBlackWhiteBox();
 
-            } else if (SepiaRadio.equals(selected)) {
+            } else if (SepiaRadio.isSelected()) {
                 effectType = OperationType.Sepia;
                 makeSepiaBox();
 
-            } else if (effectMosaicRadio.equals(selected)) {
+            } else if (effectMosaicRadio.isSelected()) {
                 effectType = OperationType.Mosaic;
                 makeMosaicBox();
 
-            } else if (effectFrostedRadio.equals(selected)) {
+            } else if (effectFrostedRadio.isSelected()) {
                 effectType = OperationType.FrostedGlass;
                 makeMosaicBox();
 
@@ -172,210 +160,6 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    protected void initPosterizing() {
-        try {
-            quanGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) {
-                    checkPosterizingAlgorithm();
-                }
-            });
-
-            quanColors = UserConfig.getInt(baseName + "QuanColorsNumber", 256);
-            quanColors = regionSize <= 0 ? 256 : quanColors;
-            quanColorsSelector.getItems().addAll(Arrays.asList(
-                    "27", "64", "8", "16", "256", "512", "1024", "2048", "4096", "216", "343", "128", "1000", "729", "1728", "8000"));
-            quanColorsSelector.setValue(quanColors + "");
-            quanColorsSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            quanColors = v;
-                            UserConfig.setInt(baseName + "QuanColorsNumber", quanColors);
-                            ValidationTools.setEditorNormal(intBox);
-                        } else {
-                            ValidationTools.setEditorBadStyle(intBox);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(intBox);
-                    }
-                }
-            });
-
-            regionSize = UserConfig.getInt(baseName + "RegionSize", 4096);
-            regionSize = regionSize <= 0 ? 4096 : regionSize;
-            regionSizeSelector.getItems().addAll(Arrays.asList("4096", "1024", "256", "8192", "512", "128"));
-            regionSizeSelector.setValue(regionSize + "");
-            regionSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            regionSize = v;
-                            UserConfig.setInt(baseName + "RegionSize", regionSize);
-                            regionSizeSelector.getEditor().setStyle(null);
-                        } else {
-                            regionSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        regionSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            weightSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        String[] values = newValue.split(":");
-                        int v1 = Integer.parseInt(values[0]);
-                        int v2 = Integer.parseInt(values[1]);
-                        int v3 = Integer.parseInt(values[2]);
-                        if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            weightSelector.getEditor().setStyle(UserConfig.badStyle());
-                            return;
-                        }
-                        weight1 = v1;
-                        weight2 = v2;
-                        weight3 = v3;
-                        weightSelector.getEditor().setStyle(null);
-                        UserConfig.setString(baseName + (hsbQuanRadio.isSelected() ? "HSBWeights" : "RGBWeights"), newValue);
-                    } catch (Exception e) {
-                        weightSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            kmeansLoop = UserConfig.getInt(baseName + "KmeansLoop", 10000);
-            kmeansLoop = kmeansLoop <= 0 ? 10000 : kmeansLoop;
-            kmeansLoopSelector.getItems().addAll(Arrays.asList(
-                    "10000", "5000", "3000", "1000", "500", "100", "20000"));
-            kmeansLoopSelector.setValue(kmeansLoop + "");
-            kmeansLoopSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            kmeansLoop = v;
-                            UserConfig.setInt(baseName + "KmeansLoop", kmeansLoop);
-                            ValidationTools.setEditorNormal(kmeansLoopSelector);
-                        } else {
-                            ValidationTools.setEditorBadStyle(kmeansLoopSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(kmeansLoopSelector);
-                    }
-                }
-            });
-
-            quanDitherCheck.setSelected(UserConfig.getBoolean(baseName + "QuanDither", true));
-            quanDitherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "QuanDither", newValue);
-                }
-            });
-
-            quanDataCheck.setSelected(UserConfig.getBoolean(baseName + "QuanData", true));
-            quanDataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "QuanData", newValue);
-                }
-            });
-
-            firstColorCheck.setSelected(UserConfig.getBoolean(baseName + "QuanFirstColor", true));
-            firstColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "QuanFirstColor", newValue);
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void checkPosterizingAlgorithm() {
-        String selected = ((RadioButton) quanGroup.getSelectedToggle()).getText();
-        for (QuantizationAlgorithm algorithm : QuantizationAlgorithm.values()) {
-            if (message(algorithm.name()).equals(selected)) {
-                quantizationAlgorithm = algorithm;
-                break;
-            }
-        }
-        if (paletteAddButton != null) {
-            paletteAddButton.setVisible(false);
-        }
-        if (htmlButton != null) {
-            htmlButton.setVisible(false);
-        }
-        switch (quantizationAlgorithm) {
-            case HSBUniformQuantization:
-                if (quanBox.getChildren().contains(regionBox)) {
-                    quanBox.getChildren().removeAll(regionBox, loopBox, actualLoopLabel);
-                }
-                weightLabel.setText(message("HSBWeight"));
-                break;
-            case RGBUniformQuantization:
-                if (quanBox.getChildren().contains(regionBox)) {
-                    quanBox.getChildren().removeAll(regionBox, loopBox, actualLoopLabel);
-                }
-                weightLabel.setText(message("RGBWeight"));
-                break;
-            case KMeansClustering:
-                if (!quanBox.getChildren().contains(regionBox)) {
-                    quanBox.getChildren().add(7, regionBox);
-                }
-                if (!quanBox.getChildren().contains(loopBox)) {
-                    quanBox.getChildren().add(8, loopBox);
-                    quanBox.getChildren().add(actualLoopLabel);
-                }
-                actualLoopLabel.setText("");
-                weightLabel.setText(message("RGBWeight"));
-                break;
-            case PopularityQuantization:
-                if (!quanBox.getChildren().contains(regionBox)) {
-                    quanBox.getChildren().add(7, regionBox);
-                }
-                if (quanBox.getChildren().contains(loopBox)) {
-                    quanBox.getChildren().removeAll(loopBox, actualLoopLabel);
-                }
-                weightLabel.setText(message("RGBWeight"));
-        }
-        isSettingValues = true;
-        weightSelector.getItems().clear();
-        if (hsbQuanRadio.isSelected()) {
-            weight1 = 4;
-            weight2 = 4;
-            weight3 = 1;
-            String defaultV = UserConfig.getString(baseName + "HSBWeights", "6:10:100");
-            weightSelector.getItems().addAll(Arrays.asList(
-                    "6:10:100", "12:4:10", "24:10:10", "12:10:40", "24:10:40", "12:20:40", "12:10:80", "6:10:80"
-            ));
-            weightSelector.setValue(defaultV);
-        } else {
-            weight1 = 2;
-            weight2 = 4;
-            weight3 = 4;
-            String defaultV = UserConfig.getString(baseName + "RGBWeights", "2:4:3");
-            weightSelector.getItems().addAll(Arrays.asList(
-                    "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
-            ));
-            weightSelector.setValue(defaultV);
-        }
-
-        isSettingValues = false;
     }
 
     protected void clearValues() {
@@ -410,7 +194,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         intInput3.setStyle(null);
         stringBox.setEditable(false);
         intBox.setEditable(false);
-        actualLoopLabel.setText("");
+        quantizationController.actualLoopLabel.setText("");
         if (paletteAddButton != null) {
             paletteAddButton.setVisible(false);
         }
@@ -514,15 +298,19 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             setBox.getChildren().addAll(quanBox);
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        quanColorsSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()));
+                        quantizationController.quanColorsSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()));
             }
 
-            checkPosterizingAlgorithm();
+            if (paletteAddButton != null) {
+                paletteAddButton.setVisible(false);
+            }
+            if (htmlButton != null) {
+                htmlButton.setVisible(false);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
     }
 
     protected void makeThresholdingBox() {

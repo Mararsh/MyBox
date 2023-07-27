@@ -21,7 +21,7 @@ import mara.mybox.fximage.ImageViewTools;
 public class ImageManufactureShapeController extends ImageManufactureOperationController {
 
     @FXML
-    protected ImageManufactureShapeOptionsController optionsController;
+    protected ControlImageShapeOptions optionsController;
 
     @Override
     public void initPane() {

@@ -33,10 +33,12 @@ public class SvgFromImageController extends BaseChildController {
             if (!optionsController.pickValues()) {
                 return;
             }
-            File svgFile = SvgTools.imageToSvgFile(this, sourceFile, optionsController.options);
+            File svgFile = SvgTools.imageToSvgFile(this, sourceFile,
+                    optionsController.myboxRadio.isSelected() ? optionsController.quantizationController : null,
+                    optionsController.options);
             if (svgFile != null && svgFile.exists()) {
                 SvgEditorController.open(svgFile);
-                close();
+//                close();
             } else {
                 popError(message("Failed"));
             }

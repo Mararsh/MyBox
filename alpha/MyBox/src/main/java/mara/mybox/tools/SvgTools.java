@@ -16,9 +16,11 @@ import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageQuantization;
 import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
+import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageRGBKMeans;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ControlImageQuantization;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
@@ -377,14 +379,14 @@ public class SvgTools {
         image to svg
      */
     public static File imageToSvgFile(BaseController controller, File imageFile,
+            ControlImageQuantization quantizationController,
             HashMap<String, Float> options) {
         try {
             if (imageFile == null || !imageFile.exists()) {
                 return null;
             }
             BufferedImage image = ImageFileReaders.readImage(imageFile);
-//            String svg = imageToSvg(controller, image, options);
-            String svg = ImageTracer.imageToSVG(image, options, null);
+            String svg = imageToSvg(controller, image, quantizationController, options);
             if (svg == null || svg.isBlank()) {
                 return null;
             }
@@ -397,8 +399,9 @@ public class SvgTools {
         }
     }
 
-    public static String imageToSvg(BaseController controller,
-            BufferedImage image, HashMap<String, Float> options) {
+    public static String imageToSvg(BaseController controller, BufferedImage image,
+            ControlImageQuantization quantizationController,
+            HashMap<String, Float> options) {
         try {
             if (image == null) {
                 PopTools.showError(controller, message("InvalidData"));
@@ -407,9 +410,13 @@ public class SvgTools {
             options = ImageTracer.checkoptions(options);
 
             // 1. Color quantization
-//            ImageTracer.ImageData imgd = ImageTracer.loadImageData(image);
-//            ImageTracer.IndexedImage ii = ImageTracer.colorquantization(imgd, null, options);
-            ImageTracer.IndexedImage ii = colorQuantization(controller, image, options);
+            ImageTracer.IndexedImage ii;
+            if (quantizationController != null) {
+                ii = colorQuantization(controller, image, quantizationController);
+            } else {
+                ImageTracer.ImageData imgd = ImageTracer.loadImageData(image);
+                ii = ImageTracer.colorquantization(imgd, null, options);
+            }
 
             // 2. Layer separation and edge detection
             int[][][] rawlayers = ImageTracer.layering(ii);
@@ -432,18 +439,21 @@ public class SvgTools {
     }
 
     public static ImageTracer.IndexedImage colorQuantization(BaseController controller,
-            BufferedImage image, HashMap<String, Float> options) {
+            BufferedImage image, ControlImageQuantization quantization) {
         try {
             ImageKMeans kmeans = ImageKMeans.create();
             kmeans.setAlgorithm(KMeansClustering).
-                    setQuantizationSize(options.get("numberofcolors").intValue())
-                    .setRegionSize(1024)
-                    .setWeight1(2).setWeight2(4).setWeight3(3)
-                    .setRecordCount(false).setFirstColor(false)
+                    setQuantizationSize(quantization.getQuanColors())
+                    .setRegionSize(quantization.getRegionSize())
+                    .setWeight1(quantization.getWeight1())
+                    .setWeight2(quantization.getWeight2())
+                    .setWeight3(quantization.getWeight3())
+                    .setRecordCount(false)
+                    .setFirstColor(quantization.getFirstColorCheck().isSelected())
                     .setOperationType(PixelsOperation.OperationType.Quantization)
-                    .setImage(image).setScope(null).setIsDithering(false);
-            kmeans.makePalette();
-            kmeans.operate();
+                    .setImage(image).setScope(null)
+                    .setIsDithering(quantization.getQuanDitherCheck().isSelected());
+            kmeans.makePalette().operate();
             return new ImageTracer.IndexedImage(kmeans.getColorIndice(), kmeans.paletteBytes);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
@@ -462,31 +472,39 @@ public class SvgTools {
             return new ImageKMeans();
         }
 
-        public boolean makePalette() {
+        public ImageKMeans makePalette() {
             try {
-                kmeans = ImageRGBKMeans.create();
-                kmeans.setSourceImage(image).setScope(scope).setIsDithering(isDithering)
-                        .setRegionSize(regionSize)
+                ImageQuantizationFactory.KMeansRegionQuantization regionQuantization
+                        = ImageQuantizationFactory.KMeansRegionQuantization.create();
+                regionQuantization.setRegionSize(regionSize)
+                        .setFirstColor(firstColor)
                         .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
-                        .setK(quantizationSize);
-                if (kmeans.init().run()) {
+                        .setRecordCount(true)
+                        .setImage(image).setScope(scope).
+                        setOperationType(PixelsOperation.OperationType.Quantization).
+                        setIsDithering(isDithering);
+                regionQuantization.buildPalette(true).operate();
+                kmeans = ImageRGBKMeans.create();
+                kmeans.setK(quantizationSize);
+                if (kmeans.init(regionQuantization).run()) {
                     kmeans.makeMap();
                 }
+
                 paletteColors = kmeans.getCenters();
                 int size = paletteColors.size();
                 paletteBytes = new byte[size + 1][4];
                 for (int i = 0; i < size; i++) {
                     int value = paletteColors.get(i).getRGB();
-                    paletteBytes[i][0] = bytetrans((byte) (value >>> 24));
-                    paletteBytes[i][1] = bytetrans((byte) (value >>> 16));
-                    paletteBytes[i][2] = bytetrans((byte) (value >>> 8));
-                    paletteBytes[i][3] = bytetrans((byte) (value));
+                    paletteBytes[i][3] = bytetrans((byte) (value >>> 24));
+                    paletteBytes[i][0] = bytetrans((byte) (value >>> 16));
+                    paletteBytes[i][1] = bytetrans((byte) (value >>> 8));
+                    paletteBytes[i][2] = bytetrans((byte) (value));
                 }
                 int transparent = 0;
-                paletteBytes[size][0] = bytetrans((byte) (transparent >>> 24));
-                paletteBytes[size][1] = bytetrans((byte) (transparent >>> 16));
-                paletteBytes[size][2] = bytetrans((byte) (transparent >>> 8));
-                paletteBytes[size][3] = bytetrans((byte) (transparent));
+                paletteBytes[size][3] = bytetrans((byte) (transparent >>> 24));
+                paletteBytes[size][0] = bytetrans((byte) (transparent >>> 16));
+                paletteBytes[size][1] = bytetrans((byte) (transparent >>> 8));
+                paletteBytes[size][2] = bytetrans((byte) (transparent));
 
                 int width = image.getWidth();
                 int height = image.getHeight();
@@ -499,11 +517,10 @@ public class SvgTools {
                     colorIndice[0][i] = -1;
                     colorIndice[height + 1][i] = -1;
                 }
-                return true;
             } catch (Exception e) {
                 MyBoxLog.debug(e);
-                return false;
             }
+            return this;
         }
 
         @Override

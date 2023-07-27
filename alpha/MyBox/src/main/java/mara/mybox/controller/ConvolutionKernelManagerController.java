@@ -117,8 +117,8 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
         tableData.clear();
         tableData.addAll(records);
 
-        if (parentController != null && parentController instanceof ImageManufactureEnhancementOptionsController) {
-            ImageManufactureEnhancementOptionsController p = (ImageManufactureEnhancementOptionsController) parentController;
+        if (parentController != null && parentController instanceof ControlImageEnhancementOptions) {
+            ControlImageEnhancementOptions p = (ControlImageEnhancementOptions) parentController;
             p.loadKernelsList(records);
         }
     }

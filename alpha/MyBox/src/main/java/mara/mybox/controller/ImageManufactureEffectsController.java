@@ -52,7 +52,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     protected StringTable quanTable;
 
     @FXML
-    protected ImageManufactureEffectsOptionsController optionsController;
+    protected ControlImageEffectOptions optionsController;
     @FXML
     protected Button demoButton, paletteAddButton, htmlButton;
 
@@ -95,7 +95,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         paletteAddButton.setVisible(false);
         htmlButton.setVisible(false);
         quanTable = null;
-        optionsController.actualLoopLabel.setText("");
+        optionsController.quantizationController.actualLoopLabel.setText("");
         if (editor == null || optionsController.effectType == null) {
             return;
         }
@@ -142,15 +142,13 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                             newImage = imageConvolution.operateFxImage();
                             break;
                         case Quantization:
-                            quantization = ImageQuantizationFactory.create(imageView.getImage(),
-                                    scopeController.scope, optionsController.quantizationAlgorithm,
-                                    optionsController.quanColors, optionsController.regionSize,
-                                    optionsController.weight1, optionsController.weight2, optionsController.weight3,
-                                    true, optionsController.quanDitherCheck.isSelected(),
-                                    optionsController.firstColorCheck.isSelected());
-                            if (optionsController.quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
+                            quantization = ImageQuantizationFactory.create(
+                                    imageView.getImage(), scopeController.scope,
+                                    optionsController.quantizationController,
+                                    optionsController.quantizationController.quanDataCheck.isSelected());
+                            if (optionsController.quantizationController.algorithm == QuantizationAlgorithm.KMeansClustering) {
                                 KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
-                                q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
+                                q.getKmeans().setMaxIteration(optionsController.quantizationController.kmeansLoop);
                                 newImage = q.operateFxImage();
                                 actualLoop = q.getKmeans().getLoopCount();
                             } else {
@@ -222,12 +220,12 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     quanTable = quantization.countTable(name);
                     if (quanTable != null) {
                         htmlButton.setVisible(true);
-                        if (optionsController.quanDataCheck.isSelected()) {
+                        if (optionsController.quantizationController.quanDataCheck.isSelected()) {
                             htmlAction();
                         }
                     }
                     if (actualLoop >= 0) {
-                        optionsController.actualLoopLabel.setText(message("ActualLoop") + ":" + actualLoop);
+                        optionsController.quantizationController.actualLoopLabel.setText(message("ActualLoop") + ":" + actualLoop);
                     }
                     List<ImageQuantization.ColorCount> sortedCounts = quantization.getSortedCounts();
                     if (sortedCounts != null && !sortedCounts.isEmpty()) {
@@ -293,9 +291,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     scope.setOutlineSource(outlineSource);
                     scope.setOutline(outline[1]);
 
-                    ImageQuantization quantization
-                            = ImageQuantizationFactory.create(image, scope,
-                                    QuantizationAlgorithm.PopularityQuantization, 16, 256, 2, 4, 3, false, true, true);
+                    ImageQuantization quantization = ImageQuantizationFactory.create(image, scope,
+                            QuantizationAlgorithm.PopularityQuantization, 16, 256, 2, 4, 3, false, true, true);
                     bufferedImage = quantization.operateImage();
                     tmpFile = FileTmpTools.generateFile(message("Posterizing"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {

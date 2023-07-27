@@ -1,10 +1,12 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.data.StringTable;
@@ -36,12 +38,19 @@ public class ImageQuantization extends PixelsOperation {
     protected long totalCount;
     protected Color[][][] palette;
 
-    public ImageQuantization build() throws Exception {
+    public ImageQuantization() {
+        operationType = PixelsOperation.OperationType.Quantization;
+    }
+
+    public ImageQuantization buildPalette(boolean recordCount) {
         return this;
     }
 
     public void countColor(Color mappedColor) {
-        if (recordCount && counts != null) {
+        if (recordCount) {
+            if (counts == null) {
+                counts = new HashMap<>();
+            }
             if (counts.containsKey(mappedColor)) {
                 counts.put(mappedColor, counts.get(mappedColor) + 1);
             } else {
@@ -126,6 +135,12 @@ public class ImageQuantization extends PixelsOperation {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    @Override
+    public BufferedImage operate() {
+        image = AlphaTools.removeAlpha(image);
+        return super.operate();
     }
 
     @Override

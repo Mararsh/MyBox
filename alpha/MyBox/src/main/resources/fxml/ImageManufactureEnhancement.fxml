@@ -9,7 +9,7 @@
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureEnhancementController">
     <children>
-        <fx:include fx:id="options" source="ImageManufactureEnhancementOptions.fxml" />
+        <fx:include fx:id="options" source="ControlImageEnhancementOptions.fxml" />
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
                 <Button fx:id="okButton" onAction="#okAction">

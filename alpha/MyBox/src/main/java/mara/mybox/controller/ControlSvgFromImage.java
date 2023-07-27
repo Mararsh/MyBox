@@ -2,10 +2,15 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.HashMap;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -27,7 +32,14 @@ public class ControlSvgFromImage extends BaseController {
     @FXML
     protected CheckBox colorSamplingCheck, viewboxCheck, descCheck;
     @FXML
-    protected RadioButton blur0Radio, blur1Radio, blur2Radio, blur3Radio, blur4Radio, blur5Radio;
+    protected RadioButton myboxRadio,
+            blur0Radio, blur1Radio, blur2Radio, blur3Radio, blur4Radio, blur5Radio;
+    @FXML
+    protected ToggleGroup algorithmGroup;
+    @FXML
+    protected ControlImageQuantization quantizationController;
+    @FXML
+    protected VBox quantizationBox, jankovicsandrasBox, myboxBox;
 
     @Override
     public void initControls() {
@@ -73,6 +85,40 @@ public class ControlSvgFromImage extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+
+        quantizationController.defaultForSvg();
+
+        algorithmGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) {
+                checkAlgorithm();
+            }
+        });
+
+        checkAlgorithm();
+
+    }
+
+    protected void checkAlgorithm() {
+        if (myboxRadio.isSelected()) {
+            if (quantizationBox.getChildren().contains(jankovicsandrasBox)) {
+                quantizationBox.getChildren().remove(jankovicsandrasBox);
+            }
+            if (!quantizationBox.getChildren().contains(myboxBox)) {
+                quantizationBox.getChildren().add(myboxBox);
+            }
+
+        } else {
+            if (quantizationBox.getChildren().contains(myboxBox)) {
+                quantizationBox.getChildren().remove(myboxBox);
+            }
+            if (!quantizationBox.getChildren().contains(jankovicsandrasBox)) {
+                quantizationBox.getChildren().add(jankovicsandrasBox);
+            }
+
+        }
+
+        refreshStyle(quantizationBox);
     }
 
     @FXML
@@ -98,6 +144,9 @@ public class ControlSvgFromImage extends BaseController {
 
             viewboxCheck.setSelected(false);
             descCheck.setSelected(true);
+
+            myboxRadio.setSelected(true);
+            quantizationController.defaultForSvg();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

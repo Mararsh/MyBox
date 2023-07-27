@@ -24,7 +24,7 @@ import mara.mybox.value.Languages;
 public class ImageManufactureBatchEffectsController extends BaseImageManufactureBatchController {
 
     @FXML
-    protected ImageManufactureEffectsOptionsController optionsController;
+    protected ControlImageEffectOptions optionsController;
 
     public ImageManufactureBatchEffectsController() {
         baseTitle = Languages.message("ImageManufactureBatchEffects");
@@ -35,7 +35,7 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
     public void initOptionsSection() {
         try {
             optionsController.setValues(this);
-            optionsController.quanDataCheck.setVisible(false);
+            optionsController.quantizationController.quanDataCheck.setVisible(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -82,12 +82,8 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
                         target = pixelsOperation.operate();
                         break;
                     case Quantization:
-                        ImageQuantization quantization = ImageQuantizationFactory.create(AlphaTools.removeAlpha(source),
-                                null, optionsController.quantizationAlgorithm,
-                                optionsController.quanColors, optionsController.regionSize,
-                                optionsController.weight1, optionsController.weight2, optionsController.weight3,
-                                optionsController.quanDataCheck.isSelected(), optionsController.quanDitherCheck.isSelected(),
-                                optionsController.firstColorCheck.isSelected());
+                        ImageQuantization quantization = ImageQuantizationFactory.create(
+                                source, null, optionsController.quantizationController, false);
                         target = quantization.operate();
                         break;
                     case Gray:

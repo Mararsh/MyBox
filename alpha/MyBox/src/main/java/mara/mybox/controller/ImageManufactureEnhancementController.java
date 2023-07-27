@@ -38,7 +38,7 @@ import static mara.mybox.value.Languages.message;
 public class ImageManufactureEnhancementController extends ImageManufactureOperationController {
 
     @FXML
-    protected ImageManufactureEnhancementOptionsController optionsController;
+    protected ControlImageEnhancementOptions optionsController;
     @FXML
     protected Label commentsLabel;
     @FXML

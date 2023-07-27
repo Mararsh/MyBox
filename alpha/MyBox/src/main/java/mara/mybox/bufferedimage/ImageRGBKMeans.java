@@ -1,7 +1,6 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,25 +17,18 @@ import mara.mybox.dev.MyBoxLog;
 public class ImageRGBKMeans extends ListKMeans<Color> {
 
     protected KMeansRegionQuantization regionQuantization;
-    protected int regionSize;
-    protected int weight1, weight2, weight3;
-    protected BufferedImage image;
     protected int equalDistance = 16;
-    protected ImageScope scope;
-    protected boolean isDithering;
 
     public static ImageRGBKMeans create() {
         return new ImageRGBKMeans();
     }
 
-    public ImageRGBKMeans init() {
+    public ImageRGBKMeans init(KMeansRegionQuantization quantization) {
         try {
-            if (image == null || k <= 0) {
+            if (quantization == null) {
                 return this;
             }
-            regionQuantization = KMeansRegionQuantization.create(image,
-                    scope, isDithering, regionSize, weight1, weight2, weight3);
-            regionQuantization.operate();
+            regionQuantization = quantization;
             data = regionQuantization.regionColors;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -70,6 +62,15 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    @Override
+    public boolean run() {
+        if (regionQuantization == null || data == null
+                || regionQuantization.rgbPalette.counts == null) {
+            return false;
+        }
+        return super.run();
     }
 
     @Override
@@ -108,8 +109,8 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             Color centerColor = null;
             for (Integer index : cluster) {
                 Color regionColor = data.get(index);
-                long colorCount = regionQuantization.rgbPalette.counts.get(regionColor);
-                if (colorCount > maxCount) {
+                Long colorCount = regionQuantization.rgbPalette.counts.get(regionColor);
+                if (colorCount != null && colorCount > maxCount) {
                     centerColor = regionColor;
                     maxCount = colorCount;
                 }
@@ -176,15 +177,6 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     /*
         get/set
      */
-    public BufferedImage getImage() {
-        return image;
-    }
-
-    public ImageRGBKMeans setSourceImage(BufferedImage sourceImage) {
-        this.image = sourceImage;
-        return this;
-    }
-
     public int getEqualDistance() {
         return equalDistance;
     }
@@ -194,66 +186,12 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         return this;
     }
 
-    public ImageScope getScope() {
-        return scope;
-    }
-
-    public ImageRGBKMeans setScope(ImageScope scope) {
-        this.scope = scope;
-        return this;
-    }
-
-    public boolean isIsDithering() {
-        return isDithering;
-    }
-
-    public ImageRGBKMeans setIsDithering(boolean isDithering) {
-        this.isDithering = isDithering;
-        return this;
-    }
-
     public KMeansRegionQuantization getRegionQuantization() {
         return regionQuantization;
     }
 
     public ImageRGBKMeans setRegionQuantization(KMeansRegionQuantization regionQuantization) {
         this.regionQuantization = regionQuantization;
-        return this;
-    }
-
-    public int getRegionSize() {
-        return regionSize;
-    }
-
-    public ImageRGBKMeans setRegionSize(int regionSize) {
-        this.regionSize = regionSize;
-        return this;
-    }
-
-    public int getWeight1() {
-        return weight1;
-    }
-
-    public ImageRGBKMeans setWeight1(int weight1) {
-        this.weight1 = weight1;
-        return this;
-    }
-
-    public int getWeight2() {
-        return weight2;
-    }
-
-    public ImageRGBKMeans setWeight2(int weight2) {
-        this.weight2 = weight2;
-        return this;
-    }
-
-    public int getWeight3() {
-        return weight3;
-    }
-
-    public ImageRGBKMeans setWeight3(int weight3) {
-        this.weight3 = weight3;
         return this;
     }
 

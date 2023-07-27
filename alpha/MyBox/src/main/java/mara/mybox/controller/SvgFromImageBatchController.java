@@ -7,8 +7,9 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.SvgTools;
 import static mara.mybox.value.Languages.message;
-import thridparty.jankovicsandras.ImageTracer;
 
 /**
  * @Author Mara
@@ -47,9 +48,10 @@ public class SvgFromImageBatchController extends BaseBatchFileController {
             if (image == null) {
                 return message("InvalidData");
             }
-            String svg = ImageTracer.imageToSVG(image, optionsController.options, null);
-            ImageTracer.saveString(target.getAbsolutePath(), svg);
-            if (target.exists()) {
+            File svgFile = SvgTools.imageToSvgFile(this, srcFile,
+                    optionsController.myboxRadio.isSelected() ? optionsController.quantizationController : null,
+                    optionsController.options);
+            if (svgFile.exists() && FileTools.rename(svgFile, target, true)) {
                 targetFileGenerated(target);
                 return message("Successful");
             } else {
