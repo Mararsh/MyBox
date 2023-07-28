@@ -114,6 +114,7 @@ public class Fxmls {
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
     public static final String ImageAnalyseFxml = "/fxml/ImageAnalyse.fxml";
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
+    public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
 
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";

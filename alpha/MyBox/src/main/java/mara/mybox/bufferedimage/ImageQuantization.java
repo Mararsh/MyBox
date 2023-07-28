@@ -42,7 +42,7 @@ public class ImageQuantization extends PixelsOperation {
         operationType = PixelsOperation.OperationType.Quantization;
     }
 
-    public ImageQuantization buildPalette(boolean recordCount) {
+    public ImageQuantization buildPalette() {
         return this;
     }
 
@@ -146,6 +146,30 @@ public class ImageQuantization extends PixelsOperation {
     @Override
     public Color operateColor(Color color) {
         return color;
+    }
+
+    public ImageRGBKMeans imageKMeans() {
+        try {
+            ImageQuantizationFactory.KMeansRegionQuantization regionQuantization
+                    = ImageQuantizationFactory.KMeansRegionQuantization.create();
+            regionQuantization.setRegionSize(regionSize)
+                    .setFirstColor(firstColor)
+                    .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                    .setRecordCount(true)
+                    .setImage(image).setScope(scope).
+                    setOperationType(PixelsOperation.OperationType.Quantization).
+                    setIsDithering(isDithering);
+            regionQuantization.buildPalette().operate();
+            ImageRGBKMeans kmeans = ImageRGBKMeans.create();
+            kmeans.setK(quantizationSize);
+            if (kmeans.init(regionQuantization).run()) {
+                kmeans.makeMap();
+                return kmeans;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return null;
     }
 
     public class PopularityRegion {

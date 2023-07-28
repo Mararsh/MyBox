@@ -195,10 +195,9 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     public void convertAction() {
-        ImageConverterBatchController controller = (ImageConverterBatchController) openStage(Fxmls.ImageConverterBatchFxml);
         File file = imageFile();
         if (file != null) {
-            controller.tableController.addFile(file);
+            ImageConverterController.open(file);
         }
     }
 

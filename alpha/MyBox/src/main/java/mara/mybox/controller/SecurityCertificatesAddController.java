@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Optional;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -12,18 +10,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2019-11-29
  * @License Apache License Version 2.0
  */
-public class SecurityCertificatesAddController extends BaseController {
+public class SecurityCertificatesAddController extends BaseChildController {
 
     protected SecurityCertificatesController certController;
 
@@ -32,7 +28,7 @@ public class SecurityCertificatesAddController extends BaseController {
     @FXML
     protected RadioButton addressRadio, fileRadio;
     @FXML
-    protected CheckBox saveCloseCheck, chainCheck;
+    protected CheckBox chainCheck;
 
     public SecurityCertificatesAddController() {
         baseTitle = Languages.message("SecurityCertificates");
@@ -41,25 +37,6 @@ public class SecurityCertificatesAddController extends BaseController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Certificate, VisitHistory.FileType.Html);
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(interfaceName + "SaveClose", saveCloseCheck.isSelected());
-                }
-            });
-            saveCloseCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @FXML
@@ -143,7 +120,7 @@ public class SecurityCertificatesAddController extends BaseController {
                         certController = SecurityCertificatesController.oneOpen(ksFile);
                     }
                     certController.loadAll(alias);
-                    if (saveCloseCheck.isSelected()) {
+                    if (closeAfterCheck.isSelected()) {
                         closeStage();
                     }
                     popSuccessful();
@@ -196,12 +173,6 @@ public class SecurityCertificatesAddController extends BaseController {
             }
         };
         start(task);
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        closeStage();
     }
 
     /*

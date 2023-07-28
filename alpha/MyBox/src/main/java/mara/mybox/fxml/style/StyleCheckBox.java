@@ -118,7 +118,7 @@ public class StyleCheckBox {
                 return new StyleData("displaySizeCheck", "", message("DisplaySize"), "", "iconNumber.png");
             case "topCheck":
                 return new StyleData("topCheck", "", message("AlwayOnTop"), "", "iconTop.png");
-            case "saveCloseCheck":
+            case "closeAfterCheck":
                 return new StyleData(id, "", message("CloseAfterHandled"), "", "iconClose.png");
             case "deskewCheck":
                 return new StyleData("deskewCheck", "", message("Deskew"), "", "iconShear.png");

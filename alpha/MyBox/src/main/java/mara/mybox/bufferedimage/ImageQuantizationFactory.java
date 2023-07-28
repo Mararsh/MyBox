@@ -69,10 +69,11 @@ public class ImageQuantizationFactory {
                     setQuantizationSize(quantizationSize)
                     .setRegionSize(regionSize)
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
-                    .setRecordCount(recordCount).setFirstColor(firstColor)
+                    .setRecordCount(recordCount)
+                    .setFirstColor(firstColor)
                     .setOperationType(PixelsOperation.OperationType.Quantization)
                     .setImage(image).setScope(scope).setIsDithering(dithering);
-            return quantization.buildPalette(recordCount);
+            return quantization.buildPalette();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -89,9 +90,8 @@ public class ImageQuantizationFactory {
         }
 
         @Override
-        public RGBUniformQuantization buildPalette(boolean recordCount) {
+        public RGBUniformQuantization buildPalette() {
             try {
-                this.recordCount = recordCount;
                 double redWegiht = weight1 < 1 ? 1 : weight1;
                 double greenWegiht = weight2 < 1 ? 1 : weight2;
                 double blueWegiht = weight3 < 1 ? 1 : weight3;
@@ -187,7 +187,7 @@ public class ImageQuantizationFactory {
         }
 
         @Override
-        public HSBUniformQuantization buildPalette(boolean recordCount) {
+        public HSBUniformQuantization buildPalette() {
             try {
                 double hueWegiht = weight1 < 1 ? 1 : weight1;
                 double saturationWegiht = weight2 < 1 ? 1 : weight2;
@@ -281,7 +281,7 @@ public class ImageQuantizationFactory {
         protected boolean large;
 
         @Override
-        public RegionQuantization buildPalette(boolean recordCount) {
+        public RegionQuantization buildPalette() {
             try {
                 large = image.getWidth() * image.getHeight() > regionSize;
                 if (large) {
@@ -291,7 +291,7 @@ public class ImageQuantizationFactory {
                             .setRecordCount(recordCount)
                             .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
                             .setIsDithering(isDithering);
-                    rgbPalette.buildPalette(recordCount);
+                    rgbPalette.buildPalette();
                 }
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -337,8 +337,8 @@ public class ImageQuantizationFactory {
         }
 
         @Override
-        public RegionQuantization buildPalette(boolean recordCount) {
-            super.buildPalette(recordCount);
+        public RegionQuantization buildPalette() {
+            super.buildPalette();
             regionsMap = new HashMap<>();
             return this;
         }
@@ -403,7 +403,7 @@ public class ImageQuantizationFactory {
         }
 
         @Override
-        public PopularityQuantization buildPalette(boolean recordCount) {
+        public PopularityQuantization buildPalette() {
             try {
                 regionQuantization = PopularityRegionQuantization.create();
                 regionQuantization.setRegionSize(regionSize)
@@ -413,7 +413,7 @@ public class ImageQuantizationFactory {
                         .setImage(image).setScope(scope).
                         setOperationType(PixelsOperation.OperationType.Quantization).
                         setIsDithering(isDithering);
-                regionQuantization.buildPalette(false).operate();
+                regionQuantization.buildPalette().operate();
                 regions = regionQuantization.getRegions(quantizationSize);
 
                 if (recordCount) {
@@ -467,8 +467,8 @@ public class ImageQuantizationFactory {
         }
 
         @Override
-        public RegionQuantization buildPalette(boolean recordCount) {
-            super.buildPalette(true);
+        public RegionQuantization buildPalette() {
+            super.buildPalette();
             regionColors = new ArrayList<>();
             return this;
         }
@@ -491,22 +491,8 @@ public class ImageQuantizationFactory {
         }
 
         @Override
-        public KMeansClusteringQuantization buildPalette(boolean recordCount) {
-            KMeansRegionQuantization regionQuantization = KMeansRegionQuantization.create();
-            regionQuantization.setRegionSize(regionSize)
-                    .setFirstColor(firstColor)
-                    .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
-                    .setRecordCount(true)
-                    .setImage(image).setScope(scope).
-                    setOperationType(PixelsOperation.OperationType.Quantization).
-                    setIsDithering(isDithering);
-            regionQuantization.buildPalette(true).operate();
-
-            kmeans = ImageRGBKMeans.create();
-            kmeans.setK(quantizationSize);
-            if (kmeans.init(regionQuantization).run()) {
-                kmeans.makeMap();
-            }
+        public KMeansClusteringQuantization buildPalette() {
+            kmeans = imageKMeans();
             if (recordCount) {
                 counts = new HashMap<>();
             }

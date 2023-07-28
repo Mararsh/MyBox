@@ -25,6 +25,7 @@ public class SvgFromImageBatchController extends BaseBatchFileController {
 
     public SvgFromImageBatchController() {
         baseTitle = message("ImageToSvg");
+        targetFileSuffix = "svg";
     }
 
     @Override
