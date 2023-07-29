@@ -30,7 +30,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     protected Slider angleSlider;
     @FXML
-    protected Button shearButton;
+    protected Button shearButton, rotateLeftButton, rotateRightButton;
 
     @Override
     public void initPane() {
@@ -97,7 +97,6 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     }
 
     @FXML
-    @Override
     public void rotateRight() {
         if (task != null) {
             task.cancel();
@@ -126,7 +125,6 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     }
 
     @FXML
-    @Override
     public void rotateLeft() {
         if (task != null) {
             task.cancel();
@@ -239,7 +237,6 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         start(task);
     }
 
-    @Override
     public void rotate(int angle) {
         imageView.setRotate(angle);
     }

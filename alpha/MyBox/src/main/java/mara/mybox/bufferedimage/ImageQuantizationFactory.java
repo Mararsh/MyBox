@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
 import mara.mybox.controller.ControlImageQuantization;
 import mara.mybox.dev.MyBoxLog;
@@ -32,16 +33,19 @@ public class ImageQuantizationFactory {
         return create(image, scope, quantizationController.getAlgorithm(),
                 quantizationController.getQuanColors(),
                 quantizationController.getRegionSize(),
-                quantizationController.getWeight1(),
-                quantizationController.getWeight2(),
-                quantizationController.getWeight3(),
+                quantizationController.getAlgorithm() == QuantizationAlgorithm.HSBUniformQuantization
+                ? quantizationController.getHsbWeight1() : quantizationController.getRgbWeight1(),
+                quantizationController.getAlgorithm() == QuantizationAlgorithm.HSBUniformQuantization
+                ? quantizationController.getHsbWeight2() : quantizationController.getRgbWeight2(),
+                quantizationController.getAlgorithm() == QuantizationAlgorithm.HSBUniformQuantization
+                ? quantizationController.getHsbWeight3() : quantizationController.getRgbWeight3(),
                 recordCount,
                 quantizationController.getQuanDitherCheck().isSelected(),
                 quantizationController.getFirstColorCheck().isSelected());
     }
 
     public static ImageQuantization create(BufferedImage image, ImageScope scope,
-            ImageQuantization.QuantizationAlgorithm algorithm, int quantizationSize,
+            QuantizationAlgorithm algorithm, int quantizationSize,
             int regionSize, int weight1, int weight2, int weight3,
             boolean recordCount, boolean dithering, boolean firstColor) {
         try {
@@ -92,28 +96,30 @@ public class ImageQuantizationFactory {
         @Override
         public RGBUniformQuantization buildPalette() {
             try {
-                double redWegiht = weight1 < 1 ? 1 : weight1;
-                double greenWegiht = weight2 < 1 ? 1 : weight2;
-                double blueWegiht = weight3 < 1 ? 1 : weight3;
-                double sum = weight1 + weight2 + weight3;
+                float redWegiht = weight1 < 1 ? 1 : weight1;
+                float greenWegiht = weight2 < 1 ? 1 : weight2;
+                float blueWegiht = weight3 < 1 ? 1 : weight3;
+                float sum = weight1 + weight2 + weight3;
                 redWegiht = redWegiht / sum;
                 greenWegiht = greenWegiht / sum;
                 blueWegiht = blueWegiht / sum;
-                double x = Math.cbrt(quantizationSize / (redWegiht * greenWegiht * blueWegiht));
+                float x = (float) Math.cbrt(regionSize / (redWegiht * greenWegiht * blueWegiht));
 
-                double redValue = redWegiht * x;
-                redSize = (int) Math.ceil(redValue);
-                redMod = (int) Math.ceil(256 / redValue);
+                float redValue = redWegiht * x;
+                redMod = (int) (256 / redValue);
+                redSize = (int) (256 / redMod) + 1;
 
-                double greenValue = greenWegiht * x;
-                greenSize = (int) Math.ceil(greenValue);
-                greenMod = (int) Math.ceil(256 / greenValue);
+                float greenValue = greenWegiht * x;
+                greenMod = (int) (256 / greenValue);
+                greenSize = (int) (256 / greenMod) + 1;
 
-                double blueValue = blueWegiht * x;
-                blueSize = (int) Math.ceil(blueValue);
-                blueMod = (int) Math.ceil(256 / blueValue);
+                float blueValue = blueWegiht * x;
+                blueMod = (int) (256 / blueValue);
+                blueSize = (int) (256 / blueMod) + 1;
 
-//            MyBoxLog.console(redMod + " " + greenMod + " " + blueMod + " ");
+//                MyBoxLog.console("regionSize:" + regionSize + " x:" + x);
+//                MyBoxLog.console("redMod:" + redMod + " greenMod:" + greenMod + " blueMod:" + blueMod);
+//                MyBoxLog.console("redSize:" + redSize + " greenSize:" + greenSize + " blueSize:" + blueSize);
                 if (redSize <= 0 || greenSize <= 0 || blueSize <= 0
                         || redMod <= 0 || greenMod <= 0 || blueMod <= 0) {
                     MyBoxLog.error(message("InvalidParameters"));
@@ -139,41 +145,45 @@ public class ImageQuantizationFactory {
 
         @Override
         public Color operateColor(Color color) {
-            if (color.getRGB() == 0) {
-                return color;
-            }
-            int red = color.getRed();
-            int green = color.getGreen();
-            int blue = color.getBlue();
-            Color mappedColor;
-            if (firstColor) {
-                int indexRed = red / redMod;
-                int indexGreen = green / greenMod;
-                int indexBlue = blue / blueMod;
-                if (palette[indexRed][indexGreen][indexBlue] == null) {
-                    palette[indexRed][indexGreen][indexBlue] = color;
-                    mappedColor = color;
+            try {
+                if (color.getRGB() == 0) {
+                    return color;
+                }
+                int red = color.getRed();
+                int green = color.getGreen();
+                int blue = color.getBlue();
+                Color mappedColor;
+                if (firstColor) {
+                    int indexRed = red / redMod;
+                    int indexGreen = green / greenMod;
+                    int indexBlue = blue / blueMod;
+                    if (palette[indexRed][indexGreen][indexBlue] == null) {
+                        palette[indexRed][indexGreen][indexBlue] = color;
+                        mappedColor = color;
+                    } else {
+                        mappedColor = palette[indexRed][indexGreen][indexBlue];
+                    }
+
                 } else {
-                    mappedColor = palette[indexRed][indexGreen][indexBlue];
+                    red = red - (red % redMod) + redOffset;
+                    red = Math.min(Math.max(red, 0), 255);
+
+                    green = green - (green % greenMod) + greenOffset;
+                    green = Math.min(Math.max(green, 0), 255);
+
+                    blue = blue - (blue % blueMod) + blueOffset;
+                    blue = Math.min(Math.max(blue, 0), 255);
+
+                    mappedColor = new Color(red, green, blue);
                 }
 
-            } else {
-                red = red - (red % redMod) + redOffset;
-                red = Math.min(Math.max(red, 0), 255);
-
-                green = green - (green % greenMod) + greenOffset;
-                green = Math.min(Math.max(green, 0), 255);
-
-                blue = blue - (blue % blueMod) + blueOffset;
-                blue = Math.min(Math.max(blue, 0), 255);
-
-                mappedColor = new Color(red, green, blue);
+                countColor(mappedColor);
+                return mappedColor;
+            } catch (Exception e) {
+//                MyBoxLog.error(e);
+                return color;
             }
-
-            countColor(mappedColor);
-            return mappedColor;
         }
-
     }
 
     public static class HSBUniformQuantization extends ImageQuantization {
@@ -189,27 +199,30 @@ public class ImageQuantizationFactory {
         @Override
         public HSBUniformQuantization buildPalette() {
             try {
-                double hueWegiht = weight1 < 1 ? 1 : weight1;
-                double saturationWegiht = weight2 < 1 ? 1 : weight2;
-                double brightnessWegiht = weight3 < 1 ? 1 : weight3;
-                double sum = hueWegiht + saturationWegiht + brightnessWegiht;
+                float hueWegiht = weight1 < 1 ? 1 : weight1;
+                float saturationWegiht = weight2 < 1 ? 1 : weight2;
+                float brightnessWegiht = weight3 < 1 ? 1 : weight3;
+                float sum = hueWegiht + saturationWegiht + brightnessWegiht;
                 hueWegiht = hueWegiht / sum;
                 saturationWegiht = saturationWegiht / sum;
                 brightnessWegiht = brightnessWegiht / sum;
-                double x = Math.cbrt(quantizationSize / (hueWegiht * saturationWegiht * brightnessWegiht));
+                float x = (float) Math.cbrt(regionSize / (hueWegiht * saturationWegiht * brightnessWegiht));
 
-                double hueValue = hueWegiht * x;
-                hueSize = (int) Math.ceil(hueValue);
-                hueMod = (int) Math.ceil(360 / hueValue);
+                float hueValue = hueWegiht * x;
+                hueMod = (int) (360 / hueValue);
+                hueSize = (int) (360 / hueMod) + 1;
 
-                double saturationValue = saturationWegiht * x;
-                saturationSize = (int) Math.ceil(saturationValue);
-                saturationMod = (int) Math.ceil(100 / saturationValue);
+                float saturationValue = saturationWegiht * x;
+                saturationMod = (int) (100 / saturationValue);
+                saturationSize = (int) (100 / saturationMod) + 1;
 
-                double brightnessValue = brightnessWegiht * x;
-                brightnessSize = (int) Math.ceil(brightnessValue);
-                brightnessMod = (int) Math.ceil(100 / brightnessValue);
+                float brightnessValue = brightnessWegiht * x;
+                brightnessMod = (int) (100 / brightnessValue);
+                brightnessSize = (int) (100 / brightnessMod) + 1;
 
+//                MyBoxLog.console("regionSize:" + regionSize + " x:" + x);
+//                MyBoxLog.console("hueMod:" + hueMod + " saturationMod:" + saturationMod + " brightnessMod:" + brightnessMod);
+//                MyBoxLog.console("hueSize:" + hueSize + " saturationSize:" + saturationSize + " brightnessSize:" + brightnessSize);
                 if (hueSize <= 0 || saturationSize <= 0 || saturationSize <= 0
                         || hueMod <= 0 || saturationMod <= 0 || brightnessMod <= 0) {
                     MyBoxLog.error(message("InvalidParameters"));
@@ -235,44 +248,47 @@ public class ImageQuantizationFactory {
 
         @Override
         public Color operateColor(Color color) {
-            if (color.getRGB() == 0) {
-                return color;
-            }
-            Color mappedColor;
-            float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-            float h, s, b;
+            try {
+                if (color.getRGB() == 0) {
+                    return color;
+                }
+                Color mappedColor;
+                float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+                float h, s, b;
 
-            int hue = (int) (hsb[0] * 360);
-            int saturation = (int) (hsb[1] * 100);
-            int brightness = (int) (hsb[2] * 100);
+                int hue = (int) (hsb[0] * 360);
+                int saturation = (int) (hsb[1] * 100);
+                int brightness = (int) (hsb[2] * 100);
+                if (firstColor) {
+                    int indexHue = hue / hueMod;
+                    int indexSaturation = saturation / saturationMod;
+                    int indexBrightness = brightness / brightnessMod;
+                    if (palette[indexHue][indexSaturation][indexBrightness] == null) {
+                        palette[indexHue][indexSaturation][indexBrightness] = color;
+                        mappedColor = color;
+                    } else {
+                        mappedColor = palette[indexHue][indexSaturation][indexBrightness];
+                    }
 
-            if (firstColor) {
-                int indexHue = hue / hueMod;
-                int indexSaturation = saturation / saturationMod;
-                int indexBrightness = brightness / brightnessMod;
-                if (palette[indexHue][indexSaturation][indexBrightness] == null) {
-                    palette[indexHue][indexSaturation][indexBrightness] = color;
-                    mappedColor = color;
                 } else {
-                    mappedColor = palette[indexHue][indexSaturation][indexBrightness];
+                    hue = hue - (hue % hueMod) + hueOffset;
+                    h = Math.min(Math.max(hue / 360.0f, 0.0f), 1.0f);
+
+                    saturation = saturation - (saturation % saturationMod) + saturationOffset;
+                    s = Math.min(Math.max(saturation / 100.0f, 0.0f), 1.0f);
+
+                    brightness = brightness - (brightness % brightnessMod) + brightnessOffset;
+                    b = Math.min(Math.max(brightness / 100.0f, 0.0f), 1.0f);
+                    mappedColor = Color.getHSBColor(h, s, b);
                 }
 
-            } else {
-                hue = hue - (hue % hueMod) + hueOffset;
-                h = Math.min(Math.max(hue / 360.0f, 0.0f), 1.0f);
-
-                saturation = saturation - (saturation % saturationMod) + saturationOffset;
-                s = Math.min(Math.max(saturation / 100.0f, 0.0f), 1.0f);
-
-                brightness = brightness - (brightness % brightnessMod) + brightnessOffset;
-                b = Math.min(Math.max(brightness / 100.0f, 0.0f), 1.0f);
-                mappedColor = Color.getHSBColor(h, s, b);
+                countColor(mappedColor);
+                return mappedColor;
+            } catch (Exception e) {
+//                MyBoxLog.error(e);
+                return color;
             }
-
-            countColor(mappedColor);
-            return mappedColor;
         }
-
     }
 
     public static class RegionQuantization extends ImageQuantization {
@@ -286,7 +302,7 @@ public class ImageQuantizationFactory {
                 large = image.getWidth() * image.getHeight() > regionSize;
                 if (large) {
                     rgbPalette = RGBUniformQuantization.create();
-                    rgbPalette.setQuantizationSize(regionSize)
+                    rgbPalette.setRegionSize(regionSize)
                             .setFirstColor(firstColor)
                             .setRecordCount(recordCount)
                             .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)

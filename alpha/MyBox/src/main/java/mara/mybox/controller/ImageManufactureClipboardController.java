@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -38,7 +39,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
-    protected int keepRatioType;
+    protected int keepRatioType, rotateAngle, currentAngle;
 
     @FXML
     protected ControlImagesClipboard clipsController;
@@ -48,6 +49,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     protected ComboBox<String> angleBox, ratioBox;
     @FXML
     protected CheckBox keepRatioCheck, enlargeCheck;
+    @FXML
+    protected Button rotateLeftButton, rotateRightButton;
     @FXML
     protected Label listLabel;
     @FXML
@@ -313,13 +316,11 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @FXML
-    @Override
     public void rotateRight() {
         pasteClip(rotateAngle);
     }
 
     @FXML
-    @Override
     public void rotateLeft() {
         pasteClip(360 - rotateAngle);
 

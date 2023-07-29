@@ -194,7 +194,7 @@ public class ControlImageEffectOptions extends BaseController {
         intInput3.setStyle(null);
         stringBox.setEditable(false);
         intBox.setEditable(false);
-        quantizationController.actualLoopLabel.setText("");
+        quantizationController.resultsLabel.setText("");
         if (paletteAddButton != null) {
             paletteAddButton.setVisible(false);
         }

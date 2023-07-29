@@ -138,7 +138,7 @@ public class ImageAnalyseDominantController extends BaseController {
     public void clear() {
         colorsController.clear();
         dominantPie.getData().clear();
-        quantizationController.actualLoopLabel.setText("");
+        quantizationController.resultsLabel.setText("");
         colors = null;
     }
 
@@ -181,7 +181,7 @@ public class ImageAnalyseDominantController extends BaseController {
 
             colorsController.loadContents​(html);
             if (quantizationController.algorithm == QuantizationAlgorithm.KMeansClustering) {
-                quantizationController.actualLoopLabel.setText(message("ActualLoop") + ":"
+                quantizationController.resultsLabel.setText(message("ActualLoop") + ":"
                         + ((KMeansClusteringQuantization) quantization).getKmeans().getLoopCount());
             }
 

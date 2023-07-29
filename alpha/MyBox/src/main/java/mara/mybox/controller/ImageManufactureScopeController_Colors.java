@@ -68,16 +68,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
     }
 
     @Override
-    public boolean controlAltK() {
-        if (tabPane.getTabs().contains(colorsTab)) {
-            pickColorCheck.setSelected(!pickColorCheck.isSelected());
-        } else {
-            isPickingColor = false;
-        }
-        return true;
-    }
-
-    @Override
     protected void startPickingColor() {
         if (!tabPane.getTabs().contains(colorsTab)) {
             isPickingColor = false;

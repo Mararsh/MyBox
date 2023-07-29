@@ -444,9 +444,9 @@ public class SvgTools {
             kmeans.setAlgorithm(KMeansClustering).
                     setQuantizationSize(quantization.getQuanColors())
                     .setRegionSize(quantization.getRegionSize())
-                    .setWeight1(quantization.getWeight1())
-                    .setWeight2(quantization.getWeight2())
-                    .setWeight3(quantization.getWeight3())
+                    .setWeight1(quantization.getRgbWeight1())
+                    .setWeight2(quantization.getRgbWeight2())
+                    .setWeight3(quantization.getRgbWeight3())
                     .setRecordCount(false)
                     .setFirstColor(quantization.getFirstColorCheck().isSelected())
                     .setOperationType(PixelsOperation.OperationType.Quantization)

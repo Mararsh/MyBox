@@ -1,16 +1,12 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -21,29 +17,9 @@ public class SvgFromImageController extends BaseChildController {
 
     @FXML
     protected ControlSvgFromImage optionsController;
-    @FXML
-    protected CheckBox closeAfterCheck;
 
     public SvgFromImageController() {
         baseTitle = message("ImageToSvg");
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
-                }
-            });
-            closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     public void setParameters(File file) {

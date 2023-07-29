@@ -1,7 +1,6 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -135,12 +134,6 @@ public class ImageQuantization extends PixelsOperation {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    @Override
-    public BufferedImage operate() {
-        image = AlphaTools.removeAlpha(image);
-        return super.operate();
     }
 
     @Override

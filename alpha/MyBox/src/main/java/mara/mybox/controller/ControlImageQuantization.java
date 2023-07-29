@@ -12,13 +12,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
-import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
-import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.PopularityQuantization;
-import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.RGBUniformQuantization;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -28,8 +25,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageQuantization extends BaseController {
 
-    protected int regionSize, weight1, weight2, weight3,
-            quanColors, kmeansLoop;
+    protected int regionSize, quanColors, kmeansLoop,
+            rgbWeight1, rgbWeight2, rgbWeight3, hsbWeight1, hsbWeight2, hsbWeight3;
     protected QuantizationAlgorithm algorithm;
 
     @FXML
@@ -37,14 +34,16 @@ public class ControlImageQuantization extends BaseController {
     @FXML
     protected RadioButton rgbQuanRadio, hsbQuanRadio, popularQuanRadio, kmeansQuanRadio;
     @FXML
-    protected FlowPane regionPane, loopPane;
+    protected VBox setBox;
     @FXML
-    protected ComboBox<String> weightSelector, quanColorsSelector,
+    protected FlowPane regionPane, numberPane, loopPane, rgbWeightPane, hsbWeightPane;
+    @FXML
+    protected ComboBox<String> rgbWeightSelector, hsbWeightSelector, quanColorsSelector,
             regionSizeSelector, kmeansLoopSelector;
     @FXML
     protected CheckBox quanDitherCheck, quanDataCheck, firstColorCheck;
     @FXML
-    protected Label weightLabel, actualLoopLabel;
+    protected Label resultsLabel;
     @FXML
     protected ImageView imageQuantizationTipsView;
 
@@ -80,7 +79,7 @@ public class ControlImageQuantization extends BaseController {
 
             regionSize = UserConfig.getInt(baseName + "RegionSize", 4096);
             regionSize = regionSize <= 0 ? 4096 : regionSize;
-            regionSizeSelector.getItems().addAll(Arrays.asList("4096", "1024", "256", "8192", "512", "128"));
+            regionSizeSelector.getItems().addAll(Arrays.asList("4096", "1024", "256", "8192", "2048", "512", "128", "16", "27", "64"));
             regionSizeSelector.setValue(regionSize + "");
             regionSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -102,7 +101,15 @@ public class ControlImageQuantization extends BaseController {
                 }
             });
 
-            weightSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            rgbWeight1 = 2;
+            rgbWeight2 = 4;
+            rgbWeight3 = 3;
+            String defaultV = UserConfig.getString(baseName + "RGBWeights", "2:4:3");
+            rgbWeightSelector.getItems().addAll(Arrays.asList(
+                    "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
+            ));
+            rgbWeightSelector.setValue(defaultV);
+            rgbWeightSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
@@ -111,18 +118,51 @@ public class ControlImageQuantization extends BaseController {
                         int v2 = Integer.parseInt(values[1]);
                         int v3 = Integer.parseInt(values[2]);
                         if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            weightSelector.getEditor().setStyle(UserConfig.badStyle());
+                            rgbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
                             return;
                         }
-                        weight1 = v1;
-                        weight2 = v2;
-                        weight3 = v3;
-                        weightSelector.getEditor().setStyle(null);
+                        rgbWeight1 = v1;
+                        rgbWeight2 = v2;
+                        rgbWeight3 = v3;
+                        rgbWeightSelector.getEditor().setStyle(null);
                         if (!isSettingValues) {
-                            UserConfig.setString(baseName + (hsbQuanRadio.isSelected() ? "HSBWeights" : "RGBWeights"), newValue);
+                            UserConfig.setString(baseName + "RGBWeights", newValue);
                         }
                     } catch (Exception e) {
-                        weightSelector.getEditor().setStyle(UserConfig.badStyle());
+                        rgbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+            hsbWeight1 = 6;
+            hsbWeight2 = 10;
+            hsbWeight3 = 100;
+            defaultV = UserConfig.getString(baseName + "HSBWeights", "6:10:100");
+            hsbWeightSelector.getItems().addAll(Arrays.asList(
+                    "6:10:100", "12:4:10", "24:10:10", "12:10:40", "24:10:40", "12:20:40", "12:10:80", "6:10:80"
+            ));
+            hsbWeightSelector.setValue(defaultV);
+            hsbWeightSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        String[] values = newValue.split(":");
+                        int v1 = Integer.parseInt(values[0]);
+                        int v2 = Integer.parseInt(values[1]);
+                        int v3 = Integer.parseInt(values[2]);
+                        if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
+                            hsbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
+                            return;
+                        }
+                        hsbWeight1 = v1;
+                        hsbWeight2 = v2;
+                        hsbWeight3 = v3;
+                        hsbWeightSelector.getEditor().setStyle(null);
+                        if (!isSettingValues) {
+                            UserConfig.setString(baseName + "HSBWeights", newValue);
+                        }
+                    } catch (Exception e) {
+                        hsbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -197,75 +237,30 @@ public class ControlImageQuantization extends BaseController {
     }
 
     protected void checkAlgorithm() {
+        setBox.getChildren().clear();
+        resultsLabel.setText("");
+
         if (rgbQuanRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.RGBUniformQuantization;
+            setBox.getChildren().addAll(regionPane, rgbWeightPane);
+
         } else if (hsbQuanRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.HSBUniformQuantization;
+            setBox.getChildren().addAll(regionPane, hsbWeightPane);
+
         } else if (popularQuanRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.PopularityQuantization;
+            setBox.getChildren().addAll(numberPane, regionPane, rgbWeightPane);
+
         } else if (kmeansQuanRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.KMeansClustering;
+            setBox.getChildren().addAll(numberPane, regionPane, rgbWeightPane);
+
         } else {
             algorithm = null;
-            return;
         }
-        switch (algorithm) {
-            case HSBUniformQuantization:
-                if (thisPane.getChildren().contains(regionPane)) {
-                    thisPane.getChildren().removeAll(regionPane, loopPane, actualLoopLabel);
-                }
-                weightLabel.setText(message("HSBWeight"));
-                break;
-            case RGBUniformQuantization:
-                if (thisPane.getChildren().contains(regionPane)) {
-                    thisPane.getChildren().removeAll(regionPane, loopPane, actualLoopLabel);
-                }
-                weightLabel.setText(message("RGBWeight"));
-                break;
-            case KMeansClustering:
-                if (!thisPane.getChildren().contains(regionPane)) {
-                    thisPane.getChildren().add(7, regionPane);
-                }
-                if (!thisPane.getChildren().contains(loopPane)) {
-                    thisPane.getChildren().add(8, loopPane);
-                    thisPane.getChildren().add(actualLoopLabel);
-                }
-                actualLoopLabel.setText("");
-                weightLabel.setText(message("RGBWeight"));
-                break;
-            case PopularityQuantization:
-                if (!thisPane.getChildren().contains(regionPane)) {
-                    thisPane.getChildren().add(7, regionPane);
-                }
-                if (thisPane.getChildren().contains(loopPane)) {
-                    thisPane.getChildren().removeAll(loopPane, actualLoopLabel);
-                }
-                weightLabel.setText(message("RGBWeight"));
-        }
-        isSettingValues = true;
-        weightSelector.getItems().clear();
-        if (hsbQuanRadio.isSelected()) {
-            weight1 = 4;
-            weight2 = 4;
-            weight3 = 1;
-            String defaultV = UserConfig.getString(baseName + "HSBWeights", "6:10:100");
-            weightSelector.getItems().addAll(Arrays.asList(
-                    "6:10:100", "12:4:10", "24:10:10", "12:10:40", "24:10:40", "12:20:40", "12:10:80", "6:10:80"
-            ));
-            weightSelector.setValue(defaultV);
-        } else {
-            weight1 = 2;
-            weight2 = 4;
-            weight3 = 4;
-            String defaultV = UserConfig.getString(baseName + "RGBWeights", "2:4:3");
-            weightSelector.getItems().addAll(Arrays.asList(
-                    "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
-            ));
-            weightSelector.setValue(defaultV);
-        }
-        isSettingValues = false;
 
-        refreshStyle(thisPane);
+        refreshStyle(setBox);
     }
 
     protected void defaultForAnalyse() {
@@ -281,7 +276,7 @@ public class ControlImageQuantization extends BaseController {
 
         quanColorsSelector.setValue("5");
         regionSizeSelector.setValue("256");
-        weightSelector.setValue("2:4:3");
+        rgbWeightSelector.setValue("2:4:3");
         kmeansLoopSelector.setValue("10000");
 
         isSettingValues = false;
@@ -300,7 +295,7 @@ public class ControlImageQuantization extends BaseController {
 
         quanColorsSelector.setValue("16");
         regionSizeSelector.setValue("4096");
-        weightSelector.setValue("2:4:3");
+        rgbWeightSelector.setValue("2:4:3");
         kmeansLoopSelector.setValue("10000");
 
         isSettingValues = false;
@@ -315,30 +310,6 @@ public class ControlImageQuantization extends BaseController {
 
     public void setRegionSize(int regionSize) {
         this.regionSize = regionSize;
-    }
-
-    public int getWeight1() {
-        return weight1;
-    }
-
-    public void setWeight1(int weight1) {
-        this.weight1 = weight1;
-    }
-
-    public int getWeight2() {
-        return weight2;
-    }
-
-    public void setWeight2(int weight2) {
-        this.weight2 = weight2;
-    }
-
-    public int getWeight3() {
-        return weight3;
-    }
-
-    public void setWeight3(int weight3) {
-        this.weight3 = weight3;
     }
 
     public int getQuanColors() {
@@ -363,6 +334,102 @@ public class ControlImageQuantization extends BaseController {
 
     public void setAlgorithm(QuantizationAlgorithm algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public int getRgbWeight1() {
+        return rgbWeight1;
+    }
+
+    public void setRgbWeight1(int rgbWeight1) {
+        this.rgbWeight1 = rgbWeight1;
+    }
+
+    public int getRgbWeight2() {
+        return rgbWeight2;
+    }
+
+    public void setRgbWeight2(int rgbWeight2) {
+        this.rgbWeight2 = rgbWeight2;
+    }
+
+    public int getRgbWeight3() {
+        return rgbWeight3;
+    }
+
+    public void setRgbWeight3(int rgbWeight3) {
+        this.rgbWeight3 = rgbWeight3;
+    }
+
+    public int getHsbWeight1() {
+        return hsbWeight1;
+    }
+
+    public void setHsbWeight1(int hsbWeight1) {
+        this.hsbWeight1 = hsbWeight1;
+    }
+
+    public int getHsbWeight2() {
+        return hsbWeight2;
+    }
+
+    public void setHsbWeight2(int hsbWeight2) {
+        this.hsbWeight2 = hsbWeight2;
+    }
+
+    public int getHsbWeight3() {
+        return hsbWeight3;
+    }
+
+    public void setHsbWeight3(int hsbWeight3) {
+        this.hsbWeight3 = hsbWeight3;
+    }
+
+    public VBox getSetBox() {
+        return setBox;
+    }
+
+    public void setSetBox(VBox setBox) {
+        this.setBox = setBox;
+    }
+
+    public FlowPane getNumberPane() {
+        return numberPane;
+    }
+
+    public void setNumberPane(FlowPane numberPane) {
+        this.numberPane = numberPane;
+    }
+
+    public FlowPane getRgbWeightPane() {
+        return rgbWeightPane;
+    }
+
+    public void setRgbWeightPane(FlowPane rgbWeightPane) {
+        this.rgbWeightPane = rgbWeightPane;
+    }
+
+    public FlowPane getHsbWeightPane() {
+        return hsbWeightPane;
+    }
+
+    public void setHsbWeightPane(FlowPane hsbWeightPane) {
+        this.hsbWeightPane = hsbWeightPane;
+    }
+
+    public ComboBox<String> getRgbWeightSelector() {
+        return rgbWeightSelector;
+    }
+
+    public void setRgbWeightSelector(ComboBox<String> rgbWeightSelector) {
+        this.rgbWeightSelector = rgbWeightSelector;
+    }
+
+    public ComboBox<String> getHsbWeightSelector() {
+        return hsbWeightSelector;
+    }
+
+    public void setHsbWeightSelector(ComboBox<String> hsbWeightSelector) {
+        this.hsbWeightSelector = hsbWeightSelector;
     }
 
     public ToggleGroup getQuanGroup() {
@@ -421,14 +488,6 @@ public class ControlImageQuantization extends BaseController {
         this.loopPane = loopPane;
     }
 
-    public ComboBox<String> getWeightSelector() {
-        return weightSelector;
-    }
-
-    public void setWeightSelector(ComboBox<String> weightSelector) {
-        this.weightSelector = weightSelector;
-    }
-
     public ComboBox<String> getQuanColorsSelector() {
         return quanColorsSelector;
     }
@@ -477,20 +536,12 @@ public class ControlImageQuantization extends BaseController {
         this.firstColorCheck = firstColorCheck;
     }
 
-    public Label getWeightLabel() {
-        return weightLabel;
+    public Label getResultsLabel() {
+        return resultsLabel;
     }
 
-    public void setWeightLabel(Label weightLabel) {
-        this.weightLabel = weightLabel;
-    }
-
-    public Label getActualLoopLabel() {
-        return actualLoopLabel;
-    }
-
-    public void setActualLoopLabel(Label actualLoopLabel) {
-        this.actualLoopLabel = actualLoopLabel;
+    public void setResultsLabel(Label resultsLabel) {
+        this.resultsLabel = resultsLabel;
     }
 
     public ImageView getImageQuantizationTipsView() {

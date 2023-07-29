@@ -21,10 +21,10 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-9-5
  * @License Apache License Version 2.0
  */
-public class ImageManufactureOperationsController extends ImageViewerController {
-    
+public class ImageManufactureOperationsController extends BaseController {
+
     protected ImageManufactureController editor;
-    
+
     protected ImageManufactureCopyController copyController;
     protected ImageManufactureClipboardController clipboardController;
     protected ImageManufactureCropController cropController;
@@ -40,26 +40,25 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     protected ImageManufactureShadowController shadowController;
     protected ImageManufactureMarginsController marginsController;
     protected ImageManufactureOperationController currentController;
-    
+
     @FXML
     protected Accordion accordionPane;
     @FXML
     protected TitledPane copyPane, clipboardPane, cropPane, scalePane, colorPane,
             effectPane, enhancementPane, transformPane, shadowPane,
             marginsPane, arcPane, shapePane, eliminatePane, textPane, richTextPane;
-    
+
     public ImageManufactureOperationsController() {
         baseTitle = Languages.message("ImageManufacture");
     }
-    
+
     public void setParameters(ImageManufactureController parent) {
         this.parentController = parent;
         editor = parent;
-        imageView = editor.imageView;
         baseName = editor.baseName;
         initPanes();
     }
-    
+
     public void initPanes() {
         try {
             copyPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
@@ -72,7 +71,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(copyController, n);
                 }
             });
-            
+
             clipboardPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -83,7 +82,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(clipboardController, n);
                 }
             });
-            
+
             cropPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -94,7 +93,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(cropController, n);
                 }
             });
-            
+
             colorPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -105,7 +104,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(colorController, n);
                 }
             });
-            
+
             effectPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -116,7 +115,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(effectController, n);
                 }
             });
-            
+
             enhancementPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -127,7 +126,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(enhancementController, n);
                 }
             });
-            
+
             scalePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -138,7 +137,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(scaleController, n);
                 }
             });
-            
+
             transformPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -149,7 +148,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(transformController, n);
                 }
             });
-            
+
             shadowPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -160,7 +159,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(shadowController, n);
                 }
             });
-            
+
             marginsPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -171,7 +170,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(marginsController, n);
                 }
             });
-            
+
             arcPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -182,7 +181,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(arcController, n);
                 }
             });
-            
+
             shapePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -193,7 +192,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(shapeController, n);
                 }
             });
-            
+
             eliminatePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -204,7 +203,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(eliminateController, n);
                 }
             });
-            
+
             textPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -215,12 +214,12 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                     paneExpanded(textController, n);
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-    
+
     public void paneExpanded(ImageManufactureOperationController controller, boolean expanded) {
         if (controller == null) {
             return;
@@ -233,7 +232,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         }
 //        editor.adjustRightPane();
     }
-    
+
     protected ImageManufactureOperationController loadPane(TitledPane titledPane, String fxml) {
         try {
             if (titledPane.getContent() == null) {
@@ -248,7 +247,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                 controller.baseName = editor.baseName;
                 controller.baseTitle = editor.baseTitle;
                 controller.initPane();
-                
+
                 VBox box = new VBox();
                 box.getChildren().add(controller.getMyScene().getRoot());
                 box.setMinHeight(Region.USE_PREF_SIZE);
@@ -264,14 +263,14 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         }
         return null;
     }
-    
+
     public void resetOperationPanes() {
         if (currentController == null) {
             return;
         }
         currentController.resetOperationPane();
     }
-    
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (currentController != null) {
@@ -279,7 +278,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         }
         return false;
     }
-    
+
     @Override
     public BaseImageController refreshInterfaceAndFile() {
         return null;  //Bypass since this is part of frame
@@ -288,31 +287,24 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     /*
         events passed from image pane
      */
-    @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
         if (currentController != null) {
             currentController.paneClicked(event, p);
         }
     }
-    
-    @FXML
-    @Override
+
     public void mousePressed(MouseEvent event) {
         if (currentController != null) {
             currentController.mousePressed(event);
         }
     }
-    
-    @FXML
-    @Override
+
     public void mouseDragged(MouseEvent event) {
         if (currentController != null) {
             currentController.mouseDragged(event);
         }
     }
-    
-    @FXML
-    @Override
+
     public void mouseReleased(MouseEvent event) {
         if (currentController != null) {
             currentController.mouseReleased(event);
@@ -325,9 +317,9 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     public ImageManufactureClipboardController getClipboardController() {
         return clipboardController;
     }
-    
+
     public void setClipboardController(ImageManufactureClipboardController clipboardController) {
         this.clipboardController = clipboardController;
     }
-    
+
 }

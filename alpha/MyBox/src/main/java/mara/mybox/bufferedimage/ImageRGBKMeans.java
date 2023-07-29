@@ -122,31 +122,6 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         }
     }
 
-//    @Override
-    public Color calculateCenters2(List<Integer> cluster) {
-        try {
-            if (cluster == null || cluster.isEmpty()) {
-                return null;
-            }
-            long totalr = 0, totalg = 0, totalb = 0;
-            for (Integer index : cluster) {
-                Color regionColor = data.get(index);
-                totalr += regionColor.getRed();
-                totalg += regionColor.getGreen();
-                totalb += regionColor.getBlue();
-            }
-            long size = cluster.size();
-            Color centerColor = new Color(
-                    Math.min(255, (int) (totalr / size)),
-                    Math.min(255, (int) (totalg / size)),
-                    Math.min(255, (int) (totalb / size)));
-            return centerColor;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public Color map(Color color) {
         try {
             if (color.getRGB() == 0 || dataMap == null) {

@@ -95,7 +95,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         paletteAddButton.setVisible(false);
         htmlButton.setVisible(false);
         quanTable = null;
-        optionsController.quantizationController.actualLoopLabel.setText("");
+        optionsController.quantizationController.resultsLabel.setText("");
         if (editor == null || optionsController.effectType == null) {
             return;
         }
@@ -225,7 +225,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         }
                     }
                     if (actualLoop >= 0) {
-                        optionsController.quantizationController.actualLoopLabel.setText(message("ActualLoop") + ":" + actualLoop);
+                        optionsController.quantizationController.resultsLabel.setText(message("ActualLoop") + ":" + actualLoop);
                     }
                     List<ImageQuantization.ColorCount> sortedCounts = quantization.getSortedCounts();
                     if (sortedCounts != null && !sortedCounts.isEmpty()) {

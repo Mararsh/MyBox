@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -40,8 +39,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     protected TitledPane createPane;
     @FXML
     protected Tab imageTab, scopeTab, hisTab, backupTab;
-    @FXML
-    protected FlowPane buttonsPane;
     @FXML
     protected ImageView maskView;
     @FXML
@@ -148,19 +145,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     @Override
     public boolean controlAltT() {
-        try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == imageTab) {
-                return super.controlAltT();
-
-            } else if (tab == scopeTab) {
-                return scopeController.controlAltT();
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
+        return true;
     }
 
     @Override
