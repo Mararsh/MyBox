@@ -1,14 +1,7 @@
 package mara.mybox.data;
 
-import java.awt.geom.PathIterator;
-import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.data.DoublePathSegment.PathSegmentType;
 import mara.mybox.dev.MyBoxLog;
-import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
-import org.apache.batik.ext.awt.geom.ExtendedPathIterator;
-import org.apache.batik.parser.AWTPathProducer;
-import org.apache.batik.parser.PathParser;
 
 /**
  * @Author Mara
@@ -16,92 +9,46 @@ import org.apache.batik.parser.PathParser;
  * @License Apache License Version 2.0
  */
 public class DoublePath extends DoubleRectangle {
-    
+
     protected String content;
-    protected DoublePoint startPoint;
     protected List<DoublePathSegment> segments;
-    
+    protected int scale;
+
     public DoublePath() {
+        init();
+    }
+
+    final public void init() {
         content = null;
-    }
-    
-    public DoublePath(String content) {
-        this.content = content;
-        startPoint = null;
         segments = null;
-        if (content == null || content.isBlank()) {
-            return;
-        }
-        try {
-            AWTPathProducer pathProducer = new AWTPathProducer();
-            PathParser pathParser = new PathParser();
-            pathParser.setPathHandler(pathProducer);
-            pathParser.parse(content);
-            
-            ExtendedGeneralPath exPath = (ExtendedGeneralPath) pathProducer.getShape();
-            startPoint = new DoublePoint(exPath.getCurrentPoint());
-            
-            ExtendedPathIterator exPathIterator = exPath.getExtendedPathIterator();
-            float[] values = new float[6];
-            segments = new ArrayList<>();
-            List<DoublePoint> points;
-            while (!exPathIterator.isDone()) {
-                try {
-                    int type = exPathIterator.currentSegment(values);
-                    DoublePathSegment segment = new DoublePathSegment().setIsAbsolute(true);
-                    switch (type) {
-                        case PathIterator.SEG_MOVETO:
-                            points = new ArrayList<>();
-                            points.add(new DoublePoint(values[0], values[1]));
-                            segment.setType(PathSegmentType.Move).setPoints(points);
-                            break;
-                        case PathIterator.SEG_LINETO:
-                            points = new ArrayList<>();
-                            points.add(new DoublePoint(values[0], values[1]));
-                            segment.setType(PathSegmentType.Line).setPoints(points);
-                            break;
-                        case PathIterator.SEG_QUADTO:
-                            points = new ArrayList<>();
-                            points.add(new DoublePoint(values[0], values[1]));
-                            points.add(new DoublePoint(values[2], values[3]));
-                            segment.setType(PathSegmentType.Quadratic).setPoints(points);
-                            break;
-                        case PathIterator.SEG_CUBICTO:
-                            points = new ArrayList<>();
-                            points.add(new DoublePoint(values[0], values[1]));
-                            points.add(new DoublePoint(values[2], values[3]));
-                            points.add(new DoublePoint(values[4], values[5]));
-                            segment.setType(PathSegmentType.Cubic).setPoints(points);
-                            break;
-                        case PathIterator.SEG_CLOSE:
-                            segment.setType(PathSegmentType.Close).setPoints(null);
-                            break;
-                        default:
-                            segment = null;
-                            break;
-                    }
-                    if (segment != null) {
-                        segments.add(segment);
-                    }
-                    exPathIterator.next();
-                } catch (Exception e) {
-                    MyBoxLog.console(e);
-                }
-            }
-            
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        scale = 3;
     }
-    
-    public String typesetting(String separator, int scale) {
-        return segmentsToPath(segments, separator, scale);
+
+    public DoublePath(String content) {
+        init();
+        parse(content);
+    }
+
+    public final List<DoublePathSegment> parse(String content) {
+        this.content = content;
+
+        DoublePathParser parser = new DoublePathParser().parse(content, scale);
+        if (parser == null) {
+            segments = null;
+        } else {
+            segments = parser.getSegments();
+        }
+        return segments;
+    }
+
+    public String typesetting(String separator) {
+        return segmentsToPath(segments, separator);
     }
 
     /*
         static
      */
-    public static String segmentsToPath(List<DoublePathSegment> segments, String separator, int scale) {
+    public static String segmentsToPath(List<DoublePathSegment> segments, String separator) {
         try {
             if (segments == null || segments.isEmpty()) {
                 return null;
@@ -109,9 +56,9 @@ public class DoublePath extends DoubleRectangle {
             String path = null;
             for (DoublePathSegment seg : segments) {
                 if (path != null) {
-                    path += separator + seg.text(scale);
+                    path += separator + seg.text();
                 } else {
-                    path = seg.text(scale);
+                    path = seg.text();
                 }
             }
             return path;
@@ -120,11 +67,11 @@ public class DoublePath extends DoubleRectangle {
             return null;
         }
     }
-    
-    public static String typesetting(String content, String separator, int scale) {
+
+    public static String typesetting(String content, String separator) {
         try {
             DoublePath path = new DoublePath(content);
-            return segmentsToPath(path.getSegments(), separator, scale);
+            return segmentsToPath(path.getSegments(), separator);
         } catch (Exception e) {
             MyBoxLog.console(e);
             return content;
@@ -137,13 +84,9 @@ public class DoublePath extends DoubleRectangle {
     public void setContent(String content) {
         this.content = content;
     }
-    
+
     public void setSegments(List<DoublePathSegment> segments) {
         this.segments = segments;
-    }
-    
-    public void setStartPoint(DoublePoint startPoint) {
-        this.startPoint = startPoint;
     }
 
     /*
@@ -152,9 +95,9 @@ public class DoublePath extends DoubleRectangle {
     public String getContent() {
         return content;
     }
-    
+
     public List<DoublePathSegment> getSegments() {
         return segments;
     }
-    
+
 }

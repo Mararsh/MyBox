@@ -322,13 +322,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void maskShapeChanged() {
-        if (!isSettingValues) {
+        if (!isSettingValues && maskShapeChanged != null) {
             maskShapeChanged.set(!maskShapeChanged.get());
         }
     }
 
     public void maskShapeDataChanged() {
-        if (!isSettingValues) {
+        if (!isSettingValues && maskShapeDataChanged != null) {
             maskShapeDataChanged.set(!maskShapeDataChanged.get());
         }
     }

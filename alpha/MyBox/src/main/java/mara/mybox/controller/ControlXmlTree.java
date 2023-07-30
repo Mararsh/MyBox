@@ -358,15 +358,18 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
                 popError(message("NoData"));
                 return;
             }
-            Node newNode = doc.importNode(XmlTools.toElement(this, text), true);
+            Element element = XmlTools.toElement(this, text);
+            if (element == null) {
+                return;
+            }
+            Node newNode = doc.importNode(element, true);
             if (newNode == null) {
                 popError(message("InvalidFormat"));
                 return;
             }
             treeItem.getValue().getNode().appendChild(newNode);
 
-            TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
-            treeItem.getChildren().add(newItem);
+            TreeItem<XmlTreeNode> newItem = addTreeItem(treeItem, -1, new XmlTreeNode(newNode));
 
             focusItem(newItem);
             xmlEditor.domChanged(true);

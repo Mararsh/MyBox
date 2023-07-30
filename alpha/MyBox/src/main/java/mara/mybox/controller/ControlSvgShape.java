@@ -725,8 +725,11 @@ public class ControlSvgShape extends ControlShapeOptions {
     @FXML
     public void goXml() {
         try {
-            element = XmlTools.toElement(this, xmlArea.getText());
-            element = (Element) doc.importNode(element, true);
+            Element e = XmlTools.toElement(this, xmlArea.getText());
+            if (e == null) {
+                return;
+            }
+            element = (Element) doc.importNode(e, true);
             loadElement(element);
         } catch (Exception e) {
             MyBoxLog.error(e);

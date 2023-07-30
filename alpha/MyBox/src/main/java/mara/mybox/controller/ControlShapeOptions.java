@@ -615,7 +615,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public boolean pickPath() {
         try {
-            String d = pathController.pickPath(" ", 2);
+            String d = pathController.pickPath(" ");
             if (d == null || d.isBlank()) {
                 popError(message("NoData"));
                 return false;

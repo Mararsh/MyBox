@@ -2,6 +2,7 @@ package mara.mybox.data;
 
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -11,16 +12,19 @@ import static mara.mybox.value.Languages.message;
  */
 public class DoublePathSegment {
 
-    protected String text;
     protected PathSegmentType type;
     protected List<DoublePoint> points;
-    protected boolean isAbsolute;
+    protected double value;
+    protected boolean isAbsolute, flag1, flag2;
+    protected int scale;
 
     public static enum PathSegmentType {
-        Move, Line, Quadratic, Cubic, Arc, Close
+        Move, Line, Quadratic, Cubic, Arc, Close,
+        LineHorizontal, LineVertical, QuadraticSmooth, CubicSmooth
     }
 
     public DoublePathSegment() {
+        scale = 3;
     }
 
     public String getTypeName() {
@@ -32,10 +36,18 @@ public class DoublePathSegment {
                 return message("Move");
             case Line:
                 return message("StraightLine");
+            case LineHorizontal:
+                return message("LineHorizontal");
+            case LineVertical:
+                return message("LineVertical");
             case Quadratic:
                 return message("QuadraticCurve");
+            case QuadraticSmooth:
+                return message("QuadraticSmooth");
             case Cubic:
                 return message("CubicCurve");
+            case CubicSmooth:
+                return message("CubicSmooth");
             case Arc:
                 return message("ArcCurve");
             case Close:
@@ -44,30 +56,86 @@ public class DoublePathSegment {
         return null;
     }
 
-    public String getPointsText() {
-        return DoublePoint.toText(points, 2);
-    }
-
-    public String text(int scale) {
+    public String getParameters() {
         try {
             if (type == null) {
                 return null;
             }
             switch (type) {
                 case Move:
-                    return (isAbsolute ? "M " : "m ") + points.get(0).text(scale);
+                    return points.get(0).text(scale);
                 case Line:
-                    return (isAbsolute ? "L " : "l ") + points.get(0).text(scale);
+                    return points.get(0).text(scale);
+                case LineHorizontal:
+                    return DoubleTools.scaleString(value, scale);
+                case LineVertical:
+                    return DoubleTools.scaleString(value, scale);
                 case Quadratic:
-                    return (isAbsolute ? "Q " : "q ") + points.get(0).text(scale) + " " + points.get(1).text(scale);
+                    return points.get(0).text(scale) + " " + points.get(1).text(scale);
+                case QuadraticSmooth:
+                    return points.get(0).text(scale);
                 case Cubic:
-                    return (isAbsolute ? "C " : "c ") + points.get(0).text(scale) + " " + points.get(1).text(scale) + " " + points.get(2).text(scale);
+                    return points.get(0).text(scale)
+                            + " " + points.get(1).text(scale)
+                            + " " + points.get(2).text(scale);
+                case CubicSmooth:
+                    return points.get(0).text(scale) + " " + points.get(1).text(scale);
                 case Arc:
-                    return (isAbsolute ? "A " : "a ") + points.get(0).text(scale) + " " + points.get(1).text(scale) + " " + points.get(2).text(scale);
+                    return points.get(0).text(scale)
+                            + " " + DoubleTools.scaleString(value, scale)
+                            + " " + (flag1 ? 1 : 0)
+                            + " " + (flag2 ? 1 : 0)
+                            + " " + points.get(1).text(scale);
                 case Close:
-                    return (isAbsolute ? "Z " : "z");
+                    return "";
             }
             return null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String getCommand() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            switch (type) {
+                case Move:
+                    return isAbsolute ? "M " : "m ";
+                case Line:
+                    return isAbsolute ? "L " : "l ";
+                case LineHorizontal:
+                    return isAbsolute ? "H " : "h ";
+                case LineVertical:
+                    return isAbsolute ? "V " : "v ";
+                case Quadratic:
+                    return isAbsolute ? "Q " : "q ";
+                case QuadraticSmooth:
+                    return isAbsolute ? "T " : "t ";
+                case Cubic:
+                    return isAbsolute ? "Q " : "q ";
+                case CubicSmooth:
+                    return isAbsolute ? "S " : "s ";
+                case Arc:
+                    return isAbsolute ? "A " : "a ";
+                case Close:
+                    return isAbsolute ? "Z " : "z ";
+            }
+            return null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String text() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            return getCommand() + " " + getParameters();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -77,11 +145,6 @@ public class DoublePathSegment {
     /*
         set
      */
-    public DoublePathSegment setText(String text) {
-        this.text = text;
-        return this;
-    }
-
     public DoublePathSegment setType(PathSegmentType type) {
         this.type = type;
         return this;
@@ -97,13 +160,29 @@ public class DoublePathSegment {
         return this;
     }
 
+    public DoublePathSegment setValue(double value) {
+        this.value = value;
+        return this;
+    }
+
+    public DoublePathSegment setFlag1(boolean flag1) {
+        this.flag1 = flag1;
+        return this;
+    }
+
+    public DoublePathSegment setFlag2(boolean flag2) {
+        this.flag2 = flag2;
+        return this;
+    }
+
+    public DoublePathSegment setScale(int scale) {
+        this.scale = scale;
+        return this;
+    }
+
     /*
         get
      */
-    public String getText() {
-        return text;
-    }
-
     public PathSegmentType getType() {
         return type;
     }
@@ -114,6 +193,22 @@ public class DoublePathSegment {
 
     public boolean isIsAbsolute() {
         return isAbsolute;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public boolean isFlag1() {
+        return flag1;
+    }
+
+    public boolean isFlag2() {
+        return flag2;
+    }
+
+    public int getScale() {
+        return scale;
     }
 
 }

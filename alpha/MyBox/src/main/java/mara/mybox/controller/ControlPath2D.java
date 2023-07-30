@@ -4,7 +4,6 @@ import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
@@ -12,12 +11,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoublePathSegment;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableRowIndexCell;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -34,7 +32,10 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     protected DoublePath path;
 
     @FXML
-    protected TableColumn<DoublePathSegment, String> indexColumn, typeColumn, pointsColumn;
+    protected TableColumn<DoublePathSegment, String> indexColumn, typeColumn,
+            commandColumn, parametersColumn;
+    @FXML
+    protected TableColumn<DoublePathSegment, Boolean> absoluteColumn;
     @FXML
     protected TextArea textArea;
 
@@ -53,30 +54,12 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeName"));
 
-            pointsColumn.setCellValueFactory(new PropertyValueFactory<>("pointsText"));
-            pointsColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
-            pointsColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<DoublePathSegment, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<DoublePathSegment, String> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int row = e.getTablePosition().getRow();
-                    String s = e.getNewValue();
-                    if (row < 0 || s == null || s.isBlank()) {
-                        return;
-                    }
-                    List<DoublePoint> points = DoublePoint.parseList(s);
-                    if (points == null || points.isEmpty()) {
-                        return;
-                    }
-                    DoublePathSegment seg = e.getRowValue();
-                    seg.setPoints(points);
-                    tableData.set(row, seg);
-                }
-            });
-            pointsColumn.setEditable(true);
-            pointsColumn.getStyleClass().add("editable-column");
+            absoluteColumn.setCellValueFactory(new PropertyValueFactory<>("isAbsolute"));
+            absoluteColumn.setCellFactory(new TableBooleanCell());
+
+            commandColumn.setCellValueFactory(new PropertyValueFactory<>("command"));
+
+            parametersColumn.setCellValueFactory(new PropertyValueFactory<>("parameters"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -107,8 +90,8 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         }
     }
 
-    public String pickPath(String separator, int scale) {
-        return DoublePath.segmentsToPath(tableData, separator, scale);
+    public String pickPath(String separator) {
+        return DoublePath.segmentsToPath(tableData, separator);
     }
 
     @FXML
@@ -126,6 +109,12 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     @Override
+    public void editAction() {
+
+    }
+
+    @FXML
+    @Override
     public void recoverAction() {
         load();
     }
@@ -137,7 +126,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
             popError(message("NoData"));
             return;
         }
-        textArea.setText(DoublePath.typesetting(text, "\n", 2));
+        textArea.setText(DoublePath.typesetting(text, "\n"));
     }
 
     @FXML

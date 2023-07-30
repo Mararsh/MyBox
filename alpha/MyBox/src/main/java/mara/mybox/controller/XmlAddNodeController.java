@@ -202,7 +202,11 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 newNode = doc.createComment(value);
 
             } else if (xmlRadio.isSelected()) {
-                newNode = doc.importNode(XmlTools.toElement(myController, value), true);
+                Element element = XmlTools.toElement(this, value);
+                if (element == null) {
+                    return;
+                }
+                newNode = doc.importNode(element, true);
 
             } else {
                 return;
