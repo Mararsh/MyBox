@@ -673,6 +673,9 @@ public class StyleButton {
         if (id.startsWith("draw")) {
             return new StyleData(id, message("Draw"), "", "iconDraw.png");
         }
+        if (id.startsWith("typesetting")) {
+            return new StyleData(id, "", message("Typesetting"), "", "iconTypesetting.png");
+        }
         return null;
     }
 

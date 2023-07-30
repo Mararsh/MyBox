@@ -53,8 +53,6 @@ public class ControlSvgShape extends ControlShapeOptions {
     @FXML
     protected TextArea styleArea, xmlArea;
     @FXML
-    protected ControlPoints polylinePointsController, polygonPointsController;
-    @FXML
     protected CheckBox wrapXmlCheck;
     @FXML
     protected ControlSvgOptions optionsController;
@@ -421,7 +419,8 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadPath(Element node) {
         try {
-            imageController.pathData = new DoublePath(node.getAttribute("d"));
+            String d = node.getAttribute("d");
+            imageController.pathData = new DoublePath(d);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

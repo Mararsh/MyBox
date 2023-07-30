@@ -3,13 +3,11 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -30,12 +28,9 @@ import mara.mybox.data.ShapeStyle;
 import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -72,11 +67,11 @@ public abstract class ControlShapeOptions extends BaseController {
             lineX1Input, lineY1Input, lineX2Input, lineY2Input,
             dashInput;
     @FXML
-    protected TextArea pathArea;
-    @FXML
     protected ControlPoints pointsController;
     @FXML
     protected ControlLines linesController;
+    @FXML
+    protected ControlPath2D pathController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector, arcSizeSelector;
@@ -377,7 +372,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 case Path:
                     shapeBox.getChildren().add(pathBox);
                     VBox.setVgrow(pathBox, Priority.ALWAYS);
-                    pathArea.setText(imageController.pathData.getContent());
+                    pathController.loadPath(imageController.pathData.getContent());
                     break;
                 default:
                     popError(message("InvalidData"));
@@ -620,7 +615,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public boolean pickPath() {
         try {
-            String d = pathArea.getText();
+            String d = pathController.pickPath(" ", 2);
             if (d == null || d.isBlank()) {
                 popError(message("NoData"));
                 return false;
@@ -806,35 +801,6 @@ public abstract class ControlShapeOptions extends BaseController {
      */
     public void drawPath() {
         imageController.drawPath();
-    }
-
-    @FXML
-    public void popExamplesPathMenu(Event event) {
-        if (UserConfig.getBoolean("SvgPathExamplesPopWhenMouseHovering", false)) {
-            showExamplesPathMenu(event);
-        }
-    }
-
-    @FXML
-    public void showExamplesPathMenu(Event event) {
-        PopTools.popValues(this, pathArea, "SvgPathExamples", HelpTools.svgPathExamples(), event);
-    }
-
-    @FXML
-    protected void popPathHistories(Event event) {
-        if (UserConfig.getBoolean("SvgPathHistoriesPopWhenMouseHovering", false)) {
-            showPathHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showPathHistories(Event event) {
-        PopTools.popStringValues(this, pathArea, event, "SvgPathHistories", false, true);
-    }
-
-    @FXML
-    protected void clearPath() {
-        pathArea.clear();
     }
 
 }

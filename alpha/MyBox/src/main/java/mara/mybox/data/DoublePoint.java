@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.tools.DoubleTools;
@@ -22,6 +23,11 @@ public class DoublePoint {
     public DoublePoint(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public DoublePoint(Point2D p) {
+        this.x = p.getX();
+        this.y = p.getY();
     }
 
     public boolean same(DoublePoint p) {
