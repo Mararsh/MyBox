@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.awt.geom.Ellipse2D;
+
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:29:29
@@ -60,6 +62,11 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
+    public Ellipse2D.Double getShape() {
+        return new Ellipse2D.Double(centerX - radiusX, centerY - radiusY, 2 * radiusX, 2 * radiusY);
+    }
+
+    @Override
     public boolean isValid() {
         return longAxis > 0 && shortAxis > 0
                 && focalBig != null && focalSmall != null
@@ -114,12 +121,12 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
-    public DoubleEllipse move(double offset) {
-        return move(offset, offset);
+    public DoubleEllipse translateRel(double offset) {
+        return translateRel(offset, offset);
     }
 
     @Override
-    public DoubleEllipse move(double offsetX, double offsetY) {
+    public DoubleEllipse translateRel(double offsetX, double offsetY) {
         DoubleEllipse nEllipse = new DoubleEllipse(
                 centerX - radiusX + offsetX,
                 centerY - radiusY + offsetY,
@@ -129,8 +136,8 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
-    public DoubleEllipse moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+    public DoubleEllipse translateAbs(double x, double y) {
+        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleEllipse) moved : null;
     }
 

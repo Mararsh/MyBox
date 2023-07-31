@@ -1,16 +1,16 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import static mara.mybox.controller.ControlShapeOptions.ShapeType.Lines;
+import static mara.mybox.controller.ControlShapeOptions.ShapeType.Polygon;
+import static mara.mybox.controller.ControlShapeOptions.ShapeType.Polyline;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ShapeTools;
@@ -24,11 +24,9 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlImageShapeOptions extends ControlShapeOptions {
 
-    protected ImageManufactureShapeController penController;
+    protected ImageManufactureShapeController shapeController;
     protected ImageManufactureController editor;
     protected ImageView maskView, imageView;
-    protected List<Line> currentLine;
-    protected DoublePoint lastPoint;
 
     @FXML
     protected Label commentsLabel;
@@ -39,7 +37,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
     public void setParameters(ImageManufactureShapeController penController) {
         try {
-            this.penController = penController;
+            this.shapeController = penController;
             editor = penController.editor;
             maskView = editor.maskView;
             imageView = editor.imageView;
@@ -63,6 +61,13 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             super.initShapeControls();
 
             blendController.setParameters(this);
+
+            blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    redrawShape();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -124,6 +129,12 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     }
 
     @Override
+    public void shapeDataChanged() {
+        setShapeControls();
+        redrawShape();
+    }
+
+    @Override
     public void drawRectangle() {
         if (isSettingValues || imageView == null || imageView.getImage() == null
                 || imageController.maskRectangleData == null) {
@@ -137,7 +148,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
             @Override
             protected boolean handle() {
-                newImage = ShapeTools.drawRectangle(imageView.getImage(),
+                newImage = ShapeTools.drawShape(imageView.getImage(),
                         imageController.maskRectangleData, style,
                         blendController.blender());
                 return newImage != null;
@@ -168,7 +179,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
             @Override
             protected boolean handle() {
-                newImage = ShapeTools.drawCircle(imageView.getImage(),
+                newImage = ShapeTools.drawShape(imageView.getImage(),
                         imageController.maskCircleData, style,
                         blendController.blender());
                 return newImage != null;
@@ -199,7 +210,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
             @Override
             protected boolean handle() {
-                newImage = ShapeTools.drawEllipse(imageView.getImage(),
+                newImage = ShapeTools.drawShape(imageView.getImage(),
                         imageController.maskEllipseData, style,
                         blendController.blender());
                 return newImage != null;
@@ -230,7 +241,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
             @Override
             protected boolean handle() {
-                newImage = ShapeTools.drawPolygon(imageView.getImage(),
+                newImage = ShapeTools.drawShape(imageView.getImage(),
                         imageController.maskPolygonData, style,
                         blendController.blender());
                 return newImage != null;
@@ -279,6 +290,37 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     }
 
     @Override
+    public void drawLine() {
+        if (isSettingValues || imageController.maskLineData == null
+                || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = ShapeTools.drawShape(imageView.getImage(),
+                        imageController.maskLineData, style,
+                        blendController.blender());
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                maskView.setImage(newImage);
+                editor.drawMaskLine();
+                editor.maskLine.setOpacity(0);
+            }
+
+        };
+        start(task);
+    }
+
+    @Override
     public void drawLines() {
         if (isSettingValues || imageView == null || imageView.getImage() == null
                 || imageController.maskLinesData == null) {
@@ -308,45 +350,11 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-
-                if (currentLine != null) {
-                    for (Line line : currentLine) {
-                        imageController.maskPane.getChildren().remove(line);
-                    }
-                    currentLine = null;
-                }
-                lastPoint = null;
-
-                updateLinesList();
+                editor.clearCurrentLine();
             }
 
         };
         start(task);
-    }
-
-    public void updateLinesList() {
-        linesController.loadList(imageController.maskLinesData.getLinePoints());
-    }
-
-    public void drawLinePoint(DoublePoint thisPoint) {
-        Line line = imageController.drawMaskLinesLine(lastPoint, thisPoint);
-        if (line != null) {
-            if (currentLine == null) {
-                currentLine = new ArrayList<>();
-            }
-            line.setStroke(Color.RED);
-            line.setStrokeWidth(10);
-            line.getStrokeDashArray().clear();
-            currentLine.add(line);
-        }
-        editor.maskLinesData.addPoint(thisPoint);
-        updateLinesList();
-    }
-
-    @Override
-    public void shapeDataChanged() {
-        setShapeControls();
-        redrawShape();
     }
 
     @FXML
@@ -357,15 +365,11 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         }
         switch (shapeType) {
             case Polyline:
-                imageController.removeMaskPolylineLastPoint();
-                drawPolyline();
-                break;
             case Polygon:
-                imageController.removeMaskPolygonLastPoint();
-                drawPolygon();
+                pointsController.tableData.remove(pointsController.tableData.size() - 1);
                 break;
             case Lines:
-                imageController.maskLinesData.removeLastLine();
+                linesController.tableData.remove(pointsController.tableData.size() - 1);
                 drawLines();
                 break;
         }
@@ -380,17 +384,18 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     @FXML
     @Override
     public void clearAction() {
-        if (polygonRadio.isSelected()) {
-            editor.maskPolygonData.clear();
-
-        } else if (polylineRadio.isSelected()) {
-            editor.maskPolylineData.clear();
-
-        } else if (linesRadio.isSelected()) {
-            editor.maskLinesData.clear();
-
+        if (null == shapeType || imageView == null || imageView.getImage() == null) {
+            return;
         }
-        redrawShape();
+        switch (shapeType) {
+            case Polyline:
+            case Polygon:
+                pointsController.tableData.clear();
+                break;
+            case Lines:
+                linesController.tableData.clear();
+                break;
+        }
     }
 
     @FXML

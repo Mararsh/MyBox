@@ -17,11 +17,11 @@ import mara.mybox.value.UserConfig;
  */
 public class ShapeStyle {
 
-    public final static String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
+    public final static String DefaultStrokeColor = "#c94d58", DefaultControlColor = "#0066cc";
 
     private String name, more;
-    private Color strokeColor, fillColor, anchorColor;
-    private float strokeWidth, strokeOpacity, fillOpacity, anchorSize;
+    private Color strokeColor, fillColor, controlColor;
+    private float strokeWidth, strokeOpacity, fillOpacity, controlSize;
     private int roundArc;
     private boolean isFillColor, isStrokeDash;
     private List<Double> strokeDash;
@@ -48,9 +48,9 @@ public class ShapeStyle {
             fillColor = Color.TRANSPARENT;
         }
         try {
-            anchorColor = Color.web(UserConfig.getString(name + "AnchorColor", DefaultAnchorColor));
+            controlColor = Color.web(UserConfig.getString(name + "ControlColor", DefaultControlColor));
         } catch (Exception e) {
-            anchorColor = Color.web(DefaultAnchorColor);
+            controlColor = Color.web(DefaultControlColor);
         }
         strokeWidth = UserConfig.getFloat(name + "StrokeWidth", 2);
         if (strokeWidth < 0) {
@@ -66,9 +66,9 @@ public class ShapeStyle {
         }
         isFillColor = UserConfig.getBoolean(name + "IsFillColor", false);
         isStrokeDash = UserConfig.getBoolean(name + "IsStrokeDash", false);
-        anchorSize = UserConfig.getFloat(name + "AnchorSize", 10);
-        if (anchorSize < 0) {
-            anchorSize = 10;
+        controlSize = UserConfig.getFloat(name + "ControlSize", 10);
+        if (controlSize < 0) {
+            controlSize = 10;
         }
         roundArc = UserConfig.getInt(name + "RoundArc", 0);
         if (roundArc < 0) {
@@ -183,9 +183,9 @@ public class ShapeStyle {
         return this;
     }
 
-    public ShapeStyle setAnchorColor(Color anchorColor) {
-        this.anchorColor = anchorColor;
-        UserConfig.setString(name + "AnchorColor", anchorColor != null ? anchorColor.toString() : null);
+    public ShapeStyle setControlColor(Color ControlColor) {
+        this.controlColor = ControlColor;
+        UserConfig.setString(name + "ControlColor", ControlColor != null ? ControlColor.toString() : null);
         return this;
     }
 
@@ -207,9 +207,9 @@ public class ShapeStyle {
         return this;
     }
 
-    public ShapeStyle setAnchorSize(float anchorSize) {
-        this.anchorSize = anchorSize;
-        UserConfig.setFloat(name + "AnchorSize", anchorSize);
+    public ShapeStyle setControlSize(float ControlSize) {
+        this.controlSize = ControlSize;
+        UserConfig.setFloat(name + "ControlSize", ControlSize);
         return this;
     }
 
@@ -298,12 +298,12 @@ public class ShapeStyle {
         return FxColorTools.color2css(fillColor);
     }
 
-    public Color getAnchorColor() {
-        return anchorColor;
+    public Color getControlColor() {
+        return controlColor;
     }
 
-    public java.awt.Color getAnchorColorAwt() {
-        return toAwtColor(getAnchorColor());
+    public java.awt.Color getControlColorAwt() {
+        return toAwtColor(getControlColor());
     }
 
     public float getStrokeWidth() {
@@ -318,8 +318,8 @@ public class ShapeStyle {
         return fillOpacity;
     }
 
-    public float getAnchorSize() {
-        return anchorSize;
+    public float getControlSize() {
+        return controlSize;
     }
 
     public int getRoundArc() {

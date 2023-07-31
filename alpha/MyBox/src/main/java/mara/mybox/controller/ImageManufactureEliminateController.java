@@ -339,7 +339,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
             double offsetX = p.getX() - p0.getX();
             double offsetY = p.getY() - p0.getY();
             if (DoubleShape.changed(offsetX, offsetY)) {
-                editor.maskLinesData = editor.maskLinesData.move(offsetX, offsetY);
+                editor.maskLinesData = editor.maskLinesData.translateRel(offsetX, offsetY);
                 erase();
             }
 
@@ -396,7 +396,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
                         currentLine = new ArrayList<>();
                     }
                     line.setStroke(Color.RED);
-                    line.setStrokeWidth(10);
+                    line.setStrokeWidth(strokeWidth * editor.viewXRatio());
                     line.getStrokeDashArray().clear();
                     currentLine.add(line);
                 }

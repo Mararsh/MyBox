@@ -123,8 +123,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             tableView.setItems(tableData);
-            tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
-                tableChanged();
+            tableData.addListener(new ListChangeListener<P>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends P> c) {
+                    tableChanged();
+                }
             });
 
             if (lostFocusCommitCheck != null) {

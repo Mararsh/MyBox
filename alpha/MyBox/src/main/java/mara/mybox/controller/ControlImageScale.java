@@ -26,7 +26,6 @@ public class ControlImageScale extends ControlImageSize {
         editor = scaleController.editor;
         imageController = editor;
         infoLabel = scaleController.commentsLabel;
-        image = editor.imageView.getImage();
         checkScaleType();
     }
 
@@ -49,6 +48,7 @@ public class ControlImageScale extends ControlImageSize {
     @Override
     protected void switchType() {
         try {
+            image = editor.imageView.getImage();
             if (dragRadio.isSelected()) {
                 scaleType = ScaleType.Dragging;
                 setBox.getChildren().addAll(keepBox);

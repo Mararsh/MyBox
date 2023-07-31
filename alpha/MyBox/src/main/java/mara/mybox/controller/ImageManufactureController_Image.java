@@ -225,19 +225,21 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     @Override
     public void mousePressed(MouseEvent event) {
+        super.mousePressed(event);
         operationsController.mousePressed(event);
     }
 
     @FXML
     @Override
     public void mouseDragged(MouseEvent event) {
+        super.mouseDragged(event);
         operationsController.mouseDragged(event);
     }
 
     @FXML
     @Override
     public void mouseReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
+        super.mouseReleased(event);
         operationsController.mouseReleased(event);
     }
 

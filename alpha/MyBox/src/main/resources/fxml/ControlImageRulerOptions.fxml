@@ -23,10 +23,10 @@ License:    Apache License Version 2.0
         </FlowPane>
         <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
             <children>
-                <Label text="%AnchorColor" />
-                <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
+                <Label text="%ControlColor" />
+                <fx:include fx:id="ControlColor" source="ControlColorSet.fxml" />
                 <Label text="%Width" />
-                <ComboBox fx:id="anchorWidthSelector" editable="true" prefWidth="100.0" />
+                <ComboBox fx:id="controlSizeSelector" editable="true" prefWidth="100.0" />
             </children>
         </FlowPane>
       <FlowPane hgap="2.0" layoutX="10.0" layoutY="50.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">

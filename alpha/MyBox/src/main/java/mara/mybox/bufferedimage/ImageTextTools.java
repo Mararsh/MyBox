@@ -61,7 +61,7 @@ public class ImageTextTools {
                 style.setRoundArc(optionsController.getBordersArc());
                 style.setFillOpacity(opacity);
                 style.setStrokeDashed(optionsController.bordersDotted());
-                backImage = ShapeTools.drawRectangle(sourceImage, textRect, style,
+                backImage = ShapeTools.drawShape(sourceImage, textRect, style,
                         PixelsBlend.blender(PixelsBlend.ImagesBlendMode.NORMAL, opacity, false, true));
             }
             Color textColor = optionsController.textColor();

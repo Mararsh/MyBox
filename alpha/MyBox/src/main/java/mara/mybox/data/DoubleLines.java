@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Point2D;
@@ -17,6 +18,11 @@ public class DoubleLines implements DoubleShape {
 
     public DoubleLines() {
         linePoints = new ArrayList<>();
+    }
+
+    @Override
+    public Path2D.Double getShape() {
+        return new Path2D.Double();
     }
 
     public boolean addPoint(DoublePoint p) {
@@ -142,12 +148,12 @@ public class DoubleLines implements DoubleShape {
     }
 
     @Override
-    public DoubleLines move(double offset) {
-        return move(offset, offset);
+    public DoubleLines translateRel(double offset) {
+        return translateRel(offset, offset);
     }
 
     @Override
-    public DoubleLines move(double offsetX, double offsetY) {
+    public DoubleLines translateRel(double offsetX, double offsetY) {
         DoubleLines np = new DoubleLines();
         for (List<DoublePoint> line : linePoints) {
             List<DoublePoint> newline = new ArrayList<>();
@@ -160,8 +166,8 @@ public class DoubleLines implements DoubleShape {
     }
 
     @Override
-    public DoubleLines moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+    public DoubleLines translateAbs(double x, double y) {
+        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleLines) moved : null;
     }
 

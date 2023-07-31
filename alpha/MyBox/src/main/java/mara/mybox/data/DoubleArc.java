@@ -4,18 +4,18 @@ import java.awt.geom.Line2D;
 
 /**
  * @Author Mara
- * @CreateDate 2023-7-6
+ * @CreateDate 2023-7-31
  * @License Apache License Version 2.0
  */
-public class DoubleLine implements DoubleShape {
+public class DoubleArc implements DoubleShape {
 
     private double startX, startY, endX, endY;
 
-    public DoubleLine() {
+    public DoubleArc() {
 
     }
 
-    public DoubleLine(double startX, double startY, double endX, double endY) {
+    public DoubleArc(double startX, double startY, double endX, double endY) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
@@ -28,8 +28,8 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
-    public DoubleLine cloneValues() {
-        return new DoubleLine(startX, startY, endX, endY);
+    public DoubleArc cloneValues() {
+        return new DoubleArc(startX, startY, endX, endY);
     }
 
     @Override
@@ -75,22 +75,22 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
-    public DoubleLine translateRel(double offset) {
+    public DoubleArc translateRel(double offset) {
         return translateRel(offset, offset);
     }
 
     @Override
-    public DoubleLine translateRel(double offsetX, double offsetY) {
-        DoubleLine nline = new DoubleLine(
+    public DoubleArc translateRel(double offsetX, double offsetY) {
+        DoubleArc nline = new DoubleArc(
                 startX + offsetX, startY + offsetY,
                 endX + offsetX, endY + offsetY);
         return nline;
     }
 
     @Override
-    public DoubleLine translateAbs(double x, double y) {
+    public DoubleArc translateAbs(double x, double y) {
         DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleLine) moved : null;
+        return moved != null ? (DoubleArc) moved : null;
     }
 
     @Override

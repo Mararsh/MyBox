@@ -48,19 +48,104 @@ License:    Apache License Version 2.0
                                               </graphic>
                                           </Button>
                                         <FlowPane fx:id="typePane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" HBox.hgrow="ALWAYS">
-                                            <children> 
-                                                <RadioButton fx:id="rectangleRadio" mnemonicParsing="false" selected="true" text="%Rectangle">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="typeGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="circleRadio" mnemonicParsing="false" text="%Circle" toggleGroup="$typeGroup" />
-                                                <RadioButton fx:id="ellipseRadio" mnemonicParsing="false" text="%Ellipse" toggleGroup="$typeGroup" />
-                                                <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="%StraightLine" toggleGroup="$typeGroup" />
-                                                <RadioButton fx:id="polylineRadio" mnemonicParsing="false" text="%Polyline" toggleGroup="$typeGroup" />
-                                                <RadioButton fx:id="polygonRadio" mnemonicParsing="false" text="%Polygon" toggleGroup="$typeGroup" />
-                                                <RadioButton fx:id="pathRadio" layoutX="286.0" layoutY="16.0" mnemonicParsing="false" text="%SvgPath" toggleGroup="$typeGroup" />
-                                            </children>
+                                 <children>
+                                    <RadioButton fx:id="lineRadio" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconLine.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="typeGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="polylineRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconPolyline.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="polygonRadio" mnemonicParsing="false">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="typeGroup" />
+                                       </toggleGroup>
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconStar.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="rectangleRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconRectangle.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="circleRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconCircle.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="ellipseRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconEllipse.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="cubicRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconCubic.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="quadraticRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconQuadratic.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="arcRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconArc.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="linesRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconDraw.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                 </children>
                                         </FlowPane>
                                     </children>
                                 </HBox>
@@ -218,6 +303,15 @@ License:    Apache License Version 2.0
                                                                         </VBox>
                                                                     </content>
                                                                 </Tab>
+                                                <Tab fx:id="linesTab" text="lines">
+                                                   <content>
+                                                      <VBox fx:id="linesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                         <children>
+                                                            <fx:include fx:id="lines" source="ControlLines.fxml" />
+                                                         </children>
+                                                      </VBox>
+                                                   </content>
+                                                </Tab>
                                                                 <Tab text="path">
                                                                     <content>
                                                                         <VBox fx:id="pathBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -260,9 +354,9 @@ License:    Apache License Version 2.0
                                                                     <children>
                                                                         <Label minHeight="-Infinity" text="%StrokeLinecap" wrapText="true" />
                                                                         <RadioButton fx:id="linecapButtRadio" mnemonicParsing="false" selected="true" text="%Butt">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="linecap" />
-                                                                            </toggleGroup>
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="linecap" />
+                                                         </toggleGroup>
                                                                         </RadioButton>
                                                                         <RadioButton fx:id="linecapRoundRadio" layoutX="63.0" layoutY="10.0" mnemonicParsing="false" text="%Round" toggleGroup="$linecap" />
                                                                         <RadioButton fx:id="linecapSquareRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%SquareShape" toggleGroup="$linecap" />
@@ -292,10 +386,10 @@ License:    Apache License Version 2.0
                                                                 </FlowPane>
                                                                 <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
                                                                     <children>
-                                                                        <Label text="%AnchorColor" />
-                                                                        <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
-                                                                        <Label text="%AnchorSize" />
-                                                                        <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="100.0" />
+                                                                        <Label text="%ControlColor" />
+                                                                        <fx:include fx:id="ControlColor" source="ControlColorSet.fxml" />
+                                                                        <Label text="%ControlSize" />
+                                                                        <ComboBox fx:id="controlSizeSelector" editable="true" prefWidth="100.0" />
                                                                     </children>
                                                                 </FlowPane>
                                                                 <HBox alignment="CENTER_LEFT" spacing="2.0">

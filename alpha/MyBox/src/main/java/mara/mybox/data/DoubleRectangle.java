@@ -1,6 +1,9 @@
 package mara.mybox.data;
 
 import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 
 /**
  * @Author Mara
@@ -10,7 +13,7 @@ import java.awt.Rectangle;
 public class DoubleRectangle implements DoubleShape {
 
     protected double smallX, smallY, bigX, bigY, width, height;
-    protected double maxX, maxY;
+    protected double maxX, maxY, round;
 
     public DoubleRectangle() {
         maxX = Integer.MAX_VALUE;
@@ -41,6 +44,15 @@ public class DoubleRectangle implements DoubleShape {
         bigY = y2;
         width = getWidth();
         height = getHeight();
+    }
+
+    @Override
+    public Shape getShape() {
+        if (round > 0) {
+            return new RoundRectangle2D.Double(smallX, smallY, width, height, round, round);
+        } else {
+            return new Rectangle2D.Double(smallX, smallY, width, height);
+        }
     }
 
     @Override
@@ -75,12 +87,12 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
-    public DoubleRectangle move(double offset) {
-        return move(offset, offset);
+    public DoubleRectangle translateRel(double offset) {
+        return translateRel(offset, offset);
     }
 
     @Override
-    public DoubleRectangle move(double offsetX, double offsetY) {
+    public DoubleRectangle translateRel(double offsetX, double offsetY) {
         DoubleRectangle nRectangle = new DoubleRectangle(
                 smallX + offsetX, smallY + offsetY,
                 bigX + offsetX, bigY + offsetY);
@@ -88,8 +100,8 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
-    public DoubleRectangle moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+    public DoubleRectangle translateAbs(double x, double y) {
+        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleRectangle) moved : null;
     }
 
@@ -166,6 +178,14 @@ public class DoubleRectangle implements DoubleShape {
 
     public void setMaxY(double maxY) {
         this.maxY = maxY;
+    }
+
+    public double getRound() {
+        return round;
+    }
+
+    public void setRound(double round) {
+        this.round = round;
     }
 
 }

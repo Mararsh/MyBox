@@ -22,6 +22,15 @@ public class DoublePolygon implements DoubleShape {
         points = new ArrayList<>();
     }
 
+    @Override
+    public java.awt.Polygon getShape() {
+        java.awt.Polygon polygon = new java.awt.Polygon();
+        for (DoublePoint p : points) {
+            polygon.addPoint((int) p.getX(), (int) p.getY());
+        }
+        return polygon;
+    }
+
     public boolean add(double x, double y) {
         points.add(new DoublePoint(x, y));
         return true;
@@ -175,7 +184,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public DoublePolygon move(double offset) {
+    public DoublePolygon translateRel(double offset) {
         DoublePolygon np = new DoublePolygon();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
@@ -185,7 +194,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public DoublePolygon move(double offsetX, double offsetY) {
+    public DoublePolygon translateRel(double offsetX, double offsetY) {
         DoublePolygon np = new DoublePolygon();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
@@ -195,8 +204,8 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public DoublePolygon moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+    public DoublePolygon translateAbs(double x, double y) {
+        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoublePolygon) moved : null;
     }
 

@@ -21,7 +21,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
@@ -536,41 +535,6 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             return;
         }
         MenuImageBaseController.open((BaseImageController) this, x, y);
-    }
-
-    /*
-        pick color
-     */
-    protected void checkPickingColor() {
-        if (isPickingColor) {
-            startPickingColor();
-        } else {
-            stopPickingColor();
-        }
-    }
-
-    protected void startPickingColor() {
-        if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = ColorsPickingController.oneOpen(this);
-        }
-    }
-
-    protected void stopPickingColor() {
-        if (paletteController != null) {
-            paletteController.closeStage();
-            paletteController = null;
-        }
-    }
-
-    protected Color pickColor(DoublePoint p, ImageView view) {
-        Color color = ImageViewTools.imagePixel(p, view);
-        if (color != null) {
-            startPickingColor();
-            if (paletteController != null && paletteController.getMyStage().isShowing()) {
-                paletteController.pickColor(color);
-            }
-        }
-        return color;
     }
 
 }

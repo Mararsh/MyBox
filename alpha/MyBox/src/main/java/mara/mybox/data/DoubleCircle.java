@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.awt.geom.Ellipse2D;
+
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:29:29
@@ -20,6 +22,11 @@ public class DoubleCircle implements DoubleShape {
         centerY = y;
         radius = r;
         radius2 = r * r;
+    }
+
+    @Override
+    public Ellipse2D.Double getShape() {
+        return new Ellipse2D.Double(centerX - radius, centerY - radius, 2 * radius, 2 * radius);
     }
 
     @Override
@@ -50,22 +57,22 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
-    public DoubleCircle move(double offset) {
+    public DoubleCircle translateRel(double offset) {
         DoubleCircle nCircle = new DoubleCircle(
                 centerX + offset, centerY + offset, radius);
         return nCircle;
     }
 
     @Override
-    public DoubleCircle move(double offsetX, double offsetY) {
+    public DoubleCircle translateRel(double offsetX, double offsetY) {
         DoubleCircle nCircle = new DoubleCircle(
                 centerX + offsetX, centerY + offsetY, radius);
         return nCircle;
     }
 
     @Override
-    public DoubleCircle moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+    public DoubleCircle translateAbs(double x, double y) {
+        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleCircle) moved : null;
     }
 

@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -15,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.ROUND;
@@ -22,13 +25,13 @@ import static javafx.scene.shape.StrokeLineCap.SQUARE;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
-import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
+import static mara.mybox.data.ShapeStyle.DefaultControlColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -46,12 +49,14 @@ public abstract class ControlShapeOptions extends BaseController {
     public ShapeType shapeType = null;
 
     public enum ShapeType {
-        Rectangle, Circle, Ellipse, Line, Polygon, Polyline, Lines, Path, Text;
+        Line, Rectangle, Circle, Ellipse, Polygon, Polyline, Lines,
+        Cubic, Quadratic, Arc, Path, Text;
     }
 
     @FXML
-    protected RadioButton rectangleRadio, circleRadio, ellipseRadio,
-            lineRadio, polylineRadio, polygonRadio, linesRadio, pathRadio,
+    protected RadioButton lineRadio, rectangleRadio, circleRadio, ellipseRadio,
+            polylineRadio, polygonRadio, linesRadio,
+            arcRadio, quadraticRadio, cubicRadio, pathRadio,
             linecapSquareRadio, linecapRoundRadio, linecapButtRadio;
     @FXML
     protected VBox shapeBox, shapeOutBox, pointsBox, linesBox,
@@ -59,7 +64,7 @@ public abstract class ControlShapeOptions extends BaseController {
     @FXML
     protected TabPane shapesPane;
     @FXML
-    protected ToggleGroup typeGroup;
+    protected ToggleGroup typeGroup, linecap;
     @FXML
     protected TextField circleXInput, circleYInput, circleRadiusInput,
             rectXInput, rectYInput, rectWidthInput, rectHeightInput,
@@ -74,11 +79,11 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ControlPath2D pathController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
-            anchorSizeSelector, arcSizeSelector;
+            controlSizeSelector, arcSizeSelector;
     @FXML
     protected CheckBox fillCheck, dashCheck;
     @FXML
-    protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
+    protected ControlColorSet strokeColorController, ControlColorController, fillColorController;
 
     public void setParameters(BaseImageController imageController) {
         try {
@@ -115,6 +120,23 @@ public abstract class ControlShapeOptions extends BaseController {
                 });
             }
 
+            if (pointsController != null) {
+                pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
+                    @Override
+                    public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
+                        goShape();
+                    }
+                });
+            }
+
+            if (linesController != null) {
+                linesController.tableData.addListener(new ListChangeListener<List<DoublePoint>>() {
+                    @Override
+                    public void onChanged(ListChangeListener.Change<? extends List<DoublePoint>> c) {
+                        goShape();
+                    }
+                });
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -124,23 +146,70 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             style = new ShapeStyle(interfaceName);
 
+            isSettingValues = true;
             if (strokeWidthSelector != null) {
                 strokeWidthSelector.getItems().addAll(Arrays.asList(
                         "3", "0", "1", "2", "5", "8", "10", "15", "25", "30", "50", "80"));
                 strokeWidthSelector.setValue(style.getStrokeWidth() + "");
+                strokeWidthSelector.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue v, String ov, String nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        float f;
+                        try {
+                            f = Float.parseFloat(strokeWidthSelector.getValue());
+                        } catch (Exception e) {
+                            f = -1;
+                        }
+                        style.setStrokeWidth(f);
+                        goStyle();
+                    }
+                });
             }
 
             if (strokeColorController != null) {
                 strokeColorController.init(this, interfaceName + "StrokeColor", Color.web(DefaultStrokeColor));
                 strokeColorController.initColor(style.getStrokeColor());
+                strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                    @Override
+                    public void changed(ObservableValue v, Paint ov, Paint nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        style.setStrokeColor(strokeColorController.color());
+                        goStyle();
+                    }
+                });
             }
 
             if (fillColorController != null) {
                 fillColorController.init(this, interfaceName + "FillColor", Color.TRANSPARENT);
                 fillColorController.initColor(style.getFillColor());
+                fillColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                    @Override
+                    public void changed(ObservableValue v, Paint ov, Paint nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        style.setStrokeColor(fillColorController.color());
+                        goStyle();
+                    }
+                });
             }
             if (fillCheck != null) {
                 fillCheck.setSelected(style.isIsFillColor());
+                fillCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        style.setIsFillColor(fillCheck.isSelected());
+                        goStyle();
+                    }
+                });
             }
 
             if (fillOpacitySelector != null) {
@@ -148,25 +217,93 @@ public abstract class ControlShapeOptions extends BaseController {
                         "0.3", "0.5", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"
                 );
                 fillOpacitySelector.setValue(style.getFillOpacity() + "");
+                fillOpacitySelector.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue v, String ov, String nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        float f;
+                        try {
+                            f = Float.parseFloat(fillOpacitySelector.getValue());
+                        } catch (Exception e) {
+                            f = -1;
+                        }
+                        style.setFillOpacity(f);
+                        goStyle();
+                    }
+                });
             }
             if (strokeOpacitySelector != null) {
                 strokeOpacitySelector.getItems().addAll(
                         "1.0", "0.3", "0.5", "0", "0.05", "0.02", "0.1", "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"
                 );
                 strokeOpacitySelector.setValue(style.getStrokeOpacity() + "");
+                strokeOpacitySelector.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue v, String ov, String nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        float f;
+                        try {
+                            f = Float.parseFloat(strokeOpacitySelector.getValue());
+                        } catch (Exception e) {
+                            f = -1;
+                        }
+                        style.setStrokeOpacity(f);
+                        goStyle();
+                    }
+                });
             }
 
             if (arcSizeSelector != null) {
                 arcSizeSelector.getItems().setAll(Arrays.asList("0", "2", "5", "10", "15", "30", "40", "50"));
                 arcSizeSelector.setValue(style.getRoundArc() + "");
+                arcSizeSelector.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue v, String ov, String nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        int a;
+                        try {
+                            a = Integer.parseInt(arcSizeSelector.getValue());
+                        } catch (Exception e) {
+                            a = -1;
+                        }
+                        style.setRoundArc(a);
+                        goStyle();
+                    }
+                });
             }
 
             if (dashCheck != null) {
                 dashCheck.setSelected(style.isIsStrokeDash());
+                dashCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        style.setIsStrokeDash(dashCheck.isSelected());
+                        goStyle();
+                    }
+                });
             }
 
             if (dashInput != null) {
                 dashInput.setText(style.getStrokeDashText());
+                dashInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        if (isSettingValues || nv) {
+                            return;
+                        }
+                        style.setStrokeDashText(dashInput.getText());
+                        goStyle();
+                    }
+                });
             }
 
             if (linecapSquareRadio != null) {
@@ -186,33 +323,63 @@ public abstract class ControlShapeOptions extends BaseController {
                             break;
                     }
                 }
-            }
-
-            if (anchorColorController != null) {
-                anchorColorController.init(this, interfaceName + "AnchorColor", Color.web(DefaultAnchorColor));
-                anchorColorController.initColor(style.getAnchorColor());
-            }
-
-            if (anchorSizeSelector != null) {
-                anchorSizeSelector.getItems().setAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-                anchorSizeSelector.setValue(style.getAnchorSize() + "");
-                anchorSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                linecap.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        try {
-                            float v = Float.parseFloat(newValue);
-                            if (v >= 0) {
-                                ValidationTools.setEditorNormal(anchorSizeSelector);
-                            } else {
-                                ValidationTools.setEditorBadStyle(anchorSizeSelector);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(anchorSizeSelector);
+                    public void changed(ObservableValue v, Toggle ov, Toggle nv) {
+                        if (isSettingValues) {
+                            return;
                         }
+                        if (linecapSquareRadio.isSelected()) {
+                            style.setLineCap(StrokeLineCap.SQUARE);
+                        } else if (linecapRoundRadio.isSelected()) {
+                            style.setLineCap(StrokeLineCap.ROUND);
+                        } else if (linecapButtRadio.isSelected()) {
+                            style.setLineCap(StrokeLineCap.BUTT);
+                        } else {
+                            style.setLineCap(null);
+                        }
+                        goStyle();
                     }
                 });
             }
 
+            if (ControlColorController != null) {
+                ControlColorController.init(this, interfaceName + "ControlColor", Color.web(DefaultControlColor));
+                ControlColorController.initColor(style.getControlColor());
+                ControlColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                    @Override
+                    public void changed(ObservableValue v, Paint ov, Paint nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        style.setControlColor(ControlColorController.color());
+                        goStyle();
+                    }
+                });
+            }
+
+            if (controlSizeSelector != null) {
+                controlSizeSelector.getItems().setAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
+                controlSizeSelector.setValue(style.getControlSize() + "");
+                controlSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        float f;
+                        try {
+                            f = Float.parseFloat(controlSizeSelector.getValue());
+                        } catch (Exception e) {
+                            f = -1;
+                        }
+                        style.setControlSize(f);
+                        goStyle();
+                    }
+                });
+            }
+
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -328,27 +495,27 @@ public abstract class ControlShapeOptions extends BaseController {
             isSettingValues = true;
             switch (shapeType) {
                 case Rectangle:
-                    shapeBox.getChildren().add(rectangleBox);
+                    shapeBox.getChildren().addAll(rectangleBox, goButton);
                     rectXInput.setText(scale(imageController.maskRectangleData.getSmallX()) + "");
                     rectYInput.setText(scale(imageController.maskRectangleData.getSmallY()) + "");
                     rectWidthInput.setText(scale(imageController.maskRectangleData.getWidth()) + "");
                     rectHeightInput.setText(scale(imageController.maskRectangleData.getHeight()) + "");
                     break;
                 case Circle:
-                    shapeBox.getChildren().add(circleBox);
+                    shapeBox.getChildren().addAll(circleBox, goButton);
                     circleXInput.setText(scale(imageController.maskCircleData.getCenterX()) + "");
                     circleYInput.setText(scale(imageController.maskCircleData.getCenterY()) + "");
                     circleRadiusInput.setText(scale(imageController.maskCircleData.getRadius()) + "");
                     break;
                 case Ellipse:
-                    shapeBox.getChildren().add(ellipseBox);
+                    shapeBox.getChildren().addAll(ellipseBox, goButton);
                     ellipseXInput.setText(scale(imageController.maskEllipseData.getCenterX()) + "");
                     ellipseYInput.setText(scale(imageController.maskEllipseData.getCenterY()) + "");
                     ellipseXRadiusInput.setText(scale(imageController.maskEllipseData.getRadiusX()) + "");
                     ellipseYRadiusInput.setText(scale(imageController.maskEllipseData.getRadiusY()) + "");
                     break;
                 case Line:
-                    shapeBox.getChildren().add(lineBox);
+                    shapeBox.getChildren().addAll(lineBox, goButton);
                     lineX1Input.setText(scale(imageController.maskLineData.getStartX()) + "");
                     lineY1Input.setText(scale(imageController.maskLineData.getStartY()) + "");
                     lineX2Input.setText(scale(imageController.maskLineData.getEndX()) + "");
@@ -628,98 +795,6 @@ public abstract class ControlShapeOptions extends BaseController {
         }
     }
 
-    public boolean pickStyle() {
-        try {
-            if (imageController == null || style == null) {
-                popError(message("InvalidParameter"));
-                return false;
-            }
-            if (strokeColorController != null) {
-                style.setStrokeColor(strokeColorController.color());
-            }
-            if (strokeWidthSelector != null) {
-                try {
-                    float v = Float.parseFloat(strokeWidthSelector.getValue());
-                    style.setStrokeWidth(v);
-                } catch (Exception e) {
-                    style.setStrokeWidth(-1);
-                }
-            }
-            if (strokeOpacitySelector != null) {
-                try {
-                    float v = Float.parseFloat(strokeOpacitySelector.getValue());
-                    style.setStrokeOpacity(v);
-                } catch (Exception e) {
-                    style.setStrokeOpacity(-1);
-                }
-            }
-
-            if (fillCheck != null) {
-                style.setIsFillColor(fillCheck.isSelected());
-            }
-            if (fillColorController != null) {
-                style.setFillColor(fillColorController.color());
-            }
-            if (fillOpacitySelector != null) {
-                try {
-                    float v = Float.parseFloat(fillOpacitySelector.getValue());
-                    style.setFillOpacity(v);
-                } catch (Exception e) {
-                    style.setFillOpacity(-1);
-                }
-            }
-
-            if (arcSizeSelector != null) {
-                try {
-                    int v = Integer.parseInt(arcSizeSelector.getValue());
-                    style.setRoundArc(v);
-                } catch (Exception e) {
-                    style.setRoundArc(-1);
-                }
-            }
-
-            if (dashCheck != null) {
-                style.setIsStrokeDash(dashCheck.isSelected());
-            }
-
-            if (dashInput != null) {
-                style.setStrokeDashText(dashInput.getText());
-            }
-
-            if (linecapSquareRadio != null) {
-                if (linecapSquareRadio.isSelected()) {
-                    style.setLineCap(StrokeLineCap.SQUARE);
-                } else if (linecapRoundRadio.isSelected()) {
-                    style.setLineCap(StrokeLineCap.ROUND);
-                } else if (linecapButtRadio.isSelected()) {
-                    style.setLineCap(StrokeLineCap.BUTT);
-                } else {
-                    style.setLineCap(null);
-                }
-            }
-
-            if (anchorColorController != null) {
-                style.setAnchorColor(anchorColorController.color());
-            }
-            if (anchorSizeSelector != null) {
-                try {
-                    float v = Float.parseFloat(anchorSizeSelector.getValue());
-                    style.setAnchorSize(v);
-                } catch (Exception e) {
-                    style.setAnchorSize(-1);
-                }
-            }
-
-            imageController.shapeStyle = style;
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-
     /*
         draw
      */
@@ -758,6 +833,7 @@ public abstract class ControlShapeOptions extends BaseController {
     }
 
     public void drawRectangle() {
+        MyBoxLog.debug("drawRectangle");
         imageController.showMaskRectangle();
     }
 
@@ -791,9 +867,17 @@ public abstract class ControlShapeOptions extends BaseController {
     @FXML
     @Override
     public void goAction() {
-        if (pickShape() && pickStyle()) {
+        goShape();
+    }
+
+    public void goShape() {
+        if (pickShape()) {
             redrawShape();
         }
+    }
+
+    public void goStyle() {
+        redrawShape();
     }
 
     /*

@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,11 @@ public class DoublePolyline implements DoubleShape {
 
     public DoublePolyline() {
         points = new ArrayList<>();
+    }
+
+    @Override
+    public Shape getShape() {
+        return null;
     }
 
     public boolean add(double x, double y) {
@@ -182,12 +188,12 @@ public class DoublePolyline implements DoubleShape {
     }
 
     @Override
-    public DoublePolyline move(double offset) {
-        return move(offset, offset);
+    public DoublePolyline translateRel(double offset) {
+        return translateRel(offset, offset);
     }
 
     @Override
-    public DoublePolyline move(double offsetX, double offsetY) {
+    public DoublePolyline translateRel(double offsetX, double offsetY) {
         List<DoublePoint> moved = new ArrayList<>();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
@@ -199,8 +205,8 @@ public class DoublePolyline implements DoubleShape {
     }
 
     @Override
-    public DoublePolyline moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+    public DoublePolyline translateAbs(double x, double y) {
+        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoublePolyline) moved : null;
     }
 

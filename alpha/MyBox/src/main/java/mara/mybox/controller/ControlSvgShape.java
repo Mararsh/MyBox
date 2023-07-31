@@ -123,7 +123,6 @@ public class ControlSvgShape extends ControlShapeOptions {
                 element = (Element) node.cloneNode(false);
                 loadShape(element);
                 loadStyle(element);
-                pickStyle();
                 super.switchShape();
                 loadXml(element);
             } else {
@@ -496,17 +495,10 @@ public class ControlSvgShape extends ControlShapeOptions {
         return false;
     }
 
-    @Override
-    public boolean pickShape() {
-        if (!super.pickShape()) {
-            return false;
-        }
-        return shape2Element();
-    }
-
     @FXML
+    @Override
     public void goShape() {
-        if (pickShape()) {
+        if (pickShape() && shape2Element()) {
             loadXml(element);
             redrawShape();
         }
@@ -515,6 +507,35 @@ public class ControlSvgShape extends ControlShapeOptions {
     /*
         style
      */
+    @Override
+    public void initStyleControls() {
+        try {
+            super.initStyleControls();
+
+            styleArea.setText(style.getMore());
+            styleArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue o, Boolean ov, Boolean nv) {
+                    if (isSettingValues || nv) {
+                        return;
+                    }
+                    String v = styleArea.getText();
+                    if (v != null && !v.isBlank()) {
+                        v = StringTools.trimBlanks(v);
+                        style.setMore(v);
+                        TableStringValues.add("SvgStyleHistories", v);
+                    } else {
+                        style.setMore(null);
+                    }
+                    goStyle();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void loadStyle(Element node) {
         try {
             if (node == null) {
@@ -577,27 +598,6 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
-    @Override
-    public boolean pickStyle() {
-        try {
-            if (!super.pickStyle()) {
-                return false;
-            }
-            String v = styleArea.getText();
-            if (v != null && !v.isBlank()) {
-                v = StringTools.trimBlanks(v);
-                style.setMore(v);
-                TableStringValues.add("SvgStyleHistories", v);
-            } else {
-                style.setMore(null);
-            }
-            return style2Element();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
     public boolean style2Element() {
         try {
             if (style == null || element == null) {
@@ -655,8 +655,9 @@ public class ControlSvgShape extends ControlShapeOptions {
     }
 
     @FXML
+    @Override
     public void goStyle() {
-        if (pickStyle()) {
+        if (style2Element()) {
             loadXml(element);
             redrawShape();
         }
@@ -755,7 +756,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 return true;
 
             } else if (tab == styleTab) {
-                goStyle();
+                goShape();
                 return true;
 
             } else if (tab == xmlTab) {

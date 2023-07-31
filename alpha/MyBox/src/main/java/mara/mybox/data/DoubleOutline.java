@@ -71,12 +71,12 @@ public class DoubleOutline extends DoubleRectangle {
     }
 
     @Override
-    public DoubleOutline move(double offset) {
-        return move(offset, offset);
+    public DoubleOutline translateRel(double offset) {
+        return translateRel(offset, offset);
     }
 
     @Override
-    public DoubleOutline move(double offsetX, double offsetY) {
+    public DoubleOutline translateRel(double offsetX, double offsetY) {
         DoubleRectangle nRectangle = new DoubleRectangle(
                 smallX + offsetX, smallY + offsetY,
                 bigX + offsetX, bigY + offsetY);

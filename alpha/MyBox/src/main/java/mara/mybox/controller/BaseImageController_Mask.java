@@ -13,7 +13,6 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
 import mara.mybox.data.DoublePoint;
@@ -109,16 +108,16 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         return v;
     }
 
-    public Color anchorColor() {
+    public Color controlColor() {
         try {
-            return Color.web(UserConfig.getString("AnchorColor", ShapeStyle.DefaultAnchorColor));
+            return Color.web(UserConfig.getString("ControlColor", ShapeStyle.DefaultControlColor));
         } catch (Exception e) {
-            return Color.web(ShapeStyle.DefaultAnchorColor);
+            return Color.web(ShapeStyle.DefaultControlColor);
         }
     }
 
-    public float anchorSize() {
-        float v = UserConfig.getFloat("AnchorSize", 10);
+    public float controlSize() {
+        float v = UserConfig.getFloat("ControlSize", 10);
         if (v < 0) {
             v = 10;
         }
@@ -141,14 +140,12 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         return imageHeight() / viewHeight();
     }
 
-    public double maskHandlerX(Shape shape, MouseEvent event) {
-        return (shape.getLayoutX() + event.getX() - imageView.getLayoutX())
-                * imageXRatio();
+    public double maskEventX(MouseEvent event) {
+        return event.getX() * imageXRatio();
     }
 
-    public double maskHandlerY(Shape shape, MouseEvent event) {
-        return (shape.getLayoutY() + event.getY() - imageView.getLayoutY())
-                * imageYRatio();
+    public double maskEventY(MouseEvent event) {
+        return event.getY() * imageYRatio();
     }
 
     public double imageOffsetX(MouseEvent event) {

@@ -29,10 +29,14 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Arc?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.CubicCurve?>
 <?import javafx.scene.shape.Ellipse?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.shape.Polyline?>
+<?import javafx.scene.shape.QuadCurve?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
@@ -502,7 +506,7 @@ License:    Apache License Version 2.0
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                         </Ellipse>
-                                                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" stroke="RED" strokeType="INSIDE">
+                                                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#handlerPressed" onMouseReleased="#polygonReleased" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="DEFAULT" />
                                                                             </cursor>
@@ -515,7 +519,7 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-60.0" />
                                                                             </points>
                                                                         </Polygon>
-                                                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE">
+                                                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#handlerPressed" onMouseReleased="#polylineReleased" stroke="RED" strokeType="INSIDE">
                                                                             <points>
                                                                                 <Double fx:value="-50.0" />
                                                                                 <Double fx:value="-40.0" />
@@ -527,6 +531,10 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-40.0" />
                                                                             </points>
                                                                         </Polyline>
+                                                      <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#handlerPressed" onMouseReleased="#lineReleased" startX="-100.0" />
+                                                      <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
+                                                      <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" startX="-150.0" stroke="BLACK" />
+                                                      <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" startX="-50.0" stroke="BLACK" strokeType="INSIDE" />
                                                                         <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="70.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="NW_RESIZE" />

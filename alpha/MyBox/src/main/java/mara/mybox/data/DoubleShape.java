@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.awt.Shape;
+
 /**
  * @Author Mara
  * @CreateDate 2019-04-02
@@ -15,15 +17,17 @@ public interface DoubleShape {
 
     boolean contains(double x, double y);
 
+    Shape getShape();
+
     DoubleRectangle getBound();
 
     DoublePoint getCenter();
 
-    DoubleShape move(double offset);
+    DoubleShape translateRel(double offset);
 
-    DoubleShape move(double offsetX, double offsetY);
+    DoubleShape translateRel(double offsetX, double offsetY);
 
-    DoubleShape moveTo(double x, double y);
+    DoubleShape translateAbs(double x, double y);
 
     /*
         static
@@ -41,12 +45,12 @@ public interface DoubleShape {
         return changed(p1.getX() - p2.getX(), p1.getY() - p2.getY());
     }
 
-    public static DoubleShape moveTo(DoubleShape shape, double x, double y) {
+    public static DoubleShape translateAbs(DoubleShape shape, double x, double y) {
         DoublePoint center = shape.getCenter();
         double offsetX = x - center.getX();
         double offsetY = y - center.getY();
         if (DoubleShape.changed(offsetX, offsetY)) {
-            return shape.move(offsetX, offsetY);
+            return shape.translateRel(offsetX, offsetY);
         } else {
             return null;
         }
