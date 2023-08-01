@@ -35,7 +35,7 @@ public class EliminateTools {
             linesg.setBackground(Color.WHITE);
             linesg.setColor(Color.BLACK);
             linesg.setStroke(new BasicStroke(strokeWidth));
-            for (Line line : linesData.getList()) {
+            for (Line line : linesData.getLineList()) {
                 int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
                 int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
                 int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));
@@ -79,7 +79,7 @@ public class EliminateTools {
             gt.drawImage(source, 0, 0, width, height, null);
             gt.dispose();
             int pixel, w = strokeWidth / 2;
-            for (Line line : linesData.getList()) {
+            for (Line line : linesData.getLineList()) {
                 int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
                 int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
                 int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));

@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 
 /**
@@ -13,15 +14,7 @@ public interface DoubleShape {
 
     boolean isValid();
 
-    boolean contains(double x, double y);
-
     Shape getShape();
-
-    DoubleRectangle getBound();
-
-    DoublePoint getCenter();
-
-    DoubleShape translateRel(double offset);
 
     DoubleShape translateRel(double offsetX, double offsetY);
 
@@ -49,7 +42,7 @@ public interface DoubleShape {
     }
 
     public static DoubleShape translateAbs(DoubleShape shape, double x, double y) {
-        DoublePoint center = shape.getCenter();
+        DoublePoint center = getCenter(shape);
         double offsetX = x - center.getX();
         double offsetY = y - center.getY();
         if (DoubleShape.changed(offsetX, offsetY)) {
@@ -57,6 +50,19 @@ public interface DoubleShape {
         } else {
             return null;
         }
+    }
+
+    public static Rectangle getBound(DoubleShape shape) {
+        return shape.getShape().getBounds();
+    }
+
+    public static boolean contains(DoubleShape shape, double x, double y) {
+        return shape.isValid() && shape.getShape().contains(x, y);
+    }
+
+    public static DoublePoint getCenter(DoubleShape shape) {
+        Rectangle bound = getBound(shape);
+        return new DoublePoint((bound.getMinX() + bound.getMaxX()) / 2, (bound.getMinY() + bound.getMaxY()) / 2);
     }
 
 }

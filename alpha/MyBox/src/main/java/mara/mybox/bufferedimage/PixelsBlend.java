@@ -3,6 +3,7 @@ package mara.mybox.bufferedimage;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -121,7 +122,7 @@ public abstract class PixelsBlend {
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
                     int backPixel = backImage.getRGB(i, j);
-                    if (rect.contains(i, j)) {
+                    if (DoubleShape.contains(rect, i, j)) {
                         int forePixel = foreImage.getRGB(i - x, j - y);
                         target.setRGB(i, j, blend(forePixel, backPixel));
                     } else {
@@ -201,7 +202,7 @@ public abstract class PixelsBlend {
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
                     int backPixel = backImage.getRGB(i, j);
-                    if (rect.contains(i, j)) {
+                    if (DoubleShape.contains(rect, i, j)) {
                         int forePixel = foreImage.getRGB(i - x, j - y);
                         target.setRGB(i, j, blender.blend(forePixel, backPixel));
                     } else {

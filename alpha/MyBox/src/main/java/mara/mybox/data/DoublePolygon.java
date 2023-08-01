@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.geometry.Bounds;
-import javafx.scene.shape.Polygon;
 
 /**
  * @Author Mara
@@ -120,29 +118,6 @@ public class DoublePolygon implements DoubleShape {
         return np;
     }
 
-    @Override
-    public boolean contains(double x, double y) {
-        return isValid() && makePolygon().contains(x, y);
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        Bounds bound = makePolygon().getBoundsInLocal();
-        return new DoubleRectangle(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        DoubleRectangle bound = getBound();
-        return bound != null ? bound.getCenter() : null;
-    }
-
-    public Polygon makePolygon() {
-        Polygon polygon = new Polygon();
-        polygon.getPoints().addAll(getData());
-        return polygon;
-    }
-
     public void clear() {
         points.clear();
     }
@@ -181,16 +156,6 @@ public class DoublePolygon implements DoubleShape {
         xy.put("x", x);
         xy.put("y", y);
         return xy;
-    }
-
-    @Override
-    public DoublePolygon translateRel(double offset) {
-        DoublePolygon np = new DoublePolygon();
-        for (int i = 0; i < points.size(); ++i) {
-            DoublePoint p = points.get(i);
-            np.add(p.getX() + offset, p.getY() + offset);
-        }
-        return np;
     }
 
     @Override

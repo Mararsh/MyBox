@@ -5,7 +5,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.data.DoubleLines;
-import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 
@@ -22,16 +21,6 @@ public class ShapeTools {
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.bufferedimage.ShapeTools.drawShape(source, shape, style, blender);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawPolyLines(Image image, DoublePolyline polyline, ShapeStyle style, PixelsBlend blender) {
-        if (polyline == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.ShapeTools.drawPolyLines(source, polyline, style, blender);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

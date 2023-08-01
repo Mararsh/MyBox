@@ -1,12 +1,11 @@
 package mara.mybox.data;
 
 import java.awt.Shape;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.geometry.Bounds;
-import javafx.scene.shape.Polyline;
 
 /**
  * @Author Mara
@@ -23,7 +22,17 @@ public class DoublePolyline implements DoubleShape {
 
     @Override
     public Shape getShape() {
-        return null;
+        if (points == null || points.isEmpty()) {
+            return null;
+        }
+        Path2D.Double path = new Path2D.Double();
+        DoublePoint p = points.get(0);
+        path.moveTo(p.getX(), p.getY());
+        for (int i = 1; i < points.size(); i++) {
+            p = points.get(i);
+            path.lineTo(p.getX(), p.getY());
+        }
+        return path;
     }
 
     public boolean add(double x, double y) {
@@ -93,19 +102,6 @@ public class DoublePolyline implements DoubleShape {
         return np;
     }
 
-    @Override
-    public boolean contains(double x, double y) {
-        if (!isValid()) {
-            return false;
-        }
-        for (DoublePoint p : points) {
-            if (p.getX() == x && p.getY() == y) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean same(DoublePolyline polyline) {
         if (polyline == null) {
             return false;
@@ -125,20 +121,6 @@ public class DoublePolyline implements DoubleShape {
             }
         }
         return true;
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        if (points == null || points.isEmpty()) {
-            return null;
-        }
-        Polyline polyline = new Polyline();
-        for (DoublePoint p : points) {
-            polyline.getPoints().add(p.getX());
-            polyline.getPoints().add(p.getY());
-        }
-        Bounds bound = polyline.getBoundsInLocal();
-        return new DoubleRectangle(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
     }
 
     public void clear() {
@@ -179,17 +161,6 @@ public class DoublePolyline implements DoubleShape {
         xy.put("x", x);
         xy.put("y", y);
         return xy;
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        DoubleRectangle bound = getBound();
-        return bound != null ? bound.getCenter() : null;
-    }
-
-    @Override
-    public DoublePolyline translateRel(double offset) {
-        return translateRel(offset, offset);
     }
 
     @Override

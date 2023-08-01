@@ -36,7 +36,7 @@ public class DoubleEllipse implements DoubleShape {
         }
         rectangle = rect;
         focalsOnX = rect.getWidth() >= rect.getHeight();
-        DoublePoint center = rect.getCenter();
+        DoublePoint center = DoubleShape.getCenter(rect);
         centerX = center.getX();
         centerY = center.getY();
         if (focalsOnX) {
@@ -85,18 +85,6 @@ public class DoubleEllipse implements DoubleShape {
         return new DoubleEllipse(rectangle);
     }
 
-    @Override
-    public boolean contains(double x, double y) {
-        double distanceA = DoublePoint.distance(focalBig.getX(), focalBig.getY(), x, y);
-        double distanceB = DoublePoint.distance(focalSmall.getX(), focalSmall.getY(), x, y);
-        return distanceA + distanceB <= sumLength;
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        return new DoubleRectangle(centerX - radiusX, centerY - radiusY, centerX + radiusX, centerY + radiusY);
-    }
-
     public boolean on(double x, double y) {
         double distanceA = DoublePoint.distance(focalBig.getX(), focalBig.getY(), x, y);
         double distanceB = DoublePoint.distance(focalSmall.getX(), focalSmall.getY(), x, y);
@@ -113,16 +101,6 @@ public class DoubleEllipse implements DoubleShape {
         double distanceA = DoublePoint.distance(focalBig, p);
         double distanceB = DoublePoint.distance(focalSmall, p);
         return distanceA + distanceB == sumLength;
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint(centerX, centerY);
-    }
-
-    @Override
-    public DoubleEllipse translateRel(double offset) {
-        return translateRel(offset, offset);
     }
 
     @Override

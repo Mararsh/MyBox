@@ -38,48 +38,6 @@ public class DoubleCubic implements DoubleShape {
     }
 
     @Override
-    public boolean contains(double x, double y) {
-        if (startX == x && startY == y //  same points
-                || endX == x && endY == y) {
-            return true;
-
-        } else if (startX == endX) {           // veriical line
-            if (x == startX) {
-                return startY > y && y > endY
-                        || startY < y && y < endY;
-            } else {
-                return false;
-            }
-
-        } else if (startY == endY) {       // horizontal line
-            if (y == startY) {
-                return startX > x && x > endX
-                        || startX < x && x < endX;
-            } else {
-                return false;
-            }
-        } else if (startX == x || startY == y // oblique line
-                || endX == x || endY == y) {
-            return false;
-
-        } else {                               // slop
-            double s1 = (endX - startX) / (endY - startY);
-            double s2 = (endX - x) / (endY - y);
-            return Math.abs(s1 - s2) < 1e-6;
-        }
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint((startX + endX) / 2, (startY + endY) / 2);
-    }
-
-    @Override
-    public DoubleCubic translateRel(double offset) {
-        return translateRel(offset, offset);
-    }
-
-    @Override
     public DoubleCubic translateRel(double offsetX, double offsetY) {
         DoubleCubic nline = new DoubleCubic(
                 startX + offsetX, startY + offsetY,
@@ -91,11 +49,6 @@ public class DoubleCubic implements DoubleShape {
     public DoubleCubic translateAbs(double x, double y) {
         DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleCubic) moved : null;
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        return new DoubleRectangle(startX, startY, endX, endY);
     }
 
     public double getStartX() {

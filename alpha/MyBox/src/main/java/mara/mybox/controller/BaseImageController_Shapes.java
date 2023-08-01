@@ -785,9 +785,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         double w = imageWidth();
         double h = imageHeight();
         maskPolylineData = new DoublePolyline();
-        maskPolylineData.add(10, 10);
+        maskPolylineData.add(30, 50);
         maskPolylineData.add(w / 2, 10);
-        maskPolylineData.add(w / 4, h / 2);
+        maskPolylineData.add(w / 4, h / 3);
         maskPolylineData.add(w - 30, h / 2);
     }
 
@@ -954,9 +954,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         double w = imageWidth();
         double h = imageHeight();
         maskPolygonData = new DoublePolygon();
-        maskPolygonData.add(10, 10);
+        maskPolygonData.add(50, 80);
         maskPolygonData.add(w / 2, 10);
-        maskPolygonData.add(w / 4, h / 2);
+        maskPolygonData.add(w / 4, h / 3);
         maskPolygonData.add(w - 30, h / 2);
     }
 
@@ -1145,13 +1145,16 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 || currentLine == null || currentLine.isEmpty()) {
             return;
         }
-        List<Line> newLine = new ArrayList<>();
+        List<DoublePoint> newLine = new ArrayList<>();
         double xRatio = imageXRatio();
         double yRatio = imageYRatio();
         for (Line line : currentLine) {
-            newLine.add(new Line(
-                    line.getStartX() * xRatio,
-                    line.getStartY() * yRatio,
+            if (newLine.isEmpty()) {
+                newLine.add(new DoublePoint(
+                        line.getStartX() * xRatio,
+                        line.getStartY() * yRatio));
+            }
+            newLine.add(new DoublePoint(
                     line.getEndX() * xRatio,
                     line.getEndY() * yRatio));
         }

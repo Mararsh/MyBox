@@ -45,40 +45,14 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
-    public boolean contains(double x, double y) {
-        double distanceX = centerX - x;
-        double distaneY = centerY - y;
-        return distanceX * distanceX + distaneY * distaneY <= radius2;
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint(centerX, centerY);
-    }
-
-    @Override
-    public DoubleCircle translateRel(double offset) {
-        DoubleCircle nCircle = new DoubleCircle(
-                centerX + offset, centerY + offset, radius);
-        return nCircle;
-    }
-
-    @Override
     public DoubleCircle translateRel(double offsetX, double offsetY) {
-        DoubleCircle nCircle = new DoubleCircle(
-                centerX + offsetX, centerY + offsetY, radius);
-        return nCircle;
+        return new DoubleCircle(centerX + offsetX, centerY + offsetY, radius);
     }
 
     @Override
     public DoubleCircle translateAbs(double x, double y) {
         DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleCircle) moved : null;
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        return new DoubleRectangle(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
     }
 
     public double getCenterX() {

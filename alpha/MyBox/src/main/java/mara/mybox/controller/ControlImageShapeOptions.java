@@ -269,7 +269,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
             @Override
             protected boolean handle() {
-                newImage = ShapeTools.drawPolyLines(imageView.getImage(),
+                newImage = ShapeTools.drawShape(imageView.getImage(),
                         imageController.maskPolylineData, style,
                         blendController.blender());
                 return newImage != null;

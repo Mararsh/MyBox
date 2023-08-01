@@ -540,7 +540,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 case Lines:
                     shapeBox.getChildren().add(linesBox);
                     VBox.setVgrow(linesBox, Priority.ALWAYS);
-                    linesController.loadList(imageController.maskLinesData.getPoints());
+                    linesController.loadList(imageController.maskLinesData.getLines());
                     break;
                 case Path:
                     shapeBox.getChildren().add(pathBox);
@@ -778,7 +778,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public boolean pickLines() {
         try {
-            imageController.maskLinesData.setPoints(linesController.tableData);
+            imageController.maskLinesData.setLines(linesController.tableData);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

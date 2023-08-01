@@ -77,21 +77,6 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
-    public boolean contains(double x, double y) {
-        return x >= smallX && y >= smallY && x <= bigX && y <= bigY;
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint((bigX + smallX) / 2, (bigY + smallY) / 2);
-    }
-
-    @Override
-    public DoubleRectangle translateRel(double offset) {
-        return translateRel(offset, offset);
-    }
-
-    @Override
     public DoubleRectangle translateRel(double offsetX, double offsetY) {
         DoubleRectangle nRectangle = new DoubleRectangle(
                 smallX + offsetX, smallY + offsetY,
@@ -103,11 +88,6 @@ public class DoubleRectangle implements DoubleShape {
     public DoubleRectangle translateAbs(double x, double y) {
         DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleRectangle) moved : null;
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        return this;
     }
 
     public Rectangle rectangle() {

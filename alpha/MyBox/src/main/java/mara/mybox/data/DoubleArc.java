@@ -1,6 +1,6 @@
 package mara.mybox.data;
 
-import java.awt.geom.Line2D;
+import java.awt.geom.QuadCurve2D;
 
 /**
  * @Author Mara
@@ -9,27 +9,30 @@ import java.awt.geom.Line2D;
  */
 public class DoubleArc implements DoubleShape {
 
-    private double startX, startY, endX, endY;
+    private double startX, startY, controlX, controlY, endX, endY;
 
     public DoubleArc() {
 
     }
 
-    public DoubleArc(double startX, double startY, double endX, double endY) {
+    public DoubleArc(double startX, double startY,
+            double controlX, double controlY, double endX, double endY) {
         this.startX = startX;
         this.startY = startY;
+        this.controlX = controlX;
+        this.controlY = controlY;
         this.endX = endX;
         this.endY = endY;
     }
 
     @Override
-    public Line2D.Double getShape() {
-        return new Line2D.Double(startX, startY, endX, endY);
+    public QuadCurve2D.Double getShape() {
+        return new QuadCurve2D.Double(startX, startY, controlX, controlY, endX, endY);
     }
 
     @Override
     public DoubleArc cloneValues() {
-        return new DoubleArc(startX, startY, endX, endY);
+        return new DoubleArc(startX, startY, controlX, controlY, endX, endY);
     }
 
     @Override
@@ -38,64 +41,16 @@ public class DoubleArc implements DoubleShape {
     }
 
     @Override
-    public boolean contains(double x, double y) {
-        if (startX == x && startY == y //  same points
-                || endX == x && endY == y) {
-            return true;
-
-        } else if (startX == endX) {           // veriical line
-            if (x == startX) {
-                return startY > y && y > endY
-                        || startY < y && y < endY;
-            } else {
-                return false;
-            }
-
-        } else if (startY == endY) {       // horizontal line
-            if (y == startY) {
-                return startX > x && x > endX
-                        || startX < x && x < endX;
-            } else {
-                return false;
-            }
-        } else if (startX == x || startY == y // oblique line
-                || endX == x || endY == y) {
-            return false;
-
-        } else {                               // slop
-            double s1 = (endX - startX) / (endY - startY);
-            double s2 = (endX - x) / (endY - y);
-            return Math.abs(s1 - s2) < 1e-6;
-        }
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint((startX + endX) / 2, (startY + endY) / 2);
-    }
-
-    @Override
-    public DoubleArc translateRel(double offset) {
-        return translateRel(offset, offset);
-    }
-
-    @Override
     public DoubleArc translateRel(double offsetX, double offsetY) {
-        DoubleArc nline = new DoubleArc(
-                startX + offsetX, startY + offsetY,
+        return new DoubleArc(startX + offsetX, startY + offsetY,
+                controlX + offsetX, controlY + offsetY,
                 endX + offsetX, endY + offsetY);
-        return nline;
     }
 
     @Override
     public DoubleArc translateAbs(double x, double y) {
         DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoubleArc) moved : null;
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        return new DoubleRectangle(startX, startY, endX, endY);
     }
 
     public double getStartX() {

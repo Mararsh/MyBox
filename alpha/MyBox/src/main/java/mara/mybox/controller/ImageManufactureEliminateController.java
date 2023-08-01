@@ -139,6 +139,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
                             intensity = v;
                             ValidationTools.setEditorNormal(intensitySelector);
                             UserConfig.setInt(interfaceName + "Intensity", v);
+                            redraw();
                         } else {
                             ValidationTools.setEditorBadStyle(intensitySelector);
                         }

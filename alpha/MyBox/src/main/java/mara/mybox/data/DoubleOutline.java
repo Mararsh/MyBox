@@ -54,10 +54,9 @@ public class DoubleOutline extends DoubleRectangle {
         return new DoubleOutline(image, rectangle, insideColor);
     }
 
-    @Override
     public boolean contains(double x, double y) {
         try {
-            return isValid() && rectangle.contains(x, y)
+            return isValid() && DoubleShape.contains(rectangle, x, y)
                     && (image.getRGB((int) (x - offsetX), (int) (y - offsetY)) == insideColor);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -65,14 +64,8 @@ public class DoubleOutline extends DoubleRectangle {
         }
     }
 
-    @Override
     public DoubleRectangle getBound() {
         return rectangle;
-    }
-
-    @Override
-    public DoubleOutline translateRel(double offset) {
-        return translateRel(offset, offset);
     }
 
     @Override
