@@ -46,9 +46,17 @@ public class ControlImageScale extends ControlImageSize {
     }
 
     @Override
+    protected Image getImage() {
+        if (editor == null) {
+            return null;
+        } else {
+            return editor.imageView.getImage();
+        }
+    }
+
+    @Override
     protected void switchType() {
         try {
-            image = editor.imageView.getImage();
             if (dragRadio.isSelected()) {
                 scaleType = ScaleType.Dragging;
                 setBox.getChildren().addAll(keepBox);
@@ -59,10 +67,8 @@ public class ControlImageScale extends ControlImageSize {
                 adjustRadio();
 
             } else {
-
                 super.switchType();
             }
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -70,7 +76,11 @@ public class ControlImageScale extends ControlImageSize {
 
     protected void initDrag() {
         try {
-            if (image == null || !dragRadio.isSelected()) {
+            if (!dragRadio.isSelected()) {
+                return;
+            }
+            Image image = getImage();
+            if (image == null) {
                 return;
             }
             width = image.getWidth();

@@ -127,6 +127,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 @Override
                 public void onChanged(ListChangeListener.Change<? extends P> c) {
                     tableChanged();
+                    checkSelected();
                 }
             });
 
@@ -207,7 +208,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void tableChanged(boolean changed) {
-        if (isSettingValues) {
+        if (isSettingValues || isSettingTable) {
             return;
         }
         updateStatus();

@@ -24,12 +24,13 @@ public class EliminateTools {
     }
 
     public static Image drawMosaic(Image image, DoubleLines penData,
-            ImageMosaic.MosaicType mosaicType, int strokeWidth) {
+            ImageMosaic.MosaicType mosaicType, int strokeWidth, int intensity) {
         if (penData == null || mosaicType == null || strokeWidth < 1) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.EliminateTools.drawMosaic(source, penData, mosaicType, strokeWidth);
+        BufferedImage target = mara.mybox.bufferedimage.EliminateTools.drawMosaic(
+                source, penData, mosaicType, strokeWidth, intensity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

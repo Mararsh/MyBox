@@ -41,8 +41,6 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
     @Override
     protected void paneUnexpanded() {
         optionsController.removeListener();
-        editor.resetImagePane();
-        editor.clearMaskShapesData();
     }
 
     protected void refreshShape() {
@@ -78,25 +76,18 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
         mousePoint(event);
     }
 
+    @FXML
+    @Override
+    public void mouseReleased(MouseEvent event) {
+        mousePoint(event);
+    }
+
     public void mousePoint(MouseEvent event) {
         if (imageView == null || imageView.getImage() == null || editor.isPickingColor) {
             return;
         }
-        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
         if (optionsController.coordinatePenCheck.isSelected()) {
-            editor.showXY(event, p);
-        }
-    }
-
-    @FXML
-    @Override
-    public void mouseReleased(MouseEvent event) {
-        editor.scrollPane.setPannable(true);
-        if (imageView == null || imageView.getImage() == null || editor.isPickingColor) {
-            return;
-        }
-        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-        if (optionsController.coordinatePenCheck.isSelected()) {
+            DoublePoint p = ImageViewTools.getImageXY(event, imageView);
             editor.showXY(event, p);
         }
     }

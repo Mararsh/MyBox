@@ -45,18 +45,6 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            operateOriginalSize = true;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
     public void initControls() {
         try {
             super.initControls();

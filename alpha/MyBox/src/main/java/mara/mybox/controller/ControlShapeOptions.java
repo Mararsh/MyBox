@@ -28,6 +28,7 @@ import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.data.DoubleShape.ShapeType;
 import mara.mybox.data.ShapeStyle;
 import static mara.mybox.data.ShapeStyle.DefaultControlColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
@@ -47,11 +48,6 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ShapeStyle style;
     protected ChangeListener<Boolean> shapeDataChangeListener;
     public ShapeType shapeType = null;
-
-    public enum ShapeType {
-        Line, Rectangle, Circle, Ellipse, Polygon, Polyline, Lines,
-        Cubic, Quadratic, Arc, Path, Text;
-    }
 
     @FXML
     protected RadioButton lineRadio, rectangleRadio, circleRadio, ellipseRadio,
@@ -124,6 +120,9 @@ public abstract class ControlShapeOptions extends BaseController {
                 pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
                     @Override
                     public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
+                        if (pointsController.isSettingTable || pointsController.isSettingTable) {
+                            return;
+                        }
                         goShape();
                     }
                 });
@@ -133,6 +132,9 @@ public abstract class ControlShapeOptions extends BaseController {
                 linesController.tableData.addListener(new ListChangeListener<List<DoublePoint>>() {
                     @Override
                     public void onChanged(ListChangeListener.Change<? extends List<DoublePoint>> c) {
+                        if (linesController.isSettingTable || linesController.isSettingTable) {
+                            return;
+                        }
                         goShape();
                     }
                 });
@@ -194,7 +196,9 @@ public abstract class ControlShapeOptions extends BaseController {
                             return;
                         }
                         style.setStrokeColor(fillColorController.color());
-                        goStyle();
+                        if (fillCheck.isSelected()) {
+                            goStyle();
+                        }
                     }
                 });
             }
@@ -301,7 +305,9 @@ public abstract class ControlShapeOptions extends BaseController {
                             return;
                         }
                         style.setStrokeDashText(dashInput.getText());
-                        goStyle();
+                        if (dashCheck.isSelected()) {
+                            goStyle();
+                        }
                     }
                 });
             }
@@ -534,7 +540,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 case Lines:
                     shapeBox.getChildren().add(linesBox);
                     VBox.setVgrow(linesBox, Priority.ALWAYS);
-                    linesController.loadList(imageController.maskLinesData.getLinePoints());
+                    linesController.loadList(imageController.maskLinesData.getPoints());
                     break;
                 case Path:
                     shapeBox.getChildren().add(pathBox);
@@ -772,7 +778,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public boolean pickLines() {
         try {
-            imageController.maskLinesData.setLinePoints(linesController.tableData);
+            imageController.maskLinesData.setPoints(linesController.tableData);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

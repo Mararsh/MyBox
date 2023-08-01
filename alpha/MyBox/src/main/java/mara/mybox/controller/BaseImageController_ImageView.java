@@ -46,7 +46,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     protected Image image;
     protected ImageAttributes attributes;
     protected final SimpleBooleanProperty loadNotify;
-    protected boolean imageChanged, isPickingColor, operateOriginalSize;
+    protected boolean imageChanged, isPickingColor;
     protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, // 0-based
             sizeChangeAware, zoomStep, xZoomStep, yZoomStep;
     protected LoadingController loadingController;
@@ -88,7 +88,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         try {
             super.initValues();
 
-            isPickingColor = imageChanged = operateOriginalSize = false;
+            isPickingColor = imageChanged = false;
             loadWidth = defaultLoadWidth = -1;
             frameIndex = framesNumber = 0;
             sizeChangeAware = 1;
@@ -412,8 +412,13 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         return imageView.getBoundsInParent().getHeight();
     }
 
+    protected boolean operateOriginalSize() {
+        return (this instanceof ImageSplitController)
+                || (this instanceof ImageSampleController);
+    }
+
     public double widthRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
+        if (!operateOriginalSize() || imageInformation == null || image == null) {
             return 1;
         }
         double ratio = imageWidth() / imageInformation.getWidth();
@@ -421,7 +426,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     }
 
     public double heightRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
+        if (!operateOriginalSize() || imageInformation == null || image == null) {
             return 1;
         }
         double ratio = imageHeight() / imageInformation.getHeight();

@@ -344,22 +344,37 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
     }
 
+    protected boolean canPickColor() {
+        return imageView != null && imageView.getImage() != null
+                && !(this instanceof ImageSplitController)
+                && !(this instanceof ImageSampleController);
+    }
+
+    protected boolean canSelect() {
+        return imageView != null && imageView.getImage() != null
+                && maskRectangle != null && maskCircle == null
+                && !(this instanceof ImageSplitController)
+                && !(this instanceof ImageSampleController);
+    }
+
     protected void checkSelect() {
         if (isSettingValues) {
             return;
         }
-        boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
-        if (cropButton != null) {
-            cropButton.setDisable(!selected);
-        }
-        if (selectAllButton != null) {
-            selectAllButton.setDisable(!selected);
-        }
         clearMask();
-        if (selected) {
-            showMaskRectangle();
-        } else {
-            maskShapeChanged();
+        if (canSelect()) {
+            boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
+            if (cropButton != null) {
+                cropButton.setDisable(!selected);
+            }
+            if (selectAllButton != null) {
+                selectAllButton.setDisable(!selected);
+            }
+            if (selected) {
+                showMaskRectangle();
+            } else {
+                maskShapeChanged();
+            }
         }
         updateLabelsTitle();
     }

@@ -5,8 +5,6 @@ import java.awt.Shape;
 /**
  * @Author Mara
  * @CreateDate 2019-04-02
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public interface DoubleShape {
@@ -32,6 +30,11 @@ public interface DoubleShape {
     /*
         static
      */
+    public static enum ShapeType {
+        Line, Rectangle, Circle, Ellipse, Polygon, Polyline, Lines,
+        Cubic, Quadratic, Arc, Path, Text;
+    }
+
     public static final double ChangeThreshold = 0.01;
 
     public static boolean changed(double offsetX, double offsetY) {

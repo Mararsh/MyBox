@@ -125,8 +125,8 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     }
 
     private void checkOperationType() {
-        editor.resetImagePane();
         editor.imageTab();
+        editor.resetImagePane();
         setBox.getChildren().clear();
         ValidationTools.setEditorNormal(marginWidthBox);
         distanceInput.setStyle(null);
@@ -169,11 +169,11 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     private void initDragging() {
         try {
+            commentsLabel.setText(Languages.message("DragMarginsComments"));
             editor.maskRectangleData = new DoubleRectangle(0, 0,
                     imageView.getImage().getWidth() - 1,
                     imageView.getImage().getHeight() - 1);
             editor.showMaskRectangle();
-            commentsLabel.setText(Languages.message("DragMarginsComments"));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

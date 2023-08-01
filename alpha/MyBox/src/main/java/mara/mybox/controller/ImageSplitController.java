@@ -71,7 +71,6 @@ public class ImageSplitController extends BaseImagesListController {
         try {
             super.initValues();
 
-            operateOriginalSize = true;
             splitValid = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {

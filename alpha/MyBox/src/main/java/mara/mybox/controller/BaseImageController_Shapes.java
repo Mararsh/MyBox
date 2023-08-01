@@ -55,13 +55,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected DoublePolygon maskPolygonData;
     protected DoublePolyline maskPolylineData;
     protected DoubleLines maskLinesData;
-    protected List<List<Line>> maskLines;
     protected DoubleQuadratic maskQuadraticData;
     protected DoubleCubic maskCubicData;
     protected DoubleArc maskArcData;
     protected DoublePath pathData;
     protected SVGPath svgPath;
-    public boolean maskPointDragged;
+    public boolean maskPointDragged, maskLinesMaking;
     protected List<Line> currentLine;
     protected DoublePoint lastPoint;
 
@@ -136,7 +135,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         setShapeStyle(maskCircle);
         setShapeStyle(maskEllipse);
         setShapeStyle(maskLine);
-        setMasklinesStyle();
         setMaskPolylineStyle();
         setMaskPolygonStyle();
         setShapeStyle(maskQuadratic);
@@ -162,6 +160,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
         shape.getStrokeDashArray().clear();
         shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
+
     }
 
     public void setMaskAnchorsStyle() {
@@ -264,6 +263,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             clearMaskArc();
             clearPath();
             shapeStyle = null;
+            maskLinesMaking = false;
+            maskPointDragged = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -322,7 +323,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (drawPath()) {
                 return;
             }
-            setMasklinesStyle();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -1106,7 +1106,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             return;
         }
         clearMaskLines();
-        maskLines = new ArrayList<>();
         drawMaskLines();
     }
 
@@ -1114,47 +1113,53 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (maskLinesData == null) {
             maskLinesData = new DoubleLines();
         }
+        maskLinesMaking = true;
         return true;
     }
 
-    public void drawLinePoint(DoublePoint thisPoint) {
-        Line line = drawMaskLinesLine(lastPoint, thisPoint);
-        if (line != null) {
-            if (currentLine == null) {
-                currentLine = new ArrayList<>();
-            }
-            line.setStroke(Color.RED);
-            line.setStrokeWidth(10);
-            line.getStrokeDashArray().clear();
-            currentLine.add(line);
-        }
-        maskLinesData.addPoint(thisPoint);
-    }
-
     public Line drawMaskLinesLine(DoublePoint lastPonit, DoublePoint thisPoint) {
-        if (lastPonit == null || thisPoint == null) {
+        if (!maskLinesMaking || lastPonit == null || thisPoint == null) {
+            return null;
+        }
+        double lastx = lastPonit.getX();
+        double lasty = lastPonit.getY();
+        double thisx = thisPoint.getX();
+        double thisy = thisPoint.getY();
+        if (lastx == thisx && lasty == thisy) {
             return null;
         }
         double xRatio = viewXRatio();
         double yRatio = viewYRatio();
-        Line line = makeMaskLinesLine(lastPonit.getX(), lastPonit.getY(), thisPoint.getX(), thisPoint.getY(), xRatio, yRatio);
-        if (line != null) {
-            maskPane.getChildren().add(line);
-            line.setLayoutX(imageView.getLayoutX());
-            line.setLayoutY(imageView.getLayoutY());
-        }
-        return line;
-    }
-
-    public Line makeMaskLinesLine(double lastx, double lasty, double thisx, double thisy, double xRatio, double yRatio) {
-        if (lastx == thisx && lasty == thisy) {
-            return null;
-        }
         Line line = new Line(lastx * xRatio, lasty * yRatio, thisx * xRatio, thisy * yRatio);
+        maskPane.getChildren().add(line);
+        line.setLayoutX(imageView.getLayoutX());
+        line.setLayoutY(imageView.getLayoutY());
+        line.setStroke(Color.RED);
+        line.setStrokeWidth((shapeStyle != null ? shapeStyle.getStrokeWidth() : strokeWidth()) * viewXRatio());
+        line.getStrokeDashArray().clear();
         return line;
     }
 
-    public void clearCurrentLine() {
+    public void addMaskLinesData() {
+        if (!maskLinesMaking || maskLinesData == null
+                || currentLine == null || currentLine.isEmpty()) {
+            return;
+        }
+        List<Line> newLine = new ArrayList<>();
+        double xRatio = imageXRatio();
+        double yRatio = imageYRatio();
+        for (Line line : currentLine) {
+            newLine.add(new Line(
+                    line.getStartX() * xRatio,
+                    line.getStartY() * yRatio,
+                    line.getEndX() * xRatio,
+                    line.getEndY() * yRatio));
+        }
+        maskLinesData.addLine(newLine);
+        maskShapeDataChanged();
+    }
+
+    public void clearMaskLines() {
         if (imageView == null || maskPane == null) {
             return;
         }
@@ -1167,34 +1172,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         lastPoint = null;
     }
 
-    public void clearMaskLines() {
-        if (imageView == null || maskPane == null) {
-            return;
-        }
-        if (maskLines != null) {
-            for (List<Line> line : maskLines) {
-                maskPane.getChildren().removeAll(line);
-            }
-            maskLines.clear();
-            maskLines = null;
-        }
-    }
-
     public void clearMaskLinesData() {
         if (maskLinesData != null) {
             maskLinesData.clear();
             maskLinesData = null;
         }
-    }
-
-    public void setMasklinesStyle() {
-        if (maskLines != null && !maskLines.isEmpty()) {
-            for (List<Line> lines : maskLines) {
-                for (Line line : lines) {
-                    setShapeStyle(line);
-                }
-            }
-        }
+        maskLinesMaking = false;
     }
 
     /*

@@ -32,7 +32,6 @@ import mara.mybox.value.UserConfig;
 public class ControlImageSize extends BaseController {
 
     protected ImageViewerController imageController;
-    protected Image image;
     protected ScaleType scaleType;
     protected double width, height;
     protected float scale = 1.0f;
@@ -108,7 +107,6 @@ public class ControlImageSize extends BaseController {
             scaleSelector.getSelectionModel().select(0);
 
             checkScaleType();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -124,14 +122,22 @@ public class ControlImageSize extends BaseController {
                 imageLoaded();
             }
         });
+
     }
 
     protected void imageLoaded() {
         if (isSettingValues) {
             return;
         }
-        image = imageController.scopeImage();
         originalSize();
+    }
+
+    protected Image getImage() {
+        if (imageController == null) {
+            return null;
+        } else {
+            return imageController.scopeImage();
+        }
     }
 
     protected void checkScaleType() {
@@ -140,7 +146,7 @@ public class ControlImageSize extends BaseController {
             switchType();
             refreshStyle(setBox);
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -155,7 +161,7 @@ public class ControlImageSize extends BaseController {
                 imageController.clearMask();
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +178,7 @@ public class ControlImageSize extends BaseController {
                 pickScale();
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -216,7 +222,11 @@ public class ControlImageSize extends BaseController {
 
     protected void adjustRadio() {
         try {
-            if (isSettingValues || image == null || scaleType == ScaleType.Scale) {
+            if (isSettingValues || scaleType == ScaleType.Scale) {
+                return;
+            }
+            Image image = getImage();
+            if (image == null) {
                 return;
             }
             scale = 1;
@@ -271,7 +281,11 @@ public class ControlImageSize extends BaseController {
 
     protected void pickScale() {
         try {
-            if (image == null || scaleType != ScaleType.Scale) {
+            if (scaleType != ScaleType.Scale) {
+                return;
+            }
+            Image image = getImage();
+            if (image == null) {
                 return;
             }
             float f = Float.parseFloat(scaleSelector.getValue());
@@ -294,6 +308,7 @@ public class ControlImageSize extends BaseController {
 
     @FXML
     public void originalSize() {
+        Image image = getImage();
         if (image == null) {
             return;
         }
@@ -307,6 +322,7 @@ public class ControlImageSize extends BaseController {
     @FXML
     public void calculator(ActionEvent event) {
         try {
+            Image image = getImage();
             if (image == null) {
                 return;
             }
@@ -331,7 +347,11 @@ public class ControlImageSize extends BaseController {
     }
 
     protected void labelSize() {
-        if (infoLabel == null || imageController == null || image == null) {
+        if (infoLabel == null || imageController == null) {
+            return;
+        }
+        Image image = getImage();
+        if (image == null) {
             return;
         }
         String info = message("OriginalSize") + ": " + (int) Math.round(imageController.image.getWidth())
@@ -344,6 +364,7 @@ public class ControlImageSize extends BaseController {
     }
 
     public void scale() {
+        Image image = getImage();
         if (image == null) {
             return;
         }

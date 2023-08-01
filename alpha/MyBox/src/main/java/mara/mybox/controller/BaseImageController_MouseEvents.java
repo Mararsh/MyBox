@@ -1,11 +1,13 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
@@ -48,18 +50,18 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     @FXML
     public void mousePressed(MouseEvent event) {
-        mousePoint(event);
+        pointForLines(event);
     }
 
     @FXML
     public void mouseDragged(MouseEvent event) {
-        mousePoint(event);
+        pointForLines(event);
     }
 
-    public void mousePoint(MouseEvent event) {
+    public void pointForLines(MouseEvent event) {
         if (imageView == null || imageView.getImage() == null
                 || isPickingColor || event.getButton() == MouseButton.SECONDARY
-                || maskLines == null || maskLinesData == null) {
+                || !maskLinesMaking) {
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
@@ -68,13 +70,15 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
         scrollPane.setPannable(false);
         if (lastPoint != null) {
-            double offsetX = p.getX() - lastPoint.getX();
-            double offsetY = p.getY() - lastPoint.getY();
-            if (DoubleShape.changed(offsetX, offsetY)) {
-                drawLinePoint(p);
+            if (DoubleShape.changed(lastPoint, p)) {
+                Line line = drawMaskLinesLine(lastPoint, p);
+                if (line != null) {
+                    if (currentLine == null) {
+                        currentLine = new ArrayList<>();
+                    }
+                    currentLine.add(line);
+                }
             }
-        } else {
-            maskLinesData.addPoint(p);
         }
         lastPoint = p;
     }
@@ -84,7 +88,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         if (imageView == null || imageView.getImage() == null
                 || isPickingColor || event.getButton() == MouseButton.SECONDARY
-                || maskLines == null || maskLinesData == null) {
+                || !maskLinesMaking) {
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
@@ -92,12 +96,18 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
         if (DoubleShape.changed(lastPoint, p)) {
-            maskLinesData.endLine(p);
+            Line line = drawMaskLinesLine(lastPoint, p);
+            if (line != null) {
+                if (currentLine == null) {
+                    currentLine = new ArrayList<>();
+                }
+                currentLine.add(line);
+                addMaskLinesData();
+            }
         } else {
-            maskLinesData.endLine(null);
+            addMaskLinesData();
         }
         lastPoint = null;
-        maskShapeDataChanged();
     }
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
@@ -151,8 +161,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
             shapeVisible = true;
 
-        } else if (maskLines != null && maskLinesData != null) {
+        } else if (maskLinesMaking) {
             if (singleClickedLines(event, p)) {
+                maskShapeDataChanged();
                 return;
             }
             shapeVisible = true;
@@ -272,16 +283,17 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     protected boolean singleClickedLines(MouseEvent event, DoublePoint p) {
-        if (p == null || maskLines == null || maskLinesData == null) {
+        if (p == null || !maskLinesMaking) {
             return false;
         }
-        if (event.getButton() == MouseButton.SECONDARY && maskLinesData.getPointsSize() > 0) {
+        if (event.getButton() == MouseButton.SECONDARY && maskLinesData.getLinesSize() > 0) {
             DoubleLines moved = maskLinesData.translateAbs(p.getX(), p.getY());
             if (moved != null) {
                 maskLinesData = moved;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @FXML

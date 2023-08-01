@@ -144,11 +144,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     }
 
     @Override
-    public boolean controlAltT() {
-        return true;
-    }
-
-    @Override
     public boolean controlAlt1() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();

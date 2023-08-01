@@ -192,7 +192,7 @@ public class ShapeTools {
     public static BufferedImage drawLines(BufferedImage srcImage, DoubleLines linesData,
             ShapeStyle style, PixelsBlend blender) {
         try {
-            if (linesData == null || linesData.getPointsSize() == 0) {
+            if (linesData == null || linesData.getLinesSize() == 0) {
                 return srcImage;
             }
             int width = srcImage.getWidth();
@@ -213,7 +213,7 @@ public class ShapeTools {
                 g.setColor(strokeColor);
             }
             g.setStroke(stroke(linesData, style));
-            for (Line line : linesData.lines()) {
+            for (Line line : linesData.getList()) {
                 int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
                 int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
                 int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));

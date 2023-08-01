@@ -79,16 +79,14 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
         }
     }
 
-    @Override
-    public void tableChanged(boolean changed) {
-    }
-
     public void loadList(List<List<DoublePoint>> list) {
+        isSettingValues = true;
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
             tableData.setAll(DoublePoint.scaleLists(list, Scale));
         }
+        isSettingValues = false;
     }
 
     @FXML

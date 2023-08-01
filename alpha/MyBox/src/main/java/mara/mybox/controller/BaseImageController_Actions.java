@@ -316,7 +316,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             } else {
                 if (imageInformation != null && imageInformation.getRegion() != null) {
                     imageController.loadRegion(imageInformation);
-                } else if (imageController instanceof ImageSampleController || imageController instanceof ImageSplitController) {
+                } else if (operateOriginalSize()) {
                     imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
                 } else if (imageInformation != null && imageInformation.isIsScaled()) {
                     imageController.loadImage(imageView.getImage());

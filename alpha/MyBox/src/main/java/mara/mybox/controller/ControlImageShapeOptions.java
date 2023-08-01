@@ -7,9 +7,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import static mara.mybox.controller.ControlShapeOptions.ShapeType.Lines;
-import static mara.mybox.controller.ControlShapeOptions.ShapeType.Polygon;
-import static mara.mybox.controller.ControlShapeOptions.ShapeType.Polyline;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -323,7 +320,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     @Override
     public void drawLines() {
         if (isSettingValues || imageView == null || imageView.getImage() == null
-                || imageController.maskLinesData == null) {
+                || !imageController.maskLinesMaking) {
             return;
         }
         if (task != null) {
@@ -350,7 +347,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-                editor.clearCurrentLine();
+                editor.clearMaskLines();
             }
 
         };
@@ -369,7 +366,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 pointsController.tableData.remove(pointsController.tableData.size() - 1);
                 break;
             case Lines:
-                linesController.tableData.remove(pointsController.tableData.size() - 1);
+                linesController.tableData.remove(linesController.tableData.size() - 1);
                 drawLines();
                 break;
         }

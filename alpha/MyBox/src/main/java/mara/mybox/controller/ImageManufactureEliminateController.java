@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -14,21 +13,15 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import mara.mybox.bufferedimage.ImageMosaic.MosaicType;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
-import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.DoubleShape;
+import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.EliminateTools;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
@@ -43,15 +36,13 @@ import mara.mybox.value.UserConfig;
 public class ImageManufactureEliminateController extends ImageManufactureOperationController {
 
     protected int strokeWidth, intensity;
-    protected DoublePoint lastPoint;
-    protected List<Line> currentLine;
 
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton eraserRadio, mosaicRadio, frostedRadio, shapeCircleRadio, shapeRectangleRadio;
     @FXML
-    protected FlowPane strokeWidthPane, intensityPane, shapePane;
+    protected FlowPane strokeWidthPane, intensityPane;
     @FXML
     protected VBox setBox;
     @FXML
@@ -66,13 +57,18 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
         try {
             super.initPane();
 
-            lastPoint = null;
             setBox.getChildren().clear();
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
+                public void changed(ObservableValue o, Toggle ov, Toggle nv) {
                     checkType();
+                }
+            });
+
+            editor.maskShapeDataChanged.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue o, Boolean ov, Boolean nv) {
+                    redraw();
                 }
             });
 
@@ -100,8 +96,12 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
                         int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             strokeWidth = v;
-                            UserConfig.setInt(interfaceName + "StrokeWidth", strokeWidth);
-                            erase();
+                            UserConfig.setInt(interfaceName + "StrokeWidth", v);
+                            if (editor.shapeStyle == null) {
+                                editor.shapeStyle = new ShapeStyle(interfaceName);
+                            }
+                            editor.shapeStyle.setStrokeWidth(strokeWidth);
+                            redraw();
                             ValidationTools.setEditorNormal(strokeWidthSelector);
                         } else {
                             ValidationTools.setEditorBadStyle(strokeWidthSelector);
@@ -159,38 +159,27 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
         checkType();
     }
 
-    @Override
-    protected void paneUnexpanded() {
-    }
-
     private void checkType() {
         try {
             editor.resetImagePane();
             editor.imageTab();
-            editor.clearMask();
+            editor.shapeStyle = new ShapeStyle(interfaceName);
+            editor.shapeStyle.setStrokeWidth(strokeWidth);
             maskView.setImage(imageView.getImage());
             maskView.setOpacity(1);
             maskView.setVisible(true);
             imageView.setVisible(false);
             imageView.toBack();
-            clearErase();
+
+            editor.showMaskLines();
+            setBox.getChildren().clear();
 
             if (eraserRadio.isSelected()) {
-                editor.showMaskLines();
-                setBox.getChildren().clear();
-                withdrawButton.setVisible(true);
                 commentsLabel.setText(message("PenLinesTips") + "\n" + message("ImageEraserComments"));
 
-            } else if (frostedRadio.isSelected()) {
-                setBox.getChildren().setAll(intensityPane, shapePane);
-                withdrawButton.setVisible(false);
+            } else {
+                setBox.getChildren().add(intensityPane);
                 commentsLabel.setText(message("PenMosaicTips"));
-
-            } else if (mosaicRadio.isSelected()) {
-                setBox.getChildren().setAll(intensityPane, shapePane);
-                withdrawButton.setVisible(false);
-                commentsLabel.setText(message("PenMosaicTips"));
-
             }
 
             refreshStyle(thisPane);
@@ -200,9 +189,8 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
         }
     }
 
-    public void mosaic(MosaicType mosaicType, int x, int y) {
-        if (isSettingValues || mosaicType == null
-                || imageView == null || imageView.getImage() == null) {
+    public void redraw() {
+        if (isSettingValues || imageView == null || imageView.getImage() == null) {
             return;
         }
         if (task != null) {
@@ -213,47 +201,18 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
 
             @Override
             protected boolean handle() {
-                DoubleShape shape;
-                if (shapeCircleRadio.isSelected()) {
-                    shape = new DoubleCircle(x, y, strokeWidth / 2);
-                } else {
-                    int w = strokeWidth / 2 + ((strokeWidth % 2 == 0) ? 0 : 1);
-                    shape = new DoubleRectangle(x - w, y - w, x + w, y + w);
+                if (eraserRadio.isSelected()) {
+                    newImage = EliminateTools.drawErase(imageView.getImage(),
+                            editor.maskLinesData, strokeWidth);
+                } else if (frostedRadio.isSelected()) {
+                    newImage = EliminateTools.drawMosaic(imageView.getImage(),
+                            editor.maskLinesData, MosaicType.FrostedGlass, strokeWidth, intensity);
+
+                } else if (mosaicRadio.isSelected()) {
+                    newImage = EliminateTools.drawMosaic(imageView.getImage(),
+                            editor.maskLinesData, MosaicType.Mosaic, strokeWidth, intensity);
+
                 }
-                Image image;
-                if (maskView.getImage() == null) {
-                    image = imageView.getImage();
-                } else {
-                    image = maskView.getImage();
-                }
-                newImage = FxImageTools.makeMosaic(image,
-                        shape, intensity, mosaicType == MosaicType.Mosaic, false);
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                maskView.setImage(newImage);
-            }
-
-        };
-        start(task);
-    }
-
-    public void erase() {
-        if (isSettingValues || imageView == null || imageView.getImage() == null
-                || !eraserRadio.isSelected()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = EliminateTools.drawErase(imageView.getImage(), editor.maskLinesData, strokeWidth);
                 return newImage != null;
             }
 
@@ -267,21 +226,11 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-                clearErase();
+                editor.clearMaskLines();
             }
 
         };
         start(task);
-    }
-
-    public void clearErase() {
-        if (currentLine != null) {
-            for (Line line : currentLine) {
-                editor.maskPane.getChildren().remove(line);
-            }
-            currentLine = null;
-        }
-        lastPoint = null;
     }
 
     @FXML
@@ -290,10 +239,8 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (eraserRadio.isSelected()) {
-            editor.maskLinesData.removeLastLine();
-            erase();
-        }
+        editor.maskLinesData.removeLastLine();
+        redraw();
     }
 
     @FXML
@@ -322,115 +269,30 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
 
     @FXML
     @Override
-    public void paneClicked(MouseEvent event, DoublePoint p) {
-        if (imageView == null || imageView.getImage() == null || p == null) {
-            imageView.setCursor(Cursor.OPEN_HAND);
-            return;
-        }
-        if (editor.isPickingColor) {
-            return;
-        }
-        if (eraserRadio.isSelected()) {
-            if (event.getButton() != MouseButton.SECONDARY) {
-                imageView.setCursor(Cursor.OPEN_HAND);
-                return;
-            }
-            DoublePoint p0 = editor.maskLinesData.getPoint(0);
-            double offsetX = p.getX() - p0.getX();
-            double offsetY = p.getY() - p0.getY();
-            if (DoubleShape.changed(offsetX, offsetY)) {
-                editor.maskLinesData = editor.maskLinesData.translateRel(offsetX, offsetY);
-                erase();
-            }
-
-        } else if (mosaicRadio.isSelected()) {
-            if (event.getButton() == MouseButton.SECONDARY) {
-                imageView.setCursor(Cursor.OPEN_HAND);
-                return;
-            }
-            mosaic(MosaicType.Mosaic, (int) p.getX(), (int) p.getY());
-
-        } else if (frostedRadio.isSelected()) {
-            if (event.getButton() == MouseButton.SECONDARY) {
-                imageView.setCursor(Cursor.OPEN_HAND);
-                return;
-            }
-            mosaic(MosaicType.FrostedGlass, (int) p.getX(), (int) p.getY());
-        }
-    }
-
-    @FXML
-    @Override
     public void mousePressed(MouseEvent event) {
-        erase(event);
+        mousePoint(event);
     }
 
     @FXML
     @Override
     public void mouseDragged(MouseEvent event) {
-        erase(event);
-    }
-
-    public void erase(MouseEvent event) {
-        if (imageView == null || imageView.getImage() == null
-                || editor.isPickingColor || !eraserRadio.isSelected()) {
-            return;
-        }
-        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-        if (coordinatePenCheck.isSelected()) {
-            editor.showXY(event, p);
-        }
-
-        if (event.getButton() == MouseButton.SECONDARY || p == null
-                || editor.maskLinesData == null) {
-            return;
-        }
-        editor.scrollPane.setPannable(false);
-        if (lastPoint != null) {
-            double offsetX = p.getX() - lastPoint.getX();
-            double offsetY = p.getY() - lastPoint.getY();
-            if (DoubleShape.changed(offsetX, offsetY)) {
-                Line line = editor.drawMaskLinesLine(lastPoint, p);
-                if (line != null) {
-                    if (currentLine == null) {
-                        currentLine = new ArrayList<>();
-                    }
-                    line.setStroke(Color.RED);
-                    line.setStrokeWidth(strokeWidth * editor.viewXRatio());
-                    line.getStrokeDashArray().clear();
-                    currentLine.add(line);
-                }
-                editor.maskLinesData.addPoint(p);
-            }
-        } else {
-            editor.maskLinesData.addPoint(p);
-        }
-        lastPoint = p;
+        mousePoint(event);
     }
 
     @FXML
     @Override
     public void mouseReleased(MouseEvent event) {
-        editor.scrollPane.setPannable(true);
-        if (imageView == null || imageView.getImage() == null
-                || editor.isPickingColor || !eraserRadio.isSelected()) {
+        mousePoint(event);
+    }
+
+    public void mousePoint(MouseEvent event) {
+        if (imageView == null || imageView.getImage() == null || editor.isPickingColor) {
             return;
         }
-        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
         if (coordinatePenCheck.isSelected()) {
+            DoublePoint p = ImageViewTools.getImageXY(event, imageView);
             editor.showXY(event, p);
         }
-
-        if (event.getButton() == MouseButton.SECONDARY || p == null) {
-            return;
-        }
-        if (DoubleShape.changed(lastPoint, p)) {
-            editor.maskLinesData.endLine(p);
-        } else {
-            editor.maskLinesData.endLine(null);
-        }
-        lastPoint = null;
-        erase();
     }
 
     @Override
