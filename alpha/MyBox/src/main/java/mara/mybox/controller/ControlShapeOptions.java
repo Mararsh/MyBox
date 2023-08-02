@@ -475,7 +475,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 shapeType = ShapeType.Polygon;
 
             } else if (linesRadio != null && linesRadio.isSelected()) {
-                imageController.showMaskLines();
+                imageController.showMaskPolylines();
                 shapeType = ShapeType.Lines;
 
             } else if (pathRadio != null && pathRadio.isSelected()) {
@@ -540,7 +540,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 case Lines:
                     shapeBox.getChildren().add(linesBox);
                     VBox.setVgrow(linesBox, Priority.ALWAYS);
-                    linesController.loadList(imageController.maskLinesData.getLines());
+                    linesController.loadList(imageController.maskPolylinesData.getLines());
                     break;
                 case Path:
                     shapeBox.getChildren().add(pathBox);
@@ -778,7 +778,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public boolean pickLines() {
         try {
-            imageController.maskLinesData.setLines(linesController.tableData);
+            imageController.maskPolylinesData.setLines(linesController.tableData);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -864,7 +864,7 @@ public abstract class ControlShapeOptions extends BaseController {
     }
 
     public void drawLines() {
-        imageController.showMaskLines();
+        imageController.showMaskPolylines();
     }
 
     /*

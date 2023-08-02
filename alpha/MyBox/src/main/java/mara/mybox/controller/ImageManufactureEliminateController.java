@@ -36,6 +36,7 @@ import mara.mybox.value.UserConfig;
 public class ImageManufactureEliminateController extends ImageManufactureOperationController {
 
     protected int strokeWidth, intensity;
+    protected ChangeListener<Boolean> shapeDataChangeListener;
 
     @FXML
     protected ToggleGroup typeGroup;
@@ -65,12 +66,12 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
                 }
             });
 
-            editor.maskShapeDataChanged.addListener(new ChangeListener<Boolean>() {
+            shapeDataChangeListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue o, Boolean ov, Boolean nv) {
                     redraw();
                 }
-            });
+            };
 
             int imageWidth = (int) imageView.getImage().getWidth();
             strokeWidthSelector.getItems().clear();
@@ -158,6 +159,12 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
     @Override
     protected void paneExpanded() {
         checkType();
+        editor.maskShapeDataChanged.addListener(shapeDataChangeListener);
+    }
+
+    @Override
+    protected void paneUnexpanded() {
+        editor.maskShapeDataChanged.removeListener(shapeDataChangeListener);
     }
 
     private void checkType() {
@@ -172,7 +179,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
             imageView.setVisible(false);
             imageView.toBack();
 
-            editor.showMaskLines();
+            editor.showMaskPolylines();
             setBox.getChildren().clear();
 
             if (eraserRadio.isSelected()) {
@@ -204,14 +211,14 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
             protected boolean handle() {
                 if (eraserRadio.isSelected()) {
                     newImage = EliminateTools.drawErase(imageView.getImage(),
-                            editor.maskLinesData, strokeWidth);
+                            editor.maskPolylinesData, strokeWidth);
                 } else if (frostedRadio.isSelected()) {
                     newImage = EliminateTools.drawMosaic(imageView.getImage(),
-                            editor.maskLinesData, MosaicType.FrostedGlass, strokeWidth, intensity);
+                            editor.maskPolylinesData, MosaicType.FrostedGlass, strokeWidth, intensity);
 
                 } else if (mosaicRadio.isSelected()) {
                     newImage = EliminateTools.drawMosaic(imageView.getImage(),
-                            editor.maskLinesData, MosaicType.Mosaic, strokeWidth, intensity);
+                            editor.maskPolylinesData, MosaicType.Mosaic, strokeWidth, intensity);
 
                 }
                 return newImage != null;
@@ -227,7 +234,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-                editor.clearMaskLines();
+                editor.clearMaskPolylines();
             }
 
         };
@@ -240,7 +247,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        editor.maskLinesData.removeLastLine();
+        editor.maskPolylinesData.removeLastLine();
         redraw();
     }
 

@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import javafx.scene.shape.Line;
-import mara.mybox.data.DoubleLines;
+import mara.mybox.data.DoublePolylines;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 
@@ -19,7 +19,7 @@ import mara.mybox.value.AppVariables;
  */
 public class EliminateTools {
 
-    public static BufferedImage drawErase(BufferedImage srcImage, DoubleLines linesData, int strokeWidth) {
+    public static BufferedImage drawErase(BufferedImage srcImage, DoublePolylines linesData, int strokeWidth) {
         try {
             if (linesData == null || linesData.getLinesSize() == 0 || strokeWidth < 1) {
                 return srcImage;
@@ -61,7 +61,7 @@ public class EliminateTools {
         }
     }
 
-    public static BufferedImage drawMosaic(BufferedImage source, DoubleLines linesData,
+    public static BufferedImage drawMosaic(BufferedImage source, DoublePolylines linesData,
             ImageMosaic.MosaicType mosaicType, int strokeWidth, int intensity) {
         try {
             if (linesData == null || mosaicType == null || linesData.getLinesSize() == 0

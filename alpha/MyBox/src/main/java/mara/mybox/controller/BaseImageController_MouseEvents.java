@@ -1,20 +1,18 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
-import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
+import mara.mybox.data.DoublePolylines;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
@@ -61,7 +59,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     public void pointForLines(MouseEvent event) {
         if (imageView == null || imageView.getImage() == null
                 || isPickingColor || event.getButton() == MouseButton.SECONDARY
-                || !maskLinesMaking) {
+                || maskPolylines == null) {
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
@@ -69,17 +67,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
         scrollPane.setPannable(false);
-        if (lastPoint != null) {
-            if (DoubleShape.changed(lastPoint, p)) {
-                Line line = drawMaskLinesLine(lastPoint, p);
-                if (line != null) {
-                    if (currentLine == null) {
-                        currentLine = new ArrayList<>();
-                    }
-                    currentLine.add(line);
-                }
-            }
-        }
+        makeCurrentLine(p);
         lastPoint = p;
     }
 
@@ -88,25 +76,17 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         if (imageView == null || imageView.getImage() == null
                 || isPickingColor || event.getButton() == MouseButton.SECONDARY
-                || !maskLinesMaking) {
+                || maskPolylines == null) {
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
         if (p == null) {
             return;
         }
-        if (DoubleShape.changed(lastPoint, p)) {
-            Line line = drawMaskLinesLine(lastPoint, p);
-            if (line != null) {
-                if (currentLine == null) {
-                    currentLine = new ArrayList<>();
-                }
-                currentLine.add(line);
-                addMaskLinesData();
-            }
-        } else {
-            addMaskLinesData();
-        }
+        makeCurrentLine(p);
+        addMaskLinesData();
+        maskPane.getChildren().remove(currentPolyline);
+        currentPolyline = null;
         lastPoint = null;
     }
 
@@ -161,7 +141,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
             shapeVisible = true;
 
-        } else if (maskLinesMaking) {
+        } else if (maskPolylines != null) {
             if (singleClickedLines(event, p)) {
                 maskShapeDataChanged();
                 return;
@@ -283,13 +263,13 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     protected boolean singleClickedLines(MouseEvent event, DoublePoint p) {
-        if (p == null || !maskLinesMaking) {
+        if (p == null || maskPolylines == null) {
             return false;
         }
-        if (event.getButton() == MouseButton.SECONDARY && maskLinesData.getLinesSize() > 0) {
-            DoubleLines moved = maskLinesData.translateAbs(p.getX(), p.getY());
+        if (event.getButton() == MouseButton.SECONDARY && maskPolylinesData.getLinesSize() > 0) {
+            DoublePolylines moved = maskPolylinesData.translateAbs(p.getX(), p.getY());
             if (moved != null) {
-                maskLinesData = moved;
+                maskPolylinesData = moved;
                 return true;
             }
         }

@@ -383,7 +383,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             return;
         }
         checkButtons();
-        countSize(false);
     }
 
     @Override

@@ -66,6 +66,15 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
+            <Button fx:id="editButton" layoutX="203.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconEdit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="addItemButton" mnemonicParsing="false" onAction="#addAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -75,15 +84,6 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <CheckBox fx:id="lostFocusCommitCheck" mnemonicParsing="false" onAction="#autoCommitCheck">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/red/iconInput.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
          </children>
       </FlowPane>
       <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">

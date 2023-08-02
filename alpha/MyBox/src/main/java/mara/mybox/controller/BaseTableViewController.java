@@ -388,7 +388,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @Override
     public void deleteAction() {
         try {
-            List<P> selected = tableView.getSelectionModel().getSelectedItems();
+            List<P> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;

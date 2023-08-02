@@ -3,9 +3,14 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
@@ -27,17 +32,18 @@ import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleCubic;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
-import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
+import mara.mybox.data.DoublePolylines;
 import mara.mybox.data.DoubleQuadratic;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -54,14 +60,15 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected DoubleLine maskLineData;
     protected DoublePolygon maskPolygonData;
     protected DoublePolyline maskPolylineData;
-    protected DoubleLines maskLinesData;
+    protected DoublePolylines maskPolylinesData;
     protected DoubleQuadratic maskQuadraticData;
     protected DoubleCubic maskCubicData;
     protected DoubleArc maskArcData;
     protected DoublePath pathData;
     protected SVGPath svgPath;
-    public boolean maskPointDragged, maskLinesMaking;
-    protected List<Line> currentLine;
+    public boolean maskPointDragged;
+    protected Polyline currentPolyline;
+    protected List<Polyline> maskPolylines;
     protected DoublePoint lastPoint;
 
     protected ShapeStyle shapeStyle = null;
@@ -137,6 +144,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         setShapeStyle(maskLine);
         setMaskPolylineStyle();
         setMaskPolygonStyle();
+        setMaskPolyinesStyle();
         setShapeStyle(maskQuadratic);
         setShapeStyle(maskCubic);
         setShapeStyle(maskArc);
@@ -257,13 +265,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             clearMaskLine();
             clearMaskPolyline();
             clearMaskPolygon();
-            clearMaskLines();
+            clearMaskPolylines();
             clearMaskQuadratic();
             clearMaskCubic();
             clearMaskArc();
             clearPath();
             shapeStyle = null;
-            maskLinesMaking = false;
             maskPointDragged = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -278,7 +285,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             clearMaskLineData();
             clearMaskPolylineData();
             clearMaskPolygonData();
-            clearMaskLinesData();
+            clearMaskPolylinesData();
             clearMaskQuadraticData();
             clearMaskCubicData();
             clearMaskArcData();
@@ -309,6 +316,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 return;
             }
             if (drawMaskPolyline()) {
+                return;
+            }
+            if (drawMaskPolylines()) {
                 return;
             }
             if (drawMaskQuadratic()) {
@@ -858,11 +868,61 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                     }
                 }
             });
-            NodeStyleTools.setTooltip(text, message("Point") + " " + index + "\n" + p.text(2));
+            text.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        popNodeMenu(text, textMenu(maskPolylineData, text, index, p));
+                    }
+                }
+            });
             setTextStyle(text);
             maskPane.getChildren().add(text);
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    protected List<MenuItem> textMenu(DoubleShape shape, Text text, int index, DoublePoint p) {
+        try {
+            if (text == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            String title = message("Point") + " " + index;
+            menu = new MenuItem(title);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            menu = new MenuItem(StringTools.menuPrefix(p.text(2)));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                PointInputController inputController = PointInputController.open(this, title, p, 3);
+                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        if (shape == maskPolylineData) {
+                            maskPolylineData.set(index - 1, inputController.picked);
+                        } else if (shape == maskPolygonData) {
+                            maskPolylineData.set(index - 1, inputController.picked);
+                        }
+                        inputController.close();
+                        maskShapeDataChanged();
+                    }
+                });
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 
@@ -930,6 +990,187 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 setTextStyle((Text) node);
             }
         }
+    }
+
+    /*
+        polylines
+     */
+    public void showMaskPolylines() {
+        if (imageView == null || maskPane == null) {
+            return;
+        }
+        clearMaskPolylines();
+        maskPolylines = new ArrayList<>();
+        drawMaskPolylines();
+    }
+
+    public boolean drawMaskPolylines() {
+        try {
+            if (maskPolylines == null || imageView == null || imageView.getImage() == null) {
+                return false;
+            }
+            if (maskPolylinesData == null) {
+                maskPolylinesData = new DoublePolylines();
+            }
+            clearMaskPolylines();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
+            for (int i = 0; i < maskPolylinesData.getLinesSize(); i++) {
+                List<DoublePoint> points = maskPolylinesData.getLines().get(i);
+                if (points.isEmpty()) {
+                    continue;
+                }
+                Polyline pline = new Polyline();
+                for (DoublePoint p : points) {
+                    pline.getPoints().add(p.getX() * xRatio);
+                    pline.getPoints().add(p.getY() * yRatio);
+                }
+                maskPolylines.add(pline);
+                maskPane.getChildren().add(pline);
+                pline.setLayoutX(imageView.getLayoutX());
+                pline.setLayoutY(imageView.getLayoutY());
+                setShapeStyle(pline);
+                pline.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (newValue) {
+                            popNodeMenu(pline, lineMenu(pline, points));
+                        }
+                    }
+                });
+            }
+
+            maskShapeChanged();
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    protected List<MenuItem> lineMenu(Polyline line, List<DoublePoint> points) {
+        try {
+            if (line == null) {
+                return null;
+            }
+            int index = maskPolylines.indexOf(line);
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            String title = message("Line") + " " + (index + 1);
+            menu = new MenuItem(title);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                LineInputController inputController = LineInputController.open(this, title, points, 3);
+                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        List<DoublePoint> line = inputController.picked;
+                        if (line == null || line.isEmpty()) {
+                            popError(message("InvalidValue"));
+                            return;
+                        }
+                        inputController.close();
+                        maskPolylinesData.setLine(index, line);
+                        maskShapeDataChanged();
+                    }
+                });
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void setMaskPolyinesStyle() {
+        if (maskPolylines != null) {
+            for (Polyline line : maskPolylines) {
+                setShapeStyle(line);
+            }
+        }
+    }
+
+    public boolean makeCurrentLine(DoublePoint p) {
+        if (!DoubleShape.changed(lastPoint, p)) {
+            return false;
+        }
+        double xRatio = viewXRatio();
+        double yRatio = viewYRatio();
+        if (currentPolyline == null) {
+            currentPolyline = new Polyline();
+            currentPolyline.setStroke(Color.RED);
+            currentPolyline.setStrokeWidth((shapeStyle != null ? shapeStyle.getStrokeWidth() : strokeWidth()) * xRatio);
+            currentPolyline.getStrokeDashArray().clear();
+            maskPane.getChildren().add(currentPolyline);
+            currentPolyline.setLayoutX(imageView.getLayoutX());
+            currentPolyline.setLayoutY(imageView.getLayoutY());
+        }
+        currentPolyline.getPoints().add(p.getX() * xRatio);
+        currentPolyline.getPoints().add(p.getY() * yRatio);
+        return true;
+    }
+
+    public void addMaskLinesData() {
+        if (maskPolylines == null || maskPolylinesData == null
+                || currentPolyline == null) {
+            return;
+        }
+        List<DoublePoint> newLine = new ArrayList<>();
+        double xRatio = imageXRatio();
+        double yRatio = imageYRatio();
+        List<Double> values = currentPolyline.getPoints();
+        for (int i = 0; i < values.size(); i++) {
+            newLine.add(new DoublePoint(values.get(i) * xRatio, values.get(++i) * yRatio));
+        }
+        maskPolylinesData.addLine(newLine);
+        maskShapeDataChanged();
+    }
+
+    public void hideMaskPolylines() {
+        if (maskPolylines != null) {
+            for (Polyline line : maskPolylines) {
+                line.setOpacity(0);
+            }
+        }
+        if (currentPolyline != null) {
+            maskPane.getChildren().remove(currentPolyline);
+            currentPolyline = null;
+        }
+        lastPoint = null;
+    }
+
+    public void clearMaskPolylines() {
+        if (imageView == null || maskPane == null) {
+            return;
+        }
+        if (maskPolylines != null) {
+            for (Polyline line : maskPolylines) {
+                maskPane.getChildren().remove(line);
+            }
+            maskPolylines.clear();
+        }
+        if (currentPolyline != null) {
+            maskPane.getChildren().remove(currentPolyline);
+            currentPolyline = null;
+        }
+        lastPoint = null;
+    }
+
+    public void clearMaskPolylinesData() {
+        if (maskPolylinesData != null) {
+            maskPolylinesData.clear();
+            maskPolylinesData = null;
+        }
+        maskPolylines = null;
     }
 
     /*
@@ -1025,7 +1266,14 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                     }
                 }
             });
-            NodeStyleTools.setTooltip(text, message("Point") + " " + index + "\n" + p.text(2));
+            text.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        popNodeMenu(text, textMenu(maskPolygonData, text, index, p));
+                    }
+                }
+            });
             setTextStyle(text);
             maskPane.getChildren().add(text);
         } catch (Exception e) {
@@ -1096,91 +1344,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 setTextStyle((Text) node);
             }
         }
-    }
-
-    /*
-        lines
-     */
-    public void showMaskLines() {
-        if (imageView == null || maskPane == null) {
-            return;
-        }
-        clearMaskLines();
-        drawMaskLines();
-    }
-
-    public boolean drawMaskLines() {
-        if (maskLinesData == null) {
-            maskLinesData = new DoubleLines();
-        }
-        maskLinesMaking = true;
-        return true;
-    }
-
-    public Line drawMaskLinesLine(DoublePoint lastPonit, DoublePoint thisPoint) {
-        if (!maskLinesMaking || lastPonit == null || thisPoint == null) {
-            return null;
-        }
-        double lastx = lastPonit.getX();
-        double lasty = lastPonit.getY();
-        double thisx = thisPoint.getX();
-        double thisy = thisPoint.getY();
-        if (lastx == thisx && lasty == thisy) {
-            return null;
-        }
-        double xRatio = viewXRatio();
-        double yRatio = viewYRatio();
-        Line line = new Line(lastx * xRatio, lasty * yRatio, thisx * xRatio, thisy * yRatio);
-        maskPane.getChildren().add(line);
-        line.setLayoutX(imageView.getLayoutX());
-        line.setLayoutY(imageView.getLayoutY());
-        line.setStroke(Color.RED);
-        line.setStrokeWidth((shapeStyle != null ? shapeStyle.getStrokeWidth() : strokeWidth()) * viewXRatio());
-        line.getStrokeDashArray().clear();
-        return line;
-    }
-
-    public void addMaskLinesData() {
-        if (!maskLinesMaking || maskLinesData == null
-                || currentLine == null || currentLine.isEmpty()) {
-            return;
-        }
-        List<DoublePoint> newLine = new ArrayList<>();
-        double xRatio = imageXRatio();
-        double yRatio = imageYRatio();
-        for (Line line : currentLine) {
-            if (newLine.isEmpty()) {
-                newLine.add(new DoublePoint(
-                        line.getStartX() * xRatio,
-                        line.getStartY() * yRatio));
-            }
-            newLine.add(new DoublePoint(
-                    line.getEndX() * xRatio,
-                    line.getEndY() * yRatio));
-        }
-        maskLinesData.addLine(newLine);
-        maskShapeDataChanged();
-    }
-
-    public void clearMaskLines() {
-        if (imageView == null || maskPane == null) {
-            return;
-        }
-        if (currentLine != null) {
-            for (Line line : currentLine) {
-                maskPane.getChildren().remove(line);
-            }
-            currentLine = null;
-        }
-        lastPoint = null;
-    }
-
-    public void clearMaskLinesData() {
-        if (maskLinesData != null) {
-            maskLinesData.clear();
-            maskLinesData = null;
-        }
-        maskLinesMaking = false;
     }
 
     /*

@@ -146,14 +146,14 @@ public class DoublePoint {
         }
     }
 
-    public static String toText(List<DoublePoint> points, int scale) {
+    public static String toText(List<DoublePoint> points, int scale, String separator) {
         if (points == null || points.isEmpty()) {
             return null;
         }
         String s = null;
         for (DoublePoint p : points) {
             if (s != null) {
-                s += " ";
+                s += separator;
             } else {
                 s = "";
             }

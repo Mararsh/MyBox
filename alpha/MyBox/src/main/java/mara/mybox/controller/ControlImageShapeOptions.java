@@ -320,7 +320,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     @Override
     public void drawLines() {
         if (isSettingValues || imageView == null || imageView.getImage() == null
-                || !imageController.maskLinesMaking) {
+                || imageController.maskPolylines == null) {
             return;
         }
         if (task != null) {
@@ -331,8 +331,8 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
             @Override
             protected boolean handle() {
-                newImage = ShapeTools.drawLines(imageView.getImage(),
-                        imageController.maskLinesData, style,
+                newImage = ShapeTools.drawShape(imageView.getImage(),
+                        imageController.maskPolylinesData, style,
                         blendController.blender());
                 return newImage != null;
             }
@@ -347,7 +347,8 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-                editor.clearMaskLines();
+                editor.drawMaskPolylines();
+                editor.hideMaskPolylines();
             }
 
         };

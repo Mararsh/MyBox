@@ -1,17 +1,16 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowIndexCell;
-import mara.mybox.fxml.cell.TableTextAreaEditCell;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -46,33 +45,12 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
                         if (points == null) {
                             return null;
                         }
-                        return new SimpleStringProperty(DoublePoint.toText(points, Scale));
+                        return new SimpleStringProperty(DoublePoint.toText(points, Scale, " "));
                     } catch (Exception e) {
                         return null;
                     }
                 }
             });
-            pointsColumn.setCellFactory(TableTextAreaEditCell.create(myController, null));
-            pointsColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<DoublePoint>, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<List<DoublePoint>, String> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int row = e.getTablePosition().getRow();
-                    String s = e.getNewValue();
-                    if (row < 0 || s == null || s.isBlank()) {
-                        return;
-                    }
-                    List<DoublePoint> points = DoublePoint.parseList(s.replaceAll("\n", " "));
-                    if (points == null || points.isEmpty()) {
-                        return;
-                    }
-                    tableData.set(row, points);
-                }
-            });
-            pointsColumn.setEditable(true);
-            pointsColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -92,9 +70,48 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
     @FXML
     @Override
     public void addAction() {
-        List<DoublePoint> line = new ArrayList<>();
-        line.add(new DoublePoint(0, 0));
-        tableData.add(line);
+        LineInputController inputController = LineInputController.open(this, message("Add"), null, Scale);
+        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                List<DoublePoint> line = inputController.picked;
+                if (line == null || line.isEmpty()) {
+                    popError(message("InvalidValue"));
+                    return;
+                }
+                tableData.add(line);
+                inputController.close();
+            }
+        });
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        try {
+            int index = selectedIndix();
+            if (index < 0) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            List<DoublePoint> line = tableData.get(index);
+            LineInputController inputController = LineInputController.open(this,
+                    message("Line") + " " + (index + 1), line, Scale);
+            inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    List<DoublePoint> line = inputController.picked;
+                    if (line == null || line.isEmpty()) {
+                        popError(message("InvalidValue"));
+                        return;
+                    }
+                    inputController.close();
+                    tableData.set(index, line);
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }

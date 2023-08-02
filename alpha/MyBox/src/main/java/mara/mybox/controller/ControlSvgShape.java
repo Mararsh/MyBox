@@ -473,13 +473,13 @@ public class ControlSvgShape extends ControlShapeOptions {
                     if (element == null) {
                         element = doc.createElement("polyline");
                     }
-                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolylineData.getPoints(), 2));
+                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolylineData.getPoints(), 3, " "));
                     return true;
                 case Polygon:
                     if (element == null) {
                         element = doc.createElement("polygon");
                     }
-                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolygonData.getPoints(), 2));
+                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolygonData.getPoints(), 3, " "));
                     return true;
                 case Path:
                     if (element == null) {

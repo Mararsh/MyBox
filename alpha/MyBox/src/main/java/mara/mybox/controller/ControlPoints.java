@@ -1,14 +1,15 @@
 package mara.mybox.controller;
 
 import java.util.List;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableRowIndexCell;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -31,42 +32,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
             indexColumn.setCellFactory(new TableRowIndexCell());
 
             xColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
-            xColumn.setCellFactory(TableAutoCommitCell.forDoubleColumn());
-            xColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<DoublePoint, Double>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<DoublePoint, Double> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int row = e.getTablePosition().getRow();
-                    if (row < 0) {
-                        return;
-                    }
-                    DoublePoint point = tableData.get(row);
-                    point.setX(e.getNewValue());
-                    tableData.set(row, point);
-                }
-            });
-            xColumn.getStyleClass().add("editable-column");
-
             yColumn.setCellValueFactory(new PropertyValueFactory<>("y"));
-            yColumn.setCellFactory(TableAutoCommitCell.forDoubleColumn());
-            yColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<DoublePoint, Double>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<DoublePoint, Double> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int row = e.getTablePosition().getRow();
-                    if (row < 0) {
-                        return;
-                    }
-                    DoublePoint point = tableData.get(row);
-                    point.setY(e.getNewValue());
-                    tableData.set(row, point);
-                }
-            });
-            yColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -82,21 +48,51 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     }
 
     public void loadList(List<DoublePoint> list) {
+        isSettingValues = true;
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
             tableData.setAll(DoublePoint.scaleList(list, Scale));
         }
-    }
-
-    public String toText() {
-        return DoublePoint.toText(tableData, Scale);
+        isSettingValues = false;
     }
 
     @FXML
     @Override
     public void addAction() {
-        tableData.add(new DoublePoint(0, 0));
+        PointInputController inputController = PointInputController.open(
+                this, message("Add"), null, Scale);
+        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                tableData.add(inputController.picked);
+                inputController.close();
+            }
+        });
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        try {
+            int index = selectedIndix();
+            if (index < 0) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            DoublePoint point = tableData.get(index);
+            PointInputController inputController = PointInputController.open(
+                    this, message("Point") + " " + (index + 1), point, Scale);
+            inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    tableData.set(index, inputController.picked);
+                    inputController.close();
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }
