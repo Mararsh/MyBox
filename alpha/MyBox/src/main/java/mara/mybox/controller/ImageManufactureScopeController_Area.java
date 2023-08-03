@@ -13,7 +13,6 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -27,7 +26,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     @FXML
     public void goScope() {
         try {
-            if (isSettingValues || imageView == null || imageView.getImage() == null
+            if (imageView == null || imageView.getImage() == null
                     || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
                 return;
             }
@@ -65,7 +64,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             maskRectangleData = rect;
             scope.setRectangle(maskRectangleData.cloneValues());
             drawMaskRectangle();
-            indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -83,7 +81,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             maskEllipseData = new DoubleEllipse(rect);
             scope.setEllipse(maskEllipseData.cloneValues());
             drawMaskEllipse();
-            indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -169,7 +166,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             maskCircleData = circle;
             scope.setCircle(maskCircleData.cloneValues());
             drawMaskCircle();
-            indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -197,48 +193,11 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             }
             maskPolygonData = new DoublePolygon();
             maskPolygonData.setAll(pointsController.tableData);
-            drawMaskPolygon();
             scope.setPolygon(maskPolygonData.cloneValues());
-            indicateScope();
+            drawMaskPolygon();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public boolean drawMaskRectangle() {
-        if (!super.drawMaskRectangle()) {
-            return false;
-        }
-        rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX(), 2) + "");
-        rectLeftTopYInput.setText(scale(maskRectangleData.getSmallY(), 2) + "");
-        rightBottomXInput.setText(scale(maskRectangleData.getBigX(), 2) + "");
-        rightBottomYInput.setText(scale(maskRectangleData.getBigY(), 2) + "");
-        return true;
-    }
-
-    @Override
-    public boolean drawMaskCircle() {
-        if (!super.drawMaskCircle()) {
-            return false;
-        }
-        circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
-        circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
-        circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
-        return true;
-    }
-
-    @Override
-    public boolean drawMaskEllipse() {
-        if (!super.drawMaskEllipse()) {
-            return false;
-        }
-        DoubleRectangle rect = maskEllipseData.getRectangle();
-        rectLeftTopXInput.setText(scale(rect.getSmallX(), 2) + "");
-        rectLeftTopYInput.setText(scale(rect.getSmallY(), 2) + "");
-        rightBottomXInput.setText(scale(rect.getBigX(), 2) + "");
-        rightBottomYInput.setText(scale(rect.getBigY(), 2) + "");
-        return true;
     }
 
 }

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Toggle;
@@ -13,13 +14,16 @@ import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.tools.DoubleTools.scale;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -47,6 +51,42 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             initColorsTab();
             initMatchTab();
             initSaveTab();
+
+            tableColor = new TableColor();
+
+            maskShapeChanged.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    indicateScope();
+                }
+            });
+
+            maskShapeDataChanged.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    updateShapeData();
+                }
+            });
+
+            pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
+                    if (isSettingValues
+                            || pointsController.isSettingValues
+                            || pointsController.isSettingTable) {
+                        return;
+                    }
+                    isSettingValues = true;
+                    goScope();
+                    isSettingValues = false;
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -238,52 +278,15 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             sourceFile = imageController.sourceFile;
             imageInformation = imageController.imageInformation;
             image = imageController.image;
-            tableColor = new TableColor();
 
             refreshStyle();
 
             loadImage(sourceFile, imageInformation, imageController.image, parent.imageChanged);
-            checkScopeType();
+
+            isSettingValues = true;
             scopeAllRadio.setSelected(true);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    public void viewSizeChanged(double change) {
-        super.viewSizeChanged(change);
-        if (change < sizeChangeAware) {
-            return;
-        }
-        goScope();
-    }
-
-    @Override
-    public void refinePane() {
-        super.refinePane();
-        scopeView.setFitWidth(imageView.getFitWidth());
-        scopeView.setFitHeight(imageView.getFitHeight());
-        scopeView.setLayoutX(imageView.getLayoutX());
-        scopeView.setLayoutY(imageView.getLayoutY());
-    }
-
-    @Override
-    public void paneSizeChanged(double change) {
-        refinePane();
-        redrawMaskShapes();
-    }
-
-    @Override
-    public void setImageChanged(boolean imageChanged) {
-        try {
-            this.imageChanged = imageChanged;
-
-            if (imageChanged) {
-                indicateScope();
-                redrawMaskShapes();
-            }
-
+            isSettingValues = false;
+            checkScopeType();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -306,50 +309,15 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         if (scope.getScopeType() == ScopeType.Matting) {
             int x = (int) Math.round(p.getX());
             int y = (int) Math.round(p.getY());
-            pointsController.tableData.add(new DoublePoint(x, y));
+            isSettingValues = true;
+            pointsController.addPoint(x, y);
+            isSettingValues = false;
             scope.addPoint(x, y);
             indicateScope();
+
         } else {
             super.paneClicked(event, p);
-            switch (scope.getScopeType()) {
-                case Rectangle:
-                    if (!scope.getRectangle().same(maskRectangleData)) {
-                        scope.setRectangle(maskRectangleData.cloneValues());
-                        indicateScope();
-                    }
-                    break;
-                case Circle:
-                    if (!scope.getCircle().same(maskCircleData)) {
-                        scope.setCircle(maskCircleData.cloneValues());
-                        indicateScope();
-                    }
-                    break;
-                case Ellipse:
-                    if (!scope.getEllipse().same(maskEllipseData)) {
-                        scope.setEllipse(maskEllipseData.cloneValues());
-                        indicateScope();
-                    }
-                    break;
-                case Polygon:
-                    if (!scope.getPolygon().same(maskPolygonData)) {
-                        pointsController.tableData.clear();
-                        for (DoublePoint d : maskPolygonData.getPoints()) {
-                            pointsController.tableData.add(
-                                    new DoublePoint(Math.round(d.getX()), Math.round(d.getY())));
-                        }
-                        scope.setPolygon(maskPolygonData.cloneValues());
-                        indicateScope();
-                    }
-                    break;
-                case Outline:
-                    if (!scope.getRectangle().same(maskRectangleData)) {
-                        scope.setRectangle(maskRectangleData.cloneValues());
-                        makeOutline();
-                    }
-                    break;
-            }
         }
-
     }
 
     @FXML
@@ -360,6 +328,51 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             task.cancel();
         }
         goScope();
+    }
+
+    public void updateShapeData() {
+        try {
+            if (isSettingValues || imageView == null || imageView.getImage() == null
+                    || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
+                return;
+            }
+            switch (scope.getScopeType()) {
+                case Rectangle:
+                    rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX(), 2) + "");
+                    rectLeftTopYInput.setText(scale(maskRectangleData.getSmallY(), 2) + "");
+                    rightBottomXInput.setText(scale(maskRectangleData.getBigX(), 2) + "");
+                    rightBottomYInput.setText(scale(maskRectangleData.getBigY(), 2) + "");
+                    scope.setRectangle(maskRectangleData.cloneValues());
+                    break;
+                case Ellipse:
+                    DoubleRectangle rect = maskEllipseData.getRectangle();
+                    rectLeftTopXInput.setText(scale(rect.getSmallX(), 2) + "");
+                    rectLeftTopYInput.setText(scale(rect.getSmallY(), 2) + "");
+                    rightBottomXInput.setText(scale(rect.getBigX(), 2) + "");
+                    rightBottomYInput.setText(scale(rect.getBigY(), 2) + "");
+                    scope.setEllipse(maskEllipseData.cloneValues());
+                    break;
+                case Circle:
+                    circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
+                    circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
+                    circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
+                    scope.setCircle(maskCircleData.cloneValues());
+                    break;
+                case Polygon:
+                    pointsController.loadList(maskPolygonData.getPoints());
+                    scope.setPolygon(maskPolygonData.cloneValues());
+                    break;
+                case Outline:
+                    scope.setRectangle(maskRectangleData.cloneValues());
+                    makeOutline();
+                    return;
+                default:
+                    return;
+            }
+            indicateScope();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }

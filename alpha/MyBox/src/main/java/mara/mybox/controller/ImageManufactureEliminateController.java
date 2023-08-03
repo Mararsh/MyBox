@@ -183,11 +183,11 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
             setBox.getChildren().clear();
 
             if (eraserRadio.isSelected()) {
-                commentsLabel.setText(message("PenLinesTips") + "\n" + message("ImageEraserComments"));
+                commentsLabel.setText(message("MultipleLinesTips") + "\n" + message("ImageEraserComments"));
 
             } else {
                 setBox.getChildren().add(intensityPane);
-                commentsLabel.setText(message("PenMosaicTips"));
+                commentsLabel.setText(message("MultipleLinesTips"));
             }
 
             refreshStyle(thisPane);

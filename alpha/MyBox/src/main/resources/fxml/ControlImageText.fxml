@@ -25,28 +25,28 @@
                     <content>
                         <VBox fx:id="baseBox" spacing="5.0">
                             <children>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                           <children>
-                              <Button fx:id="historyTextButton" mnemonicParsing="false" onAction="#showTextHistories" onMouseEntered="#popTextHistories">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconHistory.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="goTextButton" mnemonicParsing="false" onAction="#goText">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconGo.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <children>
+                                        <Button fx:id="historyTextButton" mnemonicParsing="false" onAction="#showTextHistories" onMouseEntered="#popTextHistories">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconHistory.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="goTextButton" mnemonicParsing="false" onAction="#goText">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconGo.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
                                 <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="60.0" VBox.vgrow="ALWAYS" />
                                 <Label fx:id="sizeLabel" />
                             </children>
@@ -56,37 +56,37 @@
                         </VBox>
                     </content>
                 </Tab>
-            <Tab fx:id="locationTab" text="%Location">
-               <content>
-                  <VBox spacing="5.0">
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                     <children> 
+                <Tab fx:id="locationTab" text="%Location">
+                    <content>
+                        <VBox spacing="5.0">
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                            <children> 
                                 <VBox fx:id="blendBox1" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
                                         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <RadioButton fx:id="leftTopRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%LeftTop" wrapText="true">
-                                       <toggleGroup>
+                                                    <toggleGroup>
                                                         <ToggleGroup fx:id="positionGroup" />
-                                       </toggleGroup>
+                                                    </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton fx:id="rightTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" wrapText="true" />
                                                 <RadioButton fx:id="rightBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightBottom" toggleGroup="$positionGroup" wrapText="true" />
                                                 <RadioButton fx:id="leftBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" wrapText="true" />
                                             </children>
                                         </FlowPane>
-                                          <RadioButton fx:id="centerRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Center" toggleGroup="$positionGroup" wrapText="true" />
-                              <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
+                                        <RadioButton fx:id="centerRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Center" toggleGroup="$positionGroup" wrapText="true" />
+                                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
                                                 <RadioButton fx:id="customRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" wrapText="true" />
-                                    <Label text="x" />
+                                                <Label text="x" />
                                                 <TextField prefWidth="90.0" promptText="X" fx:id="xInput" />
-                                    <Label layoutX="60.0" layoutY="14.0" text="y" />
+                                                <Label layoutX="60.0" layoutY="14.0" text="y" />
                                                 <TextField fx:id="yInput" prefWidth="90.0" promptText="Y" />
-                                 </children>
-                              </FlowPane>
+                                            </children>
+                                        </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="15.0" layoutY="35.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label text="%Margins" wrapText="true" />
@@ -95,19 +95,19 @@
                                         </FlowPane>
                                     </children>
                                 </VBox>
-                                  <Button fx:id="goLocationButton" mnemonicParsing="false" onAction="#goLocation">
-                                      <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                              <image>
-                                                  <Image url="@../buttons/Red/iconGo.png" />
-                                              </image>
-                                          </ImageView>
-                                      </graphic>
-                                  </Button>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
+                                <Button fx:id="goLocationButton" mnemonicParsing="false" onAction="#goLocation">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconGo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
                 <Tab fx:id="styleTab" text="%Style">
                     <content>
                         <VBox spacing="5.0">
@@ -144,15 +144,15 @@
                                     <children>
                                         <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
                                             <children>
-                                                <Label text="%LineHeight" />
-                                                <ComboBox fx:id="lineHeightSelector" editable="true" prefWidth="160.0" />
+                                                <Label text="%RowHeightPx" />
+                                                <ComboBox fx:id="rowHeightSelector" editable="true" prefWidth="160.0" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="2.0" vgap="2.0">
                                             <children>
                                                 <CheckBox fx:id="verticalCheck" mnemonicParsing="false" text="%VerticalSettingOfTypes" />
                                                 <CheckBox fx:id="rightToLeftCheck" mnemonicParsing="false" text="%RightToLeft" />
-                                              <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%Outline" />
+                                                <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%Outline" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="10.0" layoutY="59.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
@@ -161,12 +161,12 @@
                                                 <ComboBox fx:id="shadowSelector" editable="true" prefWidth="100.0" />
                                             </children>
                                         </FlowPane>
-                              <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
-                                    <Label text="%ShadowColor" />
-                                    <fx:include fx:id="shadowColor" source="ControlColorSet.fxml" />
-                                 </children>
-                              </FlowPane>
+                                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
+                                                <Label text="%ShadowColor" />
+                                                <fx:include fx:id="shadowColor" source="ControlColorSet.fxml" />
+                                            </children>
+                                        </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="10.0" layoutY="81.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label text="%Angle" />
@@ -204,13 +204,13 @@
                                                 <fx:include fx:id="bordersStrokeColor" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
-                              <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
+                                        <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
                                                 <Label fx:id="strokeWidthLabel1" text="%StrokeWidth" />
                                                 <ComboBox fx:id="bordersStrokeWidthSelector" editable="true" prefWidth="100.0" />
                                                 <CheckBox fx:id="bordersStrokeDottedCheck" mnemonicParsing="false" text="%Dotted" />
-                                 </children>
-                              </FlowPane>
+                                            </children>
+                                        </FlowPane>
                                         <FlowPane fx:id="rectArcPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label fx:id="arcLabel" text="%Arc" />
@@ -238,18 +238,18 @@
                         </VBox>
                     </content>
                 </Tab>
-            <Tab fx:id="blendTab" text="%Blend">
-               <content>
-                  <VBox spacing="5.0">
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                     <children>
-                                  <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
+                <Tab fx:id="blendTab" text="%Blend">
+                    <content>
+                        <VBox spacing="5.0">
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                            <children>
+                                <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
             </tabs>
         </TabPane>
     </children>

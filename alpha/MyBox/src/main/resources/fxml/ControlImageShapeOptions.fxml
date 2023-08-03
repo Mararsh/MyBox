@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -147,12 +146,6 @@
         </VBox>
         <Label fx:id="commentsLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
         <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWidth="200.0" vgap="5.0" />
-        <Separator prefWidth="200.0" />
-        <Label layoutX="10.0" layoutY="80.0" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SetOptionsComments" wrapText="true">
-            <VBox.margin>
-                <Insets />
-            </VBox.margin>
-        </Label>
         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
             <children>
                 <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">

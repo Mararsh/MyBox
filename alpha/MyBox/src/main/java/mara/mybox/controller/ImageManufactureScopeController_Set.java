@@ -10,10 +10,12 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.tools.DoubleTools.scale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -32,35 +34,34 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             if (scopeTypeGroup.getSelectedToggle() == null) {
                 scope.setScopeType(ImageScope.ScopeType.All);
             } else {
-                RadioButton selected = (RadioButton) scopeTypeGroup.getSelectedToggle();
-                if (selected.equals(scopeAllRadio)) {
+                if (scopeAllRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.All);
 
-                } else if (selected.equals(scopeMattingRadio)) {
+                } else if (scopeMattingRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
 
-                } else if (selected.equals(scopeRectangleRadio)) {
+                } else if (scopeRectangleRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Rectangle);
 
-                } else if (selected.equals(scopeCircleRadio)) {
+                } else if (scopeCircleRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Circle);
 
-                } else if (selected.equals(scopeEllipseRadio)) {
+                } else if (scopeEllipseRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Ellipse);
 
-                } else if (selected.equals(scopePolygonRadio)) {
+                } else if (scopePolygonRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Polygon);
 
-                } else if (selected.equals(scopeColorRadio)) {
+                } else if (scopeColorRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Color);
 
-                } else if (selected.equals(scopeOutlineRadio)) {
+                } else if (scopeOutlineRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Outline);
                 }
             }
+            setScopeValues();
 
             setScopeControls();
-            setScopeValues();
 
             indicateScope();
 
@@ -69,101 +70,13 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
         }
     }
 
-    protected void setScopeControls() {
-        try {
-            setBox.setVisible(!scopeWhole());
-            tabPane.getTabs().clear();
-            areaBox.getChildren().clear();
-            scopeTips.setText("");
-            NodeStyleTools.removeTooltip(scopeTips);
-            if (image == null || scope == null) {
-                return;
-            }
-            isSettingValues = true;
-            String tips = "";
-            switch (scope.getScopeType()) {
-                case All:
-                    tips = message("WholeImage");
-                    break;
-                case Matting:
-                    tips = message("ScopeMattingTips");
-                    tabPane.getTabs().addAll(areaTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().add(pointsBox);
-                    VBox.setVgrow(areaBox, Priority.ALWAYS);
-                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
-                    break;
-
-                case Rectangle:
-                    tips = message("ScopeRectangleColorsTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().add(rectangleBox);
-                    rectangleLabel.setText(message("Rectangle"));
-                    break;
-
-                case Circle:
-                    tips = message("ScopeCircleColorsTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().add(circleBox);
-                    break;
-
-                case Ellipse:
-                    tips = message("ScopeEllipseColorsTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().add(rectangleBox);
-                    rectangleLabel.setText(message("Ellipse"));
-                    break;
-
-                case Polygon:
-                    tips = message("ScopePolygonColorsTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().add(pointsBox);
-                    VBox.setVgrow(areaBox, Priority.ALWAYS);
-                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
-                    break;
-
-                case Color:
-                    tips = message("ScopeColorTips");
-                    tabPane.getTabs().addAll(colorsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(colorsTab);
-                    break;
-
-                case Outline:
-                    tips = message("ScopeOutlineTips");
-                    tabPane.getTabs().addAll(pixTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(pixTab);
-                    if (outlinesList.getItems().isEmpty()) {
-                        initPixTab();
-                    }
-                    break;
-
-            }
-            scopeTips.setText(tips);
-            if (!tips.isBlank()) {
-                NodeStyleTools.setTooltip(scopeTips, tips);
-            }
-            setScopeName();
-            areaBox.applyCss();
-            areaBox.layout();
-            refreshStyle(tabPane);
-            isSettingValues = false;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-
-    }
-
     private void setScopeValues() {
         try {
             if (image == null || scope == null) {
                 return;
             }
             pickColors();
+            isSettingValues = true;
             switch (scope.getScopeType()) {
                 case Matting:
                     scope.clearPoints();
@@ -211,6 +124,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
                 default:
             }
+            isSettingValues = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -233,8 +147,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             scopeView.setImage(null);
             outlineSource = null;
 
-//            pointsController.clearAction();
-//            colorsList.getItems().clear();
             scopeDistanceSelector.getItems().clear();
             scopeDistanceSelector.getEditor().setStyle(null);
             areaExcludedCheck.setSelected(false);
@@ -248,7 +160,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
     }
 
     protected boolean checkMatchType() {
-        if (isSettingValues || scope == null || matchGroup.getSelectedToggle() == null) {
+        if (scope == null || matchGroup.getSelectedToggle() == null) {
             return false;
         }
         try {
@@ -362,6 +274,107 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             name = scope.getScopeType() + "_" + DateTools.datetimeToString(new Date());
         }
         scopeNameInput.setText(name);
+    }
+
+    protected void setScopeControls() {
+        try {
+            setBox.setVisible(!scopeWhole());
+            tabPane.getTabs().clear();
+            areaBox.getChildren().clear();
+            scopeTips.setText("");
+            NodeStyleTools.removeTooltip(scopeTips);
+            if (image == null || scope == null) {
+                return;
+            }
+            isSettingValues = true;
+            String tips = "";
+            switch (scope.getScopeType()) {
+                case All:
+                    tips = message("WholeImage");
+                    break;
+                case Matting:
+                    tips = message("ScopeMattingTips");
+                    tabPane.getTabs().addAll(areaTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
+                    areaBox.getChildren().add(pointsBox);
+                    VBox.setVgrow(areaBox, Priority.ALWAYS);
+                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
+                    break;
+
+                case Rectangle:
+                    tips = message("ScopeRectangleColorsTips");
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
+                    areaBox.getChildren().addAll(rectangleBox, goScopeButton);
+                    rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX(), 2) + "");
+                    rectLeftTopYInput.setText(scale(maskRectangleData.getSmallY(), 2) + "");
+                    rightBottomXInput.setText(scale(maskRectangleData.getBigX(), 2) + "");
+                    rightBottomYInput.setText(scale(maskRectangleData.getBigY(), 2) + "");
+                    rectangleLabel.setText(message("Rectangle"));
+                    break;
+
+                case Circle:
+                    tips = message("ScopeCircleColorsTips");
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
+                    areaBox.getChildren().addAll(circleBox, goScopeButton);
+                    circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
+                    circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
+                    circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
+                    break;
+
+                case Ellipse:
+                    tips = message("ScopeEllipseColorsTips");
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
+                    areaBox.getChildren().addAll(rectangleBox, goScopeButton);
+                    DoubleRectangle rect = maskEllipseData.getRectangle();
+                    rectLeftTopXInput.setText(scale(rect.getSmallX(), 2) + "");
+                    rectLeftTopYInput.setText(scale(rect.getSmallY(), 2) + "");
+                    rightBottomXInput.setText(scale(rect.getBigX(), 2) + "");
+                    rightBottomYInput.setText(scale(rect.getBigY(), 2) + "");
+                    rectangleLabel.setText(message("Ellipse"));
+                    break;
+
+                case Polygon:
+                    tips = message("ScopePolygonColorsTips");
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
+                    areaBox.getChildren().add(pointsBox);
+                    VBox.setVgrow(areaBox, Priority.ALWAYS);
+                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
+                    break;
+
+                case Color:
+                    tips = message("ScopeColorTips");
+                    tabPane.getTabs().addAll(colorsTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(colorsTab);
+                    break;
+
+                case Outline:
+                    tips = message("ScopeOutlineTips");
+                    tabPane.getTabs().addAll(pixTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(pixTab);
+                    if (outlinesList.getItems().isEmpty()) {
+                        initPixTab();
+                    }
+                    break;
+
+            }
+            scopeTips.setText(tips);
+            if (!tips.isBlank()) {
+                NodeStyleTools.setTooltip(scopeTips, tips);
+            }
+            setScopeName();
+            areaBox.applyCss();
+            areaBox.layout();
+            refreshStyle(tabPane);
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+
     }
 
 }

@@ -311,7 +311,7 @@ public class ImageViewerController extends BaseImageController {
 
             setFilesBrowse();
 
-            refinePane();
+            finalFixView();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -421,7 +421,6 @@ public class ImageViewerController extends BaseImageController {
             protected void whenSucceeded() {
                 imageView.setImage(areaImage);
                 setImageChanged(true);
-                redrawMaskShapes();
             }
 
         };

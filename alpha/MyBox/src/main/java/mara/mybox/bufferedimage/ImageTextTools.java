@@ -106,7 +106,7 @@ public class ImageTextTools {
             }
             int textBaseX = optionsController.getBaseX();
             int textBaseY = optionsController.getTextY();
-            int linex = textBaseX, liney = textBaseY, lineHeight = optionsController.getLineHeight();
+            int rowx = textBaseX, rowy = textBaseY, rowHeight = optionsController.getRowHeight();
             String[] lines = text.split("\n", -1);
             int lend = lines.length - 1;
             boolean isOutline = optionsController.isOutline();
@@ -116,24 +116,24 @@ public class ImageTextTools {
             if (optionsController.isVertical()) {
                 for (int r = (leftToRight ? 0 : lend); (leftToRight ? r <= lend : r >= 0);) {
                     String line = lines[r];
-                    liney = textBaseY;
+                    rowy = textBaseY;
                     double cWidthMax = 0;
                     for (int i = 0; i < line.length(); i++) {
                         String c = line.charAt(i) + "";
-                        drawText(g, c, font, linex, liney, shadow, isOutline);
+                        drawText(g, c, font, rowx, rowy, shadow, isOutline);
                         Rectangle2D cBound = metrics.getStringBounds(c, g);
-                        liney += cBound.getHeight();
-                        if (lineHeight <= 0) {
+                        rowy += cBound.getHeight();
+                        if (rowHeight <= 0) {
                             double cWidth = cBound.getWidth();
                             if (cWidth > cWidthMax) {
                                 cWidthMax = cWidth;
                             }
                         }
                     }
-                    if (lineHeight > 0) {
-                        linex += lineHeight;
+                    if (rowHeight > 0) {
+                        rowx += rowHeight;
                     } else {
-                        linex += cWidthMax;
+                        rowx += cWidthMax;
                     }
                     if (leftToRight) {
                         r++;
@@ -143,11 +143,11 @@ public class ImageTextTools {
                 }
             } else {
                 for (String line : lines) {
-                    drawText(g, line, font, linex, liney, shadow, isOutline);
-                    if (lineHeight > 0) {
-                        liney += lineHeight;
+                    drawText(g, line, font, rowx, rowy, shadow, isOutline);
+                    if (rowHeight > 0) {
+                        rowy += rowHeight;
                     } else {
-                        liney += g.getFontMetrics(font).getStringBounds(line, g).getHeight();
+                        rowy += g.getFontMetrics(font).getStringBounds(line, g).getHeight();
                     }
                 }
             }

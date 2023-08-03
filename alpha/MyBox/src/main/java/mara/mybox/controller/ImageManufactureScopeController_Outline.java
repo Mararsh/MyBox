@@ -253,7 +253,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
 
             @Override
             protected void whenSucceeded() {
-                if (scope == null) {   // this may happen jn quitOpearting()
+                if (scope == null) {   // this may happen in quitOpearting()
                     return;
                 }
                 maskRectangleData = new DoubleRectangle(

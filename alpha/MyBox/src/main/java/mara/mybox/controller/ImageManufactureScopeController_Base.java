@@ -60,7 +60,8 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button saveScopeButton, scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
+    protected Button goScopeButton, saveScopeButton,
+            scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
     protected RadioButton scopeAllRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
@@ -71,11 +72,11 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
     protected synchronized void indicateScope() {
-        if (isSettingValues || imageView == null || !scopeView.isVisible() || scope == null) {
+        if (imageView == null || !scopeView.isVisible() || scope == null) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
             private Image scopedImage;
@@ -83,8 +84,9 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             @Override
             protected boolean handle() {
                 try {
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                            scope, PixelsOperation.OperationType.ShowScope);
+                    PixelsOperation pixelsOperation
+                            = PixelsOperationFactory.create(imageView.getImage(),
+                                    scope, PixelsOperation.OperationType.ShowScope);
                     if (!ignoreTransparentCheck.isSelected()) {
                         pixelsOperation.setSkipTransparent(false);
                     }
@@ -109,7 +111,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             }
 
         };
-        parentController.start(task);
+        start(task);
     }
 
     @Override

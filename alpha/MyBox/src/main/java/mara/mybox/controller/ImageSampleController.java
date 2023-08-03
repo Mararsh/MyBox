@@ -229,13 +229,9 @@ public class ImageSampleController extends ImageViewerController {
     @Override
     public boolean afterImageLoaded() {
         try {
-            if (!super.afterImageLoaded()) {
+            if (!super.afterImageLoaded() || imageView.getImage() == null) {
                 return false;
             }
-            if (imageView.getImage() == null) {
-                return false;
-            }
-            fitSize();
             showMaskRectangle();
             checkScales();
             return true;

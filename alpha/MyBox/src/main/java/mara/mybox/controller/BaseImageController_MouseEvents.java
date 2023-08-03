@@ -48,15 +48,15 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     @FXML
     public void mousePressed(MouseEvent event) {
-        pointForLines(event);
+        mousePoint(event);
     }
 
     @FXML
     public void mouseDragged(MouseEvent event) {
-        pointForLines(event);
+        mousePoint(event);
     }
 
-    public void pointForLines(MouseEvent event) {
+    public void mousePoint(MouseEvent event) {
         if (imageView == null || imageView.getImage() == null
                 || isPickingColor || event.getButton() == MouseButton.SECONDARY
                 || maskPolylines == null) {

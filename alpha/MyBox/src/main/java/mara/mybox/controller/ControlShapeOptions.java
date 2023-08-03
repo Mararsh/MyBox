@@ -120,7 +120,9 @@ public abstract class ControlShapeOptions extends BaseController {
                 pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
                     @Override
                     public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
-                        if (pointsController.isSettingTable || pointsController.isSettingTable) {
+                        if (isSettingValues
+                                || pointsController.isSettingValues
+                                || pointsController.isSettingTable) {
                             return;
                         }
                         goShape();
@@ -132,7 +134,9 @@ public abstract class ControlShapeOptions extends BaseController {
                 linesController.tableData.addListener(new ListChangeListener<List<DoublePoint>>() {
                     @Override
                     public void onChanged(ListChangeListener.Change<? extends List<DoublePoint>> c) {
-                        if (linesController.isSettingTable || linesController.isSettingTable) {
+                        if (isSettingValues
+                                || pointsController.isSettingValues
+                                || pointsController.isSettingTable) {
                             return;
                         }
                         goShape();

@@ -359,9 +359,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                     .append(": ").append(DateTools.datetimeToString(sourceFile.lastModified())).append("\n");
             s.append(editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
                     .append(": ").append(StringTools.format(fileObjectNumber)).append("\n");
-            s.append(message("LinesNumberInFile"))
+            s.append(message("RowsNumberInFile"))
                     .append(": ").append(StringTools.format(fileLinesNumber)).append("\n");
-            s.append(editType == Edit_Type.Bytes ? message("BytesPerPage") : message("LinesPerPage"))
+            s.append(editType == Edit_Type.Bytes ? message("BytesPerPage") : message("RowsPerPage"))
                     .append(": ").append(StringTools.format(pageSize)).append("\n");
             s.append(message("CurrentPage"))
                     .append(": ").append(StringTools.format(currentPage + 1)).append(" / ")
@@ -376,14 +376,14 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                     .append(": [").append(StringTools.format(pageObjectStart + 1))
                     .append(" - ").append(StringTools.format(pageObjectEnd))
                     .append("] ").append(StringTools.format(pageObjectsNumber)).append("\n");
-            s.append(message("LinesRangeInPage"))
+            s.append(message("RowsRangeInPage"))
                     .append(": [").append(StringTools.format(pageLineStart + 1))
                     .append(" - ").append(StringTools.format(pageLineEnd))
                     .append("] ").append(StringTools.format(pageLinesNumber)).append("\n");
         } else {
             s.append(editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage"))
                     .append(": ").append(StringTools.format(pageObjectsNumber)).append("\n");
-            s.append(message("LinesNumberInPage"))
+            s.append(message("RowsNumberInPage"))
                     .append(": ").append(StringTools.format(pageLinesNumber)).append("\n");
         }
         s.append(message("PageModifyTime"))

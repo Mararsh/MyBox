@@ -130,19 +130,19 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                             <children>
-                                                                <Button fx:id="goScopeButton" mnemonicParsing="false" onAction="#goScope">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconGo.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                     <content>
                                                                         <VBox fx:id="areaBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                                             <children>
+                                                                            <Button fx:id="goScopeButton" mnemonicParsing="false" onAction="#goScope">
+                                                                                <graphic>
+                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                        <image>
+                                                                                            <Image url="@../buttons/Red/iconGo.png" />
+                                                                                        </image>
+                                                                                    </ImageView>
+                                                                                </graphic>
+                                                                            </Button>
                                                                                 <VBox fx:id="rectangleBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                                                     <children>
                                                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -514,7 +514,7 @@ License:    Apache License Version 2.0
                                                 <Cursor fx:constant="DEFAULT" />
                                             </cursor>
                                         </Ellipse>
-                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0"  onMousePressed="#handlerPressed" onMouseReleased="#polygonReleased" stroke="RED" strokeType="INSIDE">
+                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#handlerPressed" onMouseReleased="#polygonReleased" stroke="RED" strokeType="INSIDE">
                                             <cursor>
                                                 <Cursor fx:constant="DEFAULT" />
                                             </cursor>
@@ -527,7 +527,7 @@ License:    Apache License Version 2.0
                                                 <Double fx:value="-60.0" />
                                             </points>
                                         </Polygon>
-                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0"  onMousePressed="#handlerPressed" onMouseReleased="#polylineReleased" stroke="RED" strokeType="INSIDE">
+                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#handlerPressed" onMouseReleased="#polylineReleased" stroke="RED" strokeType="INSIDE">
                                             <points>
                                                 <Double fx:value="-50.0" />
                                                 <Double fx:value="-40.0" />

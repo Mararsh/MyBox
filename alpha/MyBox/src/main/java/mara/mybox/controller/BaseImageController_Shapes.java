@@ -180,7 +180,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void setMaskAnchorsStyle(Color controlColor, float controlSize) {
-        if (isSettingValues || maskPane == null) {
+        if (maskPane == null) {
             return;
         }
         try {

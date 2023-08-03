@@ -66,7 +66,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             sizeCartesianRadio, sizeSquareRootRadio, sizeLogarithmicERadio, sizeLogarithmic10Radio,
             sortVertivalRadio, sortHorizontalRadio;
     @FXML
-    protected ComboBox<String> labelFontSizeSelector, lineWdithSelector, tickFontSizeSelector,
+    protected ComboBox<String> labelFontSizeSelector, lineWidthSelector, tickFontSizeSelector,
             categoryFontSizeSelector, categoryTickRotationSelector, barGapSelector, categoryGapSelector,
             numberFontSizeSelector, numberTickRotationSelector;
     @FXML
@@ -230,23 +230,22 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             });
 
             int lineWidth = chartMaker.getLineWidth();
-            lineWdithSelector.getItems().addAll(Arrays.asList(
+            lineWidthSelector.getItems().addAll(Arrays.asList(
                     "4", "1", "2", "3", "5", "6", "7", "8", "9", "10"
             ));
-            lineWdithSelector.getSelectionModel().select(lineWidth + "");
-            lineWdithSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+            lineWidthSelector.getSelectionModel().select(lineWidth + "");
+            lineWidthSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         try {
                             int v = Integer.parseInt(newValue);
                             if (v >= 0) {
                                 chartMaker.setLineWidth(v);
-                                lineWdithSelector.getEditor().setStyle(null);
+                                lineWidthSelector.getEditor().setStyle(null);
                                 chartController.redraw();
                             } else {
-                                lineWdithSelector.getEditor().setStyle(UserConfig.badStyle());
+                                lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            lineWdithSelector.getEditor().setStyle(UserConfig.badStyle());
+                            lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
 

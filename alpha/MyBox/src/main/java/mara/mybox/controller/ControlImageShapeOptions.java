@@ -86,28 +86,28 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             withdrawButton.setDisable(true);
             clearButton.setDisable(true);
             if (rectangleRadio.isSelected()) {
-                commentsLabel.setText(message("PenRectangleTips"));
+                commentsLabel.setText(message("ShapeDragMoveComments"));
 
             } else if (circleRadio.isSelected()) {
-                commentsLabel.setText(message("PenCircleTips"));
+                commentsLabel.setText(message("ShapeDragMoveComments"));
 
             } else if (ellipseRadio.isSelected()) {
-                commentsLabel.setText(message("PenEllipseTips"));
+                commentsLabel.setText(message("ShapeDragMoveComments"));
 
             } else if (polygonRadio.isSelected()) {
                 withdrawButton.setDisable(false);
                 clearButton.setDisable(false);
-                commentsLabel.setText(message("PenPolygonTips"));
+                commentsLabel.setText(message("ShapePointsMoveComments"));
 
             } else if (polylineRadio.isSelected()) {
                 withdrawButton.setDisable(false);
                 clearButton.setDisable(false);
-                commentsLabel.setText(message("PenPolylineTips"));
+                commentsLabel.setText(message("ShapePointsMoveComments"));
 
             } else if (linesRadio.isSelected()) {
                 withdrawButton.setDisable(false);
                 clearButton.setDisable(false);
-                commentsLabel.setText(message("PenLinesTips"));
+                commentsLabel.setText(message("MultipleLinesTips"));
 
             }
 

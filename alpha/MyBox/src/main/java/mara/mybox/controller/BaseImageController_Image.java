@@ -279,11 +279,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 return true;
             }
 
-            if (isPop) {
-                paneSize();
-            } else {
-                fitSize();
-            }
             refinePane();
 
             if (imageInformation == null) {
@@ -294,7 +289,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
             isPickingColor = false;
             checkPickingColor();
-            checkSelect();
+            finalFixView();
 
             notifyLoad();
             return true;
@@ -357,9 +352,14 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 && !(this instanceof ImageSampleController);
     }
 
-    protected void checkSelect() {
+    protected void finalFixView() {
         if (isSettingValues) {
             return;
+        }
+        if (isPop) {
+            paneSize();
+        } else {
+            fitSize();
         }
         clearMask();
         if (canSelect()) {

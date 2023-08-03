@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -7,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowIndexCell;
 import static mara.mybox.value.Languages.message;
@@ -39,10 +41,6 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         }
     }
 
-    @Override
-    public void tableChanged(boolean changed) {
-    }
-
     public void loadText(String values) {
         loadList(DoublePoint.parseList(values));
     }
@@ -55,6 +53,28 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
             tableData.setAll(DoublePoint.scaleList(list, Scale));
         }
         isSettingValues = false;
+    }
+
+    public void loadIntList(List<IntPoint> list) {
+        if (list == null || list.isEmpty()) {
+            tableData.clear();
+            return;
+        }
+        List<DoublePoint> dlist = new ArrayList<>();
+        for (IntPoint p : list) {
+            dlist.add(new DoublePoint(p.getX(), p.getY()));
+        }
+        isSettingValues = true;
+        tableData.setAll(dlist);
+        isSettingValues = false;
+    }
+
+    public void addPoint(DoublePoint point) {
+        tableData.add(point);
+    }
+
+    public void addPoint(double x, double y) {
+        tableData.add(new DoublePoint(x, y));
     }
 
     @FXML

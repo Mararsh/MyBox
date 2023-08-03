@@ -104,11 +104,12 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             scopeSavedController.setParameters(this);
             operationsController.resetOperationPanes();
 
-//            autoSize();
             hisTab.setDisable(sourceFile == null);
             backupTab.setDisable(sourceFile == null);
             hisController.loadHistories();
             backupController.loadBackups(sourceFile);
+
+            finalFixView();
 
             updateLabelString(message("Loaded"));
 
