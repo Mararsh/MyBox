@@ -71,11 +71,6 @@ public class JsonAddElementController extends ControlJsonNodeBase {
         return false;
     }
 
-    @Override
-    public boolean keyF6() {
-        close();
-        return false;
-    }
 
     /*
         static methods

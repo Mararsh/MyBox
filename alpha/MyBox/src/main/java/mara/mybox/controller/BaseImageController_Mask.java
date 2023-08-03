@@ -108,16 +108,16 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         return v;
     }
 
-    public Color controlColor() {
+    public Color anchorColor() {
         try {
-            return Color.web(UserConfig.getString("ControlColor", ShapeStyle.DefaultControlColor));
+            return Color.web(UserConfig.getString("AnchorColor", ShapeStyle.DefaultAnchorColor));
         } catch (Exception e) {
-            return Color.web(ShapeStyle.DefaultControlColor);
+            return Color.web(ShapeStyle.DefaultAnchorColor);
         }
     }
 
-    public float controlSize() {
-        float v = UserConfig.getFloat("ControlSize", 10);
+    public float anchorSize() {
+        float v = UserConfig.getFloat("AnchorSize", 10);
         if (v < 0) {
             v = 10;
         }

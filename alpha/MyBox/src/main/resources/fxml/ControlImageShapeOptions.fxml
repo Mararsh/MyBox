@@ -429,14 +429,14 @@
                                         </FlowPane>
                                         <FlowPane hgap="2.0" layoutX="15.0" layoutY="276.0" prefWrapLength="0.0" vgap="2.0">
                                             <children>
-                                                <Label text="%ControlColor" />
-                                                <fx:include fx:id="ControlColor" source="ControlColorSet.fxml" />
+                                                <Label text="%AnchorColor" />
+                                                <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="2.0" vgap="2.0">
                                             <children>
-                                                <Label text="%ControlSize" />
-                                                <ComboBox fx:id="controlSizeSelector" editable="true" prefWidth="100.0" />
+                                                <Label text="%AnchorSize" />
+                                                <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="100.0" />
                                             </children>
                                         </FlowPane>
                                     </children>

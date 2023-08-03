@@ -591,12 +591,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     }
 
     @Override
-    public boolean keyF6() {
-        close();
-        return false;
-    }
-
-    @Override
     public void cleanPane() {
         try {
             super.cleanPane();

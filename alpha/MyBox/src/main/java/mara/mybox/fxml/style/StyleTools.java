@@ -145,12 +145,12 @@ public class StyleTools {
         Color
      */
     public static StyleColor getConfigStyleColor() {
-        return getColorStyle(UserConfig.getString("ControlColor", "red"));
+        return getColorStyle(UserConfig.getString("AnchorColor", "red"));
     }
 
     public static void setConfigStyleColor(BaseController controller, String value) {
         AppVariables.ControlColor = getColorStyle(value);
-        UserConfig.setString("ControlColor", AppVariables.ControlColor.name());
+        UserConfig.setString("AnchorColor", AppVariables.ControlColor.name());
         if (AppVariables.ControlColor == StyleColor.Customize) {
             SingletonTask task = new SingletonTask<Void>(controller) {
 

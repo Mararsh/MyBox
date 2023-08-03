@@ -54,10 +54,4 @@ public abstract class BaseChildController extends BaseController {
         return false;
     }
 
-    @Override
-    public boolean keyF6() {
-        close();
-        return false;
-    }
-
 }

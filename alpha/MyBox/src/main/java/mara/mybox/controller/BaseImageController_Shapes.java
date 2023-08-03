@@ -173,62 +173,62 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public void setMaskAnchorsStyle() {
         if (shapeStyle == null) {
-            setMaskAnchorsStyle(controlColor(), controlSize());
+            setMaskAnchorsStyle(anchorColor(), anchorSize());
         } else {
-            setMaskAnchorsStyle(shapeStyle.getControlColor(), shapeStyle.getControlSize());
+            setMaskAnchorsStyle(shapeStyle.getAnchorColor(), shapeStyle.getAnchorSize());
         }
     }
 
-    public void setMaskAnchorsStyle(Color controlColor, float controlSize) {
+    public void setMaskAnchorsStyle(Color anchorColor, float anchorSize) {
         if (maskPane == null) {
             return;
         }
         try {
             if (topLeftHandler != null) {
-                topLeftHandler.setStroke(controlColor);
-                topCenterHandler.setStroke(controlColor);
-                topRightHandler.setStroke(controlColor);
-                bottomLeftHandler.setStroke(controlColor);
-                bottomCenterHandler.setStroke(controlColor);
-                bottomRightHandler.setStroke(controlColor);
-                leftCenterHandler.setStroke(controlColor);
-                rightCenterHandler.setStroke(controlColor);
+                topLeftHandler.setStroke(anchorColor);
+                topCenterHandler.setStroke(anchorColor);
+                topRightHandler.setStroke(anchorColor);
+                bottomLeftHandler.setStroke(anchorColor);
+                bottomCenterHandler.setStroke(anchorColor);
+                bottomRightHandler.setStroke(anchorColor);
+                leftCenterHandler.setStroke(anchorColor);
+                rightCenterHandler.setStroke(anchorColor);
 
-                topLeftHandler.setWidth(controlSize);
-                topLeftHandler.setHeight(controlSize);
-                topCenterHandler.setWidth(controlSize);
-                topCenterHandler.setHeight(controlSize);
-                topRightHandler.setWidth(controlSize);
-                topRightHandler.setHeight(controlSize);
-                bottomLeftHandler.setWidth(controlSize);
-                bottomLeftHandler.setHeight(controlSize);
-                bottomCenterHandler.setWidth(controlSize);
-                bottomCenterHandler.setHeight(controlSize);
-                bottomRightHandler.setWidth(controlSize);
-                bottomRightHandler.setHeight(controlSize);
-                leftCenterHandler.setWidth(controlSize);
-                leftCenterHandler.setHeight(controlSize);
-                rightCenterHandler.setWidth(controlSize);
-                rightCenterHandler.setHeight(controlSize);
+                topLeftHandler.setWidth(anchorSize);
+                topLeftHandler.setHeight(anchorSize);
+                topCenterHandler.setWidth(anchorSize);
+                topCenterHandler.setHeight(anchorSize);
+                topRightHandler.setWidth(anchorSize);
+                topRightHandler.setHeight(anchorSize);
+                bottomLeftHandler.setWidth(anchorSize);
+                bottomLeftHandler.setHeight(anchorSize);
+                bottomCenterHandler.setWidth(anchorSize);
+                bottomCenterHandler.setHeight(anchorSize);
+                bottomRightHandler.setWidth(anchorSize);
+                bottomRightHandler.setHeight(anchorSize);
+                leftCenterHandler.setWidth(anchorSize);
+                leftCenterHandler.setHeight(anchorSize);
+                rightCenterHandler.setWidth(anchorSize);
+                rightCenterHandler.setHeight(anchorSize);
 
-                topLeftHandler.setFill(controlColor);
-                topCenterHandler.setFill(controlColor);
-                topRightHandler.setFill(controlColor);
-                bottomLeftHandler.setFill(controlColor);
-                bottomCenterHandler.setFill(controlColor);
-                bottomRightHandler.setFill(controlColor);
-                leftCenterHandler.setFill(controlColor);
-                rightCenterHandler.setFill(controlColor);
+                topLeftHandler.setFill(anchorColor);
+                topCenterHandler.setFill(anchorColor);
+                topRightHandler.setFill(anchorColor);
+                bottomLeftHandler.setFill(anchorColor);
+                bottomCenterHandler.setFill(anchorColor);
+                bottomRightHandler.setFill(anchorColor);
+                leftCenterHandler.setFill(anchorColor);
+                rightCenterHandler.setFill(anchorColor);
             }
 
-            Font font = new Font(controlSize);
+            Font font = new Font(anchorSize);
             for (Node node : maskPane.getChildren()) {
                 if (node == null || !(node instanceof Text) || node.getId() == null) {
                     continue;
                 }
                 if (node.getId().startsWith("MaskPoint")) {
                     Text text = (Text) node;
-                    text.setFill(controlColor);
+                    text.setFill(anchorColor);
                     text.setFont(font);
                 }
             }
@@ -242,12 +242,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             return;
         }
         if (shapeStyle == null) {
-            text.setFill(controlColor());
-            text.setFont(new Font(controlSize()));
+            text.setFill(anchorColor());
+            text.setFont(new Font(anchorSize()));
 
         } else {
-            text.setFill(shapeStyle.getControlColor());
-            text.setFont(new Font(shapeStyle.getControlSize()));
+            text.setFill(shapeStyle.getAnchorColor());
+            text.setFont(new Font(shapeStyle.getAnchorSize()));
         }
     }
 
@@ -411,7 +411,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskRectangle.setWidth(x2 - x1 + 1);
             maskRectangle.setHeight(y2 - y1 + 1);
 
-            double anchorHW = controlSize() * xRatio / 2;
+            double anchorHW = anchorSize() * xRatio / 2;
 
             topLeftHandler.setLayoutX(layoutX);
             topLeftHandler.setLayoutY(layoutY);
@@ -536,7 +536,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskCircle.setCenterY(y);
             maskCircle.setRadius(r);
 
-            double anchorHW = controlSize() * xRatio / 2;
+            double anchorHW = anchorSize() * xRatio / 2;
             topCenterHandler.setLayoutX(layoutX);
             topCenterHandler.setLayoutY(layoutY);
             topCenterHandler.setX(x - anchorHW);
@@ -635,7 +635,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskEllipse.setRadiusX(rx);
             maskEllipse.setRadiusY(ry);
 
-            double anchorHW = controlSize() * xRatio / 2;
+            double anchorHW = anchorSize() * xRatio / 2;
             topCenterHandler.setLayoutX(layoutX);
             topCenterHandler.setLayoutY(layoutY);
             topCenterHandler.setX(cx - anchorHW);
@@ -736,7 +736,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskLine.setEndY(endY);
             maskLine.setVisible(true);
 
-            double anchorHW = controlSize() * xRatio / 2;
+            double anchorHW = anchorSize() * xRatio / 2;
             topLeftHandler.setLayoutX(layoutX);
             topLeftHandler.setLayoutY(layoutY);
             topLeftHandler.setX(startX - anchorHW);
@@ -1328,7 +1328,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (maskQuadraticData == null) {
                 setMaskQuadraticDefaultValues();
             }
-            float anchorHW = controlSize() / 2;
+            float anchorHW = anchorSize() / 2;
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
 //            double startX = imageView.getLayoutX() + maskLineData.getStartX() * xRatio;
@@ -1409,7 +1409,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (maskCubicData == null) {
                 setMaskCubicDefaultValues();
             }
-            float anchorHW = controlSize() / 2;
+            float anchorHW = anchorSize() / 2;
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
 //            double startX = imageView.getLayoutX() + maskLineData.getStartX() * xRatio;
@@ -1490,7 +1490,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (maskArcData == null) {
                 setMaskArcDefaultValues();
             }
-            float anchorHW = controlSize() / 2;
+            float anchorHW = anchorSize() / 2;
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
 //            double startX = imageView.getLayoutX() + maskLineData.getStartX() * xRatio;

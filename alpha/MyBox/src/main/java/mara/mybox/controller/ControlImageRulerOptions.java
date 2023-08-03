@@ -23,9 +23,9 @@ import mara.mybox.value.UserConfig;
 public class ControlImageRulerOptions extends BaseController {
 
     @FXML
-    protected ControlColorSet strokeColorController, ControlColorController, rulerColorController, gridColorController;
+    protected ControlColorSet strokeColorController, anchorColorController, rulerColorController, gridColorController;
     @FXML
-    protected ComboBox<String> strokeWidthSelector, controlSizeSelector, gridWidthSelector,
+    protected ComboBox<String> strokeWidthSelector, anchorSizeSelector, gridWidthSelector,
             gridIntervalSelector, gridOpacitySelector;
 
     @Override
@@ -84,8 +84,8 @@ public class ControlImageRulerOptions extends BaseController {
                 }
             });
 
-            controlSizeSelector.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-            controlSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            anchorSizeSelector.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
+            anchorSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (isSettingValues || newValue == null || newValue.isEmpty()) {
@@ -94,20 +94,20 @@ public class ControlImageRulerOptions extends BaseController {
                     try {
                         float v = Float.parseFloat(newValue);
                         if (v > 0) {
-                            UserConfig.setFloat("ControlSize", v);
-                            ValidationTools.setEditorNormal(controlSizeSelector);
+                            UserConfig.setFloat("AnchorSize", v);
+                            ValidationTools.setEditorNormal(anchorSizeSelector);
                             BaseImageController.updateMaskAnchors();
                         } else {
-                            ValidationTools.setEditorBadStyle(controlSizeSelector);
+                            ValidationTools.setEditorBadStyle(anchorSizeSelector);
                         }
                     } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(controlSizeSelector);
+                        ValidationTools.setEditorBadStyle(anchorSizeSelector);
                     }
                 }
             });
 
-            ControlColorController.init(this, "ControlColor", Color.web(ShapeStyle.DefaultControlColor));
-            ControlColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            anchorColorController.init(this, "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
+            anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
                     if (isSettingValues) {
@@ -207,14 +207,14 @@ public class ControlImageRulerOptions extends BaseController {
             isSettingValues = true;
 
             strokeWidthSelector.setValue(UserConfig.getFloat("StrokeWidth", 2) + "");
-            controlSizeSelector.setValue(UserConfig.getFloat("ControlSize", 10) + "");
+            anchorSizeSelector.setValue(UserConfig.getFloat("AnchorSize", 10) + "");
             gridWidthSelector.setValue(UserConfig.getInt("GridLinesWidth", 1) + "");
             int gi = UserConfig.getInt("GridLinesInterval", -1);
             gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
             gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
 
             strokeColorController.asSaved();
-            ControlColorController.asSaved();
+            anchorColorController.asSaved();
             gridColorController.asSaved();
 
             isSettingValues = false;

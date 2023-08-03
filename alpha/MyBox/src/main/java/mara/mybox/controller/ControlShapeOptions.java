@@ -30,11 +30,11 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.DoubleShape.ShapeType;
 import mara.mybox.data.ShapeStyle;
-import static mara.mybox.data.ShapeStyle.DefaultControlColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 
 /**
  * @Author Mara
@@ -75,11 +75,11 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ControlPath2D pathController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
-            controlSizeSelector, arcSizeSelector;
+            anchorSizeSelector, arcSizeSelector;
     @FXML
     protected CheckBox fillCheck, dashCheck;
     @FXML
-    protected ControlColorSet strokeColorController, ControlColorController, fillColorController;
+    protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
     public void setParameters(BaseImageController imageController) {
         try {
@@ -353,25 +353,25 @@ public abstract class ControlShapeOptions extends BaseController {
                 });
             }
 
-            if (ControlColorController != null) {
-                ControlColorController.init(this, interfaceName + "ControlColor", Color.web(DefaultControlColor));
-                ControlColorController.initColor(style.getControlColor());
-                ControlColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            if (anchorColorController != null) {
+                anchorColorController.init(this, interfaceName + "AnchorColor", Color.web(DefaultAnchorColor));
+                anchorColorController.initColor(style.getAnchorColor());
+                anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                     @Override
                     public void changed(ObservableValue v, Paint ov, Paint nv) {
                         if (isSettingValues) {
                             return;
                         }
-                        style.setControlColor(ControlColorController.color());
+                        style.setAnchorColor(anchorColorController.color());
                         goStyle();
                     }
                 });
             }
 
-            if (controlSizeSelector != null) {
-                controlSizeSelector.getItems().setAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-                controlSizeSelector.setValue(style.getControlSize() + "");
-                controlSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            if (anchorSizeSelector != null) {
+                anchorSizeSelector.getItems().setAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
+                anchorSizeSelector.setValue(style.getAnchorSize() + "");
+                anchorSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         if (isSettingValues) {
@@ -379,11 +379,11 @@ public abstract class ControlShapeOptions extends BaseController {
                         }
                         float f;
                         try {
-                            f = Float.parseFloat(controlSizeSelector.getValue());
+                            f = Float.parseFloat(anchorSizeSelector.getValue());
                         } catch (Exception e) {
                             f = -1;
                         }
-                        style.setControlSize(f);
+                        style.setAnchorSize(f);
                         goStyle();
                     }
                 });
