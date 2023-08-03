@@ -54,7 +54,7 @@ public class ControlSvgImage extends BaseImageController {
     }
 
     @Override
-    protected void finalFixView() {
+    protected void finalRefineView() {
     }
 
 }

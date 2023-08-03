@@ -668,9 +668,10 @@ public class ImageSplitController extends BaseImagesListController {
     }
 
     @Override
-    public void redrawMaskShapes() {
+    public boolean redrawMaskShapes() {
         super.redrawMaskShapes();
         indicateSplit();
+        return true;
     }
 
     @Override

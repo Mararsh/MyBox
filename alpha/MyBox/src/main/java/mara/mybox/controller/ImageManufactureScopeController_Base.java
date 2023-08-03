@@ -16,8 +16,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.data.DoublePoint;
+import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -108,10 +111,37 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
                 scopeView.setFitHeight(imageView.getFitHeight());
                 scopeView.setLayoutX(imageView.getLayoutX());
                 scopeView.setLayoutY(imageView.getLayoutY());
+                if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
+                    drawMattingPoints();
+                }
+            }
+
+            @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
             }
 
         };
-        start(task);
+        start(task, thisPane);
+    }
+
+    public void drawMattingPoints() {
+        try {
+            clearMaskPoints();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
+            for (int i = 0; i < scope.getPoints().size(); i++) {
+                IntPoint p = scope.getPoints().get(i);
+                double x = p.getX() * xRatio;
+                double y = p.getY() * yRatio;
+                addMaskPoint(i, new DoublePoint(p.getX(), p.getY()), x, y);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

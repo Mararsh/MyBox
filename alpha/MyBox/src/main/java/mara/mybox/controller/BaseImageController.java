@@ -50,7 +50,7 @@ public abstract class BaseImageController extends BaseImageController_Actions {
             return true;
         } else if (canSelect()) {
             UserConfig.setBoolean(baseName + "SelectArea", !UserConfig.getBoolean(baseName + "SelectArea", false));
-            finalFixView();
+            finalRefineView();
             return true;
         } else {
             return false;

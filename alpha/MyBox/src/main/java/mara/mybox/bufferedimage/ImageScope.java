@@ -122,6 +122,21 @@ public class ImageScope extends BaseData {
         addPoint(point);
     }
 
+    public void setPoint(int index, int x, int y) {
+        if (x < 0 || y < 0 || points == null || index < 0 || index >= points.size()) {
+            return;
+        }
+        IntPoint point = new IntPoint(x, y);
+        points.set(index, point);
+    }
+
+    public void deletePoint(int index) {
+        if (points == null || index < 0 || index >= points.size()) {
+            return;
+        }
+        points.remove(index);
+    }
+
     public void clearPoints() {
         points = new ArrayList<>();
     }

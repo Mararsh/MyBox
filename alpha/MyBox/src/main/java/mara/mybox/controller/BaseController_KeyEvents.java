@@ -708,9 +708,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF6() {
-        WindowTools.closeAllPopup();
-        MenuController.closeAll();
-        return true;
+        return keyESC();
     }
 
     public boolean keyF7() {

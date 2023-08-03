@@ -289,7 +289,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
             isPickingColor = false;
             checkPickingColor();
-            finalFixView();
+            finalRefineView();
 
             notifyLoad();
             return true;
@@ -352,7 +352,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 && !(this instanceof ImageSampleController);
     }
 
-    protected void finalFixView() {
+    protected void finalRefineView() {
         if (isSettingValues) {
             return;
         }
@@ -376,7 +376,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 maskShapeChanged();
             }
         }
-        updateLabelsTitle();
+        refinePane();
     }
 
 }

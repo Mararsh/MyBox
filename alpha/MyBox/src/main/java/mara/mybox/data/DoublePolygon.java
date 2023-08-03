@@ -54,6 +54,14 @@ public class DoublePolygon implements DoubleShape {
         return addAll(ps);
     }
 
+    public boolean set(int index, DoublePoint p) {
+        if (p == null || index < 0 || index >= points.size()) {
+            return false;
+        }
+        points.set(index, p);
+        return true;
+    }
+
     public boolean remove(double x, double y) {
         if (points == null || points.isEmpty()) {
             return false;

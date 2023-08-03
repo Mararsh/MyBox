@@ -11,6 +11,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowIndexCell;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -70,11 +71,32 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     }
 
     public void addPoint(DoublePoint point) {
-        tableData.add(point);
+        if (point == null) {
+            return;
+        }
+        addPoint(point.getX(), point.getY());
     }
 
     public void addPoint(double x, double y) {
-        tableData.add(new DoublePoint(x, y));
+        tableData.add(point(x, y));
+    }
+
+    public DoublePoint point(double x, double y) {
+        return new DoublePoint(DoubleTools.scale(x, Scale), DoubleTools.scale(y, Scale));
+    }
+
+    public void setPoint(int index, double x, double y) {
+        if (index < 0 || index >= tableData.size()) {
+            return;
+        }
+        tableData.set(index, point(x, y));
+    }
+
+    public void deletePoint(int index) {
+        if (index < 0 || index >= tableData.size()) {
+            return;
+        }
+        tableData.remove(index);
     }
 
     @FXML

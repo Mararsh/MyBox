@@ -54,37 +54,10 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
             tableColor = new TableColor();
 
-            maskShapeChanged.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    indicateScope();
-                }
-            });
-
-            maskShapeDataChanged.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    updateShapeData();
-                }
-            });
-
             pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
                 @Override
                 public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
-                    if (isSettingValues
-                            || pointsController.isSettingValues
-                            || pointsController.isSettingTable) {
-                        return;
-                    }
-                    isSettingValues = true;
-                    goScope();
-                    isSettingValues = false;
+                    pickPoints();
                 }
             });
 
@@ -320,6 +293,39 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         }
     }
 
+    @Override
+    public void maskPointChanged(int index, DoublePoint newValue) {
+        if (scope.getScopeType() == ScopeType.Matting) {
+            int x = (int) Math.round(newValue.getX());
+            int y = (int) Math.round(newValue.getY());
+            scope.setPoint(index, x, y);
+            isSettingValues = true;
+            pointsController.setPoint(index, x, y);
+            isSettingValues = false;
+            indicateScope();
+
+        } else if (scope.getScopeType() == ScopeType.Polygon) {
+            maskPolygonData.set(index, newValue);
+            maskShapeDataChanged();
+        }
+    }
+
+    @Override
+    public void deleteMaskPoint(int index) {
+        if (scope.getScopeType() == ScopeType.Matting) {
+            scope.deletePoint(index);
+            isSettingValues = true;
+            pointsController.deletePoint(index);
+            isSettingValues = false;
+            indicateScope();
+
+        } else if (scope.getScopeType() == ScopeType.Polygon) {
+            maskPolygonData.remove(index);
+            drawMaskPolygon();
+            maskShapeDataChanged();
+        }
+    }
+
     @FXML
     @Override
     public void refreshAction() {
@@ -327,10 +333,28 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         if (task != null) {
             task.cancel();
         }
-        goScope();
+        redrawMaskShapes();
     }
 
-    public void updateShapeData() {
+    @Override
+    public boolean redrawMaskShapes() {
+        super.redrawMaskShapes();
+        if (scope == null) {
+            return true;
+        }
+        if (scope.getScopeType() == ScopeType.Outline) {
+            makeOutline();
+        } else {
+            if (scope.getScopeType() == ScopeType.Outline) {
+                makeOutline();
+            }
+            indicateScope();
+        }
+        return true;
+    }
+
+    @Override
+    public void maskShapeDataChanged() {
         try {
             if (isSettingValues || imageView == null || imageView.getImage() == null
                     || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
@@ -343,6 +367,8 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     rightBottomXInput.setText(scale(maskRectangleData.getBigX(), 2) + "");
                     rightBottomYInput.setText(scale(maskRectangleData.getBigY(), 2) + "");
                     scope.setRectangle(maskRectangleData.cloneValues());
+                    drawMaskRectangle();
+                    indicateScope();
                     break;
                 case Ellipse:
                     DoubleRectangle rect = maskEllipseData.getRectangle();
@@ -351,16 +377,22 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     rightBottomXInput.setText(scale(rect.getBigX(), 2) + "");
                     rightBottomYInput.setText(scale(rect.getBigY(), 2) + "");
                     scope.setEllipse(maskEllipseData.cloneValues());
+                    drawMaskEllipse();
+                    indicateScope();
                     break;
                 case Circle:
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
                     circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
                     scope.setCircle(maskCircleData.cloneValues());
+                    drawMaskCircle();
+                    indicateScope();
                     break;
                 case Polygon:
                     pointsController.loadList(maskPolygonData.getPoints());
                     scope.setPolygon(maskPolygonData.cloneValues());
+                    drawMaskPolygon();
+                    indicateScope();
                     break;
                 case Outline:
                     scope.setRectangle(maskRectangleData.cloneValues());

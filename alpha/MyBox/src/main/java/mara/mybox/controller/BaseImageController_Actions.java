@@ -49,10 +49,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean(baseName + "SelectArea", selectAreaCheck.isSelected());
-                        finalFixView();
+                        finalRefineView();
                     }
                 });
-                finalFixView();
+                finalRefineView();
             }
 
             if (pickColorCheck != null) {
@@ -564,8 +564,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             @Override
             protected void whenSucceeded() {
                 imageView.setImage(newImage);
-                finalFixView();
-                refinePane();
+                finalRefineView();
                 setImageChanged(true);
             }
 

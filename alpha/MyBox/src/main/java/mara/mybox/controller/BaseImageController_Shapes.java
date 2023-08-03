@@ -226,7 +226,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 if (node == null || !(node instanceof Text) || node.getId() == null) {
                     continue;
                 }
-                if (node.getId().startsWith("PolylinePoint") || node.getId().startsWith("PolygonPoint")) {
+                if (node.getId().startsWith("MaskPoint")) {
                     Text text = (Text) node;
                     text.setFill(controlColor);
                     text.setFont(font);
@@ -296,45 +296,47 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     // Any mask operations when pane size is changed
-    public void redrawMaskShapes() {
+    public boolean redrawMaskShapes() {
         try {
             drawMaskRulers();
             checkCoordinate();
             if (drawMaskRectangle()) {
-                return;
+                return true;
             }
             if (drawMaskCircle()) {
-                return;
+                return true;
             }
             if (drawMaskEllipse()) {
-                return;
+                return true;
             }
             if (drawMaskLine()) {
-                return;
+                return true;
             }
             if (drawMaskPolygon()) {
-                return;
+                return true;
             }
             if (drawMaskPolyline()) {
-                return;
+                return true;
             }
             if (drawMaskPolylines()) {
-                return;
+                return true;
             }
             if (drawMaskQuadratic()) {
-                return;
+                return true;
             }
             if (drawMaskCubic()) {
-                return;
+                return true;
             }
             if (drawMaskArc()) {
-                return;
+                return true;
             }
             if (drawPath()) {
-                return;
+                return true;
             }
+            return false;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -773,6 +775,151 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
+    /* 
+        point
+        index: 0-based
+     */
+    public void addMaskPoint(int index, DoublePoint p, double x, double y) {
+        try {
+            Text text = new Text((index + 1) + "");
+            text.setLayoutX(imageView.getLayoutX());
+            text.setLayoutY(imageView.getLayoutY());
+            text.setX(x);
+            text.setY(y);
+            text.setId("MaskPoint" + index);
+            text.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    scrollPane.setPannable(false);
+                }
+            });
+            text.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    maskPointDragged = true;
+                    scrollPane.setPannable(true);
+                    double nx = maskEventX(event);
+                    double ny = maskEventY(event);
+                    if (DoubleShape.changed(nx - p.getX(), ny - p.getY())) {
+                        maskPointChanged(index, new DoublePoint(nx, ny));
+                    }
+                }
+            });
+            text.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        popNodeMenu(text, maskPointMenu(text, index, p));
+                    }
+                }
+            });
+            setTextStyle(text);
+            maskPane.getChildren().add(text);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected List<MenuItem> maskPointMenu(Text text, int index, DoublePoint p) {
+        try {
+            if (text == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            String title = message("Point") + " " + (index + 1);
+            menu = new MenuItem(title);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            menu = new MenuItem(StringTools.menuPrefix(p.text(2)));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                PointInputController inputController = PointInputController.open(this, title, p, 3);
+                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        maskPointChanged(index, inputController.picked);
+                        inputController.close();
+                    }
+                });
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteMaskPoint(index);
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void maskPointChanged(int index, DoublePoint newValue) {
+        if (maskPolyline != null && maskPolyline.isVisible() && maskPolylineData != null) {
+            maskPolylineData.set(index, newValue);
+            drawMaskPolyline();
+            maskShapeDataChanged();
+
+        } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygonData != null) {
+            maskPolygonData.set(index, newValue);
+            drawMaskPolygon();
+            maskShapeDataChanged();
+        }
+    }
+
+    public void deleteMaskPoint(int index) {
+        if (maskPolyline != null && maskPolyline.isVisible() && maskPolylineData != null) {
+            maskPolylineData.remove(index);
+            drawMaskPolyline();
+            maskShapeDataChanged();
+
+        } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygonData != null) {
+            maskPolygonData.remove(index);
+            drawMaskPolygon();
+            maskShapeDataChanged();
+        }
+    }
+
+    public void clearMaskPoints() {
+        if (maskPane == null) {
+            return;
+        }
+        List<Node> nodes = new ArrayList<>();
+        nodes.addAll(maskPane.getChildren());
+        for (Node node : nodes) {
+            if (node == null || !(node instanceof Text) || node.getId() == null) {
+                continue;
+            }
+            if (node.getId().startsWith("MaskPoint")) {
+                maskPane.getChildren().remove(node);
+            }
+        }
+    }
+
+    public void setMaskPointsStyle() {
+        if (maskPane == null) {
+            return;
+        }
+        for (Node node : maskPane.getChildren()) {
+            if (node == null || !(node instanceof Text) || node.getId() == null) {
+                continue;
+            }
+            if (node.getId().startsWith("MaskPoint")) {
+                setTextStyle((Text) node);
+            }
+        }
+    }
+
     /*
         polyline
      */
@@ -815,7 +962,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
 
-            clearPolylinePoints();
+            clearMaskPoints();
             maskPolyline.getPoints().clear();
             maskPolyline.setLayoutX(layoutX);
             maskPolyline.setLayoutY(layoutY);
@@ -823,7 +970,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 DoublePoint p = maskPolylineData.get(i);
                 double x = p.getX() * xRatio;
                 double y = p.getY() * yRatio;
-                addMaskPolylinePoint(i + 1, p, x, y);
+                addMaskPolylinePoint(i, p, x, y);
             }
 
             setMaskPolylineStyle();
@@ -842,104 +989,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPolyline.getPoints().add(x);
             maskPolyline.getPoints().add(y);
 
-            Text text = new Text(index + "");
-            text.setLayoutX(imageView.getLayoutX());
-            text.setLayoutY(imageView.getLayoutY());
-            text.setX(x);
-            text.setY(y);
-            text.setId("PolylinePoint" + index);
-            text.setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    scrollPane.setPannable(false);
-                }
-            });
-            text.setOnMouseReleased(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    maskPointDragged = true;
-                    scrollPane.setPannable(true);
-                    double nx = maskEventX(event);
-                    double ny = maskEventY(event);
-                    if (DoubleShape.changed(nx - p.getX(), ny - p.getY())) {
-                        maskPolylineData.getPoints().set(index - 1, new DoublePoint(nx, ny));
-                        drawMaskPolyline();
-                        maskShapeDataChanged();
-                    }
-                }
-            });
-            text.hoverProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (newValue) {
-                        popNodeMenu(text, textMenu(maskPolylineData, text, index, p));
-                    }
-                }
-            });
-            setTextStyle(text);
-            maskPane.getChildren().add(text);
+            addMaskPoint(index, p, x, y);
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    protected List<MenuItem> textMenu(DoubleShape shape, Text text, int index, DoublePoint p) {
-        try {
-            if (text == null) {
-                return null;
-            }
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            String title = message("Point") + " " + index;
-            menu = new MenuItem(title);
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            items.add(menu);
-            menu = new MenuItem(StringTools.menuPrefix(p.text(2)));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                PointInputController inputController = PointInputController.open(this, title, p, 3);
-                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                        if (shape == maskPolylineData) {
-                            maskPolylineData.set(index - 1, inputController.picked);
-                        } else if (shape == maskPolygonData) {
-                            maskPolylineData.set(index - 1, inputController.picked);
-                        }
-                        inputController.close();
-                        maskShapeDataChanged();
-                    }
-                });
-            });
-            items.add(menu);
-
-            return items;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public void clearPolylinePoints() {
-        if (maskPane == null) {
-            return;
-        }
-        List<Node> nodes = new ArrayList<>();
-        nodes.addAll(maskPane.getChildren());
-        for (Node node : nodes) {
-            if (node == null || !(node instanceof Text) || node.getId() == null) {
-                continue;
-            }
-            if (node.getId().startsWith("PolylinePoint")) {
-                maskPane.getChildren().remove(node);
-                node = null;
-            }
         }
     }
 
@@ -951,26 +1003,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         maskPolyline.setVisible(false);
         maskPolyline.getPoints().clear();
 
-        clearPolylinePoints();
-
-    }
-
-    public void removeMaskPolylineLastPoint() {
-        if (imageView == null || maskPane == null || maskPolyline == null) {
-            return;
-        }
-        int size = maskPolylineData.getSize();
-        maskPolylineData.remove(size - 1);
-
-        for (Node node : maskPane.getChildren()) {
-            if (node == null || !(node instanceof Text) || node.getId() == null) {
-                continue;
-            }
-            if (node.getId().equalsIgnoreCase("PolylinePoint" + size)) {
-                maskPane.getChildren().remove(node);
-                break;
-            }
-        }
+        clearMaskPoints();
     }
 
     public void clearMaskPolylineData() {
@@ -982,14 +1015,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public void setMaskPolylineStyle() {
         setShapeStyle(maskPolyline);
-        for (Node node : maskPane.getChildren()) {
-            if (node == null || !(node instanceof Text) || node.getId() == null) {
-                continue;
-            }
-            if (node.getId().startsWith("PolylinePoint")) {
-                setTextStyle((Text) node);
-            }
-        }
+        setMaskPointsStyle();
     }
 
     /*
@@ -1213,7 +1239,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
 
-            clearPolygonPoints();
+            clearMaskPoints();
             maskPolygon.getPoints().clear();
             maskPolygon.setLayoutX(imageView.getLayoutX());
             maskPolygon.setLayoutY(imageView.getLayoutY());
@@ -1221,7 +1247,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 DoublePoint p = maskPolygonData.get(i);
                 double x = p.getX() * xRatio;
                 double y = p.getY() * yRatio;
-                addMaskPolygonPoint(i + 1, p, x, y);
+                addMaskPolygonPoint(i, p, x, y);
             }
 
             setMaskPolygonStyle();
@@ -1240,61 +1266,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPolygon.getPoints().add(x);
             maskPolygon.getPoints().add(y);
 
-            Text text = new Text(index + "");
-            text.setLayoutX(imageView.getLayoutX());
-            text.setLayoutY(imageView.getLayoutY());
-            text.setX(x);
-            text.setY(y);
-            text.setId("PolygonPoint" + index);
-            text.setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    scrollPane.setPannable(false);
-                }
-            });
-            text.setOnMouseReleased(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    maskPointDragged = true;
-                    scrollPane.setPannable(true);
-                    double nx = maskEventX(event);
-                    double ny = maskEventY(event);
-                    if (DoubleShape.changed(nx - p.getX(), ny - p.getY())) {
-                        maskPolygonData.getPoints().set(index - 1, new DoublePoint(nx, ny));
-                        drawMaskPolygon();
-                        maskShapeDataChanged();
-                    }
-                }
-            });
-            text.hoverProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (newValue) {
-                        popNodeMenu(text, textMenu(maskPolygonData, text, index, p));
-                    }
-                }
-            });
-            setTextStyle(text);
-            maskPane.getChildren().add(text);
+            addMaskPoint(index, p, x, y);
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    public void clearPolygonPoints() {
-        if (maskPane == null) {
-            return;
-        }
-        List<Node> nodes = new ArrayList<>();
-        nodes.addAll(maskPane.getChildren());
-        for (Node node : nodes) {
-            if (node == null || !(node instanceof Text) || node.getId() == null) {
-                continue;
-            }
-            if (node.getId().startsWith("PolygonPoint")) {
-                maskPane.getChildren().remove(node);
-                node = null;
-            }
         }
     }
 
@@ -1305,26 +1279,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         maskPane.getChildren().remove(maskPolygon);
         maskPolygon.setVisible(false);
         maskPolygon.getPoints().clear();
-        clearPolygonPoints();
-    }
-
-    public void removeMaskPolygonLastPoint() {
-        if (imageView == null || maskPane == null || maskPolygon == null) {
-            return;
-        }
-        int size = maskPolygonData.getSize();
-        maskPolygonData.remove(size - 1);
-
-        for (Node node : maskPane.getChildren()) {
-            if (node == null || !(node instanceof Text) || node.getId() == null) {
-                continue;
-            }
-            if (node.getId().equalsIgnoreCase("PolygonPoint" + size)) {
-                maskPane.getChildren().remove(node);
-                break;
-            }
-        }
-        maskShapeChanged();
+        clearMaskPoints();
     }
 
     public void clearMaskPolygonData() {
@@ -1336,14 +1291,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public void setMaskPolygonStyle() {
         setShapeStyle(maskPolygon);
-        for (Node node : maskPane.getChildren()) {
-            if (node == null || !(node instanceof Text) || node.getId() == null) {
-                continue;
-            }
-            if (node.getId().startsWith("PolygonPoint")) {
-                setTextStyle((Text) node);
-            }
-        }
+        setMaskPointsStyle();
     }
 
     /*

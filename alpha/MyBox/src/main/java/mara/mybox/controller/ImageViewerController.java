@@ -267,11 +267,8 @@ public class ImageViewerController extends BaseImageController {
     @Override
     public boolean afterImageLoaded() {
         try {
-            if (!super.afterImageLoaded()) {
+            if (!super.afterImageLoaded() || imageView == null) {
                 return false;
-            }
-            if (imageView == null) {
-                return true;
             }
             if (saveAsBox != null && saveFramesPane != null) {
                 if (framesNumber <= 1) {
@@ -311,7 +308,6 @@ public class ImageViewerController extends BaseImageController {
 
             setFilesBrowse();
 
-            finalFixView();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

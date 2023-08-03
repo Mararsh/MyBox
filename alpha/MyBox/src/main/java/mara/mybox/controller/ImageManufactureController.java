@@ -109,7 +109,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             hisController.loadHistories();
             backupController.loadBackups(sourceFile);
 
-            finalFixView();
+            finalRefineView();
 
             updateLabelString(message("Loaded"));
 

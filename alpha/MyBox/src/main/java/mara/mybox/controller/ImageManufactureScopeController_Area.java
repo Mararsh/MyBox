@@ -4,8 +4,6 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
-import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
-import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
@@ -31,9 +29,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 return;
             }
             switch (scope.getScopeType()) {
-                case Matting:
-                    pickMatting();
-                    break;
                 case Rectangle:
                     pickRectangle();
                     break;
@@ -42,9 +37,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                     break;
                 case Circle:
                     pickCircle();
-                    break;
-                case Polygon:
-                    pickPolygon();
                     break;
             }
         } catch (Exception e) {
@@ -64,6 +56,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             maskRectangleData = rect;
             scope.setRectangle(maskRectangleData.cloneValues());
             drawMaskRectangle();
+            indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -81,6 +74,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             maskEllipseData = new DoubleEllipse(rect);
             scope.setEllipse(maskEllipseData.cloneValues());
             drawMaskEllipse();
+            indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -166,35 +160,35 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             maskCircleData = circle;
             scope.setCircle(maskCircleData.cloneValues());
             drawMaskCircle();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void pickMatting() {
-        try {
-            if (scope == null || scope.getScopeType() != ScopeType.Matting) {
-                return;
-            }
-            scope.clearPoints();
-            for (DoublePoint p : pointsController.tableData) {
-                scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
-            }
             indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void pickPolygon() {
+    public void pickPoints() {
         try {
-            if (scope == null || scope.getScopeType() != ScopeType.Polygon) {
+            if (scope == null || isSettingValues
+                    || pointsController.isSettingValues
+                    || pointsController.isSettingTable) {
                 return;
             }
-            maskPolygonData = new DoublePolygon();
-            maskPolygonData.setAll(pointsController.tableData);
-            scope.setPolygon(maskPolygonData.cloneValues());
-            drawMaskPolygon();
+            if (scope.getScopeType() == ScopeType.Matting) {
+                scope.clearPoints();
+                for (int i = 0; i < pointsController.tableData.size(); i++) {
+                    DoublePoint p = pointsController.tableData.get(i);
+                    scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
+                }
+                indicateScope();
+
+            } else if (scope.getScopeType() == ScopeType.Polygon) {
+                maskPolygonData = new DoublePolygon();
+                maskPolygonData.setAll(pointsController.tableData);
+                scope.setPolygon(maskPolygonData.cloneValues());
+                drawMaskPolygon();
+                indicateScope();
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
