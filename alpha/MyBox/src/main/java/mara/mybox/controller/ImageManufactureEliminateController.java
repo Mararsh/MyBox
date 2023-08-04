@@ -41,7 +41,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton eraserRadio, mosaicRadio, frostedRadio, shapeCircleRadio, shapeRectangleRadio;
+    protected RadioButton eraserRadio, mosaicRadio, frostedRadio;
     @FXML
     protected FlowPane strokeWidthPane, intensityPane;
     @FXML
@@ -234,7 +234,8 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-                editor.clearMaskPolylines();
+                editor.drawMaskPolylines();
+                editor.hideMaskShape();
             }
 
         };

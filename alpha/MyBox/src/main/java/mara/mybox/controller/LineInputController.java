@@ -16,21 +16,19 @@ import static mara.mybox.value.Languages.message;
  */
 public class LineInputController extends BaseInputController {
 
-    protected int scale;
     protected List<DoublePoint> line, picked;
 
     @FXML
     protected TextArea textArea;
 
-    public void setParameters(BaseController parent, String title,
-            List<DoublePoint> inLine, int scale) {
+    public void setParameters(BaseController parent, String title, List<DoublePoint> inLine) {
         try {
             super.setParameters(parent, title);
 
             line = inLine;
             recoverButton.setVisible(line != null);
             if (line != null) {
-                textArea.setText(DoublePoint.toText(line, scale, "\n"));
+                textArea.setText(DoublePoint.imageCoordinatesToText(line, "\n"));
             }
 
         } catch (Exception e) {
@@ -43,7 +41,7 @@ public class LineInputController extends BaseInputController {
     @Override
     public boolean checkInput() {
         picked = null;
-        picked = DoublePoint.parseList(textArea.getText());
+        picked = DoublePoint.parseImageCoordinates(textArea.getText());
         if (picked == null || picked.isEmpty()) {
             popError(message("InvalidValue"));
             return false;
@@ -57,15 +55,15 @@ public class LineInputController extends BaseInputController {
         if (line == null) {
             return;
         }
-        textArea.setText(DoublePoint.toText(line, scale, "\n"));
+        textArea.setText(DoublePoint.imageCoordinatesToText(line, "\n"));
     }
 
     public static LineInputController open(BaseController parent,
-            String title, List<DoublePoint> line, int scale) {
+            String title, List<DoublePoint> line) {
         try {
             LineInputController controller = (LineInputController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.LineInputFxml, true);
-            controller.setParameters(parent, title, line, scale);
+            controller.setParameters(parent, title, line);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

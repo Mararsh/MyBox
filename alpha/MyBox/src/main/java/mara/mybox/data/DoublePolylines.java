@@ -45,10 +45,18 @@ public class DoublePolylines implements DoubleShape {
     }
 
     public boolean setLine(int index, List<DoublePoint> line) {
-        if (line == null) {
+        if (line == null || index < 0 || index >= points.size()) {
             return false;
         }
         points.set(index, line);
+        return true;
+    }
+
+    public boolean removeLine(int index) {
+        if (index < 0 || index >= points.size()) {
+            return false;
+        }
+        points.remove(index);
         return true;
     }
 

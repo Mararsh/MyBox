@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -59,6 +60,11 @@ public class DoublePoint {
         return new DoublePoint();
     }
 
+    public static DoublePoint imageCoordinate(double x, double y) {
+        int scale = UserConfig.imageScale();
+        return new DoublePoint(DoubleTools.scale(x, scale), DoubleTools.scale(y, scale));
+    }
+
     public static double distanceSquare(double x1, double y1, double x2, double y2) {
         double distanceX = x1 - x2;
         double distanceY = y1 - y2;
@@ -108,11 +114,15 @@ public class DoublePoint {
         }
     }
 
-    public static List<DoublePoint> parseList(String string) {
-        return DoublePoint.parseList(string, DoublePoint.Separator);
+    public static List<DoublePoint> parseImageCoordinates(String string) {
+        return DoublePoint.parseList(string, DoublePoint.Separator, UserConfig.imageScale());
     }
 
-    public static List<DoublePoint> parseList(String string, String separator) {
+    public static List<DoublePoint> parseList(String string, int scale) {
+        return DoublePoint.parseList(string, DoublePoint.Separator, scale);
+    }
+
+    public static List<DoublePoint> parseList(String string, String separator, int scale) {
         try {
             if (string == null || string.isBlank()) {
                 return null;
@@ -123,7 +133,9 @@ public class DoublePoint {
             }
             List<DoublePoint> list = new ArrayList<>();
             for (int i = 0; i < vs.length - 1; i += 2) {
-                list.add(new DoublePoint(Double.parseDouble(vs[i]), Double.parseDouble(vs[i + 1])));
+                list.add(new DoublePoint(
+                        DoubleTools.scale(Double.parseDouble(vs[i]), scale),
+                        DoubleTools.scale(Double.parseDouble(vs[i + 1]), scale)));
             }
             return list;
         } catch (Exception e) {
@@ -144,6 +156,10 @@ public class DoublePoint {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String imageCoordinatesToText(List<DoublePoint> points, String separator) {
+        return toText(points, UserConfig.imageScale(), separator);
     }
 
     public static String toText(List<DoublePoint> points, int scale, String separator) {
@@ -172,6 +188,10 @@ public class DoublePoint {
         } catch (Exception e) {
             return p;
         }
+    }
+
+    public static List<DoublePoint> scaleImageCoordinates(List<DoublePoint> points) {
+        return scaleList(points, UserConfig.imageScale());
     }
 
     public static List<DoublePoint> scaleList(List<DoublePoint> points, int scale) {

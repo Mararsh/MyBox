@@ -61,6 +61,13 @@ public class ImageManufactureOperationsController extends BaseController {
 
     public void initPanes() {
         try {
+            accordionPane.expandedPaneProperty().addListener(new ChangeListener<TitledPane>() {
+                @Override
+                public void changed(ObservableValue<? extends TitledPane> v, TitledPane o, TitledPane n) {
+                    paneSwitched(n);
+                }
+            });
+
             copyPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
@@ -217,6 +224,12 @@ public class ImageManufactureOperationsController extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void paneSwitched(TitledPane currentPane) {
+        if (currentPane == null) {
+            editor.resetImagePane();
         }
     }
 

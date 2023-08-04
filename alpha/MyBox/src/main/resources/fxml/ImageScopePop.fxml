@@ -149,42 +149,42 @@ License:    Apache License Version 2.0
                                 <Cursor fx:constant="MOVE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerLeftCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerLeftCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="W_RESIZE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerTopRight" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopRightReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="NE_RESIZE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerTopCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="N_RESIZE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerRightCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerRightCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="E_RESIZE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerBottomRight" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomRightReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="SE_RESIZE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerBottomCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="N_RESIZE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerBottomLeft" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="SW_RESIZE" />
                             </cursor>
                         </Rectangle>
-                        <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                        <Rectangle fx:id="maskHandlerTopLeft" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
                                 <Cursor fx:constant="NW_RESIZE" />
                             </cursor>

@@ -11,6 +11,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowIndexCell;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -18,8 +19,6 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
-
-    public final int Scale = 2;
 
     @FXML
     protected TableColumn<List<DoublePoint>, String> indexColumn, pointsColumn;
@@ -45,7 +44,7 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
                         if (points == null) {
                             return null;
                         }
-                        return new SimpleStringProperty(DoublePoint.toText(points, Scale, " "));
+                        return new SimpleStringProperty(DoublePoint.imageCoordinatesToText(points, " "));
                     } catch (Exception e) {
                         return null;
                     }
@@ -62,7 +61,7 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
-            tableData.setAll(DoublePoint.scaleLists(list, Scale));
+            tableData.setAll(DoublePoint.scaleLists(list, UserConfig.imageScale()));
         }
         isSettingValues = false;
     }
@@ -70,7 +69,7 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
     @FXML
     @Override
     public void addAction() {
-        LineInputController inputController = LineInputController.open(this, message("Add"), null, Scale);
+        LineInputController inputController = LineInputController.open(this, message("Add"), null);
         inputController.getNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue v, Boolean ov, Boolean nv) {
@@ -96,7 +95,7 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
             }
             List<DoublePoint> line = tableData.get(index);
             LineInputController inputController = LineInputController.open(this,
-                    message("Line") + " " + (index + 1), line, Scale);
+                    message("Line") + " " + (index + 1), line);
             inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {

@@ -43,7 +43,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean addAll(String values) {
-        return addAll(DoublePoint.parseList(values));
+        return addAll(DoublePoint.parseImageCoordinates(values));
     }
 
     public boolean setAll(List<DoublePoint> ps) {

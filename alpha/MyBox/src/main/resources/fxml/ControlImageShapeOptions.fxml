@@ -100,20 +100,20 @@
                 </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="45.0" spacing="5.0">
                <children>
-                  <RadioButton fx:id="cubicRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
-                     <graphic>
-                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconCubic.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </RadioButton>
                   <RadioButton fx:id="quadraticRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                      <graphic>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../buttons/Red/iconQuadratic.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="cubicRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconCubic.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -197,7 +197,7 @@
                                         <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" spacing="2.0" />
                                     </content>
                                 </ScrollPane>
-                                <TabPane fx:id="shapesPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                                <TabPane fx:id="shapesPane" tabClosingPolicy="UNAVAILABLE">
                                     <tabs>
                                         <Tab text="circle">
                                             <content>
@@ -312,7 +312,7 @@
                                             <content>
                                                 <VBox fx:id="lineBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                     <children>
-                                                        <Label text="%Start" />
+                                                        <Label text="%StartPoint" />
                                                         <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
                                                             <children>
                                                                 <Label text="x1">
@@ -329,7 +329,7 @@
                                                                 <TextField fx:id="lineY1Input" prefWidth="100.0" />
                                                             </children>
                                                         </FlowPane>
-                                                        <Label text="%End" />
+                                                        <Label text="%EndPoint" />
                                                         <FlowPane hgap="5.0" layoutX="15.0" layoutY="15.0" minHeight="-Infinity" vgap="5.0">
                                                             <children>
                                                                 <Label text="x2">
@@ -368,6 +368,141 @@
                                                 </VBox>
                                             </content>
                                         </Tab>
+                              <Tab text="quadraic">
+                                 <content>
+                                    <VBox fx:id="quadraticBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <Label text="%StartPoint" />
+                                          <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="x">
+                                                   <FlowPane.margin>
+                                                      <Insets />
+                                                   </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="quadStartXInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="15.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="y" />
+                                                <TextField fx:id="quadStartYInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <Label layoutX="15.0" layoutY="15.0" text="%ControlPoint" />
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="35.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="x">
+                                                   <FlowPane.margin>
+                                                      <Insets />
+                                                   </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="quadControlXInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="63.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="y" />
+                                                <TextField fx:id="quadControlYInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <Label layoutX="15.0" layoutY="91.0" text="%EndPoint" />
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="111.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="x">
+                                                   <FlowPane.margin>
+                                                      <Insets />
+                                                   </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="quadEndXInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="139.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="y" />
+                                                <TextField fx:id="quadEndYInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
+                              <Tab text="cubic">
+                                 <content>
+                                    <VBox fx:id="cubicBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <Label text="%StartPoint" />
+                                          <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="x">
+                                                   <FlowPane.margin>
+                                                      <Insets />
+                                                   </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="cubicStartXInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="15.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="y" />
+                                                <TextField fx:id="cubicStartYInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <Label layoutX="15.0" layoutY="91.0" text="%ControlPoint1" />
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="35.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="x">
+                                                   <FlowPane.margin>
+                                                      <Insets />
+                                                   </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="cubicControlX1Input" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="63.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="y" />
+                                                <TextField fx:id="cubicControlY1Input" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <Label layoutX="15.0" layoutY="91.0" text="%ControlPoint2" />
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="111.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="x">
+                                                   <FlowPane.margin>
+                                                      <Insets />
+                                                   </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="cubicControlX2Input" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="139.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="y" />
+                                                <TextField fx:id="cubicControlY2Input" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <Label layoutX="15.0" layoutY="91.0" text="%EndPoint" />
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="111.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="x">
+                                                   <FlowPane.margin>
+                                                      <Insets />
+                                                   </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="cubicEndXInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" layoutX="15.0" layoutY="139.0" minHeight="-Infinity" vgap="5.0">
+                                             <children>
+                                                <Label text="y" />
+                                                <TextField fx:id="cubicEndYInput" prefWidth="100.0" />
+                                             </children>
+                                          </FlowPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
                                     </tabs>
                                 </TabPane>
                             </children>

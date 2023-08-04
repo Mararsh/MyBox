@@ -158,7 +158,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="150.0" />
                                                             </children>
                                                         </FlowPane>
-                                          <fx:include fx:id="ruler" source="ControlImageRulerOptions.fxml" />
+                                          <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                                             <children>
                                                                 <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">

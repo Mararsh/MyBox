@@ -294,7 +294,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @Override
-    public void maskPointChanged(int index, DoublePoint newValue) {
+    public void changeMaskPoint(int index, DoublePoint newValue) {
         if (scope.getScopeType() == ScopeType.Matting) {
             int x = (int) Math.round(newValue.getX());
             int y = (int) Math.round(newValue.getY());

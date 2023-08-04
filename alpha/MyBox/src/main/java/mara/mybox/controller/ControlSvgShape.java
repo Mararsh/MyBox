@@ -388,7 +388,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadPolyline(Element node) {
         try {
-            List<DoublePoint> list = DoublePoint.parseList(node.getAttribute("points"));
+            List<DoublePoint> list = DoublePoint.parseImageCoordinates(node.getAttribute("points"));
             if (list != null && !list.isEmpty()) {
                 imageController.maskPolylineData.setAll(list);
             } else {
@@ -403,7 +403,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadPolygon(Element node) {
         try {
-            List<DoublePoint> list = DoublePoint.parseList(node.getAttribute("points"));
+            List<DoublePoint> list = DoublePoint.parseImageCoordinates(node.getAttribute("points"));
             if (list != null && !list.isEmpty()) {
                 imageController.maskPolygonData.setAll(list);
             } else {
@@ -419,7 +419,7 @@ public class ControlSvgShape extends ControlShapeOptions {
     public boolean loadPath(Element node) {
         try {
             String d = node.getAttribute("d");
-            imageController.pathData = new DoublePath(d);
+            imageController.maskPathData = new DoublePath(d);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -485,7 +485,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                     if (element == null) {
                         element = doc.createElement("path");
                     }
-                    element.setAttribute("d", imageController.pathData.getContent());
+                    element.setAttribute("d", imageController.maskPathData.getContent());
                     return true;
             }
             popError(message("InvalidData"));

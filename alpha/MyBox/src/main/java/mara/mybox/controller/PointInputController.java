@@ -5,8 +5,10 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -16,22 +18,21 @@ import static mara.mybox.value.Languages.message;
 public class PointInputController extends BaseInputController {
 
     protected double x, y;
-    protected int scale;
     protected DoublePoint point, picked;
 
     @FXML
     protected TextField xInput, yInput;
 
-    public void setParameters(BaseController parent, String title,
-            DoublePoint inPoint, int scale) {
+    public void setParameters(BaseController parent, String title, DoublePoint inPoint) {
         try {
             super.setParameters(parent, title);
 
             point = inPoint;
             recoverButton.setVisible(point != null);
             if (point != null) {
-                xInput.setText(point.getX() + "");
-                yInput.setText(point.getY() + "");
+                int scale = UserConfig.getInt("ImageDecimal", 2);
+                xInput.setText(DoubleTools.scale(point.getX(), scale) + "");
+                yInput.setText(DoubleTools.scale(point.getX(), scale) + "");
             }
 
         } catch (Exception e) {
@@ -56,7 +57,7 @@ public class PointInputController extends BaseInputController {
             popError(message("InvalidValue") + ": y");
             return false;
         }
-        picked = new DoublePoint(x, y);
+        picked = DoublePoint.imageCoordinate(x, y);
         return picked != null;
     }
 
@@ -70,12 +71,11 @@ public class PointInputController extends BaseInputController {
         yInput.setText(point.getY() + "");
     }
 
-    public static PointInputController open(BaseController parent,
-            String title, DoublePoint point, int scale) {
+    public static PointInputController open(BaseController parent, String title, DoublePoint point) {
         try {
             PointInputController controller = (PointInputController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.PointInputFxml, true);
-            controller.setParameters(parent, title, point, scale);
+            controller.setParameters(parent, title, point);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

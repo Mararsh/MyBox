@@ -467,6 +467,10 @@ public class UserConfig {
         return "-fx-text-box-border: " + c + ";   -fx-text-fill: " + c + ";";
     }
 
+    public static int imageScale() {
+        return UserConfig.getInt("ImageDecimal", 2);
+    }
+
     public static int selectorScrollSize() {
         int size = getInt("SelectorScrollSize", 100);
         if (size <= 0) {

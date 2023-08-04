@@ -11,7 +11,6 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowIndexCell;
-import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,8 +19,6 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ControlPoints extends BaseTableViewController<DoublePoint> {
-
-    public final int Scale = 2;
 
     @FXML
     protected TableColumn<DoublePoint, Double> indexColumn, xColumn, yColumn;
@@ -43,7 +40,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     }
 
     public void loadText(String values) {
-        loadList(DoublePoint.parseList(values));
+        loadList(DoublePoint.parseImageCoordinates(values));
     }
 
     public void loadList(List<DoublePoint> list) {
@@ -51,7 +48,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
-            tableData.setAll(DoublePoint.scaleList(list, Scale));
+            tableData.setAll(DoublePoint.scaleImageCoordinates(list));
         }
         isSettingValues = false;
     }
@@ -82,7 +79,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     }
 
     public DoublePoint point(double x, double y) {
-        return new DoublePoint(DoubleTools.scale(x, Scale), DoubleTools.scale(y, Scale));
+        return DoublePoint.imageCoordinate(x, y);
     }
 
     public void setPoint(int index, double x, double y) {
@@ -102,8 +99,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     @FXML
     @Override
     public void addAction() {
-        PointInputController inputController = PointInputController.open(
-                this, message("Add"), null, Scale);
+        PointInputController inputController = PointInputController.open(this, message("Add"), null);
         inputController.getNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue v, Boolean ov, Boolean nv) {
@@ -123,8 +119,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
                 return;
             }
             DoublePoint point = tableData.get(index);
-            PointInputController inputController = PointInputController.open(
-                    this, message("Point") + " " + (index + 1), point, Scale);
+            PointInputController inputController = PointInputController.open(this, message("Point") + " " + (index + 1), point);
             inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {

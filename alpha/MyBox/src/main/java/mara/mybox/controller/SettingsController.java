@@ -106,8 +106,6 @@ public class SettingsController extends BaseController {
             derbyStatus;
     @FXML
     protected ControlImageRender renderController;
-    @FXML
-    protected ControlImageRulerOptions rulerController;
 
     public SettingsController() {
         baseTitle = message("Settings");

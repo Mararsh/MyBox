@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ShapeTools;
@@ -132,9 +133,12 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     }
 
     @Override
-    public void drawRectangle() {
-        if (isSettingValues || imageView == null || imageView.getImage() == null
-                || imageController.maskRectangleData == null) {
+    public void redrawShape() {
+        if (imageController == null || shapeType == null) {
+            return;
+        }
+        DoubleShape shapeData = editor.currentMaskShapData();
+        if (shapeData == null) {
             return;
         }
         if (task != null) {
@@ -146,194 +150,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             @Override
             protected boolean handle() {
                 newImage = ShapeTools.drawShape(imageView.getImage(),
-                        imageController.maskRectangleData, style,
-                        blendController.blender());
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                maskView.setImage(newImage);
-                editor.drawMaskRectangle();
-                editor.maskRectangle.setOpacity(0);
-            }
-
-        };
-        start(task);
-    }
-
-    @Override
-    public void drawCircle() {
-        if (isSettingValues || imageView == null || imageView.getImage() == null
-                || imageController.maskCircleData == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = ShapeTools.drawShape(imageView.getImage(),
-                        imageController.maskCircleData, style,
-                        blendController.blender());
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                maskView.setImage(newImage);
-                editor.drawMaskCircle();
-                editor.maskCircle.setOpacity(0);
-            }
-
-        };
-        start(task);
-    }
-
-    @Override
-    public void drawEllipse() {
-        if (isSettingValues || imageView == null || imageView.getImage() == null
-                || imageController.maskEllipseData == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = ShapeTools.drawShape(imageView.getImage(),
-                        imageController.maskEllipseData, style,
-                        blendController.blender());
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                maskView.setImage(newImage);
-                editor.drawMaskEllipse();
-                editor.maskEllipse.setOpacity(0);
-            }
-
-        };
-        start(task);
-    }
-
-    @Override
-    public void drawPolygon() {
-        if (isSettingValues || imageView == null || imageView.getImage() == null
-                || imageController.maskPolygonData == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = ShapeTools.drawShape(imageView.getImage(),
-                        imageController.maskPolygonData, style,
-                        blendController.blender());
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                maskView.setImage(newImage);
-                editor.drawMaskPolygon();
-                editor.maskPolygon.setOpacity(0);
-            }
-
-        };
-        start(task);
-    }
-
-    @Override
-    public void drawPolyline() {
-        if (isSettingValues || imageController.maskPolylineData == null
-                || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = ShapeTools.drawShape(imageView.getImage(),
-                        imageController.maskPolylineData, style,
-                        blendController.blender());
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                maskView.setImage(newImage);
-                editor.drawMaskPolyline();
-                editor.maskPolyline.setOpacity(0);
-            }
-
-        };
-        start(task);
-    }
-
-    @Override
-    public void drawLine() {
-        if (isSettingValues || imageController.maskLineData == null
-                || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = ShapeTools.drawShape(imageView.getImage(),
-                        imageController.maskLineData, style,
-                        blendController.blender());
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                maskView.setImage(newImage);
-                editor.drawMaskLine();
-                editor.maskLine.setOpacity(0);
-            }
-
-        };
-        start(task);
-    }
-
-    @Override
-    public void drawLines() {
-        if (isSettingValues || imageView == null || imageView.getImage() == null
-                || imageController.maskPolylines == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = ShapeTools.drawShape(imageView.getImage(),
-                        imageController.maskPolylinesData, style,
-                        blendController.blender());
+                        shapeData, style, blendController.blender());
                 return newImage != null;
             }
 
@@ -347,8 +164,8 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-                editor.drawMaskPolylines();
-                editor.hideMaskPolylines();
+                editor.drawMaskShape();
+                editor.hideMaskShape();
             }
 
         };
@@ -368,7 +185,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 break;
             case Lines:
                 linesController.tableData.remove(linesController.tableData.size() - 1);
-                drawLines();
                 break;
         }
     }

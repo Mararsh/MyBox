@@ -23,18 +23,23 @@ import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.ROUND;
 import static javafx.scene.shape.StrokeLineCap.SQUARE;
 import mara.mybox.data.DoubleCircle;
+import mara.mybox.data.DoubleCubic;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoubleQuadratic;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.DoubleShape.ShapeType;
+import static mara.mybox.data.DoubleShape.ShapeType.Cubic;
+import static mara.mybox.data.DoubleShape.ShapeType.Lines;
+import static mara.mybox.data.DoubleShape.ShapeType.Quadratic;
 import mara.mybox.data.ShapeStyle;
+import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
-import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 
 /**
  * @Author Mara
@@ -56,7 +61,8 @@ public abstract class ControlShapeOptions extends BaseController {
             linecapSquareRadio, linecapRoundRadio, linecapButtRadio;
     @FXML
     protected VBox shapeBox, shapeOutBox, pointsBox, linesBox,
-            rectangleBox, circleBox, ellipseBox, lineBox, pathBox;
+            rectangleBox, circleBox, ellipseBox, lineBox, quadraticBox, cubicBox,
+            pathBox;
     @FXML
     protected TabPane shapesPane;
     @FXML
@@ -66,6 +72,9 @@ public abstract class ControlShapeOptions extends BaseController {
             rectXInput, rectYInput, rectWidthInput, rectHeightInput,
             ellipseXInput, ellipseYInput, ellipseXRadiusInput, ellipseYRadiusInput,
             lineX1Input, lineY1Input, lineX2Input, lineY2Input,
+            quadStartXInput, quadStartYInput, quadControlXInput, quadControlYInput, quadEndXInput, quadEndYInput,
+            cubicStartXInput, cubicStartYInput, cubicControlX1Input, cubicControlY1Input,
+            cubicControlX2Input, cubicControlY2Input, cubicEndXInput, cubicEndYInput,
             dashInput;
     @FXML
     protected ControlPoints pointsController;
@@ -482,8 +491,16 @@ public abstract class ControlShapeOptions extends BaseController {
                 imageController.showMaskPolylines();
                 shapeType = ShapeType.Lines;
 
+            } else if (quadraticRadio != null && quadraticRadio.isSelected()) {
+                imageController.showMaskQuadratic();
+                shapeType = ShapeType.Quadratic;
+
+            } else if (cubicRadio != null && cubicRadio.isSelected()) {
+                imageController.showMaskCubic();
+                shapeType = ShapeType.Cubic;
+
             } else if (pathRadio != null && pathRadio.isSelected()) {
-                imageController.showPath();
+                imageController.showMaskPath();
                 shapeType = ShapeType.Path;
 
             } else {
@@ -546,10 +563,32 @@ public abstract class ControlShapeOptions extends BaseController {
                     VBox.setVgrow(linesBox, Priority.ALWAYS);
                     linesController.loadList(imageController.maskPolylinesData.getLines());
                     break;
+                case Quadratic:
+                    shapeBox.getChildren().add(quadraticBox);
+                    VBox.setVgrow(quadraticBox, Priority.ALWAYS);
+                    quadStartXInput.setText(scale(imageController.maskQuadraticData.getStartX()) + "");
+                    quadStartYInput.setText(scale(imageController.maskQuadraticData.getStartY()) + "");
+                    quadControlXInput.setText(scale(imageController.maskQuadraticData.getControlX()) + "");
+                    quadControlYInput.setText(scale(imageController.maskQuadraticData.getControlY()) + "");
+                    quadEndXInput.setText(scale(imageController.maskQuadraticData.getEndX()) + "");
+                    quadEndYInput.setText(scale(imageController.maskQuadraticData.getEndY()) + "");
+                    break;
+                case Cubic:
+                    shapeBox.getChildren().add(cubicBox);
+                    VBox.setVgrow(cubicBox, Priority.ALWAYS);
+                    cubicStartXInput.setText(scale(imageController.maskCubicData.getStartX()) + "");
+                    cubicStartYInput.setText(scale(imageController.maskCubicData.getStartY()) + "");
+                    cubicControlX1Input.setText(scale(imageController.maskCubicData.getControlX1()) + "");
+                    cubicControlY1Input.setText(scale(imageController.maskCubicData.getControlY1()) + "");
+                    cubicControlX2Input.setText(scale(imageController.maskCubicData.getControlX2()) + "");
+                    cubicControlY2Input.setText(scale(imageController.maskCubicData.getControlY2()) + "");
+                    cubicEndXInput.setText(scale(imageController.maskCubicData.getEndX()) + "");
+                    cubicEndYInput.setText(scale(imageController.maskCubicData.getEndY()) + "");
+                    break;
                 case Path:
                     shapeBox.getChildren().add(pathBox);
                     VBox.setVgrow(pathBox, Priority.ALWAYS);
-                    pathController.loadPath(imageController.pathData.getContent());
+                    pathController.loadPath(imageController.maskPathData.getContent());
                     break;
                 default:
                     popError(message("InvalidData"));
@@ -598,6 +637,10 @@ public abstract class ControlShapeOptions extends BaseController {
                     return pickPolygon();
                 case Lines:
                     return pickLines();
+                case Quadratic:
+                    return pickQuadratic();
+                case Cubic:
+                    return pickCubic();
                 case Path:
                     return pickPath();
                 default:
@@ -790,6 +833,112 @@ public abstract class ControlShapeOptions extends BaseController {
         }
     }
 
+    public boolean pickQuadratic() {
+        try {
+            float sx, sy, cx, cy, ex, ey;
+            try {
+                sx = Float.parseFloat(quadStartXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("StartPoint") + " x");
+                return false;
+            }
+            try {
+                sy = Float.parseFloat(quadStartYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("StartPoint") + " y");
+                return false;
+            }
+            try {
+                cx = Float.parseFloat(quadControlXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("ControlPoint") + " x");
+                return false;
+            }
+            try {
+                cy = Float.parseFloat(quadControlYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("ControlPoint") + " y");
+                return false;
+            }
+            try {
+                ex = Float.parseFloat(quadEndXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("EndPoint") + " x");
+                return false;
+            }
+            try {
+                ey = Float.parseFloat(quadEndYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("EndPoint") + " y");
+                return false;
+            }
+            imageController.maskQuadraticData = new DoubleQuadratic(sx, sy, cx, cy, ex, ey);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean pickCubic() {
+        try {
+            float sx, sy, cx1, cy1, cx2, cy2, ex, ey;
+            try {
+                sx = Float.parseFloat(cubicStartXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("StartPoint") + " x");
+                return false;
+            }
+            try {
+                sy = Float.parseFloat(quadStartYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("StartPoint") + " y");
+                return false;
+            }
+            try {
+                cx1 = Float.parseFloat(cubicControlX1Input.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("ControlPoint1") + " x");
+                return false;
+            }
+            try {
+                cy1 = Float.parseFloat(cubicControlY1Input.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("ControlPoint1") + " y");
+                return false;
+            }
+            try {
+                cx2 = Float.parseFloat(cubicControlX2Input.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("ControlPoint2") + " x");
+                return false;
+            }
+            try {
+                cy2 = Float.parseFloat(cubicControlY2Input.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("ControlPoint2") + " y");
+                return false;
+            }
+            try {
+                ex = Float.parseFloat(cubicEndXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("EndPoint") + " x");
+                return false;
+            }
+            try {
+                ey = Float.parseFloat(cubicEndYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("End") + " y");
+                return false;
+            }
+            imageController.maskCubicData = new DoubleCubic(sx, sy, cx1, cy1, cx2, cy2, ex, ey);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     public boolean pickPath() {
         try {
             String d = pathController.pickPath(" ");
@@ -812,63 +961,7 @@ public abstract class ControlShapeOptions extends BaseController {
         if (imageController == null || shapeType == null) {
             return;
         }
-        switch (shapeType) {
-            case Rectangle:
-                drawRectangle();
-                break;
-            case Circle:
-                drawCircle();
-                break;
-            case Ellipse:
-                drawEllipse();
-                break;
-            case Line:
-                drawLine();
-                break;
-            case Polyline:
-                drawPolyline();
-                break;
-            case Polygon:
-                drawPolygon();
-                break;
-            case Lines:
-                drawLines();
-                break;
-            case Path:
-                drawPath();
-                break;
-            default:
-                return;
-        }
-    }
-
-    public void drawRectangle() {
-        MyBoxLog.debug("drawRectangle");
-        imageController.showMaskRectangle();
-    }
-
-    public void drawCircle() {
-        imageController.showMaskCircle();
-    }
-
-    public void drawEllipse() {
-        imageController.showMaskEllipse();
-    }
-
-    public void drawPolygon() {
-        imageController.showMaskPolygon();
-    }
-
-    public void drawPolyline() {
-        imageController.showMaskPolyline();
-    }
-
-    public void drawLine() {
-        imageController.showMaskLine();
-    }
-
-    public void drawLines() {
-        imageController.showMaskPolylines();
+        imageController.drawMaskShape();
     }
 
     /*
@@ -888,13 +981,6 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public void goStyle() {
         redrawShape();
-    }
-
-    /*
-        path
-     */
-    public void drawPath() {
-        imageController.drawPath();
     }
 
 }

@@ -61,16 +61,18 @@ public class StyleRadioButton {
                 return new StyleData(id, "", message("Ellipse"), "", "iconEllipse.png");
             case "polygonRadio":
                 return new StyleData(id, "", message("Polygon"), "", "iconStar.png");
+            case "quadraticRadio":
+                return new StyleData(id, "", message("QuadraticCurve"), "", "iconQuadratic.png");
+            case "cubicRadio":
+                return new StyleData(id, "", message("CubicCurve"), "", "iconCubic.png");
+            case "arcRadio":
+                return new StyleData(id, "", message("ArcCurve"), "", "iconArc.png");
             case "eraserRadio":
                 return new StyleData(id, "", message("Eraser"), "", "iconEraser.png");
             case "mosaicRadio":
                 return new StyleData(id, "", message("Mosaic"), "", "iconMosaic.png");
             case "frostedRadio":
                 return new StyleData(id, "", message("FrostedGlass"), "", "iconFrosted.png");
-            case "shapeRectangleRadio":
-                return new StyleData(id, "", message("Rectangle"), "", "iconRectangle.png");
-            case "shapeCircleRadio":
-                return new StyleData(id, "", message("Circle"), "", "iconCircle.png");
             case "horizontalBarChartRadio":
                 return new StyleData(id, "", message("HorizontalBarChart"), "", "iconBarChartH.png");
             case "barChartRadio":

@@ -20,13 +20,13 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-7-19
  * @License Apache License Version 2.0
  */
-public class ControlImageRulerOptions extends BaseController {
+public class ControlImageOptions extends BaseController {
 
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, rulerColorController, gridColorController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, anchorSizeSelector, gridWidthSelector,
-            gridIntervalSelector, gridOpacitySelector;
+            gridIntervalSelector, gridOpacitySelector, decimalSelector;
 
     @Override
     public void initControls() {
@@ -197,6 +197,27 @@ public class ControlImageRulerOptions extends BaseController {
                 }
             });
 
+            decimalSelector.getItems().addAll(Arrays.asList("2", "1", "3", "0", "4", "5", "6", "7", "8"));
+            decimalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (isSettingValues || newValue == null || newValue.isEmpty()) {
+                        return;
+                    }
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v > 0) {
+                            UserConfig.setInt("ImageDecimal", v);
+                            ValidationTools.setEditorNormal(decimalSelector);
+                        } else {
+                            ValidationTools.setEditorBadStyle(decimalSelector);
+                        }
+                    } catch (Exception e) {
+                        ValidationTools.setEditorBadStyle(decimalSelector);
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -212,6 +233,7 @@ public class ControlImageRulerOptions extends BaseController {
             int gi = UserConfig.getInt("GridLinesInterval", -1);
             gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
             gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
+            decimalSelector.setValue(UserConfig.getInt("ImageDecimal", 2) + "");
 
             strokeColorController.asSaved();
             anchorColorController.asSaved();

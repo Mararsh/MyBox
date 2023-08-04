@@ -15,7 +15,6 @@ import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoublePolylines;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 
 /**
@@ -44,6 +43,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             imageSingleClicked(event, p);
 
         }
+        maskControlDragged = false;
     }
 
     @FXML
@@ -58,8 +58,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     public void mousePoint(MouseEvent event) {
         if (imageView == null || imageView.getImage() == null
-                || isPickingColor || event.getButton() == MouseButton.SECONDARY
-                || maskPolylines == null) {
+                || isPickingColor || maskControlDragged
+                || event.getButton() == MouseButton.SECONDARY
+                || !isMaskPolylinesShown()) {
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
@@ -75,8 +76,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     public void mouseReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (imageView == null || imageView.getImage() == null
-                || isPickingColor || event.getButton() == MouseButton.SECONDARY
-                || maskPolylines == null) {
+                || isPickingColor || maskControlDragged
+                || event.getButton() == MouseButton.SECONDARY
+                || !isMaskPolylinesShown()) {
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
@@ -124,7 +126,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             shapeVisible = true;
 
         } else if (maskPolyline != null && maskPolyline.isVisible()) {
-            if (!maskPointDragged) {
+            if (!maskControlDragged) {
                 if (singleClickedPolyline(event, p)) {
                     maskShapeDataChanged();
                     return;
@@ -133,7 +135,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             shapeVisible = true;
 
         } else if (maskPolygon != null && maskPolygon.isVisible()) {
-            if (!maskPointDragged) {
+            if (!maskControlDragged) {
                 if (singleClickedPolygon(event, p)) {
                     maskShapeDataChanged();
                     return;
@@ -141,7 +143,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
             shapeVisible = true;
 
-        } else if (maskPolylines != null) {
+        } else if (isMaskPolylinesShown()) {
             if (singleClickedLines(event, p)) {
                 maskShapeDataChanged();
                 return;
@@ -150,7 +152,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         }
 
-        maskPointDragged = false;
         if (!shapeVisible && event.getButton() == MouseButton.SECONDARY) {
             popImageMenu(event.getScreenX(), event.getScreenY());
         }
@@ -278,9 +279,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     @FXML
     public void handlerPressed(MouseEvent event) {
-        scrollPane.setPannable(false);
-        mouseX = event.getX();
-        mouseY = event.getY();
+        controlPressed(event);
     }
 
     @FXML
@@ -394,10 +393,10 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void topLeftHandlerReleased(MouseEvent event) {
+    public void maskHandlerTopLeftReleased(MouseEvent event) {
         scrollPane.setPannable(true);
-        if (isPickingColor || topLeftHandler == null || !topLeftHandler.isVisible()
-                || !maskPane.getChildren().contains(topLeftHandler)) {
+        if (isPickingColor || maskHandlerTopLeft == null || !maskHandlerTopLeft.isVisible()
+                || !maskPane.getChildren().contains(maskHandlerTopLeft)) {
             return;
         }
 
@@ -429,7 +428,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void topCenterHandlerReleased(MouseEvent event) {
+    public void maskHandlerTopCenterReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;
@@ -446,7 +445,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = bottomCenterHandler.getY() - event.getY();
+            double r = maskHandlerBottomCenter.getY() - event.getY();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageYRatio() / 2);
                 drawMaskCircle();
@@ -454,7 +453,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double ry = bottomCenterHandler.getY() - event.getY();
+            double ry = maskHandlerBottomCenter.getY() - event.getY();
             if (ry > 0) {
                 ry = ry * imageYRatio() / 2;
                 double rx = maskEllipseData.getRadiusX();
@@ -469,7 +468,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void topRightHandlerReleased(MouseEvent event) {
+    public void maskHandlerTopRightReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;
@@ -493,7 +492,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void bottomLeftHandlerReleased(MouseEvent event) {
+    public void maskHandlerBottomLeftReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;
@@ -516,7 +515,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void bottomCenterHandlerReleased(MouseEvent event) {
+    public void maskHandlerBottomCenterReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;
@@ -534,7 +533,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = event.getY() - topCenterHandler.getY();
+            double r = event.getY() - maskHandlerTopCenter.getY();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageYRatio() / 2);
                 drawMaskCircle();
@@ -542,7 +541,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double ry = event.getY() - topCenterHandler.getY();
+            double ry = event.getY() - maskHandlerTopCenter.getY();
             if (ry > 0) {
                 ry = ry * imageYRatio() / 2;
                 double rx = maskEllipseData.getRadiusX();
@@ -557,7 +556,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void bottomRightHandlerReleased(MouseEvent event) {
+    public void maskHandlerBottomRightReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;
@@ -587,7 +586,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void leftCenterHandlerReleased(MouseEvent event) {
+    public void maskHandlerLeftCenterReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;
@@ -605,7 +604,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = rightCenterHandler.getX() - event.getX();
+            double r = maskHandlerRightCenter.getX() - event.getX();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageXRatio() / 2);
                 drawMaskCircle();
@@ -613,9 +612,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double rx = rightCenterHandler.getX() - event.getX();
+            double rx = maskHandlerRightCenter.getX() - event.getX();
             if (rx > 0) {
-                rx = rx * imageYRatio() / 2;
+                rx = rx * imageXRatio() / 2;
                 double ry = maskEllipseData.getRadiusY();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
@@ -628,7 +627,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void rightCenterHandlerReleased(MouseEvent event) {
+    public void maskHandlerRightCenterReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;
@@ -647,7 +646,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = event.getX() - leftCenterHandler.getLayoutX();
+            double r = event.getX() - maskHandlerLeftCenter.getX();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageXRatio() / 2);
                 drawMaskCircle();
@@ -655,9 +654,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double rx = event.getX() - leftCenterHandler.getLayoutX();
+            double rx = event.getX() - maskHandlerLeftCenter.getX();
             if (rx > 0) {
-                rx = rx * imageYRatio() / 2;
+                rx = rx * imageXRatio() / 2;
                 double ry = maskEllipseData.getRadiusY();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
@@ -694,7 +693,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskEllipse != null) {
             maskEllipse.setCursor(Cursor.HAND);
         }
-        MyBoxLog.console(maskLine != null);
         if (maskLine != null) {
             maskLine.setCursor(Cursor.HAND);
         }
@@ -703,6 +701,15 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
         if (maskPolyline != null) {
             maskPolyline.setCursor(Cursor.HAND);
+        }
+        if (maskQuadratic != null) {
+            maskQuadratic.setCursor(Cursor.HAND);
+        }
+        if (maskCubic != null) {
+            maskCubic.setCursor(Cursor.HAND);
+        }
+        if (maskArc != null) {
+            maskArc.setCursor(Cursor.HAND);
         }
         if (svgPath != null) {
             svgPath.setCursor(Cursor.HAND);
@@ -732,6 +739,15 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
         if (maskPolyline != null) {
             maskPolyline.setCursor(Cursor.MOVE);
+        }
+        if (maskQuadratic != null) {
+            maskQuadratic.setCursor(Cursor.MOVE);
+        }
+        if (maskCubic != null) {
+            maskCubic.setCursor(Cursor.MOVE);
+        }
+        if (maskArc != null) {
+            maskArc.setCursor(Cursor.MOVE);
         }
         if (svgPath != null) {
             svgPath.setCursor(Cursor.MOVE);

@@ -11,7 +11,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageRulerOptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageOptions">
     <children>
         <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
             <children>
@@ -48,5 +48,11 @@ License:    Apache License Version 2.0
                 <ComboBox fx:id="gridOpacitySelector" editable="true" layoutX="348.0" layoutY="13.0" prefWidth="100.0" />
             </children>
         </FlowPane>
+      <FlowPane hgap="2.0" layoutX="10.0" layoutY="91.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+         <children>
+            <Label text="%ImageCoordinateDecimalDigits" />
+            <ComboBox fx:id="decimalSelector" editable="true" prefWidth="100.0" />
+         </children>
+      </FlowPane>
     </children>
 </VBox>

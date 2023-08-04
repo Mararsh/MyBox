@@ -1,6 +1,6 @@
 package mara.mybox.data;
 
-import java.awt.geom.Line2D;
+import java.awt.geom.QuadCurve2D;
 
 /**
  * @Author Mara
@@ -9,27 +9,30 @@ import java.awt.geom.Line2D;
  */
 public class DoubleQuadratic implements DoubleShape {
 
-    private double startX, startY, endX, endY;
+    private double startX, startY, controlX, controlY, endX, endY;
 
     public DoubleQuadratic() {
 
     }
 
-    public DoubleQuadratic(double startX, double startY, double endX, double endY) {
+    public DoubleQuadratic(double startX, double startY,
+            double controlX, double controlY, double endX, double endY) {
         this.startX = startX;
         this.startY = startY;
+        this.controlX = controlX;
+        this.controlY = controlY;
         this.endX = endX;
         this.endY = endY;
     }
 
     @Override
-    public Line2D.Double getShape() {
-        return new Line2D.Double(startX, startY, endX, endY);
+    public QuadCurve2D.Double getShape() {
+        return new QuadCurve2D.Double(startX, startY, controlX, controlY, endX, endY);
     }
 
     @Override
     public DoubleQuadratic cloneValues() {
-        return new DoubleQuadratic(startX, startY, endX, endY);
+        return new DoubleQuadratic(startX, startY, controlX, controlY, endX, endY);
     }
 
     @Override
@@ -41,6 +44,7 @@ public class DoubleQuadratic implements DoubleShape {
     public DoubleQuadratic translateRel(double offsetX, double offsetY) {
         DoubleQuadratic nline = new DoubleQuadratic(
                 startX + offsetX, startY + offsetY,
+                controlX + offsetX, controlY + offsetY,
                 endX + offsetX, endY + offsetY);
         return nline;
     }
@@ -81,6 +85,22 @@ public class DoubleQuadratic implements DoubleShape {
 
     public void setEndY(double endY) {
         this.endY = endY;
+    }
+
+    public double getControlX() {
+        return controlX;
+    }
+
+    public void setControlX(double controlX) {
+        this.controlX = controlX;
+    }
+
+    public double getControlY() {
+        return controlY;
+    }
+
+    public void setControlY(double controlY) {
+        this.controlY = controlY;
     }
 
 }
