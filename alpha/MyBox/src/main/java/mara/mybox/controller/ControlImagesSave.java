@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import com.github.jaiimageio.impl.plugins.gif.GIFImageMetadata;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -350,7 +350,7 @@ public class ControlImagesSave extends BaseController {
         }
         int maxW = 0, maxH = 0;
         for (ImageInformation info : imageInfos) {
-            Rectangle region = info.getRegion();
+            Rectangle2D.Double region = info.getRegion();
             if (region != null) {
                 if (region.getWidth() > maxW) {
                     maxW = (int) region.getWidth();

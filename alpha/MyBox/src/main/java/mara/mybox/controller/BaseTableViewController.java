@@ -409,6 +409,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     @FXML
+    public void removeLastItem() {
+        tableData.remove(tableData.size() - 1);
+    }
+
+    @FXML
     public void moveUpAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(tableView.getSelectionModel().getSelectedIndices());

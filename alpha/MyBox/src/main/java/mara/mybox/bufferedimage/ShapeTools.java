@@ -30,9 +30,10 @@ public class ShapeTools {
     public static BufferedImage drawShape(BufferedImage srcImage, DoubleShape doubleShape,
             ShapeStyle style, PixelsBlend blender) {
         try {
-            if (doubleShape == null || !doubleShape.isValid()) {
+            if (doubleShape == null || doubleShape.isEmpty()) {
                 return srcImage;
             }
+            Shape shape = doubleShape.getShape();
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;
@@ -47,7 +48,7 @@ public class ShapeTools {
                 }
                 ((DoubleRectangle) doubleShape).setRound(arcWidth);
             }
-            Shape shape = doubleShape.getShape();
+
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();

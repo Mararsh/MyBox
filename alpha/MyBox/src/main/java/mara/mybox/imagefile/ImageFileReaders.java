@@ -134,7 +134,7 @@ public class ImageFileReaders {
         }
         try {
             ImageReadParam param = reader.getDefaultReadParam();
-            Rectangle region = imageInfo.getRegion();
+            Rectangle region = imageInfo.getIntRegion();
             if (region != null) {
                 param.setSourceRegion(region);
             }
@@ -277,7 +277,7 @@ public class ImageFileReaders {
             int bmWidth = bufferedImage.getWidth();
             int xscale = imageInfo.getXscale();
             int yscale = imageInfo.getYscale();
-            Rectangle region = imageInfo.getRegion();
+            Rectangle region = imageInfo.getIntRegion();
             if (region == null) {
                 if (xscale != 1 || yscale != 1) {
                     bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, xscale, yscale);
@@ -286,9 +286,11 @@ public class ImageFileReaders {
                 }
             } else {
                 if (xscale != 1 || yscale != 1) {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage, new DoubleRectangle(region), xscale, yscale);
+                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
+                            new DoubleRectangle(imageInfo.getRegion()), xscale, yscale);
                 } else {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage, new DoubleRectangle(region), requiredWidth);
+                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
+                            new DoubleRectangle(imageInfo.getRegion()), requiredWidth);
                 }
             }
             return bufferedImage;

@@ -41,6 +41,11 @@ public class DoubleQuadratic implements DoubleShape {
     }
 
     @Override
+    public boolean isEmpty() {
+        return !isValid();
+    }
+
+    @Override
     public DoubleQuadratic translateRel(double offsetX, double offsetY) {
         DoubleQuadratic nline = new DoubleQuadratic(
                 startX + offsetX, startY + offsetY,

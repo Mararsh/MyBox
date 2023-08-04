@@ -16,6 +16,16 @@ public class DoubleText extends DoubleRectangle {
         super(Integer.MAX_VALUE, Integer.MAX_VALUE, x1, y1, x2, y2);
     }
 
+    @Override
+    public boolean isValid() {
+        return text != null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid();
+    }
+
     /*
         get/set
      */

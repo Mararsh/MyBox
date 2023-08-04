@@ -98,6 +98,11 @@ public class DoublePolygon implements DoubleShape {
         return points != null && points.size() > 2;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return !isValid() || points.isEmpty();
+    }
+
     public boolean same(DoublePolygon polygon) {
         if (polygon == null) {
             return false;

@@ -1,6 +1,6 @@
 package mara.mybox.data;
 
-import java.awt.geom.QuadCurve2D;
+import java.awt.geom.Arc2D;
 
 /**
  * @Author Mara
@@ -9,30 +9,48 @@ import java.awt.geom.QuadCurve2D;
  */
 public class DoubleArc implements DoubleShape {
 
-    private double startX, startY, controlX, controlY, endX, endY;
+    private double centerX, centerY, radiusX, radiusY,
+            width, height, x, y, startAngle, extentAngle;
+    private int type;
 
-    public DoubleArc() {
-
+    public DoubleArc(DoubleRectangle rect, double startAngle, double extentAngle, int type) {
+        x = rect.getSmallX();
+        y = rect.getSmallY();
+        width = rect.getWidth();
+        height = rect.getHeight();
+        DoublePoint center = DoubleShape.getCenter(rect);
+        centerX = center.getX();
+        centerY = center.getY();
+        radiusX = rect.getWidth() / 2;
+        radiusY = rect.getHeight() / 2;
+        this.startAngle = startAngle;
+        this.extentAngle = extentAngle;
+        this.type = type;
     }
 
-    public DoubleArc(double startX, double startY,
-            double controlX, double controlY, double endX, double endY) {
-        this.startX = startX;
-        this.startY = startY;
-        this.controlX = controlX;
-        this.controlY = controlY;
-        this.endX = endX;
-        this.endY = endY;
+    public DoubleArc(double x, double y, double width, double height,
+            double startAngle, double extentAngle, int type) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.startAngle = startAngle;
+        this.extentAngle = extentAngle;
+        this.type = type;
+        radiusX = width / 2;
+        radiusY = height / 2;
+        centerX = x + radiusX;
+        centerY = y + radiusY;
     }
 
     @Override
-    public QuadCurve2D.Double getShape() {
-        return new QuadCurve2D.Double(startX, startY, controlX, controlY, endX, endY);
+    public Arc2D.Double getShape() {
+        return new Arc2D.Double(x, y, width, height, startAngle, extentAngle, type);
     }
 
     @Override
     public DoubleArc cloneValues() {
-        return new DoubleArc(startX, startY, controlX, controlY, endX, endY);
+        return new DoubleArc(x, y, width, height, startAngle, extentAngle, type);
     }
 
     @Override
@@ -41,10 +59,14 @@ public class DoubleArc implements DoubleShape {
     }
 
     @Override
+    public boolean isEmpty() {
+        return !isValid();
+    }
+
+    @Override
     public DoubleArc translateRel(double offsetX, double offsetY) {
-        return new DoubleArc(startX + offsetX, startY + offsetY,
-                controlX + offsetX, controlY + offsetY,
-                endX + offsetX, endY + offsetY);
+        return new DoubleArc(x + offsetX, y + offsetY,
+                width, height, startAngle, extentAngle, type);
     }
 
     @Override
@@ -53,36 +75,51 @@ public class DoubleArc implements DoubleShape {
         return moved != null ? (DoubleArc) moved : null;
     }
 
-    public double getStartX() {
-        return startX;
+    /*
+        get
+     */
+    public double getCenterX() {
+        return centerX;
     }
 
-    public void setStartX(double startX) {
-        this.startX = startX;
+    public double getCenterY() {
+        return centerY;
     }
 
-    public double getStartY() {
-        return startY;
+    public double getRadiusX() {
+        return radiusX;
     }
 
-    public void setStartY(double startY) {
-        this.startY = startY;
+    public double getRadiusY() {
+        return radiusY;
     }
 
-    public double getEndX() {
-        return endX;
+    public double getWidth() {
+        return width;
     }
 
-    public void setEndX(double endX) {
-        this.endX = endX;
+    public double getHeight() {
+        return height;
     }
 
-    public double getEndY() {
-        return endY;
+    public double getX() {
+        return x;
     }
 
-    public void setEndY(double endY) {
-        this.endY = endY;
+    public double getY() {
+        return y;
+    }
+
+    public double getStartAngle() {
+        return startAngle;
+    }
+
+    public double getExtentAngle() {
+        return extentAngle;
+    }
+
+    public int getType() {
+        return type;
     }
 
 }

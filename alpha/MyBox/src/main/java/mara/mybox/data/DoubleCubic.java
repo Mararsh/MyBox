@@ -45,6 +45,11 @@ public class DoubleCubic implements DoubleShape {
     }
 
     @Override
+    public boolean isEmpty() {
+        return !isValid();
+    }
+
+    @Override
     public DoubleCubic translateRel(double offsetX, double offsetY) {
         DoubleCubic nline = new DoubleCubic(
                 startX + offsetX, startY + offsetY,

@@ -20,7 +20,7 @@ public class DoubleRectangle implements DoubleShape {
         maxY = Integer.MAX_VALUE;
     }
 
-    public DoubleRectangle(Rectangle rectangle) {
+    public DoubleRectangle(Rectangle2D.Double rectangle) {
         maxX = Integer.MAX_VALUE;
         maxY = Integer.MAX_VALUE;
         smallX = rectangle.getX();
@@ -63,6 +63,11 @@ public class DoubleRectangle implements DoubleShape {
     @Override
     public boolean isValid() {
         return isValid(maxX, maxY);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid() || width == 0 || height == 0;
     }
 
     public boolean isValid(double maxX, double maxY) {

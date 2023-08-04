@@ -431,11 +431,14 @@ public class PixelsOperationFactory {
 
     public static class SetPreOpacity extends PixelsOperation {
 
+        protected Color bkColor;
+
         public SetPreOpacity(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.PreOpacity;
             this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
+            bkColor = ColorConvertTools.alphaColor();
         }
 
         @Override
@@ -448,11 +451,14 @@ public class PixelsOperationFactory {
 
     public static class IncreasePreOpacity extends PixelsOperation {
 
+        protected Color bkColor;
+
         public IncreasePreOpacity(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.PreOpacity;
             this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
+            bkColor = ColorConvertTools.alphaColor();
         }
 
         @Override
@@ -465,11 +471,14 @@ public class PixelsOperationFactory {
 
     public static class DecreasePreOpacity extends PixelsOperation {
 
+        protected Color bkColor;
+
         public DecreasePreOpacity(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.PreOpacity;
             this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
+            bkColor = ColorConvertTools.alphaColor();
         }
 
         @Override

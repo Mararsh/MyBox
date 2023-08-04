@@ -21,7 +21,7 @@ public class DoublePolylines implements DoubleShape {
 
     @Override
     public Path2D.Double getShape() {
-        if (points == null || points.isEmpty()) {
+        if (points == null) {
             return null;
         }
         Path2D.Double path = new Path2D.Double();
@@ -63,6 +63,11 @@ public class DoublePolylines implements DoubleShape {
     @Override
     public boolean isValid() {
         return points != null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid() || points.isEmpty();
     }
 
     @Override
@@ -161,6 +166,19 @@ public class DoublePolylines implements DoubleShape {
     public DoublePolylines translateAbs(double x, double y) {
         DoubleShape moved = DoubleShape.translateAbs(this, x, y);
         return moved != null ? (DoublePolylines) moved : null;
+    }
+
+    public void translateLineRel(int index, double offsetX, double offsetY) {
+        if (index < 0 || index >= points.size()) {
+            return;
+        }
+        List<DoublePoint> newline = new ArrayList<>();
+        List<DoublePoint> line = points.get(index);
+        for (int i = 0; i < line.size(); i++) {
+            DoublePoint p = line.get(i);
+            newline.add(new DoublePoint(p.getX() + offsetX, p.getY() + offsetY));
+        }
+        points.set(index, newline);
     }
 
     public DoublePoint getCenter() {

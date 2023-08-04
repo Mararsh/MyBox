@@ -2,6 +2,7 @@ package mara.mybox.bufferedimage;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -52,7 +53,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected Image image, thumbnail, regionImage;
     protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
-    protected Rectangle region;
+    protected Rectangle2D.Double region;
     protected SingletonTask task;
 
     public ImageInformation() {
@@ -328,7 +329,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setWidth(imageWidth);
             imageInfo.setHeight(bufferedImage.getHeight());
             imageInfo.setImageType(bufferedImage.getType());
-            Rectangle region = imageInfo.getRegion();
+            Rectangle2D.Double region = imageInfo.getRegion();
             if (region != null) {
                 bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, new DoubleRectangle(region));
                 if (task != null && task.isCancelled()) {
@@ -425,7 +426,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         if (imageInfo == null) {
             return null;
         }
-        Rectangle region = imageInfo.getRegion();
+        Rectangle2D.Double region = imageInfo.getRegion();
         if (region == null) {
             return readImage(imageInfo, requireWidth);
         }
@@ -600,7 +601,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     }
 
     public ImageInformation setRegion(double x1, double y1, double x2, double y2) {
-        region = new Rectangle((int) x1, (int) y1, Math.abs((int) (x2 - x1)), Math.abs((int) (y2 - y1)));
+        region = new Rectangle2D.Double(x1, y1, Math.abs(x2 - x1 + 1), Math.abs(y2 - y1 + 1));
         regionImage = null;
         return this;
     }
@@ -1483,8 +1484,16 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         this.thumbnailRotation = thumbnailRotation;
     }
 
-    public Rectangle getRegion() {
+    public Rectangle2D.Double getRegion() {
         return region;
+    }
+
+    public Rectangle getIntRegion() {
+        if (region == null) {
+            return null;
+        }
+        return new Rectangle((int) region.getX(), (int) region.getY(),
+                (int) region.getWidth(), (int) region.getHeight());
     }
 
     public Image getRegionImage() {

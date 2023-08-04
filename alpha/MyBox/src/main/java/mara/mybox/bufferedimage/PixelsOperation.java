@@ -26,7 +26,7 @@ public abstract class PixelsOperation {
     protected boolean isDithering, boolPara1, boolPara2, boolPara3, skipTransparent = true, excludeScope;
     protected int intPara1, intPara2, intPara3, scopeColor = 0;
     protected float floatPara1, floatPara2;
-    protected Color colorPara1, colorPara2, bkColor;
+    protected Color colorPara1, colorPara2;
     protected ImageScope scope;
     protected OperationType operationType;
     protected ColorActionType colorActionType;
@@ -49,7 +49,6 @@ public abstract class PixelsOperation {
     }
 
     public PixelsOperation() {
-        this.bkColor = ColorConvertTools.alphaColor();
         excludeScope = false;
     }
 
@@ -548,15 +547,6 @@ public abstract class PixelsOperation {
 
     public PixelsOperation setExcludeScope(boolean excludeScope) {
         this.excludeScope = excludeScope;
-        return this;
-    }
-
-    public Color getBkColor() {
-        return bkColor;
-    }
-
-    public PixelsOperation setBkColor(Color bkColor) {
-        this.bkColor = bkColor;
         return this;
     }
 

@@ -22,9 +22,6 @@ public class DoublePolyline implements DoubleShape {
 
     @Override
     public Shape getShape() {
-        if (points == null || points.isEmpty()) {
-            return null;
-        }
         Path2D.Double path = new Path2D.Double();
         DoublePoint p = points.get(0);
         path.moveTo(p.getX(), p.getY());
@@ -100,7 +97,12 @@ public class DoublePolyline implements DoubleShape {
 
     @Override
     public boolean isValid() {
-        return points != null && points.size() > 1;
+        return points != null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid() || points.isEmpty();
     }
 
     @Override

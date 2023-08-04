@@ -14,6 +14,8 @@ public interface DoubleShape {
 
     boolean isValid();
 
+    boolean isEmpty();
+
     Shape getShape();
 
     DoubleShape translateRel(double offsetX, double offsetY);

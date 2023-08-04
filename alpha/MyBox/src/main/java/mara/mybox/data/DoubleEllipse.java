@@ -13,10 +13,7 @@ import java.awt.geom.Ellipse2D;
 public class DoubleEllipse implements DoubleShape {
 
     private DoubleRectangle rectangle;
-    private DoublePoint focalSmall, focalBig;
-    private double longAxis, shortAxis, focalDistance, centerX, centerY,
-            radiusX, radiusY, sumLength;
-    private boolean focalsOnX;
+    private double centerX, centerY, radiusX, radiusY;
 
     public DoubleEllipse() {
 
@@ -35,30 +32,11 @@ public class DoubleEllipse implements DoubleShape {
             return;
         }
         rectangle = rect;
-        focalsOnX = rect.getWidth() >= rect.getHeight();
         DoublePoint center = DoubleShape.getCenter(rect);
         centerX = center.getX();
         centerY = center.getY();
-        if (focalsOnX) {
-            longAxis = rect.getWidth() / 2;
-            shortAxis = rect.getHeight() / 2;
-            radiusX = longAxis;
-            radiusY = shortAxis;
-            focalDistance = Math.sqrt(longAxis * longAxis - shortAxis * shortAxis);
-            focalSmall = new DoublePoint(centerX - focalDistance, centerY);
-            focalBig = new DoublePoint(centerX + focalDistance, centerY);
-            sumLength = rect.getWidth();
-        } else {
-            longAxis = rect.getHeight() / 2;
-            shortAxis = rect.getWidth() / 2;
-            radiusX = shortAxis;
-            radiusY = longAxis;
-            focalDistance = Math.sqrt(longAxis * longAxis - shortAxis * shortAxis);
-            focalSmall = new DoublePoint(centerX, centerY - focalDistance);
-            focalBig = new DoublePoint(centerX, centerY + focalDistance);
-            sumLength = rect.getHeight();
-        }
-
+        radiusX = rect.getWidth() / 2;
+        radiusY = rect.getHeight() / 2;
     }
 
     @Override
@@ -68,9 +46,12 @@ public class DoubleEllipse implements DoubleShape {
 
     @Override
     public boolean isValid() {
-        return longAxis > 0 && shortAxis > 0
-                && focalBig != null && focalSmall != null
-                && rectangle != null && rectangle.isValid();
+        return rectangle != null && rectangle.isValid();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid();
     }
 
     public boolean same(DoubleEllipse ellipse) {
@@ -83,24 +64,6 @@ public class DoubleEllipse implements DoubleShape {
     @Override
     public DoubleEllipse cloneValues() {
         return new DoubleEllipse(rectangle);
-    }
-
-    public boolean on(double x, double y) {
-        double distanceA = DoublePoint.distance(focalBig.getX(), focalBig.getY(), x, y);
-        double distanceB = DoublePoint.distance(focalSmall.getX(), focalSmall.getY(), x, y);
-        return distanceA + distanceB == sumLength;
-    }
-
-    public boolean include(DoublePoint p) {
-        double distanceA = DoublePoint.distance(focalBig, p);
-        double distanceB = DoublePoint.distance(focalSmall, p);
-        return distanceA + distanceB <= sumLength;
-    }
-
-    public boolean on(DoublePoint p) {
-        double distanceA = DoublePoint.distance(focalBig, p);
-        double distanceB = DoublePoint.distance(focalSmall, p);
-        return distanceA + distanceB == sumLength;
     }
 
     @Override
@@ -119,100 +82,27 @@ public class DoubleEllipse implements DoubleShape {
         return moved != null ? (DoubleEllipse) moved : null;
     }
 
+    /*
+        get
+     */
     public DoubleRectangle getRectangle() {
         return rectangle;
-    }
-
-    public void setRectangle(DoubleRectangle rectangle) {
-        this.rectangle = rectangle;
-    }
-
-    public DoublePoint getFocalSmall() {
-        return focalSmall;
-    }
-
-    public void setFocalSmall(DoublePoint focalSmall) {
-        this.focalSmall = focalSmall;
-    }
-
-    public DoublePoint getFocalBig() {
-        return focalBig;
-    }
-
-    public void setFocalBig(DoublePoint focalBig) {
-        this.focalBig = focalBig;
-    }
-
-    public double getLongAxis() {
-        return longAxis;
-    }
-
-    public void setLongAxis(double longAxis) {
-        this.longAxis = longAxis;
-    }
-
-    public double getShortAxis() {
-        return shortAxis;
-    }
-
-    public void setShortAxis(double shortAxis) {
-        this.shortAxis = shortAxis;
-    }
-
-    public double getFocalDistance() {
-        return focalDistance;
-    }
-
-    public void setFocalDistance(double focalDistance) {
-        this.focalDistance = focalDistance;
     }
 
     public double getCenterX() {
         return centerX;
     }
 
-    public void setCenterX(double centerX) {
-        this.centerX = centerX;
-    }
-
     public double getCenterY() {
         return centerY;
-    }
-
-    public void setCenterY(double centerY) {
-        this.centerY = centerY;
-    }
-
-    public double getSumLength() {
-        return sumLength;
-    }
-
-    public void setSumLength(double sumLength) {
-        this.sumLength = sumLength;
-    }
-
-    public boolean isFocalsOnX() {
-        return focalsOnX;
-    }
-
-    public void setFocalsOnX(boolean focalsOnX) {
-        this.focalsOnX = focalsOnX;
     }
 
     public double getRadiusX() {
         return radiusX;
     }
 
-    public void setRadiusX(double radiusX) {
-        this.radiusX = radiusX;
-    }
-
     public double getRadiusY() {
         return radiusY;
-    }
-
-    public void setRadiusY(double radiusY) {
-        this.radiusY = radiusY;
     }
 
 }

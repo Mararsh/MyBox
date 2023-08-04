@@ -11,7 +11,7 @@ import java.awt.geom.Ellipse2D;
  */
 public class DoubleCircle implements DoubleShape {
 
-    private double centerX, centerY, radius, radius2;
+    private double centerX, centerY, radius;
 
     public DoubleCircle() {
 
@@ -21,7 +21,6 @@ public class DoubleCircle implements DoubleShape {
         centerX = x;
         centerY = y;
         radius = r;
-        radius2 = r * r;
     }
 
     @Override
@@ -37,6 +36,11 @@ public class DoubleCircle implements DoubleShape {
     @Override
     public boolean isValid() {
         return radius > 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid();
     }
 
     public boolean same(DoubleCircle circle) {
@@ -55,29 +59,26 @@ public class DoubleCircle implements DoubleShape {
         return moved != null ? (DoubleCircle) moved : null;
     }
 
-    public double getCenterX() {
-        return centerX;
+    /*
+        set
+     */
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
-    public void setCenterX(double centerX) {
-        this.centerX = centerX;
+    /*
+        get
+     */
+    public double getCenterX() {
+        return centerX;
     }
 
     public double getCenterY() {
         return centerY;
     }
 
-    public void setCenterY(double centerY) {
-        this.centerY = centerY;
-    }
-
     public double getRadius() {
         return radius;
-    }
-
-    public void setRadius(double radius) {
-        radius2 = radius * radius;
-        this.radius = radius;
     }
 
 }

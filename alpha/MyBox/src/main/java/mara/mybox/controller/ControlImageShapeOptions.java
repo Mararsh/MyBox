@@ -137,7 +137,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         if (imageController == null || shapeType == null) {
             return;
         }
-        DoubleShape shapeData = editor.currentMaskShapData();
+        DoubleShape shapeData = editor.currentMaskShapeData();
         if (shapeData == null) {
             return;
         }
@@ -181,10 +181,10 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         switch (shapeType) {
             case Polyline:
             case Polygon:
-                pointsController.tableData.remove(pointsController.tableData.size() - 1);
+                parametersController.pointsController.removeLastItem();
                 break;
             case Lines:
-                linesController.tableData.remove(linesController.tableData.size() - 1);
+                parametersController.linesController.removeLastItem();
                 break;
         }
     }
@@ -204,10 +204,10 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         switch (shapeType) {
             case Polyline:
             case Polygon:
-                pointsController.tableData.clear();
+                parametersController.pointsController.tableData.clear();
                 break;
             case Lines:
-                linesController.tableData.clear();
+                parametersController.linesController.tableData.clear();
                 break;
         }
     }

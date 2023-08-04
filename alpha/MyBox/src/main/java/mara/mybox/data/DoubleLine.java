@@ -38,6 +38,11 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
+    public boolean isEmpty() {
+        return !isValid();
+    }
+
+    @Override
     public DoubleLine translateRel(double offsetX, double offsetY) {
         DoubleLine nline = new DoubleLine(
                 startX + offsetX, startY + offsetY,

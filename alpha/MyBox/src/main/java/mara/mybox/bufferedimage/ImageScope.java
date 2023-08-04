@@ -160,21 +160,6 @@ public class ImageScope extends BaseData {
         colors = new ArrayList<>();
     }
 
-    public void setCircleCenter(int x, int y) {
-        if (circle == null) {
-            circle = new DoubleCircle();
-        }
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-    }
-
-    public void setCircleRadius(int r) {
-        if (circle == null) {
-            circle = new DoubleCircle();
-        }
-        circle.setRadius(r);
-    }
-
     public String getScopeText() {
         String s = "";
         if (null != scopeType) {

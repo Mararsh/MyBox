@@ -380,7 +380,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         return null;
     }
 
-    public DoubleShape currentMaskShapData() {
+    public DoubleShape currentMaskShapeData() {
         if (isMaskRectangleShown()) {
             return maskRectangleData;
         } else if (isMaskCircleShown()) {
@@ -1183,19 +1183,19 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             return;
         }
         clearMaskPolylines();
+        maskPolylines = new ArrayList<>();
         drawMaskPolylines();
     }
 
     public boolean drawMaskPolylines() {
         try {
-            if (imageView == null || imageView.getImage() == null) {
+            if (imageView == null || imageView.getImage() == null || maskPolylines == null) {
                 return false;
             }
             if (maskPolylinesData == null) {
                 maskPolylinesData = new DoublePolylines();
             }
             clearMaskPolylines();
-            maskPolylines = new ArrayList<>();
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
             for (int i = 0; i < maskPolylinesData.getLinesSize(); i++) {
@@ -1213,6 +1213,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 pline.setLayoutX(imageView.getLayoutX());
                 pline.setLayoutY(imageView.getLayoutY());
                 setShapeStyle(pline);
+                int index = i;
                 pline.setOnMousePressed(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -1239,12 +1240,11 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                         if (!DoubleShape.changed(offsetX, offsetY)) {
                             return;
                         }
-                        maskPolylinesData = maskPolylinesData.translateRel(offsetX, offsetY);
+                        maskPolylinesData.translateLineRel(index, offsetX, offsetY);
                         drawMaskPolylines();
                         maskShapeDataChanged();
                     }
                 });
-
                 pline.hoverProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -1378,7 +1378,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 maskPane.getChildren().remove(line);
             }
             maskPolylines.clear();
-            maskPolylines = null;
         }
         if (currentPolyline != null) {
             maskPane.getChildren().remove(currentPolyline);
@@ -1612,7 +1611,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         double w = imageWidth();
         double h = imageHeight();
-        maskCubicData = new DoubleCubic(15, 25, w / 2 - 10, 20, w / 2 + 30, h - 35, w - 30, h - 30);
+        maskCubicData = new DoubleCubic(w / 5, h * 3 / 5, w / 2 - 10, 20, w / 2 + 30, h - 35, w * 3 / 4, h * 4 / 5);
 
     }
 
