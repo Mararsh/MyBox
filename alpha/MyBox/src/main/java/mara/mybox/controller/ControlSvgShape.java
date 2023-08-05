@@ -312,15 +312,15 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadEllipse(Element node) {
         try {
-            float x, y, rx, ry;
+            float cx, cy, rx, ry;
             try {
-                x = Float.parseFloat(node.getAttribute("cx"));
+                cx = Float.parseFloat(node.getAttribute("cx"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": x");
                 return false;
             }
             try {
-                y = Float.parseFloat(node.getAttribute("cy"));
+                cy = Float.parseFloat(node.getAttribute("cy"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": y");
                 return false;
@@ -343,7 +343,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 popError(message("InvalidParameter") + ": " + message("Radius"));
                 return false;
             }
-            imageController.maskEllipseData = new DoubleEllipse(x, y, x + rx * 2 - 1, y + ry * 2 - 1);
+            imageController.maskEllipseData = DoubleEllipse.ellipse(cx, cy, rx, ry);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

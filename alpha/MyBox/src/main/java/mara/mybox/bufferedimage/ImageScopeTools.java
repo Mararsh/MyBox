@@ -281,9 +281,8 @@ public class ImageScopeTools {
             BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
                 lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
-            DoubleRectangle rect = ellipse.getRectangle();
-            g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()),
-                    (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
+            g.drawOval((int) Math.round(ellipse.getX1()), (int) Math.round(ellipse.getY1()),
+                    (int) Math.round(ellipse.getRadiusX() * 2), (int) Math.round(ellipse.getRadiusY() * 2));
             g.dispose();
             return target;
         } catch (Exception e) {
@@ -296,9 +295,6 @@ public class ImageScopeTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            if (!rect.isValid(width, height)) {
-                return source;
-            }
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();

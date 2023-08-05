@@ -17,7 +17,6 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
@@ -371,11 +370,10 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     indicateScope();
                     break;
                 case Ellipse:
-                    DoubleRectangle rect = maskEllipseData.getRectangle();
-                    rectLeftTopXInput.setText(scale(rect.getSmallX(), 2) + "");
-                    rectLeftTopYInput.setText(scale(rect.getSmallY(), 2) + "");
-                    rightBottomXInput.setText(scale(rect.getBigX(), 2) + "");
-                    rightBottomYInput.setText(scale(rect.getBigY(), 2) + "");
+                    rectLeftTopXInput.setText(scale(maskEllipseData.getX1(), 2) + "");
+                    rectLeftTopYInput.setText(scale(maskEllipseData.getY1(), 2) + "");
+                    rightBottomXInput.setText(scale(maskEllipseData.getX2(), 2) + "");
+                    rightBottomYInput.setText(scale(maskEllipseData.getY2(), 2) + "");
                     scope.setEllipse(maskEllipseData.cloneValues());
                     drawMaskEllipse();
                     indicateScope();

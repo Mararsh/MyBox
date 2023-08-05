@@ -9,48 +9,62 @@ import java.awt.geom.Arc2D;
  */
 public class DoubleArc implements DoubleShape {
 
-    private double centerX, centerY, radiusX, radiusY,
-            width, height, x, y, startAngle, extentAngle;
+    private double centerX, centerY, radiusX, radiusY, startAngle, extentAngle;
     private int type;
 
-    public DoubleArc(DoubleRectangle rect, double startAngle, double extentAngle, int type) {
-        x = rect.getSmallX();
-        y = rect.getSmallY();
-        width = rect.getWidth();
-        height = rect.getHeight();
-        DoublePoint center = DoubleShape.getCenter(rect);
-        centerX = center.getX();
-        centerY = center.getY();
-        radiusX = rect.getWidth() / 2;
-        radiusY = rect.getHeight() / 2;
-        this.startAngle = startAngle;
-        this.extentAngle = extentAngle;
-        this.type = type;
+    public DoubleArc() {
     }
 
-    public DoubleArc(double x, double y, double width, double height,
+    public static DoubleArc rect(double x1, double y1, double x2, double y2,
             double startAngle, double extentAngle, int type) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.startAngle = startAngle;
-        this.extentAngle = extentAngle;
-        this.type = type;
-        radiusX = width / 2;
-        radiusY = height / 2;
-        centerX = x + radiusX;
-        centerY = y + radiusY;
+        DoubleArc a = new DoubleArc();
+        a.setCenterX((x1 + x2) / 2);
+        a.setCenterY((y1 + y2) / 2);
+        a.setRadiusX(Math.abs(x2 - x1 + 1) / 2);
+        a.setRadiusY(Math.abs(y2 - y1 + 1) / 2);
+        a.setStartAngle(startAngle);
+        a.setExtentAngle(extentAngle);
+        a.setType(type);
+        return a;
+    }
+
+    public static DoubleArc arc(double centerX, double centerY, double radiusX, double radiusY,
+            double startAngle, double extentAngle, int type) {
+        DoubleArc a = new DoubleArc();
+        a.setCenterX(centerX);
+        a.setCenterY(centerY);
+        a.setRadiusX(radiusX);
+        a.setRadiusY(radiusY);
+        a.setStartAngle(startAngle);
+        a.setExtentAngle(extentAngle);
+        a.setType(type);
+        return a;
+    }
+
+    public double getX1() {
+        return centerX - radiusX;
+    }
+
+    public double getY1() {
+        return centerY - radiusY;
+    }
+
+    public double getX2() {
+        return centerX + radiusX;
+    }
+
+    public double getY2() {
+        return centerY + radiusY;
     }
 
     @Override
     public Arc2D.Double getShape() {
-        return new Arc2D.Double(x, y, width, height, startAngle, extentAngle, type);
+        return new Arc2D.Double(getX1(), getY1(), radiusX * 2, radiusY * 2, startAngle, extentAngle, type);
     }
 
     @Override
     public DoubleArc cloneValues() {
-        return new DoubleArc(x, y, width, height, startAngle, extentAngle, type);
+        return DoubleArc.arc(centerX, centerY, radiusX, radiusY, startAngle, extentAngle, type);
     }
 
     @Override
@@ -65,8 +79,8 @@ public class DoubleArc implements DoubleShape {
 
     @Override
     public DoubleArc translateRel(double offsetX, double offsetY) {
-        return new DoubleArc(x + offsetX, y + offsetY,
-                width, height, startAngle, extentAngle, type);
+        return DoubleArc.arc(centerX + offsetX, centerY + offsetY,
+                radiusX, radiusY, startAngle, extentAngle, type);
     }
 
     @Override
@@ -94,22 +108,6 @@ public class DoubleArc implements DoubleShape {
         return radiusY;
     }
 
-    public double getWidth() {
-        return width;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
     public double getStartAngle() {
         return startAngle;
     }
@@ -120,6 +118,37 @@ public class DoubleArc implements DoubleShape {
 
     public int getType() {
         return type;
+    }
+
+    /*
+        set
+     */
+    public void setCenterX(double centerX) {
+        this.centerX = centerX;
+    }
+
+    public void setCenterY(double centerY) {
+        this.centerY = centerY;
+    }
+
+    public void setRadiusX(double radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    public void setRadiusY(double radiusY) {
+        this.radiusY = radiusY;
+    }
+
+    public void setStartAngle(double startAngle) {
+        this.startAngle = startAngle;
+    }
+
+    public void setExtentAngle(double extentAngle) {
+        this.extentAngle = extentAngle;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
 }

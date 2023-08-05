@@ -595,7 +595,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconRef.png"));
+            menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconMove.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveAction();
             });

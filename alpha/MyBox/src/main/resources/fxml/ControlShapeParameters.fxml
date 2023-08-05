@@ -3,10 +3,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -382,6 +384,18 @@
                                         <TextField fx:id="arcExtentAngleInput" prefWidth="100.0" />
                                     </children>
                                 </FlowPane>
+                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="175.0" minHeight="-Infinity" vgap="5.0">
+                           <children>
+                              <Label text="%Type" />
+                              <RadioButton fx:id="arcOpenRadio" mnemonicParsing="false" selected="true" text="%Open">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="arcType" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="arcChordRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="%ChordClose" toggleGroup="$arcType" />
+                              <RadioButton fx:id="arcPieRadio" layoutX="137.0" layoutY="10.0" mnemonicParsing="false" text="%PieClose" toggleGroup="$arcType" />
+                           </children>
+                        </FlowPane>
                             </children>
                         </VBox>
                     </content>

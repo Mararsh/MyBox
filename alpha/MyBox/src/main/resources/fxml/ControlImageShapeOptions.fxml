@@ -166,11 +166,11 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <CheckBox fx:id="coordinatePenCheck" mnemonicParsing="false">
+                <CheckBox fx:id="popCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconLocation.png" />
+                                <Image url="@../buttons/Red/iconPop.png" />
                             </image>
                         </ImageView>
                     </graphic>

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -48,6 +49,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -249,8 +251,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 }
                 if ((node instanceof Rectangle) && node.getId().startsWith("maskHandler")) {
                     Rectangle rect = (Rectangle) node;
-                    rect.setStroke(anchorColor);
+                    rect.setStrokeWidth(0);
                     rect.setFill(anchorColor);
+                    rect.setWidth(anchorSize);
                     rect.setHeight(anchorSize);
 
                 } else if ((node instanceof Text) && node.getId().startsWith("MaskPoint")) {
@@ -460,7 +463,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (newValue) {
-                        popNodeMenu(text, maskPointMenu(text, index, title, p));
+                        if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
+                            popNodeMenu(text, maskPointMenu(text, index, title, p));
+                        }
                         if (isPickingColor) {
                             text.setCursor(Cursor.HAND);
                         } else {
@@ -898,7 +903,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         double w = imageWidth();
         double h = imageHeight();
-        maskEllipseData = new DoubleEllipse(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
+        maskEllipseData = DoubleEllipse.rect(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
     }
 
     public boolean drawMaskEllipse() {
@@ -1174,8 +1179,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         polylines
      */
     public boolean isMaskPolylinesShown() {
-        return imageView != null && maskPane != null
-                && maskPolylines != null && maskPolylinesData != null;
+        return imageView != null && maskPane != null && maskPolylines != null;
     }
 
     public void showMaskPolylines() {
@@ -1196,6 +1200,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 maskPolylinesData = new DoublePolylines();
             }
             clearMaskPolylines();
+            maskPolylines = new ArrayList<>();
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
             for (int i = 0; i < maskPolylinesData.getLinesSize(); i++) {
@@ -1249,7 +1254,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (newValue) {
-                            popNodeMenu(pline, lineMenu(pline, points));
+                            if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
+                                popNodeMenu(pline, lineMenu(pline, points));
+                            }
                             if (isPickingColor) {
                                 pline.setCursor(Cursor.HAND);
                             } else {
@@ -1378,6 +1385,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 maskPane.getChildren().remove(line);
             }
             maskPolylines.clear();
+            maskPolylines = null;
         }
         if (currentPolyline != null) {
             maskPane.getChildren().remove(currentPolyline);
@@ -1612,7 +1620,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         double w = imageWidth();
         double h = imageHeight();
         maskCubicData = new DoubleCubic(w / 5, h * 3 / 5, w / 2 - 10, 20, w / 2 + 30, h - 35, w * 3 / 4, h * 4 / 5);
-
     }
 
     public boolean drawMaskCubic() {
@@ -1702,11 +1709,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         if (!maskPane.getChildren().contains(maskArc)) {
             maskPane.getChildren().addAll(maskArc,
-                    maskHandlerTopLeft, maskHandlerBottomRight);
+                    maskHandlerLeftCenter, maskHandlerRightCenter,
+                    maskHandlerTopCenter, maskHandlerBottomCenter);
         }
         maskArc.setOpacity(1);
         maskArc.setVisible(true);
-        return drawMaskCubic();
+        return drawMaskArc();
     }
 
     public void setMaskArcDefaultValues() {
@@ -1715,7 +1723,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         double w = imageWidth();
         double h = imageHeight();
-
+        maskArcData = DoubleArc.rect(w / 5, h / 5, w / 2, h / 2, 45, 270, Arc2D.OPEN);
     }
 
     public boolean drawMaskArc() {
@@ -1727,24 +1735,45 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (maskArcData == null) {
                 setMaskArcDefaultValues();
             }
-            float anchorHW = anchorSize() / 2;
+            double layoutX = imageView.getLayoutX();
+            double layoutY = imageView.getLayoutY();
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
-//            double startX = imageView.getLayoutX() + maskLineData.getStartX() * xRatio;
-//            double startY = imageView.getLayoutY() + maskLineData.getStartY() * yRatio;
-//            double endX = imageView.getLayoutX() + maskLineData.getEndX() * xRatio;
-//            double endY = imageView.getLayoutY() + maskLineData.getEndY() * yRatio;
-//
-//            maskLine.setStartX(startX);
-//            maskLine.setStartY(startY);
-//            maskLine.setEndX(endX);
-//            maskLine.setEndY(endY);
-//            maskLine.setVisible(true);
-//
-//            maskHandlerTopLeft.setLayoutX(startX - anchorHW);
-//            maskHandlerTopLeft.setLayoutY(startY - anchorHW);
-//            maskHandlerBottomRight.setLayoutX(endX - anchorHW);
-//            maskHandlerBottomRight.setLayoutY(endY - anchorHW);
+            double cx = maskArcData.getCenterX() * xRatio;
+            double cy = maskArcData.getCenterY() * yRatio;
+            double rx = maskArcData.getRadiusX() * xRatio;
+            double ry = maskArcData.getRadiusY() * yRatio;
+            double sa = maskArcData.getStartAngle() * xRatio;
+            double ea = maskArcData.getExtentAngle() * yRatio;
+            maskArc.setLayoutX(layoutX);
+            maskArc.setLayoutY(layoutY);
+            maskArc.setCenterX(cx);
+            maskArc.setCenterY(cy);
+            maskArc.setRadiusX(rx);
+            maskArc.setRadiusY(ry);
+            maskArc.setStartAngle(sa);
+            maskArc.setLength(ea);
+
+            double anchorHW = anchorSize() * xRatio / 2;
+            maskHandlerTopCenter.setLayoutX(layoutX);
+            maskHandlerTopCenter.setLayoutY(layoutY);
+            maskHandlerTopCenter.setX(cx - anchorHW);
+            maskHandlerTopCenter.setY(cy - ry - anchorHW);
+
+            maskHandlerBottomCenter.setLayoutX(layoutX);
+            maskHandlerBottomCenter.setLayoutY(layoutY);
+            maskHandlerBottomCenter.setX(cx - anchorHW);
+            maskHandlerBottomCenter.setY(cy + ry - anchorHW);
+
+            maskHandlerLeftCenter.setLayoutX(layoutX);
+            maskHandlerLeftCenter.setLayoutY(layoutY);
+            maskHandlerLeftCenter.setX(cx - rx - anchorHW);
+            maskHandlerLeftCenter.setY(cy - anchorHW);
+
+            maskHandlerRightCenter.setLayoutX(layoutX);
+            maskHandlerRightCenter.setLayoutY(layoutY);
+            maskHandlerRightCenter.setX(cx + rx - anchorHW);
+            maskHandlerRightCenter.setY(cy - anchorHW);
 
             setShapeStyle(maskArc);
             setMaskAnchorsStyle();
@@ -1763,7 +1792,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             return;
         }
         maskPane.getChildren().removeAll(maskArc,
-                maskHandlerTopLeft, maskHandlerBottomRight);
+                maskHandlerLeftCenter, maskHandlerRightCenter,
+                maskHandlerTopCenter, maskHandlerBottomCenter);
         maskArc.setVisible(false);
 
     }

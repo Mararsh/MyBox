@@ -64,34 +64,6 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
         }
     }
 
-    @FXML
-    @Override
-    public void mousePressed(MouseEvent event) {
-        mousePoint(event);
-    }
-
-    @FXML
-    @Override
-    public void mouseDragged(MouseEvent event) {
-        mousePoint(event);
-    }
-
-    @FXML
-    @Override
-    public void mouseReleased(MouseEvent event) {
-        mousePoint(event);
-    }
-
-    public void mousePoint(MouseEvent event) {
-        if (imageView == null || imageView.getImage() == null || editor.isPickingColor) {
-            return;
-        }
-        if (optionsController.coordinatePenCheck.isSelected()) {
-            DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-            editor.showXY(event, p);
-        }
-    }
-
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         return optionsController.keyEventsFilter(event);

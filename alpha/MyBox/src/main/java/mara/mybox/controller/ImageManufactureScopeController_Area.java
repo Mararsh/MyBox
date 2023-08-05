@@ -71,7 +71,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             if (rect == null) {
                 return;
             }
-            maskEllipseData = new DoubleEllipse(rect);
+            maskEllipseData = DoubleEllipse.rect(rect);
             scope.setEllipse(maskEllipseData.cloneValues());
             drawMaskEllipse();
             indicateScope();

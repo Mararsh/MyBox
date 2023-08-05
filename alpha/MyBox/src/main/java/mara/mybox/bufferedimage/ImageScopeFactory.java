@@ -227,7 +227,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();
@@ -810,7 +810,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();
@@ -840,7 +840,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();
@@ -870,7 +870,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();
@@ -900,7 +900,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();
@@ -930,7 +930,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();
@@ -960,7 +960,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();
@@ -990,7 +990,7 @@ public class ImageScopeFactory {
             if (image != null) {
                 rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                         image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
+                ellipse = DoubleEllipse.rect(rectangle);
             } else {
                 rectangle = new DoubleRectangle();
                 ellipse = new DoubleEllipse();

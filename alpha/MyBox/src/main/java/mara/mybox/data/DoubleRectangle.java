@@ -13,16 +13,12 @@ import java.awt.geom.RoundRectangle2D;
 public class DoubleRectangle implements DoubleShape {
 
     protected double smallX, smallY, bigX, bigY, width, height;
-    protected double maxX, maxY, round;
+    protected double round;
 
     public DoubleRectangle() {
-        maxX = Integer.MAX_VALUE;
-        maxY = Integer.MAX_VALUE;
     }
 
     public DoubleRectangle(Rectangle2D.Double rectangle) {
-        maxX = Integer.MAX_VALUE;
-        maxY = Integer.MAX_VALUE;
         smallX = rectangle.getX();
         smallY = rectangle.getY();
         width = rectangle.getWidth();
@@ -32,12 +28,6 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public DoubleRectangle(double x1, double y1, double x2, double y2) {
-        this(Integer.MAX_VALUE, Integer.MAX_VALUE, x1, y1, x2, y2);
-    }
-
-    public DoubleRectangle(double maxX, double maxY, double x1, double y1, double x2, double y2) {
-        this.maxX = maxX;
-        this.maxY = maxY;
         smallX = x1;
         smallY = y1;
         bigX = x2;
@@ -57,28 +47,17 @@ public class DoubleRectangle implements DoubleShape {
 
     @Override
     public DoubleRectangle cloneValues() {
-        return new DoubleRectangle(maxX, maxY, smallX, smallY, bigX, bigY);
+        return new DoubleRectangle(smallX, smallY, bigX, bigY);
     }
 
     @Override
     public boolean isValid() {
-        return isValid(maxX, maxY);
+        return true;
     }
 
     @Override
     public boolean isEmpty() {
         return !isValid() || width == 0 || height == 0;
-    }
-
-    public boolean isValid(double maxX, double maxY) {
-        return bigX > smallX && bigY > smallY
-                && bigX < maxX && bigY < maxY;
-    }
-
-    public boolean same(DoubleRectangle rect) {
-        return rect != null
-                && smallX == rect.getSmallX() && smallY == rect.getSmallY()
-                && bigX == rect.getBigX() && bigY == rect.getBigY();
     }
 
     @Override
@@ -99,6 +78,15 @@ public class DoubleRectangle implements DoubleShape {
         return new Rectangle((int) smallX, (int) smallY, (int) getWidth(), (int) getHeight());
     }
 
+    public boolean same(DoubleRectangle rect) {
+        return rect != null
+                && smallX == rect.getSmallX() && smallY == rect.getSmallY()
+                && bigX == rect.getBigX() && bigY == rect.getBigY();
+    }
+
+    /*
+        get
+     */
     public final double getWidth() {
         width = Math.abs(bigX - smallX) + 1;
         return width;
@@ -147,22 +135,6 @@ public class DoubleRectangle implements DoubleShape {
 
     public void setBigY(double bigY) {
         this.bigY = bigY;
-    }
-
-    public double getMaxX() {
-        return maxX;
-    }
-
-    public void setMaxX(double maxX) {
-        this.maxX = maxX;
-    }
-
-    public double getMaxY() {
-        return maxY;
-    }
-
-    public void setMaxY(double maxY) {
-        this.maxY = maxY;
     }
 
     public double getRound() {

@@ -1357,7 +1357,7 @@ public class ControlWebView extends BaseController {
                             frameItems.add(menu);
                         }
                         if (!frameItems.isEmpty()) {
-                            Menu frameMenu = new Menu(message("Frame"), StyleTools.getIconImageView("iconRef.png"));
+                            Menu frameMenu = new Menu(message("Frame"), StyleTools.getIconImageView("iconMove.png"));
                             frameMenu.getItems().addAll(frameItems);
                             items.add(frameMenu);
                         }

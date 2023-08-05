@@ -10,7 +10,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -328,11 +327,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    DoubleRectangle rect = maskEllipseData.getRectangle();
-                    rectLeftTopXInput.setText(scale(rect.getSmallX(), 2) + "");
-                    rectLeftTopYInput.setText(scale(rect.getSmallY(), 2) + "");
-                    rightBottomXInput.setText(scale(rect.getBigX(), 2) + "");
-                    rightBottomYInput.setText(scale(rect.getBigY(), 2) + "");
+                    rectLeftTopXInput.setText(scale(maskEllipseData.getX1(), 2) + "");
+                    rectLeftTopYInput.setText(scale(maskEllipseData.getY1(), 2) + "");
+                    rightBottomXInput.setText(scale(maskEllipseData.getX2(), 2) + "");
+                    rightBottomYInput.setText(scale(maskEllipseData.getY2(), 2) + "");
                     rectangleLabel.setText(message("Ellipse"));
                     break;
 

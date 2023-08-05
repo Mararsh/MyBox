@@ -60,6 +60,9 @@ public class DoubleQuadratic implements DoubleShape {
         return moved != null ? (DoubleQuadratic) moved : null;
     }
 
+    /*
+        get
+     */
     public double getStartX() {
         return startX;
     }

@@ -12,23 +12,22 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.ROUND;
 import static javafx.scene.shape.StrokeLineCap.SQUARE;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.DoubleShape.ShapeType;
-import static mara.mybox.data.DoubleShape.ShapeType.Lines;
 import mara.mybox.data.ShapeStyle;
 import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -58,13 +57,47 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector, arcSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck;
+    protected CheckBox fillCheck, dashCheck, popCheck;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (popCheck != null) {
+                popCheck.setSelected(UserConfig.getBoolean("ImageShapeControlPopMenu", true));
+                popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                        UserConfig.setBoolean("ImageShapeControlPopMenu", popCheck.isSelected());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            if (popCheck != null) {
+                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopAnchorMenu")));
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
 
     public void setParameters(BaseImageController imageController) {
         try {
             this.imageController = imageController;
+            parametersController.optionsOontroller = this;
             parametersController.imageController = imageController;
 
             shapeDataChangeListener = new ChangeListener<Boolean>() {
@@ -371,6 +404,9 @@ public abstract class ControlShapeOptions extends BaseController {
         }
     }
 
+    /*
+        shape
+     */
     public void switchShape() {
         if (isSettingValues) {
             return;
@@ -381,47 +417,6 @@ public abstract class ControlShapeOptions extends BaseController {
         }
     }
 
-
-    /*
-        values
-     */
-    public Image currentImage() {
-        return imageController != null ? imageController.image : null;
-    }
-
-    public Shape currentShape() {
-        if (imageController == null || shapeType == null) {
-            return null;
-        }
-        switch (shapeType) {
-            case Rectangle:
-                return imageController.maskRectangle;
-            case Circle:
-                return imageController.maskCircle;
-            case Ellipse:
-                return imageController.maskEllipse;
-            case Line:
-                return imageController.maskLine;
-            case Polyline:
-                return imageController.maskPolyline;
-            case Polygon:
-                return imageController.maskPolygon;
-            case Lines:
-                return null;
-            case Path:
-                return imageController.svgPath;
-            default:
-                return null;
-        }
-    }
-
-    public double scale(double v) {
-        return DoubleTools.scale(v, 2);
-    }
-
-    /*
-        load
-     */
     public boolean showShape() {
         try {
             if (imageController == null) {
@@ -466,6 +461,10 @@ public abstract class ControlShapeOptions extends BaseController {
                 imageController.showMaskCubic();
                 shapeType = ShapeType.Cubic;
 
+            } else if (arcRadio != null && arcRadio.isSelected()) {
+                imageController.showMaskArc();
+                shapeType = ShapeType.Arc;
+
             } else if (pathRadio != null && pathRadio.isSelected()) {
                 imageController.showMaskPath();
                 shapeType = ShapeType.Path;
@@ -498,16 +497,10 @@ public abstract class ControlShapeOptions extends BaseController {
         imageController.maskShapeDataChanged.removeListener(shapeDataChangeListener);
     }
 
-    /*
-        pick
-     */
     public boolean pickShape() {
         return parametersController.pickShape(shapeType);
     }
 
-    /*
-        draw
-     */
     public void redrawShape() {
         if (imageController == null || shapeType == null) {
             return;
@@ -518,12 +511,6 @@ public abstract class ControlShapeOptions extends BaseController {
     /*
         action
      */
-    @FXML
-    @Override
-    public void goAction() {
-        goShape();
-    }
-
     public void goShape() {
         if (pickShape()) {
             redrawShape();

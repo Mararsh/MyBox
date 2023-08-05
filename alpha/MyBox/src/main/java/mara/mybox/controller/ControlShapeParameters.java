@@ -1,10 +1,13 @@
 package mara.mybox.controller;
 
+import java.awt.geom.Arc2D;
 import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.DoubleArc;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleCubic;
 import mara.mybox.data.DoubleEllipse;
@@ -26,11 +29,12 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlShapeParameters extends BaseController {
 
+    protected ControlShapeOptions optionsOontroller;
     protected BaseImageController imageController;
 
     @FXML
     protected VBox shapeBox, pointsBox, linesBox, rectangleBox, circleBox, ellipseBox,
-            lineBox, quadraticBox, cubicBox, pathBox;
+            lineBox, quadraticBox, cubicBox, arcBox, pathBox;
     @FXML
     protected TabPane shapesPane;
     @FXML
@@ -41,7 +45,10 @@ public class ControlShapeParameters extends BaseController {
             quadStartXInput, quadStartYInput, quadControlXInput, quadControlYInput, quadEndXInput, quadEndYInput,
             cubicStartXInput, cubicStartYInput, cubicControlX1Input, cubicControlY1Input,
             cubicControlX2Input, cubicControlY2Input, cubicEndXInput, cubicEndYInput,
+            arcCenterXInput, arcCenterYInput, arcRadiusXInput, arcRadiusYInput, arcStartAngleInput, arcExtentAngleInput,
             dashInput;
+    @FXML
+    protected RadioButton arcOpenRadio, arcChordRadio, arcPieRadio;
     @FXML
     protected ControlPoints pointsController;
     @FXML
@@ -116,8 +123,7 @@ public class ControlShapeParameters extends BaseController {
                     linesController.loadList(imageController.maskPolylinesData.getLines());
                     break;
                 case Quadratic:
-                    shapeBox.getChildren().add(quadraticBox);
-                    VBox.setVgrow(quadraticBox, Priority.ALWAYS);
+                    shapeBox.getChildren().addAll(quadraticBox, goButton);
                     quadStartXInput.setText(scale(imageController.maskQuadraticData.getStartX()) + "");
                     quadStartYInput.setText(scale(imageController.maskQuadraticData.getStartY()) + "");
                     quadControlXInput.setText(scale(imageController.maskQuadraticData.getControlX()) + "");
@@ -126,8 +132,7 @@ public class ControlShapeParameters extends BaseController {
                     quadEndYInput.setText(scale(imageController.maskQuadraticData.getEndY()) + "");
                     break;
                 case Cubic:
-                    shapeBox.getChildren().add(cubicBox);
-                    VBox.setVgrow(cubicBox, Priority.ALWAYS);
+                    shapeBox.getChildren().addAll(cubicBox, goButton);
                     cubicStartXInput.setText(scale(imageController.maskCubicData.getStartX()) + "");
                     cubicStartYInput.setText(scale(imageController.maskCubicData.getStartY()) + "");
                     cubicControlX1Input.setText(scale(imageController.maskCubicData.getControlX1()) + "");
@@ -136,6 +141,26 @@ public class ControlShapeParameters extends BaseController {
                     cubicControlY2Input.setText(scale(imageController.maskCubicData.getControlY2()) + "");
                     cubicEndXInput.setText(scale(imageController.maskCubicData.getEndX()) + "");
                     cubicEndYInput.setText(scale(imageController.maskCubicData.getEndY()) + "");
+                    break;
+                case Arc:
+                    shapeBox.getChildren().addAll(arcBox, goButton);
+                    arcCenterXInput.setText(scale(imageController.maskArcData.getCenterX()) + "");
+                    arcCenterYInput.setText(scale(imageController.maskArcData.getCenterY()) + "");
+                    arcRadiusXInput.setText(scale(imageController.maskArcData.getRadiusX()) + "");
+                    arcRadiusYInput.setText(scale(imageController.maskArcData.getRadiusY()) + "");
+                    arcStartAngleInput.setText(scale(imageController.maskArcData.getStartAngle()) + "");
+                    arcExtentAngleInput.setText(scale(imageController.maskArcData.getExtentAngle()) + "");
+                    switch (imageController.maskArcData.getType()) {
+                        case Arc2D.CHORD:
+                            arcChordRadio.setSelected(true);
+                            break;
+                        case Arc2D.PIE:
+                            arcPieRadio.setSelected(true);
+                            break;
+                        default:
+                            arcOpenRadio.setSelected(true);
+                            break;
+                    }
                     break;
                 case Path:
                     shapeBox.getChildren().add(pathBox);
@@ -185,6 +210,8 @@ public class ControlShapeParameters extends BaseController {
                     return pickQuadratic();
                 case Cubic:
                     return pickCubic();
+                case Arc:
+                    return pickArc();
                 case Path:
                     return pickPath();
                 default:
@@ -273,15 +300,15 @@ public class ControlShapeParameters extends BaseController {
 
     public boolean pickEllipse() {
         try {
-            float x, y, rx, ry;
+            float cx, cy, rx, ry;
             try {
-                x = Float.parseFloat(ellipseXInput.getText());
+                cx = Float.parseFloat(ellipseXInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": x");
                 return false;
             }
             try {
-                y = Float.parseFloat(ellipseYInput.getText());
+                cy = Float.parseFloat(ellipseYInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": y");
                 return false;
@@ -304,7 +331,7 @@ public class ControlShapeParameters extends BaseController {
                 popError(message("InvalidParameter") + ": " + message("Radius"));
                 return false;
             }
-            imageController.maskEllipseData = new DoubleEllipse(x, y, x + rx * 2 - 1, y + ry * 2 - 1);
+            imageController.maskEllipseData = DoubleEllipse.ellipse(cx, cy, rx, ry);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -483,6 +510,61 @@ public class ControlShapeParameters extends BaseController {
         }
     }
 
+    public boolean pickArc() {
+        try {
+            float cx, cy, rx, ry, sa, ea;
+            int type;
+            try {
+                cx = Float.parseFloat(arcCenterXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("Center") + " x");
+                return false;
+            }
+            try {
+                cy = Float.parseFloat(arcCenterYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("Center") + " y");
+                return false;
+            }
+            try {
+                rx = Float.parseFloat(arcRadiusXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("RadiusX"));
+                return false;
+            }
+            try {
+                ry = Float.parseFloat(arcRadiusYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("RadiusY"));
+                return false;
+            }
+            try {
+                sa = Float.parseFloat(arcStartAngleInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("StartAngle"));
+                return false;
+            }
+            try {
+                ea = Float.parseFloat(arcExtentAngleInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("ExtentAngle"));
+                return false;
+            }
+            if (arcChordRadio.isSelected()) {
+                type = Arc2D.CHORD;
+            } else if (arcPieRadio.isSelected()) {
+                type = Arc2D.PIE;
+            } else {
+                type = Arc2D.OPEN;
+            }
+            imageController.maskArcData = DoubleArc.arc(cx, cy, rx, ry, sa, ea, type);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     public boolean pickPath() {
         try {
             String d = pathController.pickPath(" ");
@@ -496,6 +578,12 @@ public class ControlShapeParameters extends BaseController {
             MyBoxLog.error(e);
             return false;
         }
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        optionsOontroller.goShape();
     }
 
 }

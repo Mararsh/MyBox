@@ -491,7 +491,7 @@ public class StyleButton {
             return new StyleData(id, message("Unfold"), "", "iconTree.png");
         }
         if (id.startsWith("moveData")) {
-            return new StyleData(id, message("Move"), "", "iconRef.png");
+            return new StyleData(id, message("Move"), "", "iconMove.png");
         }
         if (id.startsWith("csv")) {
             return new StyleData(id, "CSV", "", "iconCSV.png");

@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,8 +29,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     protected Label commentsLabel;
     @FXML
     protected ControlImagesBlend blendController;
-    @FXML
-    protected CheckBox coordinatePenCheck;
 
     public void setParameters(ImageManufactureShapeController penController) {
         try {
@@ -84,23 +81,8 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             imageView.setVisible(false);
             imageView.toBack();
             setBlender();
-            withdrawButton.setDisable(true);
-            clearButton.setDisable(true);
-            if (rectangleRadio.isSelected()) {
-                commentsLabel.setText(message("ShapeDragMoveComments"));
 
-            } else if (circleRadio.isSelected()) {
-                commentsLabel.setText(message("ShapeDragMoveComments"));
-
-            } else if (ellipseRadio.isSelected()) {
-                commentsLabel.setText(message("ShapeDragMoveComments"));
-
-            } else if (polygonRadio.isSelected()) {
-                withdrawButton.setDisable(false);
-                clearButton.setDisable(false);
-                commentsLabel.setText(message("ShapePointsMoveComments"));
-
-            } else if (polylineRadio.isSelected()) {
+            if (polygonRadio.isSelected() | polylineRadio.isSelected()) {
                 withdrawButton.setDisable(false);
                 clearButton.setDisable(false);
                 commentsLabel.setText(message("ShapePointsMoveComments"));
@@ -108,7 +90,12 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             } else if (linesRadio.isSelected()) {
                 withdrawButton.setDisable(false);
                 clearButton.setDisable(false);
-                commentsLabel.setText(message("MultipleLinesTips"));
+                commentsLabel.setText(message("ShapePolylinesTips"));
+
+            } else {
+                commentsLabel.setText(message("ShapeDragMoveComments"));
+                withdrawButton.setDisable(true);
+                clearButton.setDisable(true);
 
             }
 

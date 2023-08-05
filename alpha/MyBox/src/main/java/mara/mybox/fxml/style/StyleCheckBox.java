@@ -14,10 +14,10 @@ public class StyleCheckBox {
             return null;
         }
         if (id.startsWith("leftPane")) {
-            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
+            return new StyleData(id, "", message("LeftPane"), "F4", "iconDoubleLeft.png");
         }
         if (id.startsWith("rightPane")) {
-            return new StyleData(id, "", message("RightPane"), "", "iconDoubleRight.png");
+            return new StyleData(id, "", message("RightPane"), "F5", "iconDoubleRight.png");
         }
         if (id.startsWith("contextMenu")) {
             return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");

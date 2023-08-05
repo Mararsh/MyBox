@@ -17,16 +17,10 @@ public class StyleImageView {
             return new StyleData(id, "", "", "iconTipsRight.png");
         }
         if (id.startsWith("leftPane")) {
-            return new StyleData(id, "", "F4", "iconDoubleLeft.png");
+            return new StyleData(id, message("LeftPane"), "F4", "iconDoubleLeft.png");
         }
         if (id.startsWith("rightPane")) {
-            return new StyleData(id, "", "F5", "iconDoubleRight.png");
-        }
-        if (id.startsWith("scopePane")) {
-            return new StyleData(id, "", "", "iconDoubleLeft.png");
-        }
-        if (id.startsWith("imagePane")) {
-            return new StyleData(id, "", "", "iconDoubleRight.png");
+            return new StyleData(id, message("RightPane"), "F5", "iconDoubleRight.png");
         }
         if (id.startsWith("links")) {
             return new StyleData(id, "", message("Links"), "iconLink.png");

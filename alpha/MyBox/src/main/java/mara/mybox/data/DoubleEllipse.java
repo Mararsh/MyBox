@@ -12,31 +12,52 @@ import java.awt.geom.Ellipse2D;
 // https://en.wikipedia.org/wiki/Ellipse
 public class DoubleEllipse implements DoubleShape {
 
-    private DoubleRectangle rectangle;
     private double centerX, centerY, radiusX, radiusY;
 
     public DoubleEllipse() {
-
     }
 
-    public DoubleEllipse(double x1, double y1, double x2, double y2) {
-        makeEllipse(new DoubleRectangle(x1, y1, x2, y2));
+    public static DoubleEllipse rect(double x1, double y1, double x2, double y2) {
+        DoubleEllipse e = new DoubleEllipse();
+        e.setCenterX((x1 + x2) / 2);
+        e.setCenterY((y1 + y2) / 2);
+        e.setRadiusX(Math.abs(x2 - x1 + 1) / 2);
+        e.setRadiusY(Math.abs(y2 - y1 + 1) / 2);
+        return e;
     }
 
-    public DoubleEllipse(DoubleRectangle rect) {
-        makeEllipse(rect);
+    public static DoubleEllipse rect(DoubleRectangle rect) {
+        DoubleEllipse e = new DoubleEllipse();
+        e.setCenterX((rect.getSmallX() + rect.getBigX()) / 2);
+        e.setCenterY((rect.getSmallY() + rect.getBigY()) / 2);
+        e.setRadiusX(rect.getWidth() / 2);
+        e.setRadiusY(rect.getHeight() / 2);
+        return e;
     }
 
-    private void makeEllipse(DoubleRectangle rect) {
-        if (rect == null || !rect.isValid()) {
-            return;
-        }
-        rectangle = rect;
-        DoublePoint center = DoubleShape.getCenter(rect);
-        centerX = center.getX();
-        centerY = center.getY();
-        radiusX = rect.getWidth() / 2;
-        radiusY = rect.getHeight() / 2;
+    public static DoubleEllipse ellipse(double centerX, double centerY, double radiusX, double radiusY) {
+        DoubleEllipse e = new DoubleEllipse();
+        e.setCenterX(centerX);
+        e.setCenterY(centerY);
+        e.setRadiusX(radiusX);
+        e.setRadiusY(radiusY);
+        return e;
+    }
+
+    public double getX1() {
+        return centerX - radiusX;
+    }
+
+    public double getY1() {
+        return centerY - radiusY;
+    }
+
+    public double getX2() {
+        return centerX + radiusX;
+    }
+
+    public double getY2() {
+        return centerY + radiusY;
     }
 
     @Override
@@ -46,7 +67,7 @@ public class DoubleEllipse implements DoubleShape {
 
     @Override
     public boolean isValid() {
-        return rectangle != null && rectangle.isValid();
+        return radiusX > 0 && radiusY > 0;
     }
 
     @Override
@@ -54,25 +75,16 @@ public class DoubleEllipse implements DoubleShape {
         return !isValid();
     }
 
-    public boolean same(DoubleEllipse ellipse) {
-        return centerX == ellipse.getCenterX()
-                && centerY == ellipse.getCenterY()
-                && radiusX == ellipse.getRadiusX()
-                && radiusY == ellipse.getRadiusY();
-    }
-
     @Override
     public DoubleEllipse cloneValues() {
-        return new DoubleEllipse(rectangle);
+        return ellipse(centerX, centerY, radiusX, radiusY);
     }
 
     @Override
     public DoubleEllipse translateRel(double offsetX, double offsetY) {
-        DoubleEllipse nEllipse = new DoubleEllipse(
-                centerX - radiusX + offsetX,
-                centerY - radiusY + offsetY,
-                centerX + radiusX + offsetX,
-                centerY + radiusY + offsetY);
+        DoubleEllipse nEllipse = ellipse(
+                centerX + offsetX, centerY + offsetY,
+                radiusX, radiusY);
         return nEllipse;
     }
 
@@ -85,10 +97,6 @@ public class DoubleEllipse implements DoubleShape {
     /*
         get
      */
-    public DoubleRectangle getRectangle() {
-        return rectangle;
-    }
-
     public double getCenterX() {
         return centerX;
     }
@@ -103,6 +111,25 @@ public class DoubleEllipse implements DoubleShape {
 
     public double getRadiusY() {
         return radiusY;
+    }
+
+    /*
+        set
+     */
+    public void setCenterX(double centerX) {
+        this.centerX = centerX;
+    }
+
+    public void setCenterY(double centerY) {
+        this.centerY = centerY;
+    }
+
+    public void setRadiusX(double radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    public void setRadiusY(double radiusY) {
+        this.radiusY = radiusY;
     }
 
 }
