@@ -20,8 +20,8 @@ public class DoubleArc implements DoubleShape {
         DoubleArc a = new DoubleArc();
         a.setCenterX((x1 + x2) / 2);
         a.setCenterY((y1 + y2) / 2);
-        a.setRadiusX(Math.abs(x2 - x1 + 1) / 2);
-        a.setRadiusY(Math.abs(y2 - y1 + 1) / 2);
+        a.setRadiusX(Math.abs(x2 - x1) / 2);
+        a.setRadiusY(Math.abs(y2 - y1) / 2);
         a.setStartAngle(startAngle);
         a.setExtentAngle(extentAngle);
         a.setType(type);

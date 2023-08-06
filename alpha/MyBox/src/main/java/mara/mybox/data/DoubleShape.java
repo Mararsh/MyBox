@@ -26,7 +26,7 @@ public interface DoubleShape {
         static
      */
     public static enum ShapeType {
-        Line, Rectangle, Circle, Ellipse, Polygon, Polyline, Lines,
+        Line, Rectangle, Circle, Ellipse, Polygon, Polyline, Polylines,
         Cubic, Quadratic, Arc, Path, Text;
     }
 
@@ -54,6 +54,14 @@ public interface DoubleShape {
         }
     }
 
+    public static DoubleShape translateRel(DoubleShape shape, double offsetX, double offsetY) {
+        if (DoubleShape.changed(offsetX, offsetY)) {
+            return shape.translateRel(offsetX, offsetY);
+        } else {
+            return null;
+        }
+    }
+
     public static Rectangle getBound(DoubleShape shape) {
         return shape.getShape().getBounds();
     }
@@ -64,7 +72,7 @@ public interface DoubleShape {
 
     public static DoublePoint getCenter(DoubleShape shape) {
         Rectangle bound = getBound(shape);
-        return new DoublePoint((bound.getMinX() + bound.getMaxX()) / 2, (bound.getMinY() + bound.getMaxY()) / 2);
+        return new DoublePoint(bound.getCenterX(), bound.getCenterY());
     }
 
 }

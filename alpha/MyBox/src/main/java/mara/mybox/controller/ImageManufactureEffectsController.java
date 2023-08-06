@@ -284,7 +284,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     if (sourceFile != null) {
                         scope.setFile(sourceFile.getAbsolutePath());
                     }
-                    scope.setRectangle(new DoubleRectangle(0, 0, image.getWidth() - 1, image.getHeight() - 1));
+                    scope.setRectangle(DoubleRectangle.image(image));
                     BufferedImage[] outline = AlphaTools.outline(outlineSource,
                             scope.getRectangle(), image.getWidth(), image.getHeight(),
                             false, ColorConvertTools.converColor(Color.WHITE), false);

@@ -49,7 +49,7 @@ public class CropTools {
     }
 
     public static Image cropOutsideFx(Image image, double x1, double y1, double x2, double y2) {
-        return cropOutsideFx(image, new DoubleRectangle(x1, y1, x2, y2), Color.TRANSPARENT);
+        return cropOutsideFx(image, DoubleRectangle.xy12(x1, y1, x2, y2), Color.TRANSPARENT);
     }
 
 }

@@ -287,10 +287,10 @@ public class ImageFileReaders {
             } else {
                 if (xscale != 1 || yscale != 1) {
                     bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
-                            new DoubleRectangle(imageInfo.getRegion()), xscale, yscale);
+                            DoubleRectangle.rect(imageInfo.getRegion()), xscale, yscale);
                 } else {
                     bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
-                            new DoubleRectangle(imageInfo.getRegion()), requiredWidth);
+                            DoubleRectangle.rect(imageInfo.getRegion()), requiredWidth);
                 }
             }
             return bufferedImage;

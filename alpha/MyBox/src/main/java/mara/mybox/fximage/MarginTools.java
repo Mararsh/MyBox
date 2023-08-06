@@ -59,7 +59,6 @@ public class MarginTools {
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
             PixelReader pixelReader = image.getPixelReader();
-            //            MyBoxLog.debug(width + " " + height);
             int top = 0;
             int bottom = height - 1;
             int left = 0;
@@ -158,8 +157,8 @@ public class MarginTools {
             int iheight = (int) image.getHeight();
             int rwidth = (int) rect.getWidth();
             int rheight = (int) rect.getHeight();
-            int rx = (int) rect.getSmallX();
-            int ry = (int) rect.getSmallY();
+            int rx = (int) rect.getX();
+            int ry = (int) rect.getY();
             PixelReader pixelReader = image.getPixelReader();
             WritableImage newImage = new WritableImage(rwidth, rheight);
             PixelWriter pixelWriter = newImage.getPixelWriter();

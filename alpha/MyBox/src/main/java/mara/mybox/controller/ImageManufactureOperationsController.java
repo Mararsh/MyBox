@@ -203,12 +203,14 @@ public class ImageManufactureOperationsController extends BaseController {
         try {
             if (currentPane == null) {
                 editor.resetImagePane();
+                currentController = null;
 
             } else if (currentPane == copyPane) {
                 if (copyController == null) {
                     copyController = (ImageManufactureCopyController) loadPane(
                             copyPane, Fxmls.ImageManufactureCopyFxml);
                 }
+                currentController = copyController;
                 copyController.paneExpanded();
 
             } else if (currentPane == clipboardPane) {
@@ -216,6 +218,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     clipboardController = (ImageManufactureClipboardController) loadPane(
                             clipboardPane, Fxmls.ImageManufactureClipboardFxml);
                 }
+                currentController = clipboardController;
                 clipboardController.paneExpanded();
 
             } else if (currentPane == cropPane) {
@@ -223,6 +226,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     cropController = (ImageManufactureCropController) loadPane(
                             cropPane, Fxmls.ImageManufactureCropFxml);
                 }
+                currentController = cropController;
                 cropController.paneExpanded();
 
             } else if (currentPane == scalePane) {
@@ -230,6 +234,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     scaleController = (ImageManufactureScaleController) loadPane(
                             scalePane, Fxmls.ImageManufactureScaleFxml);
                 }
+                currentController = scaleController;
                 scaleController.paneExpanded();
 
             } else if (currentPane == colorPane) {
@@ -237,6 +242,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     colorController = (ImageManufactureColorController) loadPane(
                             colorPane, Fxmls.ImageManufactureColorFxml);
                 }
+                currentController = colorController;
                 colorController.paneExpanded();
 
             } else if (currentPane == effectPane) {
@@ -244,6 +250,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     effectController = (ImageManufactureEffectsController) loadPane(
                             effectPane, Fxmls.ImageManufactureEffectsFxml);
                 }
+                currentController = effectController;
                 effectController.paneExpanded();
 
             } else if (currentPane == enhancementPane) {
@@ -251,6 +258,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     enhancementController = (ImageManufactureEnhancementController) loadPane(
                             enhancementPane, Fxmls.ImageManufactureEnhancementFxml);
                 }
+                currentController = enhancementController;
                 enhancementController.paneExpanded();
 
             } else if (currentPane == transformPane) {
@@ -258,6 +266,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     transformController = (ImageManufactureTransformController) loadPane(
                             transformPane, Fxmls.ImageManufactureTransformFxml);
                 }
+                currentController = transformController;
                 transformController.paneExpanded();
 
             } else if (currentPane == shadowPane) {
@@ -265,6 +274,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     shadowController = (ImageManufactureShadowController) loadPane(
                             shadowPane, Fxmls.ImageManufactureShadowFxml);
                 }
+                currentController = shadowController;
                 shadowController.paneExpanded();
 
             } else if (currentPane == marginsPane) {
@@ -272,6 +282,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     marginsController = (ImageManufactureMarginsController) loadPane(
                             marginsPane, Fxmls.ImageManufactureMarginsFxml);
                 }
+                currentController = marginsController;
                 marginsController.paneExpanded();
 
             } else if (currentPane == arcPane) {
@@ -279,6 +290,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     arcController = (ImageManufactureArcController) loadPane(
                             arcPane, Fxmls.ImageManufactureArcFxml);
                 }
+                currentController = arcController;
                 arcController.paneExpanded();
 
             } else if (currentPane == shapePane) {
@@ -287,6 +299,7 @@ public class ImageManufactureOperationsController extends BaseController {
                             shapePane, Fxmls.ImageManufactureShapeFxml);
 
                 }
+                currentController = shapeController;
                 shapeController.paneExpanded();
 
             } else if (currentPane == eliminatePane) {
@@ -294,6 +307,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     eliminateController = (ImageManufactureEliminateController) loadPane(
                             eliminatePane, Fxmls.ImageManufactureEliminateFxml);
                 }
+                currentController = eliminateController;
                 eliminateController.paneExpanded();
 
             } else if (currentPane == textPane) {
@@ -301,6 +315,7 @@ public class ImageManufactureOperationsController extends BaseController {
                     textController = (ImageManufactureTextController) loadPane(
                             textPane, Fxmls.ImageManufactureTextFxml);
                 }
+                currentController = textController;
                 textController.paneExpanded();
 
             }

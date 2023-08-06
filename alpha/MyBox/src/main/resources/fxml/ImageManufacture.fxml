@@ -38,6 +38,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Polyline?>
 <?import javafx.scene.shape.QuadCurve?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Text?>
 
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureController">
@@ -535,6 +536,7 @@ License:    Apache License Version 2.0
                                                       <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#handlerPressed" onMouseReleased="#arcReleased" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
                                                       <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#handlerPressed" onMouseReleased="#cubicReleased" startX="-150.0" stroke="BLACK" />
                                                       <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#handlerPressed" onMouseReleased="#quadraticReleased" startX="-50.0" stroke="BLACK" strokeType="INSIDE" />
+                                                      <SVGPath fx:id="maskSVGPath" content="M40,60 C42,48 44,30 25,32" layoutX="47.0" layoutY="191.0" />
                                                                         <Rectangle fx:id="maskHandlerTopLeft" fill="#ffffff00" height="10.0" layoutX="70.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="NW_RESIZE" />

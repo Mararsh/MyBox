@@ -305,8 +305,8 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX(), 2) + "");
-                    rectLeftTopYInput.setText(scale(maskRectangleData.getSmallY(), 2) + "");
+                    rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
+                    rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskRectangleData.getBigX(), 2) + "");
                     rightBottomYInput.setText(scale(maskRectangleData.getBigY(), 2) + "");
                     rectangleLabel.setText(message("Rectangle"));

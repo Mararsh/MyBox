@@ -85,7 +85,7 @@ public class ControlImageScale extends ControlImageSize {
             }
             width = image.getWidth();
             height = image.getHeight();
-            editor.maskRectangleData = new DoubleRectangle(0, 0, width - 1, height - 1);
+            editor.maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
             editor.showMaskRectangle();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -99,11 +99,6 @@ public class ControlImageScale extends ControlImageSize {
                 || editor.maskRectangleData == null) {
             return;
         }
-        editor.maskRectangleData = new DoubleRectangle(
-                editor.maskRectangleData.getSmallX(),
-                editor.maskRectangleData.getSmallY(),
-                editor.maskRectangleData.getSmallX() + width - 1,
-                editor.maskRectangleData.getSmallY() + height - 1);
         editor.drawMaskRectangle();
     }
 

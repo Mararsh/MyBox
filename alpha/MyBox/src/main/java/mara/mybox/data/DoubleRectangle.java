@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
 
 /**
  * @Author Mara
@@ -12,42 +14,68 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class DoubleRectangle implements DoubleShape {
 
-    protected double smallX, smallY, bigX, bigY, width, height;
-    protected double round;
+    protected double x, y, width, height, round;
 
     public DoubleRectangle() {
     }
 
-    public DoubleRectangle(Rectangle2D.Double rectangle) {
-        smallX = rectangle.getX();
-        smallY = rectangle.getY();
-        width = rectangle.getWidth();
-        height = rectangle.getHeight();
-        bigX = rectangle.getX() + width - 1;
-        bigY = rectangle.getY() + height - 1;
+    public static DoubleRectangle xywh(double x, double y, double width, double height) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(x);
+        rect.setY(y);
+        rect.setWidth(width);
+        rect.setHeight(height);
+        return rect;
     }
 
-    public DoubleRectangle(double x1, double y1, double x2, double y2) {
-        smallX = x1;
-        smallY = y1;
-        bigX = x2;
-        bigY = y2;
-        width = getWidth();
-        height = getHeight();
+    public static DoubleRectangle xy12(double x1, double y1, double x2, double y2) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(x1);
+        rect.setY(y1);
+        rect.setWidth(Math.abs(x2 - x1));
+        rect.setHeight(Math.abs(y2 - y1));
+        return rect;
+    }
+
+    public static DoubleRectangle rect(Rectangle2D.Double rect2D) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(rect2D.getX());
+        rect.setY(rect2D.getY());
+        rect.setWidth(rect2D.getWidth());
+        rect.setHeight(rect2D.getHeight());
+        return rect;
+    }
+
+    public static DoubleRectangle image(Image image) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(0);
+        rect.setY(0);
+        rect.setWidth(image.getWidth());
+        rect.setHeight(image.getHeight());
+        return rect;
+    }
+
+    public static DoubleRectangle image(BufferedImage image) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(0);
+        rect.setY(0);
+        rect.setWidth(image.getWidth());
+        rect.setHeight(image.getHeight());
+        return rect;
     }
 
     @Override
     public Shape getShape() {
         if (round > 0) {
-            return new RoundRectangle2D.Double(smallX, smallY, width, height, round, round);
+            return new RoundRectangle2D.Double(x, y, width, height, round, round);
         } else {
-            return new Rectangle2D.Double(smallX, smallY, width, height);
+            return new Rectangle2D.Double(x, y, width, height);
         }
     }
 
     @Override
     public DoubleRectangle cloneValues() {
-        return new DoubleRectangle(smallX, smallY, bigX, bigY);
+        return DoubleRectangle.xywh(x, y, width, height);
     }
 
     @Override
@@ -62,9 +90,8 @@ public class DoubleRectangle implements DoubleShape {
 
     @Override
     public DoubleRectangle translateRel(double offsetX, double offsetY) {
-        DoubleRectangle nRectangle = new DoubleRectangle(
-                smallX + offsetX, smallY + offsetY,
-                bigX + offsetX, bigY + offsetY);
+        DoubleRectangle nRectangle = DoubleRectangle.xywh(
+                x + offsetX, y + offsetY, width, height);
         return nRectangle;
     }
 
@@ -75,20 +102,46 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public Rectangle rectangle() {
-        return new Rectangle((int) smallX, (int) smallY, (int) getWidth(), (int) getHeight());
+        return new Rectangle((int) x, (int) y, (int) getWidth(), (int) getHeight());
     }
 
     public boolean same(DoubleRectangle rect) {
         return rect != null
-                && smallX == rect.getSmallX() && smallY == rect.getSmallY()
-                && bigX == rect.getBigX() && bigY == rect.getBigY();
+                && x == rect.getX() && y == rect.getY()
+                && width == rect.getWidth() && height == rect.getHeight();
     }
+
+    public double getBigX() {
+        return x + width;
+    }
+
+    public double getBigY() {
+        return y + height;
+    }
+
+    public void setBigX(double x2) {
+        width = Math.abs(x2 - x);
+    }
+
+    public void setBigY(double y2) {
+        height = Math.abs(y2 - y);
+    }
+
+    public void changeX(double nx) {
+        width = width + x - nx;
+        x = nx;
+    }
+
+    public void changeY(double ny) {
+        height = height + y - ny;
+        y = ny;
+    }
+
 
     /*
         get
      */
     public final double getWidth() {
-        width = Math.abs(bigX - smallX) + 1;
         return width;
     }
 
@@ -97,7 +150,6 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public final double getHeight() {
-        height = Math.abs(bigY - smallY) + 1;
         return height;
     }
 
@@ -105,36 +157,20 @@ public class DoubleRectangle implements DoubleShape {
         this.height = height;
     }
 
-    public double getSmallX() {
-        return smallX;
+    public double getX() {
+        return x;
     }
 
-    public void setSmallX(double smallX) {
-        this.smallX = smallX;
+    public void setX(double x) {
+        this.x = x;
     }
 
-    public double getSmallY() {
-        return smallY;
+    public double getY() {
+        return y;
     }
 
-    public void setSmallY(double smallY) {
-        this.smallY = smallY;
-    }
-
-    public double getBigX() {
-        return bigX;
-    }
-
-    public void setBigX(double bigX) {
-        this.bigX = bigX;
-    }
-
-    public double getBigY() {
-        return bigY;
-    }
-
-    public void setBigY(double bigY) {
-        this.bigY = bigY;
+    public void setY(double y) {
+        this.y = y;
     }
 
     public double getRound() {

@@ -1,6 +1,15 @@
 package mara.mybox.data;
 
 import java.util.List;
+import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.ClosePath;
+import javafx.scene.shape.CubicCurveTo;
+import javafx.scene.shape.HLineTo;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.PathElement;
+import javafx.scene.shape.QuadCurveTo;
+import javafx.scene.shape.VLineTo;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
@@ -13,6 +22,7 @@ import static mara.mybox.value.Languages.message;
 public class DoublePathSegment {
 
     protected PathSegmentType type;
+    protected DoublePoint interPoint; // The point between previous segment and current segment
     protected List<DoublePoint> points;
     protected double value;
     protected boolean isAbsolute, flag1, flag2;
@@ -142,6 +152,49 @@ public class DoublePathSegment {
         }
     }
 
+    public PathElement pathElement() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            switch (type) {
+                case Move:
+                    return new MoveTo(points.get(0).getX(), points.get(0).getY());
+                case Line:
+                    return new LineTo(points.get(0).getX(), points.get(0).getY());
+                case LineHorizontal:
+                    return new HLineTo(value);
+                case LineVertical:
+                    return new VLineTo(value);
+                case Quadratic:
+                    return new QuadCurveTo(points.get(0).getX(), points.get(0).getY(),
+                            points.get(1).getX(), points.get(1).getY());
+                case QuadraticSmooth:
+                    return new QuadCurveTo(points.get(0).getX(), points.get(0).getY(),
+                            points.get(0).getX(), points.get(0).getY());
+                case Cubic:
+                    return new CubicCurveTo(points.get(0).getX(), points.get(0).getY(),
+                            points.get(1).getX(), points.get(1).getY(),
+                            points.get(2).getX(), points.get(2).getY());
+                case CubicSmooth:
+                    return new CubicCurveTo(points.get(0).getX(), points.get(0).getY(),
+                            points.get(0).getX(), points.get(0).getY(),
+                            points.get(1).getX(), points.get(1).getY());
+                case Arc:
+                    return new ArcTo(points.get(0).getX(), points.get(0).getY(),
+                            value,
+                            points.get(1).getX(), points.get(1).getY(),
+                            flag1, flag2);
+                case Close:
+                    return new ClosePath();
+            }
+            return null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     /*
         set
      */
@@ -180,6 +233,11 @@ public class DoublePathSegment {
         return this;
     }
 
+    public DoublePathSegment setInterPoint(DoublePoint interPoint) {
+        this.interPoint = interPoint;
+        return this;
+    }
+
     /*
         get
      */
@@ -209,6 +267,10 @@ public class DoublePathSegment {
 
     public int getScale() {
         return scale;
+    }
+
+    public DoublePoint getInterPoint() {
+        return interPoint;
     }
 
 }

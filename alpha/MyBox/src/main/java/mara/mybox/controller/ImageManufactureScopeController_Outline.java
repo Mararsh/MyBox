@@ -200,8 +200,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         if (bufferedImage == null) {
             return;
         }
-        loadOutlineSource(bufferedImage, new DoubleRectangle(0, 0,
-                bufferedImage.getWidth() - 1, bufferedImage.getHeight() - 1));
+        loadOutlineSource(bufferedImage, DoubleRectangle.image(bufferedImage));
     }
 
     public void loadOutlineSource(BufferedImage bufferedImage, DoubleRectangle rect) {
@@ -256,10 +255,9 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                 if (scope == null) {   // this may happen in quitOpearting()
                     return;
                 }
-                maskRectangleData = new DoubleRectangle(
-                        maskRectangleData.getSmallX(), maskRectangleData.getSmallY(),
-                        maskRectangleData.getSmallX() + outline[0].getWidth() - 1,
-                        maskRectangleData.getSmallY() + outline[0].getHeight() - 1);
+                maskRectangleData = DoubleRectangle.xywh(
+                        maskRectangleData.getX(), maskRectangleData.getY(),
+                        outline[0].getWidth(), outline[0].getHeight());
                 drawMaskRectangle();
                 scope.setOutlineSource(outlineSource);
                 scope.setOutline(outline[1]);
@@ -297,8 +295,8 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                 scopeView.setImage(outlineImage);
                 double xradio = viewXRatio();
                 double yradio = viewYRatio();
-                double offsetX = maskRectangleData.getSmallX() >= 0 ? 0 : maskRectangleData.getSmallX();
-                double offsetY = maskRectangleData.getSmallY() >= 0 ? 0 : maskRectangleData.getSmallY();
+                double offsetX = maskRectangleData.getX() >= 0 ? 0 : maskRectangleData.getX();
+                double offsetY = maskRectangleData.getY() >= 0 ? 0 : maskRectangleData.getY();
                 scopeView.setLayoutX(imageView.getLayoutX() + offsetX * xradio);
                 scopeView.setLayoutY(imageView.getLayoutY() + offsetY * yradio);
                 scopeView.setFitWidth(outlineImage.getWidth() * xradio);

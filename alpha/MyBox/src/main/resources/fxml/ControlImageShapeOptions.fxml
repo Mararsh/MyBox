@@ -131,7 +131,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="106.0" spacing="5.0">
                <children>
-                        <RadioButton fx:id="linesRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                        <RadioButton fx:id="polylinesRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -140,13 +140,22 @@
                                 </ImageView>
                             </graphic>
                         </RadioButton>
+                  <RadioButton fx:id="pathRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$typeGroup">
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconDraw.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </RadioButton>
                </children>
             </HBox>
             </children>
         </VBox>
         <Label fx:id="commentsLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
         <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWidth="200.0" vgap="5.0" />
-        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+        <FlowPane fx:id="opPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
             <children>
                 <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
                     <graphic>

@@ -308,7 +308,7 @@ public class ImageScopeTools {
             BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
                 lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
-            g.drawRect((int) rect.getSmallX(), (int) rect.getSmallY(), (int) rect.getWidth(), (int) rect.getHeight());
+            g.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
             g.dispose();
             return target;
         } catch (Exception e) {

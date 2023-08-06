@@ -1,6 +1,20 @@
 package mara.mybox.data;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.util.List;
+import javafx.scene.shape.Path;
+import mara.mybox.data.DoublePathSegment.PathSegmentType;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.Arc;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.Close;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.Cubic;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.CubicSmooth;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.Line;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineHorizontal;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineVertical;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.Move;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.Quadratic;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.QuadraticSmooth;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -8,7 +22,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2023-7-12
  * @License Apache License Version 2.0
  */
-public class DoublePath extends DoubleRectangle {
+public class DoublePath implements DoubleShape {
 
     protected String content;
     protected List<DoublePathSegment> segments;
@@ -42,13 +56,61 @@ public class DoublePath extends DoubleRectangle {
     }
 
     public String typesetting(String separator) {
-        return segmentsToPath(segments, separator);
+        return segmentsToString(segments, separator);
+    }
+
+    @Override
+    public Path2D.Double getShape() {
+        Path2D.Double path = new Path2D.Double();
+        addToPath2D(path, segments);
+        return path;
+    }
+
+    @Override
+    public DoublePath cloneValues() {
+        return new DoublePath(content);
+    }
+
+    @Override
+    public boolean isValid() {
+        return content != null && segments != null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid() || segments.isEmpty();
+    }
+
+    @Override
+    public DoublePath translateRel(double offsetX, double offsetY) {
+        DoublePath nPath = new DoublePath(content);
+        AffineTransform.getTranslateInstance(offsetX, offsetY);
+        return nPath;
+    }
+
+    @Override
+    public DoublePath translateAbs(double x, double y) {
+        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
+        return moved != null ? (DoublePath) moved : null;
+    }
+
+    /*
+        set
+     */
+    public void setContent(String content) {
+        this.content = content;
+        parse(content);
+    }
+
+    public void setSegments(List<DoublePathSegment> segments) {
+        this.segments = segments;
+        content = segmentsToString(segments, " ");
     }
 
     /*
         static
      */
-    public static String segmentsToPath(List<DoublePathSegment> segments, String separator) {
+    public static String segmentsToString(List<DoublePathSegment> segments, String separator) {
         try {
             if (segments == null || segments.isEmpty()) {
                 return null;
@@ -68,25 +130,82 @@ public class DoublePath extends DoubleRectangle {
         }
     }
 
+    public static boolean addToPath2D(Path2D.Double path, List<DoublePathSegment> segments) {
+        try {
+            if (path == null || segments == null) {
+                return false;
+            }
+            for (DoublePathSegment seg : segments) {
+                PathSegmentType type = seg.getType();
+                if (type == null) {
+                    continue;
+                }
+                switch (type) {
+                    case Move:
+                        path.moveTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY());
+                        break;
+                    case Line:
+                        path.lineTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY());
+                        break;
+                    case LineHorizontal:
+                        path.lineTo(seg.getValue(), seg.getInterPoint().getY());
+                        break;
+                    case LineVertical:
+                        path.lineTo(seg.getInterPoint().getX(), seg.getValue());
+                        break;
+                    case Quadratic:
+                        path.quadTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY(),
+                                seg.getPoints().get(1).getX(), seg.getPoints().get(1).getY());
+                        break;
+                    case QuadraticSmooth:
+//                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
+                        break;
+                    case Cubic:
+                        path.curveTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY(),
+                                seg.getPoints().get(1).getX(), seg.getPoints().get(1).getY(),
+                                seg.getPoints().get(2).getX(), seg.getPoints().get(2).getY());
+                        break;
+                    case CubicSmooth:
+//                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
+                        break;
+                    case Arc:
+//                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
+                        break;
+                    case Close:
+                        path.closePath();
+                        break;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return false;
+        }
+    }
+
+    public static boolean addToFxPath(Path path, List<DoublePathSegment> segments) {
+        try {
+            if (path == null || segments == null) {
+                return false;
+            }
+            for (DoublePathSegment seg : segments) {
+                path.getElements().add(seg.pathElement());
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return false;
+        }
+    }
+
     public static String typesetting(String content, String separator) {
         try {
             DoublePath path = new DoublePath(content);
-            return segmentsToPath(path.getSegments(), separator);
+            return segmentsToString(path.getSegments(), separator);
         } catch (Exception e) {
             MyBoxLog.console(e);
             return content;
         }
-    }
-
-    /*
-        set
-     */
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setSegments(List<DoublePathSegment> segments) {
-        this.segments = segments;
     }
 
     /*

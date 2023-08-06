@@ -331,7 +331,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setImageType(bufferedImage.getType());
             Rectangle2D.Double region = imageInfo.getRegion();
             if (region != null) {
-                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, new DoubleRectangle(region));
+                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, DoubleRectangle.rect(region));
                 if (task != null && task.isCancelled()) {
                     return null;
                 }
@@ -441,13 +441,13 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setRequiredWidth(regionWidth);
             Image image = imageInfo.getImage();
             if (image != null && (int) image.getWidth() == infoWidth) {
-                regionImage = CropTools.cropOutsideFx(image, new DoubleRectangle(region));
+                regionImage = CropTools.cropOutsideFx(image, DoubleRectangle.rect(region));
                 regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, regionWidth);
             }
             if (regionImage == null) {
                 Image thumb = imageInfo.getThumbnail();
                 if (thumb != null && (int) thumb.getWidth() == infoWidth) {
-                    regionImage = CropTools.cropOutsideFx(thumb, new DoubleRectangle(region));
+                    regionImage = CropTools.cropOutsideFx(thumb, DoubleRectangle.rect(region));
                     regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, regionWidth);
                 }
             }

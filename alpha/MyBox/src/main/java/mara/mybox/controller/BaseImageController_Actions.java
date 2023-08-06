@@ -80,8 +80,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 return null;
             }
             if (maskRectangle != null && maskRectangle.isVisible() && maskRectangleData != null) {
-                if ((int) maskRectangleData.getSmallX() == 0
-                        && (int) maskRectangleData.getSmallY() == 0
+                if ((int) maskRectangleData.getX() == 0
+                        && (int) maskRectangleData.getY() == 0
                         && (int) maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
                         && (int) maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
                     return inImage;
@@ -283,7 +283,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView.getImage() == null || maskRectangle == null || !maskRectangle.isVisible()) {
             return;
         }
-        maskRectangleData = new DoubleRectangle(0, 0, imageWidth() - 1, imageHeight() - 1);
+        maskRectangleData = DoubleRectangle.xywh(0, 0, imageWidth(), imageHeight());
         drawMaskRectangle();
     }
 

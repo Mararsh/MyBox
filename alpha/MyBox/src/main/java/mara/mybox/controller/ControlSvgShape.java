@@ -153,34 +153,6 @@ public class ControlSvgShape extends ControlShapeOptions {
     }
 
     @Override
-    public void setShapeControls() {
-        try {
-            super.setShapeControls();
-            showController.infoLabel.setText("");
-            if (imageController == null || shapeType == null) {
-                return;
-            }
-            isSettingValues = true;
-            switch (shapeType) {
-                case Circle:
-                case Rectangle:
-                case Ellipse:
-                case Line:
-                    showController.infoLabel.setText(message("ShapeDragMoveComments"));
-                    break;
-                case Polyline:
-                case Polygon:
-                case Lines:
-                    showController.infoLabel.setText(message("ShapePointsMoveComments"));
-                    break;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        isSettingValues = false;
-    }
-
-    @Override
     public void shapeDataChanged() {
         setShapeControls();
         shape2Element();
@@ -270,7 +242,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 popError(message("InvalidParameter") + ": " + message("Height"));
                 return false;
             }
-            imageController.maskRectangleData = new DoubleRectangle(x, y, x + w - 1, y + h - 1);
+            imageController.maskRectangleData = DoubleRectangle.xywh(x, y, w, h);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -438,8 +410,8 @@ public class ControlSvgShape extends ControlShapeOptions {
                     if (element == null) {
                         element = doc.createElement("rect");
                     }
-                    element.setAttribute("x", scaleValue(imageController.maskRectangleData.getSmallX()));
-                    element.setAttribute("y", scaleValue(imageController.maskRectangleData.getSmallY()));
+                    element.setAttribute("x", scaleValue(imageController.maskRectangleData.getX()));
+                    element.setAttribute("y", scaleValue(imageController.maskRectangleData.getY()));
                     element.setAttribute("width", scaleValue(imageController.maskRectangleData.getWidth()));
                     element.setAttribute("height", scaleValue(imageController.maskRectangleData.getHeight()));
                     return true;

@@ -8,11 +8,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.data.DoubleShape.ShapeType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -36,6 +36,8 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             editor = penController.editor;
             maskView = editor.maskView;
             imageView = editor.imageView;
+
+            infoLabel = commentsLabel;
 
             super.setParameters(editor);
 
@@ -82,23 +84,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             imageView.toBack();
             setBlender();
 
-            if (polygonRadio.isSelected() | polylineRadio.isSelected()) {
-                withdrawButton.setDisable(false);
-                clearButton.setDisable(false);
-                commentsLabel.setText(message("ShapePointsMoveComments"));
-
-            } else if (linesRadio.isSelected()) {
-                withdrawButton.setDisable(false);
-                clearButton.setDisable(false);
-                commentsLabel.setText(message("ShapePolylinesTips"));
-
-            } else {
-                commentsLabel.setText(message("ShapeDragMoveComments"));
-                withdrawButton.setDisable(true);
-                clearButton.setDisable(true);
-
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -126,6 +111,10 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         }
         DoubleShape shapeData = editor.currentMaskShapeData();
         if (shapeData == null) {
+            return;
+        }
+        if (shapeType == ShapeType.Path) {
+            imageController.drawMaskShape();
             return;
         }
         if (task != null) {
@@ -157,46 +146,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
         };
         start(task);
-    }
-
-    @FXML
-    @Override
-    public void withdrawAction() {
-        if (null == shapeType || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        switch (shapeType) {
-            case Polyline:
-            case Polygon:
-                parametersController.pointsController.removeLastItem();
-                break;
-            case Lines:
-                parametersController.linesController.removeLastItem();
-                break;
-        }
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        withdrawAction();
-    }
-
-    @FXML
-    @Override
-    public void clearAction() {
-        if (null == shapeType || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        switch (shapeType) {
-            case Polyline:
-            case Polygon:
-                parametersController.pointsController.tableData.clear();
-                break;
-            case Lines:
-                parametersController.linesController.tableData.clear();
-                break;
-        }
     }
 
     @FXML

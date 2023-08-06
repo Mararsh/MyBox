@@ -116,8 +116,7 @@ public abstract class PixelsBlend {
                 return null;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            DoubleRectangle rect = new DoubleRectangle(x, y,
-                    x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
+            DoubleRectangle rect = DoubleRectangle.xywh(x, y, foreImage.getWidth(), foreImage.getHeight());
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
@@ -196,8 +195,7 @@ public abstract class PixelsBlend {
                 return null;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            DoubleRectangle rect = new DoubleRectangle(x, y,
-                    x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
+            DoubleRectangle rect = DoubleRectangle.xywh(x, y, foreImage.getWidth(), foreImage.getHeight());
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {

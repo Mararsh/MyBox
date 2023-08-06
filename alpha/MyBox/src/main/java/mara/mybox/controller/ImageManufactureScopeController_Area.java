@@ -111,7 +111,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 rightBottomYInput.setStyle(UserConfig.badStyle());
                 return null;
             }
-            DoubleRectangle rect = new DoubleRectangle(x1, y1, x2, y2);
+            DoubleRectangle rect = DoubleRectangle.xy12(x1, y1, x2, y2);
             if (!rect.isValid()) {
                 popError(Languages.message("InvalidData"));
                 return null;

@@ -13,7 +13,6 @@ import mara.mybox.bufferedimage.ImageScope;
 public class DoubleOutline extends DoubleRectangle {
 
     private BufferedImage image;
-    private DoubleRectangle rectangle;
     private int insideColor;
     private double offsetX, offsetY;
 
@@ -22,57 +21,48 @@ public class DoubleOutline extends DoubleRectangle {
 
     public DoubleOutline(BufferedImage image, int color) {
         this.image = image;
-        rectangle = new DoubleRectangle(0, 0, image.getWidth() - 1, image.getHeight() - 1);
+        x = 0;
+        y = 0;
+        width = image.getWidth();
+        height = image.getHeight();
         this.insideColor = color;
-        offsetX = rectangle.getSmallX() >= 0 ? 0 : rectangle.getSmallX();
-        offsetY = rectangle.getSmallY() >= 0 ? 0 : rectangle.getSmallY();
     }
 
-    public DoubleOutline(BufferedImage image, DoubleRectangle rectangle, int color) {
+    public DoubleOutline(BufferedImage image, DoubleRectangle rect, int color) {
         this.image = image;
-        this.rectangle = rectangle;
         this.insideColor = color;
-        offsetX = rectangle.getSmallX() >= 0 ? 0 : rectangle.getSmallX();
-        offsetY = rectangle.getSmallY() >= 0 ? 0 : rectangle.getSmallY();
+        x = rect.getX();
+        y = rect.getY();
+        width = rect.getWidth();
+        height = rect.getHeight();
+        offsetX = x >= 0 ? 0 : x;
+        offsetY = y >= 0 ? 0 : y;
     }
 
     public DoubleOutline(ImageScope scope) {
         image = scope.getOutline();
-        rectangle = scope.getRectangle();
         insideColor = scope.isAreaExcluded() ? -1 : 0;
-        offsetX = rectangle.getSmallX() >= 0 ? 0 : rectangle.getSmallX();
-        offsetY = rectangle.getSmallY() >= 0 ? 0 : rectangle.getSmallY();
+        DoubleRectangle rect = scope.getRectangle();
+        x = rect.getX();
+        y = rect.getY();
+        width = rect.getWidth();
+        height = rect.getHeight();
     }
 
     @Override
     public boolean isValid() {
-        return image != null && rectangle != null;
+        return image != null && super.isValid();
     }
 
     @Override
     public DoubleOutline cloneValues() {
-        return new DoubleOutline(image, rectangle, insideColor);
-    }
-
-    public boolean contains(double x, double y) {
-        try {
-            return isValid() && DoubleShape.contains(rectangle, x, y)
-                    && (image.getRGB((int) (x - offsetX), (int) (y - offsetY)) == insideColor);
-        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public DoubleRectangle getBound() {
-        return rectangle;
+        return new DoubleOutline(image, this, insideColor);
     }
 
     @Override
     public DoubleOutline translateRel(double offsetX, double offsetY) {
-        DoubleRectangle nRectangle = new DoubleRectangle(
-                smallX + offsetX, smallY + offsetY,
-                bigX + offsetX, bigY + offsetY);
+        DoubleRectangle nRectangle = DoubleRectangle.xywh(
+                x + offsetX, y + offsetY, width, height);
         return new DoubleOutline(image, nRectangle, insideColor);
     }
 

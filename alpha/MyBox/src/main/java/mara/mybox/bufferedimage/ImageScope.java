@@ -85,8 +85,8 @@ public class ImageScope extends BaseData {
         areaExcluded = colorExcluded = distanceSquareRoot = false;
         eightNeighbor = true;
         if (image != null) {
-            rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                    image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            rectangle = DoubleRectangle.xywh(image.getWidth() / 4, image.getHeight() / 4,
+                    image.getWidth() / 2, image.getHeight() / 2);
             circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
                     Math.min(image.getWidth(), image.getHeight()) / 4);
             ellipse = DoubleEllipse.rect(rectangle);
@@ -373,7 +373,7 @@ public class ImageScope extends BaseData {
                 case Outline:
                     DoubleRectangle rect = scope.getRectangle();
                     if (rect != null) {
-                        s = (int) rect.getSmallX() + DataSeparator + (int) rect.getSmallY() + DataSeparator
+                        s = (int) rect.getX() + DataSeparator + (int) rect.getY() + DataSeparator
                                 + (int) rect.getBigX() + DataSeparator + (int) rect.getBigY();
                     }
                     break;
@@ -490,7 +490,7 @@ public class ImageScope extends BaseData {
                 case Outline: {
                     String[] items = areaData.split(DataSeparator);
                     if (items.length == 4) {
-                        DoubleRectangle rect = new DoubleRectangle(
+                        DoubleRectangle rect = DoubleRectangle.xy12(
                                 Double.parseDouble(items[0]), Double.parseDouble(items[1]),
                                 Double.parseDouble(items[2]), Double.parseDouble(items[3])
                         );

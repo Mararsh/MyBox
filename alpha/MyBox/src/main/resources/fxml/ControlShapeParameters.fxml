@@ -400,6 +400,15 @@
                         </VBox>
                     </content>
                 </Tab>
+            <Tab text="path">
+               <content>
+                  <VBox fx:id="pathBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                        <fx:include fx:id="path" source="ControlPath2D.fxml" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
             </tabs>
         </TabPane>
     </children>

@@ -507,8 +507,8 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         if (maskRectangleData == null
                 || maskRectangleData.getWidth() > imageView.getImage().getWidth()
                 || maskRectangleData.getHeight() > imageView.getImage().getHeight()) {
-            maskRectangleData = new DoubleRectangle(0, 0,
-                    imageView.getImage().getWidth() - 1, imageView.getImage().getHeight() - 1);
+            maskRectangleData = DoubleRectangle.xywh(0, 0,
+                    imageView.getImage().getWidth(), imageView.getImage().getHeight());
         }
     }
 

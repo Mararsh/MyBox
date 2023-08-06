@@ -275,8 +275,8 @@ public class AlphaTools {
             }
             BufferedImage scaledImage = ScaleTools.scaleImage(srcImage,
                     (int) rect.getWidth(), (int) rect.getHeight(), keepRatio, BufferedImageTools.KeepRatioType.BaseOnWidth);
-            int offsetX = (int) rect.getSmallX();
-            int offsetY = (int) rect.getSmallY();
+            int offsetX = (int) rect.getX();
+            int offsetY = (int) rect.getY();
             int scaledWidth = scaledImage.getWidth();
             int scaledHeight = scaledImage.getHeight();
             int width = offsetX >= 0 ? Math.max(targetWidth, scaledWidth + offsetX) : Math.max(targetWidth - offsetX, scaledWidth);

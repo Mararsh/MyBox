@@ -48,11 +48,11 @@ public class ImageTextTools {
             BufferedImage backImage = sourceImage;
             if (optionsController.showBorders()) {
                 int m = optionsController.getBordersMargin();
-                DoubleText textRect = new DoubleText(
+                DoubleText textRect = DoubleText.xywh(
                         optionsController.getBaseX() - m,
                         optionsController.getBaseY() - m,
-                        optionsController.getBaseX() + optionsController.getTextWidth() + m - 1,
-                        optionsController.getBaseY() + optionsController.getTextHeight() + m - 1);
+                        optionsController.getTextWidth() + m,
+                        optionsController.getTextHeight() + m);
                 ShapeStyle style = new ShapeStyle("Text");
                 style.setStrokeColor(optionsController.bordersStrokeColor());
                 style.setStrokeWidth(optionsController.getBordersStrokeWidth());

@@ -91,7 +91,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     }
 
     public String pickPath(String separator) {
-        return DoublePath.segmentsToPath(tableData, separator);
+        return DoublePath.segmentsToString(tableData, separator);
     }
 
     @FXML
@@ -102,9 +102,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     @FXML
     @Override
     public void addAction() {
-//        List<DoublePoint> line = new ArrayList<>();
-//        line.add(new DoublePoint(0, 0));
-//        tableData.add(line);
+
     }
 
     @FXML

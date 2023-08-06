@@ -48,15 +48,16 @@ public class CropTools {
             int width = source.getWidth();
             int height = source.getHeight();
             Rectangle shapeBound = DoubleShape.getBound(shape);
+
             int x1 = Math.max(0, (int) Math.ceil(shapeBound.getMinX()));
             int y1 = Math.max(0, (int) Math.ceil(shapeBound.getMinY()));
-            if (x1 >= width || y1 >= height) {
+            if (x1 > width || y1 > height) {
                 return null;
             }
-            int x2 = Math.min(width - 1, (int) Math.round(shapeBound.getMaxX()));
-            int y2 = Math.min(height - 1, (int) Math.round(shapeBound.getMaxY()));
-            int w = x2 - x1 + 1;
-            int h = y2 - y1 + 1;
+            int x2 = Math.min(width, (int) Math.round(shapeBound.getMaxX()));
+            int y2 = Math.min(height, (int) Math.round(shapeBound.getMaxY()));
+            int w = x2 - x1;
+            int h = y2 - y1;
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(w, h, imageType);
             int bgPixel = bgColor.getRGB();
@@ -80,15 +81,15 @@ public class CropTools {
         if (rectangle == null) {
             return source;
         }
-        return cropOutside(source, rectangle.getSmallX(), rectangle.getSmallY(), rectangle.getBigX(), rectangle.getBigY());
+        return cropOutside(source, rectangle.getX(), rectangle.getY(), rectangle.getBigX(), rectangle.getBigY());
     }
 
     public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2) {
-        return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), Color.WHITE);
+        return cropOutside(source, DoubleRectangle.xy12(x1, y1, x2, y2), Color.WHITE);
     }
 
     public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2, Color bgColor) {
-        return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), bgColor);
+        return cropOutside(source, DoubleRectangle.xy12(x1, y1, x2, y2), bgColor);
     }
 
     public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int xscale, int yscale) {
@@ -127,7 +128,7 @@ public class CropTools {
         if (x1 >= x2 || y1 >= y2 || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0) {
             return null;
         }
-        return sample(source, new DoubleRectangle(x1, y1, x2, y2), xscale, yscale);
+        return sample(source, DoubleRectangle.xy12(x1, y1, x2, y2), xscale, yscale);
     }
 
 }

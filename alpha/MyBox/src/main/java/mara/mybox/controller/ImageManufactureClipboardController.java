@@ -221,8 +221,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             clipSource = image;
             currentClip = clipSource;
             editor.scope = new ImageScope();
-            editor.maskRectangleData = new DoubleRectangle(0, 0,
-                    currentClip.getWidth() - 1, currentClip.getHeight() - 1);
+            editor.maskRectangleData = DoubleRectangle.image(currentClip);
             editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
             pasteClip(0);
         } catch (Exception e) {
@@ -275,8 +274,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         }
                     }
                     blendedImage = blendController.blend(finalClip, bgImage,
-                            (int) editor.scope.getRectangle().getSmallX(),
-                            (int) editor.scope.getRectangle().getSmallY());
+                            (int) editor.scope.getRectangle().getX(),
+                            (int) editor.scope.getRectangle().getY());
                     if (task == null || isCancelled()) {
                         return false;
                     }
@@ -293,11 +292,9 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 if (enlarged) {
                     editor.setImage(ImageOperation.Margins, bgImage);
                 }
-                editor.maskRectangleData = new DoubleRectangle(
-                        editor.maskRectangleData.getSmallX(),
-                        editor.maskRectangleData.getSmallY(),
-                        editor.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
-                        editor.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
+                editor.maskRectangleData = DoubleRectangle.xywh(
+                        editor.maskRectangleData.getX(), editor.maskRectangleData.getY(),
+                        finalClip.getWidth(), finalClip.getHeight());
                 editor.showMaskRectangle();
                 editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
                 maskView.setImage(blendedImage);

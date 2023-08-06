@@ -20,7 +20,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.QuadCurve;
@@ -70,7 +69,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected DoubleCubic maskCubicData;
     protected DoubleArc maskArcData;
     protected DoublePath maskPathData;
-    protected SVGPath svgPath;
     public boolean maskControlDragged;
     protected Polyline currentPolyline;
     protected List<Polyline> maskPolylines;
@@ -100,7 +98,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     @FXML
     protected QuadCurve maskQuadratic;
     @FXML
-    protected Path maskPath;
+    protected SVGPath maskSVGPath;
 
 
     /*
@@ -207,7 +205,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         } else if (isMaskArcShown()) {
             setShapeStyle(maskArc);
         } else if (isMaskPathShown()) {
-            setShapeStyle(svgPath);
+            setShapeStyle(maskSVGPath);
         }
         setMaskPointsStyle();
     }
@@ -378,7 +376,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         } else if (isMaskArcShown()) {
             return maskArc;
         } else if (isMaskPathShown()) {
-            return maskPath;
+            return maskSVGPath;
         }
         return null;
     }
@@ -666,7 +664,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         double w = imageWidth();
         double h = imageHeight();
-        maskRectangleData = new DoubleRectangle(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
+        maskRectangleData = DoubleRectangle.xywh(w / 4, h / 4, w / 2, h / 2);
     }
 
     public boolean drawMaskRectangle() {
@@ -683,8 +681,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             double yRatio = viewYRatio();
             double layoutX = imageView.getLayoutX();
             double layoutY = imageView.getLayoutY();
-            double x1 = maskRectangleData.getSmallX() * xRatio;
-            double y1 = maskRectangleData.getSmallY() * yRatio;
+            double x1 = maskRectangleData.getX() * xRatio;
+            double y1 = maskRectangleData.getY() * yRatio;
             double x2 = maskRectangleData.getBigX() * xRatio;
             double y2 = maskRectangleData.getBigY() * yRatio;
             maskRectangle.setLayoutX(layoutX);
@@ -1587,9 +1585,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void clearMaskQuadraticData() {
-        if (maskQuadraticData != null) {
-            maskQuadraticData = null;
-        }
+        maskQuadraticData = null;
     }
 
     /*
@@ -1689,9 +1685,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void clearMaskCubicData() {
-        if (maskCubicData != null) {
-            maskCubicData = null;
-        }
+        maskCubicData = null;
     }
 
     /*
@@ -1799,9 +1793,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void clearMaskArcData() {
-        if (maskArcData != null) {
-            maskArcData = null;
-        }
+        maskArcData = null;
     }
 
     /*
@@ -1809,19 +1801,19 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
      */
     public boolean isMaskPathShown() {
         return imageView != null && maskPane != null
-                && maskPath != null && maskPath.isVisible()
+                && maskSVGPath != null && maskSVGPath.isVisible()
                 && maskPathData != null;
     }
 
     public boolean showMaskPath() {
-        if (imageView == null || maskPane == null || maskPath == null) {
+        if (imageView == null || maskPane == null || maskSVGPath == null) {
             return false;
         }
-        if (!maskPane.getChildren().contains(maskPath)) {
-            maskPane.getChildren().addAll(maskPath);
+        if (!maskPane.getChildren().contains(maskSVGPath)) {
+            maskPane.getChildren().addAll(maskSVGPath);
         }
-        maskPath.setOpacity(1);
-        maskPath.setVisible(true);
+        maskSVGPath.setOpacity(1);
+        maskSVGPath.setVisible(true);
         return drawMaskPath();
     }
 
@@ -1835,19 +1827,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public boolean drawMaskPath() {
         try {
-            if (imageView == null || maskPane == null || maskPath == null) {
+            if (imageView == null || maskPane == null || maskSVGPath == null) {
                 return false;
             }
             if (maskPathData == null) {
                 setMaskPathDefaultValues();
             }
-//            maskPath.set(maskPathData.getContent());
+            maskSVGPath.setContent(maskPathData.getContent());
+            maskSVGPath.setLayoutX(imageView.getLayoutX());
+            maskSVGPath.setLayoutY(imageView.getLayoutY());
+            setShapeStyle(maskSVGPath);
 
-            svgPath.setLayoutX(imageView.getLayoutX());
-            svgPath.setLayoutY(imageView.getLayoutY());
-            setShapeStyle(svgPath);
-
-            svgPath.setVisible(true);
+            maskSVGPath.setVisible(true);
             maskShapeChanged();
             return true;
         } catch (Exception e) {
@@ -1857,22 +1848,15 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void clearMaskPath() {
-        try {
-            if (maskPane == null) {
-                return;
-            }
-            if (svgPath != null) {
-                maskPane.getChildren().remove(svgPath);
-                svgPath = null;
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (maskPane == null || maskSVGPath == null) {
+            return;
         }
+        maskPane.getChildren().remove(maskSVGPath);
+        maskSVGPath.setContent("");
+        maskSVGPath.setVisible(false);
     }
 
     public void clearMaskPathData() {
-        svgPath = null;
         maskPathData = null;
     }
 

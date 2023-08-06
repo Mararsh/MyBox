@@ -8,11 +8,13 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
@@ -21,6 +23,14 @@ import static javafx.scene.shape.StrokeLineCap.SQUARE;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.DoubleShape.ShapeType;
+import static mara.mybox.data.DoubleShape.ShapeType.Arc;
+import static mara.mybox.data.DoubleShape.ShapeType.Circle;
+import static mara.mybox.data.DoubleShape.ShapeType.Ellipse;
+import static mara.mybox.data.DoubleShape.ShapeType.Line;
+import static mara.mybox.data.DoubleShape.ShapeType.Polygon;
+import static mara.mybox.data.DoubleShape.ShapeType.Polyline;
+import static mara.mybox.data.DoubleShape.ShapeType.Polylines;
+import static mara.mybox.data.DoubleShape.ShapeType.Rectangle;
 import mara.mybox.data.ShapeStyle;
 import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
@@ -40,11 +50,12 @@ public abstract class ControlShapeOptions extends BaseController {
     protected DoubleShape currentShape;
     protected ShapeStyle style;
     protected ChangeListener<Boolean> shapeDataChangeListener;
+    protected Label infoLabel;
     public ShapeType shapeType = null;
 
     @FXML
     protected RadioButton lineRadio, rectangleRadio, circleRadio, ellipseRadio,
-            polylineRadio, polygonRadio, linesRadio,
+            polylineRadio, polygonRadio, polylinesRadio,
             arcRadio, quadraticRadio, cubicRadio, pathRadio,
             linecapSquareRadio, linecapRoundRadio, linecapButtRadio;
     @FXML
@@ -59,6 +70,8 @@ public abstract class ControlShapeOptions extends BaseController {
     @FXML
     protected CheckBox fillCheck, dashCheck, popCheck;
     @FXML
+    protected FlowPane opPane;
+    @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
     @Override
@@ -66,31 +79,16 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             super.initControls();
 
-            if (popCheck != null) {
-                popCheck.setSelected(UserConfig.getBoolean("ImageShapeControlPopMenu", true));
-                popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean("ImageShapeControlPopMenu", popCheck.isSelected());
-                    }
-                });
-            }
+            popCheck.setSelected(UserConfig.getBoolean("ImageShapeControlPopMenu", true));
+            popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean("ImageShapeControlPopMenu", popCheck.isSelected());
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            if (popCheck != null) {
-                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopAnchorMenu")));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 
@@ -449,9 +447,9 @@ public abstract class ControlShapeOptions extends BaseController {
                 imageController.showMaskPolygon();
                 shapeType = ShapeType.Polygon;
 
-            } else if (linesRadio != null && linesRadio.isSelected()) {
+            } else if (polylinesRadio != null && polylinesRadio.isSelected()) {
                 imageController.showMaskPolylines();
-                shapeType = ShapeType.Lines;
+                shapeType = ShapeType.Polylines;
 
             } else if (quadraticRadio != null && quadraticRadio.isSelected()) {
                 imageController.showMaskQuadratic();
@@ -481,8 +479,44 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public void setShapeControls() {
         isSettingValues = true;
-        parametersController.setShapeControls(shapeType);
+        try {
+            parametersController.setShapeControls(shapeType);
+
+            if (infoLabel != null) {
+                infoLabel.setText("");
+                opPane.getChildren().clear();
+                switch (shapeType) {
+                    case Polyline:
+                    case Polygon:
+                        opPane.getChildren().addAll(withdrawButton, clearButton, popCheck);
+                        NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopAnchorMenu")));
+                        infoLabel.setText(message("ShapePointsMoveComments"));
+                        break;
+                    case Polylines:
+                        opPane.getChildren().addAll(withdrawButton, clearButton, popCheck);
+                        NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopLineMenu")));
+                        infoLabel.setText(message("ShapePolylinesTips"));
+                        break;
+                    case Circle:
+                    case Rectangle:
+                    case Ellipse:
+                    case Line:
+                    case Arc:
+                        infoLabel.setText(message("ShapeDragMoveComments"));
+                        break;
+                    case Quadratic:
+                    case Cubic:
+                        opPane.getChildren().addAll(popCheck);
+                        NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopAnchorMenu")));
+                        infoLabel.setText(message("ShapeDragMoveComments"));
+                        break;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
         isSettingValues = false;
+
     }
 
     public void shapeDataChanged() {
@@ -519,6 +553,46 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public void goStyle() {
         redrawShape();
+    }
+
+    @FXML
+    @Override
+    public void withdrawAction() {
+        if (null == shapeType || imageController == null) {
+            return;
+        }
+        switch (shapeType) {
+            case Polyline:
+            case Polygon:
+                parametersController.pointsController.removeLastItem();
+                break;
+            case Polylines:
+                parametersController.linesController.removeLastItem();
+                break;
+        }
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        withdrawAction();
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        if (null == shapeType || imageController == null) {
+            return;
+        }
+        switch (shapeType) {
+            case Polyline:
+            case Polygon:
+                parametersController.pointsController.tableData.clear();
+                break;
+            case Polylines:
+                parametersController.linesController.tableData.clear();
+                break;
+        }
     }
 
 }

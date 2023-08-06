@@ -16,7 +16,7 @@ import mara.mybox.data.DoubleQuadratic;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape.ShapeType;
 import static mara.mybox.data.DoubleShape.ShapeType.Cubic;
-import static mara.mybox.data.DoubleShape.ShapeType.Lines;
+import static mara.mybox.data.DoubleShape.ShapeType.Polylines;
 import static mara.mybox.data.DoubleShape.ShapeType.Quadratic;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
@@ -82,8 +82,8 @@ public class ControlShapeParameters extends BaseController {
             switch (shapeType) {
                 case Rectangle:
                     shapeBox.getChildren().setAll(rectangleBox, goButton);
-                    rectXInput.setText(scale(imageController.maskRectangleData.getSmallX()) + "");
-                    rectYInput.setText(scale(imageController.maskRectangleData.getSmallY()) + "");
+                    rectXInput.setText(scale(imageController.maskRectangleData.getX()) + "");
+                    rectYInput.setText(scale(imageController.maskRectangleData.getY()) + "");
                     rectWidthInput.setText(scale(imageController.maskRectangleData.getWidth()) + "");
                     rectHeightInput.setText(scale(imageController.maskRectangleData.getHeight()) + "");
                     break;
@@ -117,7 +117,7 @@ public class ControlShapeParameters extends BaseController {
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     pointsController.loadList(imageController.maskPolygonData.getPoints());
                     break;
-                case Lines:
+                case Polylines:
                     shapeBox.getChildren().add(linesBox);
                     VBox.setVgrow(linesBox, Priority.ALWAYS);
                     linesController.loadList(imageController.maskPolylinesData.getLines());
@@ -204,7 +204,7 @@ public class ControlShapeParameters extends BaseController {
                     return pickPolyline();
                 case Polygon:
                     return pickPolygon();
-                case Lines:
+                case Polylines:
                     return pickLines();
                 case Quadratic:
                     return pickQuadratic();
@@ -258,7 +258,7 @@ public class ControlShapeParameters extends BaseController {
                 popError(message("InvalidParameter") + ": " + message("Height"));
                 return false;
             }
-            imageController.maskRectangleData = new DoubleRectangle(x, y, x + w - 1, y + h - 1);
+            imageController.maskRectangleData = DoubleRectangle.xywh(x, y, w, h);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -572,7 +572,7 @@ public class ControlShapeParameters extends BaseController {
                 popError(message("NoData"));
                 return false;
             }
-            imageController.svgPath.setContent(d);
+            imageController.maskPathData.setContent(d);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

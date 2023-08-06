@@ -182,7 +182,7 @@ public class ImageSampleController extends ImageViewerController {
                 rightBottomYInput.setStyle(UserConfig.badStyle());
                 return null;
             }
-            DoubleRectangle rect = new DoubleRectangle(
+            DoubleRectangle rect = DoubleRectangle.xy12(
                     x1 * widthRatio(), y1 * heightRatio(),
                     x2 * widthRatio(), y2 * heightRatio());
             if (!rect.isValid()) {
@@ -218,8 +218,8 @@ public class ImageSampleController extends ImageViewerController {
         if (!super.drawMaskRectangle()) {
             return false;
         }
-        rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX() / widthRatio(), 2) + "");
-        rectLeftTopYInput.setText(scale(maskRectangleData.getSmallY() / heightRatio(), 2) + "");
+        rectLeftTopXInput.setText(scale(maskRectangleData.getX() / widthRatio(), 2) + "");
+        rectLeftTopYInput.setText(scale(maskRectangleData.getY() / heightRatio(), 2) + "");
         rightBottomXInput.setText(scale(maskRectangleData.getBigX() / widthRatio(), 2) + "");
         rightBottomYInput.setText(scale(maskRectangleData.getBigY() / heightRatio(), 2) + "");
         updateLabel();

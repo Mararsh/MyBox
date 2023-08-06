@@ -21,15 +21,16 @@ public class DoubleEllipse implements DoubleShape {
         DoubleEllipse e = new DoubleEllipse();
         e.setCenterX((x1 + x2) / 2);
         e.setCenterY((y1 + y2) / 2);
-        e.setRadiusX(Math.abs(x2 - x1 + 1) / 2);
-        e.setRadiusY(Math.abs(y2 - y1 + 1) / 2);
+        e.setRadiusX(Math.abs(x2 - x1) / 2);
+        e.setRadiusY(Math.abs(y2 - y1) / 2);
         return e;
     }
 
     public static DoubleEllipse rect(DoubleRectangle rect) {
         DoubleEllipse e = new DoubleEllipse();
-        e.setCenterX((rect.getSmallX() + rect.getBigX()) / 2);
-        e.setCenterY((rect.getSmallY() + rect.getBigY()) / 2);
+        DoublePoint c = DoubleShape.getCenter(rect);
+        e.setCenterX(c.getX());
+        e.setCenterY(c.getY());
         e.setRadiusX(rect.getWidth() / 2);
         e.setRadiusY(rect.getHeight() / 2);
         return e;

@@ -121,30 +121,6 @@ public class DoublePolylines implements DoubleShape {
         return false;
     }
 
-    public DoubleRectangle getBound() {
-        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE,
-                maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
-        for (List<DoublePoint> lineData : points) {
-            for (DoublePoint p : lineData) {
-                double x = p.getX();
-                double y = p.getY();
-                if (x < minX) {
-                    minX = x;
-                }
-                if (x > maxX) {
-                    maxX = x;
-                }
-                if (y < minY) {
-                    minY = y;
-                }
-                if (y > maxY) {
-                    maxY = y;
-                }
-            }
-        }
-        return new DoubleRectangle(minX, minY, maxX, maxY);
-    }
-
     public void clear() {
         points.clear();
     }
@@ -179,11 +155,6 @@ public class DoublePolylines implements DoubleShape {
             newline.add(new DoublePoint(p.getX() + offsetX, p.getY() + offsetY));
         }
         points.set(index, newline);
-    }
-
-    public DoublePoint getCenter() {
-        DoubleRectangle bound = getBound();
-        return DoubleShape.getCenter(bound);
     }
 
     public int getLinesSize() {
