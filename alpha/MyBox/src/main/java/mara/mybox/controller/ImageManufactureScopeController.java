@@ -363,17 +363,17 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                 case Rectangle:
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
-                    rightBottomXInput.setText(scale(maskRectangleData.getBigX(), 2) + "");
-                    rightBottomYInput.setText(scale(maskRectangleData.getBigY(), 2) + "");
+                    rightBottomXInput.setText(scale(maskRectangleData.getMaxX(), 2) + "");
+                    rightBottomYInput.setText(scale(maskRectangleData.getMaxY(), 2) + "");
                     scope.setRectangle(maskRectangleData.cloneValues());
                     drawMaskRectangle();
                     indicateScope();
                     break;
                 case Ellipse:
-                    rectLeftTopXInput.setText(scale(maskEllipseData.getX1(), 2) + "");
-                    rectLeftTopYInput.setText(scale(maskEllipseData.getY1(), 2) + "");
-                    rightBottomXInput.setText(scale(maskEllipseData.getX2(), 2) + "");
-                    rightBottomYInput.setText(scale(maskEllipseData.getY2(), 2) + "");
+                    rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
+                    rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
+                    rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
+                    rightBottomYInput.setText(scale(maskEllipseData.getMaxY(), 2) + "");
                     scope.setEllipse(maskEllipseData.cloneValues());
                     drawMaskEllipse();
                     indicateScope();

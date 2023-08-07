@@ -14,7 +14,8 @@ import mara.mybox.value.Colors;
  */
 public class MarginTools {
 
-    public static BufferedImage blurMarginsAlpha(BufferedImage source, int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
+    public static BufferedImage blurMarginsAlpha(BufferedImage source, int blurWidth,
+            boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -76,10 +77,7 @@ public class MarginTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int top;
-            int bottom;
-            int left;
-            int right;
+            int top, bottom, left, right;
             int cutValue = cutColor.getRGB();
             if (cutTop) {
                 top = -1;
@@ -104,7 +102,7 @@ public class MarginTools {
                 for (int j = height - 1; j >= 0; --j) {
                     for (int i = 0; i < width; ++i) {
                         if (source.getRGB(i, j) != cutValue) {
-                            bottom = j;
+                            bottom = j + 1;
                             break bottomploop;
                         }
                     }
@@ -113,7 +111,7 @@ public class MarginTools {
                     return null;
                 }
             } else {
-                bottom = height - 1;
+                bottom = height;
             }
             if (cutLeft) {
                 left = -1;
@@ -138,7 +136,7 @@ public class MarginTools {
                 for (int i = width - 1; i >= 0; --i) {
                     for (int j = 0; j < height; ++j) {
                         if (source.getRGB(i, j) != cutValue) {
-                            right = i;
+                            right = i + 1;
                             break rightloop;
                         }
                     }
@@ -147,7 +145,7 @@ public class MarginTools {
                     return null;
                 }
             } else {
-                right = width - 1;
+                right = width;
             }
             BufferedImage target = CropTools.cropOutside(source, left, top, right, bottom);
             return target;
@@ -157,7 +155,8 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage cutMargins(BufferedImage source, int MarginWidth, boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
+    public static BufferedImage cutMargins(BufferedImage source, int MarginWidth,
+            boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             if (source == null || MarginWidth <= 0) {
                 return source;
@@ -169,19 +168,19 @@ public class MarginTools {
             int height = source.getHeight();
             int x1 = 0;
             int y1 = 0;
-            int x2 = width - 1;
-            int y2 = height - 1;
+            int x2 = width;
+            int y2 = height;
             if (cutLeft) {
                 x1 = MarginWidth;
             }
             if (cutRight) {
-                x2 = width - 1 - MarginWidth;
+                x2 = width - MarginWidth;
             }
             if (cutTop) {
                 y1 = MarginWidth;
             }
             if (cutBottom) {
-                y2 = height - 1 - MarginWidth;
+                y2 = height - MarginWidth;
             }
             return CropTools.cropOutside(source, x1, y1, x2, y2);
         } catch (Exception e) {
@@ -190,7 +189,8 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage blurMarginsNoAlpha(BufferedImage source, int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
+    public static BufferedImage blurMarginsNoAlpha(BufferedImage source, int blurWidth,
+            boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -242,7 +242,8 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage addMargins(BufferedImage source, Color addColor, int MarginWidth, boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
+    public static BufferedImage addMargins(BufferedImage source, Color addColor, int MarginWidth,
+            boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         try {
             if (source == null || MarginWidth <= 0) {
                 return source;

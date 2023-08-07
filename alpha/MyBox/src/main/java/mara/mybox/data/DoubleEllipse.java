@@ -5,87 +5,118 @@ import java.awt.geom.Ellipse2D;
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:29:29
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 // https://en.wikipedia.org/wiki/Ellipse
 public class DoubleEllipse implements DoubleShape {
 
-    private double centerX, centerY, radiusX, radiusY;
+    protected double x, y, width, height;
 
     public DoubleEllipse() {
     }
 
-    public static DoubleEllipse rect(double x1, double y1, double x2, double y2) {
+    public static DoubleEllipse xywh(double x, double y, double width, double height) {
         DoubleEllipse e = new DoubleEllipse();
-        e.setCenterX((x1 + x2) / 2);
-        e.setCenterY((y1 + y2) / 2);
-        e.setRadiusX(Math.abs(x2 - x1) / 2);
-        e.setRadiusY(Math.abs(y2 - y1) / 2);
+        e.setX(x);
+        e.setY(y);
+        e.setWidth(width);
+        e.setHeight(height);
+        return e;
+    }
+
+    public static DoubleEllipse xy12(double x1, double y1, double x2, double y2) {
+        DoubleEllipse e = new DoubleEllipse();
+        e.setX(Math.min(x1, x2));
+        e.setY(Math.min(y1, y2));
+        e.setWidth(Math.abs(x2 - x1));
+        e.setHeight(Math.abs(y2 - y1));
         return e;
     }
 
     public static DoubleEllipse rect(DoubleRectangle rect) {
         DoubleEllipse e = new DoubleEllipse();
-        DoublePoint c = DoubleShape.getCenter(rect);
-        e.setCenterX(c.getX());
-        e.setCenterY(c.getY());
-        e.setRadiusX(rect.getWidth() / 2);
-        e.setRadiusY(rect.getHeight() / 2);
+        e.setX(rect.getX());
+        e.setY(rect.getY());
+        e.setWidth(rect.getWidth());
+        e.setHeight(rect.getHeight());
         return e;
     }
 
     public static DoubleEllipse ellipse(double centerX, double centerY, double radiusX, double radiusY) {
         DoubleEllipse e = new DoubleEllipse();
-        e.setCenterX(centerX);
-        e.setCenterY(centerY);
-        e.setRadiusX(radiusX);
-        e.setRadiusY(radiusY);
+        e.setX(centerX - radiusX);
+        e.setY(centerY - radiusY);
+        e.setWidth(radiusX * 2);
+        e.setHeight(radiusY * 2);
         return e;
     }
 
-    public double getX1() {
-        return centerX - radiusX;
+    public double getCenterX() {
+        return x + width * 0.5;
     }
 
-    public double getY1() {
-        return centerY - radiusY;
+    public double getCenterY() {
+        return y + height * 0.5;
     }
 
-    public double getX2() {
-        return centerX + radiusX;
+    public double getRadiusX() {
+        return width * 0.5;
     }
 
-    public double getY2() {
-        return centerY + radiusY;
+    public double getRadiusY() {
+        return height * 0.5;
+    }
+
+    // exclude maxX and maxY       
+    public double getMaxX() {
+        return x + width;
+    }
+
+    public double getMaxY() {
+        return y + height;
+    }
+
+    public void setMaxX(double maxX) {
+        width = Math.abs(maxX - x);
+    }
+
+    public void setMaxY(double maxY) {
+        height = Math.abs(maxY - y);
+    }
+
+    public void changeX(double nx) {
+        width = width + x - nx;
+        x = nx;
+    }
+
+    public void changeY(double ny) {
+        height = height + y - ny;
+        y = ny;
     }
 
     @Override
     public Ellipse2D.Double getShape() {
-        return new Ellipse2D.Double(centerX - radiusX, centerY - radiusY, 2 * radiusX, 2 * radiusY);
+        return new Ellipse2D.Double(x, y, width, height);
     }
 
     @Override
     public boolean isValid() {
-        return radiusX > 0 && radiusY > 0;
+        return true;
     }
 
     @Override
     public boolean isEmpty() {
-        return !isValid();
+        return !isValid() || width <= 0 || height <= 0;
     }
 
     @Override
     public DoubleEllipse cloneValues() {
-        return ellipse(centerX, centerY, radiusX, radiusY);
+        return xywh(x, y, width, height);
     }
 
     @Override
     public DoubleEllipse translateRel(double offsetX, double offsetY) {
-        DoubleEllipse nEllipse = ellipse(
-                centerX + offsetX, centerY + offsetY,
-                radiusX, radiusY);
+        DoubleEllipse nEllipse = xywh(x + offsetX, y + offsetY, width, height);
         return nEllipse;
     }
 
@@ -98,39 +129,40 @@ public class DoubleEllipse implements DoubleShape {
     /*
         get
      */
-    public double getCenterX() {
-        return centerX;
+    public double getX() {
+        return x;
     }
 
-    public double getCenterY() {
-        return centerY;
+    public double getY() {
+        return y;
     }
 
-    public double getRadiusX() {
-        return radiusX;
+    public double getWidth() {
+        return width;
     }
 
-    public double getRadiusY() {
-        return radiusY;
+    public double getHeight() {
+        return height;
     }
+
 
     /*
         set
      */
-    public void setCenterX(double centerX) {
-        this.centerX = centerX;
+    public void setX(double x) {
+        this.x = x;
     }
 
-    public void setCenterY(double centerY) {
-        this.centerY = centerY;
+    public void setY(double y) {
+        this.y = y;
     }
 
-    public void setRadiusX(double radiusX) {
-        this.radiusX = radiusX;
+    public void setWidth(double width) {
+        this.width = width;
     }
 
-    public void setRadiusY(double radiusY) {
-        this.radiusY = radiusY;
+    public void setHeight(double height) {
+        this.height = height;
     }
 
 }

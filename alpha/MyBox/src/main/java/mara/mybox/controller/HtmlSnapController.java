@@ -223,7 +223,7 @@ public class HtmlSnapController extends WebAddressController {
             if (snapTotalHeight < snapHeight + snapStep) { // last snap
                 cropped = CropTools.cropOutsideFx(snapshot, 0,
                         (int) ((snapStep + snapHeight - snapTotalHeight) * snapScale),
-                        (int) snapshot.getWidth() - 1, (int) snapshot.getHeight() - 1);
+                        (int) snapshot.getWidth(), (int) snapshot.getHeight());
             } else {
                 cropped = snapshot;
             }

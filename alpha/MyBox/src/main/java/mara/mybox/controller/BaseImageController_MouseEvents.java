@@ -558,7 +558,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         } else if (maskRectangle != null && maskRectangle.isVisible()) {
 
-            if (x < maskRectangleData.getBigX() && y < maskRectangleData.getBigY()) {
+            if (x < maskRectangleData.getMaxX() && y < maskRectangleData.getMaxY()) {
                 if (x >= imageWidth() - 1) {
                     x = imageWidth() - 2;
                 }
@@ -581,7 +581,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
         if (maskRectangle != null && maskRectangle.isVisible()) {
             double y = maskEventY(event);
-            if (y < maskRectangleData.getBigY()) {
+            if (y < maskRectangleData.getMaxY()) {
                 if (y >= imageHeight() - 1) {
                     y = imageHeight() - 2;
                 }
@@ -601,8 +601,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
             double ry = maskHandlerBottomCenter.getY() - event.getY();
             if (ry > 0) {
-                ry = ry * imageYRatio() / 2;
-                maskEllipseData.setRadiusY(ry);
+                ry = ry * imageYRatio();
+                maskEllipseData.setHeight(ry);
                 drawMaskEllipse();
                 maskShapeDataChanged();
             }
@@ -629,14 +629,14 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         double x = maskEventX(event);
         double y = maskEventY(event);
 
-        if (x > maskRectangleData.getX() && y < maskRectangleData.getBigY()) {
+        if (x > maskRectangleData.getX() && y < maskRectangleData.getMaxY()) {
             if (x <= 0) {
                 x = 1;
             }
             if (y >= imageHeight() - 1) {
                 y = imageHeight() - 2;
             }
-            maskRectangleData.setBigX(x);
+            maskRectangleData.setMaxX(x);
             maskRectangleData.changeY(y);
             drawMaskRectangle();
             maskShapeDataChanged();
@@ -652,7 +652,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         double x = maskEventX(event);
         double y = maskEventY(event);
 
-        if (x < maskRectangleData.getBigX() && y > maskRectangleData.getY()) {
+        if (x < maskRectangleData.getMaxX() && y > maskRectangleData.getY()) {
             if (x >= imageWidth() - 1) {
                 x = imageWidth() - 2;
             }
@@ -660,7 +660,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 y = 1;
             }
             maskRectangleData.changeX(x);
-            maskRectangleData.setBigY(y);
+            maskRectangleData.setMaxY(y);
             drawMaskRectangle();
             maskShapeDataChanged();
         }
@@ -679,7 +679,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 if (y <= 0) {
                     y = 1;
                 }
-                maskRectangleData.setBigY(y);
+                maskRectangleData.setMaxY(y);
                 drawMaskRectangle();
                 maskShapeDataChanged();
             }
@@ -695,8 +695,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
             double ry = event.getY() - maskHandlerTopCenter.getY();
             if (ry > 0) {
-                ry = ry * imageYRatio() / 2;
-                maskEllipseData.setRadiusY(ry);
+                ry = ry * imageYRatio();
+                maskEllipseData.setHeight(ry);
                 drawMaskEllipse();
                 maskShapeDataChanged();
             }
@@ -737,8 +737,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (y <= 0) {
                 y = 1;
             }
-            maskRectangleData.setBigX(x);
-            maskRectangleData.setBigY(y);
+            maskRectangleData.setMaxX(x);
+            maskRectangleData.setMaxY(y);
             drawMaskRectangle();
             maskShapeDataChanged();
         }
@@ -753,7 +753,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         if (maskRectangle != null && maskRectangle.isVisible()) {
             double x = maskEventX(event);
-            if (x < maskRectangleData.getBigX()) {
+            if (x < maskRectangleData.getMaxX()) {
                 if (x >= imageWidth() - 1) {
                     x = imageWidth() - 2;
                 }
@@ -773,8 +773,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
             double rx = maskHandlerRightCenter.getX() - event.getX();
             if (rx > 0) {
-                rx = rx * imageXRatio() / 2;
-                maskEllipseData.setRadiusX(rx);
+                rx = rx * imageXRatio();
+                maskEllipseData.setWidth(rx);
                 drawMaskEllipse();
                 maskShapeDataChanged();
             }
@@ -806,7 +806,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 if (x <= 0) {
                     x = 1;
                 }
-                maskRectangleData.setBigX(x);
+                maskRectangleData.setMaxX(x);
                 drawMaskRectangle();
                 maskShapeDataChanged();
             }
@@ -822,8 +822,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
             double rx = event.getX() - maskHandlerLeftCenter.getX();
             if (rx > 0) {
-                rx = rx * imageXRatio() / 2;
-                maskEllipseData.setRadiusX(rx);
+                rx = rx * imageXRatio();
+                maskEllipseData.setWidth(rx);
                 drawMaskEllipse();
                 maskShapeDataChanged();
             }

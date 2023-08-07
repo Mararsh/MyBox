@@ -1317,7 +1317,7 @@ public class WeiboSnapRunController extends BaseController {
 //                                            MyBoxLog.debug(pageHeight + " " + snapHeight + " " + windowHeight + " " + y1);
                     String filename = imageFiles.get(imageFiles.size() - 1);
                     Image lastSnap = CropTools.cropOutsideFx(snapshot, 0, y1 * snapScale,
-                            (int) snapshot.getWidth() - 1, (int) snapshot.getHeight() - 1);
+                            (int) snapshot.getWidth(), (int) snapshot.getHeight());
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(lastSnap, null);
                     FileDeleteTools.delete(new File(filename));
                     ImageFileWriters.writeImageFile(bufferedImage, "png", filename);

@@ -82,8 +82,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (maskRectangle != null && maskRectangle.isVisible() && maskRectangleData != null) {
                 if ((int) maskRectangleData.getX() == 0
                         && (int) maskRectangleData.getY() == 0
-                        && (int) maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
-                        && (int) maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+                        && (int) maskRectangleData.getMaxX() == (int) inImage.getWidth()
+                        && (int) maskRectangleData.getMaxY() == (int) inImage.getHeight()) {
                     return inImage;
                 }
                 return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);

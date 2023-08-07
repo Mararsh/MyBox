@@ -6,11 +6,15 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -23,7 +27,9 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.IntTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -504,7 +510,6 @@ public class ImageSplitController extends BaseImagesListController {
                 if (node != null && node.getId() != null
                         && node.getId().startsWith("SplitLines")) {
                     maskPane.getChildren().remove(node);
-                    node = null;
                 }
             }
             imageView.setImage(image);
@@ -524,59 +529,47 @@ public class ImageSplitController extends BaseImagesListController {
                 splitValid.set(false);
                 return;
             }
+            IntTools.sortList(rows);
+            IntTools.sortList(cols);
             Color strokeColor = strokeColor();
             double strokeWidth = strokeWidth();
             double w = viewWidth();
             double h = viewHeight();
-            double ratiox = w / imageWidth();
-            double ratioy = h / imageHeight();
+            double ratiox = viewXRatio() * widthRatio();
+            double ratioy = viewXRatio() * heightRatio();
             for (int i = 0; i < rows.size(); ++i) {
-                double row = rows.get(i) * ratioy * heightRatio();
+                double row = rows.get(i) * ratioy;
                 if (row <= 0 || row >= h - 1) {
                     continue;
                 }
                 Line line = new Line(0, row, w, row);
-                line.setId("SplitLinesRows" + i);
-                line.setStroke(strokeColor);
-                line.setStrokeWidth(strokeWidth);
-                line.getStrokeDashArray().clear();
-                line.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
-                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
-                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
-                maskPane.getChildren().add(line);
+                addLine(i, line, false, ratioy, strokeColor, strokeWidth);
             }
             for (int i = 0; i < cols.size(); ++i) {
-                double col = cols.get(i) * ratiox * widthRatio();
+                double col = cols.get(i) * ratiox;
                 if (col <= 0 || col >= w - 1) {
                     continue;
                 }
                 Line line = new Line(col, 0, col, h);
-                line.setId("SplitLinesCols" + i);
-                line.setStroke(strokeColor);
-                line.setStrokeWidth(strokeWidth);
-                line.getStrokeDashArray().clear();
-                line.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
-                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
-                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
-                maskPane.getChildren().add(line);
+                addLine(i, line, true, ratiox, strokeColor, strokeWidth);
             }
 
             if (displaySizeCheck.isSelected()) {
                 String style = " -fx-font-size: 1.2em; ";
-                IntTools.sortList(rows);
-                IntTools.sortList(cols);
                 for (int i = 0; i < rows.size() - 1; ++i) {
-                    double row = rows.get(i) * ratioy * heightRatio();
+                    double row = rows.get(i) * ratioy;
                     int hv = rows.get(i + 1) - rows.get(i);
                     for (int j = 0; j < cols.size() - 1; ++j) {
-                        double col = cols.get(j) * ratiox * widthRatio();
+                        double col = cols.get(j) * ratiox;
                         int wv = cols.get(j + 1) - cols.get(j);
                         Text text = new Text(wv + "x" + hv);
                         text.setStyle(style);
                         text.setFill(strokeColor);
-                        text.setLayoutX(imageView.getLayoutX() + col + 2);
-                        text.setLayoutY(imageView.getLayoutY() + row + 20);
                         text.setId("SplitLinesText" + i + "x" + j);
+                        text.setLayoutX(imageView.getLayoutX());
+                        text.setLayoutY(imageView.getLayoutY());
+                        text.setX(col + 10);
+                        text.setY(row + 10);
                         maskPane.getChildren().add(text);
                     }
                 }
@@ -600,6 +593,146 @@ public class ImageSplitController extends BaseImagesListController {
             splitValid.set(false);
         }
         makeList();
+    }
+
+    protected void addLine(int index, Line line, boolean isCol,
+            double ratio, Color strokeColor, double strokeWidth) {
+        if (isCol) {
+            line.setId("SplitLinesCols" + index);
+        } else {
+            line.setId("SplitLinesRows" + index);
+        }
+        line.setStroke(strokeColor);
+        line.setStrokeWidth(strokeWidth);
+        line.getStrokeDashArray().clear();
+        line.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
+        line.setLayoutX(imageView.getLayoutX());
+        line.setLayoutY(imageView.getLayoutY());
+        maskPane.getChildren().add(line);
+        line.setCursor(Cursor.MOVE);
+        line.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                maskControlDragged = true;
+                controlPressed(event);
+            }
+        });
+        line.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                maskControlDragged = true;
+            }
+        });
+        line.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                maskControlDragged = true;
+                scrollPane.setPannable(true);
+                double offsetX = imageOffsetX(event);
+                double offsetY = imageOffsetY(event);
+                if (!DoubleShape.changed(offsetX, offsetY)) {
+                    return;
+                }
+                if (isCol) {
+                    double x = event.getX();
+                    line.setStartX(x);
+                    line.setEndX(x);
+                    cols.set(index, (int) (x / ratio));
+                } else {
+                    double y = event.getY();
+                    line.setStartY(y);
+                    line.setEndY(y);
+                    rows.set(index, (int) (y / ratio));
+                }
+                lineChanged();
+            }
+        });
+        line.hoverProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (newValue) {
+                    popNodeMenu(line, lineMenu(line, index, isCol));
+                }
+            }
+        });
+
+    }
+
+    protected List<MenuItem> lineMenu(Line line, int index, boolean isCol) {
+        try {
+            if (line == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (isCol) {
+                menu = new MenuItem(message("Column") + " " + index + "\n"
+                        + "x: " + cols.get(index));
+            } else {
+                menu = new MenuItem(message("Row") + " " + index + "\n"
+                        + "y: " + rows.get(index));
+            }
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                if (isCol) {
+                    cols.remove(index);
+                } else {
+                    rows.remove(index);
+                }
+                lineChanged();
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    protected void lineChanged() {
+        try {
+            customizeRadio.setSelected(true);
+
+            String s = "";
+            for (int col : cols) {
+                if (col <= 0 || col >= operationWidth()) {
+                    continue;
+                }
+                if (s.isEmpty()) {
+                    s += col;
+                } else {
+                    s += "," + col;
+
+                }
+            }
+            customizedColsInput.setText(s);
+
+            s = "";
+            for (int row : rows) {
+                if (row <= 0 || row >= operationHeight()) {
+                    continue;
+                }
+                if (s.isEmpty()) {
+                    s += row;
+                } else {
+                    s += "," + row;
+
+                }
+            }
+            customizedRowsInput.setText(s);
+
+            indicateSplit();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public synchronized void makeList() {
@@ -637,7 +770,7 @@ public class ImageSplitController extends BaseImagesListController {
 
     @Override
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        if (image == null || splitMethod != SplitMethod.Customize) {
+        if (image == null || splitMethod != SplitMethod.Customize || maskControlDragged) {
             return;
         }
 //        imageView.setCursor(Cursor.OPEN_HAND);

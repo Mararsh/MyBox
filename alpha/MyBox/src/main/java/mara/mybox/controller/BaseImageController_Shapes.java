@@ -683,16 +683,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             double layoutY = imageView.getLayoutY();
             double x1 = maskRectangleData.getX() * xRatio;
             double y1 = maskRectangleData.getY() * yRatio;
-            double x2 = maskRectangleData.getBigX() * xRatio;
-            double y2 = maskRectangleData.getBigY() * yRatio;
+            double x2 = maskRectangleData.getMaxX() * xRatio;
+            double y2 = maskRectangleData.getMaxY() * yRatio;
             maskRectangle.setLayoutX(layoutX);
             maskRectangle.setLayoutY(layoutY);
             maskRectangle.setX(x1);
             maskRectangle.setY(y1);
-            maskRectangle.setWidth(x2 - x1 + 1);
-            maskRectangle.setHeight(y2 - y1 + 1);
+            maskRectangle.setWidth(x2 - x1);
+            maskRectangle.setHeight(y2 - y1);
 
-            double anchorHW = anchorSize() * xRatio / 2;
+            double anchorHW = anchorSize() * 0.5;
+            double cx = (x2 + x1) * 0.5;
+            double cy = (y2 + y1) * 0.5;
 
             maskHandlerTopLeft.setLayoutX(layoutX);
             maskHandlerTopLeft.setLayoutY(layoutY);
@@ -701,38 +703,38 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
             maskHandlerTopCenter.setLayoutX(layoutX);
             maskHandlerTopCenter.setLayoutY(layoutY);
-            maskHandlerTopCenter.setX(x1 + maskRectangle.getWidth() / 2 - anchorHW);
+            maskHandlerTopCenter.setX(cx - anchorHW);
             maskHandlerTopCenter.setY(y1 - anchorHW);
 
             maskHandlerTopRight.setLayoutX(layoutX);
             maskHandlerTopRight.setLayoutY(layoutY);
-            maskHandlerTopRight.setX(x1 + maskRectangle.getWidth() - anchorHW);
+            maskHandlerTopRight.setX(x2 - anchorHW);
             maskHandlerTopRight.setY(y1 - anchorHW);
 
             maskHandlerBottomLeft.setLayoutX(layoutX);
             maskHandlerBottomLeft.setLayoutY(layoutY);
             maskHandlerBottomLeft.setX(x1 - anchorHW);
-            maskHandlerBottomLeft.setY(y1 + maskRectangle.getHeight() - anchorHW);
+            maskHandlerBottomLeft.setY(y2 - anchorHW);
 
             maskHandlerBottomCenter.setLayoutX(layoutX);
             maskHandlerBottomCenter.setLayoutY(layoutY);
-            maskHandlerBottomCenter.setX(x1 + maskRectangle.getWidth() / 2 - anchorHW);
-            maskHandlerBottomCenter.setY(y1 + maskRectangle.getHeight() - anchorHW);
+            maskHandlerBottomCenter.setX(cx - anchorHW);
+            maskHandlerBottomCenter.setY(y2 - anchorHW);
 
             maskHandlerBottomRight.setLayoutX(layoutX);
             maskHandlerBottomRight.setLayoutY(layoutY);
-            maskHandlerBottomRight.setX(x1 + maskRectangle.getWidth() - anchorHW);
-            maskHandlerBottomRight.setY(y1 + maskRectangle.getHeight() - anchorHW);
+            maskHandlerBottomRight.setX(x2 - anchorHW);
+            maskHandlerBottomRight.setY(y2 - anchorHW);
 
             maskHandlerLeftCenter.setLayoutX(layoutX);
             maskHandlerLeftCenter.setLayoutY(layoutY);
             maskHandlerLeftCenter.setX(x1 - anchorHW);
-            maskHandlerLeftCenter.setY(y1 + maskRectangle.getHeight() / 2 - anchorHW);
+            maskHandlerLeftCenter.setY(cy - anchorHW);
 
             maskHandlerRightCenter.setLayoutX(layoutX);
             maskHandlerRightCenter.setLayoutY(layoutY);
-            maskHandlerRightCenter.setX(x1 + maskRectangle.getWidth() - anchorHW);
-            maskHandlerRightCenter.setY(y1 + maskRectangle.getHeight() / 2 - anchorHW);
+            maskHandlerRightCenter.setX(x2 - anchorHW);
+            maskHandlerRightCenter.setY(cy - anchorHW);
 
             setShapeStyle(maskRectangle);
             setMaskAnchorsStyle();
@@ -823,7 +825,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskCircle.setCenterY(y);
             maskCircle.setRadius(r);
 
-            double anchorHW = anchorSize() * xRatio / 2;
+            double anchorHW = anchorSize() * 0.5;
             maskHandlerTopCenter.setLayoutX(layoutX);
             maskHandlerTopCenter.setLayoutY(layoutY);
             maskHandlerTopCenter.setX(x - anchorHW);
@@ -901,7 +903,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         double w = imageWidth();
         double h = imageHeight();
-        maskEllipseData = DoubleEllipse.rect(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
+        maskEllipseData = DoubleEllipse.ellipse(w / 2, h / 2, w / 2 - 10, h / 2 - 10);
     }
 
     public boolean drawMaskEllipse() {
@@ -928,7 +930,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskEllipse.setRadiusX(rx);
             maskEllipse.setRadiusY(ry);
 
-            double anchorHW = anchorSize() * xRatio / 2;
+            double anchorHW = anchorSize() * 0.5;
             maskHandlerTopCenter.setLayoutX(layoutX);
             maskHandlerTopCenter.setLayoutY(layoutY);
             maskHandlerTopCenter.setX(cx - anchorHW);
@@ -1035,7 +1037,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskLine.setEndY(endY);
             maskLine.setVisible(true);
 
-            double anchorHW = anchorSize() * xRatio / 2;
+            double anchorHW = anchorSize() * 0.5;
             maskHandlerTopLeft.setLayoutX(layoutX);
             maskHandlerTopLeft.setLayoutY(layoutY);
             maskHandlerTopLeft.setX(startX - anchorHW);
@@ -1748,7 +1750,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskArc.setStartAngle(sa);
             maskArc.setLength(ea);
 
-            double anchorHW = anchorSize() * xRatio / 2;
+            double anchorHW = anchorSize() * 0.5;
             maskHandlerTopCenter.setLayoutX(layoutX);
             maskHandlerTopCenter.setLayoutY(layoutY);
             maskHandlerTopCenter.setX(cx - anchorHW);

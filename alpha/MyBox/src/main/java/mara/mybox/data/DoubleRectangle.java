@@ -1,6 +1,5 @@
 package mara.mybox.data;
 
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -30,8 +29,8 @@ public class DoubleRectangle implements DoubleShape {
 
     public static DoubleRectangle xy12(double x1, double y1, double x2, double y2) {
         DoubleRectangle rect = new DoubleRectangle();
-        rect.setX(x1);
-        rect.setY(y1);
+        rect.setX(Math.min(x1, x2));
+        rect.setY(Math.min(y1, y2));
         rect.setWidth(Math.abs(x2 - x1));
         rect.setHeight(Math.abs(y2 - y1));
         return rect;
@@ -85,7 +84,7 @@ public class DoubleRectangle implements DoubleShape {
 
     @Override
     public boolean isEmpty() {
-        return !isValid() || width == 0 || height == 0;
+        return !isValid() || width <= 0 || height <= 0;
     }
 
     @Override
@@ -101,30 +100,27 @@ public class DoubleRectangle implements DoubleShape {
         return moved != null ? (DoubleRectangle) moved : null;
     }
 
-    public Rectangle rectangle() {
-        return new Rectangle((int) x, (int) y, (int) getWidth(), (int) getHeight());
-    }
-
     public boolean same(DoubleRectangle rect) {
         return rect != null
                 && x == rect.getX() && y == rect.getY()
                 && width == rect.getWidth() && height == rect.getHeight();
     }
 
-    public double getBigX() {
+    // exclude maxX and maxY
+    public double getMaxX() {
         return x + width;
     }
 
-    public double getBigY() {
+    public double getMaxY() {
         return y + height;
     }
 
-    public void setBigX(double x2) {
-        width = Math.abs(x2 - x);
+    public void setMaxX(double maxX) {
+        width = Math.abs(maxX - x);
     }
 
-    public void setBigY(double y2) {
-        height = Math.abs(y2 - y);
+    public void setMaxY(double maxY) {
+        height = Math.abs(maxY - y);
     }
 
     public void changeX(double nx) {

@@ -1,7 +1,6 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.BaseData;
 import static mara.mybox.db.table.TableImageScope.DataSeparator;
@@ -374,7 +372,7 @@ public class ImageScope extends BaseData {
                     DoubleRectangle rect = scope.getRectangle();
                     if (rect != null) {
                         s = (int) rect.getX() + DataSeparator + (int) rect.getY() + DataSeparator
-                                + (int) rect.getBigX() + DataSeparator + (int) rect.getBigY();
+                                + (int) rect.getMaxX() + DataSeparator + (int) rect.getMaxY();
                     }
                     break;
                 case Circle:
@@ -388,11 +386,8 @@ public class ImageScope extends BaseData {
                 case Ellipse:
                     DoubleEllipse ellipse = scope.getEllipse();
                     if (ellipse != null) {
-                        Rectangle erect = DoubleShape.getBound(ellipse);
-                        if (erect != null) {
-                            s = (int) ellipse.getX1() + DataSeparator + (int) ellipse.getY1() + DataSeparator
-                                    + (int) ellipse.getX2() + DataSeparator + (int) ellipse.getY2();
-                        }
+                        s = (int) ellipse.getX() + DataSeparator + (int) ellipse.getY() + DataSeparator
+                                + (int) ellipse.getMaxX() + DataSeparator + (int) ellipse.getMaxY();
                     }
                     break;
                 case Polygon:
@@ -516,7 +511,7 @@ public class ImageScope extends BaseData {
                 case Ellipse: {
                     String[] items = areaData.split(DataSeparator);
                     if (items.length == 4) {
-                        DoubleEllipse ellipse = DoubleEllipse.rect(
+                        DoubleEllipse ellipse = DoubleEllipse.xy12(
                                 Double.parseDouble(items[0]), Double.parseDouble(items[1]),
                                 Double.parseDouble(items[2]), Double.parseDouble(items[3])
                         );

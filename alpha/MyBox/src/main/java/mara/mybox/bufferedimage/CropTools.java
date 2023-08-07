@@ -81,7 +81,7 @@ public class CropTools {
         if (rectangle == null) {
             return source;
         }
-        return cropOutside(source, rectangle.getX(), rectangle.getY(), rectangle.getBigX(), rectangle.getBigY());
+        return cropOutside(source, rectangle.getX(), rectangle.getY(), rectangle.getMaxX(), rectangle.getMaxY());
     }
 
     public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2) {

@@ -307,8 +307,8 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
-                    rightBottomXInput.setText(scale(maskRectangleData.getBigX(), 2) + "");
-                    rightBottomYInput.setText(scale(maskRectangleData.getBigY(), 2) + "");
+                    rightBottomXInput.setText(scale(maskRectangleData.getMaxX(), 2) + "");
+                    rightBottomYInput.setText(scale(maskRectangleData.getMaxY(), 2) + "");
                     rectangleLabel.setText(message("Rectangle"));
                     break;
 
@@ -327,10 +327,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    rectLeftTopXInput.setText(scale(maskEllipseData.getX1(), 2) + "");
-                    rectLeftTopYInput.setText(scale(maskEllipseData.getY1(), 2) + "");
-                    rightBottomXInput.setText(scale(maskEllipseData.getX2(), 2) + "");
-                    rightBottomYInput.setText(scale(maskEllipseData.getY2(), 2) + "");
+                    rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
+                    rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
+                    rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
+                    rightBottomYInput.setText(scale(maskEllipseData.getMaxY(), 2) + "");
                     rectangleLabel.setText(message("Ellipse"));
                     break;
 

@@ -601,7 +601,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     }
 
     public ImageInformation setRegion(double x1, double y1, double x2, double y2) {
-        region = new Rectangle2D.Double(x1, y1, Math.abs(x2 - x1 + 1), Math.abs(y2 - y1 + 1));
+        region = new Rectangle2D.Double(x1, y1, Math.abs(x2 - x1), Math.abs(y2 - y1));
         regionImage = null;
         return this;
     }

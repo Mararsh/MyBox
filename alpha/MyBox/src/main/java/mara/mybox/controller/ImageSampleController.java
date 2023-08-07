@@ -220,8 +220,8 @@ public class ImageSampleController extends ImageViewerController {
         }
         rectLeftTopXInput.setText(scale(maskRectangleData.getX() / widthRatio(), 2) + "");
         rectLeftTopYInput.setText(scale(maskRectangleData.getY() / heightRatio(), 2) + "");
-        rightBottomXInput.setText(scale(maskRectangleData.getBigX() / widthRatio(), 2) + "");
-        rightBottomYInput.setText(scale(maskRectangleData.getBigY() / heightRatio(), 2) + "");
+        rightBottomXInput.setText(scale(maskRectangleData.getMaxX() / widthRatio(), 2) + "");
+        rightBottomYInput.setText(scale(maskRectangleData.getMaxY() / heightRatio(), 2) + "");
         updateLabel();
         return true;
     }

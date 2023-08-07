@@ -281,8 +281,8 @@ public class ImageScopeTools {
             BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
                 lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
-            g.drawOval((int) Math.round(ellipse.getX1()), (int) Math.round(ellipse.getY1()),
-                    (int) Math.round(ellipse.getRadiusX() * 2), (int) Math.round(ellipse.getRadiusY() * 2));
+            g.drawOval((int) Math.round(ellipse.getX()), (int) Math.round(ellipse.getY()),
+                    (int) Math.round(ellipse.getWidth()), (int) Math.round(ellipse.getHeight()));
             g.dispose();
             return target;
         } catch (Exception e) {

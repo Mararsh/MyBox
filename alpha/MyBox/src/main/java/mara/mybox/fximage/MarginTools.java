@@ -32,9 +32,9 @@ public class MarginTools {
             int imageWidth = (int) image.getWidth();
             int imageHeight = (int) image.getHeight();
             int top = 0;
-            int bottom = imageHeight - 1;
+            int bottom = imageHeight;
             int left = 0;
-            int right = imageWidth - 1;
+            int right = imageWidth;
             if (cutTop) {
                 top = MarginWidth;
             }
@@ -54,15 +54,16 @@ public class MarginTools {
         }
     }
 
-    public static Image cutMarginsByColor(Image image, Color mColor, int colorDistance, boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
+    public static Image cutMarginsByColor(Image image, Color mColor, int colorDistance,
+            boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
             PixelReader pixelReader = image.getPixelReader();
             int top = 0;
-            int bottom = height - 1;
+            int bottom = height;
             int left = 0;
-            int right = width - 1;
+            int right = width;
             int distance2 = colorDistance * colorDistance;
             if (cutTop) {
                 for (int j = 0; j < height; ++j) {
@@ -93,7 +94,7 @@ public class MarginTools {
                         }
                     }
                     if (notMatch) {
-                        bottom = j;
+                        bottom = j + 1;
                         break;
                     }
                 }
@@ -131,7 +132,7 @@ public class MarginTools {
                         }
                     }
                     if (notMatch) {
-                        right = i;
+                        right = i + 1;
                         break;
                     }
                 }
@@ -182,7 +183,8 @@ public class MarginTools {
         }
     }
 
-    public static Image addMarginsFx(Image image, Color color, int MarginWidth, boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
+    public static Image addMarginsFx(Image image, Color color, int MarginWidth,
+            boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         try {
             if (image == null || MarginWidth <= 0) {
                 return image;
@@ -193,12 +195,10 @@ public class MarginTools {
             int totalHegiht = height;
             int x1 = 0;
             int y1 = 0;
-            int x2 = width;
-            int y2 = height;
+
             if (addLeft) {
                 totalWidth += MarginWidth;
                 x1 = MarginWidth;
-                x2 = width + MarginWidth;
             }
             if (addRight) {
                 totalWidth += MarginWidth;
@@ -206,7 +206,7 @@ public class MarginTools {
             if (addTop) {
                 totalHegiht += MarginWidth;
                 y1 = MarginWidth;
-                y2 = height + MarginWidth;
+
             }
             if (addBottom) {
                 totalHegiht += MarginWidth;
@@ -254,7 +254,8 @@ public class MarginTools {
     }
 
     // This way may fail for big image
-    public static Image addMarginsFx2(Image image, Color color, int MarginWidth, boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
+    public static Image addMarginsFx2(Image image, Color color, int MarginWidth,
+            boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         try {
             if (image == null || MarginWidth <= 0) {
                 return image;
@@ -300,7 +301,8 @@ public class MarginTools {
         }
     }
 
-    public static Image blurMarginsNoAlpha(Image image, int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
+    public static Image blurMarginsNoAlpha(Image image, int blurWidth,
+            boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         if (image == null || blurWidth <= 0) {
             return image;
         }

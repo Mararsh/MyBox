@@ -595,16 +595,16 @@ public class ControlImageText extends BaseController {
     public void countValues(Graphics2D g, FontMetrics metrics, double imageWidth, double imageHeight) {
         countTextBound(g, metrics);
         if (rightBottomRadio.isSelected()) {
-            baseX = (int) imageWidth - 1 - margin - textWidth;
-            baseY = (int) imageHeight - 1 - margin - textHeight;
+            baseX = (int) imageWidth - margin - textWidth;
+            baseY = (int) imageHeight - margin - textHeight;
 
         } else if (rightTopRadio.isSelected()) {
-            baseX = (int) imageWidth - 1 - margin - textWidth;
+            baseX = (int) imageWidth - margin - textWidth;
             baseY = margin;
 
         } else if (leftBottomRadio.isSelected()) {
             baseX = margin;
-            baseY = (int) imageHeight - 1 - margin - textHeight;
+            baseY = (int) imageHeight - margin - textHeight;
 
         } else if (leftTopRadio.isSelected()) {
             baseX = margin;

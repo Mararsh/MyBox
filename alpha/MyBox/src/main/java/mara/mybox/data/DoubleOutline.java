@@ -14,7 +14,6 @@ public class DoubleOutline extends DoubleRectangle {
 
     private BufferedImage image;
     private int insideColor;
-    private double offsetX, offsetY;
 
     public DoubleOutline() {
     }
@@ -35,8 +34,6 @@ public class DoubleOutline extends DoubleRectangle {
         y = rect.getY();
         width = rect.getWidth();
         height = rect.getHeight();
-        offsetX = x >= 0 ? 0 : x;
-        offsetY = y >= 0 ? 0 : y;
     }
 
     public DoubleOutline(ImageScope scope) {
