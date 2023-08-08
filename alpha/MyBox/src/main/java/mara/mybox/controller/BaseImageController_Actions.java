@@ -88,15 +88,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
                 return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
 
-            } else if (maskCircle != null && maskCircle.isVisible() && maskCircle != null) {
-                return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
-
-            } else if (maskEllipse != null && maskEllipse.isVisible() && maskEllipse != null) {
-                return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
-
-            } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygon != null) {
-                return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
-
             } else {
                 return inImage;
             }

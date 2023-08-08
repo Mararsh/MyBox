@@ -1,7 +1,7 @@
 package mara.mybox.data;
 
-import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
 
 /**
  * @Author Mara
@@ -58,8 +58,9 @@ public interface DoubleShape {
         return false;
     }
 
-    public static Rectangle getBound(DoubleShape shape) {
-        return shape.getShape().getBounds();
+    // notice bound may truncate values
+    public static Rectangle2D getBound(DoubleShape shape) {
+        return shape.getShape().getBounds2D();
     }
 
     public static boolean contains(DoubleShape shape, double x, double y) {
@@ -67,7 +68,7 @@ public interface DoubleShape {
     }
 
     public static DoublePoint getCenter(DoubleShape shape) {
-        Rectangle bound = getBound(shape);
+        Rectangle2D bound = getBound(shape);
         return new DoublePoint(bound.getCenterX(), bound.getCenterY());
     }
 

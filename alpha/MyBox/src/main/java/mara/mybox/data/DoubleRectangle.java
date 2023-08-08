@@ -87,6 +87,10 @@ public class DoubleRectangle implements DoubleShape {
         return !isValid() || width <= 0 || height <= 0;
     }
 
+    public boolean contains(double px, double py) {
+        return px >= x && px < x + width && py >= y && py < y + height;
+    }
+
     @Override
     public boolean translateRel(double offsetX, double offsetY) {
         x += offsetX;
@@ -125,6 +129,12 @@ public class DoubleRectangle implements DoubleShape {
     public void changeY(double ny) {
         height = height + y - ny;
         y = ny;
+    }
+
+    public String values() {
+        return "[x=" + x + ",y=" + y
+                + ",width=" + width + ",height=" + height
+                + ",maxX=" + getMaxX() + ",maxY=" + getMaxY() + "]";
     }
 
 
