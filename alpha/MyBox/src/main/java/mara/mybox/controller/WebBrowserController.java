@@ -110,8 +110,8 @@ public class WebBrowserController extends BaseController {
     }
 
     @FXML
-    public void showFunctionsMenu(Event fevent) {
-        showFunctionsMenu(fevent, initTab, null);
+    public void showFunctionsMenu(Event event) {
+        showFunctionsMenu(event, initTab, null);
     }
 
     public void popFunctionsMenu(Event event, Tab tab, String title) {
@@ -216,6 +216,20 @@ public class WebBrowserController extends BaseController {
                 }
             });
             menu.setDisable(tabPane.getTabs().size() < 2);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStarFilled.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebFavoritesController.oneOpen();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("WebHistories"), StyleTools.getIconImageView("iconHistory.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebHistoriesController.oneOpen();
+            });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());

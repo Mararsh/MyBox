@@ -29,6 +29,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.IntTools;
 import static mara.mybox.value.Languages.message;
@@ -61,7 +62,7 @@ public class ImageSplitController extends BaseImagesListController {
     protected TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
             widthInput, heightInput;
     @FXML
-    protected CheckBox displaySizeCheck;
+    protected CheckBox displaySizeCheck, popMenuCheck;
     @FXML
     protected VBox splitOptionsBox, splitCustomizeBox;
     @FXML
@@ -91,10 +92,20 @@ public class ImageSplitController extends BaseImagesListController {
 
             rightPane.disableProperty().bind(imageView.imageProperty().isNull());
 
+            displaySizeCheck.setSelected(UserConfig.getBoolean(baseName + "DisplaySize", true));
             displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    UserConfig.setBoolean(baseName + "DisplaySize", displaySizeCheck.isSelected());
                     indicateSplit();
+                }
+            });
+
+            popMenuCheck.setSelected(UserConfig.getBoolean(baseName + "PopMenu", true));
+            popMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "PopMenu", popMenuCheck.isSelected());
                 }
             });
 
@@ -146,8 +157,8 @@ public class ImageSplitController extends BaseImagesListController {
 
             } else if (customizeRadio.isSelected()) {
                 splitMethod = SplitMethod.Customize;
-                splitOptionsBox.getChildren().addAll(splitCustomizeBox, goButton);
-                promptLabel.setText(message("SplitCustomComments"));
+                splitOptionsBox.getChildren().addAll(splitCustomizeBox, goButton, promptLabel);
+                promptLabel.setText(message("SplitImageCustom"));
 
             } else if (numbersRadio.isSelected()) {
                 splitMethod = SplitMethod.ByNumber;
@@ -158,8 +169,8 @@ public class ImageSplitController extends BaseImagesListController {
 
             } else if (sizeRadio.isSelected()) {
                 splitMethod = SplitMethod.BySize;
-                splitOptionsBox.getChildren().addAll(splitSizePane, goButton);
-                promptLabel.setText(message("SplitSizeComments"));
+                splitOptionsBox.getChildren().addAll(splitSizePane, goButton, promptLabel);
+                promptLabel.setText(message("SplitImageSize"));
                 widthInput.setText((int) (imageWidth() / (widthRatio() * 3)) + "");
                 heightInput.setText((int) (imageHeight() / (heightRatio() * 3)) + "");
 
@@ -577,14 +588,6 @@ public class ImageSplitController extends BaseImagesListController {
 
             String comments = message("SplittedNumber") + ": "
                     + (cols.size() - 1) * (rows.size() - 1);
-            if (splitMethod == SplitMethod.ByNumber) {
-                comments += "  " + message("EachSplittedImageActualSize") + ": "
-                        + operationWidth() / (cols.size() - 1)
-                        + " x " + operationHeight() / (rows.size() - 1);
-
-            } else {
-                comments += "  " + message("EachSplittedImageActualSizeComments");
-            }
             sizeLabel.setText(comments);
             splitValid.set(true);
 
@@ -650,15 +653,15 @@ public class ImageSplitController extends BaseImagesListController {
         line.hoverProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                if (newValue) {
-                    popNodeMenu(line, lineMenu(line, index, isCol));
+                if (newValue && popMenuCheck.isSelected()) {
+                    popNodeMenu(line, lineMenu(line, index, isCol, ratio));
                 }
             }
         });
 
     }
 
-    protected List<MenuItem> lineMenu(Line line, int index, boolean isCol) {
+    protected List<MenuItem> lineMenu(Line line, int index, boolean isCol, double ratio) {
         try {
             if (line == null) {
                 return null;
@@ -666,16 +669,47 @@ public class ImageSplitController extends BaseImagesListController {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
+            int currentValue;
+            String name, type;
             if (isCol) {
-                menu = new MenuItem(message("Column") + " " + index + "\n"
-                        + "x: " + cols.get(index));
+                name = message("Column");
+                type = "x";
+                currentValue = cols.get(index);
             } else {
-                menu = new MenuItem(message("Row") + " " + index + "\n"
-                        + "y: " + rows.get(index));
+                name = message("Row");
+                type = "y";
+                currentValue = rows.get(index);
             }
+
+            menu = new MenuItem(name + " " + index + "\n" + type + ": " + currentValue);
             menu.setStyle("-fx-text-fill: #2e598a;");
             items.add(menu);
             items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("MoveTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                String value = PopTools.askValue(baseTitle, name, type, currentValue + "");
+                if (value == null || value.isBlank()) {
+                    return;
+                }
+                try {
+                    int iv = Integer.parseInt(value);
+                    double vv = iv * ratio;
+                    if (isCol) {
+                        line.setStartX(vv);
+                        line.setEndX(vv);
+                        cols.set(index, iv);
+                    } else {
+                        line.setStartY(vv);
+                        line.setEndY(vv);
+                        rows.set(index, iv);
+                    }
+                    lineChanged();
+                } catch (Exception e) {
+                    popError(message("InvalidValue"));
+                }
+            });
+            items.add(menu);
 
             menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -687,6 +721,8 @@ public class ImageSplitController extends BaseImagesListController {
                 lineChanged();
             });
             items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             return items;
 
@@ -773,9 +809,6 @@ public class ImageSplitController extends BaseImagesListController {
         if (image == null || splitMethod != SplitMethod.Customize || maskControlDragged) {
             return;
         }
-//        imageView.setCursor(Cursor.OPEN_HAND);
-        promptLabel.setText(message("SplitCustomComments"));
-
         if (event.getButton() == MouseButton.PRIMARY) {
 
             int y = (int) Math.round(p.getY() / heightRatio());

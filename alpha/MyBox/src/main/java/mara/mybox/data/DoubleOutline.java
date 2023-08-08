@@ -56,11 +56,4 @@ public class DoubleOutline extends DoubleRectangle {
         return new DoubleOutline(image, this, insideColor);
     }
 
-    @Override
-    public DoubleOutline translateRel(double offsetX, double offsetY) {
-        DoubleRectangle nRectangle = DoubleRectangle.xywh(
-                x + offsetX, y + offsetY, width, height);
-        return new DoubleOutline(image, nRectangle, insideColor);
-    }
-
 }

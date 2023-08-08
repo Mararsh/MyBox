@@ -8,7 +8,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -16,7 +15,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.IntPoint;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -210,17 +208,6 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         xyText.setX(event.getX() + 10);
         xyText.setY(event.getY());
         return p;
-    }
-
-    public IntPoint getImageXYint(MouseEvent event, ImageView view) {
-        DoublePoint p = ImageViewTools.getImageXY(event, view);
-        if (p == null) {
-            return null;
-        }
-        int ix = (int) Math.round(p.getX());
-        int iy = (int) Math.round(p.getY());
-
-        return new IntPoint(ix, iy);
     }
 
     protected void initViewControls() {

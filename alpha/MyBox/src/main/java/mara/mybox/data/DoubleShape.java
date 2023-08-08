@@ -18,9 +18,7 @@ public interface DoubleShape {
 
     Shape getShape();
 
-    DoubleShape translateRel(double offsetX, double offsetY);
-
-    DoubleShape translateAbs(double x, double y);
+    boolean translateRel(double offsetX, double offsetY);
 
     /*
         static
@@ -43,23 +41,21 @@ public interface DoubleShape {
         return changed(p1.getX() - p2.getX(), p1.getY() - p2.getY());
     }
 
-    public static DoubleShape translateAbs(DoubleShape shape, double x, double y) {
+    public static boolean translateAbs(DoubleShape shape, double x, double y) {
         DoublePoint center = getCenter(shape);
         double offsetX = x - center.getX();
         double offsetY = y - center.getY();
         if (DoubleShape.changed(offsetX, offsetY)) {
             return shape.translateRel(offsetX, offsetY);
-        } else {
-            return null;
         }
+        return false;
     }
 
-    public static DoubleShape translateRel(DoubleShape shape, double offsetX, double offsetY) {
+    public static boolean translateRel(DoubleShape shape, double offsetX, double offsetY) {
         if (DoubleShape.changed(offsetX, offsetY)) {
             return shape.translateRel(offsetX, offsetY);
-        } else {
-            return null;
         }
+        return false;
     }
 
     public static Rectangle getBound(DoubleShape shape) {

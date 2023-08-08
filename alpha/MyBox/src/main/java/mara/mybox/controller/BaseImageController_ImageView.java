@@ -74,7 +74,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck,
             selectAreaCheck;
     @FXML
-    protected ComboBox<String> zoomStepSelector, loadWidthBox;
+    protected ComboBox<String> zoomStepSelector, loadWidthSelector;
     @FXML
     protected ControlImageRender renderController;
 
@@ -137,8 +137,8 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             if (pickColorCheck != null) {
                 NodeStyleTools.setTooltip(pickColorCheck, new Tooltip(message("PickColor") + "\nCTRL+k"));
             }
-            if (loadWidthBox != null) {
-                NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(message("ImageLoadWidthCommnets")));
+            if (loadWidthSelector != null) {
+                NodeStyleTools.setTooltip(loadWidthSelector, new Tooltip(message("ImageLoadWidthCommnets")));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

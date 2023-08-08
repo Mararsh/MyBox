@@ -110,19 +110,19 @@ public class ImageViewerController extends BaseImageController {
             }
 
             loadWidth = defaultLoadWidth;
-            if (loadWidthBox != null) {
+            if (loadWidthSelector != null) {
                 List<String> values = Arrays.asList(message("OriginalSize"),
                         "512", "1024", "256", "128", "2048", "100", "80", "4096");
-                loadWidthBox.getItems().addAll(values);
+                loadWidthSelector.getItems().addAll(values);
                 int v = UserConfig.getInt(baseName + "LoadWidth", defaultLoadWidth);
                 if (v <= 0) {
                     loadWidth = -1;
-                    loadWidthBox.getSelectionModel().select(0);
+                    loadWidthSelector.getSelectionModel().select(0);
                 } else {
                     loadWidth = v;
-                    loadWidthBox.setValue(v + "");
+                    loadWidthSelector.setValue(v + "");
                 }
-                loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                loadWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         if (message("OriginalSize").equals(newValue)) {
@@ -130,12 +130,12 @@ public class ImageViewerController extends BaseImageController {
                         } else {
                             try {
                                 loadWidth = Integer.parseInt(newValue);
-                                ValidationTools.setEditorNormal(loadWidthBox);
                             } catch (Exception e) {
-                                ValidationTools.setEditorBadStyle(loadWidthBox);
+                                ValidationTools.setEditorBadStyle(loadWidthSelector);
                                 return;
                             }
                         }
+                        ValidationTools.setEditorNormal(loadWidthSelector);
                         setLoadWidth();
                     }
                 });

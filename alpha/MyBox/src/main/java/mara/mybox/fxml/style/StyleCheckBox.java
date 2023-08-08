@@ -91,6 +91,14 @@ public class StyleCheckBox {
         if (id.startsWith("lostFocusCommit")) {
             return new StyleData(id, "", message("CommitModificationWhenDataCellLoseFocusComments"), "", "iconInput.png");
         }
+        if (id.startsWith("pop")) {
+            switch (id) {
+                case "popMenuCheck":
+                    return new StyleData(id, message("PopMenu"), "", "iconPop.png");
+                default:
+                    return new StyleData(id, message("Pop"), "", "iconPop.png");
+            }
+        }
         switch (id) {
             case "tableThumbCheck":
                 return new StyleData("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");
@@ -124,8 +132,6 @@ public class StyleCheckBox {
                 return new StyleData("deskewCheck", "", message("Deskew"), "", "iconShear.png");
             case "invertCheck":
                 return new StyleData("invertCheck", "", message("Invert"), "", "iconInvert.png");
-            case "popCheck":
-                return new StyleData(id, message("Pop"), "", "iconPop.png");
             case "pickColorCheck":
                 return new StyleData(id, message("PickColor"), message("ColorPickerComments"), "CTRL+k / ALT+k", "iconPickColor.png");
             case "ditherCheck":

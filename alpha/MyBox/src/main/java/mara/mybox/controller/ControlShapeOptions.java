@@ -66,9 +66,9 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ControlShapeParameters parametersController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
-            anchorSizeSelector, arcSizeSelector;
+            anchorSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck, popCheck;
+    protected CheckBox fillCheck, dashCheck, popMenuCheck;
     @FXML
     protected FlowPane opPane;
     @FXML
@@ -79,11 +79,11 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             super.initControls();
 
-            popCheck.setSelected(UserConfig.getBoolean("ImageShapeControlPopMenu", true));
-            popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            popMenuCheck.setSelected(UserConfig.getBoolean("ImageShapeControlPopMenu", true));
+            popMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageShapeControlPopMenu", popCheck.isSelected());
+                    UserConfig.setBoolean("ImageShapeControlPopMenu", popMenuCheck.isSelected());
                 }
             });
 
@@ -267,27 +267,6 @@ public abstract class ControlShapeOptions extends BaseController {
                             f = -1;
                         }
                         style.setStrokeOpacity(f);
-                        goStyle();
-                    }
-                });
-            }
-
-            if (arcSizeSelector != null) {
-                arcSizeSelector.getItems().setAll(Arrays.asList("0", "2", "5", "10", "15", "30", "40", "50"));
-                arcSizeSelector.setValue(style.getRoundArc() + "");
-                arcSizeSelector.valueProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue v, String ov, String nv) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        int a;
-                        try {
-                            a = Integer.parseInt(arcSizeSelector.getValue());
-                        } catch (Exception e) {
-                            a = -1;
-                        }
-                        style.setRoundArc(a);
                         goStyle();
                     }
                 });
@@ -488,13 +467,12 @@ public abstract class ControlShapeOptions extends BaseController {
                 switch (shapeType) {
                     case Polyline:
                     case Polygon:
-                        opPane.getChildren().addAll(withdrawButton, clearButton, popCheck);
-                        NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopAnchorMenu")));
+                        opPane.getChildren().addAll(withdrawButton, clearButton, popMenuCheck);
                         infoLabel.setText(message("ShapePointsMoveComments"));
                         break;
                     case Polylines:
-                        opPane.getChildren().addAll(withdrawButton, clearButton, popCheck);
-                        NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopLineMenu")));
+                        opPane.getChildren().addAll(withdrawButton, clearButton, popMenuCheck);
+                        NodeStyleTools.setTooltip(popMenuCheck, new Tooltip(message("PopLineMenu")));
                         infoLabel.setText(message("ShapePolylinesTips"));
                         break;
                     case Circle:
@@ -502,12 +480,7 @@ public abstract class ControlShapeOptions extends BaseController {
                     case Ellipse:
                     case Line:
                     case Arc:
-                        infoLabel.setText(message("ShapeDragMoveComments"));
-                        break;
-                    case Quadratic:
-                    case Cubic:
-                        opPane.getChildren().addAll(popCheck);
-                        NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopAnchorMenu")));
+                        opPane.getChildren().addAll(popMenuCheck);
                         infoLabel.setText(message("ShapeDragMoveComments"));
                         break;
                 }

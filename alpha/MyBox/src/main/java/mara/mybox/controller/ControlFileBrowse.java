@@ -120,14 +120,12 @@ public class ControlFileBrowse extends BaseController {
     }
 
     public void checkList() {
+        setCurrentFile(parentController.sourceFile());
         if (listCheck.isSelected()) {
             listBox.setDisable(false);
-            sourceFile = null;
-            setCurrentFile(parentController.sourceFile());
         } else {
             listBox.setDisable(true);
             tableData.clear();
-            sourceFile = null;
         }
     }
 
@@ -168,20 +166,25 @@ public class ControlFileBrowse extends BaseController {
     public void refreshAction() {
         try {
             doubleClickedToLoad = false;
+            if (sourceFile == null) {
+                infoLabel.setText("");
+                openSourceButton.setDisable(true);
+                return;
+            } else {
+                infoLabel.setText(message("Directory") + ": "
+                        + sourceFile.getParent());
+                openSourceButton.setDisable(false);
+            }
             if (!listCheck.isSelected()) {
                 return;
             }
-            openSourceButton.setDisable(sourceFile == null);
             refreshButton.setDisable(sourceFile == null);
             tableData.clear();
             tableView.getSortOrder().clear();
-            if (sourceFile == null) {
-                infoLabel.setText("");
-                return;
-            }
+
+            List<File> files = validFiles(sourceFile);
             String info = message("Directory") + ": "
                     + sourceFile.getParent() + "\n";
-            List<File> files = validFiles(sourceFile);
             if (files == null || files.isEmpty()) {
                 info += message("Valid") + ": 0";
             } else {

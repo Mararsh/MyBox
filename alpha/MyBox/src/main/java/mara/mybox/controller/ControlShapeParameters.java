@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
 import java.awt.geom.Arc2D;
+import java.util.Arrays;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -28,10 +30,10 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ControlShapeParameters extends BaseController {
-
+    
     protected ControlShapeOptions optionsOontroller;
     protected BaseImageController imageController;
-
+    
     @FXML
     protected VBox shapeBox, pointsBox, linesBox, rectangleBox, circleBox, ellipseBox,
             lineBox, quadraticBox, cubicBox, arcBox, pathBox;
@@ -48,6 +50,8 @@ public class ControlShapeParameters extends BaseController {
             arcCenterXInput, arcCenterYInput, arcRadiusXInput, arcRadiusYInput, arcStartAngleInput, arcExtentAngleInput,
             dashInput;
     @FXML
+    protected ComboBox<String> roundSizeSelector;
+    @FXML
     protected RadioButton arcOpenRadio, arcChordRadio, arcPieRadio;
     @FXML
     protected ControlPoints pointsController;
@@ -55,18 +59,21 @@ public class ControlShapeParameters extends BaseController {
     protected ControlLines linesController;
     @FXML
     protected ControlPath2D pathController;
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             thisPane.getChildren().remove(tabPane);
-
+            
+            roundSizeSelector.getItems().setAll(Arrays.asList("0", "2", "5", "10", "15", "30", "40", "50"));
+            roundSizeSelector.setValue("0");
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
+        
     }
 
     /*
@@ -171,7 +178,7 @@ public class ControlShapeParameters extends BaseController {
                     popError(message("InvalidData"));
             }
             refreshStyle(shapeBox);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -184,7 +191,7 @@ public class ControlShapeParameters extends BaseController {
     public double scale(double v) {
         return DoubleTools.scale(v, 2);
     }
-
+    
     public boolean pickShape(ShapeType shapeType) {
         try {
             if (imageController == null || shapeType == null) {
@@ -224,10 +231,10 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickRect() {
         try {
-            float x, y, w, h;
+            float x, y, w, h, round;
             try {
                 x = Float.parseFloat(rectXInput.getText());
             } catch (Exception e) {
@@ -258,14 +265,23 @@ public class ControlShapeParameters extends BaseController {
                 popError(message("InvalidParameter") + ": " + message("Height"));
                 return false;
             }
+            try {
+                round = Float.parseFloat(roundSizeSelector.getValue());
+            } catch (Exception e) {
+                round = 0;
+            }
+            if (round < 0) {
+                round = 0;
+            }
             imageController.maskRectangleData = DoubleRectangle.xywh(x, y, w, h);
+            imageController.maskRectangleData.setRound(round);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
-
+    
     public boolean pickCircle() {
         try {
             float x, y, r;
@@ -297,7 +313,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickEllipse() {
         try {
             float cx, cy, rx, ry;
@@ -338,7 +354,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickLine() {
         try {
             float x1, y1, x2, y2;
@@ -373,7 +389,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickPolyline() {
         try {
             imageController.maskPolylineData.setAll(pointsController.tableData);
@@ -383,7 +399,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickPolygon() {
         try {
             imageController.maskPolygonData.setAll(pointsController.tableData);
@@ -393,7 +409,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickLines() {
         try {
             imageController.maskPolylinesData.setLines(linesController.tableData);
@@ -403,7 +419,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickQuadratic() {
         try {
             float sx, sy, cx, cy, ex, ey;
@@ -450,7 +466,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickCubic() {
         try {
             float sx, sy, cx1, cy1, cx2, cy2, ex, ey;
@@ -509,7 +525,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickArc() {
         try {
             float cx, cy, rx, ry, sa, ea;
@@ -564,7 +580,7 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     public boolean pickPath() {
         try {
             String d = pathController.pickPath(" ");
@@ -579,11 +595,11 @@ public class ControlShapeParameters extends BaseController {
             return false;
         }
     }
-
+    
     @FXML
     @Override
     public void goAction() {
         optionsOontroller.goShape();
     }
-
+    
 }

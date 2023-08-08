@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
@@ -41,14 +40,6 @@ public class ShapeTools {
             Color strokeColor = style.getStrokeColorAwt();
             float strokeWidth = style.getStrokeWidth();
             float opacity = blender.getOpacity();
-            if (doubleShape instanceof DoubleRectangle) {
-                int arcWidth = style.getRoundArc();
-                if (arcWidth > 0) {
-                    arcWidth = Math.min(height - 1, arcWidth);
-                }
-                ((DoubleRectangle) doubleShape).setRound(arcWidth);
-            }
-
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();

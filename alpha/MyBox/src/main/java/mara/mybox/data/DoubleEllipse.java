@@ -115,15 +115,10 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
-    public DoubleEllipse translateRel(double offsetX, double offsetY) {
-        DoubleEllipse nEllipse = xywh(x + offsetX, y + offsetY, width, height);
-        return nEllipse;
-    }
-
-    @Override
-    public DoubleEllipse translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleEllipse) moved : null;
+    public boolean translateRel(double offsetX, double offsetY) {
+        x += offsetX;
+        y += offsetY;
+        return true;
     }
 
     /*

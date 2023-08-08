@@ -22,7 +22,6 @@ public class ShapeStyle {
     private String name, more;
     private Color strokeColor, fillColor, anchorColor;
     private float strokeWidth, strokeOpacity, fillOpacity, anchorSize;
-    private int roundArc;
     private boolean isFillColor, isStrokeDash;
     private List<Double> strokeDash;
     private StrokeLineCap lineCap;
@@ -69,10 +68,6 @@ public class ShapeStyle {
         anchorSize = UserConfig.getFloat(name + "AnchorSize", 10);
         if (anchorSize < 0) {
             anchorSize = 10;
-        }
-        roundArc = UserConfig.getInt(name + "RoundArc", 0);
-        if (roundArc < 0) {
-            roundArc = 0;
         }
         String text = UserConfig.getString(name + "StrokeDash", null);
         strokeDash = text2StrokeDash(text);
@@ -256,12 +251,6 @@ public class ShapeStyle {
         return this;
     }
 
-    public ShapeStyle setRoundArc(int arc) {
-        roundArc = arc;
-        UserConfig.setInt(name + "RoundArc", arc);
-        return this;
-    }
-
     public ShapeStyle setMore(String more) {
         this.more = more;
         return this;
@@ -320,10 +309,6 @@ public class ShapeStyle {
 
     public float getAnchorSize() {
         return anchorSize;
-    }
-
-    public int getRoundArc() {
-        return roundArc;
     }
 
     public boolean isIsFillColor() {

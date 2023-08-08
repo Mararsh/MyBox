@@ -6,7 +6,6 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import java.lang.Double?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -27,10 +26,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Ellipse?>
-<?import javafx.scene.shape.Polygon?>
-<?import javafx.scene.shape.Polyline?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
@@ -55,7 +50,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                             <children>
                                                                 <Label minHeight="-Infinity" text="%LoadWidth" wrapText="true" />
-                                                                <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                                                <ComboBox fx:id="loadWidthSelector" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
                                                             </children>
                                                         </HBox>
                                                         <VBox fx:id="fileBox" spacing="2.0" VBox.vgrow="NEVER">
@@ -170,7 +165,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="viewPane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%View">
+                                        <TitledPane fx:id="viewPane" expanded="false" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%View">
                                             <content>
                                                 <VBox spacing="2.0">
                                                     <children>
@@ -490,7 +485,7 @@ License:    Apache License Version 2.0
                                                                             </cursor>
                                                                         </Rectangle>
                                                                         <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
-                                                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="200.0">
+                                                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" stroke="RED" strokeType="INSIDE" width="200.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>

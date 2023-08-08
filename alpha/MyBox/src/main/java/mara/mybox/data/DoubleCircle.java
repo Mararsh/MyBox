@@ -49,14 +49,10 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
-    public DoubleCircle translateRel(double offsetX, double offsetY) {
-        return new DoubleCircle(centerX + offsetX, centerY + offsetY, radius);
-    }
-
-    @Override
-    public DoubleCircle translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleCircle) moved : null;
+    public boolean translateRel(double offsetX, double offsetY) {
+        centerX += offsetX;
+        centerY += offsetY;
+        return true;
     }
 
     /*

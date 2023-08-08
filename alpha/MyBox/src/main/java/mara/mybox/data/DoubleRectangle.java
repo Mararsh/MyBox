@@ -88,16 +88,10 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
-    public DoubleRectangle translateRel(double offsetX, double offsetY) {
-        DoubleRectangle nRectangle = DoubleRectangle.xywh(
-                x + offsetX, y + offsetY, width, height);
-        return nRectangle;
-    }
-
-    @Override
-    public DoubleRectangle translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleRectangle) moved : null;
+    public boolean translateRel(double offsetX, double offsetY) {
+        x += offsetX;
+        y += offsetY;
+        return true;
     }
 
     public boolean same(DoubleRectangle rect) {

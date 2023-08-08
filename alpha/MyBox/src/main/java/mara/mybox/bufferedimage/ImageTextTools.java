@@ -53,12 +53,12 @@ public class ImageTextTools {
                         optionsController.getBaseY() - m,
                         optionsController.getTextWidth() + m,
                         optionsController.getTextHeight() + m);
+                textRect.setRound(optionsController.getBordersArc());
                 ShapeStyle style = new ShapeStyle("Text");
                 style.setStrokeColor(optionsController.bordersStrokeColor());
                 style.setStrokeWidth(optionsController.getBordersStrokeWidth());
                 style.setIsFillColor(optionsController.bordersFilled());
                 style.setFillColor(optionsController.bordersFillColor());
-                style.setRoundArc(optionsController.getBordersArc());
                 style.setFillOpacity(opacity);
                 style.setStrokeDashed(optionsController.bordersDotted());
                 backImage = ShapeTools.drawShape(sourceImage, textRect, style,

@@ -50,19 +50,16 @@ public class DoubleCubic implements DoubleShape {
     }
 
     @Override
-    public DoubleCubic translateRel(double offsetX, double offsetY) {
-        DoubleCubic nline = new DoubleCubic(
-                startX + offsetX, startY + offsetY,
-                controlX1 + offsetX, controlY1 + offsetY,
-                controlX2 + offsetX, controlY2 + offsetY,
-                endX + offsetX, endY + offsetY);
-        return nline;
-    }
-
-    @Override
-    public DoubleCubic translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleCubic) moved : null;
+    public boolean translateRel(double offsetX, double offsetY) {
+        startX += offsetX;
+        startY += offsetY;
+        controlX1 += offsetX;
+        controlY1 += offsetY;
+        controlX2 += offsetX;
+        controlY2 += offsetY;
+        endX += offsetX;
+        endY += offsetY;
+        return true;
     }
 
     public double getStartX() {

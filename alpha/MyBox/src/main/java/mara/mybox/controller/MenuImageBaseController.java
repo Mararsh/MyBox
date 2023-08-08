@@ -301,9 +301,9 @@ public class MenuImageBaseController extends MenuController {
             });
 
             if (loadWidthSelector != null) {
-                if (imageController.loadWidthBox != null) {
-                    loadWidthSelector.getItems().addAll(imageController.loadWidthBox.getItems());
-                    loadWidthSelector.setValue(imageController.loadWidthBox.getValue());
+                if (imageController.loadWidthSelector != null) {
+                    loadWidthSelector.getItems().addAll(imageController.loadWidthSelector.getItems());
+                    loadWidthSelector.setValue(imageController.loadWidthSelector.getValue());
                     widthListener = new ChangeListener<String>() {
                         @Override
                         public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -311,11 +311,11 @@ public class MenuImageBaseController extends MenuController {
                                 return;
                             }
                             isSettingValues = true;
-                            loadWidthSelector.setValue(imageController.loadWidthBox.getValue());
+                            loadWidthSelector.setValue(imageController.loadWidthSelector.getValue());
                             isSettingValues = false;
                         }
                     };
-                    imageController.loadWidthBox.getSelectionModel().selectedItemProperty().addListener(widthListener);
+                    imageController.loadWidthSelector.getSelectionModel().selectedItemProperty().addListener(widthListener);
                 } else {
                     loadWidthSelector.getItems().addAll(Arrays.asList(message("OriginalSize"),
                             "512", "1024", "256", "128", "2048", "100", "80", "4096")
@@ -339,8 +339,8 @@ public class MenuImageBaseController extends MenuController {
                             }
                         }
                         isSettingValues = true;
-                        if (imageController.loadWidthBox != null) {
-                            imageController.loadWidthBox.setValue(newValue);
+                        if (imageController.loadWidthSelector != null) {
+                            imageController.loadWidthSelector.setValue(newValue);
                         } else {
                             imageController.setLoadWidth(v);
                         }
@@ -490,7 +490,7 @@ public class MenuImageBaseController extends MenuController {
         try {
             if (imageController != null) {
                 imageController.loadNotify.removeListener(loadListener);
-                imageController.loadWidthBox.getSelectionModel().selectedItemProperty().removeListener(widthListener);
+                imageController.loadWidthSelector.getSelectionModel().selectedItemProperty().removeListener(widthListener);
                 imageController.zoomStepSelector.getSelectionModel().selectedItemProperty().removeListener(zoomListener);
                 imageController.gridCheck.selectedProperty().removeListener(gridListener);
                 imageController.rulerXCheck.selectedProperty().removeListener(rulersListener);

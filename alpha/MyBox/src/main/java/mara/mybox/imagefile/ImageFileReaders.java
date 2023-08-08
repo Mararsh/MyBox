@@ -184,6 +184,7 @@ public class ImageFileReaders {
             ImageInformation imageInfo = null;
             File file = readInfo.getFile();
             int index = readInfo.getIndex();
+            int requiredWidth = (int) readInfo.getRequiredWidth();
             SingletonTask task = readInfo.getTask();
             LoadingController loading = task != null ? task.getLoading() : null;
             String format = readInfo.getImageFormat();
@@ -196,6 +197,7 @@ public class ImageFileReaders {
                 if (size > 0 && index < size) {
                     imageInfo = fileInfo.getImagesInformation().get(index);
                     if (!onlyInformation) {
+                        imageInfo.setRequiredWidth(requiredWidth);
                         BufferedImage bufferedImage = readIcon(imageInfo);
                         imageInfo.loadBufferedImage(bufferedImage);
                     }
@@ -204,16 +206,12 @@ public class ImageFileReaders {
                 try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                     ImageReader reader = getReader(iis, format);
                     if (reader != null) {
-                        if (fileInfo == null) {
-                            reader.setInput(iis, false, false);
-                            fileInfo = new ImageFileInformation(file);
-                            if (loading != null) {
-                                loading.setInfo(message("Reading") + ": " + message("MetaData"));
-                            }
-                            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
-                        } else {
-                            reader.setInput(iis, false, true);
+                        reader.setInput(iis, false, false);
+                        fileInfo = new ImageFileInformation(file);
+                        if (loading != null) {
+                            loading.setInfo(message("Reading") + ": " + message("MetaData"));
                         }
+                        ImageFileReaders.readImageFileMetaData(reader, fileInfo);
                         int size = fileInfo.getNumberOfImages();
                         if (size > 0 && index < size) {
                             imageInfo = fileInfo.getImagesInformation().get(index);
@@ -222,6 +220,7 @@ public class ImageFileReaders {
                                     loading.setInfo(message("Reading") + ": Image " + index + " / " + size);
                                 }
                                 imageInfo.setTask(task);
+                                imageInfo.setRequiredWidth(requiredWidth);
                                 BufferedImage bufferedImage = readFrame(reader, imageInfo);
                                 imageInfo.loadBufferedImage(bufferedImage);
                             }

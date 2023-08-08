@@ -126,22 +126,18 @@ public class DoublePolylines implements DoubleShape {
     }
 
     @Override
-    public DoublePolylines translateRel(double offsetX, double offsetY) {
-        DoublePolylines np = new DoublePolylines();
+    public boolean translateRel(double offsetX, double offsetY) {
+        List<List<DoublePoint>> npoints = new ArrayList<>();
         for (List<DoublePoint> line : points) {
             List<DoublePoint> newline = new ArrayList<>();
             for (DoublePoint p : line) {
                 newline.add(new DoublePoint(p.getX() + offsetX, p.getY() + offsetY));
             }
-            np.addLine(newline);
+            npoints.add(newline);
         }
-        return np;
-    }
-
-    @Override
-    public DoublePolylines translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoublePolylines) moved : null;
+        points.clear();
+        points.addAll(npoints);
+        return true;
     }
 
     public void translateLineRel(int index, double offsetX, double offsetY) {

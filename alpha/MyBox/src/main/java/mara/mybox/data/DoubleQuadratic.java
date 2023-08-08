@@ -46,19 +46,16 @@ public class DoubleQuadratic implements DoubleShape {
     }
 
     @Override
-    public DoubleQuadratic translateRel(double offsetX, double offsetY) {
-        DoubleQuadratic nline = new DoubleQuadratic(
-                startX + offsetX, startY + offsetY,
-                controlX + offsetX, controlY + offsetY,
-                endX + offsetX, endY + offsetY);
-        return nline;
+    public boolean translateRel(double offsetX, double offsetY) {
+        startX += offsetX;
+        startY += offsetY;
+        controlX += offsetX;
+        controlY += offsetY;
+        endX += offsetX;
+        endY += offsetY;
+        return true;
     }
 
-    @Override
-    public DoubleQuadratic translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleQuadratic) moved : null;
-    }
 
     /*
         get

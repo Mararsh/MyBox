@@ -78,16 +78,12 @@ public class DoubleArc implements DoubleShape {
     }
 
     @Override
-    public DoubleArc translateRel(double offsetX, double offsetY) {
-        return DoubleArc.arc(centerX + offsetX, centerY + offsetY,
-                radiusX, radiusY, startAngle, extentAngle, type);
+    public boolean translateRel(double offsetX, double offsetY) {
+        centerX += offsetX;
+        centerY += offsetY;
+        return true;
     }
 
-    @Override
-    public DoubleArc translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleArc) moved : null;
-    }
 
     /*
         get

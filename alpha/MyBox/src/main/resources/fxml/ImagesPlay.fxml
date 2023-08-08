@@ -93,7 +93,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0"> 
                                                             <children>
                                                                 <Label text="%LoadWidth" />
-                                                                <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                                                <ComboBox fx:id="loadWidthSelector" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
                                                             </children>
                                                         </HBox>
                                                         <FlowPane fx:id="framesPane" hgap="5.0" layoutX="32.0" layoutY="32.0" vgap="5.0">

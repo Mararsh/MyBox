@@ -516,6 +516,25 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 items.add(menu);
             }
 
+            DoubleShape shape = currentMaskShapeData();
+            if (shape != null) {
+                menu = new MenuItem(message("MoveShapeCenterTo"), StyleTools.getIconImageView("iconMove.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    PointInputController inputController = PointInputController.open(this,
+                            message("MoveShapeCenterTo"), DoubleShape.getCenter(shape));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            DoubleShape.translateAbs(shape, inputController.picked.getX(), inputController.picked.getY());
+                            drawMaskShape();
+                            maskShapeDataChanged();
+                            inputController.close();
+                        }
+                    });
+                });
+                items.add(menu);
+            }
+
             return items;
 
         } catch (Exception e) {

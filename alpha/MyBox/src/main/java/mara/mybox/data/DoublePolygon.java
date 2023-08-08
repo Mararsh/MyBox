@@ -172,19 +172,15 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public DoublePolygon translateRel(double offsetX, double offsetY) {
-        DoublePolygon np = new DoublePolygon();
+    public boolean translateRel(double offsetX, double offsetY) {
+        List<DoublePoint> moved = new ArrayList<>();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
-            np.add(p.getX() + offsetX, p.getY() + offsetY);
+            moved.add(p.move(offsetX, offsetY));
         }
-        return np;
-    }
-
-    @Override
-    public DoublePolygon translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoublePolygon) moved : null;
+        points.clear();
+        points.addAll(moved);
+        return true;
     }
 
     public DoublePoint get(int i) {

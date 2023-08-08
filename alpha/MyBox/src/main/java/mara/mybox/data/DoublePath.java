@@ -82,16 +82,10 @@ public class DoublePath implements DoubleShape {
     }
 
     @Override
-    public DoublePath translateRel(double offsetX, double offsetY) {
+    public boolean translateRel(double offsetX, double offsetY) {
         DoublePath nPath = new DoublePath(content);
         AffineTransform.getTranslateInstance(offsetX, offsetY);
-        return nPath;
-    }
-
-    @Override
-    public DoublePath translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoublePath) moved : null;
+        return true;
     }
 
     /*

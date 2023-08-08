@@ -43,17 +43,12 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
-    public DoubleLine translateRel(double offsetX, double offsetY) {
-        DoubleLine nline = new DoubleLine(
-                startX + offsetX, startY + offsetY,
-                endX + offsetX, endY + offsetY);
-        return nline;
-    }
-
-    @Override
-    public DoubleLine translateAbs(double x, double y) {
-        DoubleShape moved = DoubleShape.translateAbs(this, x, y);
-        return moved != null ? (DoubleLine) moved : null;
+    public boolean translateRel(double offsetX, double offsetY) {
+        startX += offsetX;
+        startY += offsetY;
+        endX += offsetX;
+        endY += offsetY;
+        return true;
     }
 
     public double getStartX() {

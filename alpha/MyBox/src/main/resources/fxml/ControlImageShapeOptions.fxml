@@ -175,7 +175,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <CheckBox fx:id="popCheck" mnemonicParsing="false">
+                <CheckBox fx:id="popMenuCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -245,12 +245,6 @@
                                  <children>
                                     <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%Fill" />
                                     <fx:include fx:id="fillColor" source="ControlColorSet.fxml" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane fx:id="rectArcPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
-                                 <children>
-                                    <Label text="%Arc" />
-                                    <ComboBox fx:id="arcSizeSelector" editable="true" prefWidth="90.0" />
                                  </children>
                               </FlowPane>
                               <FlowPane hgap="2.0" layoutX="15.0" layoutY="276.0" prefWrapLength="0.0" vgap="2.0">
