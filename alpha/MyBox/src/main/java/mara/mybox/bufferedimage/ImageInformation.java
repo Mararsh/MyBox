@@ -2,7 +2,6 @@ package mara.mybox.bufferedimage;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -53,7 +52,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected Image image, thumbnail, regionImage;
     protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
-    protected Rectangle2D.Double region;
+    protected DoubleRectangle region;
     protected SingletonTask task;
 
     public ImageInformation() {
@@ -329,9 +328,9 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setWidth(imageWidth);
             imageInfo.setHeight(bufferedImage.getHeight());
             imageInfo.setImageType(bufferedImage.getType());
-            Rectangle2D.Double region = imageInfo.getRegion();
+            DoubleRectangle region = imageInfo.getRegion();
             if (region != null) {
-                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, DoubleRectangle.rect(region));
+                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, region);
                 if (task != null && task.isCancelled()) {
                     return null;
                 }
@@ -426,7 +425,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         if (imageInfo == null) {
             return null;
         }
-        Rectangle2D.Double region = imageInfo.getRegion();
+        DoubleRectangle region = imageInfo.getRegion();
         if (region == null) {
             return readImage(imageInfo, requireWidth);
         }
@@ -441,13 +440,13 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setRequiredWidth(regionWidth);
             Image image = imageInfo.getImage();
             if (image != null && (int) image.getWidth() == infoWidth) {
-                regionImage = CropTools.cropOutsideFx(image, DoubleRectangle.rect(region));
+                regionImage = CropTools.cropOutsideFx(image, region);
                 regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, regionWidth);
             }
             if (regionImage == null) {
                 Image thumb = imageInfo.getThumbnail();
                 if (thumb != null && (int) thumb.getWidth() == infoWidth) {
-                    regionImage = CropTools.cropOutsideFx(thumb, DoubleRectangle.rect(region));
+                    regionImage = CropTools.cropOutsideFx(thumb, region);
                     regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, regionWidth);
                 }
             }
@@ -577,7 +576,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         if (region == null) {
             pixelsString = (int) width + "x" + (int) height;
         } else {
-            pixelsString = message("Region") + " " + (int) region.width + "x" + (int) region.height;
+            pixelsString = message("Region") + " " + (int) region.getWidth() + "x" + (int) region.getHeight();
         }
         return pixelsString;
     }
@@ -601,7 +600,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     }
 
     public ImageInformation setRegion(double x1, double y1, double x2, double y2) {
-        region = new Rectangle2D.Double(x1, y1, Math.abs(x2 - x1), Math.abs(y2 - y1));
+        region = DoubleRectangle.xy12(x1, y1, x2, y2);
         regionImage = null;
         return this;
     }
@@ -1484,7 +1483,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         this.thumbnailRotation = thumbnailRotation;
     }
 
-    public Rectangle2D.Double getRegion() {
+    public DoubleRectangle getRegion() {
         return region;
     }
 

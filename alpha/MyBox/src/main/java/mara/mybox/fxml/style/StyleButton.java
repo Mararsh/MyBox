@@ -90,9 +90,9 @@ public class StyleButton {
                 case "addRowsButton":
                     return new StyleData(id, message("AddRows"), "CTRL+n", "iconNewItem.png");
                 case "addFilesButton":
-                    return new StyleData(id, message("AddFiles"), "", "iconFileAdd.png");
+                    return new StyleData(id, message("AddFiles"), "", "iconSelectFile.png");
                 case "addDirectoryButton":
-                    return new StyleData(id, message("AddDirectory"), "", "iconFolderAdd.png");
+                    return new StyleData(id, message("AddDirectory"), "", "iconSelectPath.png");
                 case "addMenuButton":
                     return new StyleData(id, "", "", "iconAdd.png");
                 default:
@@ -647,9 +647,9 @@ public class StyleButton {
         if (id.startsWith("insert")) {
             switch (id) {
                 case "insertFilesButton":
-                    return new StyleData("insertFilesButton", message("InsertFiles"), "", "iconFileInsert.png");
+                    return new StyleData("insertFilesButton", message("InsertFiles"), "", "iconInsertFile.png");
                 case "insertDirectoryButton":
-                    return new StyleData("insertDirectoryButton", message("InsertDirectory"), "", "iconFolderInsert.png");
+                    return new StyleData("insertDirectoryButton", message("InsertDirectory"), "", "iconInsertPath.png");
             }
         }
         if (id.startsWith("XYChart")) {

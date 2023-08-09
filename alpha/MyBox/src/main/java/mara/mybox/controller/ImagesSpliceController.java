@@ -128,7 +128,7 @@ public class ImagesSpliceController extends ImageViewerController {
             });
             columnsBox.getSelectionModel().select(UserConfig.getString(baseName + "Columns", "2"));
 
-            intervalBox.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
+            intervalBox.getItems().addAll(Arrays.asList("5", "0", "1", "3", "2", "10", "15", "4", "20", "8", "30"));
             intervalBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
@@ -482,45 +482,6 @@ public class ImagesSpliceController extends ImageViewerController {
         }
     }
 
-    public void load(List<ImageInformation> imageInfos) {
-        if (imageInfos == null || imageInfos.isEmpty()) {
-            return;
-        }
-        if (task != null && !task.isQuit()) {
-            return;
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-
-            List<ImageInformation> data;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data = new ArrayList<>();
-                    for (ImageInformation imageInfo : imageInfos) {
-                        Image iimage = imageInfo.loadImage();
-                        if (iimage == null) {
-                            continue;
-                        }
-                        data.add(new ImageInformation(iimage));
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                tableController.tableData.setAll(data);
-            }
-
-        };
-        start(task);
-
-    }
-
     @FXML
     @Override
     public void saveAction() {
@@ -545,7 +506,7 @@ public class ImagesSpliceController extends ImageViewerController {
     public static ImagesSpliceController open(List<ImageInformation> imageInfos) {
         try {
             ImagesSpliceController controller = (ImagesSpliceController) WindowTools.openStage(Fxmls.ImagesSpliceFxml);
-            controller.load(imageInfos);
+            controller.tableController.tableData.setAll(imageInfos);;
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

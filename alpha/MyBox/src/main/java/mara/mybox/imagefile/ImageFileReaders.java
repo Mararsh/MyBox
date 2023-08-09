@@ -27,7 +27,6 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.color.ColorBase;
 import mara.mybox.controller.LoadingController;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
@@ -286,10 +285,10 @@ public class ImageFileReaders {
             } else {
                 if (xscale != 1 || yscale != 1) {
                     bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
-                            DoubleRectangle.rect(imageInfo.getRegion()), xscale, yscale);
+                            imageInfo.getRegion(), xscale, yscale);
                 } else {
                     bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
-                            DoubleRectangle.rect(imageInfo.getRegion()), requiredWidth);
+                            imageInfo.getRegion(), requiredWidth);
                 }
             }
             return bufferedImage;

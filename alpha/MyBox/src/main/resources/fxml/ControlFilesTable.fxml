@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconFileAdd.png" />
+                                <Image url="@../buttons/Red/iconSelectFile.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconFolderAdd.png" />
+                                <Image url="@../buttons/Red/iconSelectPath.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -45,7 +45,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconFileInsert.png" />
+                                <Image url="@../buttons/Red/iconInsertFile.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -54,7 +54,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconFolderInsert.png" />
+                                <Image url="@../buttons/Red/iconInsertPath.png" />
                             </image>
                         </ImageView>
                     </graphic>

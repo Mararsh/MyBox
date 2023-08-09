@@ -154,6 +154,9 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         return (event.getY() - mouseY) * imageYRatio();
     }
 
+    /*
+        event
+     */
     @FXML
     public void paneClicked(MouseEvent event) {
         if (imageView.getImage() == null) {

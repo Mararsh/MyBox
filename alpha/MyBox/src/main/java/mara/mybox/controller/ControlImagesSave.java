@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import com.github.jaiimageio.impl.plugins.gif.GIFImageMetadata;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -37,7 +36,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
@@ -78,8 +77,7 @@ public class ControlImagesSave extends BaseController {
     protected BaseImagesListController listController;
     protected int digit;
     protected String imagesFormat;
-    protected int gifWidth, pptWidth, pptHeight, pptMargin, savedWidth;
-    protected boolean gifKeepSize;
+    protected int pptWidth, pptHeight, pptMargin, savedWidth;
     protected ObservableList<ImageInformation> imageInfos;
     protected LoadingController loading;
 
@@ -95,9 +93,7 @@ public class ControlImagesSave extends BaseController {
     @FXML
     protected ControlImageFormat formatController;
     @FXML
-    protected ToggleGroup gifSizeGroup;
-    @FXML
-    protected TextField gifWidthInput, pptWidthInput, pptHeightInput, pptMarginInput;
+    protected TextField pptWidthInput, pptHeightInput, pptMarginInput;
     @FXML
     protected CheckBox gifLoopCheck, pptMarginCheck;
     @FXML
@@ -220,49 +216,13 @@ public class ControlImagesSave extends BaseController {
 
     public void initGifPane() {
         try {
-            gifSizeGroup.selectedToggleProperty().addListener(
-                    (ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) -> {
-                        checkGifSizeType();
+            gifLoopCheck.setSelected(UserConfig.getBoolean(baseName + "GifLoop", true));
+            gifLoopCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                        UserConfig.setBoolean(baseName + "GifLoop", gifLoopCheck.isSelected());
                     });
-
-            gifWidth = UserConfig.getInt(baseName + "GifWidth", 600);
-            gifWidth = gifWidth <= 0 ? 600 : gifWidth;
-            gifWidthInput.setText(gifWidth + "");
-            gifWidthInput.textProperty().addListener(
-                    (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                        checkGifSize();
-                    });
-
-            checkGifSizeType();
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
-        }
-    }
-
-    protected void checkGifSizeType() {
-        RadioButton button = (RadioButton) gifSizeGroup.getSelectedToggle();
-        if (message("KeepImagesSize").equals(button.getText())) {
-            gifKeepSize = true;
-            gifWidthInput.setStyle(null);
-        } else {
-            gifKeepSize = false;
-            checkGifSize();
-        }
-    }
-
-    protected void checkGifSize() {
-        try {
-            int v = Integer.parseInt(gifWidthInput.getText());
-            if (v > 0) {
-                gifWidth = v;
-                gifWidthInput.setStyle(null);
-                UserConfig.setInt(baseName + "GifWidth", v);
-            } else {
-                gifWidthInput.setStyle(UserConfig.badStyle());
-            }
-        } catch (Exception e) {
-            gifWidthInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -350,7 +310,7 @@ public class ControlImagesSave extends BaseController {
         }
         int maxW = 0, maxH = 0;
         for (ImageInformation info : imageInfos) {
-            Rectangle2D.Double region = info.getRegion();
+            DoubleRectangle region = info.getRegion();
             if (region != null) {
                 if (region.getWidth() > maxW) {
                     maxW = (int) region.getWidth();
@@ -551,7 +511,6 @@ public class ControlImagesSave extends BaseController {
         List<ImageInformation> infos = new ArrayList<>();
         for (int i = 0; i < imageInfos.size(); ++i) {
             ImageInformation info = imageInfos.get(i).cloneAttributes();
-            info.setRequiredWidth(savedWidth);
             infos.add(info);
         }
         ImagesSpliceController.open(infos);
@@ -564,7 +523,6 @@ public class ControlImagesSave extends BaseController {
         List<ImageInformation> infos = new ArrayList<>();
         for (int i = 0; i < imageInfos.size(); ++i) {
             ImageInformation info = imageInfos.get(i).cloneAttributes();
-            info.setRequiredWidth(savedWidth);
             infos.add(info);
         }
         FFmpegMergeImagesController.open(infos);
@@ -727,9 +685,6 @@ public class ControlImagesSave extends BaseController {
                         BufferedImage bufferedImage = image(i);
                         if (task == null || isCancelled()) {
                             return false;
-                        }
-                        if (!gifKeepSize) {
-                            bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, gifWidth);
                         }
                         ImageGifFile.getParaMeta(imageInfos.get(i).getDuration(), gifLoopCheck.isSelected(), param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
