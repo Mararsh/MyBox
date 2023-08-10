@@ -349,7 +349,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         return imageView != null && imageView.getImage() != null
                 && maskRectangle != null && maskCircle == null
                 && !(this instanceof ImageSplitController)
-                && !(this instanceof ImageSampleController);
+                && !(this instanceof ImageSampleController)
+                && !(this instanceof ImageManufactureController);
     }
 
     protected void finalRefineView() {

@@ -583,6 +583,7 @@ License:    Apache License Version 2.0
                                                                 </AnchorPane>
                                                             </content>
                                                         </ScrollPane>
+                                          <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
                                                     </children>
                                                 </VBox>
                                             </content>

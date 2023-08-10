@@ -87,11 +87,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
     }
 
     @Override
-    public void notifyLoad() {
-
-    }
-
-    @Override
     public boolean afterImageLoaded() {
         try {
             if (!super.afterImageLoaded() || image == null) {
@@ -107,7 +102,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 
             scopeController.setParameters(this);
             scopeSavedController.setParameters(this);
-            operationsController.resetOperationPanes();
 
             hisTab.setDisable(sourceFile == null);
             backupTab.setDisable(sourceFile == null);
@@ -116,9 +110,9 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 
             finalRefineView();
 
-            updateLabelString(message("Loaded"));
+            operationsController.resetOperationPanes();
 
-            loadNotify.set(!loadNotify.get());
+            updateLabelString(message("Loaded"));
 
             return true;
         } catch (Exception e) {

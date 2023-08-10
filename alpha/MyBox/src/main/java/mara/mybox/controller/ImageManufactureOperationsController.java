@@ -61,15 +61,6 @@ public class ImageManufactureOperationsController extends BaseController {
 
     public void initPanes() {
         try {
-            editor.loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    if (currentController != null) {
-                        currentController.resetOperationPane();
-                    }
-                }
-            });
-
             accordionPane.expandedPaneProperty().addListener(new ChangeListener<TitledPane>() {
                 @Override
                 public void changed(ObservableValue<? extends TitledPane> v, TitledPane o, TitledPane n) {
@@ -365,10 +356,9 @@ public class ImageManufactureOperationsController extends BaseController {
     }
 
     public void resetOperationPanes() {
-        if (currentController == null) {
-            return;
+        if (currentController != null) {
+            currentController.resetOperationPane();
         }
-        currentController.resetOperationPane();
     }
 
     @Override

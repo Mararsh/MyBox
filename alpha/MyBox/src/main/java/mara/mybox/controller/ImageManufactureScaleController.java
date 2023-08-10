@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
@@ -15,6 +16,8 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
     @FXML
     protected ControlImageScale sizeController;
+    @FXML
+    protected Label commentsLabel;
 
     @Override
     public void initPane() {
