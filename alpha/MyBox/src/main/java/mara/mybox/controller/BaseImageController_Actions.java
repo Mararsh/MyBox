@@ -65,6 +65,42 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 });
             }
 
+            if (rulerXCheck != null) {
+                rulerXCheck.setSelected(UserConfig.getBoolean("ImageRulerXY", false));
+                rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImageRulerXY", rulerXCheck.isSelected());
+                        drawMaskRulers();
+                    }
+                });
+            }
+            if (gridCheck != null) {
+                gridCheck.setSelected(UserConfig.getBoolean("ImageGridLines", false));
+                gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImageGridLines", gridCheck.isSelected());
+                        drawMaskGrid();
+                    }
+                });
+            }
+
+            if (coordinateCheck != null) {
+                coordinateCheck.setSelected(UserConfig.getBoolean("ImagePopCooridnate", false));
+                coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
+                        checkCoordinate();
+                    }
+                });
+            }
+
+            if (renderController != null) {
+                renderController.setParentController(this);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

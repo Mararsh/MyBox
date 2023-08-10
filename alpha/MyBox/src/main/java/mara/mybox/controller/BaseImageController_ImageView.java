@@ -66,7 +66,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     @FXML
     protected Text sizeText, xyText;
     @FXML
-    protected Label imageLabel, imageInfoLabel;
+    protected Label imageLabel, imageInfoLabel, infoLabel;
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;

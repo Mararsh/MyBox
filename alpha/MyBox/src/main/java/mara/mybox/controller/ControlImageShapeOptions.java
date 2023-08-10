@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
@@ -26,8 +25,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     protected ImageView maskView, imageView;
 
     @FXML
-    protected Label commentsLabel;
-    @FXML
     protected ControlImagesBlend blendController;
 
     public void setParameters(ImageManufactureShapeController penController) {
@@ -36,8 +33,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             editor = penController.editor;
             maskView = editor.maskView;
             imageView = editor.imageView;
-
-            infoLabel = commentsLabel;
 
             super.setParameters(editor);
 
@@ -156,6 +151,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         }
         editor.popSuccessful();
         editor.updateImage(ImageOperation.Shape, shapeType.name(), null, maskView.getImage(), 0);
+        typeGroup.selectToggle(null);
     }
 
 }

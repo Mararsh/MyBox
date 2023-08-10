@@ -293,7 +293,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @Override
-    public void changeMaskPoint(int index, DoublePoint newValue) {
+    public void moveMaskAnchor(int index, DoublePoint newValue) {
         if (scope.getScopeType() == ScopeType.Matting) {
             int x = (int) Math.round(newValue.getX());
             int y = (int) Math.round(newValue.getY());
@@ -310,7 +310,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @Override
-    public void deleteMaskPoint(int index) {
+    public void deleteMaskAnchor(int index) {
         if (scope.getScopeType() == ScopeType.Matting) {
             scope.deletePoint(index);
             isSettingValues = true;

@@ -130,14 +130,14 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
     public void drawMattingPoints() {
         try {
-            clearMaskPoints();
+            clearMaskAnchors();
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
             for (int i = 0; i < scope.getPoints().size(); i++) {
                 IntPoint p = scope.getPoints().get(i);
                 double x = p.getX() * xRatio;
                 double y = p.getY() * yRatio;
-                addMaskPoint(i, new DoublePoint(p.getX(), p.getY()), x, y);
+                addMaskAnchor(i, new DoublePoint(p.getX(), p.getY()), x, y);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

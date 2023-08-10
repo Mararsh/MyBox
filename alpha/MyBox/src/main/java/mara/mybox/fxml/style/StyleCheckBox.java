@@ -99,6 +99,9 @@ public class StyleCheckBox {
                     return new StyleData(id, message("Pop"), "", "iconPop.png");
             }
         }
+        if (id.startsWith("anchor")) {
+            return new StyleData(id, "", message("ShowAnchors"), "", "iconAnchor.png");
+        }
         switch (id) {
             case "tableThumbCheck":
                 return new StyleData("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");

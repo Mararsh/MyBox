@@ -25,7 +25,7 @@ public class ControlImageScale extends ControlImageSize {
         this.scaleController = scaleController;
         editor = scaleController.editor;
         imageController = editor;
-        infoLabel = scaleController.commentsLabel;
+        infoLabel = editor.infoLabel;
         checkScaleType();
     }
 

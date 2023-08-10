@@ -36,6 +36,7 @@ public class ImageManufactureOperationController extends BaseController {
 
     protected void initPane() {
         try {
+
             if (scopeCheck != null) {
                 scopeCheck.setSelected(editor.isScopeTabSelected());
                 scopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -60,6 +61,7 @@ public class ImageManufactureOperationController extends BaseController {
                     }
                 });
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

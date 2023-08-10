@@ -19,18 +19,24 @@
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageShapeOptions">
     <children>
-          <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-              <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                      <image>
-                          <Image url="@../buttons/Red/iconOK.png" />
-                      </image>
-                  </ImageView>
-              </graphic>
-              <VBox.margin>
-                  <Insets top="10.0" />
-              </VBox.margin>
-          </Button>
+      <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+         <children>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconTips.png" />
+               </image>
+            </ImageView>
+         </children>
+      </FlowPane>
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -135,7 +141,7 @@
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconDraw.png" />
+                                        <Image url="@../buttons/Red/iconPolylines.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -144,7 +150,7 @@
                      <graphic>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconDraw.png" />
+                              <Image url="@../buttons/Red/iconPath.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -153,8 +159,6 @@
             </HBox>
             </children>
         </VBox>
-        <Label fx:id="commentsLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
-        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWidth="200.0" vgap="5.0" />
         <FlowPane fx:id="opPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
             <children>
                 <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
@@ -175,6 +179,15 @@
                         </ImageView>
                     </graphic>
                 </Button>
+            <CheckBox fx:id="anchorCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconAnchor.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
                 <CheckBox fx:id="popMenuCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

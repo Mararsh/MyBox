@@ -49,16 +49,16 @@ public class StyleRadioButton {
         switch (id) {
             case "miaoRadio":
                 return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
-            case "polylineRadio":
-                return new StyleData(id, "", message("Polyline"), "", "iconPolyline.png");
-            case "linesRadio":
-                return new StyleData(id, "", message("DrawLines"), "", "iconDraw.png");
             case "rectangleRadio":
                 return new StyleData(id, "", message("Rectangle"), "", "iconRectangle.png");
             case "circleRadio":
                 return new StyleData(id, "", message("Circle"), "", "iconCircle.png");
             case "ellipseRadio":
                 return new StyleData(id, "", message("Ellipse"), "", "iconEllipse.png");
+            case "polylineRadio":
+                return new StyleData(id, "", message("Polyline"), "", "iconPolyline.png");
+            case "polylinesRadio":
+                return new StyleData(id, "", message("Polylines"), "", "iconPolylines.png");
             case "polygonRadio":
                 return new StyleData(id, "", message("Polygon"), "", "iconStar.png");
             case "quadraticRadio":
@@ -67,6 +67,8 @@ public class StyleRadioButton {
                 return new StyleData(id, "", message("CubicCurve"), "", "iconCubic.png");
             case "arcRadio":
                 return new StyleData(id, "", message("ArcCurve"), "", "iconArc.png");
+            case "pathRadio":
+                return new StyleData(id, "", message("Path"), "", "iconPath.png");
             case "eraserRadio":
                 return new StyleData(id, "", message("Eraser"), "", "iconEraser.png");
             case "mosaicRadio":

@@ -87,6 +87,11 @@ public class ImageManufactureController extends ImageManufactureController_Actio
     }
 
     @Override
+    public void notifyLoad() {
+
+    }
+
+    @Override
     public boolean afterImageLoaded() {
         try {
             if (!super.afterImageLoaded() || image == null) {
@@ -112,6 +117,8 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             finalRefineView();
 
             updateLabelString(message("Loaded"));
+
+            loadNotify.set(!loadNotify.get());
 
             return true;
         } catch (Exception e) {
