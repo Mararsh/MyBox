@@ -29,7 +29,7 @@ public class LocateTools {
     }
 
     public static void locateUp(Node node, PopupWindow window) {
-        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        Bounds bounds = node.localToScreen(node.getBoundsInParent());
         window.show(node, bounds.getMinX() + 2, bounds.getMinY() - 50);
     }
 
@@ -38,7 +38,7 @@ public class LocateTools {
             return;
         }
         Rectangle2D screen = NodeTools.getScreen();
-        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        Bounds bounds = node.localToScreen(node.getBoundsInParent());
         double centerX = bounds.getMinX() - stage.getWidth() / 2;
         centerX = Math.min(screen.getWidth(), Math.max(0, centerX));
         stage.setX(centerX);
@@ -48,12 +48,12 @@ public class LocateTools {
     }
 
     public static void locateCenter(Node node, PopupWindow window) {
-        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        Bounds bounds = node.localToScreen(node.getBoundsInParent());
         window.show(node, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY() + bounds.getHeight() / 2);
     }
 
     public static void locateRightTop(Node node, PopupWindow window) {
-        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        Bounds bounds = node.localToScreen(node.getBoundsInParent());
         window.show(node, bounds.getMaxX() - window.getWidth() - 20, bounds.getMinY() + 50);
     }
 
@@ -92,7 +92,7 @@ public class LocateTools {
     }
 
     public static void locateBelow(Node node, PopupWindow window) {
-        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        Bounds bounds = node.localToScreen(node.getBoundsInParent());
         window.show(node, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());
     }
 
@@ -202,7 +202,7 @@ public class LocateTools {
             if (pNnode == null || region == null) {
                 return;
             }
-            Bounds bounds = pNnode.getBoundsInLocal();
+            Bounds bounds = pNnode.getBoundsInParent();
             region.setPrefSize(bounds.getWidth() - 2 * margin, bounds.getHeight() - 2 * margin);
             LocateTools.moveCenter(pNnode, region);
         } catch (Exception e) {

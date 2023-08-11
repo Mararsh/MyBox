@@ -54,21 +54,19 @@ public class DoublePathParser implements PathHandler {
     public void closePath() {
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Close)
-                .setInterPoint(interPoint);
+                .setStartPoint(interPoint);
         segments.add(segment);
     }
 
     @Override
     public void movetoRel(float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Move)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -76,14 +74,12 @@ public class DoublePathParser implements PathHandler {
     @Override
     public void movetoAbs(float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Move)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -91,14 +87,12 @@ public class DoublePathParser implements PathHandler {
     @Override
     public void linetoRel(float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Line)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -106,14 +100,12 @@ public class DoublePathParser implements PathHandler {
     @Override
     public void linetoAbs(float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Line)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -125,7 +117,7 @@ public class DoublePathParser implements PathHandler {
                 .setIsAbsolute(false)
                 .setScale(scale)
                 .setValue(x)
-                .setInterPoint(interPoint);
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = new DoublePoint(x, interPoint.getY());
     }
@@ -137,7 +129,7 @@ public class DoublePathParser implements PathHandler {
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setValue(x)
-                .setInterPoint(interPoint);
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = new DoublePoint(x, interPoint.getY());
     }
@@ -149,7 +141,7 @@ public class DoublePathParser implements PathHandler {
                 .setIsAbsolute(false)
                 .setScale(scale)
                 .setValue(y)
-                .setInterPoint(interPoint);
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = new DoublePoint(interPoint.getX(), y);
     }
@@ -161,7 +153,7 @@ public class DoublePathParser implements PathHandler {
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setValue(y)
-                .setInterPoint(interPoint);
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = new DoublePoint(interPoint.getX(), y);
     }
@@ -171,16 +163,14 @@ public class DoublePathParser implements PathHandler {
             float x2, float y2,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(x1, y1));
-        points.add(new DoublePoint(x2, y2));
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Cubic)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setControlPoint1(new DoublePoint(x1, y1))
+                .setControlPoint2(new DoublePoint(x2, y2))
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -190,16 +180,14 @@ public class DoublePathParser implements PathHandler {
             float x2, float y2,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(x1, y1));
-        points.add(new DoublePoint(x2, y2));
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Cubic)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setControlPoint1(new DoublePoint(x1, y1))
+                .setControlPoint2(new DoublePoint(x2, y2))
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -208,15 +196,13 @@ public class DoublePathParser implements PathHandler {
     public void curvetoCubicSmoothRel(float x2, float y2,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(x2, y2));
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.CubicSmooth)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setControlPoint2(new DoublePoint(x2, y2))
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -225,15 +211,13 @@ public class DoublePathParser implements PathHandler {
     public void curvetoCubicSmoothAbs(float x2, float y2,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(x2, y2));
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.CubicSmooth)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setControlPoint2(new DoublePoint(x2, y2))
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -242,15 +226,13 @@ public class DoublePathParser implements PathHandler {
     public void curvetoQuadraticRel(float x1, float y1,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(x1, y1));
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Quadratic)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setControlPoint1(new DoublePoint(x1, y1))
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -259,15 +241,13 @@ public class DoublePathParser implements PathHandler {
     public void curvetoQuadraticAbs(float x1, float y1,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(x1, y1));
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Quadratic)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setControlPoint1(new DoublePoint(x1, y1))
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -275,14 +255,12 @@ public class DoublePathParser implements PathHandler {
     @Override
     public void curvetoQuadraticSmoothRel(float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.QuadraticSmooth)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -290,14 +268,12 @@ public class DoublePathParser implements PathHandler {
     @Override
     public void curvetoQuadraticSmoothAbs(float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.QuadraticSmooth)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setPoints(points)
-                .setInterPoint(interPoint);
+                .setEndPoint(p)
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -308,18 +284,16 @@ public class DoublePathParser implements PathHandler {
             boolean largeArcFlag, boolean sweepFlag,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(rx, ry));
-        points.add(p);
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Arc)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setPoints(points)
+                .setControlPoint1(new DoublePoint(rx, ry))
+                .setEndPoint(p)
                 .setValue(xAxisRotation)
                 .setFlag1(largeArcFlag)
                 .setFlag2(sweepFlag)
-                .setInterPoint(interPoint);
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }
@@ -330,18 +304,16 @@ public class DoublePathParser implements PathHandler {
             boolean largeArcFlag, boolean sweepFlag,
             float x, float y) {
         DoublePoint p = new DoublePoint(x, y);
-        List<DoublePoint> points = new ArrayList<>();
-        points.add(new DoublePoint(rx, ry));
-        points.add(new DoublePoint(x, y));
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(DoublePathSegment.PathSegmentType.Arc)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setPoints(points)
+                .setControlPoint1(new DoublePoint(rx, ry))
+                .setEndPoint(p)
                 .setValue(xAxisRotation)
                 .setFlag1(largeArcFlag)
                 .setFlag2(sweepFlag)
-                .setInterPoint(interPoint);
+                .setStartPoint(interPoint);
         segments.add(segment);
         interPoint = p;
     }

@@ -401,3 +401,18 @@ document.body.contentEditable=true;
 Examples > html > Operation
 Pop information
 alert("Hello");
+
+##MyBox#
+Examples > html > Operation
+confirm
+confirm("Are you fine?");
+
+##MyBox#
+Examples > html > Operation
+input
+prompt("Your cat");
+   
+##MyBox#
+Examples > html > Operation
+open address
+window.open("http://www.nlc.cn");

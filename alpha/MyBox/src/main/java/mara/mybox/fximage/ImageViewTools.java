@@ -36,7 +36,7 @@ public class ImageViewTools {
             if (iView == null || iView.getImage() == null || sPane == null) {
                 return;
             }
-            Bounds bounds = sPane.getBoundsInLocal();
+            Bounds bounds = sPane.getBoundsInParent();
             double ratioW = bounds.getWidth() / iView.getImage().getWidth();
             double ratioH = bounds.getHeight() / iView.getImage().getHeight();
             if (ratioW < ratioH) {

@@ -382,7 +382,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
                 break;
             }
         }
-        nodesController.updateNode(nodeController.parentNode);
+        nodesController.updateNode(nodeController.currentNode);
     }
 
     public void newNodeSaved() {

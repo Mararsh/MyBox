@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -11,11 +9,7 @@ import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
-import mara.mybox.db.data.ColorPalette;
-import mara.mybox.db.data.ColorPaletteName;
-import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
-import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -29,14 +23,14 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-6-7
  * @License Apache License Version 2.0
  */
-public class ColorPaletteCustomizeController extends BaseChildController {
+public class ColorsCustomizeController extends BaseChildController {
 
-    protected ControlColorPaletteSelector treeController;
+    protected ColorsManageController manager;
 
     @FXML
     protected RadioButton rybRadio;
     @FXML
-    protected TextField nameInput, hueFromInput, hueToInput, hueStepInput,
+    protected TextField hueFromInput, hueToInput, hueStepInput,
             brightnessFromInput, brightnessToInput, brightnessStepInput,
             saturationFromInput, saturationToInput, saturationStepInput;
 
@@ -58,8 +52,8 @@ public class ColorPaletteCustomizeController extends BaseChildController {
         }
     }
 
-    public void setParameters(ControlColorPaletteSelector treeController) {
-        this.treeController = treeController;
+    public void setParameters(ColorsManageController manager) {
+        this.manager = manager;
     }
 
     public int pickValue(TextField input, String name, int min, int max) {
@@ -78,11 +72,6 @@ public class ColorPaletteCustomizeController extends BaseChildController {
     @Override
     public void okAction() {
         try {
-            String name = nameInput.getText();
-            if (name == null || name.isBlank()) {
-                popError(message("InvalidParameter") + ": " + message("Name"));
-                return;
-            }
             int hueFrom = pickValue(hueFromInput, message("Hue") + "-" + message("From"), 0, 359);
             if (hueFrom < 0) {
                 return;
@@ -125,33 +114,20 @@ public class ColorPaletteCustomizeController extends BaseChildController {
             if (!PopTools.askSure(baseTitle, message("Total") + ": " + number)) {
                 return;
             }
-            if (task != null && !task.isQuit()) {
-                return;
+
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonCurrentTask<Void>(this) {
-                private ColorPaletteName newPalatte;
                 private int count = 0;
 
                 @Override
                 protected boolean handle() {
-                    TableColorPaletteName tableColorPaletteName = new TableColorPaletteName();
-                    TableColorPalette tableColorPalette = new TableColorPalette();
-                    TableColor tableColor = new TableColor();
+                    TableColorPalette tableColorPalette = manager.tableColorPalette;
+                    long paletteid = manager.palettesController.isAllColors() ? -1
+                            : manager.palettesController.currentPaletteId();
                     boolean ryb = rybRadio.isSelected();
-                    try (Connection conn = DerbyBase.getConnection();
-                            PreparedStatement queryColor = conn.prepareStatement(tableColor.QueryValue);
-                            PreparedStatement insertColor = conn.prepareStatement(tableColor.insertStatement());
-                            PreparedStatement insertColorPalette = conn.prepareStatement(tableColorPalette.insertStatement())) {
-                        if (tableColorPaletteName.find(conn, name) != null) {
-                            error = message("AlreadyExisted");
-                            return false;
-                        }
-                        newPalatte = new ColorPaletteName(name);
-                        newPalatte = tableColorPaletteName.insertData(conn, newPalatte);
-                        if (newPalatte == null) {
-                            return false;
-                        }
-                        long paletteid = newPalatte.getCpnid();
+                    try (Connection conn = DerbyBase.getConnection()) {
                         int hue = hueFrom;
                         conn.setAutoCommit(false);
                         while (true) {
@@ -177,25 +153,11 @@ public class ColorPaletteCustomizeController extends BaseChildController {
                                             + message("Brightness") + ": " + brightness + "  ");
                                     Color color = Color.hsb(ryb ? ColorConvertTools.ryb2hue(hue) : hue,
                                             saturation / 100f, brightness / 100f);
-                                    ColorData colorData = new ColorData(color);
-                                    queryColor.setInt(1, colorData.getColorValue());
-                                    queryColor.setMaxRows(1);
-                                    ResultSet results = queryColor.executeQuery();
-                                    if (results != null && results.next()) {
-                                        colorData = tableColor.readData(results);
-                                    } else {
-                                        colorData = tableColor.insertData(conn, insertColor, colorData.calculate());
-                                    }
-                                    if (colorData != null) {
-                                        ColorPalette colorPalette = new ColorPalette()
-                                                .setData(colorData)
-                                                .setColorValue(colorData.getColorValue())
-                                                .setPaletteid(paletteid)
-                                                .setOrderNumber(count);
-                                        tableColorPalette.insertData(conn, insertColorPalette, colorPalette);
-                                        if (count % Database.BatchSize == 0) {
-                                            conn.commit();
-                                        }
+                                    ColorData colorData = new ColorData(color)
+                                            .calculate().setPaletteid(paletteid);
+                                    tableColorPalette.findAndCreate(conn, colorData, false, false);
+                                    if (count % Database.BatchSize == 0) {
+                                        conn.commit();
                                     }
                                     if (brightnessFrom == brightnessTo) {
                                         break;
@@ -249,15 +211,20 @@ public class ColorPaletteCustomizeController extends BaseChildController {
 
                 @Override
                 protected void whenSucceeded() {
-                    treeController.palettesList.getItems().add(newPalatte);
-                    treeController.palettesList.getSelectionModel().select(newPalatte);
-                    treeController.popInformation(message("Create") + ": " + count);
                     close();
+                }
+
+                @Override
+                protected void taskQuit() {
+                    super.taskQuit();
+                    if (count > 0) {
+                        manager.refreshPalette();
+                        manager.popInformation(message("Create") + ": " + count);
+                    }
                 }
 
             };
             start(task);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -267,11 +234,11 @@ public class ColorPaletteCustomizeController extends BaseChildController {
     /*
         static methods
      */
-    public static ColorPaletteCustomizeController open(ControlColorPaletteSelector treeController) {
-        ColorPaletteCustomizeController controller = (ColorPaletteCustomizeController) WindowTools.openChildStage(
-                treeController.getMyWindow(), Fxmls.ColorPaletteCustomizeFxml);
+    public static ColorsCustomizeController open(ColorsManageController manager) {
+        ColorsCustomizeController controller = (ColorsCustomizeController) WindowTools.openChildStage(
+                manager.getMyWindow(), Fxmls.ColorsCustomizeFxml);
         if (controller != null) {
-            controller.setParameters(treeController);
+            controller.setParameters(manager);
             controller.requestMouse();
         }
         return controller;

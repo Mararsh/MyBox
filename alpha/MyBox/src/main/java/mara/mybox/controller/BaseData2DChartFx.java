@@ -152,7 +152,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             return;
         }
         try {
-            Bounds bounds = chart.getBoundsInLocal();
+            Bounds bounds = chart.getBoundsInParent();
             AnchorPane.clearConstraints(chart);
             chart.setPrefSize(bounds.getWidth() + 40, bounds.getHeight() + 40);
         } catch (Exception e) {

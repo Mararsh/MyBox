@@ -63,21 +63,20 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
                             <children> 
-                                <VBox fx:id="blendBox1" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
+                                        <RadioButton fx:id="centerRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Center" wrapText="true">
+                                 <toggleGroup>
+                                                  <ToggleGroup fx:id="positionGroup" />
+                                 </toggleGroup></RadioButton>
                                         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
-                                                <RadioButton fx:id="leftTopRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%LeftTop" wrapText="true">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="positionGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
+                                                <RadioButton fx:id="leftTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftTop" toggleGroup="$positionGroup" wrapText="true" />
                                                 <RadioButton fx:id="rightTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" wrapText="true" />
                                                 <RadioButton fx:id="rightBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightBottom" toggleGroup="$positionGroup" wrapText="true" />
                                                 <RadioButton fx:id="leftBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" wrapText="true" />
                                             </children>
                                         </FlowPane>
-                                        <RadioButton fx:id="centerRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Center" toggleGroup="$positionGroup" wrapText="true" />
                                         <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <RadioButton fx:id="customRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" wrapText="true" />

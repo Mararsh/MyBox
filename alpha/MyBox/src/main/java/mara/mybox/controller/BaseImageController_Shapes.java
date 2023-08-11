@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.awt.geom.Arc2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -48,6 +49,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -159,11 +161,21 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 });
             }
 
+            makeShapeMenu(maskRectangle);
+            makeShapeMenu(maskCircle);
+            makeShapeMenu(maskEllipse);
+            makeShapeMenu(maskLine);
+            makeShapeMenu(maskPolygon);
+            makeShapeMenu(maskPolyline);
+            makeShapeMenu(maskQuadratic);
+            makeShapeMenu(maskCubic);
+            makeShapeMenu(maskArc);
+            makeShapeMenu(maskSVGPath);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
 
     /*
         image
@@ -270,6 +282,14 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         return (event.getY() - mouseY) * imageYRatio();
     }
 
+    public double scale(double d) {
+        return scale(d, UserConfig.imageScale());
+    }
+
+    public double scale(double d, int scale) {
+        return DoubleTools.scale(d, scale);
+    }
+
     /*
         event
      */
@@ -329,6 +349,15 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         return p;
     }
 
+    public void controlPressed(MouseEvent event) {
+        scrollPane.setPannable(false);
+        mouseX = event.getX();
+        mouseY = event.getY();
+    }
+
+    /*
+        rulers and grid
+     */
     public void drawMaskRulers() {
         drawMaskGrid();
         drawMaskRulerX();
@@ -601,7 +630,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     /*
-        all shapes
+        shapes
      */
     public boolean drawMaskShape() {
         if (isMaskRectangleShown()) {
@@ -824,11 +853,161 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         return null;
     }
 
-    public void controlPressed(MouseEvent event) {
-        scrollPane.setPannable(false);
-        mouseX = event.getX();
-        mouseY = event.getY();
+    public DoubleShape shapeData(Shape shape) {
+        if (shape == null) {
+            return null;
+        }
+        if (shape == maskRectangle) {
+            return maskRectangleData;
+        } else if (shape == maskCircle) {
+            return maskCircleData;
+        } else if (shape == maskEllipse) {
+            return maskEllipseData;
+        } else if (shape == maskLine) {
+            return maskLineData;
+        } else if (shape == maskPolygon) {
+            return maskPolygonData;
+        } else if (shape == maskPolyline) {
+            return maskPolylineData;
+        } else if (shape == maskQuadratic) {
+            return maskQuadraticData;
+        } else if (shape == maskCubic) {
+            return maskCubicData;
+        } else if (shape == maskArc) {
+            return maskArcData;
+        } else if (shape == maskSVGPath) {
+            return maskPathData;
+        }
+        return null;
     }
+
+    public void makeShapeMenu(Shape shape) {
+        if (shape == null) {
+            return;
+        }
+        shape.hoverProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (!newValue || !shape.isVisible()) {
+                    return;
+                }
+                if (isPickingColor) {
+                    shape.setCursor(Cursor.HAND);
+                } else {
+                    shape.setCursor(Cursor.MOVE);
+                    if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
+                        popNodeMenu(shape, maskShapeMenu(shape));
+                    }
+                }
+            }
+        });
+
+    }
+
+    protected List<MenuItem> maskShapeMenu(Shape shape) {
+        try {
+            DoubleShape shapeData = shapeData(shape);
+            if (shapeData == null) {
+                return null;
+            }
+
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            Rectangle2D bounds = DoubleShape.getBound(shapeData);
+            double x1 = scale(bounds.getMinX());
+            double y1 = scale(bounds.getMinY());
+            double x2 = scale(bounds.getMaxX());
+            double y2 = scale(bounds.getMaxY());
+            double cx = scale(bounds.getCenterX());
+            double cy = scale(bounds.getCenterY());
+            double w = scale(bounds.getWidth());
+            double h = scale(bounds.getHeight());
+            String info = message(shape.getClass().getSimpleName()) + "\n"
+                    + message("LeftTop") + ": " + x1 + ", " + y1 + "\n"
+                    + message("RightBottom") + ": " + x2 + ", " + y2 + "\n"
+                    + message("Center") + ": " + cx + ", " + cy + "\n"
+                    + message("Width") + ": " + w + "  " + message("Height") + ": " + h;
+            menu = new MenuItem(info);
+            items.add(menu);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("TranslateShapeCenterTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    PointInputController inputController = PointInputController.open(myController,
+                            message("MoveShapeCenterTo"), new DoublePoint(cx, cy));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            translateRel(shapeData, inputController.picked.getX() - cx, inputController.picked.getY() - cy);
+                            inputController.close();
+                        }
+                    });
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeCenterToImageCenter"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    translateRel(shapeData, imageWidth() * 0.5 - cx, imageHeight() * 0.5 - cy);
+
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeLeftTopTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    PointInputController inputController = PointInputController.open(myController,
+                            message("TranslateShapeLeftTopTo"), new DoublePoint(x1, y1));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            translateRel(shapeData, inputController.picked.getX() - x1, inputController.picked.getY() - y1);
+                            inputController.close();
+                        }
+                    });
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeRightBottomTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    PointInputController inputController = PointInputController.open(myController,
+                            message("TranslateShapeRightBottomTo"), new DoublePoint(x2, y2));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            translateRel(shapeData, inputController.picked.getX() - x2, inputController.picked.getY() - y2);
+                            inputController.close();
+                        }
+                    });
+                }
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void translateRel(DoubleShape shapeData, double offsetX, double offsetY) {
+        shapeData.translateRel(offsetX, offsetY);
+        drawMaskShape();
+        maskShapeDataChanged();
+    }
+
 
     /* 
         anchor
@@ -850,12 +1029,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 @Override
                 public void handle(MouseEvent event) {
                     controlPressed(event);
+                    if (isPickingColor) {
+                        return;
+                    }
                     maskControlDragged = true;
                 }
             });
             text.setOnMouseDragged(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
+                    if (isPickingColor) {
+                        return;
+                    }
                     maskControlDragged = true;
                 }
             });
@@ -877,13 +1062,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (newValue) {
-                        if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
-                            popNodeMenu(text, maskAnchorMenu(text, index, title, p));
-                        }
                         if (isPickingColor) {
                             text.setCursor(Cursor.HAND);
                         } else {
                             text.setCursor(Cursor.MOVE);
+                            if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
+                                popNodeMenu(text, maskAnchorMenu(text, index, title, p));
+                            }
                         }
                     }
                 }
@@ -940,25 +1125,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteMaskAnchor(index);
-                });
-                items.add(menu);
-            }
-
-            DoubleShape shape = currentMaskShapeData();
-            if (shape != null) {
-                menu = new MenuItem(message("MoveShapeCenterTo"), StyleTools.getIconImageView("iconMove.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    PointInputController inputController = PointInputController.open(this,
-                            message("MoveShapeCenterTo"), DoubleShape.getCenter(shape));
-                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                            DoubleShape.translateAbs(shape, inputController.picked.getX(), inputController.picked.getY());
-                            drawMaskShape();
-                            maskShapeDataChanged();
-                            inputController.close();
-                        }
-                    });
                 });
                 items.add(menu);
             }
@@ -1696,12 +1862,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     @Override
                     public void handle(MouseEvent event) {
                         controlPressed(event);
+                        if (isPickingColor) {
+                            return;
+                        }
                         maskControlDragged = true;
                     }
                 });
                 pline.setOnMouseDragged(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
+                        if (isPickingColor) {
+                            return;
+                        }
                         maskControlDragged = true;
                     }
                 });
@@ -1709,10 +1881,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     @Override
                     public void handle(MouseEvent event) {
                         scrollPane.setPannable(true);
-                        maskControlDragged = true;
                         if (isPickingColor) {
                             return;
                         }
+                        maskControlDragged = true;
                         double offsetX = imageOffsetX(event);
                         double offsetY = imageOffsetY(event);
                         if (!DoubleShape.changed(offsetX, offsetY)) {
@@ -1727,13 +1899,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (newValue) {
-                            if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
-                                popNodeMenu(pline, lineMenu(pline, points));
-                            }
                             if (isPickingColor) {
                                 pline.setCursor(Cursor.HAND);
                             } else {
                                 pline.setCursor(Cursor.MOVE);
+                                if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
+                                    popNodeMenu(pline, lineMenu(pline, points));
+                                }
                             }
                         }
                     }
@@ -2294,10 +2466,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
 
     public void setMaskPathDefaultValues() {
         maskPathData = new DoublePath("M 10,30\n"
-                + "           A 20,20 0,0,1 50,30\n"
-                + "           A 20,20 0,0,1 90,30\n"
-                + "           Q 90,60 50,90\n"
-                + "           Q 10,60 10,30 z");
+                + "A 20,20 0,0,1 50,30\n"
+                + "A 20,20 0,0,1 90,30\n"
+                + "Q 90,60 50,90\n"
+                + "Q 10,60 10,30 z");
     }
 
     public boolean drawMaskPath() {

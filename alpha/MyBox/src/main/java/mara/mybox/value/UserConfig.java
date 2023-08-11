@@ -468,7 +468,7 @@ public class UserConfig {
     }
 
     public static int imageScale() {
-        return UserConfig.getInt("ImageDecimal", 2);
+        return UserConfig.getInt("ImageDecimal", 3);
     }
 
     public static int selectorScrollSize() {

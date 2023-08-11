@@ -399,4 +399,19 @@ document.body.contentEditable=true;
 ##MyBox#
 示例 > 网页 > 操作
 弹出信息
-alert("Hello");
+alert("人生得意须尽欢！");
+
+##MyBox#
+示例 > 网页 > 操作
+确认
+confirm("与君歌一曲？");
+
+##MyBox#
+示例 > 网页 > 操作
+输入
+prompt("君不见");
+
+##MyBox#
+示例 > 网页 > 操作
+打开网址
+window.open("http://www.nlc.cn");

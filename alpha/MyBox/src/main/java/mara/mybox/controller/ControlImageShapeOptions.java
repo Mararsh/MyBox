@@ -149,9 +149,14 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         if (okButton.isDisabled() || shapeType == null) {
             return;
         }
-        editor.popSuccessful();
-        editor.updateImage(ImageOperation.Shape, shapeType.name(), null, maskView.getImage(), 0);
+        String name = shapeType.name();
+        isSettingValues = true;
         typeGroup.selectToggle(null);
+        shapeType = null;
+        isSettingValues = false;
+
+        editor.popSuccessful();
+        editor.updateImage(ImageOperation.Shape, name, null, maskView.getImage(), 0);
     }
 
 }

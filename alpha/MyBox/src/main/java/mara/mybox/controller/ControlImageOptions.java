@@ -233,7 +233,7 @@ public class ControlImageOptions extends BaseController {
             int gi = UserConfig.getInt("GridLinesInterval", -1);
             gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
             gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
-            decimalSelector.setValue(UserConfig.getInt("ImageDecimal", 2) + "");
+            decimalSelector.setValue(UserConfig.imageScale() + "");
 
             strokeColorController.asSaved();
             anchorColorController.asSaved();

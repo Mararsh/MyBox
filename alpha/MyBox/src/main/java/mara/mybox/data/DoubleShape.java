@@ -41,7 +41,7 @@ public interface DoubleShape {
         return changed(p1.getX() - p2.getX(), p1.getY() - p2.getY());
     }
 
-    public static boolean translateAbs(DoubleShape shape, double x, double y) {
+    public static boolean translateCenterAbs(DoubleShape shape, double x, double y) {
         DoublePoint center = getCenter(shape);
         double offsetX = x - center.getX();
         double offsetY = y - center.getY();

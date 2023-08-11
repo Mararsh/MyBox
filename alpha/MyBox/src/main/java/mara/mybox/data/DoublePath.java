@@ -5,16 +5,13 @@ import java.awt.geom.Path2D;
 import java.util.List;
 import javafx.scene.shape.Path;
 import mara.mybox.data.DoublePathSegment.PathSegmentType;
-import static mara.mybox.data.DoublePathSegment.PathSegmentType.Arc;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Close;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Cubic;
-import static mara.mybox.data.DoublePathSegment.PathSegmentType.CubicSmooth;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Line;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineHorizontal;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineVertical;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Move;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Quadratic;
-import static mara.mybox.data.DoublePathSegment.PathSegmentType.QuadraticSmooth;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -136,35 +133,35 @@ public class DoublePath implements DoubleShape {
                 }
                 switch (type) {
                     case Move:
-                        path.moveTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY());
+                        path.moveTo(seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
                     case Line:
-                        path.lineTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY());
+                        path.lineTo(seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
                     case LineHorizontal:
-                        path.lineTo(seg.getValue(), seg.getInterPoint().getY());
+                        path.lineTo(seg.getValue(), seg.getStartPoint().getY());
                         break;
                     case LineVertical:
-                        path.lineTo(seg.getInterPoint().getX(), seg.getValue());
+                        path.lineTo(seg.getStartPoint().getX(), seg.getValue());
                         break;
                     case Quadratic:
-                        path.quadTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY(),
-                                seg.getPoints().get(1).getX(), seg.getPoints().get(1).getY());
+                        path.quadTo(seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
+                                seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
-                    case QuadraticSmooth:
+//                    case QuadraticSmooth:
 //                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
-                        break;
+//                        break;
                     case Cubic:
-                        path.curveTo(seg.getPoints().get(0).getX(), seg.getPoints().get(0).getY(),
-                                seg.getPoints().get(1).getX(), seg.getPoints().get(1).getY(),
-                                seg.getPoints().get(2).getX(), seg.getPoints().get(2).getY());
+                        path.curveTo(seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
+                                seg.getControlPoint2().getX(), seg.getControlPoint2().getY(),
+                                seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
-                    case CubicSmooth:
+//                    case CubicSmooth:
 //                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
-                        break;
-                    case Arc:
+//                        break;
+//                    case Arc:
 //                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
-                        break;
+//                        break;
                     case Close:
                         path.closePath();
                         break;

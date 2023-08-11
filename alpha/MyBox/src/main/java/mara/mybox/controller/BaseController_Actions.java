@@ -576,7 +576,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (node == null || menuItems == null || menuItems.isEmpty()) {
             return;
         }
-        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        Bounds bounds = node.localToScreen(node.getBoundsInParent());
         popMenu(node, menuItems,
                 bounds.getMinX() + bounds.getWidth() / 2,
                 bounds.getMinY() + bounds.getHeight() / 2);

@@ -63,7 +63,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         } else if (event.getButton() == MouseButton.SECONDARY) {
             DoubleShape shapeData = currentMaskShapeData();
             if (shapeData != null) {
-                if (DoubleShape.translateAbs(shapeData, p.getX(), p.getY())) {
+                if (DoubleShape.translateCenterAbs(shapeData, p.getX(), p.getY())) {
                     drawMaskShape();
                     maskShapeDataChanged();
                 }

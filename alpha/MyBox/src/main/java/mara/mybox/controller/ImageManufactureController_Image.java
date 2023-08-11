@@ -68,6 +68,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     public void resetImagePane() {
         operation = null;
         scope = null;
+        infoLabel.setText("");
 
         imageView.setRotate(0);
         imageView.setVisible(true);
@@ -296,14 +297,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     }
 
     public void updateLabelString(String info) {
-        try {
-            if (imageLabel == null) {
-                return;
-            }
-            imageLabel.setText(info);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+        infoLabel.setText(info);
     }
 
 }

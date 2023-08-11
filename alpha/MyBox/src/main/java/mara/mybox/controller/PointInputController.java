@@ -30,9 +30,9 @@ public class PointInputController extends BaseInputController {
             point = inPoint;
             recoverButton.setVisible(point != null);
             if (point != null) {
-                int scale = UserConfig.getInt("ImageDecimal", 2);
+                int scale = UserConfig.imageScale();
                 xInput.setText(DoubleTools.scale(point.getX(), scale) + "");
-                yInput.setText(DoubleTools.scale(point.getX(), scale) + "");
+                yInput.setText(DoubleTools.scale(point.getY(), scale) + "");
             }
 
         } catch (Exception e) {

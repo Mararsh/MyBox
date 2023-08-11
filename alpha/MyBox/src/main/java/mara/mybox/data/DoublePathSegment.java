@@ -1,6 +1,5 @@
 package mara.mybox.data;
 
-import java.util.List;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.CubicCurveTo;
@@ -22,8 +21,7 @@ import static mara.mybox.value.Languages.message;
 public class DoublePathSegment {
 
     protected PathSegmentType type;
-    protected DoublePoint interPoint; // The point between previous segment and current segment
-    protected List<DoublePoint> points;
+    protected DoublePoint startPoint, controlPoint1, controlPoint2, endPoint;
     protected double value;
     protected boolean isAbsolute, flag1, flag2;
     protected int scale;
@@ -73,29 +71,29 @@ public class DoublePathSegment {
             }
             switch (type) {
                 case Move:
-                    return points.get(0).text(scale);
+                    return endPoint.text(scale);
                 case Line:
-                    return points.get(0).text(scale);
+                    return endPoint.text(scale);
                 case LineHorizontal:
                     return DoubleTools.scaleString(value, scale);
                 case LineVertical:
                     return DoubleTools.scaleString(value, scale);
                 case Quadratic:
-                    return points.get(0).text(scale) + " " + points.get(1).text(scale);
+                    return controlPoint1.text(scale) + " " + endPoint.text(scale);
                 case QuadraticSmooth:
-                    return points.get(0).text(scale);
+                    return endPoint.text(scale);
                 case Cubic:
-                    return points.get(0).text(scale)
-                            + " " + points.get(1).text(scale)
-                            + " " + points.get(2).text(scale);
+                    return controlPoint1.text(scale)
+                            + " " + controlPoint2.text(scale)
+                            + " " + endPoint.text(scale);
                 case CubicSmooth:
-                    return points.get(0).text(scale) + " " + points.get(1).text(scale);
+                    return controlPoint1.text(scale) + " " + endPoint.text(scale);
                 case Arc:
-                    return points.get(0).text(scale)
+                    return controlPoint1.text(scale)
                             + " " + DoubleTools.scaleString(value, scale)
                             + " " + (flag1 ? 1 : 0)
                             + " " + (flag2 ? 1 : 0)
-                            + " " + points.get(1).text(scale);
+                            + " " + endPoint.text(scale);
                 case Close:
                     return "";
             }
@@ -159,31 +157,31 @@ public class DoublePathSegment {
             }
             switch (type) {
                 case Move:
-                    return new MoveTo(points.get(0).getX(), points.get(0).getY());
+                    return new MoveTo(endPoint.getX(), endPoint.getY());
                 case Line:
-                    return new LineTo(points.get(0).getX(), points.get(0).getY());
+                    return new LineTo(endPoint.getX(), endPoint.getY());
                 case LineHorizontal:
                     return new HLineTo(value);
                 case LineVertical:
                     return new VLineTo(value);
                 case Quadratic:
-                    return new QuadCurveTo(points.get(0).getX(), points.get(0).getY(),
-                            points.get(1).getX(), points.get(1).getY());
-                case QuadraticSmooth:
-                    return new QuadCurveTo(points.get(0).getX(), points.get(0).getY(),
-                            points.get(0).getX(), points.get(0).getY());
+                    return new QuadCurveTo(controlPoint1.getX(), controlPoint1.getY(),
+                            endPoint.getX(), endPoint.getY());
+//                case QuadraticSmooth:
+//                    return new QuadCurveTo(points.get(0).getX(), points.get(0).getY(),
+//                            points.get(0).getX(), points.get(0).getY());
                 case Cubic:
-                    return new CubicCurveTo(points.get(0).getX(), points.get(0).getY(),
-                            points.get(1).getX(), points.get(1).getY(),
-                            points.get(2).getX(), points.get(2).getY());
-                case CubicSmooth:
-                    return new CubicCurveTo(points.get(0).getX(), points.get(0).getY(),
-                            points.get(0).getX(), points.get(0).getY(),
-                            points.get(1).getX(), points.get(1).getY());
+                    return new CubicCurveTo(controlPoint1.getX(), controlPoint1.getY(),
+                            controlPoint2.getX(), controlPoint2.getY(),
+                            endPoint.getX(), endPoint.getY());
+//                case CubicSmooth:
+//                    return new CubicCurveTo(points.get(0).getX(), points.get(0).getY(),
+//                            points.get(0).getX(), points.get(0).getY(),
+//                            points.get(1).getX(), points.get(1).getY());
                 case Arc:
-                    return new ArcTo(points.get(0).getX(), points.get(0).getY(),
+                    return new ArcTo(controlPoint1.getX(), controlPoint1.getY(),
                             value,
-                            points.get(1).getX(), points.get(1).getY(),
+                            endPoint.getX(), endPoint.getY(),
                             flag1, flag2);
                 case Close:
                     return new ClosePath();
@@ -200,11 +198,6 @@ public class DoublePathSegment {
      */
     public DoublePathSegment setType(PathSegmentType type) {
         this.type = type;
-        return this;
-    }
-
-    public DoublePathSegment setPoints(List<DoublePoint> points) {
-        this.points = points;
         return this;
     }
 
@@ -233,8 +226,23 @@ public class DoublePathSegment {
         return this;
     }
 
-    public DoublePathSegment setInterPoint(DoublePoint interPoint) {
-        this.interPoint = interPoint;
+    public DoublePathSegment setStartPoint(DoublePoint startPoint) {
+        this.startPoint = startPoint;
+        return this;
+    }
+
+    public DoublePathSegment setControlPoint1(DoublePoint controlPoint1) {
+        this.controlPoint1 = controlPoint1;
+        return this;
+    }
+
+    public DoublePathSegment setControlPoint2(DoublePoint controlPoint2) {
+        this.controlPoint2 = controlPoint2;
+        return this;
+    }
+
+    public DoublePathSegment setEndPoint(DoublePoint endPoint) {
+        this.endPoint = endPoint;
         return this;
     }
 
@@ -245,8 +253,20 @@ public class DoublePathSegment {
         return type;
     }
 
-    public List<DoublePoint> getPoints() {
-        return points;
+    public DoublePoint getStartPoint() {
+        return startPoint;
+    }
+
+    public DoublePoint getControlPoint1() {
+        return controlPoint1;
+    }
+
+    public DoublePoint getControlPoint2() {
+        return controlPoint2;
+    }
+
+    public DoublePoint getEndPoint() {
+        return endPoint;
     }
 
     public boolean isIsAbsolute() {
@@ -267,10 +287,6 @@ public class DoublePathSegment {
 
     public int getScale() {
         return scale;
-    }
-
-    public DoublePoint getInterPoint() {
-        return interPoint;
     }
 
 }

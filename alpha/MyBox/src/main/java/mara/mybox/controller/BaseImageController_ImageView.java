@@ -325,7 +325,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
                 loadInfo = message("LoadedSize") + ":"
                         + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "\n"
                         + message("DisplayedSize") + ":"
-                        + (int) imageView.getBoundsInLocal().getWidth() + "x" + (int) imageView.getBoundsInLocal().getHeight();
+                        + (int) imageView.getBoundsInParent().getWidth() + "x" + (int) imageView.getBoundsInParent().getHeight();
             }
             String more = moreDisplayInfo();
             loadInfo += (!loadInfo.isBlank() && !more.isBlank() ? "\n" : "") + more;

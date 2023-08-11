@@ -261,6 +261,9 @@ public class MyBoxLog extends BaseData {
             if (LastMyBoxLog != null && LastMyBoxLog.equalTo(myboxLog)) {
                 return myboxLog;
             }
+            if (logString.contains("java.sql.SQLNonTransientConnectionException")) {
+                type = LogType.Debug;
+            }
             if (AppVariables.popErrorLogs && type == LogType.Error) {
                 Platform.runLater(() -> {
                     MyBoxLogViewerController controller = MyBoxLogViewerController.oneOpen();
@@ -269,6 +272,7 @@ public class MyBoxLog extends BaseData {
                     }
                 });
             }
+
             boolean notSave = isMylog || type == LogType.Console
                     || (type == LogType.Debug && !AppVariables.saveDebugLogs);
             if (!notSave) {
