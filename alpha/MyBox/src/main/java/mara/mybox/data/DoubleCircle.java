@@ -1,12 +1,11 @@
 package mara.mybox.data;
 
 import java.awt.geom.Ellipse2D;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:29:29
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class DoubleCircle implements DoubleShape {
@@ -21,6 +20,11 @@ public class DoubleCircle implements DoubleShape {
         centerX = x;
         centerY = y;
         radius = r;
+    }
+
+    @Override
+    public String name() {
+        return message("Circle");
     }
 
     @Override

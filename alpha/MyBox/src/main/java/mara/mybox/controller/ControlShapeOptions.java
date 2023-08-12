@@ -51,7 +51,7 @@ public abstract class ControlShapeOptions extends BaseController {
     @FXML
     protected RadioButton lineRadio, rectangleRadio, circleRadio, ellipseRadio,
             polylineRadio, polygonRadio, polylinesRadio,
-            arcRadio, quadraticRadio, cubicRadio, pathRadio,
+            arcRadio, quadraticRadio, cubicRadio, svgRadio,
             linecapSquareRadio, linecapRoundRadio, linecapButtRadio;
     @FXML
     protected ToggleGroup typeGroup, linecap;
@@ -63,7 +63,7 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck, popMenuCheck;
+    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorMenuCheck;
     @FXML
     protected FlowPane opPane;
     @FXML
@@ -77,12 +77,13 @@ public abstract class ControlShapeOptions extends BaseController {
     public void initControls() {
         try {
             super.initControls();
+            parametersController.optionsOontroller = this;
 
-            popMenuCheck.setSelected(UserConfig.getBoolean("ImageShapeControlPopMenu", true));
-            popMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            popAnchorMenuCheck.setSelected(UserConfig.getBoolean("ImageShapeAnchorPopMenu", true));
+            popAnchorMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageShapeControlPopMenu", popMenuCheck.isSelected());
+                    UserConfig.setBoolean("ImageShapeAnchorPopMenu", popAnchorMenuCheck.isSelected());
                 }
             });
 
@@ -105,8 +106,9 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             this.imageController = imageController;
             imageController.showAnchors = anchorCheck.isSelected();
-            parametersController.optionsOontroller = this;
             parametersController.imageController = imageController;
+            parametersController.optionsOontroller = this;
+            parametersController.pathController.optionsOontroller = this;
             infoLabel = imageController.infoLabel;
 
             shapeDataChangeListener = new ChangeListener<Boolean>() {
@@ -452,7 +454,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 imageController.showMaskArc();
                 shapeType = ShapeType.Arc;
 
-            } else if (pathRadio != null && pathRadio.isSelected()) {
+            } else if (svgRadio != null && svgRadio.isSelected()) {
                 imageController.showMaskPath();
                 shapeType = ShapeType.Path;
 
@@ -468,6 +470,7 @@ public abstract class ControlShapeOptions extends BaseController {
         isSettingValues = true;
         try {
             parametersController.setShapeControls(shapeType);
+            NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
 
             if (infoLabel != null) {
                 infoLabel.setText("");
@@ -477,18 +480,18 @@ public abstract class ControlShapeOptions extends BaseController {
                         case Polyline:
                         case Polygon:
                             opPane.getChildren().addAll(withdrawButton, clearButton);
-                            infoLabel.setText(message("ShapePointsMoveComments"));
+                            infoLabel.setText(message("ShapeDragMoveComments"));
                             break;
                         case Polylines:
                             opPane.getChildren().addAll(withdrawButton, clearButton);
-                            NodeStyleTools.setTooltip(popMenuCheck, new Tooltip(message("PopLineMenu")));
+                            NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopLineMenu")));
                             infoLabel.setText(message("ShapePolylinesTips"));
                             break;
                         default:
                             infoLabel.setText(message("ShapeDragMoveComments"));
                             break;
                     }
-                    opPane.getChildren().addAll(anchorCheck, popMenuCheck);
+                    opPane.getChildren().addAll(anchorCheck, popAnchorMenuCheck);
                 }
             }
         } catch (Exception e) {

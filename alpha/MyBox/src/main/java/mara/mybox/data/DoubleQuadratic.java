@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.QuadCurve2D;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -23,6 +24,11 @@ public class DoubleQuadratic implements DoubleShape {
         this.controlY = controlY;
         this.endX = endX;
         this.endY = endY;
+    }
+
+    @Override
+    public String name() {
+        return message("QuadraticCurve");
     }
 
     @Override

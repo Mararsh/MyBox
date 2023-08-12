@@ -126,7 +126,7 @@ License:    Apache License Version 2.0
                         </Text>
                         <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
                         </ImageView>
-                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="144.0" layoutY="150.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" stroke="RED" strokeType="INSIDE" width="334.0">
+                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="144.0" layoutY="150.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE" width="334.0">
                             <cursor>
                                 <Cursor fx:constant="MOVE" />
                             </cursor>

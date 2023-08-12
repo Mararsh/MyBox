@@ -616,20 +616,18 @@ public class ImageSplitController extends BaseImagesListController {
         line.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                maskControlDragged = true;
                 controlPressed(event);
             }
         });
         line.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                maskControlDragged = true;
+
             }
         });
         line.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                maskControlDragged = true;
                 scrollPane.setPannable(true);
                 double offsetX = imageOffsetX(event);
                 double offsetY = imageOffsetY(event);
@@ -806,30 +804,58 @@ public class ImageSplitController extends BaseImagesListController {
 
     @Override
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        if (image == null || splitMethod != SplitMethod.Customize || maskControlDragged) {
+        if (image == null || splitMethod != SplitMethod.Customize
+                || event.getButton() != MouseButton.SECONDARY) {
             return;
         }
-        if (event.getButton() == MouseButton.PRIMARY) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+            double px = scale(p.getX());
+            double py = scale(p.getY());
+            menu = new MenuItem(message("Point") + ": " + px + ", " + py);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
-            int y = (int) Math.round(p.getY() / heightRatio());
-            String str = customizedRowsInput.getText().trim();
-            if (str.isEmpty()) {
-                customizedRowsInput.setText(y + "");
-            } else {
-                customizedRowsInput.setText(str + "," + y);
-            }
+            menu = new MenuItem(message("AddRowAtPoint"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    int y = (int) Math.round(p.getY() / heightRatio());
+                    String str = customizedRowsInput.getText().trim();
+                    if (str.isEmpty()) {
+                        customizedRowsInput.setText(y + "");
+                    } else {
+                        customizedRowsInput.setText(str + "," + y);
+                    }
+                    pickCustomize();
+                }
+            });
+            items.add(menu);
 
-            pickCustomize();
+            menu = new MenuItem(message("AddColAtPoint"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    int x = (int) Math.round(p.getX() / widthRatio());
+                    String str = customizedColsInput.getText().trim();
+                    if (str.isEmpty()) {
+                        customizedColsInput.setText(x + "");
+                    } else {
+                        customizedColsInput.setText(str + "," + x);
+                    }
+                    pickCustomize();
+                }
+            });
+            items.add(menu);
 
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-            int x = (int) Math.round(p.getX() / widthRatio());
-            String str = customizedColsInput.getText().trim();
-            if (str.isEmpty()) {
-                customizedColsInput.setText(x + "");
-            } else {
-                customizedColsInput.setText(str + "," + x);
-            }
-            pickCustomize();
+            items.add(new SeparatorMenuItem());
+
+            popEventMenu(event, items);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

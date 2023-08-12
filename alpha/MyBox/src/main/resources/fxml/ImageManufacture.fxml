@@ -493,22 +493,22 @@ License:    Apache License Version 2.0
                                                                             </cursor>
                                                                         </Rectangle>
                                                                         <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
-                                                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" stroke="RED" strokeType="INSIDE" width="200.0">
+                                                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE" width="200.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                         </Rectangle>
-                                                                        <Circle fx:id="maskCircle" fill="#ffffff00" layoutX="210.0" layoutY="141.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" radius="139.0" stroke="RED" strokeType="INSIDE">
+                                                                        <Circle fx:id="maskCircle" fill="#ffffff00" layoutX="210.0" layoutY="141.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" radius="139.0" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                         </Circle>
-                                                                        <Ellipse fx:id="maskEllipse" fill="#ffffff00" layoutX="130.0" layoutY="181.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" radiusX="100.0" radiusY="80.0" stroke="RED" strokeType="INSIDE">
+                                                                        <Ellipse fx:id="maskEllipse" fill="#ffffff00" layoutX="130.0" layoutY="181.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="80.0" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                         </Ellipse>
-                                                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" stroke="RED" strokeType="INSIDE">
+                                                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="DEFAULT" />
                                                                             </cursor>
@@ -521,7 +521,7 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-60.0" />
                                                                             </points>
                                                                         </Polygon>
-                                                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" stroke="RED" strokeType="INSIDE">
+                                                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE">
                                                                             <points>
                                                                                 <Double fx:value="-50.0" />
                                                                                 <Double fx:value="-40.0" />
@@ -533,10 +533,10 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-40.0" />
                                                                             </points>
                                                                         </Polyline>
-                                                      <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" startX="-100.0" />
-                                                      <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
-                                                      <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" startX="-150.0" stroke="BLACK" />
-                                                      <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#handlerPressed" onMouseReleased="#moveShape" startX="-50.0" stroke="BLACK" strokeType="INSIDE" />
+                                                      <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-100.0" />
+                                                      <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
+                                                      <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-150.0" stroke="BLACK" />
+                                                      <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-50.0" stroke="BLACK" strokeType="INSIDE" />
                                                       <SVGPath fx:id="maskSVGPath" content="M40,60 C42,48 44,30 25,32" layoutX="47.0" layoutY="191.0" />
                                                                         <Rectangle fx:id="maskHandlerTopLeft" fill="#ffffff00" height="10.0" layoutX="70.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                                                                             <cursor>

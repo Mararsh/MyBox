@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.Line2D;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -20,6 +21,11 @@ public class DoubleLine implements DoubleShape {
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
+    }
+
+    @Override
+    public String name() {
+        return message("StraightLine");
     }
 
     @Override

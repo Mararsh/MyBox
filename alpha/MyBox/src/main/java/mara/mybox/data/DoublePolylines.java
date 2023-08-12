@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -17,6 +18,11 @@ public class DoublePolylines implements DoubleShape {
 
     public DoublePolylines() {
         points = new ArrayList<>();
+    }
+
+    @Override
+    public String name() {
+        return message("Polylines");
     }
 
     @Override

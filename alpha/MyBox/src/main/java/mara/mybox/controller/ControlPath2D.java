@@ -2,9 +2,12 @@ package mara.mybox.controller;
 
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -28,9 +31,11 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
-    public int Scale = 2;
-    protected DoublePath path;
+    protected ControlShapeOptions optionsOontroller;
+    public int Scale = 3;
 
+    @FXML
+    protected Tab codesTab, textsTab;
     @FXML
     protected TableColumn<DoublePathSegment, String> indexColumn, typeColumn,
             commandColumn, parametersColumn;
@@ -38,6 +43,8 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     protected TableColumn<DoublePathSegment, Boolean> absoluteColumn;
     @FXML
     protected TextArea textArea;
+    @FXML
+    protected CheckBox wrapTextsCheck, typesettingCheck;
 
     @Override
     public void initControls() {
@@ -61,44 +68,103 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
             parametersColumn.setCellValueFactory(new PropertyValueFactory<>("parameters"));
 
+            wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapText", true));
+            textArea.setWrapText(wrapTextsCheck.isSelected());
+            wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapText", wrapTextsCheck.isSelected());
+                    textArea.setWrapText(wrapTextsCheck.isSelected());
+                }
+            });
+
+            typesettingCheck.setSelected(UserConfig.getBoolean(baseName + "Typesetting", true));
+            typesettingCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Typesetting", typesettingCheck.isSelected());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void tableChanged(boolean changed) {
-    }
-
+    /*
+        data
+     */
     public void loadPath(String contents) {
-        path = new DoublePath(contents);
-        load();
-    }
-
-    public void load() {
-        if (path == null) {
+        List<DoublePathSegment> segments = DoublePath.stringToSegments(this, contents, Scale);
+        if (segments == null || segments.isEmpty()) {
             tableData.clear();
             textArea.clear();
             return;
-        }
-        textArea.setText(path.getContent());
-        List<DoublePathSegment> segments = path.getSegments();
-        if (segments == null || segments.isEmpty()) {
-            tableData.clear();
         } else {
             tableData.setAll(segments);
         }
+        String s = contents;
+        if (typesettingCheck.isSelected()) {
+            s = DoublePath.segmentsToString(segments, "\n");
+        }
+        textArea.setText(s);
+
     }
 
-    public String pickPath(String separator) {
-        return DoublePath.segmentsToString(tableData, separator);
+    public boolean pickPath() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == codesTab) {
+            if (tableData.isEmpty()) {
+                popError(message("NoData"));
+                return false;
+            }
+            if (DoublePath.includeUnsupported(tableData)) {
+                alertError(message("Path2DNotSupportComment"));
+                return false;
+            }
+            String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
+            textArea.setText(s);
+
+        } else {
+            String s = textArea.getText();
+            List<DoublePathSegment> segments = DoublePath.stringToSegments(this, s, Scale);
+            if (segments == null) {
+                return false;
+            }
+            if (segments.isEmpty()) {
+                popError(message("NoData"));
+                return false;
+            }
+            if (DoublePath.includeUnsupported(segments)) {
+                alertError(message("Path2DNotSupportComment"));
+                return false;
+            }
+            tableData.setAll(segments);
+
+        }
+
+        return true;
     }
 
     @FXML
-    public void checkAbsolute() {
-
+    @Override
+    public void goAction() {
+        if (pickPath() && optionsOontroller != null) {
+            optionsOontroller.goShape();
+        }
     }
 
+    public String getText() {
+        return textArea.getText();
+    }
+
+    public List<DoublePathSegment> getSegments() {
+        return tableData;
+    }
+
+    /*
+        table
+     */
     @FXML
     @Override
     public void addAction() {
@@ -111,10 +177,18 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     }
 
+
+    /*
+        text
+     */
     @FXML
-    @Override
-    public void recoverAction() {
-        load();
+    public void editTexts() {
+        if (textArea.getText().isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(textArea.getText());
     }
 
     @FXML
@@ -124,17 +198,11 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
             popError(message("NoData"));
             return;
         }
-        textArea.setText(DoublePath.typesetting(text, "\n"));
-    }
-
-    @FXML
-    public void editTexts() {
-        if (textArea.getText().isEmpty()) {
-            popError(message("NoData"));
+        String s = DoublePath.typesetting(this, text, "\n", Scale);
+        if (s == null) {
             return;
         }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textArea.getText());
+        textArea.setText(s);
     }
 
     @FXML
@@ -159,6 +227,18 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     @FXML
     protected void showPathHistories(Event event) {
         PopTools.popStringValues(this, textArea, event, "SvgPathHistories", false, true);
+    }
+
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        popEventMenu(event, HelpTools.svgHelps(true));
     }
 
 }

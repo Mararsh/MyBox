@@ -2,7 +2,7 @@ package mara.mybox.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.controller.BaseController;
 import org.apache.batik.parser.PathHandler;
 import org.apache.batik.parser.PathParser;
 
@@ -17,7 +17,7 @@ public class DoublePathParser implements PathHandler {
     protected int scale;
     protected List<DoublePathSegment> segments;
 
-    public DoublePathParser parse(String content, int scale) {
+    public DoublePathParser parse(BaseController controller, String content, int scale) {
         try {
             segments = null;
             this.scale = scale;
@@ -32,7 +32,7 @@ public class DoublePathParser implements PathHandler {
 
             return this;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            controller.displayError(e.toString());
             return null;
         }
     }

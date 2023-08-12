@@ -1,9 +1,9 @@
 package mara.mybox.data;
 
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.List;
 import javafx.scene.shape.Path;
+import mara.mybox.controller.BaseController;
 import mara.mybox.data.DoublePathSegment.PathSegmentType;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Close;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Cubic;
@@ -13,6 +13,7 @@ import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineVertical;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Move;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Quadratic;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -29,27 +30,32 @@ public class DoublePath implements DoubleShape {
         init();
     }
 
+    public DoublePath(BaseController controller, String content) {
+        init();
+        parseContent(controller, content);
+    }
+
     final public void init() {
         content = null;
         segments = null;
         scale = 3;
     }
 
-    public DoublePath(String content) {
-        init();
-        parse(content);
+    @Override
+    public String name() {
+        return message("SvgPath");
     }
 
-    public final List<DoublePathSegment> parse(String content) {
+    public final List<DoublePathSegment> parseContent(BaseController controller, String content) {
         this.content = content;
-
-        DoublePathParser parser = new DoublePathParser().parse(content, scale);
-        if (parser == null) {
-            segments = null;
-        } else {
-            segments = parser.getSegments();
-        }
+        segments = stringToSegments(controller, content, scale);
         return segments;
+    }
+
+    public String parseSegments(List<DoublePathSegment> segments) {
+        this.segments = segments;
+        content = segmentsToString(segments, " ");
+        return content;
     }
 
     public String typesetting(String separator) {
@@ -65,7 +71,10 @@ public class DoublePath implements DoubleShape {
 
     @Override
     public DoublePath cloneValues() {
-        return new DoublePath(content);
+        DoublePath path = new DoublePath();
+        path.setContent(content);
+        path.setSegments(segments);
+        return path;
     }
 
     @Override
@@ -78,29 +87,40 @@ public class DoublePath implements DoubleShape {
         return !isValid() || segments.isEmpty();
     }
 
+    public boolean includeUnsupported() {
+        if (segments == null || segments.isEmpty()) {
+            return false;
+        }
+        for (DoublePathSegment seg : segments) {
+            PathSegmentType type = seg.getType();
+            if (type == PathSegmentType.Arc
+                    || type == PathSegmentType.CubicSmooth
+                    || type == PathSegmentType.QuadraticSmooth) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean translateRel(double offsetX, double offsetY) {
-        DoublePath nPath = new DoublePath(content);
-        AffineTransform.getTranslateInstance(offsetX, offsetY);
+//        DoublePath nPath = new DoublePath(content);
+//        AffineTransform.getTranslateInstance(offsetX, offsetY);
         return true;
-    }
-
-    /*
-        set
-     */
-    public void setContent(String content) {
-        this.content = content;
-        parse(content);
-    }
-
-    public void setSegments(List<DoublePathSegment> segments) {
-        this.segments = segments;
-        content = segmentsToString(segments, " ");
     }
 
     /*
         static
      */
+    public static List<DoublePathSegment> stringToSegments(BaseController controller, String content, int scale) {
+        DoublePathParser parser = new DoublePathParser().parse(controller, content, scale);
+        if (parser == null) {
+            return null;
+        } else {
+            return parser.getSegments();
+        }
+    }
+
     public static String segmentsToString(List<DoublePathSegment> segments, String separator) {
         try {
             if (segments == null || segments.isEmpty()) {
@@ -189,14 +209,40 @@ public class DoublePath implements DoubleShape {
         }
     }
 
-    public static String typesetting(String content, String separator) {
+    public static String typesetting(BaseController controller, String content, String separator, int scale) {
         try {
-            DoublePath path = new DoublePath(content);
-            return segmentsToString(path.getSegments(), separator);
+            List<DoublePathSegment> segments = stringToSegments(controller, content, scale);
+            return segmentsToString(segments, separator);
         } catch (Exception e) {
             MyBoxLog.console(e);
             return content;
         }
+    }
+
+    public static boolean includeUnsupported(List<DoublePathSegment> segments) {
+        if (segments == null || segments.isEmpty()) {
+            return false;
+        }
+        for (DoublePathSegment seg : segments) {
+            PathSegmentType type = seg.getType();
+            if (type == PathSegmentType.Arc
+                    || type == PathSegmentType.CubicSmooth
+                    || type == PathSegmentType.QuadraticSmooth) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+        set
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setSegments(List<DoublePathSegment> segments) {
+        this.segments = segments;
     }
 
     /*

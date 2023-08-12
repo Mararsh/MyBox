@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.CubicCurve2D;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -27,6 +28,11 @@ public class DoubleCubic implements DoubleShape {
         this.controlY2 = control2Y;
         this.endX = endX;
         this.endY = endY;
+    }
+
+    @Override
+    public String name() {
+        return message("CubicCurve");
     }
 
     @Override

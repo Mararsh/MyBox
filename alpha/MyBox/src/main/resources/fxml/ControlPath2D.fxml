@@ -25,26 +25,26 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_RIGHT" spacing="2.0">
             <children>
-                <Button fx:id="synchronizeButton" mnemonicParsing="false" onAction="#synchronizeAction">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconSynchronize.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+            <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconRecover.png" />
+                        <Image url="@../buttons/Red/iconGo.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
+            <CheckBox fx:id="typesettingCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/red/iconTypesetting.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
+                <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -156,6 +156,52 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
+                              <Button fx:id="typesettingButton" layoutX="174.0" layoutY="10.0" mnemonicParsing="false" onAction="#typesettingAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconTypesetting.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                        <Button fx:id="clearTextButton" mnemonicParsing="false" onAction="#clearAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="popTextButton" mnemonicParsing="false" onAction="#popAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconPop.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="editTextsButton" mnemonicParsing="false" onAction="#editTexts">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconEdit.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" selected="true">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/red/iconWrap.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                   <Button fx:id="examplesPathButton" mnemonicParsing="false" onAction="#showExamplesPathMenu" onMouseEntered="#popExamplesPathMenu">
                                       <graphic>
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -174,51 +220,6 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                       </graphic>
                                   </Button>
-                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconClear.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconPop.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="editTextsButton" mnemonicParsing="false" onAction="#editTexts">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconEdit.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                              <Button fx:id="typesettingButton" layoutX="174.0" layoutY="10.0" mnemonicParsing="false" onAction="#typesettingAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconTypesetting.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                                        <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/red/iconWrap.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </CheckBox>
                                     </children>
                                 </HBox>
                                 <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />

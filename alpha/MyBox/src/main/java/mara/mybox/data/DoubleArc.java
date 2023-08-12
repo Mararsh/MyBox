@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.Arc2D;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -39,6 +40,11 @@ public class DoubleArc implements DoubleShape {
         a.setExtentAngle(extentAngle);
         a.setType(type);
         return a;
+    }
+
+    @Override
+    public String name() {
+        return message("ArcCurve");
     }
 
     public double getX1() {

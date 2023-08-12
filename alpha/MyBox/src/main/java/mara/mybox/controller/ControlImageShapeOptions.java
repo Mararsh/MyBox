@@ -5,9 +5,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoubleShape;
-import mara.mybox.data.DoubleShape.ShapeType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ShapeTools;
@@ -108,10 +108,10 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         if (shapeData == null) {
             return;
         }
-        if (shapeType == ShapeType.Path) {
-            imageController.drawMaskShape();
-            return;
-        }
+//        if (shapeType == ShapeType.Path) {
+//            imageController.drawMaskShape();
+//            return;
+//        }
         if (task != null) {
             task.cancel();
         }
@@ -157,6 +157,14 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
         editor.popSuccessful();
         editor.updateImage(ImageOperation.Shape, name, null, maskView.getImage(), 0);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (parametersController.keyEventsFilter(event)) {
+            return true;
+        }
+        return super.keyEventsFilter(event);
     }
 
 }

@@ -487,7 +487,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 });
                 handleMenu.getItems().add(menu);
 
-                menu = new MenuItem("SVG", StyleTools.getIconImageView("iconDelimiter.png"));
+                menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     svgAction();
                 });

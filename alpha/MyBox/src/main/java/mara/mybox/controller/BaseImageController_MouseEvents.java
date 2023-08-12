@@ -1,14 +1,26 @@
 package mara.mybox.controller;
 
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -36,42 +48,197 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        if (event == null || p == null) {
+        if (event == null || p == null || event.getButton() != MouseButton.SECONDARY) {
             return;
         }
-        if (event.getButton() == MouseButton.PRIMARY) {
-            if (maskPolyline != null && maskPolyline.isVisible()) {
-                if (!maskControlDragged) {
-                    maskPolylineData.add(p.getX(), p.getY());
-                    double x = p.getX() * viewXRatio();
-                    double y = p.getY() * viewYRatio();
-                    addMaskPolylinePoint(maskPolylineData.getSize(), p, x, y);
-                    maskShapeChanged();
-                }
-
-            } else if (maskPolygon != null && maskPolygon.isVisible()) {
-                if (!maskControlDragged) {
-                    maskPolygonData.add(p.getX(), p.getY());
-                    double x = p.getX() * viewXRatio();
-                    double y = p.getY() * viewYRatio();
-                    addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
-                    maskShapeChanged();
-                }
-
-            }
-
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-            DoubleShape shapeData = currentMaskShapeData();
-            if (shapeData != null) {
-                if (DoubleShape.translateCenterAbs(shapeData, p.getX(), p.getY())) {
-                    drawMaskShape();
-                    maskShapeDataChanged();
-                }
-            } else {
-                popImageMenu(event.getScreenX(), event.getScreenY());
-            }
-
+        DoubleShape shapeData = currentMaskShapeData();
+        if (shapeData != null) {
+            popEventMenu(event, maskShapeMenu(event, shapeData, p));
+        } else {
+            popImageMenu(event.getScreenX(), event.getScreenY());
         }
+    }
+
+    protected List<MenuItem> maskShapeMenu(MouseEvent event, DoubleShape shapeData, DoublePoint p) {
+        try {
+            if (event == null || shapeData == null || p == null) {
+                return null;
+            }
+
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            Rectangle2D bounds = DoubleShape.getBound(shapeData);
+            double x1 = scale(bounds.getMinX());
+            double y1 = scale(bounds.getMinY());
+            double x2 = scale(bounds.getMaxX());
+            double y2 = scale(bounds.getMaxY());
+            double cx = scale(bounds.getCenterX());
+            double cy = scale(bounds.getCenterY());
+            double w = scale(bounds.getWidth());
+            double h = scale(bounds.getHeight());
+            double px = scale(p.getX());
+            double py = scale(p.getY());
+            String info = shapeData.name() + "\n"
+                    + message("LeftTop") + ": " + x1 + ", " + y1 + "\n"
+                    + message("RightBottom") + ": " + x2 + ", " + y2 + "\n"
+                    + message("Center") + ": " + cx + ", " + cy + "\n"
+                    + message("Width") + ": " + w + "  " + message("Height") + ": " + h;
+            menu = new MenuItem(info);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            info = message("Point") + ": " + px + ", " + py;
+            menu = new MenuItem(info);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+
+            if (maskSVGPath != null && maskSVGPath.isVisible()) {
+                return items;
+            }
+
+            if (maskPolyline != null && maskPolyline.isVisible()) {
+                menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        maskPolylineData.add(p.getX(), p.getY());
+                        double x = p.getX() * viewXRatio();
+                        double y = p.getY() * viewYRatio();
+                        addMaskPolylinePoint(maskPolylineData.getSize(), p, x, y);
+                        maskShapeDataChanged();
+                    }
+                });
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            } else if (maskPolygon != null && maskPolygon.isVisible()) {
+                menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        maskPolygonData.add(p.getX(), p.getY());
+                        double x = p.getX() * viewXRatio();
+                        double y = p.getY() * viewYRatio();
+                        addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
+                        maskShapeDataChanged();
+                    }
+                });
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            }
+
+            menu = new MenuItem(message("TranslateShapeCenterToPoint"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    translateRel(shapeData, px - cx, py - cy);
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeCenterToImageCenter"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    translateRel(shapeData, imageWidth() * 0.5 - cx, imageHeight() * 0.5 - cy);
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeCenterTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    PointInputController inputController = PointInputController.open(myController,
+                            message("TranslateShapeCenterTo"), new DoublePoint(cx, cy));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            translateRel(shapeData, inputController.picked.getX() - cx, inputController.picked.getY() - cy);
+                            inputController.close();
+                        }
+                    });
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeLeftTopToPoint"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    translateRel(shapeData, px - x1, py - y1);
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeLeftTopTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    PointInputController inputController = PointInputController.open(myController,
+                            message("TranslateShapeLeftTopTo"), new DoublePoint(x1, y1));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            translateRel(shapeData, inputController.picked.getX() - x1, inputController.picked.getY() - y1);
+                            inputController.close();
+                        }
+                    });
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeRightBottomToPoint"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    translateRel(shapeData, px - x2, py - y2);
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TranslateShapeRightBottomTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    PointInputController inputController = PointInputController.open(myController,
+                            message("TranslateShapeRightBottomTo"), new DoublePoint(x2, y2));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            translateRel(shapeData, inputController.picked.getX() - x2, inputController.picked.getY() - y2);
+                            inputController.close();
+                        }
+                    });
+                }
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ImageMenu"), StyleTools.getIconImageView("iconMenu.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    popImageMenu(event.getScreenX(), event.getScreenY());
+                }
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void translateRel(DoubleShape shapeData, double offsetX, double offsetY) {
+        shapeData.translateRel(offsetX, offsetY);
+        drawMaskShape();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -104,8 +271,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     public void mouseReleased(MouseEvent event) {
         scrollPane.setPannable(true);
         if (imageView == null || imageView.getImage() == null
-                || isPickingColor || maskControlDragged
-                || event.getButton() == MouseButton.SECONDARY
+                || isPickingColor || event.getButton() == MouseButton.SECONDARY
                 || maskPolylines == null) {
             return;
         }
@@ -126,7 +292,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void moveShape(MouseEvent event) {
+    public void translateShape(MouseEvent event) {
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;

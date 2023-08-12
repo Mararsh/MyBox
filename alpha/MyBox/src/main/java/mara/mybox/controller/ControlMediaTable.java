@@ -227,16 +227,6 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @Override
-    public void checkSelected() {
-        super.checkSelected();
-        MediaInformation selected = selectedItem();
-        if (selected == null || selected.getInfo() == null) {
-            return;
-        }
-        parentController.popInformation(selected.getInfo(), 5000);
-    }
-
-    @Override
     protected void tableChanged() {
         super.tableChanged();
         if (saveButton != null) {

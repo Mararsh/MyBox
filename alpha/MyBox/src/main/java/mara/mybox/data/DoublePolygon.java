@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -18,6 +19,11 @@ public class DoublePolygon implements DoubleShape {
 
     public DoublePolygon() {
         points = new ArrayList<>();
+    }
+
+    @Override
+    public String name() {
+        return message("Polygon");
     }
 
     @Override

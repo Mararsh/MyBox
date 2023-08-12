@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.Ellipse2D;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -49,6 +50,11 @@ public class DoubleEllipse implements DoubleShape {
         e.setWidth(radiusX * 2);
         e.setHeight(radiusY * 2);
         return e;
+    }
+
+    @Override
+    public String name() {
+        return message("Ellipse");
     }
 
     public double getCenterX() {

@@ -197,7 +197,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                     break;
                 case "path":
                     if (loadPath(node)) {
-                        pathRadio.setSelected(true);
+                        svgRadio.setSelected(true);
                     }
                     break;
                 default:
@@ -391,7 +391,7 @@ public class ControlSvgShape extends ControlShapeOptions {
     public boolean loadPath(Element node) {
         try {
             String d = node.getAttribute("d");
-            imageController.maskPathData = new DoublePath(d);
+            imageController.maskPathData = new DoublePath(this, d);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

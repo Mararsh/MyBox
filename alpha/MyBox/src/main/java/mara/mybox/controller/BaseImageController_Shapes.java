@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.geom.Arc2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -111,7 +110,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         }
         try {
             showAnchors = true;
-            maskControlDragged = false;
 
             maskPane.prefWidthProperty().bind(imageView.fitWidthProperty());
             maskPane.prefHeightProperty().bind(imageView.fitHeightProperty());
@@ -160,17 +158,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     }
                 });
             }
-
-            makeShapeMenu(maskRectangle);
-            makeShapeMenu(maskCircle);
-            makeShapeMenu(maskEllipse);
-            makeShapeMenu(maskLine);
-            makeShapeMenu(maskPolygon);
-            makeShapeMenu(maskPolyline);
-            makeShapeMenu(maskQuadratic);
-            makeShapeMenu(maskCubic);
-            makeShapeMenu(maskArc);
-            makeShapeMenu(maskSVGPath);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -881,134 +868,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         return null;
     }
 
-    public void makeShapeMenu(Shape shape) {
-        if (shape == null) {
-            return;
-        }
-        shape.hoverProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                if (!newValue || !shape.isVisible()) {
-                    return;
-                }
-                if (isPickingColor) {
-                    shape.setCursor(Cursor.HAND);
-                } else {
-                    shape.setCursor(Cursor.MOVE);
-                    if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
-                        popNodeMenu(shape, maskShapeMenu(shape));
-                    }
-                }
-            }
-        });
-
-    }
-
-    protected List<MenuItem> maskShapeMenu(Shape shape) {
-        try {
-            DoubleShape shapeData = shapeData(shape);
-            if (shapeData == null) {
-                return null;
-            }
-
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            Rectangle2D bounds = DoubleShape.getBound(shapeData);
-            double x1 = scale(bounds.getMinX());
-            double y1 = scale(bounds.getMinY());
-            double x2 = scale(bounds.getMaxX());
-            double y2 = scale(bounds.getMaxY());
-            double cx = scale(bounds.getCenterX());
-            double cy = scale(bounds.getCenterY());
-            double w = scale(bounds.getWidth());
-            double h = scale(bounds.getHeight());
-            String info = message(shape.getClass().getSimpleName()) + "\n"
-                    + message("LeftTop") + ": " + x1 + ", " + y1 + "\n"
-                    + message("RightBottom") + ": " + x2 + ", " + y2 + "\n"
-                    + message("Center") + ": " + cx + ", " + cy + "\n"
-                    + message("Width") + ": " + w + "  " + message("Height") + ": " + h;
-            menu = new MenuItem(info);
-            items.add(menu);
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("TranslateShapeCenterTo"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    PointInputController inputController = PointInputController.open(myController,
-                            message("MoveShapeCenterTo"), new DoublePoint(cx, cy));
-                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                            translateRel(shapeData, inputController.picked.getX() - cx, inputController.picked.getY() - cy);
-                            inputController.close();
-                        }
-                    });
-                }
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("TranslateShapeCenterToImageCenter"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    translateRel(shapeData, imageWidth() * 0.5 - cx, imageHeight() * 0.5 - cy);
-
-                }
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("TranslateShapeLeftTopTo"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    PointInputController inputController = PointInputController.open(myController,
-                            message("TranslateShapeLeftTopTo"), new DoublePoint(x1, y1));
-                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                            translateRel(shapeData, inputController.picked.getX() - x1, inputController.picked.getY() - y1);
-                            inputController.close();
-                        }
-                    });
-                }
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("TranslateShapeRightBottomTo"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    PointInputController inputController = PointInputController.open(myController,
-                            message("TranslateShapeRightBottomTo"), new DoublePoint(x2, y2));
-                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                            translateRel(shapeData, inputController.picked.getX() - x2, inputController.picked.getY() - y2);
-                            inputController.close();
-                        }
-                    });
-                }
-            });
-            items.add(menu);
-
-            return items;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public void translateRel(DoubleShape shapeData, double offsetX, double offsetY) {
-        shapeData.translateRel(offsetX, offsetY);
-        drawMaskShape();
-        maskShapeDataChanged();
-    }
-
-
     /* 
         anchor
         index: 0-based
@@ -1029,19 +888,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 @Override
                 public void handle(MouseEvent event) {
                     controlPressed(event);
-                    if (isPickingColor) {
-                        return;
-                    }
-                    maskControlDragged = true;
-                }
-            });
-            text.setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (isPickingColor) {
-                        return;
-                    }
-                    maskControlDragged = true;
                 }
             });
             text.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -1066,7 +912,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                             text.setCursor(Cursor.HAND);
                         } else {
                             text.setCursor(Cursor.MOVE);
-                            if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
+                            if (UserConfig.getBoolean("ImageShapeAnchorPopMenu", true)) {
                                 popNodeMenu(text, maskAnchorMenu(text, index, title, p));
                             }
                         }
@@ -1100,10 +946,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(title);
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            items.add(menu);
-            menu = new MenuItem(StringTools.menuPrefix(p.text(2)));
+            menu = new MenuItem(title + "\n" + StringTools.menuPrefix(p.text(2)));
             menu.setStyle("-fx-text-fill: #2e598a;");
             items.add(menu);
             items.add(new SeparatorMenuItem());
@@ -1128,6 +971,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 });
                 items.add(menu);
             }
+
+            items.add(new SeparatorMenuItem());
 
             return items;
 
@@ -1830,13 +1675,42 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         drawMaskPolylines();
     }
 
+    public void setMaskPolylinesDefaultValues() {
+        if (imageView == null || maskPane == null || maskPolylines == null) {
+            return;
+        }
+        double w = imageWidth();
+        double h = imageHeight();
+        maskPolylinesData = new DoublePolylines();
+        List<DoublePoint> line = new ArrayList<>();
+        double y = h / 2 - w / 4;
+        line.add(new DoublePoint(w / 4, y));
+        line.add(new DoublePoint(w / 2 - w / 16, y));
+        maskPolylinesData.addLine(line);
+        line = new ArrayList<>();
+        line.add(new DoublePoint(w / 2 + w / 16, y));
+        line.add(new DoublePoint(w * 3 / 4, y));
+        maskPolylinesData.addLine(line);
+        line = new ArrayList<>();
+        y = h / 2;
+        line.add(new DoublePoint(w / 4, y));
+        line.add(new DoublePoint(w * 3 / 4, y));
+        maskPolylinesData.addLine(line);
+        line = new ArrayList<>();
+        y = h / 2 + w / 4;
+        line.add(new DoublePoint(w / 4, y));
+        line.add(new DoublePoint(w * 3 / 4, y));
+        maskPolylinesData.addLine(line);
+
+    }
+
     public boolean drawMaskPolylines() {
         try {
             if (imageView == null || imageView.getImage() == null || maskPolylines == null) {
                 return false;
             }
             if (maskPolylinesData == null) {
-                maskPolylinesData = new DoublePolylines();
+                setMaskPolylinesDefaultValues();
             }
             clearMaskPolylines();
             maskPolylines = new ArrayList<>();
@@ -1903,7 +1777,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                                 pline.setCursor(Cursor.HAND);
                             } else {
                                 pline.setCursor(Cursor.MOVE);
-                                if (UserConfig.getBoolean("ImageShapeControlPopMenu", true)) {
+                                if (UserConfig.getBoolean("ImageShapeAnchorPopMenu", true)) {
                                     popNodeMenu(pline, lineMenu(pline, points));
                                 }
                             }
@@ -1963,6 +1837,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 maskShapeDataChanged();
             });
             items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             return items;
 
@@ -2465,11 +2341,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void setMaskPathDefaultValues() {
-        maskPathData = new DoublePath("M 10,30\n"
+        String s = "M 10,30\n"
                 + "A 20,20 0,0,1 50,30\n"
                 + "A 20,20 0,0,1 90,30\n"
                 + "Q 90,60 50,90\n"
-                + "Q 10,60 10,30 z");
+                + "Q 10,60 10,30 z";
+        maskPathData = new DoublePath(this, s);
     }
 
     public boolean drawMaskPath() {

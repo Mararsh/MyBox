@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import javafx.scene.image.Image;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -61,6 +62,11 @@ public class DoubleRectangle implements DoubleShape {
         rect.setWidth(image.getWidth());
         rect.setHeight(image.getHeight());
         return rect;
+    }
+
+    @Override
+    public String name() {
+        return message("Rectangle");
     }
 
     @Override
