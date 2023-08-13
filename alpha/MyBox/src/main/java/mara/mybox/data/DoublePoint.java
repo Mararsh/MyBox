@@ -53,6 +53,10 @@ public class DoublePoint {
         return DoubleTools.scale(x, scale) + "," + DoubleTools.scale(y, scale);
     }
 
+    public DoublePoint copy() {
+        return new DoublePoint(x, y);
+    }
+
     /*
         static
      */

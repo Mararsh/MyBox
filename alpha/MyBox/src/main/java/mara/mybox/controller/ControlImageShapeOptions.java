@@ -1,22 +1,16 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import mara.mybox.bufferedimage.PixelsBlend;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoubleShape;
-import mara.mybox.data.DoubleShape.ShapeType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ShapeTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 
 /**
@@ -110,10 +104,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         if (imageController == null || shapeType == null) {
             return;
         }
-        if (shapeType == ShapeType.Path && editor.maskPathData.includePath2DUnsupported()) {
-            redrawPath();
-            return;
-        }
         DoubleShape shapeData = editor.currentMaskShapeData();
         if (shapeData == null) {
             return;
@@ -143,59 +133,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 imageView.toBack();
                 editor.drawMaskShape();
                 editor.hideMaskShape();
-            }
-
-        };
-        start(task);
-    }
-
-    public void redrawPath() {
-        if (imageController == null || !editor.isMaskPathShown()) {
-            return;
-        }
-        editor.drawMaskPath();
-        Image snap = NodeTools.snap(editor.maskSVGPath, 1);
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                BufferedImage pathImage = SwingFXUtils.fromFXImage(snap, null);
-//                BufferedImage pathImage = SvgTools.pathToImage(myController, editor.maskSVGPath.getContent());
-                if (task == null || isCancelled() || pathImage == null) {
-                    return false;
-                }
-                double radiox = editor.imageXRatio();
-                double radioy = editor.imageYRatio();
-                MyBoxLog.console(radiox + ",    " + radioy);
-                int x = (int) (editor.maskSVGPath.getLayoutX());
-                int y = (int) (editor.maskSVGPath.getLayoutY());
-                MyBoxLog.console(x + ",    " + y);
-                pathImage = ScaleTools.scaleImageByScale(pathImage, (float) radiox);
-                BufferedImage bgImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                BufferedImage target = PixelsBlend.blend(pathImage, bgImage,
-                        0, 0, blendController.blender());
-                if (task == null || isCancelled() || target == null) {
-                    return false;
-                }
-                newImage = SwingFXUtils.toFXImage(target, null);
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (isCancelled()) {
-                    return;
-                }
-                maskView.setImage(newImage);
-                maskView.setOpacity(1);
-                maskView.setVisible(true);
-                imageView.setVisible(false);
-                imageView.toBack();
-//                editor.maskSVGPath.setOpacity(0);
             }
 
         };

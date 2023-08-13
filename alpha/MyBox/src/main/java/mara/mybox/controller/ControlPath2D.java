@@ -118,10 +118,6 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
                 popError(message("NoData"));
                 return false;
             }
-//            if (DoublePath.includeSvgPathUnsupported(tableData)) {
-//                alertError(message("Path2DNotSupportComment"));
-//                return false;
-//            }
             String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
             textArea.setText(s);
 
@@ -135,12 +131,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
                 popError(message("NoData"));
                 return false;
             }
-//            if (DoublePath.includeSvgPathUnsupported(segments)) {
-//                alertError(message("Path2DNotSupportComment"));
-//                return false;
-//            }
             tableData.setAll(segments);
-
         }
 
         return true;

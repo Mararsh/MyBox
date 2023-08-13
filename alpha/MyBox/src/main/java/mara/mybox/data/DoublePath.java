@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.util.List;
 import javafx.scene.shape.Path;
@@ -13,6 +14,7 @@ import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineVertical;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Move;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Quadratic;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.SvgTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -87,14 +89,6 @@ public class DoublePath implements DoubleShape {
         return !isValid() || segments.isEmpty();
     }
 
-    public boolean includeSvgPathUnsupported() {
-        return includeSvgPathUnsupported(segments);
-    }
-
-    public boolean includePath2DUnsupported() {
-        return includePath2DUnsupported(segments);
-    }
-
     @Override
     public boolean translateRel(double offsetX, double offsetY) {
 //        DoublePath nPath = new DoublePath(content);
@@ -149,32 +143,30 @@ public class DoublePath implements DoubleShape {
                         path.moveTo(seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
                     case Line:
+                    case LineHorizontal:
+                    case LineVertical:
                         path.lineTo(seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
-                    case LineHorizontal:
-                        path.lineTo(seg.getValue(), seg.getStartPoint().getY());
-                        break;
-                    case LineVertical:
-                        path.lineTo(seg.getStartPoint().getX(), seg.getValue());
-                        break;
                     case Quadratic:
+                    case QuadraticSmooth:
                         path.quadTo(seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
-//                    case QuadraticSmooth:
-//                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
-//                        break;
                     case Cubic:
+                    case CubicSmooth:
                         path.curveTo(seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
                                 seg.getControlPoint2().getX(), seg.getControlPoint2().getY(),
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
-//                    case CubicSmooth:
-//                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
-//                        break;
-//                    case Arc:
-//                        path.quadTo(seg.getInterPoint().getX(), seg.getValue());
-//                        break;
+                    case Arc:
+                        Arc2D arc = SvgTools.computeArc(
+                                seg.getStartPoint().getX(), seg.getStartPoint().getY(),
+                                seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
+                                seg.getValue(),
+                                seg.isFlag1(), seg.isFlag2(),
+                                seg.getEndPoint().getX(), seg.getEndPoint().getY());
+                        path.append(arc, true);
+                        break;
                     case Close:
                         path.closePath();
                         break;
@@ -193,7 +185,7 @@ public class DoublePath implements DoubleShape {
                 return false;
             }
             for (DoublePathSegment seg : segments) {
-                path.getElements().add(seg.pathElement());
+                path.getElements().add(DoublePathSegment.pathElement(seg));
             }
             return true;
         } catch (Exception e) {
@@ -211,36 +203,6 @@ public class DoublePath implements DoubleShape {
             return content;
         }
     }
-
-    public static boolean includeSvgPathUnsupported(List<DoublePathSegment> segments) {
-        if (segments == null || segments.isEmpty()) {
-            return false;
-        }
-        for (DoublePathSegment seg : segments) {
-            PathSegmentType type = seg.getType();
-            if (type == PathSegmentType.CubicSmooth
-                    || type == PathSegmentType.QuadraticSmooth) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean includePath2DUnsupported(List<DoublePathSegment> segments) {
-        if (segments == null || segments.isEmpty()) {
-            return false;
-        }
-        for (DoublePathSegment seg : segments) {
-            PathSegmentType type = seg.getType();
-            if (type == PathSegmentType.Arc
-                    || type == PathSegmentType.CubicSmooth
-                    || type == PathSegmentType.QuadraticSmooth) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     /*
         set

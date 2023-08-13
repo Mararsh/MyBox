@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.BaseController;
+import mara.mybox.data.DoublePathSegment.PathSegmentType;
 import org.apache.batik.parser.PathHandler;
 import org.apache.batik.parser.PathParser;
 
@@ -13,7 +14,9 @@ import org.apache.batik.parser.PathParser;
  */
 public class DoublePathParser implements PathHandler {
 
-    protected DoublePoint interPoint; // The point between previous segment and current segment
+    protected double currentX, currentY; // The point between previous segment and current segment
+    protected double xCenter, yCenter; // for smooth curve
+
     protected int scale;
     protected List<DoublePathSegment> segments;
 
@@ -21,11 +24,14 @@ public class DoublePathParser implements PathHandler {
         try {
             segments = null;
             this.scale = scale;
-            interPoint = null;
+            currentX = 0;
+            currentY = 0;
+            xCenter = 0;
+            yCenter = 0;
+
             if (content == null || content.isBlank()) {
                 return null;
             }
-            interPoint = new DoublePoint(0, 0);
             PathParser pathParser = new PathParser();
             pathParser.setPathHandler(this);
             pathParser.parse(content);
@@ -53,229 +59,285 @@ public class DoublePathParser implements PathHandler {
     @Override
     public void closePath() {
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Close)
-                .setStartPoint(interPoint);
+                .setType(PathSegmentType.Close)
+                .setIsAbsolute(true)
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
     }
 
     @Override
     public void movetoRel(float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = currentX + x;
+        yCenter = currentY + y;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Move)
+                .setType(PathSegmentType.Move)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(xCenter, yCenter))
+                .setEndPointRel(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX += x;
+        currentY += y;
     }
 
     @Override
     public void movetoAbs(float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = x;
+        yCenter = y;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Move)
+                .setType(PathSegmentType.Move)
                 .setIsAbsolute(true)
                 .setScale(scale)
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX = x;
+        currentY = y;
     }
 
     @Override
     public void linetoRel(float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = currentX + x;
+        yCenter = currentY + y;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Line)
+                .setType(PathSegmentType.Line)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(xCenter, yCenter))
+                .setEndPointRel(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX += x;
+        currentY += y;
     }
 
     @Override
     public void linetoAbs(float x, float y) {
+        xCenter = x;
+        yCenter = y;
         DoublePoint p = new DoublePoint(x, y);
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Line)
+                .setType(PathSegmentType.Line)
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX = x;
+        currentY = y;
     }
 
     @Override
     public void linetoHorizontalRel(float x) {
+        xCenter = currentX + x;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.LineHorizontal)
+                .setType(PathSegmentType.LineHorizontal)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setValue(x)
-                .setStartPoint(interPoint);
+                .setValue(xCenter)
+                .setValueRel(x)
+                .setEndPoint(new DoublePoint(xCenter, currentY))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = new DoublePoint(x, interPoint.getY());
+        currentX += x;
     }
 
     @Override
     public void linetoHorizontalAbs(float x) {
+        xCenter = x;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.LineVertical)
+                .setType(PathSegmentType.LineVertical)
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setValue(x)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(x, currentY))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = new DoublePoint(x, interPoint.getY());
+        currentX = x;
     }
 
     @Override
     public void linetoVerticalRel(float y) {
+        yCenter = currentY + y;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.LineVertical)
+                .setType(PathSegmentType.LineVertical)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setValue(y)
-                .setStartPoint(interPoint);
+                .setValue(yCenter)
+                .setValueRel(y)
+                .setEndPoint(new DoublePoint(currentX, yCenter))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = new DoublePoint(interPoint.getX(), y);
+        currentY += y;
     }
 
     @Override
     public void linetoVerticalAbs(float y) {
+        yCenter = y;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.LineVertical)
+                .setType(PathSegmentType.LineVertical)
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setValue(y)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(currentX, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = new DoublePoint(interPoint.getX(), y);
+        currentY = y;
     }
 
     @Override
     public void curvetoCubicRel(float x1, float y1,
             float x2, float y2,
             float x, float y) {
+        xCenter = currentX + x2;
+        yCenter = currentY + y2;
         DoublePoint p = new DoublePoint(x, y);
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Cubic)
+                .setType(PathSegmentType.Cubic)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setControlPoint1(new DoublePoint(x1, y1))
-                .setControlPoint2(new DoublePoint(x2, y2))
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setControlPoint1(new DoublePoint(currentX + x1, currentY + y1))
+                .setControlPoint1Rel(new DoublePoint(x1, y1))
+                .setControlPoint2(new DoublePoint(xCenter, yCenter))
+                .setControlPoint2Rel(new DoublePoint(x2, y2))
+                .setEndPoint(new DoublePoint(currentX + x, currentY + y))
+                .setEndPointRel(p)
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX += x;
+        currentY += y;
     }
 
     @Override
     public void curvetoCubicAbs(float x1, float y1,
             float x2, float y2,
             float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = x2;
+        yCenter = y2;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Cubic)
+                .setType(PathSegmentType.Cubic)
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setControlPoint1(new DoublePoint(x1, y1))
                 .setControlPoint2(new DoublePoint(x2, y2))
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX = x;
+        currentY = y;
     }
 
+    // refer to "org.apache.batik.parser.curvetoCubicSmoothRel"
     @Override
     public void curvetoCubicSmoothRel(float x2, float y2,
             float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = currentX + x2;
+        yCenter = currentY + y2;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.CubicSmooth)
+                .setType(PathSegmentType.CubicSmooth)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setControlPoint2(new DoublePoint(x2, y2))
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setControlPoint1(new DoublePoint(currentX * 2 - xCenter, currentY * 2 - yCenter))
+                .setControlPoint2(new DoublePoint(xCenter, yCenter))
+                .setControlPoint2Rel(new DoublePoint(x2, y2))
+                .setEndPoint(new DoublePoint(currentX + x, currentY + y))
+                .setEndPointRel(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX += x;
+        currentY += y;
     }
 
+    // refer to "org.apache.batik.parser.curvetoCubicSmoothAbs"
     @Override
     public void curvetoCubicSmoothAbs(float x2, float y2,
             float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = x2;
+        yCenter = y2;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.CubicSmooth)
+                .setType(PathSegmentType.CubicSmooth)
                 .setIsAbsolute(true)
                 .setScale(scale)
+                .setControlPoint1(new DoublePoint(currentX * 2 - xCenter, currentY * 2 - yCenter))
                 .setControlPoint2(new DoublePoint(x2, y2))
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX = x;
+        currentY = y;
     }
 
     @Override
     public void curvetoQuadraticRel(float x1, float y1,
             float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = currentX + x1;
+        yCenter = currentY + y1;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Quadratic)
+                .setType(PathSegmentType.Quadratic)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setControlPoint1(new DoublePoint(x1, y1))
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setControlPoint1(new DoublePoint(xCenter, yCenter))
+                .setControlPoint1Rel(new DoublePoint(x1, y1))
+                .setEndPoint(new DoublePoint(currentX + x, currentY + y))
+                .setEndPointRel(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX += x;
+        currentY += y;
     }
 
     @Override
     public void curvetoQuadraticAbs(float x1, float y1,
             float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = x1;
+        yCenter = y1;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Quadratic)
+                .setType(PathSegmentType.Quadratic)
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setControlPoint1(new DoublePoint(x1, y1))
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setEndPoint(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX = x;
+        currentY = y;
     }
 
+    // refer to "org.apache.batik.parser.curvetoQuadraticSmoothRel"
     @Override
     public void curvetoQuadraticSmoothRel(float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = currentX * 2 - xCenter;
+        yCenter = currentY * 2 - yCenter;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.QuadraticSmooth)
+                .setType(PathSegmentType.QuadraticSmooth)
                 .setIsAbsolute(false)
                 .setScale(scale)
-                .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setControlPoint1(new DoublePoint(xCenter, yCenter))
+                .setEndPoint(new DoublePoint(currentX + x, currentY + y))
+                .setEndPointRel(new DoublePoint(x, y))
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX += x;
+        currentY += y;
     }
 
+    // refer to "org.apache.batik.parser.curvetoQuadraticSmoothAbs"
     @Override
     public void curvetoQuadraticSmoothAbs(float x, float y) {
+        xCenter = currentX * 2 - xCenter;
+        yCenter = currentY * 2 - yCenter;
         DoublePoint p = new DoublePoint(x, y);
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.QuadraticSmooth)
+                .setType(PathSegmentType.QuadraticSmooth)
                 .setIsAbsolute(true)
                 .setScale(scale)
+                .setControlPoint1(new DoublePoint(xCenter, yCenter))
                 .setEndPoint(p)
-                .setStartPoint(interPoint);
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX = x;
+        currentY = y;
     }
 
     @Override
@@ -283,19 +345,22 @@ public class DoublePathParser implements PathHandler {
             float xAxisRotation,
             boolean largeArcFlag, boolean sweepFlag,
             float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = currentX + x;
+        yCenter = currentY + y;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Arc)
+                .setType(PathSegmentType.Arc)
                 .setIsAbsolute(false)
                 .setScale(scale)
                 .setControlPoint1(new DoublePoint(rx, ry))
-                .setEndPoint(p)
+                .setEndPoint(new DoublePoint(xCenter, yCenter))
+                .setEndPointRel(new DoublePoint(x, y))
                 .setValue(xAxisRotation)
                 .setFlag1(largeArcFlag)
                 .setFlag2(sweepFlag)
-                .setStartPoint(interPoint);
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX += x;
+        currentY += y;
     }
 
     @Override
@@ -303,18 +368,21 @@ public class DoublePathParser implements PathHandler {
             float xAxisRotation,
             boolean largeArcFlag, boolean sweepFlag,
             float x, float y) {
-        DoublePoint p = new DoublePoint(x, y);
+        xCenter = x;
+        yCenter = y;
         DoublePathSegment segment = new DoublePathSegment()
-                .setType(DoublePathSegment.PathSegmentType.Arc)
+                .setType(PathSegmentType.Arc)
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setControlPoint1(new DoublePoint(rx, ry))
-                .setEndPoint(p)
+                .setEndPoint(new DoublePoint(x, y))
                 .setValue(xAxisRotation)
                 .setFlag1(largeArcFlag)
                 .setFlag2(sweepFlag)
-                .setStartPoint(interPoint);
+                .setStartPoint(new DoublePoint(currentX, currentY));
         segments.add(segment);
-        interPoint = p;
+        currentX = x;
+        currentY = y;
     }
+
 }
