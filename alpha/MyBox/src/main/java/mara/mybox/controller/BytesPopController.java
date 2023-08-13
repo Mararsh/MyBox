@@ -40,7 +40,7 @@ public class BytesPopController extends TextPopController {
             textArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuBytesEditController.open(myController, textArea, event);
+                    MenuBytesEditController.openBytes(myController, textArea, event);
                 }
             });
 

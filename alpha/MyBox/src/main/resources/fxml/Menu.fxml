@@ -8,14 +8,16 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
+<VBox fx:id="thisPane" prefHeight="200.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -28,8 +30,17 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <CheckBox fx:id="childWindowCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/red/iconWindow.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
                 <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" /> 
-                <Button fx:id="styleButton" mnemonicParsing="false"  onAction="#showStyles"    onMouseEntered="#popStyles" >
+                <Button fx:id="styleButton" mnemonicParsing="false" onAction="#showStyles" onMouseEntered="#popStyles">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -41,7 +52,11 @@ License:    Apache License Version 2.0
             </children>
         </HBox>
         <Separator prefWidth="200.0" />
-        <VBox fx:id="nodesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" VBox.vgrow="ALWAYS" />
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+         <content>
+              <VBox fx:id="nodesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" />
+         </content>
+      </ScrollPane>
         <Separator prefWidth="200.0" />
         <HBox fx:id="bottomBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>

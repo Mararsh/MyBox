@@ -202,7 +202,7 @@ public class MenuBytesEditController extends MenuTextEditController {
     /*
         static methods
      */
-    public static MenuBytesEditController open(BaseController parent, Node node, double x, double y) {
+    public static MenuBytesEditController openBytes(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;
@@ -231,12 +231,12 @@ public class MenuBytesEditController extends MenuTextEditController {
         }
     }
 
-    public static MenuBytesEditController open(BaseController parent, Node node, MouseEvent event) {
-        return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
+    public static MenuBytesEditController openBytes(BaseController parent, Node node, MouseEvent event) {
+        return openBytes(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
-    public static MenuBytesEditController open(BaseController parent, Node node, ContextMenuEvent event) {
-        return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
+    public static MenuBytesEditController openBytes(BaseController parent, Node node, ContextMenuEvent event) {
+        return openBytes(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
 }

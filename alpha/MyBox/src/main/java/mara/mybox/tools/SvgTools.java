@@ -76,6 +76,23 @@ public class SvgTools {
         return textToImage(controller, TextFileTools.readTexts(file), width, height, area);
     }
 
+    public static BufferedImage pathToImage(BaseController controller, String path) {
+        if (path == null || path.isBlank()) {
+            return null;
+        }
+        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" ><path d=\""
+                + path + "\"></path></svg>";
+        File tmpFile = textToImage(controller, svg, -1, -1, null);
+        if (tmpFile == null || !tmpFile.exists()) {
+            return null;
+        }
+        if (tmpFile.length() <= 0) {
+            FileDeleteTools.delete(tmpFile);
+            return null;
+        }
+        return ImageFileReaders.readImage(tmpFile);
+    }
+
     public static File toImage(BaseController controller, InputStream inputStream,
             float width, float height, Rectangle area) {
         if (inputStream == null) {

@@ -2,11 +2,14 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
@@ -18,6 +21,7 @@ import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -33,6 +37,8 @@ public class MenuController extends BaseChildController {
     protected String baseStyle;
     protected double initX, initY;
 
+    @FXML
+    protected CheckBox childWindowCheck;
     @FXML
     protected HBox topBox, bottomBox;
     @FXML
@@ -79,6 +85,7 @@ public class MenuController extends BaseChildController {
     public void setParameters(BaseController parent, Node node, double x, double y) {
         try {
             this.parentController = parent;
+            this.node = node;
             initX = x;
             initY = y;
             thisPane.requestFocus();
@@ -87,22 +94,27 @@ public class MenuController extends BaseChildController {
                         || !parentController.sourceFile.exists());
             }
 
+            String name = name(parent, node);
             Window window = getMyWindow();
             if (window instanceof Popup) {
                 window.setX(x);
                 window.setY(y);
             } else {
-                String name = baseName;
-                if (parent != null) {
-                    name += parent.baseName;
-                    if (getMyStage() != null) {
-                        myStage.setTitle(parent.getTitle());
-                    }
-                }
-                if (node != null && node.getId() != null) {
-                    name += node.getId();
+                if (parent != null && getMyStage() != null) {
+                    myStage.setTitle(parent.getTitle());
                 }
                 setAsPop(name);
+            }
+
+            if (childWindowCheck != null) {
+                childWindowCheck.setSelected(UserConfig.getBoolean(name + "AsChildWindow", true));
+                childWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(name + "AsChildWindow", childWindowCheck.isSelected());
+                    }
+                });
+
             }
 
             if (node != null && node.getId() != null) {
@@ -214,12 +226,58 @@ public class MenuController extends BaseChildController {
     /*
         static methods
      */
+    public static String name(BaseController parent, Node node) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            String name = parent.getBaseName();
+            if (node != null && node.getId() != null) {
+                name += "_" + node.getId();
+            }
+            name += "_menu";
+            return name;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static MenuController open(BaseController parent, Node node, double x, double y) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            if (UserConfig.getBoolean(name(parent, node) + "AsChildWindow", true)) {
+                MenuController controller = (MenuController) WindowTools.openChildStage(
+                        parent.getMyWindow(), Fxmls.MenuFxml);
+                if (controller == null) {
+                    return null;
+                }
+                controller.setParameters(parent, node, x, y);
+                controller.requestMouse();
+                return controller;
+            } else {
+                return pop(parent, node, x, y);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static MenuController open(BaseController parent, Node node, Event event) {
         Point2D everntCoord = LocateTools.getScreenCoordinate(event);
         return open(parent, node, everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
     }
 
-    public static MenuController open(BaseController parent, Node node, double x, double y) {
+    public static MenuController pop(BaseController parent, Node node, Event event) {
+        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+        return pop(parent, node, everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
+    }
+
+    public static MenuController pop(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null) {
                 return null;

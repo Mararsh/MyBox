@@ -521,7 +521,7 @@ public class XmlEditorController extends BaseFileController {
                 return true;
 
             } else if (tab == textsTab) {
-                MenuTextEditController.open(this, textsArea);
+                MenuTextEditController.textMenu(this, textsArea);
                 return true;
 
             }

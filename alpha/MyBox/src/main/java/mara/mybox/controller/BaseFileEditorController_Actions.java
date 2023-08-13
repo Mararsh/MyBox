@@ -489,7 +489,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     @Override
     public boolean menuAction() {
         Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
-        MenuTextEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+        MenuTextEditController.textMenu(myController, mainArea, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 

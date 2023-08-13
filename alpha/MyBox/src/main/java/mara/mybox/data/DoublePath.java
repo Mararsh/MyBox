@@ -87,19 +87,12 @@ public class DoublePath implements DoubleShape {
         return !isValid() || segments.isEmpty();
     }
 
-    public boolean includeUnsupported() {
-        if (segments == null || segments.isEmpty()) {
-            return false;
-        }
-        for (DoublePathSegment seg : segments) {
-            PathSegmentType type = seg.getType();
-            if (type == PathSegmentType.Arc
-                    || type == PathSegmentType.CubicSmooth
-                    || type == PathSegmentType.QuadraticSmooth) {
-                return true;
-            }
-        }
-        return false;
+    public boolean includeSvgPathUnsupported() {
+        return includeSvgPathUnsupported(segments);
+    }
+
+    public boolean includePath2DUnsupported() {
+        return includePath2DUnsupported(segments);
     }
 
     @Override
@@ -219,7 +212,21 @@ public class DoublePath implements DoubleShape {
         }
     }
 
-    public static boolean includeUnsupported(List<DoublePathSegment> segments) {
+    public static boolean includeSvgPathUnsupported(List<DoublePathSegment> segments) {
+        if (segments == null || segments.isEmpty()) {
+            return false;
+        }
+        for (DoublePathSegment seg : segments) {
+            PathSegmentType type = seg.getType();
+            if (type == PathSegmentType.CubicSmooth
+                    || type == PathSegmentType.QuadraticSmooth) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean includePath2DUnsupported(List<DoublePathSegment> segments) {
         if (segments == null || segments.isEmpty()) {
             return false;
         }
@@ -233,6 +240,7 @@ public class DoublePath implements DoubleShape {
         }
         return false;
     }
+
 
     /*
         set

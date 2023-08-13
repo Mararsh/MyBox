@@ -218,7 +218,7 @@ public class BytesEditorController extends BaseFileEditorController {
                 node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                     @Override
                     public void handle(ContextMenuEvent event) {
-                        MenuBytesEditController.open(myController, node, event);
+                        MenuBytesEditController.openBytes(myController, node, event);
                     }
                 });
             } else {
@@ -317,7 +317,7 @@ public class BytesEditorController extends BaseFileEditorController {
     @Override
     public boolean menuAction() {
         Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
-        MenuBytesEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+        MenuBytesEditController.openBytes(myController, mainArea, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 

@@ -989,7 +989,7 @@ public class ControlWebView extends BaseController {
     public void popElementMenu(Element element) {
         try {
             Robot robot = new Robot();
-            MenuWebviewController.pop(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
+            MenuWebviewController.webviewMenu(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -1938,7 +1938,7 @@ public class ControlWebView extends BaseController {
     public boolean menuAction() {
         try {
             Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-            MenuWebviewController.pop(this, null, localToScreen.getX(), localToScreen.getY());
+            MenuWebviewController.webviewMenu(this, null, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

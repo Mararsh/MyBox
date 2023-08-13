@@ -118,10 +118,10 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
                 popError(message("NoData"));
                 return false;
             }
-            if (DoublePath.includeUnsupported(tableData)) {
-                alertError(message("Path2DNotSupportComment"));
-                return false;
-            }
+//            if (DoublePath.includeSvgPathUnsupported(tableData)) {
+//                alertError(message("Path2DNotSupportComment"));
+//                return false;
+//            }
             String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
             textArea.setText(s);
 
@@ -135,10 +135,10 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
                 popError(message("NoData"));
                 return false;
             }
-            if (DoublePath.includeUnsupported(segments)) {
-                alertError(message("Path2DNotSupportComment"));
-                return false;
-            }
+//            if (DoublePath.includeSvgPathUnsupported(segments)) {
+//                alertError(message("Path2DNotSupportComment"));
+//                return false;
+//            }
             tableData.setAll(segments);
 
         }
@@ -231,14 +231,14 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("SvgPathHelpsPopWhenMouseHovering", false)) {
             showHelps(event);
         }
     }
 
     @FXML
     protected void showHelps(Event event) {
-        popEventMenu(event, HelpTools.svgHelps(true));
+        popEventMenu(event, HelpTools.svgPathHelps());
     }
 
 }

@@ -335,7 +335,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             textInput.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuTextEditController.open(myController, node, event);
+                    MenuTextEditController.textMenu(myController, node, event);
                 }
             });
         } catch (Exception e) {

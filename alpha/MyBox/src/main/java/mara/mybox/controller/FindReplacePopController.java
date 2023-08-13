@@ -37,7 +37,7 @@ public class FindReplacePopController extends MenuTextBaseController {
     /*
         static methods
      */
-    public static FindReplacePopController open(BaseController parent, Node node, double x, double y) {
+    public static FindReplacePopController replaceMenu(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;

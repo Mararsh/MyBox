@@ -100,7 +100,7 @@ public class MenuTextBaseController extends MenuController {
         if (parentController == null || node == null) {
             return false;
         }
-        MenuTextEditController.open(parentController, node, initX, initY);
+        MenuTextEditController.textMenu(parentController, node, initX, initY);
         return true;
     }
 
@@ -111,7 +111,7 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindPopController.open(parentController, node, window.getX(), window.getY());
+        FindPopController.findMenu(parentController, node, window.getX(), window.getY());
         window.hide();
     }
 
@@ -122,7 +122,7 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindReplacePopController.open(parentController, node, window.getX(), window.getY());
+        FindReplacePopController.replaceMenu(parentController, node, window.getX(), window.getY());
     }
 
     @FXML

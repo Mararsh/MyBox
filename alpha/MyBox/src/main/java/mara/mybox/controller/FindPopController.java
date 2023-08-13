@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -38,7 +37,7 @@ public class FindPopController extends MenuTextBaseController {
     /*
         static methods
      */
-    public static FindPopController open(BaseController parent, Node node, double x, double y) {
+    public static FindPopController findMenu(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;

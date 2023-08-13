@@ -551,7 +551,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @Override
     public boolean menuAction() {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-        MenuImageBaseController.open((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
+        MenuImageBaseController.imageMenu((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 

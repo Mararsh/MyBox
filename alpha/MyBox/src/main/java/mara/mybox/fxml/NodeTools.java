@@ -279,11 +279,14 @@ public class NodeTools {
     }
 
     public static Image snap(Node node) {
+        return snap(node, dpiScale());
+    }
+
+    public static Image snap(Node node, double scale) {
         try {
             if (node == null) {
                 return null;
             }
-            double scale = dpiScale();
             final SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
             snapPara.setTransform(javafx.scene.transform.Transform.scale(scale, scale));

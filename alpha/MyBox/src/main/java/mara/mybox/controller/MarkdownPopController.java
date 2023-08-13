@@ -37,7 +37,7 @@ public class MarkdownPopController extends TextPopController {
             textArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuMarkdownEditController.open(myController, textArea, event);
+                    MenuMarkdownEditController.mdMenu(myController, textArea, event);
                 }
             });
 

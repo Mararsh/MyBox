@@ -78,7 +78,7 @@ public class MarkdownEditorController extends TextEditorController {
                 node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                     @Override
                     public void handle(ContextMenuEvent event) {
-                        MenuMarkdownEditController.open(myController, node, event);
+                        MenuMarkdownEditController.mdMenu(myController, node, event);
                     }
                 });
             } else {
@@ -118,7 +118,7 @@ public class MarkdownEditorController extends TextEditorController {
             codesArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuHtmlCodesController.open(myController, codesArea, event);
+                    MenuHtmlCodesController.htmlMenu(myController, codesArea, event);
                 }
             });
 
@@ -308,7 +308,7 @@ public class MarkdownEditorController extends TextEditorController {
         try {
             closePopup();
             Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
-            MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+            MenuMarkdownEditController.mdMenu(myController, mainArea, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -325,7 +325,7 @@ public class MarkdownEditorController extends TextEditorController {
     public boolean menuCodesAction() {
         try {
             Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
-            MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
+            MenuHtmlCodesController.htmlMenu(this, codesArea, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

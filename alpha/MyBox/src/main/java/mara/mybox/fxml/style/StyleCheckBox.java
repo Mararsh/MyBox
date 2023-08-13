@@ -31,6 +31,9 @@ public class StyleCheckBox {
         if (id.startsWith("editable")) {
             return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
         }
+        if (id.startsWith("childWindow")) {
+            return new StyleData(id, "", message("ChildWindowCheck"), "", "iconWindow.png");
+        }
         if (id.startsWith("scope")) {
             return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
         }

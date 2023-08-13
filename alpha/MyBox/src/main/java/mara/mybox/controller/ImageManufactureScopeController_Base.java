@@ -149,7 +149,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageScopeController.open((ImageManufactureScopeController) this, x, y);
+        MenuImageScopeController.scopeMenu((ImageManufactureScopeController) this, x, y);
     }
 
     @FXML
@@ -157,7 +157,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     public boolean menuAction() {
         try {
             Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-            MenuImageScopeController.open((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
+            MenuImageScopeController.scopeMenu((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

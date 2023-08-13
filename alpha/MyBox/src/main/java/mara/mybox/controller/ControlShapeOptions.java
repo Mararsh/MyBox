@@ -219,7 +219,7 @@ public abstract class ControlShapeOptions extends BaseController {
                         if (isSettingValues) {
                             return;
                         }
-                        style.setStrokeColor(fillColorController.color());
+                        style.setFillColor(fillColorController.color());
                         if (fillCheck.isSelected()) {
                             goStyle();
                         }

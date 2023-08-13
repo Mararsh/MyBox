@@ -453,15 +453,13 @@ public class ImagesPlayController extends BaseImagesListController {
                 return;
             }
             for (ImageInformation info : infos) {
-                imageInfos.add(info.cloneAttributes());
+                ImageInformation ninfo = info.cloneAttributes();
+                if (ninfo.getDuration() < 0) {
+                    ninfo.setDuration(playController.timeValue);
+                }
+                imageInfos.add(ninfo);
             }
             framesNumber = imageInfos.size();
-            for (int i = 0; i < framesNumber; i++) {
-                ImageInformation info = imageInfos.get(i);
-                if (info.getDuration() < 0) {
-                    info.setDuration(playController.timeValue);
-                }
-            }
             playImages();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -558,6 +556,13 @@ public class ImagesPlayController extends BaseImagesListController {
             if (info == null) {
                 return null;
             }
+            double imageWidth = info.getWidth();
+            double targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
+            Image thumb = info.getThumbnail();
+            if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
+                return thumb;
+            }
+            info.setThumbnail(null);
             if (fileFormat == null) {
                 info.loadThumbnail(loadWidth);
             } else if (fileFormat.equalsIgnoreCase("pdf")) {
@@ -653,7 +658,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 }
             });
 
-            imageInformation.setThumbnail(null);
+            imageInformation.setThumbnail(null); // release memory
 //            if (playController.stopped.get()) {
 //                return;
 //            }

@@ -125,7 +125,7 @@ public class ImageOCRController extends ImageViewerController {
 
             if (txtTab.isSelected()) {
                 Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
-                MenuTextEditController.open(myController, textArea, localToScreen.getX(), localToScreen.getY());
+                MenuTextEditController.textMenu(myController, textArea, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (htmlTab.isSelected()) {

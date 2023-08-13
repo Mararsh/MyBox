@@ -27,6 +27,7 @@ import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
@@ -205,14 +206,16 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
      */
     public Color strokeColor() {
         try {
-            return Color.web(UserConfig.getString("StrokeColor", ShapeStyle.DefaultStrokeColor));
+            return shapeStyle == null
+                    ? Color.web(UserConfig.getString("StrokeColor", ShapeStyle.DefaultStrokeColor))
+                    : shapeStyle.getStrokeColor();
         } catch (Exception e) {
             return Color.web(ShapeStyle.DefaultStrokeColor);
         }
     }
 
     public float strokeWidth() {
-        float v = UserConfig.getFloat("StrokeWidth", 2);
+        float v = shapeStyle == null ? UserConfig.getFloat("StrokeWidth", 2) : shapeStyle.getStrokeWidth();
         if (v < 0) {
             v = 2;
         }
@@ -267,6 +270,14 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
 
     public double imageOffsetY(MouseEvent event) {
         return (event.getY() - mouseY) * imageYRatio();
+    }
+
+    public double nodeX(Node node) {
+        return node.getLayoutX() * imageXRatio();
+    }
+
+    public double nodeY(Node node) {
+        return node.getLayoutX() * imageXRatio();
     }
 
     public double scale(double d) {
@@ -690,23 +701,32 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void setShapeStyle(Shape shape) {
-        if (shape == null || !shape.isVisible()) {
-            return;
+        try {
+            if (shape == null || !shape.isVisible()) {
+                return;
+            }
+            double strokeWidth = strokeWidth();
+            shape.setStrokeWidth(strokeWidth);
+            shape.setStroke(strokeColor());
+            shape.getStrokeDashArray().clear();
+            if (shapeStyle != null) {
+                if (shapeStyle.isIsFillColor()) {
+                    shape.setFill(shapeStyle.getFillColor());
+                } else {
+                    shape.setFill(Color.TRANSPARENT);
+                }
+                shape.setStrokeLineCap(shapeStyle.getLineCap());
+                if (shapeStyle.isIsStrokeDash()) {
+                    shape.getStrokeDashArray().addAll(shapeStyle.getStrokeDash());
+                }
+            } else {
+                shape.setFill(Color.TRANSPARENT);
+                shape.setStrokeLineCap(StrokeLineCap.BUTT);
+                shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        Color strokeColor = strokeColor();
-        if (strokeColor.equals(Color.TRANSPARENT)) {
-            // Have not found how to make line as transparent. For display only.
-            strokeColor = Color.WHITE;
-        }
-        shape.setStroke(strokeColor);
-        double strokeWidth = strokeWidth();
-        shape.setStrokeWidth(strokeWidth);
-
-        shape.setFill(Color.TRANSPARENT);
-
-        shape.getStrokeDashArray().clear();
-        shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
-
     }
 
     public void clearMask() {

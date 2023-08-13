@@ -496,7 +496,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
     /*
         static methods
      */
-    public static MenuMarkdownEditController open(BaseController parent, Node node, double x, double y) {
+    public static MenuMarkdownEditController mdMenu(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;
@@ -525,25 +525,25 @@ public class MenuMarkdownEditController extends MenuTextEditController {
         }
     }
 
-    public static MenuMarkdownEditController open(BaseController parent, Region node) {
+    public static MenuMarkdownEditController mdMenu(BaseController parent, Region node) {
         try {
             if (parent == null || node == null) {
                 return null;
             }
             Point2D localToScreen = node.localToScreen(node.getWidth() - 80, 80);
-            return MenuMarkdownEditController.open(parent, node, localToScreen.getX(), localToScreen.getY());
+            return mdMenu(parent, node, localToScreen.getX(), localToScreen.getY());
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static MenuMarkdownEditController open(BaseController parent, Node node, MouseEvent event) {
-        return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
+    public static MenuMarkdownEditController mdMenu(BaseController parent, Node node, MouseEvent event) {
+        return mdMenu(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
-    public static MenuMarkdownEditController open(BaseController parent, Node node, ContextMenuEvent event) {
-        return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
+    public static MenuMarkdownEditController mdMenu(BaseController parent, Node node, ContextMenuEvent event) {
+        return mdMenu(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
 }

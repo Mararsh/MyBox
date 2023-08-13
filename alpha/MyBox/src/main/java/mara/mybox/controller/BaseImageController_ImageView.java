@@ -539,7 +539,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageBaseController.open((BaseImageController) this, x, y);
+        MenuImageBaseController.imageMenu((BaseImageController) this, x, y);
     }
 
 }

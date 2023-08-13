@@ -196,9 +196,9 @@ public class ControlFindReplace extends BaseController {
                 @Override
                 public void handle(ContextMenuEvent event) {
                     if (editerController != null && editerController.sourceInformation instanceof BytesEditInformation) {
-                        MenuBytesEditController.open(editerController, findArea, event);
+                        MenuBytesEditController.openBytes(editerController, findArea, event);
                     } else {
-                        MenuTextEditController.open(parentController, findArea, event);
+                        MenuTextEditController.textMenu(parentController, findArea, event);
                     }
                 }
             });
@@ -215,9 +215,9 @@ public class ControlFindReplace extends BaseController {
                     @Override
                     public void handle(ContextMenuEvent event) {
                         if (editerController != null && editerController.sourceInformation instanceof BytesEditInformation) {
-                            MenuBytesEditController.open(editerController, replaceArea, event);
+                            MenuBytesEditController.openBytes(editerController, replaceArea, event);
                         } else {
-                            MenuTextEditController.open(parentController, replaceArea, event);
+                            MenuTextEditController.textMenu(parentController, replaceArea, event);
                         }
                     }
                 });

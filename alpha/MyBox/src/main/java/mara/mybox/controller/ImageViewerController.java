@@ -721,14 +721,14 @@ public class ImageViewerController extends BaseImageController {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageViewController.open(this, x, y);
+        MenuImageViewController.imageViewMenu(this, x, y);
     }
 
     @FXML
     @Override
     public boolean menuAction() {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-        MenuImageViewController.open(this, localToScreen.getX(), localToScreen.getY());
+        MenuImageViewController.imageViewMenu(this, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 

@@ -182,7 +182,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageManufactureController.open((ImageManufactureController) this, x, y);
+        MenuImageManufactureController.manufactureMenu((ImageManufactureController) this, x, y);
     }
 
     @FXML
@@ -245,7 +245,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
                 Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-                MenuImageManufactureController.open((ImageManufactureController) this, localToScreen.getX(), localToScreen.getY());
+                MenuImageManufactureController.manufactureMenu((ImageManufactureController) this, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (tab == scopeTab) {

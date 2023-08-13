@@ -515,7 +515,7 @@ public class MenuImageBaseController extends MenuController {
     /*
         static methods
      */
-    public static MenuImageBaseController open(BaseImageController imageController, double x, double y) {
+    public static MenuImageBaseController imageMenu(BaseImageController imageController, double x, double y) {
         try {
             if (imageController == null) {
                 return null;
