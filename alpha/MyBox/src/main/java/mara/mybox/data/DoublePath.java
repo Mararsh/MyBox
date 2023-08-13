@@ -14,8 +14,8 @@ import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineVertical;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Move;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Quadratic;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.SvgTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
 
 /**
  * @Author Mara
@@ -159,7 +159,7 @@ public class DoublePath implements DoubleShape {
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
                     case Arc:
-                        Arc2D arc = SvgTools.computeArc(
+                        Arc2D arc = ExtendedGeneralPath.computeArc(
                                 seg.getStartPoint().getX(), seg.getStartPoint().getY(),
                                 seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
                                 seg.getValue(),
