@@ -2360,12 +2360,26 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         return drawMaskPath();
     }
 
-    public void setMaskPathDefaultValues() {
+    /*
         String s = "M 10,30\n"
                 + "A 20,20 0,0,1 50,30\n"
                 + "A 20,20 0,0,1 90,30\n"
                 + "Q 90,60 50,90\n"
                 + "Q 10,60 10,30 z";
+     */
+    public void setMaskPathDefaultValues() {
+        if (imageView == null || maskPane == null || maskSVGPath == null) {
+            return;
+        }
+        double w = imageWidth();
+        double h = imageHeight();
+        int r = (int) (Math.min(w, h) / 8);
+        String s = "M " + (int) (w / 2 - r * 2) + "," + (int) (h / 2 - r) + "\n"
+                + "A " + r + "," + r + " 0,1,1 " + (int) (w / 2) + "," + (int) (h / 2 - r) + "\n"
+                + "A " + r + "," + r + " 0,1,1 " + (int) (w / 2 + r * 2) + "," + (int) (h / 2 - r) + "\n"
+                + "Q " + (int) (w / 2 + 2 * r) + "," + (int) (h / 2 + r) + "  " + (int) (w / 2) + "," + (int) (h / 2 + 2 * r) + "\n"
+                + "Q " + (int) (w / 2 - 2 * r) + "," + (int) (h / 2 + r) + "  " + (int) (w / 2 - r * 2) + "," + (int) (h / 2 - r) + "\n"
+                + "Z";
         maskPathData = new DoublePath(this, s);
     }
 

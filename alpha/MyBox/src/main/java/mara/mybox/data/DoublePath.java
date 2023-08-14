@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.util.List;
@@ -91,9 +93,38 @@ public class DoublePath implements DoubleShape {
 
     @Override
     public boolean translateRel(double offsetX, double offsetY) {
-//        DoublePath nPath = new DoublePath(content);
-//        AffineTransform.getTranslateInstance(offsetX, offsetY);
-        return true;
+        try {
+            if (segments == null) {
+                return true;
+            }
+            for (int i = 0; i < segments.size(); i++) {
+                DoublePathSegment seg = segments.get(i);
+                segments.set(i, seg.translate(offsetX, offsetY));
+            }
+            content = segmentsToString(segments, " ");
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        try {
+            if (segments == null) {
+                return true;
+            }
+            for (int i = 0; i < segments.size(); i++) {
+                DoublePathSegment seg = segments.get(i);
+                segments.set(i, seg.scale(scaleX, scaleY));
+            }
+            content = segmentsToString(segments, " ");
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     /*
@@ -165,7 +196,15 @@ public class DoublePath implements DoubleShape {
                                 seg.getValue(),
                                 seg.isFlag1(), seg.isFlag2(),
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());
-                        path.append(arc, true);
+                        Shape shape;
+                        if (seg.getValue() != 0) {
+                            AffineTransform at = AffineTransform.getRotateInstance(seg.getValue(),
+                                    arc.getX() + arc.getWidth() / 2, arc.getY() + arc.getHeight() / 2);
+                            shape = at.createTransformedShape(arc);
+                        } else {
+                            shape = arc;
+                        }
+                        path.append(shape, true);
                         break;
                     case Close:
                         path.closePath();

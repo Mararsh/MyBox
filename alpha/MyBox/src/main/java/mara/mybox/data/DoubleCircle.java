@@ -59,6 +59,13 @@ public class DoubleCircle implements DoubleShape {
         return true;
     }
 
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        radius *= scaleX;
+        return true;
+    }
+
+
     /*
         set
      */

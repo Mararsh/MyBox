@@ -62,6 +62,16 @@ public class DoubleQuadratic implements DoubleShape {
         return true;
     }
 
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        startX *= scaleX;
+        startY *= scaleY;
+        controlX *= scaleX;
+        controlY *= scaleY;
+        endX *= scaleX;
+        endY *= scaleY;
+        return true;
+    }
 
     /*
         get

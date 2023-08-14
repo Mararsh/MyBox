@@ -90,6 +90,12 @@ public class DoubleArc implements DoubleShape {
         return true;
     }
 
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        radiusX *= scaleX;
+        radiusY *= scaleY;
+        return true;
+    }
 
     /*
         get

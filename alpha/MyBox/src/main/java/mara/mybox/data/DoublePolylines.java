@@ -154,7 +154,35 @@ public class DoublePolylines implements DoubleShape {
         List<DoublePoint> line = points.get(index);
         for (int i = 0; i < line.size(); i++) {
             DoublePoint p = line.get(i);
-            newline.add(new DoublePoint(p.getX() + offsetX, p.getY() + offsetY));
+            newline.add(p.translate(offsetX, offsetY));
+        }
+        points.set(index, newline);
+    }
+
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        List<List<DoublePoint>> npoints = new ArrayList<>();
+        for (List<DoublePoint> line : points) {
+            List<DoublePoint> newline = new ArrayList<>();
+            for (DoublePoint p : line) {
+                newline.add(p.scale(scaleX, scaleY));
+            }
+            npoints.add(newline);
+        }
+        points.clear();
+        points.addAll(npoints);
+        return true;
+    }
+
+    public void scale(int index, double scaleX, double scaleY) {
+        if (index < 0 || index >= points.size()) {
+            return;
+        }
+        List<DoublePoint> newline = new ArrayList<>();
+        List<DoublePoint> line = points.get(index);
+        for (int i = 0; i < line.size(); i++) {
+            DoublePoint p = line.get(i);
+            newline.add(p.scale(scaleX, scaleY));
         }
         points.set(index, newline);
     }

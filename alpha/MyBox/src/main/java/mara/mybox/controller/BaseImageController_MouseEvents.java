@@ -94,8 +94,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
             items.add(new SeparatorMenuItem());
 
-            if (maskPolyline != null && maskPolyline.isVisible()) {
-                if (p != null) {
+            if (p != null) {
+                if (maskPolyline != null && maskPolyline.isVisible()) {
                     menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
                     menu.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
@@ -108,34 +108,10 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                         }
                     });
                     items.add(menu);
-                }
 
-                menu = new MenuItem(message("RemoveLastPoint"), StyleTools.getIconImageView("iconDelete.png"));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent mevent) {
-                        maskPolylineData.removeLast();
-                        maskPolyline.getPoints().remove(maskPolyline.getPoints().size() - 1);
-                        maskShapeDataChanged();
-                    }
-                });
-                items.add(menu);
+                    items.add(new SeparatorMenuItem());
 
-                menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent mevent) {
-                        maskPolylineData.clear();
-                        maskPolyline.getPoints().clear();
-                        maskShapeDataChanged();
-                    }
-                });
-                items.add(menu);
-
-                items.add(new SeparatorMenuItem());
-
-            } else if (maskPolygon != null && maskPolygon.isVisible()) {
-                if (p != null) {
+                } else if (maskPolygon != null && maskPolygon.isVisible()) {
                     menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
                     menu.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
@@ -148,34 +124,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                         }
                     });
                     items.add(menu);
+                    items.add(new SeparatorMenuItem());
                 }
 
-                menu = new MenuItem(message("RemoveLastPoint"), StyleTools.getIconImageView("iconDelete.png"));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent mevent) {
-                        maskPolygonData.removeLast();
-                        maskPolygon.getPoints().remove(maskPolygon.getPoints().size() - 1);
-                        maskShapeDataChanged();
-                    }
-                });
-                items.add(menu);
-
-                menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent mevent) {
-                        maskPolygonData.clear();
-                        maskPolygon.getPoints().clear();
-                        maskShapeDataChanged();
-                    }
-                });
-                items.add(menu);
-
-                items.add(new SeparatorMenuItem());
-            }
-
-            if (p != null) {
                 menu = new MenuItem(message("TranslateShapeCenterToPoint"), StyleTools.getIconImageView("iconMove.png"));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -184,6 +135,25 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     }
                 });
                 items.add(menu);
+
+                menu = new MenuItem(message("TranslateShapeLeftTopToPoint"), StyleTools.getIconImageView("iconMove.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        translateRel(shapeData, px - x1, py - y1);
+                    }
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("TranslateShapeRightBottomToPoint"), StyleTools.getIconImageView("iconMove.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        translateRel(shapeData, px - x2, py - y2);
+                    }
+                });
+                items.add(menu);
+
             }
 
             menu = new MenuItem(message("TranslateShapeCenterToImageCenter"), StyleTools.getIconImageView("iconMove.png"));
@@ -210,18 +180,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     });
                 }
             });
-            items.add(menu);
-
-            if (p != null) {
-                menu = new MenuItem(message("TranslateShapeLeftTopToPoint"), StyleTools.getIconImageView("iconMove.png"));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent mevent) {
-                        translateRel(shapeData, px - x1, py - y1);
-                    }
-                });
-                items.add(menu);
-            }
+            items.add(menu);;
 
             menu = new MenuItem(message("TranslateShapeLeftTopTo"), StyleTools.getIconImageView("iconMove.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -240,17 +199,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             });
             items.add(menu);
 
-            if (p != null) {
-                menu = new MenuItem(message("TranslateShapeRightBottomToPoint"), StyleTools.getIconImageView("iconMove.png"));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent mevent) {
-                        translateRel(shapeData, px - x2, py - y2);
-                    }
-                });
-                items.add(menu);
-            }
-
             menu = new MenuItem(message("TranslateShapeRightBottomTo"), StyleTools.getIconImageView("iconMove.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -261,6 +209,23 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                         @Override
                         public void changed(ObservableValue v, Boolean ov, Boolean nv) {
                             translateRel(shapeData, inputController.picked.getX() - x2, inputController.picked.getY() - y2);
+                            inputController.close();
+                        }
+                    });
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ScaleShape"), StyleTools.getIconImageView("iconExpand.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    PointInputController inputController = PointInputController.open(myController,
+                            message("ScaleShape"), new DoublePoint(2, 2));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                            scale(shapeData, inputController.picked.getX(), inputController.picked.getY());
                             inputController.close();
                         }
                     });
@@ -291,6 +256,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     public void translateRel(DoubleShape shapeData, double offsetX, double offsetY) {
         shapeData.translateRel(offsetX, offsetY);
+        drawMaskShape();
+        maskShapeDataChanged();
+    }
+
+    public void scale(DoubleShape shapeData, double scaleX, double scaleY) {
+        shapeData.scale(scaleX, scaleY);
         drawMaskShape();
         maskShapeDataChanged();
     }

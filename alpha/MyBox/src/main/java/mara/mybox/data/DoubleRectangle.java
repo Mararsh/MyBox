@@ -104,6 +104,13 @@ public class DoubleRectangle implements DoubleShape {
         return true;
     }
 
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        width *= scaleX;
+        height *= scaleY;
+        return true;
+    }
+
     public boolean same(DoubleRectangle rect) {
         return rect != null
                 && x == rect.getX() && y == rect.getY()

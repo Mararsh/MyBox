@@ -68,6 +68,19 @@ public class DoubleCubic implements DoubleShape {
         return true;
     }
 
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        startX *= scaleX;
+        startY *= scaleY;
+        controlX1 *= scaleX;
+        controlY1 *= scaleY;
+        controlX2 *= scaleX;
+        controlY2 *= scaleY;
+        endX *= scaleX;
+        endY *= scaleY;
+        return true;
+    }
+
     public double getStartX() {
         return startX;
     }

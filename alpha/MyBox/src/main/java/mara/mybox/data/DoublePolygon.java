@@ -182,10 +182,22 @@ public class DoublePolygon implements DoubleShape {
         List<DoublePoint> moved = new ArrayList<>();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
-            moved.add(p.move(offsetX, offsetY));
+            moved.add(p.translate(offsetX, offsetY));
         }
         points.clear();
         points.addAll(moved);
+        return true;
+    }
+
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        List<DoublePoint> scaled = new ArrayList<>();
+        for (int i = 0; i < points.size(); ++i) {
+            DoublePoint p = points.get(i);
+            scaled.add(p.scale(scaleX, scaleY));
+        }
+        points.clear();
+        points.addAll(scaled);
         return true;
     }
 

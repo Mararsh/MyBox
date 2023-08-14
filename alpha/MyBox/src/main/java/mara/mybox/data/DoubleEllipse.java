@@ -127,6 +127,13 @@ public class DoubleEllipse implements DoubleShape {
         return true;
     }
 
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        width *= scaleX;
+        height *= scaleY;
+        return true;
+    }
+
     /*
         get
      */

@@ -57,6 +57,13 @@ public class DoubleLine implements DoubleShape {
         return true;
     }
 
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        endX *= scaleX;
+        endY *= scaleY;
+        return true;
+    }
+
     public double getStartX() {
         return startX;
     }

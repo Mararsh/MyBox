@@ -17,7 +17,7 @@ public class DoublePathParser implements PathHandler {
     protected double currentX, currentY; // The point between previous segment and current segment
     protected double xCenter, yCenter; // for smooth curve
 
-    protected int scale;
+    protected int index, scale;
     protected List<DoublePathSegment> segments;
 
     public DoublePathParser parse(BaseController controller, String content, int scale) {
@@ -50,6 +50,7 @@ public class DoublePathParser implements PathHandler {
     @Override
     public void startPath() {
         segments = new ArrayList<>();
+        index = 0;
     }
 
     @Override
@@ -61,7 +62,8 @@ public class DoublePathParser implements PathHandler {
         DoublePathSegment segment = new DoublePathSegment()
                 .setType(PathSegmentType.Close)
                 .setIsAbsolute(true)
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
     }
 
@@ -75,7 +77,8 @@ public class DoublePathParser implements PathHandler {
                 .setScale(scale)
                 .setEndPoint(new DoublePoint(xCenter, yCenter))
                 .setEndPointRel(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
         currentY += y;
@@ -90,7 +93,8 @@ public class DoublePathParser implements PathHandler {
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setEndPoint(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
         currentY = y;
@@ -106,7 +110,8 @@ public class DoublePathParser implements PathHandler {
                 .setScale(scale)
                 .setEndPoint(new DoublePoint(xCenter, yCenter))
                 .setEndPointRel(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
         currentY += y;
@@ -122,7 +127,8 @@ public class DoublePathParser implements PathHandler {
                 .setIsAbsolute(true)
                 .setScale(scale)
                 .setEndPoint(p)
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
         currentY = y;
@@ -138,7 +144,8 @@ public class DoublePathParser implements PathHandler {
                 .setValue(xCenter)
                 .setValueRel(x)
                 .setEndPoint(new DoublePoint(xCenter, currentY))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
     }
@@ -152,7 +159,8 @@ public class DoublePathParser implements PathHandler {
                 .setScale(scale)
                 .setValue(x)
                 .setEndPoint(new DoublePoint(x, currentY))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
     }
@@ -167,7 +175,8 @@ public class DoublePathParser implements PathHandler {
                 .setValue(yCenter)
                 .setValueRel(y)
                 .setEndPoint(new DoublePoint(currentX, yCenter))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentY += y;
     }
@@ -181,7 +190,8 @@ public class DoublePathParser implements PathHandler {
                 .setScale(scale)
                 .setValue(y)
                 .setEndPoint(new DoublePoint(currentX, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentY = y;
     }
@@ -203,7 +213,8 @@ public class DoublePathParser implements PathHandler {
                 .setControlPoint2Rel(new DoublePoint(x2, y2))
                 .setEndPoint(new DoublePoint(currentX + x, currentY + y))
                 .setEndPointRel(p)
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
         currentY += y;
@@ -222,7 +233,8 @@ public class DoublePathParser implements PathHandler {
                 .setControlPoint1(new DoublePoint(x1, y1))
                 .setControlPoint2(new DoublePoint(x2, y2))
                 .setEndPoint(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
         currentY = y;
@@ -243,7 +255,8 @@ public class DoublePathParser implements PathHandler {
                 .setControlPoint2Rel(new DoublePoint(x2, y2))
                 .setEndPoint(new DoublePoint(currentX + x, currentY + y))
                 .setEndPointRel(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
         currentY += y;
@@ -262,7 +275,8 @@ public class DoublePathParser implements PathHandler {
                 .setControlPoint1(new DoublePoint(currentX * 2 - xCenter, currentY * 2 - yCenter))
                 .setControlPoint2(new DoublePoint(x2, y2))
                 .setEndPoint(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
         currentY = y;
@@ -281,7 +295,8 @@ public class DoublePathParser implements PathHandler {
                 .setControlPoint1Rel(new DoublePoint(x1, y1))
                 .setEndPoint(new DoublePoint(currentX + x, currentY + y))
                 .setEndPointRel(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
         currentY += y;
@@ -298,7 +313,8 @@ public class DoublePathParser implements PathHandler {
                 .setScale(scale)
                 .setControlPoint1(new DoublePoint(x1, y1))
                 .setEndPoint(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
         currentY = y;
@@ -316,7 +332,8 @@ public class DoublePathParser implements PathHandler {
                 .setControlPoint1(new DoublePoint(xCenter, yCenter))
                 .setEndPoint(new DoublePoint(currentX + x, currentY + y))
                 .setEndPointRel(new DoublePoint(x, y))
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
         currentY += y;
@@ -334,7 +351,8 @@ public class DoublePathParser implements PathHandler {
                 .setScale(scale)
                 .setControlPoint1(new DoublePoint(xCenter, yCenter))
                 .setEndPoint(p)
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
         currentY = y;
@@ -357,7 +375,8 @@ public class DoublePathParser implements PathHandler {
                 .setValue(xAxisRotation)
                 .setFlag1(largeArcFlag)
                 .setFlag2(sweepFlag)
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX += x;
         currentY += y;
@@ -379,7 +398,8 @@ public class DoublePathParser implements PathHandler {
                 .setValue(xAxisRotation)
                 .setFlag1(largeArcFlag)
                 .setFlag2(sweepFlag)
-                .setStartPoint(new DoublePoint(currentX, currentY));
+                .setStartPoint(new DoublePoint(currentX, currentY))
+                .setIndex(index++);
         segments.add(segment);
         currentX = x;
         currentY = y;

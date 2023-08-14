@@ -192,7 +192,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
                                                             </children>
                                                         </FlowPane>
-                                          <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
+                                                        <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="20.0" layoutY="20.0" prefWrapLength="800.0" vgap="2.0">
                                                             <children>
                                                                 <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
@@ -480,7 +480,7 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </FlowPane>
-                                          <Label fx:id="infoLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                                        <Label fx:id="infoLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
                                                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                             <content>
                                                                 <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased" VBox.vgrow="ALWAYS">
@@ -533,11 +533,11 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-40.0" />
                                                                             </points>
                                                                         </Polyline>
-                                                      <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-100.0" />
-                                                      <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
-                                                      <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-150.0" stroke="BLACK" />
-                                                      <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-50.0" stroke="BLACK" strokeType="INSIDE" />
-                                                      <SVGPath fx:id="maskSVGPath" content="M40,60 C42,48 44,30 25,32" layoutX="47.0" layoutY="191.0" />
+                                                                        <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-100.0" />
+                                                                        <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
+                                                                        <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-150.0" stroke="BLACK" />
+                                                                        <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-50.0" stroke="BLACK" strokeType="INSIDE" />
+                                                                        <SVGPath fx:id="maskSVGPath" content="M40,60 C42,48 44,30 25,32" layoutX="47.0" layoutY="191.0"  onMousePressed="#handlerPressed" onMouseReleased="#translateShape" />
                                                                         <Rectangle fx:id="maskHandlerTopLeft" fill="#ffffff00" height="10.0" layoutX="70.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="NW_RESIZE" />
@@ -583,7 +583,7 @@ License:    Apache License Version 2.0
                                                                 </AnchorPane>
                                                             </content>
                                                         </ScrollPane>
-                                          <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
+                                                        <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
                                                     </children>
                                                 </VBox>
                                             </content>

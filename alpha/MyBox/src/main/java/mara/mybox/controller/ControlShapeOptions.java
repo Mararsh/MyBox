@@ -15,11 +15,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
@@ -70,6 +70,8 @@ public abstract class ControlShapeOptions extends BaseController {
             anchorSizeSelector;
     @FXML
     protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorMenuCheck;
+    @FXML
+    protected FlowPane opPane;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
@@ -484,12 +486,16 @@ public abstract class ControlShapeOptions extends BaseController {
                 if (infoLabel != null) {
                     infoLabel.setText(message("ShapePolylinesTips"));
                 }
+
             } else {
                 NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
                 if (infoLabel != null) {
                     infoLabel.setText(message("ShapeDragMoveComments"));
                 }
             }
+            withdrawButton.setDisable(shapeType != ShapeType.Polylines
+                    && shapeType != ShapeType.Polyline
+                    && shapeType != ShapeType.Polygon);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -558,8 +564,6 @@ public abstract class ControlShapeOptions extends BaseController {
             });
             items.add(popItem);
 
-            items.add(new SeparatorMenuItem());
-
             popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -579,29 +583,6 @@ public abstract class ControlShapeOptions extends BaseController {
                 break;
             case Polylines:
                 parametersController.linesController.removeLastItem();
-                break;
-        }
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        withdrawAction();
-    }
-
-    @FXML
-    @Override
-    public void clearAction() {
-        if (null == shapeType || imageController == null) {
-            return;
-        }
-        switch (shapeType) {
-            case Polyline:
-            case Polygon:
-                parametersController.pointsController.tableData.clear();
-                break;
-            case Polylines:
-                parametersController.linesController.tableData.clear();
                 break;
         }
     }

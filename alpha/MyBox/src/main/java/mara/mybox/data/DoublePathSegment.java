@@ -25,7 +25,7 @@ public class DoublePathSegment {
     protected DoublePoint controlPoint1Rel, controlPoint2Rel, endPointRel; // relative
     protected double value, valueRel;
     protected boolean isAbsolute, flag1, flag2;
-    protected int scale;
+    protected int index, scale;
 
     public static enum PathSegmentType {
         Move, Line, Quadratic, Cubic, Arc, Close,
@@ -33,6 +33,7 @@ public class DoublePathSegment {
     }
 
     public DoublePathSegment() {
+        index = -1;
         scale = 3;
     }
 
@@ -166,8 +167,9 @@ public class DoublePathSegment {
         try {
             DoublePathSegment seg = new DoublePathSegment()
                     .setType(type).setIsAbsolute(isAbsolute)
+                    .setValue(value).setValueRel(valueRel)
                     .setFlag1(flag1).setFlag2(flag2)
-                    .setScale(scale);
+                    .setScale(scale).setIndex(index);
             if (startPoint != null) {
                 seg.setStartPoint(startPoint.copy());
             }
@@ -188,6 +190,68 @@ public class DoublePathSegment {
             }
             if (endPointRel != null) {
                 seg.setEndPointRel(endPointRel.copy());
+            }
+            return seg;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public DoublePathSegment translate(double offsetX, double offsetY) {
+        try {
+            if (type == null) {
+                return this;
+            }
+            DoublePathSegment seg = copy();
+            if (startPoint != null) {
+                seg.setStartPoint(startPoint.translate(offsetX, offsetY));
+            }
+            if (controlPoint1 != null && type != PathSegmentType.Arc) {
+                seg.setControlPoint1(controlPoint1.translate(offsetX, offsetY));
+            }
+            if (controlPoint2 != null) {
+                seg.setControlPoint2(controlPoint2.translate(offsetX, offsetY));
+            }
+            if (endPoint != null) {
+                seg.setEndPoint(endPoint.translate(offsetX, offsetY));
+            }
+            if (type == PathSegmentType.LineHorizontal) {
+                seg.setValue(value + offsetX);
+            }
+            if (type == PathSegmentType.LineVertical) {
+                seg.setValue(value + offsetY);
+            }
+            return seg;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public DoublePathSegment scale(double scaleX, double scaleY) {
+        try {
+            if (type == null) {
+                return this;
+            }
+            DoublePathSegment seg = copy();
+            if (startPoint != null) {
+                seg.setStartPoint(startPoint.scale(scaleX, scaleY));
+            }
+            if (controlPoint1 != null) {
+                seg.setControlPoint1(controlPoint1.scale(scaleX, scaleY));
+            }
+            if (controlPoint2 != null) {
+                seg.setControlPoint2(controlPoint2.scale(scaleX, scaleY));
+            }
+            if (endPoint != null) {
+                seg.setEndPoint(endPoint.scale(scaleX, scaleY));
+            }
+            if (type == PathSegmentType.LineHorizontal) {
+                seg.setValue(value * scaleX);
+            }
+            if (type == PathSegmentType.LineVertical) {
+                seg.setValue(value * scaleY);
             }
             return seg;
         } catch (Exception e) {
@@ -313,6 +377,11 @@ public class DoublePathSegment {
         return this;
     }
 
+    public DoublePathSegment setIndex(int index) {
+        this.index = index;
+        return this;
+    }
+
     /*
         get
      */
@@ -370,6 +439,10 @@ public class DoublePathSegment {
 
     public double getValueRel() {
         return valueRel;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
 }

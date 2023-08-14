@@ -20,6 +20,8 @@ public interface DoubleShape {
 
     boolean translateRel(double offsetX, double offsetY);
 
+    boolean scale(double scaleX, double scaleY);
+
     String name();
 
     /*

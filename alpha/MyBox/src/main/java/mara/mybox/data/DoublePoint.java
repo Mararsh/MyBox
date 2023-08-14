@@ -45,8 +45,12 @@ public class DoublePoint {
         return !DoubleTools.invalidDouble(x) && !DoubleTools.invalidDouble(y);
     }
 
-    public DoublePoint move(double offsetX, double offsetY) {
+    public DoublePoint translate(double offsetX, double offsetY) {
         return new DoublePoint(x + offsetX, y + offsetY);
+    }
+
+    public DoublePoint scale(double scaleX, double scaleY) {
+        return new DoublePoint(x * scaleX, y * scaleY);
     }
 
     public String text(int scale) {
