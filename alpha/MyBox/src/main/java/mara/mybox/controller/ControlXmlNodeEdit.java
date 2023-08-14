@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -21,17 +19,17 @@ import org.w3c.dom.Node;
  * @License Apache License Version 2.0
  */
 public class ControlXmlNodeEdit extends ControlXmlNodeBase {
-
+    
     protected TreeItem<XmlTreeNode> treeItem;
     protected Node node;
-
+    
     @FXML
     protected Label infoLabel;
-
+    
     public void setParameters(ControlXmlTree treeController) {
         this.treeController = treeController;
     }
-
+    
     public void editNode(TreeItem<XmlTreeNode> item) {
         clearNode();
         treeItem = item;
@@ -44,7 +42,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
         }
         thisPane.setDisable(false);
         infoLabel.setText(treeController.hierarchyNumber(item));
-
+        
         node = currentTreeNode.getNode();
         if (node == null) {
             return;
@@ -52,59 +50,53 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
         typeInput.setText(XmlTools.type(node).name());
         baseUriInput.setText(node.getBaseURI());
         namespaceInput.setText(node.getNamespaceURI());
-
+        
         nameInput.setText(node.getNodeName());
         nameInput.setDisable(true);
-
+        
         prefixInput.setText(node.getPrefix());
         prefixInput.setDisable(true);
-
-        VBox.setVgrow(setBox, Priority.ALWAYS);
+        
         switch (node.getNodeType()) {
             case Node.TEXT_NODE:
             case Node.CDATA_SECTION_NODE:
             case Node.COMMENT_NODE:
             case Node.ATTRIBUTE_NODE:
             case Node.PROCESSING_INSTRUCTION_NODE:
+                tabPane.getTabs().add(0, valueTab);
                 valueArea.setText(XmlTools.value(node));
                 valueArea.setDisable(false);
                 valueArea.setEditable(true);
-                setBox.getChildren().add(valueBox);
-                VBox.setVgrow(valueBox, Priority.ALWAYS);
-                VBox.setVgrow(valueArea, Priority.ALWAYS);
                 break;
             case Node.ELEMENT_NODE:
+                tabPane.getTabs().add(0, attrTab);
                 setAttributes();
-                setBox.getChildren().add(attrBox);
-                VBox.setVgrow(attrBox, Priority.ALWAYS);
-                VBox.setVgrow(tableView, Priority.ALWAYS);
                 break;
             case Node.DOCUMENT_NODE:
+                tabPane.getTabs().add(0, docTab);
                 Document document = (Document) node;
                 uriInput.setText(document.getDocumentURI());
                 versionInput.setText(document.getXmlVersion());
                 encodingInput.setText(document.getXmlEncoding());
                 standaloneCheck.setSelected(document.getXmlStandalone());
-                setBox.getChildren().add(docBox);
                 break;
             case Node.DOCUMENT_TYPE_NODE:
             case Node.DOCUMENT_FRAGMENT_NODE:
             case Node.ENTITY_NODE:
             case Node.ENTITY_REFERENCE_NODE:
             case Node.NOTATION_NODE:
+                tabPane.getTabs().add(0, valueTab);
                 valueArea.setText(XmlTools.value(node));
                 valueArea.setDisable(true);
                 valueArea.setEditable(false);
-                setBox.getChildren().add(valueBox);
-                VBox.setVgrow(valueBox, Priority.ALWAYS);
-                VBox.setVgrow(valueArea, Priority.ALWAYS);
                 break;
             default:
         }
-        refreshStyle(setBox);
+        refreshStyle(tabPane);
+        tabPane.getSelectionModel().select(0);
         thisPane.setDisable(false);
     }
-
+    
     public void setAttributes() {
         if (node == null) {
             return;
@@ -116,7 +108,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             }
         }
     }
-
+    
     public Node pickValue() {
         try {
             if (node == null) {
@@ -165,7 +157,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             return null;
         }
     }
-
+    
     @FXML
     public void okNode() {
         try {
@@ -193,17 +185,17 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     public void recoverNode() {
         editNode(treeItem);
     }
-
+    
     @Override
     public void clearNode() {
         super.clearNode();
         node = null;
         thisPane.setDisable(true);
     }
-
+    
 }

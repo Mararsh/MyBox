@@ -1234,25 +1234,25 @@ public class HelpTools {
     public static LinkedHashMap<String, String> svgPathExamples() {
         try {
             LinkedHashMap<String, String> values = new LinkedHashMap<>();
-            values.put("M x,y; ", message("SvgPathM"));
-            values.put("m dx,dy; ", message("SvgPathm"));
-            values.put("L x,y; ", message("SvgPathL"));
-            values.put("l dx,dy; ", message("SvgPathl"));
-            values.put("H x; ", message("SvgPathH"));
-            values.put("h dx; ", message("SvgPathh"));
-            values.put("V y; ", message("SvgPathV"));
-            values.put("v dy; ", message("SvgPathv"));
-            values.put("Q x1,y1 x,y; ", message("SvgPathQ"));
-            values.put("q dx1,dy1 dx,dy; ", message("SvgPathq"));
-            values.put("T x,y; ", message("SvgPathT"));
-            values.put("t dx,dy; ", message("SvgPatht"));
-            values.put("C x1,y1 x2,y2 x,y; ", message("SvgPathC"));
-            values.put("c dx1,dy1 dx2,dy2 dx,dy; ", message("SvgPathc"));
-            values.put("S x2,y2 x,y; ", message("SvgPathS"));
-            values.put("s dx2,dy2 dx,dy; ", message("SvgPaths"));
-            values.put("A rx ry angle large-arc-flag sweep-flag x,y; ", message("SvgPathA"));
-            values.put("s rx ry angle large-arc-flag sweep-flag x,y; ", message("SvgPatha"));
-            values.put("Z; ", message("SvgPathZ"));
+            values.put("M x,y ", message("SvgPathM"));
+            values.put("m dx,dy ", message("SvgPathm"));
+            values.put("L x,y ", message("SvgPathL"));
+            values.put("l dx,dy ", message("SvgPathl"));
+            values.put("H x ", message("SvgPathH"));
+            values.put("h dx ", message("SvgPathh"));
+            values.put("V y ", message("SvgPathV"));
+            values.put("v dy ", message("SvgPathv"));
+            values.put("Q x1,y1 x,y ", message("SvgPathQ"));
+            values.put("q dx1,dy1 dx,dy ", message("SvgPathq"));
+            values.put("T x,y ", message("SvgPathT"));
+            values.put("t dx,dy ", message("SvgPatht"));
+            values.put("C x1,y1 x2,y2 x,y ", message("SvgPathC"));
+            values.put("c dx1,dy1 dx2,dy2 dx,dy ", message("SvgPathc"));
+            values.put("S x2,y2 x,y ", message("SvgPathS"));
+            values.put("s dx2,dy2 dx,dy ", message("SvgPaths"));
+            values.put("A rx ry angle large-arc-flag sweep-flag x,y ", message("SvgPathA"));
+            values.put("s rx ry angle large-arc-flag sweep-flag x,y ", message("SvgPatha"));
+            values.put("Z ", message("SvgPathZ"));
 
             return values;
         } catch (Exception e) {

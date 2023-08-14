@@ -1608,7 +1608,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         double w = imageWidth();
         double h = imageHeight();
         maskPolylineData = new DoublePolyline();
-        maskPolylineData.add(30, 50);
+        maskPolylineData.add(w / 4, 50);
         maskPolylineData.add(w / 2, 10);
         maskPolylineData.add(w / 4, h / 3);
         maskPolylineData.add(w - 30, h / 2);

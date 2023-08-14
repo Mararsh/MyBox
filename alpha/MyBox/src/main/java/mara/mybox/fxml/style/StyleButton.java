@@ -676,6 +676,9 @@ public class StyleButton {
         if (id.startsWith("typesetting")) {
             return new StyleData(id, "", message("Typesetting"), "", "iconTypesetting.png");
         }
+        if (id.startsWith("translate")) {
+            return new StyleData(id, "", message("TranslateShape"), "", "iconMove.png");
+        }
         return null;
     }
 

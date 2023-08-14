@@ -409,9 +409,9 @@
                 </Tab>
             <Tab text="path">
                <content>
-                  <VBox fx:id="pathBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                  <VBox fx:id="pathBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                      <children>
-                        <fx:include fx:id="path" source="ControlPath2D.fxml" />
+                        <fx:include fx:id="path" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPath2D.fxml" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </content>

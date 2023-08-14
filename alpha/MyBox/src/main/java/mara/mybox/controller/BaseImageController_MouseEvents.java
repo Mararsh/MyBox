@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -59,9 +60,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
     }
 
-    protected List<MenuItem> maskShapeMenu(MouseEvent event, DoubleShape shapeData, DoublePoint p) {
+    protected List<MenuItem> maskShapeMenu(Event event, DoubleShape shapeData, DoublePoint p) {
         try {
-            if (event == null || shapeData == null || p == null) {
+            if (event == null || shapeData == null) {
                 return null;
             }
 
@@ -77,64 +78,113 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             double cy = scale(bounds.getCenterY());
             double w = scale(bounds.getWidth());
             double h = scale(bounds.getHeight());
-            double px = scale(p.getX());
-            double py = scale(p.getY());
+            double px = p != null ? scale(p.getX()) : 0;
+            double py = p != null ? scale(p.getY()) : 0;
             String info = shapeData.name() + "\n"
                     + message("LeftTop") + ": " + x1 + ", " + y1 + "\n"
                     + message("RightBottom") + ": " + x2 + ", " + y2 + "\n"
                     + message("Center") + ": " + cx + ", " + cy + "\n"
                     + message("Width") + ": " + w + "  " + message("Height") + ": " + h;
+            if (p != null) {
+                info += message("Point") + ": " + px + ", " + py;
+            }
             menu = new MenuItem(info);
             menu.setStyle("-fx-text-fill: #2e598a;");
             items.add(menu);
-            info = message("Point") + ": " + px + ", " + py;
-            menu = new MenuItem(info);
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            items.add(menu);
+
             items.add(new SeparatorMenuItem());
 
-            if (maskSVGPath != null && maskSVGPath.isVisible()) {
-                return items;
-            }
-
             if (maskPolyline != null && maskPolyline.isVisible()) {
-                menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
+                if (p != null) {
+                    menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
+                    menu.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent mevent) {
+                            maskPolylineData.add(p.getX(), p.getY());
+                            double x = p.getX() * viewXRatio();
+                            double y = p.getY() * viewYRatio();
+                            addMaskPolylinePoint(maskPolylineData.getSize(), p, x, y);
+                            maskShapeDataChanged();
+                        }
+                    });
+                    items.add(menu);
+                }
+
+                menu = new MenuItem(message("RemoveLastPoint"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent mevent) {
-                        maskPolylineData.add(p.getX(), p.getY());
-                        double x = p.getX() * viewXRatio();
-                        double y = p.getY() * viewYRatio();
-                        addMaskPolylinePoint(maskPolylineData.getSize(), p, x, y);
+                        maskPolylineData.removeLast();
+                        maskPolyline.getPoints().remove(maskPolyline.getPoints().size() - 1);
                         maskShapeDataChanged();
                     }
                 });
                 items.add(menu);
+
+                menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        maskPolylineData.clear();
+                        maskPolyline.getPoints().clear();
+                        maskShapeDataChanged();
+                    }
+                });
+                items.add(menu);
+
                 items.add(new SeparatorMenuItem());
+
             } else if (maskPolygon != null && maskPolygon.isVisible()) {
-                menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
+                if (p != null) {
+                    menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
+                    menu.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent mevent) {
+                            maskPolygonData.add(p.getX(), p.getY());
+                            double x = p.getX() * viewXRatio();
+                            double y = p.getY() * viewYRatio();
+                            addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
+                            maskShapeDataChanged();
+                        }
+                    });
+                    items.add(menu);
+                }
+
+                menu = new MenuItem(message("RemoveLastPoint"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent mevent) {
-                        maskPolygonData.add(p.getX(), p.getY());
-                        double x = p.getX() * viewXRatio();
-                        double y = p.getY() * viewYRatio();
-                        addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
+                        maskPolygonData.removeLast();
+                        maskPolygon.getPoints().remove(maskPolygon.getPoints().size() - 1);
                         maskShapeDataChanged();
                     }
                 });
                 items.add(menu);
+
+                menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        maskPolygonData.clear();
+                        maskPolygon.getPoints().clear();
+                        maskShapeDataChanged();
+                    }
+                });
+                items.add(menu);
+
                 items.add(new SeparatorMenuItem());
             }
 
-            menu = new MenuItem(message("TranslateShapeCenterToPoint"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    translateRel(shapeData, px - cx, py - cy);
-                }
-            });
-            items.add(menu);
+            if (p != null) {
+                menu = new MenuItem(message("TranslateShapeCenterToPoint"), StyleTools.getIconImageView("iconMove.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        translateRel(shapeData, px - cx, py - cy);
+                    }
+                });
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("TranslateShapeCenterToImageCenter"), StyleTools.getIconImageView("iconMove.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -162,14 +212,16 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             });
             items.add(menu);
 
-            menu = new MenuItem(message("TranslateShapeLeftTopToPoint"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    translateRel(shapeData, px - x1, py - y1);
-                }
-            });
-            items.add(menu);
+            if (p != null) {
+                menu = new MenuItem(message("TranslateShapeLeftTopToPoint"), StyleTools.getIconImageView("iconMove.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        translateRel(shapeData, px - x1, py - y1);
+                    }
+                });
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("TranslateShapeLeftTopTo"), StyleTools.getIconImageView("iconMove.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -188,14 +240,16 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             });
             items.add(menu);
 
-            menu = new MenuItem(message("TranslateShapeRightBottomToPoint"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    translateRel(shapeData, px - x2, py - y2);
-                }
-            });
-            items.add(menu);
+            if (p != null) {
+                menu = new MenuItem(message("TranslateShapeRightBottomToPoint"), StyleTools.getIconImageView("iconMove.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        translateRel(shapeData, px - x2, py - y2);
+                    }
+                });
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("TranslateShapeRightBottomTo"), StyleTools.getIconImageView("iconMove.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -220,7 +274,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    popImageMenu(event.getScreenX(), event.getScreenY());
+                    popImageMenu(event);
                 }
             });
             items.add(menu);

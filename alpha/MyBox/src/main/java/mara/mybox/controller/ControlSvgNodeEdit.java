@@ -2,9 +2,9 @@ package mara.mybox.controller;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
 import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 import mara.mybox.db.table.TableStringValues;
@@ -27,9 +27,11 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     protected SvgEditorController editor;
 
     @FXML
-    protected VBox pathBox, styleBox;
+    protected Tab pathTab, styleTab;
     @FXML
-    protected TextArea pathArea, styleArea;
+    protected TextArea styleArea;
+    @FXML
+    protected ControlPath2D pathController;
 
     @Override
     public void editNode(TreeItem<XmlTreeNode> item) {
@@ -40,12 +42,13 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 String name = currentTreeNode.getNode().getNodeName();
                 if (!name.equalsIgnoreCase("svg")) {
                     if (name.equalsIgnoreCase("path")) {
-                        setBox.getChildren().add(0, pathBox);
-                        setBox.getChildren().add(1, styleBox);
+                        tabPane.getTabs().add(0, pathTab);
+                        tabPane.getTabs().add(1, styleTab);
                     } else {
-                        setBox.getChildren().add(0, styleBox);
+                        tabPane.getTabs().add(0, styleTab);
                     }
-                    refreshStyle(setBox);
+                    tabPane.getSelectionModel().select(0);
+                    refreshStyle(tabPane);
                 }
             }
         }
@@ -70,7 +73,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 String attrName = attr.getNodeName();
                 String value = attr.getNodeValue();
                 if (isPath && "d".equalsIgnoreCase(attrName)) {
-                    pathArea.setText(value);
+                    pathController.loadPath(value);
                     continue;
                 }
                 if ("style".equalsIgnoreCase(attrName)) {
@@ -102,7 +105,8 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 element.removeAttribute("style");
             }
             if ("path".equalsIgnoreCase(node.getNodeName())) {
-                String path = pathArea.getText();
+                pathController.pickPath();
+                String path = pathController.getText();
                 if (path != null && !path.isBlank()) {
                     path = StringTools.trimBlanks(path);
                     element.setAttribute("d", path);
@@ -121,42 +125,10 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     @Override
     public void clearNode() {
         super.clearNode();
-        pathArea.clear();
+        pathController.loadPath("");
         styleArea.clear();
+        tabPane.getTabs().removeAll(pathTab, styleTab);
     }
-
-    /*
-        path
-     */
-    @FXML
-    public void popExamplesPathMenu(Event event) {
-        if (UserConfig.getBoolean("SvgPathExamplesPopWhenMouseHovering", false)) {
-            showExamplesPathMenu(event);
-        }
-    }
-
-    @FXML
-    public void showExamplesPathMenu(Event event) {
-        PopTools.popValues(this, pathArea, "SvgPathExamples", HelpTools.svgPathExamples(), event);
-    }
-
-    @FXML
-    protected void popPathHistories(Event event) {
-        if (UserConfig.getBoolean("SvgPathHistoriesPopWhenMouseHovering", false)) {
-            showPathHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showPathHistories(Event event) {
-        PopTools.popStringValues(this, pathArea, event, "SvgPathHistories", false, true);
-    }
-
-    @FXML
-    protected void clearPath() {
-        pathArea.clear();
-    }
-
 
     /*
         style

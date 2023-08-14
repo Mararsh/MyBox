@@ -5,7 +5,9 @@ import java.util.Arrays;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -540,6 +542,14 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             return;
         }
         MenuImageBaseController.imageMenu((BaseImageController) this, x, y);
+    }
+
+    protected void popImageMenu(Event event) {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+        popImageMenu(everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
     }
 
 }

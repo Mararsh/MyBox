@@ -5,16 +5,21 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
@@ -31,6 +36,7 @@ import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -64,8 +70,6 @@ public abstract class ControlShapeOptions extends BaseController {
             anchorSizeSelector;
     @FXML
     protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorMenuCheck;
-    @FXML
-    protected FlowPane opPane;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
@@ -467,38 +471,29 @@ public abstract class ControlShapeOptions extends BaseController {
     }
 
     public void setShapeControls() {
-        isSettingValues = true;
         try {
             parametersController.setShapeControls(shapeType);
-            NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
-
-            if (infoLabel != null) {
-                infoLabel.setText("");
-                opPane.getChildren().clear();
-                if (shapeType != null) {
-                    switch (shapeType) {
-                        case Polyline:
-                        case Polygon:
-                            opPane.getChildren().addAll(withdrawButton, clearButton);
-                            infoLabel.setText(message("ShapeDragMoveComments"));
-                            break;
-                        case Polylines:
-                            opPane.getChildren().addAll(withdrawButton, clearButton);
-                            NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopLineMenu")));
-                            infoLabel.setText(message("ShapePolylinesTips"));
-                            break;
-                        default:
-                            infoLabel.setText(message("ShapeDragMoveComments"));
-                            break;
-                    }
-                    opPane.getChildren().addAll(anchorCheck, popAnchorMenuCheck);
+            if (shapeType == null) {
+                if (infoLabel != null) {
+                    infoLabel.setText("");
+                }
+                return;
+            }
+            if (shapeType == ShapeType.Polylines) {
+                NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopLineMenu")));
+                if (infoLabel != null) {
+                    infoLabel.setText(message("ShapePolylinesTips"));
+                }
+            } else {
+                NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
+                if (infoLabel != null) {
+                    infoLabel.setText(message("ShapeDragMoveComments"));
                 }
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        isSettingValues = false;
-
     }
 
     public void shapeDataChanged() {
@@ -535,6 +530,40 @@ public abstract class ControlShapeOptions extends BaseController {
 
     public void goStyle() {
         redrawShape();
+    }
+
+    @FXML
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("ShapeFunctionsMenuPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        try {
+            DoubleShape shapeData = imageController.currentMaskShapeData();
+            if (event == null || shapeData == null) {
+                return;
+            }
+            List<MenuItem> items = imageController.maskShapeMenu(event, shapeData, null);
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("ShapeFunctionsMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    UserConfig.setBoolean("ShapeFunctionsMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            items.add(new SeparatorMenuItem());
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML

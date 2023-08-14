@@ -135,7 +135,7 @@ public class DoublePathSegment {
                 case QuadraticSmooth:
                     return isAbsolute ? "T " : "t ";
                 case Cubic:
-                    return isAbsolute ? "Q " : "q ";
+                    return isAbsolute ? "C " : "c ";
                 case CubicSmooth:
                     return isAbsolute ? "S " : "s ";
                 case Arc:

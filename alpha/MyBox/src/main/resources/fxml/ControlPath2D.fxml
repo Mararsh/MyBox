@@ -129,7 +129,7 @@ License:    Apache License Version 2.0
                               </Button>
                                     </children>
                                 </FlowPane>
-                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
                                             <graphic>
@@ -138,7 +138,7 @@ License:    Apache License Version 2.0
                                         </TableColumn>
                                         <TableColumn fx:id="indexColumn" editable="false" prefWidth="60.0" text="%Index" />
                                         <TableColumn fx:id="typeColumn" editable="false" prefWidth="120.0" text="%Type" />
-                              <TableColumn fx:id="absoluteColumn" editable="false" text="%AbsoluteValue" />
+                              <TableColumn fx:id="absoluteColumn" editable="false" text="%AbsoluteCoordinate" />
                               <TableColumn fx:id="commandColumn" editable="false" prefWidth="60.0" text="%Command" />
                               <TableColumn fx:id="parametersColumn" maxWidth="1.7976931348623157E308" prefWidth="328.4443664550781" text="%Parameters" />
                                     </columns>

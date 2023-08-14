@@ -6,12 +6,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.data.XmlTreeNode.NodeType;
 import static mara.mybox.data.XmlTreeNode.NodeType.Attribute;
@@ -43,7 +42,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
     @FXML
     protected RadioButton elementRadio, textRadio, cdataRadio, commentRadio, xmlRadio;
     @FXML
-    protected VBox nameBox;
+    protected Tab nameTab;
 
     @Override
     public void setStageStatus() {
@@ -62,7 +61,6 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 }
             });
 
-            VBox.setVgrow(setBox, Priority.ALWAYS);
             checkType();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -71,25 +69,25 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
 
     public void checkType() {
         try {
-            setBox.getChildren().clear();
-            valueArea.clear();
+            clearNode();
 
             if (elementRadio.isSelected()) {
-                setBox.getChildren().addAll(nameBox, attrBox);
-                VBox.setVgrow(attrBox, Priority.ALWAYS);
+                tabPane.getTabs().addAll(nameTab, attrTab);
                 nameInput.requestFocus();
 
             } else {
-                setBox.getChildren().addAll(valueBox);
-                VBox.setVgrow(valueBox, Priority.ALWAYS);
+                tabPane.getTabs().add(valueTab);
                 valueArea.requestFocus();
 
                 if (xmlRadio.isSelected()) {
+                    valueTab.setText("XML");
                     valueArea.setText("<tag attr=\"value\">text</tag>");
+                } else {
+                    valueTab.setText(message("Value"));
                 }
 
             }
-            refreshStyle(setBox);
+            refreshStyle(tabPane);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -139,6 +137,14 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void clearNode() {
+        nameInput.setText("");
+        valueArea.clear();
+        tableData.clear();
+        tabPane.getTabs().removeAll(attrTab, valueTab, nameTab);
     }
 
     @FXML

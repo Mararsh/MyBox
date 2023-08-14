@@ -45,7 +45,7 @@ public class DoublePath implements DoubleShape {
 
     @Override
     public String name() {
-        return message("SvgPath");
+        return message("SVGPath");
     }
 
     public final List<DoublePathSegment> parseContent(BaseController controller, String content) {
