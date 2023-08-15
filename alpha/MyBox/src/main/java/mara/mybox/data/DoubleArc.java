@@ -99,7 +99,7 @@ public class DoubleArc implements DoubleShape {
 
     @Override
     public String svgAbs() {
-        DoublePath pathData = DoublePath.shapeToPathData(getShape());
+        DoublePath pathData = DoubleShape.pathData(this);
         if (pathData == null) {
             return null;
         }

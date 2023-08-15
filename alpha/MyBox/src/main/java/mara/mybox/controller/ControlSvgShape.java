@@ -123,10 +123,10 @@ public class ControlSvgShape extends ControlShapeOptions {
                 element = (Element) node.cloneNode(false);
                 loadShape(element);
                 loadStyle(element);
-                super.switchShape();
+                super.switchShapeBySelection();
                 loadXml(element);
             } else {
-                switchShape();
+                switchShapeBySelection();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -141,12 +141,12 @@ public class ControlSvgShape extends ControlShapeOptions {
         shape
      */
     @Override
-    public void switchShape() {
+    public void switchShapeBySelection() {
         if (isSettingValues) {
             return;
         }
         element = null;
-        super.switchShape();
+        super.switchShapeBySelection();
         if (shape2Element() && style2Element()) {
             loadXml(element);
         }
@@ -154,7 +154,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     @Override
     public void shapeDataChanged() {
-        setShapeControls();
+        super.shapeDataChanged();
         shape2Element();
     }
 

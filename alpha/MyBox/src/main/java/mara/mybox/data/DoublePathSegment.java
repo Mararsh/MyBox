@@ -82,6 +82,22 @@ public class DoublePathSegment {
         }
     }
 
+    public String getParameters() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            if (isAbsolute) {
+                return absParameters();
+            } else {
+                return relParameters();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public String text() {
         try {
             if (type == null) {

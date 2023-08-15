@@ -257,10 +257,17 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             });
             items.add(menu);
 
+            menu = new MenuItem(message("RotateShape"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    ShapeRotateInputController.open((BaseImageController) myController, shapeData);
+                }
+            });
+            items.add(menu);
+
             items.add(new SeparatorMenuItem());
 
-            // have not found right way to convert java Arc2D to SVG arc
-//            if (!(shapeData instanceof DoubleArc)) {
             menu = new MenuItem(message("SVGPath") + " - " + message("AbsoluteCoordinate"), StyleTools.getIconImageView("iconSVG.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -280,7 +287,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
-//            }
 
             menu = new MenuItem(message("ImageCoordinateDecimalDigits"), StyleTools.getIconImageView("iconNumber.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {

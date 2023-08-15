@@ -149,7 +149,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
                     public void changed(ObservableValue v, Toggle ov, Toggle nv) {
-                        switchShape();
+                        switchShapeBySelection();
                     }
                 });
             }
@@ -414,7 +414,7 @@ public abstract class ControlShapeOptions extends BaseController {
     /*
         shape
      */
-    public void switchShape() {
+    public void switchShapeBySelection() {
         if (isSettingValues) {
             return;
         }
@@ -526,7 +526,92 @@ public abstract class ControlShapeOptions extends BaseController {
     }
 
     public void shapeDataChanged() {
+        switchShapeByData();
         setShapeControls();
+    }
+
+    public boolean switchShapeByData() {
+        try {
+            if (imageController == null) {
+                return false;
+            }
+            shapeType = null;
+            imageController.shapeStyle = style;
+
+            isSettingValues = true;
+            if (imageController.isMaskRectangleShown()) {
+                if (rectangleRadio != null) {
+                    rectangleRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Rectangle;
+
+            } else if (imageController.isMaskCircleShown()) {
+                if (circleRadio != null) {
+                    circleRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Circle;
+
+            } else if (imageController.isMaskEllipseShown()) {
+                if (ellipseRadio != null) {
+                    ellipseRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Ellipse;
+
+            } else if (imageController.isMaskLineShown()) {
+                if (lineRadio != null) {
+                    lineRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Line;
+
+            } else if (imageController.isMaskPolylineShown()) {
+                if (polylineRadio != null) {
+                    polylineRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Polyline;
+
+            } else if (imageController.isMaskPolygonShown()) {
+                if (polygonRadio != null) {
+                    polygonRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Polygon;
+
+            } else if (imageController.isMaskPolylinesShown()) {
+                if (polylinesRadio != null) {
+                    polylinesRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Polylines;
+
+            } else if (imageController.isMaskQuadraticShown()) {
+                if (quadraticRadio != null) {
+                    quadraticRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Quadratic;
+
+            } else if (imageController.isMaskCubicShown()) {
+                if (cubicRadio != null) {
+                    cubicRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Cubic;
+
+            } else if (imageController.isMaskArcShown()) {
+                if (arcRadio != null) {
+                    arcRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Arc;
+
+            } else if (imageController.isMaskPathShown()) {
+                if (svgRadio != null) {
+                    svgRadio.setSelected(true);
+                }
+                shapeType = ShapeType.Path;
+
+            }
+            isSettingValues = false;
+            return shapeType != null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     public void addListener() {

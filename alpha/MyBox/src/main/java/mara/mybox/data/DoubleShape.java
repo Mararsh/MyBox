@@ -1,7 +1,9 @@
 package mara.mybox.data;
 
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -49,34 +51,72 @@ public interface DoubleShape {
         return changed(p1.getX() - p2.getX(), p1.getY() - p2.getY());
     }
 
-    public static boolean translateCenterAbs(DoubleShape shape, double x, double y) {
-        DoublePoint center = getCenter(shape);
+    public static boolean translateCenterAbs(DoubleShape shapeData, double x, double y) {
+        DoublePoint center = getCenter(shapeData);
         double offsetX = x - center.getX();
         double offsetY = y - center.getY();
         if (DoubleShape.changed(offsetX, offsetY)) {
-            return shape.translateRel(offsetX, offsetY);
+            return shapeData.translateRel(offsetX, offsetY);
         }
         return false;
     }
 
-    public static boolean translateRel(DoubleShape shape, double offsetX, double offsetY) {
+    public static boolean translateRel(DoubleShape shapeData, double offsetX, double offsetY) {
         if (DoubleShape.changed(offsetX, offsetY)) {
-            return shape.translateRel(offsetX, offsetY);
+            return shapeData.translateRel(offsetX, offsetY);
         }
         return false;
+    }
+
+    public static boolean scale(DoubleShape shapeData, double scaleX, double scaleY) {
+        try {
+            if (shapeData == null) {
+                return true;
+            }
+            return shapeData.scale(scaleX, scaleY);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static DoublePath rorate(DoubleShape shapeData, double angle, double x, double y) {
+        try {
+            if (shapeData == null) {
+                return null;
+            }
+            AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(angle), x, y);
+            Shape shape = t.createTransformedShape(shapeData.getShape());
+            return DoublePath.shapeToPathData(shape);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static DoublePath pathData(DoubleShape shapeData) {
+        try {
+            if (shapeData == null) {
+                return null;
+            }
+            return DoublePath.shapeToPathData(shapeData.getShape());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     // notice bound may truncate values
-    public static Rectangle2D getBound(DoubleShape shape) {
-        return shape.getShape().getBounds2D();
+    public static Rectangle2D getBound(DoubleShape shapeData) {
+        return shapeData.getShape().getBounds2D();
     }
 
-    public static boolean contains(DoubleShape shape, double x, double y) {
-        return shape.isValid() && shape.getShape().contains(x, y);
+    public static boolean contains(DoubleShape shapeData, double x, double y) {
+        return shapeData.isValid() && shapeData.getShape().contains(x, y);
     }
 
-    public static DoublePoint getCenter(DoubleShape shape) {
-        Rectangle2D bound = getBound(shape);
+    public static DoublePoint getCenter(DoubleShape shapeData) {
+        Rectangle2D bound = getBound(shapeData);
         return new DoublePoint(bound.getCenterX(), bound.getCenterY());
     }
 

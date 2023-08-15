@@ -46,7 +46,7 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
     protected void refreshShape() {
         editor.resetImagePane();
         editor.imageTab();
-        optionsController.switchShape();
+        optionsController.switchShapeBySelection();
     }
 
     @FXML

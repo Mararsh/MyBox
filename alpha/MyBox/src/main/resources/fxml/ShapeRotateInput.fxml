@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShapeRotateInputController">
+    <children>
+        <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RotateShape" textAlignment="CENTER" />
+      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="46.0" spacing="5.0">
+         <children>
+            <Label text="%RotateAngle" />
+            <ComboBox fx:id="angleSelector" editable="true" prefWidth="150.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="79.0" spacing="5.0">
+         <children>
+            <Label text="%RotateCenter" />
+            <Button mnemonicParsing="false" onAction="#center" text="%ShapeCenter" />
+            <Button layoutX="63.0" layoutY="10.0" mnemonicParsing="false" onAction="#leftTop" text="%LeftTop" />
+            <Button layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#rightBottom" text="%RightBottom" />
+            <Button layoutX="189.0" layoutY="10.0" mnemonicParsing="false" onAction="#leftBottom" text="%LeftBottom" />
+            <Button layoutX="246.0" layoutY="10.0" mnemonicParsing="false" onAction="#rightTop" text="%RightTop" />
+         </children>
+      </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="372.0" spacing="5.0">
+            <children>
+                <Label fx:id="indexLabel" text="x" />
+                <TextField prefWidth="100.0" fx:id="xInput" />
+                <Label fx:id="indexLabel1" text="y" />
+                <TextField fx:id="yInput" prefWidth="100.0" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

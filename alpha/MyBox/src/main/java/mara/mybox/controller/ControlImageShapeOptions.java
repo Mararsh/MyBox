@@ -42,8 +42,8 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     }
 
     @Override
-    public void switchShape() {
-        super.switchShape();
+    public void switchShapeBySelection() {
+        super.switchShapeBySelection();
         redrawShape();
     }
 
@@ -95,7 +95,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
     @Override
     public void shapeDataChanged() {
-        setShapeControls();
+        super.shapeDataChanged();
         redrawShape();
     }
 
