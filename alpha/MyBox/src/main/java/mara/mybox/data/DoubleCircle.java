@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.Ellipse2D;
+import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -33,7 +34,7 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
-    public DoubleCircle cloneValues() {
+    public DoubleCircle copy() {
         return new DoubleCircle(centerX, centerY, radius);
     }
 
@@ -63,6 +64,29 @@ public class DoubleCircle implements DoubleShape {
     public boolean scale(double scaleX, double scaleY) {
         radius *= scaleX;
         return true;
+    }
+
+    @Override
+    public String svgAbs() {
+        double cx = imageScale(centerX);
+        double cy = imageScale(centerY);
+        double r = imageScale(radius);
+        return "M " + (cx - r) + "," + cy + " \n"
+                + "A " + r + "," + r + " 0,0,1 " + (cx + r) + "," + cy + " \n"
+                + "A " + r + "," + r + " 0,0,1 " + (cx - r) + "," + cy + " \n"
+                + "Z";
+    }
+
+    @Override
+    public String svgRel() {
+        double cx = imageScale(centerX);
+        double cy = imageScale(centerY);
+        double r = imageScale(radius);
+        double r2 = imageScale(2 * radius);
+        return "m " + (cx - r) + "," + cy + " \n"
+                + "a " + r + "," + r + " 0,0,1 " + r2 + "," + 0 + " \n"
+                + "a " + r + "," + r + " 0,0,1 " + (-r2) + "," + 0 + " \n"
+                + "z";
     }
 
 

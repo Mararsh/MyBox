@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -112,7 +113,7 @@ public class DoublePolyline implements DoubleShape {
     }
 
     @Override
-    public DoublePolyline cloneValues() {
+    public DoublePolyline copy() {
         DoublePolyline np = new DoublePolyline();
         np.addAll(points);
         return np;
@@ -201,6 +202,34 @@ public class DoublePolyline implements DoubleShape {
         points.clear();
         points.addAll(scaled);
         return true;
+    }
+
+    @Override
+    public String svgAbs() {
+        String path = "";
+        DoublePoint p = points.get(0);
+        path += "M " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
+        for (int i = 1; i < points.size(); i++) {
+            p = points.get(i);
+            path += "L " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
+        }
+        return path;
+    }
+
+    @Override
+    public String svgRel() {
+        String path = "";
+        DoublePoint p = points.get(0);
+        path += "m " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
+        double lastx = p.getX();
+        double lasty = p.getY();
+        for (int i = 1; i < points.size(); i++) {
+            p = points.get(i);
+            path += "l " + imageScale(p.getX() - lastx) + "," + imageScale(p.getY() - lasty) + "\n";
+            lastx = p.getX();
+            lasty = p.getY();
+        }
+        return path;
     }
 
     public DoublePoint get(int i) {

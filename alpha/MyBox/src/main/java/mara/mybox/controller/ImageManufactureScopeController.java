@@ -365,7 +365,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskRectangleData.getMaxX(), 2) + "");
                     rightBottomYInput.setText(scale(maskRectangleData.getMaxY(), 2) + "");
-                    scope.setRectangle(maskRectangleData.cloneValues());
+                    scope.setRectangle(maskRectangleData.copy());
                     drawMaskRectangle();
                     indicateScope();
                     break;
@@ -374,7 +374,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
                     rightBottomYInput.setText(scale(maskEllipseData.getMaxY(), 2) + "");
-                    scope.setEllipse(maskEllipseData.cloneValues());
+                    scope.setEllipse(maskEllipseData.copy());
                     drawMaskEllipse();
                     indicateScope();
                     break;
@@ -382,18 +382,18 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
                     circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
-                    scope.setCircle(maskCircleData.cloneValues());
+                    scope.setCircle(maskCircleData.copy());
                     drawMaskCircle();
                     indicateScope();
                     break;
                 case Polygon:
                     pointsController.loadList(maskPolygonData.getPoints());
-                    scope.setPolygon(maskPolygonData.cloneValues());
+                    scope.setPolygon(maskPolygonData.copy());
                     drawMaskPolygon();
                     indicateScope();
                     break;
                 case Outline:
-                    scope.setRectangle(maskRectangleData.cloneValues());
+                    scope.setRectangle(maskRectangleData.copy());
                     makeOutline();
                     return;
                 default:

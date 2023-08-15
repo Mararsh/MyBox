@@ -222,7 +222,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             currentClip = clipSource;
             editor.scope = new ImageScope();
             editor.maskRectangleData = DoubleRectangle.image(currentClip);
-            editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
+            editor.scope.setRectangle(editor.maskRectangleData.copy());
             pasteClip(0);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -296,7 +296,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         editor.maskRectangleData.getX(), editor.maskRectangleData.getY(),
                         finalClip.getWidth(), finalClip.getHeight());
                 editor.showMaskRectangle();
-                editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
+                editor.scope.setRectangle(editor.maskRectangleData.copy());
                 maskView.setImage(blendedImage);
                 maskView.setOpacity(1.0);
                 maskView.setVisible(true);
@@ -329,7 +329,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             return;
         }
         if (!editor.scope.getRectangle().same(editor.maskRectangleData)) {
-            editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
+            editor.scope.setRectangle(editor.maskRectangleData.copy());
             pasteClip(0);
         }
     }

@@ -87,19 +87,19 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
                 case Rectangle:
                     showMaskRectangle();
-                    scope.setRectangle(maskRectangleData.cloneValues());
+                    scope.setRectangle(maskRectangleData.copy());
                     checkMatchType();
                     break;
 
                 case Circle:
                     showMaskCircle();
-                    scope.setCircle(maskCircleData.cloneValues());
+                    scope.setCircle(maskCircleData.copy());
                     checkMatchType();
                     break;
 
                 case Ellipse:
                     showMaskEllipse();
-                    scope.setEllipse(maskEllipseData.cloneValues());
+                    scope.setEllipse(maskEllipseData.copy());
                     checkMatchType();
                     break;
 
@@ -107,7 +107,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     maskPolygonData = new DoublePolygon();
                     maskPolygonData.setAll(pointsController.tableData);
                     showMaskPolygon();
-                    scope.setPolygon(maskPolygonData.cloneValues());
+                    scope.setPolygon(maskPolygonData.copy());
                     checkMatchType();
                     break;
 

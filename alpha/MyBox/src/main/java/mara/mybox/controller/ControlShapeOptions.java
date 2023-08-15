@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
@@ -69,9 +70,11 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorMenuCheck;
+    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorMenuCheck, addPointCheck;
     @FXML
     protected FlowPane opPane;
+    @FXML
+    protected Button functionsButton;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
@@ -100,6 +103,14 @@ public abstract class ControlShapeOptions extends BaseController {
                         imageController.showAnchors = anchorCheck.isSelected();
                         imageController.setMaskAnchorsStyle();
                     }
+                }
+            });
+
+            addPointCheck.setSelected(UserConfig.getBoolean("ImageShapeAddPointWhenLeftClick", true));
+            addPointCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean("ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
                 }
             });
 
@@ -475,27 +486,39 @@ public abstract class ControlShapeOptions extends BaseController {
     public void setShapeControls() {
         try {
             parametersController.setShapeControls(shapeType);
+            opPane.getChildren().clear();
             if (shapeType == null) {
                 if (infoLabel != null) {
                     infoLabel.setText("");
                 }
                 return;
             }
-            if (shapeType == ShapeType.Polylines) {
-                NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopLineMenu")));
-                if (infoLabel != null) {
-                    infoLabel.setText(message("ShapePolylinesTips"));
-                }
-
-            } else {
-                NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
-                if (infoLabel != null) {
-                    infoLabel.setText(message("ShapeDragMoveComments"));
-                }
+            switch (shapeType) {
+                case Polylines:
+                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorMenuCheck);
+                    NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastLine") + "\nESC / CTRL+w / ALT+w"));
+                    NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopLineMenu")));
+                    if (infoLabel != null) {
+                        infoLabel.setText(message("ShapePolylinesTips"));
+                    }
+                    break;
+                case Polyline:
+                case Polygon:
+                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorMenuCheck, addPointCheck);
+                    NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nESC / CTRL+w / ALT+w"));
+                    NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
+                    if (infoLabel != null) {
+                        infoLabel.setText(message("ShapeDragMoveComments"));
+                    }
+                    break;
+                default:
+                    opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorMenuCheck);
+                    NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
+                    if (infoLabel != null) {
+                        infoLabel.setText(message("ShapeDragMoveComments"));
+                    }
+                    break;
             }
-            withdrawButton.setDisable(shapeType != ShapeType.Polylines
-                    && shapeType != ShapeType.Polyline
-                    && shapeType != ShapeType.Polygon);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

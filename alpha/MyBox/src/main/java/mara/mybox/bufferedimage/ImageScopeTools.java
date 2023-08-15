@@ -70,10 +70,10 @@ public class ImageScopeTools {
                 ncolors.addAll(sourceScope.getColors());
             }
             targetScope.setColors(ncolors);
-            targetScope.setRectangle(sourceScope.getRectangle().cloneValues());
-            targetScope.setCircle(sourceScope.getCircle().cloneValues());
-            targetScope.setEllipse(sourceScope.getEllipse().cloneValues());
-            targetScope.setPolygon(sourceScope.getPolygon().cloneValues());
+            targetScope.setRectangle(sourceScope.getRectangle().copy());
+            targetScope.setCircle(sourceScope.getCircle().copy());
+            targetScope.setEllipse(sourceScope.getEllipse().copy());
+            targetScope.setPolygon(sourceScope.getPolygon().copy());
             targetScope.setColorDistance(sourceScope.getColorDistance());
             targetScope.setColorDistanceSquare(sourceScope.getColorDistanceSquare());
             targetScope.setHsbDistance(sourceScope.getHsbDistance());

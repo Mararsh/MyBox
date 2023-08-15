@@ -52,7 +52,7 @@ public class DoubleOutline extends DoubleRectangle {
     }
 
     @Override
-    public DoubleOutline cloneValues() {
+    public DoubleOutline copy() {
         return new DoubleOutline(image, this, insideColor);
     }
 

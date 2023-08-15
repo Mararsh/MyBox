@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.Line2D;
+import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -34,7 +35,7 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
-    public DoubleLine cloneValues() {
+    public DoubleLine copy() {
         return new DoubleLine(startX, startY, endX, endY);
     }
 
@@ -62,6 +63,18 @@ public class DoubleLine implements DoubleShape {
         endX *= scaleX;
         endY *= scaleY;
         return true;
+    }
+
+    @Override
+    public String svgAbs() {
+        return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
+                + "L " + imageScale(endX) + "," + imageScale(endY);
+    }
+
+    @Override
+    public String svgRel() {
+        return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
+                + "l " + imageScale(endX - startX) + "," + imageScale(endY - startY);
     }
 
     public double getStartX() {

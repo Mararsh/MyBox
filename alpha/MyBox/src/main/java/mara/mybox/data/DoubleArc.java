@@ -69,7 +69,7 @@ public class DoubleArc implements DoubleShape {
     }
 
     @Override
-    public DoubleArc cloneValues() {
+    public DoubleArc copy() {
         return DoubleArc.arc(centerX, centerY, radiusX, radiusY, startAngle, extentAngle, type);
     }
 
@@ -95,6 +95,24 @@ public class DoubleArc implements DoubleShape {
         radiusX *= scaleX;
         radiusY *= scaleY;
         return true;
+    }
+
+    @Override
+    public String svgAbs() {
+        DoublePath pathData = DoublePath.shapeToPathData(getShape());
+        if (pathData == null) {
+            return null;
+        }
+        return pathData.svgAbs();
+    }
+
+    @Override
+    public String svgRel() {
+        DoublePath pathData = DoublePath.shapeToPathData(getShape());
+        if (pathData == null) {
+            return null;
+        }
+        return pathData.svgRel();
     }
 
     /*

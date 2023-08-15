@@ -4,20 +4,31 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.shape.Path;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.DoublePathSegment.PathSegmentType;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.Arc;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Close;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Cubic;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.CubicSmooth;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Line;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineHorizontal;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.LineVertical;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Move;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Quadratic;
+import static mara.mybox.data.DoublePathSegment.PathSegmentType.QuadraticSmooth;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
+import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
+import org.apache.batik.svggen.SVGGeneratorContext;
+import org.apache.batik.svggen.SVGPath;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  * @Author Mara
@@ -42,7 +53,7 @@ public class DoublePath implements DoubleShape {
     final public void init() {
         content = null;
         segments = null;
-        scale = 3;
+        scale = UserConfig.imageScale();
     }
 
     @Override
@@ -74,10 +85,16 @@ public class DoublePath implements DoubleShape {
     }
 
     @Override
-    public DoublePath cloneValues() {
+    public DoublePath copy() {
         DoublePath path = new DoublePath();
         path.setContent(content);
-        path.setSegments(segments);
+        if (segments != null) {
+            List<DoublePathSegment> list = new ArrayList<>();
+            for (DoublePathSegment seg : segments) {
+                list.add(seg.copy());
+            }
+            path.setSegments(list);
+        }
         return path;
     }
 
@@ -124,6 +141,48 @@ public class DoublePath implements DoubleShape {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
+        }
+    }
+
+    @Override
+    public String svgAbs() {
+        try {
+            if (segments == null || segments.isEmpty()) {
+                return null;
+            }
+            String path = null;
+            for (DoublePathSegment seg : segments) {
+                if (path != null) {
+                    path += "\n" + seg.abs();
+                } else {
+                    path = seg.abs();
+                }
+            }
+            return path;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    @Override
+    public String svgRel() {
+        try {
+            if (segments == null || segments.isEmpty()) {
+                return null;
+            }
+            String path = null;
+            for (DoublePathSegment seg : segments) {
+                if (path != null) {
+                    path += "\n" + seg.rel();
+                } else {
+                    path = seg.rel();
+                }
+            }
+            return path;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
         }
     }
 
@@ -190,21 +249,17 @@ public class DoublePath implements DoubleShape {
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());
                         break;
                     case Arc:
+                        double angle = seg.getValue();
                         Arc2D arc = ExtendedGeneralPath.computeArc(
                                 seg.getStartPoint().getX(), seg.getStartPoint().getY(),
                                 seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
-                                seg.getValue(),
+                                angle,
                                 seg.isFlag1(), seg.isFlag2(),
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());
-                        Shape shape;
-                        if (seg.getValue() != 0) {
-                            AffineTransform at = AffineTransform.getRotateInstance(seg.getValue(),
-                                    arc.getX() + arc.getWidth() / 2, arc.getY() + arc.getHeight() / 2);
-                            shape = at.createTransformedShape(arc);
-                        } else {
-                            shape = arc;
-                        }
-                        path.append(shape, true);
+                        AffineTransform t = AffineTransform.getRotateInstance(
+                                Math.toRadians(angle), arc.getCenterX(), arc.getCenterY());
+                        Shape s = t.createTransformedShape(arc);
+                        path.append(s, true);
                         break;
                     case Close:
                         path.closePath();
@@ -215,6 +270,147 @@ public class DoublePath implements DoubleShape {
         } catch (Exception e) {
             MyBoxLog.console(e);
             return false;
+        }
+    }
+
+    public static List<DoublePathSegment> shapeToSegments(Shape shape) {
+        try {
+            if (shape == null) {
+                return null;
+            }
+            PathIterator iterator = shape.getPathIterator(null);
+            if (iterator == null) {
+                return null;
+            }
+            List<DoublePathSegment> segments = new ArrayList<>();
+            double[] coords = new double[6];
+            int index = 0;
+            int scale = UserConfig.imageScale();
+            double currentX = 0, currentY = 0;
+            DoublePathSegment segment;
+            while (!iterator.isDone()) {
+                int type = iterator.currentSegment(coords);
+                switch (type) {
+                    case PathIterator.SEG_MOVETO:
+                        segment = new DoublePathSegment()
+                                .setType(PathSegmentType.Move)
+                                .setIsAbsolute(true)
+                                .setScale(scale)
+                                .setEndPoint(new DoublePoint(coords[0], coords[1]))
+                                .setEndPointRel(new DoublePoint(coords[0] - currentX, coords[1] - currentY))
+                                .setStartPoint(new DoublePoint(currentX, currentY))
+                                .setIndex(index++);
+                        segments.add(segment);
+                        currentX = coords[0];
+                        currentY = coords[1];
+                        break;
+                    case PathIterator.SEG_LINETO:
+                        segment = new DoublePathSegment()
+                                .setType(PathSegmentType.Line)
+                                .setIsAbsolute(true)
+                                .setScale(scale)
+                                .setEndPoint(new DoublePoint(coords[0], coords[1]))
+                                .setEndPointRel(new DoublePoint(coords[0] - currentX, coords[1] - currentY))
+                                .setStartPoint(new DoublePoint(currentX, currentY))
+                                .setIndex(index++);
+                        segments.add(segment);
+                        currentX = coords[0];
+                        currentY = coords[1];
+                        break;
+                    case PathIterator.SEG_QUADTO:
+                        segment = new DoublePathSegment()
+                                .setType(PathSegmentType.Quadratic)
+                                .setIsAbsolute(true)
+                                .setScale(scale)
+                                .setControlPoint1(new DoublePoint(coords[0], coords[1]))
+                                .setControlPoint1Rel(new DoublePoint(coords[0] - currentX, coords[1] - currentY))
+                                .setEndPoint(new DoublePoint(coords[2], coords[3]))
+                                .setEndPointRel(new DoublePoint(coords[2] - currentX, coords[3] - currentY))
+                                .setStartPoint(new DoublePoint(currentX, currentY))
+                                .setIndex(index++);
+                        segments.add(segment);
+                        currentX = coords[2];
+                        currentY = coords[3];
+                        break;
+                    case PathIterator.SEG_CUBICTO:
+                        segment = new DoublePathSegment()
+                                .setType(PathSegmentType.Cubic)
+                                .setIsAbsolute(true)
+                                .setScale(scale)
+                                .setControlPoint1(new DoublePoint(coords[0], coords[1]))
+                                .setControlPoint1Rel(new DoublePoint(coords[0] - currentX, coords[1] - currentY))
+                                .setControlPoint2(new DoublePoint(coords[2], coords[3]))
+                                .setControlPoint2Rel(new DoublePoint(coords[2] - currentX, coords[3] - currentY))
+                                .setEndPoint(new DoublePoint(coords[4], coords[5]))
+                                .setEndPointRel(new DoublePoint(coords[4] - currentX, coords[5] - currentY))
+                                .setStartPoint(new DoublePoint(currentX, currentY))
+                                .setIndex(index++);
+                        segments.add(segment);
+                        currentX = coords[4];
+                        currentY = coords[5];
+                        break;
+                    case PathIterator.SEG_CLOSE:
+                        segment = new DoublePathSegment()
+                                .setType(PathSegmentType.Close)
+                                .setIsAbsolute(true)
+                                .setScale(scale)
+                                .setStartPoint(new DoublePoint(currentX, currentY))
+                                .setIndex(index++);
+                        segments.add(segment);
+                        break;
+                }
+                iterator.next();
+            }
+
+            return segments;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static DoublePath shapeToPathData(Shape shape) {
+        try {
+            List<DoublePathSegment> segments = shapeToSegments(shape);
+            if (segments == null || segments.isEmpty()) {
+                return null;
+            }
+            DoublePath shapeData = new DoublePath();
+            shapeData.parseSegments(segments);
+            return shapeData;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static String shapeToStringByBatik(Shape shape) {
+        try {
+            if (shape == null) {
+                return null;
+            }
+            DOMImplementation impl = GenericDOMImplementation.getDOMImplementation();
+            Document myFactory = impl.createDocument("http://www.w3.org/2000/svg", "svg", null);
+            SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(myFactory);
+            return SVGPath.toSVGPathData(shape, ctx);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static DoublePath shapeToPathDataByBatik(Shape shape) {
+        try {
+            String s = shapeToStringByBatik(shape);
+            if (s == null) {
+                return null;
+            }
+            DoublePath shapeData = new DoublePath();
+            shapeData.parseContent(null, s);
+            return shapeData;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
         }
     }
 
@@ -240,6 +436,34 @@ public class DoublePath implements DoubleShape {
         } catch (Exception e) {
             MyBoxLog.console(e);
             return content;
+        }
+    }
+
+    public static DoublePath scale(DoublePath path, double scaleX, double scaleY) {
+        try {
+            if (path == null) {
+                return null;
+            }
+            DoublePath scaled = path.copy();
+            scaled.scale(scaleX, scaleY);
+            return scaled;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static DoublePath translateRel(DoublePath path, double offsetX, double offsetY) {
+        try {
+            if (path == null) {
+                return null;
+            }
+            DoublePath trans = path.copy();
+            trans.translateRel(offsetX, offsetY);
+            return trans;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

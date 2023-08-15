@@ -208,7 +208,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             return;
         }
         outlineSource = bufferedImage;
-        maskRectangleData = rect.cloneValues();
+        maskRectangleData = rect.copy();
         showMaskRectangle();
 
         makeOutline();
@@ -261,7 +261,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                 drawMaskRectangle();
                 scope.setOutlineSource(outlineSource);
                 scope.setOutline(outline[1]);
-                scope.setRectangle(maskRectangleData.cloneValues());
+                scope.setRectangle(maskRectangleData.copy());
                 displayOutline(outline[1]);
             }
 

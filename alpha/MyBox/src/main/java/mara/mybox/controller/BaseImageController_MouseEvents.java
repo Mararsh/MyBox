@@ -20,8 +20,10 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -49,14 +51,36 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        if (event == null || p == null || event.getButton() != MouseButton.SECONDARY) {
+        if (event == null || p == null) {
             return;
         }
-        DoubleShape shapeData = currentMaskShapeData();
-        if (shapeData != null) {
-            popEventMenu(event, maskShapeMenu(event, shapeData, p));
-        } else {
-            popImageMenu(event.getScreenX(), event.getScreenY());
+        if (event.getButton() == MouseButton.PRIMARY) {
+
+            if (UserConfig.getBoolean("ImageShapeAddPointWhenLeftClick", true)) {
+                if (maskPolyline != null && maskPolyline.isVisible()) {
+                    maskPolylineData.add(p.getX(), p.getY());
+                    double x = p.getX() * viewXRatio();
+                    double y = p.getY() * viewYRatio();
+                    addMaskPolylinePoint(maskPolylineData.getSize(), p, x, y);
+                    maskShapeDataChanged();
+
+                } else if (maskPolygon != null && maskPolygon.isVisible()) {
+                    maskPolygonData.add(p.getX(), p.getY());
+                    double x = p.getX() * viewXRatio();
+                    double y = p.getY() * viewYRatio();
+                    addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
+                    maskShapeDataChanged();
+                }
+            }
+
+        } else if (event.getButton() == MouseButton.SECONDARY) {
+            DoubleShape shapeData = currentMaskShapeData();
+            if (shapeData != null) {
+                popEventMenu(event, maskShapeMenu(event, shapeData, p));
+            } else {
+                popImageMenu(event.getScreenX(), event.getScreenY());
+            }
+
         }
     }
 
@@ -234,6 +258,49 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
+
+            // have not found right way to convert java Arc2D to SVG arc
+//            if (!(shapeData instanceof DoubleArc)) {
+            menu = new MenuItem(message("SVGPath") + " - " + message("AbsoluteCoordinate"), StyleTools.getIconImageView("iconSVG.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    TextPopController.loadText(myController, shapeData.svgAbs());
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SVGPath") + " - " + message("RelativeCoordinate"), StyleTools.getIconImageView("iconSVG.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    TextPopController.loadText(myController, shapeData.svgRel());
+                }
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+//            }
+
+            menu = new MenuItem(message("ImageCoordinateDecimalDigits"), StyleTools.getIconImageView("iconNumber.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    String value = PopTools.askValue(getBaseTitle(), null, message("ImageCoordinateDecimalDigits"),
+                            UserConfig.getInt("ImageDecimal", 3) + "");
+                    if (value == null || value.isBlank()) {
+                        return;
+                    }
+                    try {
+                        int v = Integer.parseInt(value);
+                        UserConfig.setInt("ImageDecimal", v);
+                        popInformation(message("TakeEffectNextTime"));
+                    } catch (Exception e) {
+                        popError(e.toString());
+                    }
+                }
+            });
+            items.add(menu);
 
             menu = new MenuItem(message("ImageMenu"), StyleTools.getIconImageView("iconMenu.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {

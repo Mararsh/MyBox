@@ -10,7 +10,7 @@ import java.awt.geom.Rectangle2D;
  */
 public interface DoubleShape {
 
-    DoubleShape cloneValues();
+    DoubleShape copy();
 
     boolean isValid();
 
@@ -23,6 +23,10 @@ public interface DoubleShape {
     boolean scale(double scaleX, double scaleY);
 
     String name();
+
+    String svgRel();
+
+    String svgAbs();
 
     /*
         static

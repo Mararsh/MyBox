@@ -21,8 +21,8 @@ import static mara.mybox.value.Languages.message;
 public class DoublePathSegment {
 
     protected PathSegmentType type;
-    protected DoublePoint startPoint, controlPoint1, controlPoint2, endPoint; // absoulte
-    protected DoublePoint controlPoint1Rel, controlPoint2Rel, endPointRel; // relative
+    protected DoublePoint startPoint, controlPoint1, controlPoint2, endPoint; // absoulte coordinate
+    protected DoublePoint controlPoint1Rel, controlPoint2Rel, endPointRel; // relative coordinate
     protected double value, valueRel;
     protected boolean isAbsolute, flag1, flag2;
     protected int index, scale;
@@ -66,85 +66,16 @@ public class DoublePathSegment {
         return null;
     }
 
-    public String getParameters() {
-        try {
-            if (type == null) {
-                return null;
-            }
-            switch (type) {
-                case Move:
-                case Line:
-                case QuadraticSmooth:
-                    return isAbsolute ? endPoint.text(scale) : endPointRel.text(scale);
-                case LineHorizontal:
-                case LineVertical:
-                    return isAbsolute ? DoubleTools.scaleString(value, scale) : DoubleTools.scaleString(valueRel, scale);
-                case Quadratic:
-                    if (isAbsolute) {
-                        return controlPoint1.text(scale) + " " + endPoint.text(scale);
-                    } else {
-                        return controlPoint1Rel.text(scale) + " " + endPointRel.text(scale);
-                    }
-                case Cubic:
-                    if (isAbsolute) {
-                        return controlPoint1.text(scale)
-                                + " " + controlPoint2.text(scale)
-                                + " " + endPoint.text(scale);
-                    } else {
-                        return controlPoint1Rel.text(scale)
-                                + " " + controlPoint2Rel.text(scale)
-                                + " " + endPointRel.text(scale);
-                    }
-                case CubicSmooth:
-                    if (isAbsolute) {
-                        return controlPoint2.text(scale) + " " + endPoint.text(scale);
-                    } else {
-                        return controlPoint2Rel.text(scale) + " " + endPointRel.text(scale);
-                    }
-                case Arc:
-                    return controlPoint1.text(scale)
-                            + " " + DoubleTools.scaleString(value, scale)
-                            + " " + (flag1 ? 1 : 0)
-                            + " " + (flag2 ? 1 : 0)
-                            + " " + (isAbsolute ? endPoint.text(scale) : endPointRel.text(scale));
-                case Close:
-                    return "";
-            }
-            return null;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public String getCommand() {
         try {
             if (type == null) {
                 return null;
             }
-            switch (type) {
-                case Move:
-                    return isAbsolute ? "M " : "m ";
-                case Line:
-                    return isAbsolute ? "L " : "l ";
-                case LineHorizontal:
-                    return isAbsolute ? "H " : "h ";
-                case LineVertical:
-                    return isAbsolute ? "V " : "v ";
-                case Quadratic:
-                    return isAbsolute ? "Q " : "q ";
-                case QuadraticSmooth:
-                    return isAbsolute ? "T " : "t ";
-                case Cubic:
-                    return isAbsolute ? "C " : "c ";
-                case CubicSmooth:
-                    return isAbsolute ? "S " : "s ";
-                case Arc:
-                    return isAbsolute ? "A " : "a ";
-                case Close:
-                    return isAbsolute ? "Z " : "z ";
+            if (isAbsolute) {
+                return absCommand();
+            } else {
+                return relCommand();
             }
-            return null;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -156,7 +87,177 @@ public class DoublePathSegment {
             if (type == null) {
                 return null;
             }
-            return getCommand() + " " + getParameters();
+            if (isAbsolute) {
+                return abs();
+            } else {
+                return rel();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String abs() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            return absCommand() + " " + absParameters();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String rel() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            return relCommand() + " " + relParameters();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String absCommand() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            switch (type) {
+                case Move:
+                    return "M ";
+                case Line:
+                    return "L ";
+                case LineHorizontal:
+                    return "H ";
+                case LineVertical:
+                    return "V ";
+                case Quadratic:
+                    return "Q ";
+                case QuadraticSmooth:
+                    return "T ";
+                case Cubic:
+                    return "C ";
+                case CubicSmooth:
+                    return "S ";
+                case Arc:
+                    return "A ";
+                case Close:
+                    return "Z ";
+            }
+            return null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String relCommand() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            switch (type) {
+                case Move:
+                    return "m ";
+                case Line:
+                    return "l ";
+                case LineHorizontal:
+                    return "h ";
+                case LineVertical:
+                    return "v ";
+                case Quadratic:
+                    return "q ";
+                case QuadraticSmooth:
+                    return "t ";
+                case Cubic:
+                    return "c ";
+                case CubicSmooth:
+                    return "s ";
+                case Arc:
+                    return "a ";
+                case Close:
+                    return "z ";
+            }
+            return null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String absParameters() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            switch (type) {
+                case Move:
+                case Line:
+                case QuadraticSmooth:
+                    return endPoint.text(scale);
+                case LineHorizontal:
+                case LineVertical:
+                    return DoubleTools.scaleString(value, scale);
+                case Quadratic:
+                    return controlPoint1.text(scale) + " " + endPoint.text(scale);
+                case Cubic:
+                    return controlPoint1.text(scale)
+                            + " " + controlPoint2.text(scale)
+                            + " " + endPoint.text(scale);
+                case CubicSmooth:
+                    return controlPoint2.text(scale) + " " + endPoint.text(scale);
+                case Arc:
+                    return controlPoint1.text(scale)
+                            + " " + DoubleTools.scaleString(value, scale)
+                            + " " + (flag1 ? 1 : 0)
+                            + " " + (flag2 ? 1 : 0)
+                            + " " + endPoint.text(scale);
+                case Close:
+                    return "";
+            }
+            return null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String relParameters() {
+        try {
+            if (type == null) {
+                return null;
+            }
+            switch (type) {
+                case Move:
+                case Line:
+                case QuadraticSmooth:
+                    return endPointRel.text(scale);
+                case LineHorizontal:
+                case LineVertical:
+                    return DoubleTools.scaleString(valueRel, scale);
+                case Quadratic:
+                    return controlPoint1Rel.text(scale) + " " + endPointRel.text(scale);
+                case Cubic:
+                    return controlPoint1Rel.text(scale)
+                            + " " + controlPoint2Rel.text(scale)
+                            + " " + endPointRel.text(scale);
+                case CubicSmooth:
+                    return controlPoint2Rel.text(scale) + " " + endPointRel.text(scale);
+                case Arc:
+                    return controlPoint1.text(scale)
+                            + " " + DoubleTools.scaleString(value, scale)
+                            + " " + (flag1 ? 1 : 0)
+                            + " " + (flag2 ? 1 : 0)
+                            + " " + endPointRel.text(scale);
+                case Close:
+                    return "";
+            }
+            return null;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -247,11 +348,22 @@ public class DoublePathSegment {
             if (endPoint != null) {
                 seg.setEndPoint(endPoint.scale(scaleX, scaleY));
             }
+            if (controlPoint1Rel != null) {
+                seg.setControlPoint1Rel(controlPoint1Rel.scale(scaleX, scaleY));
+            }
+            if (controlPoint2Rel != null) {
+                seg.setControlPoint2Rel(controlPoint2Rel.scale(scaleX, scaleY));
+            }
+            if (endPointRel != null) {
+                seg.setEndPointRel(endPointRel.scale(scaleX, scaleY));
+            }
             if (type == PathSegmentType.LineHorizontal) {
                 seg.setValue(value * scaleX);
+                seg.setValueRel(valueRel * scaleX);
             }
             if (type == PathSegmentType.LineVertical) {
                 seg.setValue(value * scaleY);
+                seg.setValueRel(valueRel * scaleY);
             }
             return seg;
         } catch (Exception e) {

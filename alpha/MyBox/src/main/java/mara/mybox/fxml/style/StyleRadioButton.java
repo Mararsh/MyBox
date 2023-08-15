@@ -68,7 +68,7 @@ public class StyleRadioButton {
             case "arcRadio":
                 return new StyleData(id, "", message("ArcCurve"), "", "iconArc.png");
             case "svgRadio":
-                return new StyleData(id, "", message("SvgPath"), "", "iconSVG.png");
+                return new StyleData(id, "", message("SVGPath"), "", "iconSVG.png");
             case "eraserRadio":
                 return new StyleData(id, "", message("Eraser"), "", "iconEraser.png");
             case "mosaicRadio":

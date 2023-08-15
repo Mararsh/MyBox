@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.Ellipse2D;
+import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -116,7 +117,7 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
-    public DoubleEllipse cloneValues() {
+    public DoubleEllipse copy() {
         return xywh(x, y, width, height);
     }
 
@@ -132,6 +133,29 @@ public class DoubleEllipse implements DoubleShape {
         width *= scaleX;
         height *= scaleY;
         return true;
+    }
+
+    @Override
+    public String svgAbs() {
+        double sx = imageScale(x);
+        double sy = imageScale(y + height / 2);
+        double rx = imageScale(width / 2);
+        double ry = imageScale(height / 2);
+        return "M " + sx + "," + sy + " \n"
+                + "A " + rx + "," + ry + " 0,0,1 " + imageScale(x + width) + "," + sy + " \n"
+                + "A " + rx + "," + ry + " 0,0,1 " + sx + "," + sy;
+    }
+
+    @Override
+    public String svgRel() {
+        double sx = imageScale(x);
+        double sy = imageScale(y + height / 2);
+        double rx = imageScale(width / 2);
+        double ry = imageScale(height / 2);
+        double r2 = imageScale(width);
+        return "m " + sx + "," + sy + " \n"
+                + "a " + rx + "," + ry + " 0,0,1 " + r2 + "," + 0 + " \n"
+                + "a " + rx + "," + ry + " 0,0,1 " + (-r2) + "," + 0;
     }
 
     /*

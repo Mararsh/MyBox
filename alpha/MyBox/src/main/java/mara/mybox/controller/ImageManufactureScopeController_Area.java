@@ -54,7 +54,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 return;
             }
             maskRectangleData = rect;
-            scope.setRectangle(maskRectangleData.cloneValues());
+            scope.setRectangle(maskRectangleData.copy());
             drawMaskRectangle();
             indicateScope();
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 return;
             }
             maskEllipseData = DoubleEllipse.rect(rect);
-            scope.setEllipse(maskEllipseData.cloneValues());
+            scope.setEllipse(maskEllipseData.copy());
             drawMaskEllipse();
             indicateScope();
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 return;
             }
             maskCircleData = circle;
-            scope.setCircle(maskCircleData.cloneValues());
+            scope.setCircle(maskCircleData.copy());
             drawMaskCircle();
             indicateScope();
         } catch (Exception e) {
@@ -184,7 +184,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             } else if (scope.getScopeType() == ScopeType.Polygon) {
                 maskPolygonData = new DoublePolygon();
                 maskPolygonData.setAll(pointsController.tableData);
-                scope.setPolygon(maskPolygonData.cloneValues());
+                scope.setPolygon(maskPolygonData.copy());
                 drawMaskPolygon();
                 indicateScope();
             }

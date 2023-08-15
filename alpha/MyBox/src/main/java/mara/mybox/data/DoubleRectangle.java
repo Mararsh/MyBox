@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import javafx.scene.image.Image;
+import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -79,7 +80,7 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
-    public DoubleRectangle cloneValues() {
+    public DoubleRectangle copy() {
         return DoubleRectangle.xywh(x, y, width, height);
     }
 
@@ -109,6 +110,32 @@ public class DoubleRectangle implements DoubleShape {
         width *= scaleX;
         height *= scaleY;
         return true;
+    }
+
+    @Override
+    public String svgAbs() {
+        double sx = imageScale(x);
+        double sy = imageScale(y);
+        double sw = imageScale(x + width);
+        double sh = imageScale(y + height);
+        return "M " + sx + "," + sy + " \n"
+                + "L " + sw + "," + sy + " \n"
+                + "L " + sw + "," + sh + " \n"
+                + "L " + sx + "," + sh + " \n"
+                + "L " + sx + "," + sy;
+    }
+
+    @Override
+    public String svgRel() {
+        double sx = imageScale(x);
+        double sy = imageScale(y);
+        double sw = imageScale(width);
+        double sh = imageScale(height);
+        return "m " + sx + "," + sy + " \n"
+                + "l " + sw + "," + 0 + " \n"
+                + "l " + 0 + "," + sh + " \n"
+                + "l " + (-sw) + "," + 0 + " \n"
+                + "l " + 0 + "," + (-sh);
     }
 
     public boolean same(DoubleRectangle rect) {

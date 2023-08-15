@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.CubicCurve2D;
+import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -41,7 +42,7 @@ public class DoubleCubic implements DoubleShape {
     }
 
     @Override
-    public DoubleCubic cloneValues() {
+    public DoubleCubic copy() {
         return new DoubleCubic(startX, startY, controlX1, controlY1, controlX2, controlY2, endX, endY);
     }
 
@@ -79,6 +80,22 @@ public class DoubleCubic implements DoubleShape {
         endX *= scaleX;
         endY *= scaleY;
         return true;
+    }
+
+    @Override
+    public String svgAbs() {
+        return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
+                + "C " + imageScale(controlX1) + "," + imageScale(controlY1) + " "
+                + imageScale(controlX2) + "," + imageScale(controlY2) + " "
+                + imageScale(endX) + "," + imageScale(endY) + " \n";
+    }
+
+    @Override
+    public String svgRel() {
+        return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
+                + "c " + imageScale(controlX1 - startX) + "," + imageScale(controlY1 - startY) + " "
+                + imageScale(controlX2 - startX) + "," + imageScale(controlY2 - startY) + " "
+                + imageScale(endX - startX) + "," + imageScale(endY - startY);
     }
 
     public double getStartX() {

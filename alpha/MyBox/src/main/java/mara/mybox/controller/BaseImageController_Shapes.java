@@ -1608,10 +1608,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         double w = imageWidth();
         double h = imageHeight();
         maskPolylineData = new DoublePolyline();
-        maskPolylineData.add(w / 4, 50);
-        maskPolylineData.add(w / 2, 10);
-        maskPolylineData.add(w / 4, h / 3);
-        maskPolylineData.add(w - 30, h / 2);
+        maskPolylineData.add(w / 4, h / 2);
+        maskPolylineData.add(w / 2, h / 4);
+        maskPolylineData.add(w * 3 / 8, h * 3 / 4);
+        maskPolylineData.add(w * 3 / 4, h / 2);
     }
 
     public boolean drawMaskPolyline() {
@@ -1971,10 +1971,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         double w = imageWidth();
         double h = imageHeight();
         maskPolygonData = new DoublePolygon();
-        maskPolygonData.add(50, 80);
-        maskPolygonData.add(w / 2, 10);
-        maskPolygonData.add(w / 4, h / 3);
-        maskPolygonData.add(w - 30, h / 2);
+        maskPolygonData.add(w / 4, h / 2);
+        maskPolygonData.add(w / 2, h / 4);
+        maskPolygonData.add(w * 3 / 8, h * 3 / 4);
+        maskPolygonData.add(w * 3 / 4, h / 2);
     }
 
     public boolean drawMaskPolygon() {
@@ -2360,13 +2360,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         return drawMaskPath();
     }
 
-    /*
-        String s = "M 10,30\n"
-                + "A 20,20 0,0,1 50,30\n"
-                + "A 20,20 0,0,1 90,30\n"
-                + "Q 90,60 50,90\n"
-                + "Q 10,60 10,30 z";
-     */
     public void setMaskPathDefaultValues() {
         if (imageView == null || maskPane == null || maskSVGPath == null) {
             return;
@@ -2378,8 +2371,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 + "A " + r + "," + r + " 0,1,1 " + (int) (w / 2) + "," + (int) (h / 2 - r) + "\n"
                 + "A " + r + "," + r + " 0,1,1 " + (int) (w / 2 + r * 2) + "," + (int) (h / 2 - r) + "\n"
                 + "Q " + (int) (w / 2 + 2 * r) + "," + (int) (h / 2 + r) + "  " + (int) (w / 2) + "," + (int) (h / 2 + 2 * r) + "\n"
-                + "Q " + (int) (w / 2 - 2 * r) + "," + (int) (h / 2 + r) + "  " + (int) (w / 2 - r * 2) + "," + (int) (h / 2 - r) + "\n"
-                + "Z";
+                + "Q " + (int) (w / 2 - 2 * r) + "," + (int) (h / 2 + r) + "  " + (int) (w / 2 - r * 2) + "," + (int) (h / 2 - r);
         maskPathData = new DoublePath(this, s);
     }
 
@@ -2391,9 +2383,15 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             if (maskPathData == null) {
                 setMaskPathDefaultValues();
             }
-            maskSVGPath.setContent(maskPathData.getContent());
+            double layoutX = imageView.getLayoutX();
+            double layoutY = imageView.getLayoutY();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
             maskSVGPath.setLayoutX(imageView.getLayoutX());
             maskSVGPath.setLayoutY(imageView.getLayoutY());
+
+            DoublePath path = DoublePath.scale(maskPathData, xRatio, yRatio);
+            maskSVGPath.setContent(path.getContent());
             setShapeStyle(maskSVGPath);
 
             maskSVGPath.setVisible(true);
