@@ -4,6 +4,8 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.tools.DoubleTools.imageScale;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -94,6 +96,20 @@ public interface DoubleShape {
         }
     }
 
+    public static DoublePath shear(DoubleShape shapeData, double x, double y) {
+        try {
+            if (shapeData == null) {
+                return null;
+            }
+            AffineTransform t = AffineTransform.getShearInstance(x, y);
+            Shape shape = t.createTransformedShape(shapeData.getShape());
+            return DoublePath.shapeToPathData(shape);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static DoublePath pathData(DoubleShape shapeData) {
         try {
             if (shapeData == null) {
@@ -118,6 +134,15 @@ public interface DoubleShape {
     public static DoublePoint getCenter(DoubleShape shapeData) {
         Rectangle2D bound = getBound(shapeData);
         return new DoublePoint(bound.getCenterX(), bound.getCenterY());
+    }
+
+    public static String values(DoubleShape shapeData) {
+        Rectangle2D bounds = getBound(shapeData);
+        return shapeData.name() + "\n"
+                + message("LeftTop") + ": " + imageScale(bounds.getMinX()) + ", " + imageScale(bounds.getMinY()) + "\n"
+                + message("RightBottom") + ": " + imageScale(bounds.getMaxX()) + ", " + imageScale(bounds.getMaxY()) + "\n"
+                + message("Center") + ": " + imageScale(bounds.getCenterX()) + ", " + imageScale(bounds.getCenterY()) + "\n"
+                + message("Width") + ": " + imageScale(bounds.getWidth()) + "  " + message("Height") + ": " + imageScale(bounds.getHeight());
     }
 
 }

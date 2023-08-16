@@ -171,13 +171,6 @@ public class DoubleRectangle implements DoubleShape {
         y = ny;
     }
 
-    public String values() {
-        return "[x=" + x + ",y=" + y
-                + ",width=" + width + ",height=" + height
-                + ",maxX=" + getMaxX() + ",maxY=" + getMaxY() + "]";
-    }
-
-
     /*
         get
      */

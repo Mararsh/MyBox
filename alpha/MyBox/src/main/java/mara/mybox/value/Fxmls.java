@@ -424,6 +424,9 @@ public class Fxmls {
     public static final String HtmlStyleInputFxml = "/fxml/HtmlStyleInput.fxml";
     public static final String PointInputFxml = "/fxml/PointInput.fxml";
     public static final String LineInputFxml = "/fxml/LineInput.fxml";
+    public static final String ShapeTranslateInputFxml = "/fxml/ShapeTranslateInput.fxml";
+    public static final String ShapeScaleInputFxml = "/fxml/ShapeScaleInput.fxml";
+    public static final String ShapeShearInputFxml = "/fxml/ShapeShearInput.fxml";
     public static final String ShapeRotateInputFxml = "/fxml/ShapeRotateInput.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";

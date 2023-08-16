@@ -22,27 +22,13 @@ public class TransformTools {
         if (angle < 0) {
             angle = 360 + angle;
         }
+        double radians = Math.toRadians(angle);
+        double cos = Math.abs(Math.cos(radians));
+        double sin = Math.abs(Math.sin(radians));
         int width = source.getWidth();
         int height = source.getHeight();
-        int newWidth;
-        int newHeight;
-        boolean isSkew = false;
-        switch (angle) {
-            case 180:
-            case 0:
-            case 360:
-                newWidth = width;
-                newHeight = height;
-                break;
-            case 90:
-            case 270:
-                newWidth = newHeight = Math.max(width, height);
-                break;
-            default:
-                newWidth = newHeight = 2 * Math.max(width, height);
-                isSkew = true;
-                break;
-        }
+        int newWidth = (int) (width * cos + height * sin);
+        int newHeight = (int) (height * cos + width * sin);
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
@@ -51,13 +37,9 @@ public class TransformTools {
         }
         Color bgColor = Colors.TRANSPARENT;
         g.setBackground(bgColor);
-        if (!isSkew) {
-            g.rotate(Math.toRadians(angle), newWidth / 2, newHeight / 2);
-            g.drawImage(source, 0, 0, null);
-        } else {
-            g.rotate(Math.toRadians(angle), width, height);
-            g.drawImage(source, width / 2, height / 2, null);
-        }
+        g.translate((newWidth - width) / 2, (newHeight - height) / 2);
+        g.rotate(radians, width / 2, height / 2);
+        g.drawImage(source, null, null);
         g.dispose();
         target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
         return target;
@@ -65,16 +47,13 @@ public class TransformTools {
 
     public static BufferedImage shearImage(BufferedImage source, float shearX, float shearY) {
         try {
-            int scale = Math.round(Math.abs(shearX));
+            int scale = Math.round(Math.abs(Math.max(shearX, shearY)));
             if (scale <= 1) {
                 scale = 2;
             }
             scale = scale * scale;
-            //            if (scale > 64) {
-            //                scale = 64;
-            //            }
             int width = source.getWidth() * scale;
-            int height = source.getHeight();
+            int height = source.getHeight() * scale;
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
