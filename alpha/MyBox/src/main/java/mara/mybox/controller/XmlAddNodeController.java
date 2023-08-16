@@ -133,6 +133,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             parentLabel.setText(message("AddInto") + ": "
                     + treeController.hierarchyNumber(treeItem));
             indexInput.setText((treeItem.getChildren().size() + 1) + "");
+            setTitle(treeController.getTitle());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

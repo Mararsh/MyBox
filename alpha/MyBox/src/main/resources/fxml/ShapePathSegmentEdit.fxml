@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShapePathSegmentEditController">
+    <children>
+      <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%SVGPathSegment" textAlignment="CENTER" />
+      <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
+      <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="20.0" layoutY="115.0" vgap="2.0">
+         <children>
+            <Label minWidth="-Infinity" text="%StartPoint" textOverrun="WORD_ELLIPSIS" />
+            <Label fx:id="indexLabel" text="x" />
+            <TextField fx:id="startXInput" disable="true" editable="false" prefWidth="100.0" />
+            <Label fx:id="indexLabel1" text="y" />
+            <TextField fx:id="startYInput" disable="true" editable="false" prefWidth="100.0" />
+            <Label layoutX="10.0" layoutY="14.0" minWidth="-Infinity" text="%AbsoluteCoordinate" textOverrun="WORD_ELLIPSIS" />
+         </children>
+      </FlowPane>
+      <FlowPane fx:id="typePane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+         <children>
+            <Label minWidth="-Infinity" text="%Type" textOverrun="WORD_ELLIPSIS" />
+            <RadioButton fx:id="moveRadio" layoutX="36.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Move">
+               <toggleGroup>
+                  <ToggleGroup fx:id="typeGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="%StraightLine" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="hlineRadio" mnemonicParsing="false" text="%LineHorizontal" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="vlineRadio" mnemonicParsing="false" text="%LineVertical" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="quadRadio" mnemonicParsing="false" text="%QuadraticCurve" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="quadSmoothRadio" layoutX="219.0" layoutY="10.0" mnemonicParsing="false" text="%QuadraticSmooth" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="cubicRadio" layoutX="331.0" layoutY="10.0" mnemonicParsing="false" text="%CubicCurve" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="cubicSmoothRadio" layoutX="331.0" layoutY="10.0" mnemonicParsing="false" text="%CubicSmooth" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="arcRadio" layoutX="118.0" layoutY="28.0" mnemonicParsing="false" text="%ArcCurve" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="closeRadio" layoutX="162.0" layoutY="28.0" mnemonicParsing="false" text="%Close" toggleGroup="$typeGroup" />
+         </children>
+      </FlowPane>
+      <VBox fx:id="setBox" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <FlowPane fx:id="coodPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%Values" textOverrun="WORD_ELLIPSIS" />
+                  <RadioButton fx:id="absRadio" mnemonicParsing="false" selected="true" text="%AbsoluteCoordinate">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="coordGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="relRadio" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" text="%RelativeCoordinate" toggleGroup="$coordGroup" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="control1Pane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%ControlPoint1" textOverrun="WORD_ELLIPSIS" />
+                  <Label fx:id="indexLabel1" text="x" />
+                  <TextField fx:id="control1XInput" editable="false" prefWidth="100.0" />
+                  <Label fx:id="indexLabel11" text="y" />
+                  <TextField fx:id="control1YInput" editable="false" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="control2Pane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%ControlPoint2" textOverrun="WORD_ELLIPSIS" />
+                  <Label fx:id="indexLabel11" text="x" />
+                  <TextField fx:id="control2XInput" editable="false" prefWidth="100.0" />
+                  <Label fx:id="indexLabel111" text="y" />
+                  <TextField fx:id="control2YInput" editable="false" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="radiusPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%Radius" textOverrun="WORD_ELLIPSIS" />
+                  <Label fx:id="indexLabel111" text="x" />
+                  <TextField fx:id="radiusXInput" editable="false" prefWidth="100.0" />
+                  <Label fx:id="indexLabel1111" text="y" />
+                  <TextField fx:id="radiusYInput" editable="false" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="endPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%EndPoint" textOverrun="WORD_ELLIPSIS" />
+                  <Label fx:id="indexLabel1111" text="x" />
+                  <TextField fx:id="endXInput" editable="false" prefWidth="100.0" />
+                  <Label fx:id="indexLabel11111" text="y" />
+                  <TextField fx:id="endYInput" editable="false" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="rotatePane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                  <Label text="%RotateAngle" />
+                  <ComboBox fx:id="angleSelector" editable="true" prefWidth="100.0" />
+                  <CheckBox fx:id="largeCheck" mnemonicParsing="false" selected="true" text="%LargeArc" />
+                  <CheckBox fx:id="closewiseCheck" mnemonicParsing="false" selected="true" text="%Clockwise" />
+               </children>
+            </FlowPane>
+         </children></VBox>
+      <HBox alignment="CENTER_RIGHT" spacing="5.0">
+         <children>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+    </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

@@ -63,6 +63,7 @@ public class DoublePathParser implements PathHandler {
                 .setType(PathSegmentType.Close)
                 .setIsAbsolute(true)
                 .setStartPoint(new DoublePoint(currentX, currentY))
+                .setEndPoint(new DoublePoint(currentX, currentY))
                 .setIndex(index++);
         segments.add(segment);
     }

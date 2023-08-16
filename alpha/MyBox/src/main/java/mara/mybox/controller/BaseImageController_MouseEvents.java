@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -91,7 +90,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            Rectangle2D bounds = DoubleShape.getBound(shapeData);
             String info = DoubleShape.values(shapeData);
             if (p != null) {
                 info += "\n" + message("Point") + ": " + scale(p.getX()) + ", " + scale(p.getY());

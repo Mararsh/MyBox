@@ -49,6 +49,8 @@ public class StyleRadioButton {
         switch (id) {
             case "miaoRadio":
                 return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
+            case "lineRadio":
+                return new StyleData(id, "", message("StraightLine"), "", "iconLine.png");
             case "rectangleRadio":
                 return new StyleData(id, "", message("Rectangle"), "", "iconRectangle.png");
             case "circleRadio":

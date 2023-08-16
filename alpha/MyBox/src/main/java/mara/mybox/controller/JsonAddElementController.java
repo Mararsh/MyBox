@@ -21,6 +21,8 @@ public class JsonAddElementController extends ControlJsonNodeBase {
         try {
             this.treeController = treeController;
             this.treeItem = item;
+            setTitle(treeController.getTitle());
+
             checkValue();
         } catch (Exception e) {
             MyBoxLog.error(e);

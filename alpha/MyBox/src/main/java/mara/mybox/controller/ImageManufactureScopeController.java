@@ -22,7 +22,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import static mara.mybox.tools.DoubleTools.scale;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -293,7 +292,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @Override
-    public void moveMaskAnchor(int index, DoublePoint newValue) {
+    public void moveMaskAnchor(int index, String name, DoublePoint newValue) {
         if (scope.getScopeType() == ScopeType.Matting) {
             int x = (int) Math.round(newValue.getX());
             int y = (int) Math.round(newValue.getY());
@@ -310,7 +309,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @Override
-    public void deleteMaskAnchor(int index) {
+    public void deleteMaskAnchor(int index, String name) {
         if (scope.getScopeType() == ScopeType.Matting) {
             scope.deletePoint(index);
             isSettingValues = true;

@@ -50,6 +50,11 @@ public class DoublePath implements DoubleShape {
         parseContent(controller, content);
     }
 
+    public DoublePath(List<DoublePathSegment> segments) {
+        init();
+        parseSegments(segments);
+    }
+
     final public void init() {
         content = null;
         segments = null;
@@ -67,7 +72,7 @@ public class DoublePath implements DoubleShape {
         return segments;
     }
 
-    public String parseSegments(List<DoublePathSegment> segments) {
+    public final String parseSegments(List<DoublePathSegment> segments) {
         this.segments = segments;
         content = segmentsToString(segments, " ");
         return content;
@@ -184,6 +189,13 @@ public class DoublePath implements DoubleShape {
             MyBoxLog.console(e);
             return null;
         }
+    }
+
+    public DoublePoint lastPoint() {
+        if (isEmpty()) {
+            return null;
+        }
+        return segments.get(segments.size() - 1).getEndPoint();
     }
 
     /*

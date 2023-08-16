@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoublePathSegment;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -132,6 +133,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
                 return false;
             }
             tableData.setAll(segments);
+            TableStringValues.add("SvgPathHistories", s);
         }
 
         return true;
@@ -153,19 +155,28 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         return tableData;
     }
 
+    public DoublePath pathData() {
+        return new DoublePath(tableData);
+    }
+
     /*
         table
      */
     @FXML
     @Override
     public void addAction() {
-
+        ShapePathSegmentEditController.open(this, pathData(), -1);
     }
 
     @FXML
     @Override
     public void editAction() {
-
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        ShapePathSegmentEditController.open(this, pathData(), index);
     }
 
 

@@ -157,6 +157,14 @@ public class Fxmls {
     public static final String SvgFromImageFxml = "/fxml/SvgFromImage.fxml";
     public static final String SvgFromImageBatchFxml = "/fxml/SvgFromImageBatch.fxml";
 
+    public static final String PointInputFxml = "/fxml/PointInput.fxml";
+    public static final String LineInputFxml = "/fxml/LineInput.fxml";
+    public static final String ShapeTranslateInputFxml = "/fxml/ShapeTranslateInput.fxml";
+    public static final String ShapeScaleInputFxml = "/fxml/ShapeScaleInput.fxml";
+    public static final String ShapeShearInputFxml = "/fxml/ShapeShearInput.fxml";
+    public static final String ShapeRotateInputFxml = "/fxml/ShapeRotateInput.fxml";
+    public static final String ShapePathSegmentEditFxml = "/fxml/ShapePathSegmentEdit.fxml";
+
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
@@ -422,12 +430,6 @@ public class Fxmls {
     public static final String DateInputFxml = "/fxml/DateInput.fxml";
     public static final String SettingCustomColorsFxml = "/fxml/SettingCustomColors.fxml";
     public static final String HtmlStyleInputFxml = "/fxml/HtmlStyleInput.fxml";
-    public static final String PointInputFxml = "/fxml/PointInput.fxml";
-    public static final String LineInputFxml = "/fxml/LineInput.fxml";
-    public static final String ShapeTranslateInputFxml = "/fxml/ShapeTranslateInput.fxml";
-    public static final String ShapeScaleInputFxml = "/fxml/ShapeScaleInput.fxml";
-    public static final String ShapeShearInputFxml = "/fxml/ShapeShearInput.fxml";
-    public static final String ShapeRotateInputFxml = "/fxml/ShapeRotateInput.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

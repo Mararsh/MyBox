@@ -655,9 +655,6 @@ public class StyleButton {
         if (id.startsWith("XYChart")) {
             return new StyleData(id, message("XYChart"), "", "iconXYChart.png");
         }
-        if (id.startsWith("straightLine")) {
-            return new StyleData(id, message("StraightLine"), "", "iconStraightLine.png");
-        }
         if (id.startsWith("jar")) {
             return new StyleData(id, message("JarFile"), "", "iconJar.png");
         }

@@ -46,6 +46,8 @@ public class BaseShapeTransformController extends BaseInputController {
                 pointButton.setVisible(point != null);
             }
 
+            setTitle(ImageController.getTitle());
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
 

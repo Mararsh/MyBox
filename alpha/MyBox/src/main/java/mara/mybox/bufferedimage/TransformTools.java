@@ -27,8 +27,8 @@ public class TransformTools {
         double sin = Math.abs(Math.sin(radians));
         int width = source.getWidth();
         int height = source.getHeight();
-        int newWidth = (int) (width * cos + height * sin);
-        int newHeight = (int) (height * cos + width * sin);
+        int newWidth = (int) (width * cos + height * sin) + 1;
+        int newHeight = (int) (height * cos + width * sin) + 1;
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
