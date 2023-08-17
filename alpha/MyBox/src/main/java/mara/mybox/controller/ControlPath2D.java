@@ -122,7 +122,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         }
         textArea.setText(s);
         isSettingValues = false;
-        TableStringValues.add("SvgPathHistories", s);
+//        TableStringValues.add("SvgPathHistories", s);
     }
 
     public void pickTableValue() {

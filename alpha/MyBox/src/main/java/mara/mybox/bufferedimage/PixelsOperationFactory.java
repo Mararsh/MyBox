@@ -234,16 +234,18 @@ public class PixelsOperationFactory {
      */
     public static class ShowScope extends PixelsOperation {
 
+        private final int opacity;
+
         public ShowScope(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.ShowScope;
             this.image = image;
             this.scope = scope;
+            opacity = (int) (scope.getOpacity() * 255);
         }
 
         @Override
         protected Color operateColor(Color color) {
-            return new Color(color.getRed(), color.getGreen(), color.getBlue(),
-                    (int) (scope.getOpacity() * 255));
+            return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
         }
     }
 

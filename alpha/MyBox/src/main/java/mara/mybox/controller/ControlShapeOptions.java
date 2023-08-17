@@ -89,6 +89,20 @@ public abstract class ControlShapeOptions extends BaseController {
             super.initControls();
             parametersController.optionsOontroller = this;
 
+            anchorCheck.setSelected(UserConfig.getBoolean("ImageShapeShowAnchor", true));
+            anchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean("ImageShapeShowAnchor", anchorCheck.isSelected());
+                    popAnchorMenuCheck.setDisable(!anchorCheck.isSelected());
+                    if (imageController != null) {
+                        imageController.showAnchors = anchorCheck.isSelected();
+                        imageController.setMaskAnchorsStyle();
+                    }
+                }
+            });
+            popAnchorMenuCheck.setDisable(!anchorCheck.isSelected());
+
             popAnchorMenuCheck.setSelected(UserConfig.getBoolean("ImageShapeAnchorPopMenu", true));
             popAnchorMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -96,17 +110,6 @@ public abstract class ControlShapeOptions extends BaseController {
                     UserConfig.setBoolean("ImageShapeAnchorPopMenu", popAnchorMenuCheck.isSelected());
                     if (imageController != null) {
                         imageController.popAnchorMenu = popAnchorMenuCheck.isSelected();
-                    }
-                }
-            });
-
-            anchorCheck.setSelected(true);
-            anchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    if (imageController != null) {
-                        imageController.showAnchors = anchorCheck.isSelected();
-                        imageController.setMaskAnchorsStyle();
                     }
                 }
             });

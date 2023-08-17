@@ -266,7 +266,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     protected void displayOutline(BufferedImage bufferedImage) {
@@ -292,18 +292,21 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
 
             @Override
             protected void whenSucceeded() {
-                scopeView.setImage(outlineImage);
+                maskView.toFront();
+                maskView.setImage(outlineImage);
                 double xradio = viewXRatio();
                 double yradio = viewYRatio();
                 double offsetX = maskRectangleData.getX() >= 0 ? 0 : maskRectangleData.getX();
                 double offsetY = maskRectangleData.getY() >= 0 ? 0 : maskRectangleData.getY();
-                scopeView.setLayoutX(imageView.getLayoutX() + offsetX * xradio);
-                scopeView.setLayoutY(imageView.getLayoutY() + offsetY * yradio);
-                scopeView.setFitWidth(outlineImage.getWidth() * xradio);
-                scopeView.setFitHeight(outlineImage.getHeight() * yradio);
+                maskView.setLayoutX(imageView.getLayoutX() + offsetX * xradio);
+                maskView.setLayoutY(imageView.getLayoutY() + offsetY * yradio);
+                maskView.setFitWidth(outlineImage.getWidth() * xradio);
+                maskView.setFitHeight(outlineImage.getHeight() * yradio);
+                imageView.setVisible(false);
+                imageView.toBack();
             }
         };
-        start(task);
+        start(task, thisPane);
     }
 
 }

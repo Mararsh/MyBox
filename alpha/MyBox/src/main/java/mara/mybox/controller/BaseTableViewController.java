@@ -413,6 +413,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void removeLastItem() {
+        if (tableData.isEmpty()) {
+            return;
+        }
         tableData.remove(tableData.size() - 1);
     }
 

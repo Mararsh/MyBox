@@ -678,6 +678,14 @@ public class StyleButton {
         if (id.startsWith("translate")) {
             return new StyleData(id, "", message("TranslateShape"), "", "iconMove.png");
         }
+        if (id.startsWith("withdraw")) {
+            switch (id) {
+                case "withdrawButton":
+                    return new StyleData(id, message("Withdraw"), "ESC / CTRL+w / ALT+w", "iconWithdraw.png");
+                default:
+                    return new StyleData(id, message("Withdraw"), "", "iconWithdraw.png");
+            }
+        }
         return null;
     }
 
@@ -712,8 +720,6 @@ public class StyleButton {
                 return new StyleData("replaceButton", message("Replace"), "CTRL+h", "iconReplace.png");
             case "replaceAllButton":
                 return new StyleData("replaceAllButton", message("ReplaceAll"), "CTRL+w", "iconReplaceAll.png");
-            case "withdrawButton":
-                return new StyleData("withdrawButton", message("Withdraw"), "ESC / CTRL+w / ALT+w", "iconWithdraw.png");
             case "browseButton":
                 return new StyleData("browseButton", message("Browse"), "", "iconBrowse.png");
             case "mirrorHButton":

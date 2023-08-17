@@ -510,7 +510,7 @@ License:    Apache License Version 2.0
                                                                         </Ellipse>
                                                                         <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
-                                                                                <Cursor fx:constant="DEFAULT" />
+                                                                                <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                             <points>
                                                                                 <Double fx:value="-50.0" />
@@ -532,12 +532,30 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-50.0" />
                                                                                 <Double fx:value="-40.0" />
                                                                             </points>
+                                                         <cursor>
+                                                            <Cursor fx:constant="MOVE" />
+                                                         </cursor>
                                                                         </Polyline>
-                                                                        <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-100.0" />
-                                                                        <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
-                                                                        <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-150.0" stroke="BLACK" />
-                                                                        <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-50.0" stroke="BLACK" strokeType="INSIDE" />
-                                                                        <SVGPath fx:id="maskSVGPath" content="M40,60 C42,48 44,30 25,32" layoutX="47.0" layoutY="191.0"  onMousePressed="#handlerPressed" onMouseReleased="#translateShape" />
+                                                                        <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-100.0">
+                                                         <cursor>
+                                                            <Cursor fx:constant="MOVE" />
+                                                         </cursor></Line>
+                                                                        <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND">
+                                                         <cursor>
+                                                            <Cursor fx:constant="MOVE" />
+                                                         </cursor></Arc>
+                                                                        <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-150.0" stroke="BLACK">
+                                                         <cursor>
+                                                            <Cursor fx:constant="MOVE" />
+                                                         </cursor></CubicCurve>
+                                                                        <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" startX="-50.0" stroke="BLACK" strokeType="INSIDE">
+                                                         <cursor>
+                                                            <Cursor fx:constant="MOVE" />
+                                                         </cursor></QuadCurve>
+                                                                        <SVGPath fx:id="maskSVGPath" content="M40,60 C42,48 44,30 25,32" layoutX="47.0" layoutY="191.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape">
+                                                         <cursor>
+                                                            <Cursor fx:constant="MOVE" />
+                                                         </cursor></SVGPath>
                                                                         <Rectangle fx:id="maskHandlerTopLeft" fill="#ffffff00" height="10.0" layoutX="70.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="NW_RESIZE" />

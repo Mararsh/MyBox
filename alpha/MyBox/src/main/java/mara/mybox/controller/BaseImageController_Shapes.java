@@ -305,6 +305,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
      */
     @FXML
     public void paneClicked(MouseEvent event) {
+        MyBoxLog.console("here");
         if (imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -743,6 +744,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 shape.setStrokeLineCap(StrokeLineCap.BUTT);
                 shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
             }
+            if (isPickingColor) {
+                shape.setCursor(Cursor.HAND);
+            } else {
+                shape.setCursor(Cursor.MOVE);
+            }
+            shape.toFront();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -972,6 +979,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         if (showAnchors) {
             text.setFill(anchorColor());
             text.setFont(new Font(anchorSize()));
+            text.toFront();
         } else {
             text.setVisible(false);
         }

@@ -39,7 +39,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected BufferedImage outlineSource;
 
     @FXML
-    protected ImageView scopeView;
+    protected ImageView maskView;
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
@@ -58,7 +58,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected ControlPoints pointsController;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
-            ignoreTransparentCheck, squareRootCheck;
+            ignoreTransparentCheck, squareRootCheck, anchorCheck, popAnchorMenuCheck, addPointCheck;
     @FXML
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
@@ -75,7 +75,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
     protected synchronized void indicateScope() {
-        if (imageView == null || !scopeView.isVisible() || scope == null) {
+        if (imageView == null || !maskView.isVisible() || scope == null) {
             return;
         }
         if (task != null) {
@@ -106,13 +106,19 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
             @Override
             protected void whenSucceeded() {
-                scopeView.setImage(scopedImage);
-                scopeView.setFitWidth(imageView.getFitWidth());
-                scopeView.setFitHeight(imageView.getFitHeight());
-                scopeView.setLayoutX(imageView.getLayoutX());
-                scopeView.setLayoutY(imageView.getLayoutY());
+                maskView.setImage(scopedImage);
+                maskView.setFitWidth(imageView.getFitWidth());
+                maskView.setFitHeight(imageView.getFitHeight());
+                maskView.setLayoutX(imageView.getLayoutX());
+                maskView.setLayoutY(imageView.getLayoutY());
+                maskView.setOpacity(1);
+                maskView.setVisible(true);
+                imageView.setVisible(false);
+                imageView.toBack();
                 if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
                     drawMattingPoints();
+                } else {
+                    drawMaskShape();
                 }
             }
 

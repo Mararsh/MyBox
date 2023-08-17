@@ -25,7 +25,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     public void goScope() {
         try {
             if (imageView == null || imageView.getImage() == null
-                    || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
+                    || scope == null || scope.getScopeType() == null || !maskView.isVisible()) {
                 return;
             }
             switch (scope.getScopeType()) {
@@ -55,7 +55,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             }
             maskRectangleData = rect;
             scope.setRectangle(maskRectangleData.copy());
-            drawMaskRectangle();
             indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -73,7 +72,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             }
             maskEllipseData = DoubleEllipse.rect(rect);
             scope.setEllipse(maskEllipseData.copy());
-            drawMaskEllipse();
             indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -124,7 +122,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
         }
     }
 
-    @FXML
     public void pickCircle() {
         try {
             if (scope == null || scope.getScopeType() != ScopeType.Circle) {
@@ -159,7 +156,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             }
             maskCircleData = circle;
             scope.setCircle(maskCircleData.copy());
-            drawMaskCircle();
             indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -185,13 +181,22 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 maskPolygonData = new DoublePolygon();
                 maskPolygonData.setAll(pointsController.tableData);
                 scope.setPolygon(maskPolygonData.copy());
-                drawMaskPolygon();
                 indicateScope();
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    @Override
+    public void withdrawAction() {
+        if (scope == null || isSettingValues
+                || scope.getScopeType() != ScopeType.Polygon) {
+            return;
+        }
+        pointsController.removeLastItem();
     }
 
 }

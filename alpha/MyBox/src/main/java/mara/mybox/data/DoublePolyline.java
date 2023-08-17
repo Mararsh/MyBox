@@ -91,7 +91,7 @@ public class DoublePolyline implements DoubleShape {
     }
 
     public boolean remove(int i) {
-        if (i < 0 || points == null || points.isEmpty()) {
+        if (points == null || i < 0 || i >= points.size()) {
             return false;
         }
         points.remove(i);
@@ -99,6 +99,9 @@ public class DoublePolyline implements DoubleShape {
     }
 
     public boolean removeLast() {
+        if (points == null || points.isEmpty()) {
+            return false;
+        }
         return remove(points.size() - 1);
     }
 

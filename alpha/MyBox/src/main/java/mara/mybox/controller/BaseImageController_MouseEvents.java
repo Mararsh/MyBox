@@ -31,6 +31,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
+        MyBoxLog.console("here");
         if (p == null || imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -48,6 +49,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
+        MyBoxLog.console("here");
         if (event == null || p == null) {
             return;
         }
@@ -61,6 +63,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     maskShapeDataChanged();
 
                 } else if (maskPolygon != null && maskPolygon.isVisible()) {
+                    MyBoxLog.console("here");
                     maskPolygonData.add(p.getX(), p.getY());
                     double x = p.getX() * viewXRatio();
                     double y = p.getY() * viewYRatio();
@@ -123,9 +126,10 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent mevent) {
-                        maskPolylineData.removeLast();
-                        maskPolyline.getPoints().remove(maskPolyline.getPoints().size() - 1);
-                        maskShapeDataChanged();
+                        if (maskPolylineData.removeLast()) {
+                            maskPolyline.getPoints().remove(maskPolyline.getPoints().size() - 1);
+                            maskShapeDataChanged();
+                        }
                     }
                 });
                 items.add(menu);
@@ -152,9 +156,10 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent mevent) {
-                        maskPolygonData.removeLast();
-                        maskPolygon.getPoints().remove(maskPolygon.getPoints().size() - 1);
-                        maskShapeDataChanged();
+                        if (maskPolygonData.removeLast()) {
+                            maskPolygon.getPoints().remove(maskPolygon.getPoints().size() - 1);
+                            maskShapeDataChanged();
+                        }
                     }
                 });
                 items.add(menu);
@@ -180,23 +185,25 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             });
             items.add(menu);
 
-            menu = new MenuItem(message("RotateShape"), StyleTools.getIconImageView("iconRotateRight.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    ShapeRotateInputController.open((BaseImageController) myController, shapeData, p);
-                }
-            });
-            items.add(menu);
+            if (supportPath) {
+                menu = new MenuItem(message("RotateShape"), StyleTools.getIconImageView("iconRotateRight.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        ShapeRotateInputController.open((BaseImageController) myController, shapeData, p);
+                    }
+                });
+                items.add(menu);
 
-            menu = new MenuItem(message("ShearShape"), StyleTools.getIconImageView("iconShear.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    ShapeShearInputController.open((BaseImageController) myController, shapeData);
-                }
-            });
-            items.add(menu);
+                menu = new MenuItem(message("ShearShape"), StyleTools.getIconImageView("iconShear.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        ShapeShearInputController.open((BaseImageController) myController, shapeData);
+                    }
+                });
+                items.add(menu);
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -311,7 +318,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     @FXML
     public void translateShape(MouseEvent event) {
+        MyBoxLog.console("here");
         scrollPane.setPannable(true);
+        event.consume();
         if (isPickingColor) {
             return;
         }

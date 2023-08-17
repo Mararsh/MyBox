@@ -79,7 +79,7 @@ public class ImageScope extends BaseData {
         colorDistance = 50;
         colorDistanceSquare = colorDistance * colorDistance;
         hsbDistance = 0.5f;
-        opacity = 0.3;
+        opacity = 0.5f;
         areaExcluded = colorExcluded = distanceSquareRoot = false;
         eightNeighbor = true;
         if (image != null) {

@@ -85,7 +85,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean remove(int i) {
-        if (i < 0 || points == null || points.isEmpty()) {
+        if (points == null || i < 0 || i >= points.size()) {
             return false;
         }
         points.remove(i);
@@ -93,6 +93,9 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean removeLast() {
+        if (points == null || points.isEmpty()) {
+            return false;
+        }
         if (remove(points.size() - 1)) {
             return true;
         } else {

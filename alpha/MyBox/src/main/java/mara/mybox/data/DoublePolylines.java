@@ -60,7 +60,7 @@ public class DoublePolylines implements DoubleShape {
     }
 
     public boolean removeLine(int index) {
-        if (index < 0 || index >= points.size()) {
+        if (points == null || index < 0 || index >= points.size()) {
             return false;
         }
         points.remove(index);

@@ -22,7 +22,7 @@ public class ImageScopePopController extends ImagePopController {
         try {
             this.scopeController = scopeController;
 
-            setSourceImageView(scopeController, scopeController.scopeView);
+            setSourceImageView(scopeController, scopeController.maskView);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
