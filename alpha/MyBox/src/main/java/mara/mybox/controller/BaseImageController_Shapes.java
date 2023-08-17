@@ -75,7 +75,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     protected DoubleCubic maskCubicData;
     protected DoubleArc maskArcData;
     protected DoublePath maskPathData;
-    public boolean maskControlDragged, showAnchors;
+    public boolean maskControlDragged, showAnchors, popAnchorMenu, popShapeMenu,
+            addPointWhenClick, supportPath;
     protected Polyline currentPolyline;
     protected List<Polyline> maskPolylines;
     protected DoublePoint lastPoint;
@@ -111,7 +112,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             return;
         }
         try {
-            showAnchors = true;
+
+            resetShapeOptions();
 
             maskPane.prefWidthProperty().bind(imageView.fitWidthProperty());
             maskPane.prefHeightProperty().bind(imageView.fitHeightProperty());
@@ -164,6 +166,15 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void resetShapeOptions() {
+        showAnchors = true;
+        popAnchorMenu = true;
+        popShapeMenu = true;
+        supportPath = false;
+        addPointWhenClick = true;
+        maskControlDragged = false;
     }
 
     /*
@@ -326,26 +337,33 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public DoublePoint showXY(MouseEvent event, DoublePoint p) {
-        if (p == null) {
-            xyText.setText("");
+        try {
+            if (p == null) {
+                xyText.setText("");
+                return null;
+            }
+            PixelReader pixelReader = imageView.getImage().getPixelReader();
+            int x = (int) p.getX();
+            int y = (int) p.getY();
+            Color color = pixelReader.getColor(x, y);
+            String s = (int) Math.round(x / widthRatio()) + ","
+                    + (int) Math.round(y / heightRatio()) + "\n"
+                    + FxColorTools.colorDisplaySimple(color);
+            if (isPickingColor) {
+                if (this instanceof ImageManufactureScopeController_Base) {
+                    s = message("PickingColorsForScope") + "\n" + s;
+                } else {
+                    s = message("PickingColorsNow") + "\n" + s;
+                }
+            }
+            xyText.setText(s);
+            xyText.setX(event.getX() + 10);
+            xyText.setY(event.getY());
+            return p;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
             return null;
         }
-        PixelReader pixelReader = imageView.getImage().getPixelReader();
-        Color color = pixelReader.getColor((int) p.getX(), (int) p.getY());
-        String s = (int) Math.round(p.getX() / widthRatio()) + ","
-                + (int) Math.round(p.getY() / heightRatio()) + "\n"
-                + FxColorTools.colorDisplaySimple(color);
-        if (isPickingColor) {
-            if (this instanceof ImageManufactureScopeController_Base) {
-                s = message("PickingColorsForScope") + "\n" + s;
-            } else {
-                s = message("PickingColorsNow") + "\n" + s;
-            }
-        }
-        xyText.setText(s);
-        xyText.setX(event.getX() + 10);
-        xyText.setY(event.getY());
-        return p;
     }
 
     public void controlPressed(MouseEvent event) {
@@ -933,7 +951,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                             text.setCursor(Cursor.HAND);
                         } else {
                             text.setCursor(Cursor.MOVE);
-                            if (UserConfig.getBoolean("ImageShapeAnchorPopMenu", true)) {
+                            if (popAnchorMenu) {
                                 popNodeMenu(text, maskAnchorMenu(text, index, name, title, p));
                             }
                         }
@@ -1815,7 +1833,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                                 pline.setCursor(Cursor.HAND);
                             } else {
                                 pline.setCursor(Cursor.MOVE);
-                                if (UserConfig.getBoolean("ImageShapeAnchorPopMenu", true)) {
+                                if (popAnchorMenu) {
                                     popNodeMenu(pline, lineMenu(pline, points));
                                 }
                             }

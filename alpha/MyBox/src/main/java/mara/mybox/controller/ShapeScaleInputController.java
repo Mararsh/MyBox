@@ -73,8 +73,8 @@ public class ShapeScaleInputController extends BaseShapeTransformController {
         DoublePoint c = DoubleShape.getCenter(shapeData);
         shapeData.scale(xRatio, yRatio);
         DoubleShape.translateCenterAbs(shapeData, c.getX(), c.getY());
-        ImageController.drawMaskShape();
-        ImageController.maskShapeDataChanged();
+        imageController.drawMaskShape();
+        imageController.maskShapeDataChanged();
         close();
     }
 

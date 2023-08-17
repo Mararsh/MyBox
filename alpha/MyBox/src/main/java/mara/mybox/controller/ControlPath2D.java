@@ -95,8 +95,20 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     /*
         data
      */
+    @Override
+    public void tableChanged(boolean changed) {
+        if (isSettingValues || isSettingTable) {
+            return;
+        }
+        super.tableChanged(changed);
+        if (changed) {
+            pickTableValue();
+        }
+    }
+
     public void loadPath(String contents) {
         List<DoublePathSegment> segments = DoublePath.stringToSegments(this, contents, Scale);
+        isSettingValues = true;
         if (segments == null || segments.isEmpty()) {
             tableData.clear();
             textArea.clear();
@@ -109,41 +121,60 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
             s = DoublePath.segmentsToString(segments, "\n");
         }
         textArea.setText(s);
-
+        isSettingValues = false;
+        TableStringValues.add("SvgPathHistories", s);
     }
 
-    public boolean pickPath() {
+    public void pickTableValue() {
+        if (tableData.isEmpty()) {
+            textArea.clear();
+            return;
+        }
+        String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
+        textArea.setText(s);
+    }
+
+    public boolean pickTextValue() {
+        String s = textArea.getText();
+        List<DoublePathSegment> segments = DoublePath.stringToSegments(this, s, Scale);
+        if (segments == null || segments.isEmpty()) {
+            popError(message("NoData"));
+            return false;
+        }
+        isSettingValues = true;
+        tableData.setAll(segments);
+        isSettingValues = false;
+        return true;
+    }
+
+    public boolean pickValue() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == codesTab) {
             if (tableData.isEmpty()) {
                 popError(message("NoData"));
                 return false;
             }
-            String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
-            textArea.setText(s);
-
         } else {
-            String s = textArea.getText();
-            List<DoublePathSegment> segments = DoublePath.stringToSegments(this, s, Scale);
-            if (segments == null) {
+            if (!pickTextValue()) {
                 return false;
             }
-            if (segments.isEmpty()) {
-                popError(message("NoData"));
-                return false;
-            }
-            tableData.setAll(segments);
-            TableStringValues.add("SvgPathHistories", s);
         }
-
-        return true;
+        String s = textArea.getText();
+        if (s != null && !s.isBlank()) {
+            TableStringValues.add("SvgPathHistories", s);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @FXML
     @Override
     public void goAction() {
-        if (pickPath() && optionsOontroller != null) {
-            optionsOontroller.goShape();
+        if (tabPane.getSelectionModel().getSelectedItem() == textsTab) {
+            if (pickTextValue() && optionsOontroller != null) {
+                optionsOontroller.goShape();
+            }
         }
     }
 
@@ -165,7 +196,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     @FXML
     @Override
     public void addAction() {
-        ShapePathSegmentEditController.open(this, pathData(), -1);
+        ShapePathSegmentEditController.open(this, pathData(), -1, null);
     }
 
     @FXML
@@ -176,9 +207,18 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
             popError(message("SelectToHandle"));
             return;
         }
-        ShapePathSegmentEditController.open(this, pathData(), index);
+        ShapePathSegmentEditController.open(this, pathData(), index, tableData.get(index));
     }
 
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        ShapePathSegmentEditController.open(this, pathData(), index, null);
+    }
 
     /*
         text

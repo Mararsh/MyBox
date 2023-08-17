@@ -105,12 +105,11 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 element.removeAttribute("style");
             }
             if ("path".equalsIgnoreCase(node.getNodeName())) {
-                pathController.pickPath();
+                pathController.pickValue();
                 String path = pathController.getText();
                 if (path != null && !path.isBlank()) {
                     path = StringTools.trimBlanks(path);
                     element.setAttribute("d", path);
-                    TableStringValues.add("SvgPathHistories", path);
                 } else {
                     element.removeAttribute("d");
                 }

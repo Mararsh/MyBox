@@ -40,7 +40,6 @@ public class ShapeTranslateInputController extends BaseShapeTransformController 
         if (!checkInput()) {
             return;
         }
-
         double offsetX, offsetY;
         if (centerRadio.isSelected()) {
             DoublePoint center = DoubleShape.getCenter(shapeData);
@@ -66,8 +65,8 @@ public class ShapeTranslateInputController extends BaseShapeTransformController 
             return;
         }
         shapeData.translateRel(offsetX, offsetY);
-        ImageController.drawMaskShape();
-        ImageController.maskShapeDataChanged();
+        imageController.drawMaskShape();
+        imageController.maskShapeDataChanged();
         close();
     }
 

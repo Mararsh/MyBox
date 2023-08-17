@@ -26,6 +26,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.ROUND;
 import static javafx.scene.shape.StrokeLineCap.SQUARE;
+import mara.mybox.data.DoublePathSegment;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.DoubleShape.ShapeType;
@@ -93,9 +94,13 @@ public abstract class ControlShapeOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     UserConfig.setBoolean("ImageShapeAnchorPopMenu", popAnchorMenuCheck.isSelected());
+                    if (imageController != null) {
+                        imageController.popAnchorMenu = popAnchorMenuCheck.isSelected();
+                    }
                 }
             });
 
+            anchorCheck.setSelected(true);
             anchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
@@ -111,6 +116,9 @@ public abstract class ControlShapeOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     UserConfig.setBoolean("ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
+                    if (imageController != null) {
+                        imageController.addPointWhenClick = addPointCheck.isSelected();
+                    }
                 }
             });
 
@@ -122,7 +130,7 @@ public abstract class ControlShapeOptions extends BaseController {
     public void setParameters(BaseImageController imageController) {
         try {
             this.imageController = imageController;
-            imageController.showAnchors = anchorCheck.isSelected();
+
             parametersController.imageController = imageController;
             parametersController.optionsOontroller = this;
             parametersController.pathController.optionsOontroller = this;
@@ -173,6 +181,18 @@ public abstract class ControlShapeOptions extends BaseController {
                         if (isSettingValues
                                 || parametersController.linesController.isSettingValues
                                 || parametersController.linesController.isSettingTable) {
+                            return;
+                        }
+                        goShape();
+                    }
+                });
+
+                parametersController.pathController.tableData.addListener(new ListChangeListener<DoublePathSegment>() {
+                    @Override
+                    public void onChanged(ListChangeListener.Change<? extends DoublePathSegment> c) {
+                        if (isSettingValues
+                                || parametersController.pathController.isSettingValues
+                                || parametersController.pathController.isSettingTable) {
                             return;
                         }
                         goShape();
@@ -414,6 +434,18 @@ public abstract class ControlShapeOptions extends BaseController {
     /*
         shape
      */
+    public void setImageShapeOptions() {
+        if (imageController == null) {
+            return;
+        }
+        imageController.showAnchors = anchorCheck.isSelected();
+        imageController.popAnchorMenu = popAnchorMenuCheck.isSelected();
+        imageController.addPointWhenClick = addPointCheck.isSelected();
+        imageController.popShapeMenu = true;
+        imageController.supportPath = true;
+        imageController.shapeStyle = style;
+    }
+
     public void switchShapeBySelection() {
         if (isSettingValues) {
             return;
@@ -429,7 +461,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 return false;
             }
             shapeType = null;
-            imageController.shapeStyle = style;
+            setImageShapeOptions();
 
             if (rectangleRadio != null && rectangleRadio.isSelected()) {
                 imageController.showMaskRectangle();
@@ -536,7 +568,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 return false;
             }
             shapeType = null;
-            imageController.shapeStyle = style;
+            setImageShapeOptions();
 
             isSettingValues = true;
             if (imageController.isMaskRectangleShown()) {
@@ -693,6 +725,15 @@ public abstract class ControlShapeOptions extends BaseController {
                 parametersController.linesController.removeLastItem();
                 break;
         }
+    }
+
+    @Override
+    public boolean controlAltG() {
+        if (goButton != null && !goButton.isDisabled() && goButton.isVisible()) {
+            goAction();
+            return true;
+        }
+        return false;
     }
 
 }

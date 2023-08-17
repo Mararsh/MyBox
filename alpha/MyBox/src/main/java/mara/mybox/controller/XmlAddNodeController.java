@@ -44,6 +44,10 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
     @FXML
     protected Tab nameTab;
 
+    public XmlAddNodeController() {
+        baseTitle = message("AddNode");
+    }
+
     @Override
     public void setStageStatus() {
         setAsPop(baseName);
@@ -133,7 +137,8 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             parentLabel.setText(message("AddInto") + ": "
                     + treeController.hierarchyNumber(treeItem));
             indexInput.setText((treeItem.getChildren().size() + 1) + "");
-            setTitle(treeController.getTitle());
+
+            setTitle(treeController.getMyStage().getTitle());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

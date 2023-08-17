@@ -52,6 +52,13 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
             tableColor = new TableColor();
 
+            showAnchors = true;
+            popAnchorMenu = true;
+            addPointWhenClick = true;
+            popShapeMenu = true;
+            supportPath = false;
+            shapeStyle = null;
+
             pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
                 @Override
                 public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {

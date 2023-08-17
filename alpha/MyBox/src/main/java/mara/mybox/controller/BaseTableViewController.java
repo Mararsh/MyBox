@@ -54,7 +54,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected CheckBox allRowsCheck, lostFocusCommitCheck;
     @FXML
     protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton,
-            copyItemsButton, deleteItemsButton, clearItemsButton;
+            copyItemsButton, deleteItemsButton, clearItemsButton, insertItemButton;
 
     @FXML
     protected Label dataSizeLabel, selectedLabel;
@@ -330,6 +330,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         if (deleteItemsButton != null) {
             deleteItemsButton.setDisable(none);
+        }
+        if (insertItemButton != null) {
+            insertItemButton.setDisable(none);
         }
         if (clearButton != null) {
             clearButton.setDisable(isEmpty);

@@ -52,8 +52,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
         if (event.getButton() == MouseButton.PRIMARY) {
-
-            if (UserConfig.getBoolean("ImageShapeAddPointWhenLeftClick", true)) {
+            if (addPointWhenClick) {
                 if (maskPolyline != null && maskPolyline.isVisible()) {
                     maskPolylineData.add(p.getX(), p.getY());
                     double x = p.getX() * viewXRatio();
@@ -71,9 +70,13 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (event.getButton() == MouseButton.SECONDARY) {
-            DoubleShape shapeData = currentMaskShapeData();
-            if (shapeData != null) {
-                popEventMenu(event, maskShapeMenu(event, shapeData, p));
+            if (popShapeMenu) {
+                DoubleShape shapeData = currentMaskShapeData();
+                if (shapeData != null) {
+                    popEventMenu(event, maskShapeMenu(event, shapeData, p));
+                } else {
+                    popImageMenu(event.getScreenX(), event.getScreenY());
+                }
             } else {
                 popImageMenu(event.getScreenX(), event.getScreenY());
             }

@@ -650,6 +650,8 @@ public class StyleButton {
                     return new StyleData("insertFilesButton", message("InsertFiles"), "", "iconInsertFile.png");
                 case "insertDirectoryButton":
                     return new StyleData("insertDirectoryButton", message("InsertDirectory"), "", "iconInsertPath.png");
+                default:
+                    return new StyleData(id, message("Insert"), "", "iconInsert.png");
             }
         }
         if (id.startsWith("XYChart")) {

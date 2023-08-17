@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageMosaic.MosaicType;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolylines;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.EliminateTools;
@@ -173,12 +174,19 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
             editor.imageTab();
             editor.shapeStyle = new ShapeStyle(interfaceName);
             editor.shapeStyle.setStrokeWidth(strokeWidth);
+            editor.showAnchors = true;
+            editor.popAnchorMenu = true;
+            editor.addPointWhenClick = false;
+            editor.popShapeMenu = true;
+            editor.supportPath = false;
+
             maskView.setImage(imageView.getImage());
             maskView.setOpacity(1);
             maskView.setVisible(true);
             imageView.setVisible(false);
             imageView.toBack();
 
+            editor.maskPolylinesData = new DoublePolylines();
             editor.showMaskPolylines();
             setBox.getChildren().clear();
 

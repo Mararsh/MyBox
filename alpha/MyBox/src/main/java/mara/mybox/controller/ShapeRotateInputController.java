@@ -62,10 +62,14 @@ public class ShapeRotateInputController extends BaseShapeTransformController {
         }
         DoublePoint c = DoubleShape.getCenter(shapeData);
         DoubleShape.translateCenterAbs(pathData, c.getX(), c.getY());
-        ImageController.clearMask();
-        ImageController.maskPathData = pathData;
-        ImageController.showMaskPath();
-        ImageController.maskShapeDataChanged();
+        if (imageController.supportPath) {
+            imageController.clearMask();
+            imageController.maskPathData = pathData;
+            imageController.showMaskPath();
+            imageController.maskShapeDataChanged();
+        } else {
+            TextPopController.loadText(imageController, pathData.svgAbs());
+        }
         close();
     }
 

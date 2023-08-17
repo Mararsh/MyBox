@@ -197,21 +197,21 @@ public class ShapePathSegmentEditController extends BaseInputController {
 
     }
 
-    public void setParameters(ControlPath2D pathController, DoublePath pathData, int index) {
+    public void setParameters(ControlPath2D pathController, DoublePath pathData,
+            int index, DoublePathSegment segment) {
         try {
             super.setParameters(pathController, null);
             this.pathController = pathController;
             this.pathData = pathData;
             this.index = index;
+            this.segment = segment;
             setTitle(pathController.getTitle());
 
-            if (index >= 0) {
-                segment = pathData.getSegments().get(index);
+            if (segment != null) {
                 typePane.setDisable(true);
                 load();
 
             } else {
-                segment = null;
                 infoLabel.setText(message("Add") + " " + message("Index") + ": " + pathData.getSegments().size());
                 startXInput.setText(pathData.lastPoint().getX() + "");
                 startYInput.setText(pathData.lastPoint().getY() + "");
@@ -286,11 +286,12 @@ public class ShapePathSegmentEditController extends BaseInputController {
         close();
     }
 
-    public static ShapePathSegmentEditController open(ControlPath2D pathController, DoublePath pathData, int index) {
+    public static ShapePathSegmentEditController open(ControlPath2D pathController,
+            DoublePath pathData, int index, DoublePathSegment segment) {
         try {
             ShapePathSegmentEditController controller = (ShapePathSegmentEditController) WindowTools.openChildStage(
                     pathController.getMyWindow(), Fxmls.ShapePathSegmentEditFxml, true);
-            controller.setParameters(pathController, pathData, index);
+            controller.setParameters(pathController, pathData, index, segment);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

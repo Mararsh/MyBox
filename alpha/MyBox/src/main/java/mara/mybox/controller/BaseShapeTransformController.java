@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class BaseShapeTransformController extends BaseInputController {
 
-    protected BaseImageController ImageController;
+    protected BaseImageController imageController;
     protected float x, y;
     protected DoubleShape shapeData;
     protected DoublePoint point;
@@ -34,7 +34,7 @@ public class BaseShapeTransformController extends BaseInputController {
         try {
             super.setParameters(parent, null);
 
-            ImageController = parent;
+            imageController = parent;
             this.shapeData = shapeData;
             this.point = point;
             String info = DoubleShape.values(shapeData);
@@ -45,8 +45,6 @@ public class BaseShapeTransformController extends BaseInputController {
             if (pointButton != null) {
                 pointButton.setVisible(point != null);
             }
-
-            setTitle(ImageController.getTitle());
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -106,11 +104,11 @@ public class BaseShapeTransformController extends BaseInputController {
 
     @FXML
     public void imageCenter() {
-        if (ImageController == null) {
+        if (imageController == null) {
             return;
         }
-        xInput.setText(imageScale(ImageController.imageWidth() / 2) + "");
-        yInput.setText(imageScale(ImageController.imageHeight() / 2) + "");
+        xInput.setText(imageScale(imageController.imageWidth() / 2) + "");
+        yInput.setText(imageScale(imageController.imageHeight() / 2) + "");
     }
 
     @FXML
@@ -127,8 +125,8 @@ public class BaseShapeTransformController extends BaseInputController {
         if (shapeData == null) {
             return;
         }
-        xInput.setText(imageScale(ImageController.imageWidth()) + "");
-        yInput.setText(imageScale(ImageController.imageHeight()) + "");
+        xInput.setText(imageScale(imageController.imageWidth()) + "");
+        yInput.setText(imageScale(imageController.imageHeight()) + "");
     }
 
     @FXML
@@ -137,7 +135,7 @@ public class BaseShapeTransformController extends BaseInputController {
             return;
         }
         xInput.setText("0");
-        yInput.setText(imageScale(ImageController.imageHeight()) + "");
+        yInput.setText(imageScale(imageController.imageHeight()) + "");
     }
 
     @FXML
@@ -145,7 +143,7 @@ public class BaseShapeTransformController extends BaseInputController {
         if (shapeData == null) {
             return;
         }
-        xInput.setText(imageScale(ImageController.imageWidth()) + "");
+        xInput.setText(imageScale(imageController.imageWidth()) + "");
         yInput.setText("0");
     }
 

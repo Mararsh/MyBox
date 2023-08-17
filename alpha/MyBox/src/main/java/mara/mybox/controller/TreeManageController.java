@@ -207,7 +207,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
     }
 
     @Override
-    public boolean controlAltG() {
+    public boolean controlAltL() {
         if (nodeController.valueInput.isFocused()) {
             nodeController.clearValue();
         } else {
