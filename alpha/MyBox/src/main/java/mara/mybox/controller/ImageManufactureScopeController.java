@@ -277,19 +277,17 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     public void setParameters(ImageManufactureController parent) {
         try {
             this.parentController = parent;
-            imageController = parent;
-            scopesSavedController = imageController.scopeSavedController;
-            sourceFile = imageController.sourceFile;
-            imageInformation = imageController.imageInformation;
-            image = imageController.image;
+            editor = parent;
+            scopesSavedController = editor.scopeSavedController;
+            sourceFile = editor.sourceFile;
+            imageInformation = editor.imageInformation;
 
-            refreshStyle();
-
-            loadImage(sourceFile, imageInformation, imageController.image, parent.imageChanged);
+            loadImage(sourceFile, imageInformation, editor.image, parent.imageChanged);
 
             isSettingValues = true;
             scopeAllRadio.setSelected(true);
             isSettingValues = false;
+
             checkScopeType();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -409,8 +407,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     @Override
     public void maskShapeDataChanged() {
         try {
-            if (isSettingValues || imageView == null || imageView.getImage() == null
-                    || scope == null || scope.getScopeType() == null || !maskView.isVisible()) {
+            if (isSettingValues || !isValidScope()) {
                 return;
             }
             switch (scope.getScopeType()) {

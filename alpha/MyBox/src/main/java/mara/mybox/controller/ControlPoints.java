@@ -132,4 +132,14 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         }
     }
 
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+
+    }
+
 }

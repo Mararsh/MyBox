@@ -807,6 +807,11 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void maskShapeDataChanged() {
+        drawMaskShape();
+        notifyShapeDataChanged();
+    }
+
+    public void notifyShapeDataChanged() {
         if (!isSettingValues && maskShapeDataChanged != null) {
             maskShapeDataChanged.set(!maskShapeDataChanged.get());
         }
@@ -918,25 +923,43 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         anchor
         index: 0-based
      */
-    public void addMaskAnchor(int index, DoublePoint p, double x, double y) {
-        addMaskAnchor(index, (index + 1) + "", message("Point") + " " + (index + 1), p, x, y);
+    public Node addMaskAnchor(int index, DoublePoint p, double x, double y) {
+        return addMaskAnchor(index, (index + 1) + "", message("Point") + " " + (index + 1),
+                p, x, y, Cursor.MOVE);
     }
 
-    public void addMaskAnchor(int index, String name, String title, DoublePoint p, double x, double y) {
+    public Node addMaskAnchor(int index, String name, String title,
+            DoublePoint p, double x, double y) {
+        return addMaskAnchor(index, name, title, p, x, y, Cursor.MOVE);
+    }
+
+    public Node addMaskAnchor(int index, String name, String title, DoublePoint p,
+            double x, double y, Cursor cursor) {
         try {
-            Text text = new Text(name);
-            text.setLayoutX(imageView.getLayoutX());
-            text.setLayoutY(imageView.getLayoutY());
-            text.setX(x);
-            text.setY(y);
-            text.setId("MaskAnchor" + index + "_" + name);
-            text.setOnMousePressed(new EventHandler<MouseEvent>() {
+            Node anchor;
+            if (name != null) {
+                Text text = new Text(name);
+                text.setX(x);
+                text.setY(y);
+                anchor = text;
+            } else {
+                Rectangle rect = new Rectangle();
+                rect.setX(x);
+                rect.setY(y);
+                anchor = rect;
+            }
+            anchor.setLayoutX(imageView.getLayoutX());
+            anchor.setLayoutY(imageView.getLayoutY());
+            setAnchorStyle(anchor);
+
+            anchor.setId("MaskShapeAnchor" + index + (name != null ? "_" + name : ""));
+            anchor.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     controlPressed(event);
                 }
             });
-            text.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            anchor.setOnMouseReleased(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     scrollPane.setPannable(true);
@@ -950,46 +973,33 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     }
                 }
             });
-            text.hoverProperty().addListener(new ChangeListener<Boolean>() {
+            anchor.hoverProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (newValue) {
                         if (isPickingColor) {
-                            text.setCursor(Cursor.HAND);
+                            anchor.setCursor(Cursor.HAND);
                         } else {
-                            text.setCursor(Cursor.MOVE);
+                            anchor.setCursor(cursor);
                             if (popAnchorMenu) {
-                                popNodeMenu(text, maskAnchorMenu(text, index, name, title, p));
+                                popNodeMenu(anchor, maskAnchorMenu(index, name, title, p));
                             }
                         }
                     }
                 }
             });
-            setTextStyle(text);
-            maskPane.getChildren().add(text);
+
+            maskPane.getChildren().add(anchor);
+
+            return anchor;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 
-    public void setTextStyle(Text text) {
-        if (text == null) {
-            return;
-        }
-        if (showAnchors) {
-            text.setFill(anchorColor());
-            text.setFont(new Font(anchorSize()));
-            text.toFront();
-        } else {
-            text.setVisible(false);
-        }
-    }
-
-    protected List<MenuItem> maskAnchorMenu(Text text, int index, String name, String title, DoublePoint p) {
+    protected List<MenuItem> maskAnchorMenu(int index, String name, String title, DoublePoint p) {
         try {
-            if (text == null) {
-                return null;
-            }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
@@ -1011,7 +1021,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             });
             items.add(menu);
 
-            if (!isMaskQuadraticShown() && !isMaskCubicShown() && !isMaskPathShown()) {
+            if (isMaskPolylineShown() || isMaskPolygonShown()) {
                 menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteMaskAnchor(index, name);
@@ -1030,14 +1040,21 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void moveMaskAnchor(int index, String name, DoublePoint p) {
-        if (maskPolyline != null && maskPolyline.isVisible() && maskPolylineData != null) {
+        if (isMaskRectangleShown()) {
+            moveMaskRectangleAnchor(index, p);
+
+        } else if (isMaskCircleShown()) {
+            moveMaskCircleAnchor(index, p);
+
+        } else if (isMaskEllipseShown()) {
+            moveMaskEllipseAnchor(index, p);
+
+        } else if (isMaskPolylineShown()) {
             maskPolylineData.set(index, p);
-            drawMaskPolyline();
             maskShapeDataChanged();
 
-        } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygonData != null) {
+        } else if (isMaskPolygonShown()) {
             maskPolygonData.set(index, p);
-            drawMaskPolygon();
             maskShapeDataChanged();
 
         } else if (isMaskQuadraticShown()) {
@@ -1057,7 +1074,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 default:
                     return;
             }
-            drawMaskQuadratic();
             maskShapeDataChanged();
 
         } else if (isMaskCubicShown()) {
@@ -1081,25 +1097,23 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 default:
                     return;
             }
-            drawMaskCubic();
             maskShapeDataChanged();
 
         } else if (isMaskPathShown()) {
             DoublePathSegment seg = maskPathData.getSegments().get(index);
 
-            if (name.endsWith(message("ControlPoint1"))) {
+            if (name.endsWith(".1")) {
                 seg.setControlPoint1(p);
 
-            } else if (name.endsWith(message("ControlPoint2"))) {
+            } else if (name.endsWith(".2")) {
                 seg.setControlPoint2(p);
 
-            } else if (name.endsWith(message("EndPoint"))) {
+            } else if (name.endsWith(".3")) {
                 seg.setEndPoint(p);
 
             } else {
                 return;
             }
-            drawMaskPath();
             maskShapeDataChanged();
         }
 
@@ -1108,14 +1122,50 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     public void deleteMaskAnchor(int index, String name) {
         if (maskPolyline != null && maskPolyline.isVisible() && maskPolylineData != null) {
             maskPolylineData.remove(index);
-            drawMaskPolyline();
             maskShapeDataChanged();
 
         } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygonData != null) {
             maskPolygonData.remove(index);
-            drawMaskPolygon();
             maskShapeDataChanged();
 
+        }
+    }
+
+    public void setAnchorStyle(Node anchor) {
+        if (anchor == null) {
+            return;
+        }
+        if (showAnchors) {
+            Color anchorColor = anchorColor();
+            float anchorSize = anchorSize();
+            setAnchorStyle(anchor, anchorColor, anchorSize, new Font(anchorSize));
+        } else {
+            anchor.setVisible(false);
+        }
+    }
+
+    public void setAnchorStyle(Node anchor, Color anchorColor, float anchorSize, Font font) {
+        if (anchor == null) {
+            return;
+        }
+        if (showAnchors) {
+            if (anchor instanceof Rectangle) {
+                Rectangle rect = (Rectangle) anchor;
+                rect.setStrokeWidth(0);
+                rect.setFill(anchorColor);
+                rect.setWidth(anchorSize);
+                rect.setHeight(anchorSize);
+
+            } else if (anchor instanceof Text) {
+                Text text = (Text) anchor;
+                text.setFill(anchorColor);
+                text.setFont(font);
+
+            }
+            anchor.setVisible(true);
+            anchor.toFront();
+        } else {
+            anchor.setVisible(false);
         }
     }
 
@@ -1126,32 +1176,20 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             }
             Color anchorColor = anchorColor();
             float anchorSize = anchorSize();
-            for (Node node : maskPane.getChildren()) {
+            Font font = new Font(anchorSize);
+            List<Node> nodes = new ArrayList<>();
+            nodes.addAll(maskPane.getChildren());
+            for (Node node : nodes) {
                 if (node == null || node.getId() == null) {
                     continue;
                 }
                 if ((node instanceof Rectangle) && node.getId().startsWith("maskHandler")) {
-                    if (showAnchors) {
-                        Rectangle rect = (Rectangle) node;
-                        rect.setStrokeWidth(0);
-                        rect.setFill(anchorColor);
-                        rect.setWidth(anchorSize);
-                        rect.setHeight(anchorSize);
-                        node.setVisible(true);
-                    } else {
-                        node.setVisible(false);
-                    }
+                    setAnchorStyle(node, anchorColor, anchorSize, font);
 
-                } else if ((node instanceof Text) && node.getId().startsWith("MaskAnchor")) {
-                    if (showAnchors) {
-                        Text text = (Text) node;
-                        text.setFill(anchorColor);
-                        text.setFont(new Font(anchorSize));
-                        node.setVisible(true);
-                    } else {
-                        node.setVisible(false);
-                    }
+                } else if (node.getId().startsWith("MaskShapeAnchor")) {
+                    setAnchorStyle(node, anchorColor, anchorSize, font);
                 }
+
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1165,10 +1203,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         List<Node> nodes = new ArrayList<>();
         nodes.addAll(maskPane.getChildren());
         for (Node node : nodes) {
-            if (node == null || !(node instanceof Text) || node.getId() == null) {
+            if (node == null || node.getId() == null) {
                 continue;
             }
-            if (node.getId().startsWith("MaskAnchor")) {
+            if (node.getId().startsWith("MaskShapeAnchor")) {
                 maskPane.getChildren().remove(node);
             }
         }
@@ -1190,11 +1228,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         try {
             if (!maskPane.getChildren().contains(maskRectangle)) {
                 maskPane.getChildren().addAll(maskRectangle);
-                if (maskHandlerLeftCenter != null && !maskPane.getChildren().contains(maskHandlerLeftCenter)) {
-                    maskPane.getChildren().addAll(maskHandlerLeftCenter, maskHandlerRightCenter,
-                            maskHandlerTopLeft, maskHandlerTopCenter, maskHandlerTopRight,
-                            maskHandlerBottomLeft, maskHandlerBottomCenter, maskHandlerBottomRight);
-                }
             }
             maskRectangle.setOpacity(1);
             maskRectangle.setVisible(true);
@@ -1228,10 +1261,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             double yRatio = viewYRatio();
             double layoutX = imageView.getLayoutX();
             double layoutY = imageView.getLayoutY();
-            double x1 = maskRectangleData.getX() * xRatio;
-            double y1 = maskRectangleData.getY() * yRatio;
-            double x2 = maskRectangleData.getMaxX() * xRatio;
-            double y2 = maskRectangleData.getMaxY() * yRatio;
+            double px1 = maskRectangleData.getX();
+            double py1 = maskRectangleData.getY();
+            double px2 = maskRectangleData.getMaxX();
+            double py2 = maskRectangleData.getMaxY();
+            double pcx = (px1 + px2) * 0.5;
+            double pcy = (py1 + py2) * 0.5;
+            double x1 = px1 * xRatio;
+            double y1 = py1 * yRatio;
+            double x2 = px2 * xRatio;
+            double y2 = py2 * yRatio;
+            double cx = pcx * xRatio;
+            double cy = pcy * yRatio;
             maskRectangle.setLayoutX(layoutX);
             maskRectangle.setLayoutY(layoutY);
             maskRectangle.setX(x1);
@@ -1242,50 +1283,24 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             setShapeStyle(maskRectangle);
 
             double anchorHW = anchorSize() * 0.5;
-            double cx = (x2 + x1) * 0.5;
-            double cy = (y2 + y1) * 0.5;
 
-            maskHandlerTopLeft.setLayoutX(layoutX);
-            maskHandlerTopLeft.setLayoutY(layoutY);
-            maskHandlerTopLeft.setX(x1 - anchorHW);
-            maskHandlerTopLeft.setY(y1 - anchorHW);
-
-            maskHandlerTopCenter.setLayoutX(layoutX);
-            maskHandlerTopCenter.setLayoutY(layoutY);
-            maskHandlerTopCenter.setX(cx - anchorHW);
-            maskHandlerTopCenter.setY(y1 - anchorHW);
-
-            maskHandlerTopRight.setLayoutX(layoutX);
-            maskHandlerTopRight.setLayoutY(layoutY);
-            maskHandlerTopRight.setX(x2 - anchorHW);
-            maskHandlerTopRight.setY(y1 - anchorHW);
-
-            maskHandlerBottomLeft.setLayoutX(layoutX);
-            maskHandlerBottomLeft.setLayoutY(layoutY);
-            maskHandlerBottomLeft.setX(x1 - anchorHW);
-            maskHandlerBottomLeft.setY(y2 - anchorHW);
-
-            maskHandlerBottomCenter.setLayoutX(layoutX);
-            maskHandlerBottomCenter.setLayoutY(layoutY);
-            maskHandlerBottomCenter.setX(cx - anchorHW);
-            maskHandlerBottomCenter.setY(y2 - anchorHW);
-
-            maskHandlerBottomRight.setLayoutX(layoutX);
-            maskHandlerBottomRight.setLayoutY(layoutY);
-            maskHandlerBottomRight.setX(x2 - anchorHW);
-            maskHandlerBottomRight.setY(y2 - anchorHW);
-
-            maskHandlerLeftCenter.setLayoutX(layoutX);
-            maskHandlerLeftCenter.setLayoutY(layoutY);
-            maskHandlerLeftCenter.setX(x1 - anchorHW);
-            maskHandlerLeftCenter.setY(cy - anchorHW);
-
-            maskHandlerRightCenter.setLayoutX(layoutX);
-            maskHandlerRightCenter.setLayoutY(layoutY);
-            maskHandlerRightCenter.setX(x2 - anchorHW);
-            maskHandlerRightCenter.setY(cy - anchorHW);
-
-            setMaskAnchorsStyle();
+            clearMaskAnchors();
+            addMaskAnchor(1, null, message("LeftTop"), new DoublePoint(px1, py1),
+                    x1 - anchorHW, y1 - anchorHW, Cursor.NW_RESIZE);
+            addMaskAnchor(2, null, message("TopCenter"), new DoublePoint(pcx, py1),
+                    cx - anchorHW, y1 - anchorHW, Cursor.N_RESIZE);
+            addMaskAnchor(3, null, message("RightTop"), new DoublePoint(px2, py1),
+                    x2 - anchorHW, y1 - anchorHW, Cursor.NE_RESIZE);
+            addMaskAnchor(4, null, message("LeftCenter"), new DoublePoint(px1, pcy),
+                    x1 - anchorHW, cy - anchorHW, Cursor.W_RESIZE);
+            addMaskAnchor(5, null, message("RightCenter"), new DoublePoint(px2, pcy),
+                    x2 - anchorHW, cy - anchorHW, Cursor.E_RESIZE);
+            addMaskAnchor(6, null, message("LeftBottom"), new DoublePoint(px1, py2),
+                    x1 - anchorHW, y2 - anchorHW, Cursor.SW_RESIZE);
+            addMaskAnchor(7, null, message("BottomCenter"), new DoublePoint(pcx, py2),
+                    cx - anchorHW, y2 - anchorHW, Cursor.S_RESIZE);
+            addMaskAnchor(8, null, message("RightBottom"), new DoublePoint(px2, py2),
+                    x2 - anchorHW, y2 - anchorHW, Cursor.SE_RESIZE);
 
             maskShapeChanged();
 
@@ -1297,16 +1312,53 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         }
     }
 
+    public boolean moveMaskRectangleAnchor(int index, DoublePoint p) {
+        double x = p.getX();
+        double y = p.getY();
+        double x1 = maskRectangleData.getX();
+        double y1 = maskRectangleData.getY();
+        double x2 = maskRectangleData.getMaxX();
+        double y2 = maskRectangleData.getMaxY();
+        switch (index) {
+            case 1:
+                maskRectangleData = DoubleRectangle.xy12(x, y, x2, y2);
+                break;
+            case 2:
+                maskRectangleData = DoubleRectangle.xy12(x1, y, x2, y2);
+                break;
+            case 3:
+                maskRectangleData = DoubleRectangle.xy12(x1, y, x, y2);
+                break;
+            case 4:
+                maskRectangleData = DoubleRectangle.xy12(x, y1, x2, y2);
+                break;
+            case 5:
+                maskRectangleData = DoubleRectangle.xy12(x1, y1, x, y2);
+                break;
+            case 6:
+                maskRectangleData = DoubleRectangle.xy12(x, y1, x2, y);
+                break;
+            case 7:
+                maskRectangleData = DoubleRectangle.xy12(x1, y1, x2, y);
+                break;
+            case 8:
+                maskRectangleData = DoubleRectangle.xy12(x1, y1, x, y);
+                break;
+            default:
+                return false;
+        }
+        maskShapeDataChanged();
+        return true;
+    }
+
     public void clearMaskRectangle() {
         try {
             if (imageView == null || maskPane == null || maskRectangle == null) {
                 return;
             }
-            maskPane.getChildren().removeAll(maskRectangle,
-                    maskHandlerLeftCenter, maskHandlerRightCenter,
-                    maskHandlerTopLeft, maskHandlerTopCenter, maskHandlerTopRight,
-                    maskHandlerBottomLeft, maskHandlerBottomCenter, maskHandlerBottomRight);
+            maskPane.getChildren().removeAll(maskRectangle);
             maskRectangle.setVisible(false);
+            clearMaskAnchors();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1333,9 +1385,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             return false;
         }
         if (!maskPane.getChildren().contains(maskCircle)) {
-            maskPane.getChildren().addAll(maskCircle,
-                    maskHandlerLeftCenter, maskHandlerRightCenter,
-                    maskHandlerTopCenter, maskHandlerBottomCenter);
+            maskPane.getChildren().addAll(maskCircle);
         }
         maskCircle.setOpacity(1);
         maskCircle.setVisible(true);
@@ -1364,38 +1414,30 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             double layoutY = imageView.getLayoutY();
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
-            double r = maskCircleData.getRadius() * xRatio;
-            double x = maskCircleData.getCenterX() * xRatio;
-            double y = maskCircleData.getCenterY() * yRatio;
+            double sr = maskCircleData.getRadius();
+            double scx = maskCircleData.getCenterX();
+            double scy = maskCircleData.getCenterY();
+            double r = sr * xRatio;
+            double x = scx * xRatio;
+            double y = scy * yRatio;
             maskCircle.setLayoutX(layoutX);
             maskCircle.setLayoutY(layoutY);
             maskCircle.setCenterX(x);
             maskCircle.setCenterY(y);
             maskCircle.setRadius(r);
+            setShapeStyle(maskCircle);
 
             double anchorHW = anchorSize() * 0.5;
-            maskHandlerTopCenter.setLayoutX(layoutX);
-            maskHandlerTopCenter.setLayoutY(layoutY);
-            maskHandlerTopCenter.setX(x - anchorHW);
-            maskHandlerTopCenter.setY(y - r - anchorHW);
 
-            maskHandlerBottomCenter.setLayoutX(layoutX);
-            maskHandlerBottomCenter.setLayoutY(layoutY);
-            maskHandlerBottomCenter.setX(x - anchorHW);
-            maskHandlerBottomCenter.setY(y + r - anchorHW);
-
-            maskHandlerLeftCenter.setLayoutX(layoutX);
-            maskHandlerLeftCenter.setLayoutY(layoutY);
-            maskHandlerLeftCenter.setX(x - r - anchorHW);
-            maskHandlerLeftCenter.setY(y - anchorHW);
-
-            maskHandlerRightCenter.setLayoutX(layoutX);
-            maskHandlerRightCenter.setLayoutY(layoutY);
-            maskHandlerRightCenter.setX(x + r - anchorHW);
-            maskHandlerRightCenter.setY(y - anchorHW);
-
-            setShapeStyle(maskCircle);
-            setMaskAnchorsStyle();
+            clearMaskAnchors();
+            addMaskAnchor(1, null, message("TopCenter"), new DoublePoint(scx, scy - sr),
+                    x - anchorHW, y - r - anchorHW, Cursor.N_RESIZE);
+            addMaskAnchor(2, null, message("LeftCenter"), new DoublePoint(scx - sr, scy),
+                    x - r - anchorHW, y - anchorHW, Cursor.W_RESIZE);
+            addMaskAnchor(3, null, message("RightCenter"), new DoublePoint(scx + sr, scy),
+                    x + r - anchorHW, y - anchorHW, Cursor.E_RESIZE);
+            addMaskAnchor(4, null, message("BottomCenter"), new DoublePoint(scx, scy + sr),
+                    x - anchorHW, y + r - anchorHW, Cursor.S_RESIZE);
 
             maskShapeChanged();
 
@@ -1406,14 +1448,39 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         }
     }
 
+    public boolean moveMaskCircleAnchor(int index, DoublePoint p) {
+        double x = p.getX();
+        double y = p.getY();
+        double scx = maskCircleData.getCenterX();
+        double scy = maskCircleData.getCenterY();
+        double sr = maskCircleData.getRadius();
+        switch (index) {
+            case 1:
+                maskCircleData = new DoubleCircle(scx, (scy + sr + y) * 0.5, Math.abs(scy + sr - y) * 0.5);
+                break;
+            case 2:
+                maskCircleData = new DoubleCircle((x + scx + sr) * 0.5, scy, Math.abs(scx + sr - x) * 0.5);
+                break;
+            case 3:
+                maskCircleData = new DoubleCircle((scx - sr + x) * 0.5, scy, Math.abs(x - scx + sr) * 0.5);
+                break;
+            case 4:
+                maskCircleData = new DoubleCircle(scx, (y + scy - sr) * 0.5, Math.abs(y - scy + sr) * 0.5);
+                break;
+            default:
+                return false;
+        }
+        maskShapeDataChanged();
+        return true;
+    }
+
     public void clearMaskCircle() {
         if (imageView == null || maskPane == null || maskCircle == null) {
             return;
         }
-        maskPane.getChildren().removeAll(maskCircle,
-                maskHandlerLeftCenter, maskHandlerRightCenter,
-                maskHandlerTopCenter, maskHandlerBottomCenter);
+        maskPane.getChildren().removeAll(maskCircle);
         maskCircle.setVisible(false);
+        clearMaskAnchors();
     }
 
     public void clearMaskCircleData() {
@@ -1436,9 +1503,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             return false;
         }
         if (!maskPane.getChildren().contains(maskEllipse)) {
-            maskPane.getChildren().addAll(maskEllipse,
-                    maskHandlerLeftCenter, maskHandlerRightCenter,
-                    maskHandlerTopCenter, maskHandlerBottomCenter);
+            maskPane.getChildren().addAll(maskEllipse);
         }
         maskEllipse.setOpacity(1);
         maskEllipse.setVisible(true);
@@ -1467,40 +1532,32 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             double layoutY = imageView.getLayoutY();
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
-            double rx = maskEllipseData.getRadiusX() * xRatio;
-            double ry = maskEllipseData.getRadiusY() * yRatio;
-            double cx = maskEllipseData.getCenterX() * xRatio;
-            double cy = maskEllipseData.getCenterY() * yRatio;
+            double srx = maskEllipseData.getRadiusX();
+            double sry = maskEllipseData.getRadiusY();
+            double scx = maskEllipseData.getCenterX();
+            double scy = maskEllipseData.getCenterY();
+            double rx = srx * xRatio;
+            double ry = sry * yRatio;
+            double cx = scx * xRatio;
+            double cy = scy * yRatio;
             maskEllipse.setLayoutX(layoutX);
             maskEllipse.setLayoutY(layoutY);
             maskEllipse.setCenterX(cx);
             maskEllipse.setCenterY(cy);
             maskEllipse.setRadiusX(rx);
             maskEllipse.setRadiusY(ry);
+            setShapeStyle(maskEllipse);
 
             double anchorHW = anchorSize() * 0.5;
-            maskHandlerTopCenter.setLayoutX(layoutX);
-            maskHandlerTopCenter.setLayoutY(layoutY);
-            maskHandlerTopCenter.setX(cx - anchorHW);
-            maskHandlerTopCenter.setY(cy - ry - anchorHW);
-
-            maskHandlerBottomCenter.setLayoutX(layoutX);
-            maskHandlerBottomCenter.setLayoutY(layoutY);
-            maskHandlerBottomCenter.setX(cx - anchorHW);
-            maskHandlerBottomCenter.setY(cy + ry - anchorHW);
-
-            maskHandlerLeftCenter.setLayoutX(layoutX);
-            maskHandlerLeftCenter.setLayoutY(layoutY);
-            maskHandlerLeftCenter.setX(cx - rx - anchorHW);
-            maskHandlerLeftCenter.setY(cy - anchorHW);
-
-            maskHandlerRightCenter.setLayoutX(layoutX);
-            maskHandlerRightCenter.setLayoutY(layoutY);
-            maskHandlerRightCenter.setX(cx + rx - anchorHW);
-            maskHandlerRightCenter.setY(cy - anchorHW);
-
-            setShapeStyle(maskEllipse);
-            setMaskAnchorsStyle();
+            clearMaskAnchors();
+            addMaskAnchor(1, null, message("TopCenter"), new DoublePoint(scx, scy - sry),
+                    cx - anchorHW, cy - ry - anchorHW, Cursor.N_RESIZE);
+            addMaskAnchor(2, null, message("LeftCenter"), new DoublePoint(scx - srx, scy),
+                    cx - rx - anchorHW, cy - anchorHW, Cursor.W_RESIZE);
+            addMaskAnchor(3, null, message("RightCenter"), new DoublePoint(scx + srx, scy),
+                    cx + rx - anchorHW, cy - anchorHW, Cursor.E_RESIZE);
+            addMaskAnchor(4, null, message("BottomCenter"), new DoublePoint(scx, scy + sry),
+                    cx - anchorHW, cy + ry - anchorHW, Cursor.S_RESIZE);
 
             maskShapeChanged();
 
@@ -1512,14 +1569,40 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
 
     }
 
+    public boolean moveMaskEllipseAnchor(int index, DoublePoint p) {
+        double x = p.getX();
+        double y = p.getY();
+        double x1 = maskEllipseData.getX();
+        double y1 = maskEllipseData.getY();
+        double x2 = maskEllipseData.getMaxX();
+        double y2 = maskEllipseData.getMaxY();
+        switch (index) {
+            case 1:
+                maskEllipseData = DoubleEllipse.xy12(x1, y, x2, y2);
+                break;
+            case 2:
+                maskEllipseData = DoubleEllipse.xy12(x, y1, x2, y2);
+                break;
+            case 3:
+                maskEllipseData = DoubleEllipse.xy12(x1, y1, x, y2);
+                break;
+            case 4:
+                maskEllipseData = DoubleEllipse.xy12(x1, y1, x2, y);
+                break;
+            default:
+                return false;
+        }
+        maskShapeDataChanged();
+        return true;
+    }
+
     public void clearMaskEllipse() {
         if (imageView == null || maskPane == null || maskEllipse == null) {
             return;
         }
-        maskPane.getChildren().removeAll(maskEllipse,
-                maskHandlerLeftCenter, maskHandlerRightCenter,
-                maskHandlerTopCenter, maskHandlerBottomCenter);
+        maskPane.getChildren().removeAll(maskEllipse);
         maskEllipse.setVisible(false);
+        clearMaskAnchors();
     }
 
     public void clearMaskEllipseData() {
@@ -1829,7 +1912,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                             return;
                         }
                         maskPolylinesData.translateLineRel(index, offsetX, offsetY);
-                        drawMaskPolylines();
                         maskShapeDataChanged();
                     }
                 });
@@ -1887,7 +1969,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                         }
                         inputController.close();
                         maskPolylinesData.setLine(index, line);
-                        drawMaskPolylines();
                         maskShapeDataChanged();
                     }
                 });
@@ -1897,7 +1978,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 maskPolylinesData.removeLine(index);
-                drawMaskPolylines();
                 maskShapeDataChanged();
             });
             items.add(menu);
@@ -2444,17 +2524,17 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 index = i + 1;
                 if (p != null) {
                     String info = seg.text() + "\n" + message("ControlPoint1");
-                    addMaskAnchor(i, index + "." + message("ControlPoint1"), info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, index + ".1", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
                 p = seg.getControlPoint2();
                 if (p != null) {
                     String info = seg.text() + "\n" + message("ControlPoint2");
-                    addMaskAnchor(i, index + "." + message("ControlPoint2"), info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, index + ".2", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
                 p = seg.getEndPoint();
                 if (p != null) {
                     String info = seg.text() + "\n" + message("EndPoint");
-                    addMaskAnchor(i, index + "." + message("EndPoint"), info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, index + ".3", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
             }
 

@@ -532,7 +532,6 @@ License:    Apache License Version 2.0
                         <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased">
                            <children>
                               <ImageView fx:id="imageView" cache="true" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                              <ImageView fx:id="maskView" cache="true" fitHeight="100.0" fitWidth="100.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true" />
                               <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" layoutX="30.0" layoutY="74.0" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
                                  <cursor>
                                     <Cursor fx:constant="NONE" />

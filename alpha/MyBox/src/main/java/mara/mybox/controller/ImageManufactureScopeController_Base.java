@@ -13,10 +13,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.data.DoublePoint;
@@ -33,13 +33,11 @@ import mara.mybox.fxml.SingletonCurrentTask;
 public abstract class ImageManufactureScopeController_Base extends ImageViewerController {
 
     protected TableColor tableColor;
-    protected ImageManufactureController imageController;
+    protected ImageManufactureController editor;
     protected ImageManufactureScopesSavedController scopesSavedController;
     protected float opacity;
     protected BufferedImage outlineSource;
 
-    @FXML
-    protected ImageView maskView;
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
@@ -75,7 +73,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
     protected synchronized void indicateScope() {
-        if (imageView == null || !maskView.isVisible() || scope == null) {
+        if (!isValidScope()) {
             return;
         }
         if (task != null) {
@@ -88,7 +86,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             protected boolean handle() {
                 try {
                     PixelsOperation pixelsOperation
-                            = PixelsOperationFactory.create(imageView.getImage(),
+                            = PixelsOperationFactory.create(editor.imageView.getImage(),
                                     scope, PixelsOperation.OperationType.ShowScope);
                     if (!ignoreTransparentCheck.isSelected()) {
                         pixelsOperation.setSkipTransparent(false);
@@ -106,15 +104,8 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
             @Override
             protected void whenSucceeded() {
-                maskView.setImage(scopedImage);
-                maskView.setFitWidth(imageView.getFitWidth());
-                maskView.setFitHeight(imageView.getFitHeight());
-                maskView.setLayoutX(imageView.getLayoutX());
-                maskView.setLayoutY(imageView.getLayoutY());
-                maskView.setOpacity(1);
-                maskView.setVisible(true);
-                imageView.setVisible(false);
-                imageView.toBack();
+                image = scopedImage;
+                imageView.setImage(image);
                 if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
                     drawMattingPoints();
                 } else {
@@ -163,7 +154,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     public boolean menuAction() {
         try {
             Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-            MenuImageScopeController.scopeMenu((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
+            popImageMenu(localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -176,6 +167,12 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     public boolean popAction() {
         ImageScopePopController.open((ImageManufactureScopeController) this);
         return true;
+    }
+
+    public boolean isValidScope() {
+        return image != null && scope != null
+                && scope.getScopeType() != null
+                && scope.getScopeType() != ScopeType.All;
     }
 
 }

@@ -113,4 +113,14 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
         }
     }
 
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+
+    }
+
 }

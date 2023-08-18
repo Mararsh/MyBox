@@ -24,8 +24,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     @FXML
     public void goScope() {
         try {
-            if (imageView == null || imageView.getImage() == null
-                    || scope == null || scope.getScopeType() == null || !maskView.isVisible()) {
+            if (!isValidScope()) {
                 return;
             }
             switch (scope.getScopeType()) {
@@ -46,7 +45,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     public void pickRectangle() {
         try {
-            if (scope == null || scope.getScopeType() != ScopeType.Rectangle) {
+            if (!isValidScope() || scope.getScopeType() != ScopeType.Rectangle) {
                 return;
             }
             DoubleRectangle rect = pickRectValues();
@@ -63,7 +62,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     public void pickEllipse() {
         try {
-            if (scope == null || scope.getScopeType() != ScopeType.Ellipse) {
+            if (!isValidScope() || scope.getScopeType() != ScopeType.Ellipse) {
                 return;
             }
             DoubleRectangle rect = pickRectValues();
@@ -124,7 +123,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     public void pickCircle() {
         try {
-            if (scope == null || scope.getScopeType() != ScopeType.Circle) {
+            if (!isValidScope() || scope.getScopeType() != ScopeType.Circle) {
                 return;
             }
             double x, y, r;
@@ -164,7 +163,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     public void pickPoints() {
         try {
-            if (scope == null || isSettingValues
+            if (!isValidScope() || isSettingValues
                     || pointsController.isSettingValues
                     || pointsController.isSettingTable) {
                 return;
@@ -192,7 +191,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     @FXML
     @Override
     public void withdrawAction() {
-        if (scope == null || isSettingValues
+        if (!isValidScope() || isSettingValues
                 || scope.getScopeType() != ScopeType.Polygon) {
             return;
         }

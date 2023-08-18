@@ -57,17 +57,11 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (addPointWhenClick) {
                 if (maskPolyline != null && maskPolyline.isVisible()) {
                     maskPolylineData.add(p.getX(), p.getY());
-                    double x = p.getX() * viewXRatio();
-                    double y = p.getY() * viewYRatio();
-                    addMaskPolylinePoint(maskPolylineData.getSize(), p, x, y);
                     maskShapeDataChanged();
 
                 } else if (maskPolygon != null && maskPolygon.isVisible()) {
                     MyBoxLog.console("here");
                     maskPolygonData.add(p.getX(), p.getY());
-                    double x = p.getX() * viewXRatio();
-                    double y = p.getY() * viewYRatio();
-                    addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
                     maskShapeDataChanged();
                 }
             }
@@ -127,7 +121,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     @Override
                     public void handle(ActionEvent mevent) {
                         if (maskPolylineData.removeLast()) {
-                            maskPolyline.getPoints().remove(maskPolyline.getPoints().size() - 1);
                             maskShapeDataChanged();
                         }
                     }
@@ -143,9 +136,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                         @Override
                         public void handle(ActionEvent mevent) {
                             maskPolygonData.add(p.getX(), p.getY());
-                            double x = p.getX() * viewXRatio();
-                            double y = p.getY() * viewYRatio();
-                            addMaskPolygonPoint(maskPolygonData.getSize(), p, x, y);
                             maskShapeDataChanged();
                         }
                     });
@@ -157,7 +147,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     @Override
                     public void handle(ActionEvent mevent) {
                         if (maskPolygonData.removeLast()) {
-                            maskPolygon.getPoints().remove(maskPolygon.getPoints().size() - 1);
                             maskShapeDataChanged();
                         }
                     }
@@ -331,7 +320,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
         if (DoubleShape.translateRel(shapeData, offsetX, offsetY)) {
-            drawMaskShape();
             maskShapeDataChanged();
         }
     }
@@ -351,7 +339,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
             maskLineData.setStartX(x);
             maskLineData.setStartY(y);
-            drawMaskLine();
             maskShapeDataChanged();
 
         } else if (maskRectangle != null && maskRectangle.isVisible()) {
@@ -365,7 +352,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 }
                 maskRectangleData.changeX(x);
                 maskRectangleData.changeY(y);
-                drawMaskRectangle();
                 maskShapeDataChanged();
             }
         }
@@ -385,7 +371,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     y = imageHeight() - 2;
                 }
                 maskRectangleData.changeY(y);
-                drawMaskRectangle();
                 maskShapeDataChanged();
             }
 
@@ -393,7 +378,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             double r = maskHandlerBottomCenter.getY() - event.getY();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageYRatio() / 2);
-                drawMaskCircle();
                 maskShapeDataChanged();
             }
 
@@ -402,7 +386,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (ry > 0) {
                 ry = ry * imageYRatio();
                 maskEllipseData.setHeight(ry);
-                drawMaskEllipse();
                 maskShapeDataChanged();
             }
 
@@ -411,7 +394,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (ry > 0) {
                 ry = ry * imageYRatio() / 2;
                 maskArcData.setRadiusY(ry);
-                drawMaskArc();
                 maskShapeDataChanged();
             }
         }
@@ -439,7 +421,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 }
                 maskRectangleData.setMaxX(x);
                 maskRectangleData.changeY(y);
-                drawMaskRectangle();
                 maskShapeDataChanged();
             }
 
@@ -468,7 +449,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 }
                 maskRectangleData.changeX(x);
                 maskRectangleData.setMaxY(y);
-                drawMaskRectangle();
                 maskShapeDataChanged();
             }
 
@@ -491,7 +471,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     y = 1;
                 }
                 maskRectangleData.setMaxY(y);
-                drawMaskRectangle();
                 maskShapeDataChanged();
             }
 
@@ -499,7 +478,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             double r = event.getY() - maskHandlerTopCenter.getY();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageYRatio() / 2);
-                drawMaskCircle();
                 maskShapeDataChanged();
             }
 
@@ -508,7 +486,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (ry > 0) {
                 ry = ry * imageYRatio();
                 maskEllipseData.setHeight(ry);
-                drawMaskEllipse();
                 maskShapeDataChanged();
             }
 
@@ -517,7 +494,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (ry > 0) {
                 ry = ry * imageYRatio() / 2;
                 maskArcData.setRadiusY(ry);
-                drawMaskArc();
                 maskShapeDataChanged();
             }
 
@@ -539,7 +515,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskLine != null && maskLine.isVisible()) {
             maskLineData.setEndX(x);
             maskLineData.setEndY(y);
-            drawMaskLine();
             maskShapeDataChanged();
 
         } else if (x > maskRectangleData.getX() && y > maskRectangleData.getY()) {
@@ -551,7 +526,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
             maskRectangleData.setMaxX(x);
             maskRectangleData.setMaxY(y);
-            drawMaskRectangle();
             maskShapeDataChanged();
         }
     }
@@ -571,7 +545,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     x = imageWidth() - 2;
                 }
                 maskRectangleData.changeX(x);
-                drawMaskRectangle();
                 maskShapeDataChanged();
             }
 
@@ -579,7 +552,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             double r = maskHandlerRightCenter.getX() - event.getX();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageXRatio() / 2);
-                drawMaskCircle();
                 maskShapeDataChanged();
             }
 
@@ -588,7 +560,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (rx > 0) {
                 rx = rx * imageXRatio();
                 maskEllipseData.setWidth(rx);
-                drawMaskEllipse();
                 maskShapeDataChanged();
             }
 
@@ -597,7 +568,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (rx > 0) {
                 rx = rx * imageXRatio() / 2;
                 maskArcData.setRadiusX(rx);
-                drawMaskArc();
                 maskShapeDataChanged();
             }
 
@@ -621,7 +591,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     x = 1;
                 }
                 maskRectangleData.setMaxX(x);
-                drawMaskRectangle();
                 maskShapeDataChanged();
             }
 
@@ -629,7 +598,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             double r = event.getX() - maskHandlerLeftCenter.getX();
             if (r > 0) {
                 maskCircleData.setRadius(r * imageXRatio() / 2);
-                drawMaskCircle();
                 maskShapeDataChanged();
             }
 
@@ -638,7 +606,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (rx > 0) {
                 rx = rx * imageXRatio();
                 maskEllipseData.setWidth(rx);
-                drawMaskEllipse();
                 maskShapeDataChanged();
             }
 
@@ -647,7 +614,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (rx > 0) {
                 rx = rx * imageXRatio() / 2;
                 maskArcData.setRadiusX(rx);
-                drawMaskArc();
                 maskShapeDataChanged();
             }
 

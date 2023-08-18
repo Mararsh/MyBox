@@ -135,8 +135,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
         try {
             isSettingValues = true;
             clearMask();
-            if (imageView.getImage() != null) {
-                scope = new ImageScope(imageView.getImage());
+            image = editor.imageView.getImage();
+            imageView.setImage(image);
+            if (image != null) {
+                scope = new ImageScope(image);
                 if (sourceFile != null) {
                     scope.setFile(sourceFile.getAbsolutePath());
                 }
@@ -144,11 +146,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                 scope = new ImageScope();
             }
             scope.setOpacity(opacity);
-            maskView.setImage(null);
             outlineSource = null;
-
-            imageView.setVisible(true);
-            imageView.toFront();
 
             scopeDistanceSelector.getItems().clear();
             scopeDistanceSelector.getEditor().setStyle(null);
@@ -163,7 +161,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
     }
 
     protected boolean checkMatchType() {
-        if (scope == null || matchGroup.getSelectedToggle() == null) {
+        if (!isValidScope()) {
             return false;
         }
         try {
@@ -204,11 +202,9 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             for (int i = 0; i <= max; i += step) {
                 vList.add(i + "");
             }
-            isSettingValues = true;
             scopeDistanceSelector.getItems().clear();
             scopeDistanceSelector.getItems().addAll(vList);
             scopeDistanceSelector.setValue("20");
-            isSettingValues = false;
 
             return checkDistanceValue();
 
@@ -219,7 +215,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
     }
 
     protected boolean checkDistanceValue() {
-        if (scope.getColorScopeType() == null
+        if (!isValidScope() || scope.getColorScopeType() == null
                 || scopeDistanceSelector.getSelectionModel().getSelectedItem() == null) {
             return false;
         }
@@ -281,13 +277,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
     protected void setScopeControls() {
         try {
-            boolean isScoped = !scopeWhole();
-            setBox.setVisible(isScoped);
-            maskView.setVisible(isScoped);
+            setBox.setVisible(!scopeWhole());
             tabPane.getTabs().clear();
             areaBox.getChildren().clear();
             scopeTips.setText("");
-            NodeStyleTools.removeTooltip(scopeTips);
             if (image == null || scope == null) {
                 return;
             }
@@ -366,9 +359,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
             }
             scopeTips.setText(tips);
-            if (!tips.isBlank()) {
-                NodeStyleTools.setTooltip(scopeTips, tips);
-            }
             setScopeName();
             areaBox.applyCss();
             areaBox.layout();
