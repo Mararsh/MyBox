@@ -302,7 +302,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         }
         finalRefineView();
         setImageChanged(false);
-        redrawMaskShapes();
+        redrawMaskShape();
         updateLabelsTitle();
         imageView.requestFocus();
     }

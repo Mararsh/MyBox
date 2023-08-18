@@ -56,12 +56,12 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected ControlPoints pointsController;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
-            ignoreTransparentCheck, squareRootCheck, anchorCheck, popAnchorMenuCheck, addPointCheck;
+            ignoreTransparentCheck, squareRootCheck;
     @FXML
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button goScopeButton, saveScopeButton,
+    protected Button goScopeButton, saveScopeButton, withdrawPointButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML

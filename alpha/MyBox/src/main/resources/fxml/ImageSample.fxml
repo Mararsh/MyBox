@@ -159,7 +159,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="150.0" />
                                                             </children>
                                                         </FlowPane>
-                                          <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
+                                                        <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                                             <children>
                                                                 <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
@@ -324,7 +324,7 @@ License:    Apache License Version 2.0
                                         </FlowPane>
                                     </children>
                                 </HBox>
-                        <Label layoutX="12.0" layoutY="666.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ShapeDragMoveComments" wrapText="true" />
+                                <Label layoutX="12.0" layoutY="666.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ShapeDragMoveComments" wrapText="true" />
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
                                         <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
@@ -341,46 +341,6 @@ License:    Apache License Version 2.0
                                                 <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE" width="334.0">
                                                     <cursor>
                                                         <Cursor fx:constant="MOVE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerLeftCenter" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerLeftCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="W_RESIZE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerTopRight" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopRightReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="NE_RESIZE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerTopCenter" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="N_RESIZE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerRightCenter" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerRightCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="E_RESIZE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerBottomRight" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomRightReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="SE_RESIZE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerBottomCenter" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="N_RESIZE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerBottomLeft" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="SW_RESIZE" />
-                                                    </cursor>
-                                                </Rectangle>
-                                                <Rectangle fx:id="maskHandlerTopLeft" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                    <cursor>
-                                                        <Cursor fx:constant="NW_RESIZE" />
                                                     </cursor>
                                                 </Rectangle>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />

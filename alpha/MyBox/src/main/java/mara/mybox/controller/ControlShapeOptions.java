@@ -71,11 +71,11 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorMenuCheck, addPointCheck;
+    protected CheckBox fillCheck, dashCheck;
     @FXML
     protected FlowPane opPane;
     @FXML
-    protected Button functionsButton;
+    protected Button functionsButton, anchorButton;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
@@ -88,42 +88,6 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             super.initControls();
             parametersController.optionsOontroller = this;
-
-            anchorCheck.setSelected(UserConfig.getBoolean("ImageShapeShowAnchor", true));
-            anchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageShapeShowAnchor", anchorCheck.isSelected());
-                    popAnchorMenuCheck.setDisable(!anchorCheck.isSelected());
-                    if (imageController != null) {
-                        imageController.showAnchors = anchorCheck.isSelected();
-                        imageController.setMaskAnchorsStyle();
-                    }
-                }
-            });
-            popAnchorMenuCheck.setDisable(!anchorCheck.isSelected());
-
-            popAnchorMenuCheck.setSelected(UserConfig.getBoolean("ImageShapeAnchorPopMenu", true));
-            popAnchorMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageShapeAnchorPopMenu", popAnchorMenuCheck.isSelected());
-                    if (imageController != null) {
-                        imageController.popAnchorMenu = popAnchorMenuCheck.isSelected();
-                    }
-                }
-            });
-
-            addPointCheck.setSelected(UserConfig.getBoolean("ImageShapeAddPointWhenLeftClick", true));
-            addPointCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
-                    if (imageController != null) {
-                        imageController.addPointWhenClick = addPointCheck.isSelected();
-                    }
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -441,10 +405,7 @@ public abstract class ControlShapeOptions extends BaseController {
         if (imageController == null) {
             return;
         }
-        imageController.showAnchors = anchorCheck.isSelected();
-        imageController.popAnchorMenu = popAnchorMenuCheck.isSelected();
-        imageController.addPointWhenClick = addPointCheck.isSelected();
-        imageController.popShapeMenu = true;
+        imageController.resetShapeOptions();
         imageController.supportPath = true;
         imageController.shapeStyle = style;
     }
@@ -530,25 +491,22 @@ public abstract class ControlShapeOptions extends BaseController {
             }
             switch (shapeType) {
                 case Polylines:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorMenuCheck);
-                    NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastLine") + "\nESC / CTRL+w / ALT+w"));
-                    NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopLineMenu")));
+                    opPane.getChildren().addAll(functionsButton, withdrawButton);
+                    NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastLine") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapePolylinesTips"));
                     }
                     break;
                 case Polyline:
                 case Polygon:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorMenuCheck, addPointCheck);
-                    NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nESC / CTRL+w / ALT+w"));
-                    NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
+                    opPane.getChildren().addAll(functionsButton, withdrawButton);
+                    NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }
                     break;
                 default:
-                    opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorMenuCheck);
-                    NodeStyleTools.setTooltip(popAnchorMenuCheck, new Tooltip(message("PopAnchorMenu")));
+                    opPane.getChildren().addAll(functionsButton);
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }
@@ -682,14 +640,14 @@ public abstract class ControlShapeOptions extends BaseController {
     }
 
     @FXML
-    public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("ShapeFunctionsMenuPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
+    public void popShapeMenu(Event event) {
+        if (UserConfig.getBoolean("ImageShapeMenuPopWhenMouseHovering", true)) {
+            showShapeMenu(event);
         }
     }
 
     @FXML
-    public void showFunctionsMenu(Event event) {
+    public void showShapeMenu(Event event) {
         try {
             DoubleShape shapeData = imageController.currentMaskShapeData();
             if (event == null || shapeData == null) {
@@ -698,11 +656,11 @@ public abstract class ControlShapeOptions extends BaseController {
             List<MenuItem> items = imageController.maskShapeMenu(event, shapeData, null);
 
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean("ShapeFunctionsMenuPopWhenMouseHovering", true));
+            popItem.setSelected(UserConfig.getBoolean("ImageShapeMenuPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent cevent) {
-                    UserConfig.setBoolean("ShapeFunctionsMenuPopWhenMouseHovering", popItem.isSelected());
+                    UserConfig.setBoolean("ImageShapeMenuPopWhenMouseHovering", popItem.isSelected());
                 }
             });
             items.add(popItem);

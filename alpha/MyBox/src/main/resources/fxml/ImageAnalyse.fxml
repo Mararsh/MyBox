@@ -159,7 +159,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
                                                             </children>
                                                         </FlowPane>
-                                          <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
+                                                        <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="20.0" layoutY="20.0" prefWrapLength="800.0" vgap="2.0">
                                                             <children>
                                                                 <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
@@ -205,15 +205,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>
-                                                  <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                                      <graphic>
-                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                              </image>
-                                                          </ImageView>
-                                                      </graphic>
-                                                  </CheckBox>
+                                                <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
                                                 <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -239,7 +239,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                                 <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                     <children>
-                                          <CheckBox fx:id="sortCheck" mnemonicParsing="false" selected="true" text="%Sort" />
+                                                        <CheckBox fx:id="sortCheck" mnemonicParsing="false" selected="true" text="%Sort" />
                                                         <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -399,46 +399,6 @@ License:    Apache License Version 2.0
                                                                                         <Cursor fx:constant="MOVE" />
                                                                                     </cursor>
                                                                                 </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerLeftCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerLeftCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="W_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerTopRight" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopRightReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="NE_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerTopCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="N_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerRightCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerRightCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="E_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerBottomRight" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomRightReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="SE_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerBottomCenter" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomCenterReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="N_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerBottomLeft" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerBottomLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="SW_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
-                                                                                <Rectangle fx:id="maskHandlerTopLeft" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#maskHandlerTopLeftReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                                    <cursor>
-                                                                                        <Cursor fx:constant="NW_RESIZE" />
-                                                                                    </cursor>
-                                                                                </Rectangle>
                                                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
                                                                             </children>
                                                                         </AnchorPane>
@@ -483,7 +443,7 @@ License:    Apache License Version 2.0
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
-                                                                                        <Image url="@../../../../../GitHub/MyBox/alpha/MyBox/src/main/resources/buttons/Red/iconSelectAll.png" />
+                                                                                        <Image url="@../buttons/Red/iconSelectAll.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>
@@ -492,7 +452,7 @@ License:    Apache License Version 2.0
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
-                                                                                        <Image url="@../../../../../GitHub/MyBox/alpha/MyBox/src/main/resources/buttons/Red/iconSelectNone.png" />
+                                                                                        <Image url="@../buttons/Red/iconSelectNone.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>

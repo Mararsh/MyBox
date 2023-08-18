@@ -7,8 +7,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -81,6 +85,10 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
     }
 
+    public boolean canAddPoint() {
+        return isMaskPolygonShown() || isMaskPolylineShown();
+    }
+
     protected List<MenuItem> maskShapeMenu(Event event, DoubleShape shapeData, DoublePoint p) {
         try {
             if (event == null || shapeData == null) {
@@ -99,6 +107,93 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
+
+            Menu anchorStyleMenu = new Menu(message("Anchor"), StyleTools.getIconImageView("iconAnchor.png"));
+            items.add(anchorStyleMenu);
+
+            CheckMenuItem anchorShowItem = new CheckMenuItem(message("ShowAnchors"), StyleTools.getIconImageView("iconAnchor.png"));
+            anchorShowItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeShowAnchor", true));
+            anchorShowItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    UserConfig.setBoolean(baseName + "ImageShapeShowAnchor", anchorShowItem.isSelected());
+                    showAnchors = anchorShowItem.isSelected();
+                    setMaskAnchorsStyle();
+                }
+            });
+            anchorStyleMenu.getItems().add(anchorShowItem);
+
+            CheckMenuItem anchorMenuItem = new CheckMenuItem(
+                    isMaskPolylinesShown() ? message("PopLineMenu") : message("PopAnchorMenu"),
+                    StyleTools.getIconImageView("iconMenu.png"));
+            anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true));
+            anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", anchorMenuItem.isSelected());
+                    popAnchorMenu = anchorMenuItem.isSelected();
+                }
+            });
+            anchorStyleMenu.getItems().add(anchorMenuItem);
+
+            anchorStyleMenu.getItems().add(new SeparatorMenuItem());
+
+            ToggleGroup anchorGroup = new ToggleGroup();
+            String current = UserConfig.getString(baseName + "ImageShapeAnchorShape", "Rectangle");
+
+            RadioMenuItem rectItem = new RadioMenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
+            rectItem.setSelected(!"Circle".equals(current) && !"Text".equals(current));
+            rectItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    UserConfig.setString(baseName + "ImageShapeAnchorShape", "Rectangle");
+                    anchorShape = AnchorShape.Rectangle;
+                    redrawMaskShape();
+                }
+            });
+            rectItem.setToggleGroup(anchorGroup);
+            anchorStyleMenu.getItems().add(rectItem);
+
+            RadioMenuItem circleItem = new RadioMenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
+            circleItem.setSelected("Circle".equals(current));
+            circleItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    UserConfig.setString(baseName + "ImageShapeAnchorShape", "Circle");
+                    anchorShape = AnchorShape.Circle;
+                    redrawMaskShape();
+                }
+            });
+            circleItem.setToggleGroup(anchorGroup);
+            anchorStyleMenu.getItems().add(circleItem);
+
+            RadioMenuItem numberItem = new RadioMenuItem(message("Name"), StyleTools.getIconImageView("iconNumber.png"));
+            numberItem.setSelected("Number".equals(current));
+            numberItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    UserConfig.setString(baseName + "ImageShapeAnchorShape", "Number");
+                    anchorShape = AnchorShape.Number;
+                    redrawMaskShape();
+                }
+            });
+            numberItem.setToggleGroup(anchorGroup);
+            anchorStyleMenu.getItems().add(numberItem);
+
+            items.add(new SeparatorMenuItem());
+
+            if (canAddPoint()) {
+                CheckMenuItem pointMenuItem = new CheckMenuItem(message("AddPointWhenLeftClick"), StyleTools.getIconImageView("iconAdd.png"));
+                pointMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true));
+                pointMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent cevent) {
+                        UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", pointMenuItem.isSelected());
+                        addPointWhenClick = pointMenuItem.isSelected();
+                    }
+                });
+                items.add(pointMenuItem);
+            }
 
             if (maskPolyline != null && maskPolyline.isVisible()) {
                 if (p != null) {
@@ -130,6 +225,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 items.add(new SeparatorMenuItem());
 
             } else if (maskPolygon != null && maskPolygon.isVisible()) {
+
+                items.add(new SeparatorMenuItem());
                 if (p != null) {
                     menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
                     menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -154,6 +251,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 items.add(menu);
 
                 items.add(new SeparatorMenuItem());
+
             }
 
             menu = new MenuItem(message("TranslateShape"), StyleTools.getIconImageView("iconMove.png"));
@@ -322,303 +420,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (DoubleShape.translateRel(shapeData, offsetX, offsetY)) {
             maskShapeDataChanged();
         }
-    }
-
-    @FXML
-    public void maskHandlerTopLeftReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerTopLeft == null || !maskHandlerTopLeft.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerTopLeft)) {
-            return;
-        }
-
-        double x = maskEventX(event);
-        double y = maskEventY(event);
-
-        if (maskLine != null && maskLine.isVisible()) {
-
-            maskLineData.setStartX(x);
-            maskLineData.setStartY(y);
-            maskShapeDataChanged();
-
-        } else if (maskRectangle != null && maskRectangle.isVisible()) {
-
-            if (x < maskRectangleData.getMaxX() && y < maskRectangleData.getMaxY()) {
-                if (x >= imageWidth() - 1) {
-                    x = imageWidth() - 2;
-                }
-                if (y >= imageHeight() - 1) {
-                    y = imageHeight() - 2;
-                }
-                maskRectangleData.changeX(x);
-                maskRectangleData.changeY(y);
-                maskShapeDataChanged();
-            }
-        }
-    }
-
-    @FXML
-    public void maskHandlerTopCenterReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerTopCenter == null || !maskHandlerTopCenter.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerTopCenter)) {
-            return;
-        }
-        if (maskRectangle != null && maskRectangle.isVisible()) {
-            double y = maskEventY(event);
-            if (y < maskRectangleData.getMaxY()) {
-                if (y >= imageHeight() - 1) {
-                    y = imageHeight() - 2;
-                }
-                maskRectangleData.changeY(y);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = maskHandlerBottomCenter.getY() - event.getY();
-            if (r > 0) {
-                maskCircleData.setRadius(r * imageYRatio() / 2);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double ry = maskHandlerBottomCenter.getY() - event.getY();
-            if (ry > 0) {
-                ry = ry * imageYRatio();
-                maskEllipseData.setHeight(ry);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskArc != null && maskArc.isVisible()) {
-            double ry = maskHandlerBottomCenter.getY() - event.getY();
-            if (ry > 0) {
-                ry = ry * imageYRatio() / 2;
-                maskArcData.setRadiusY(ry);
-                maskShapeDataChanged();
-            }
-        }
-
-    }
-
-    @FXML
-    public void maskHandlerTopRightReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerTopRight == null || !maskHandlerTopRight.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerTopRight)) {
-            return;
-        }
-
-        if (maskRectangle != null && maskRectangle.isVisible()) {
-            double x = maskEventX(event);
-            double y = maskEventY(event);
-
-            if (x > maskRectangleData.getX() && y < maskRectangleData.getMaxY()) {
-                if (x <= 0) {
-                    x = 1;
-                }
-                if (y >= imageHeight() - 1) {
-                    y = imageHeight() - 2;
-                }
-                maskRectangleData.setMaxX(x);
-                maskRectangleData.changeY(y);
-                maskShapeDataChanged();
-            }
-
-        }
-
-    }
-
-    @FXML
-    public void maskHandlerBottomLeftReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerBottomLeft == null || !maskHandlerBottomLeft.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerBottomLeft)) {
-            return;
-        }
-
-        if (maskRectangle != null && maskRectangle.isVisible()) {
-            double x = maskEventX(event);
-            double y = maskEventY(event);
-
-            if (x < maskRectangleData.getMaxX() && y > maskRectangleData.getY()) {
-                if (x >= imageWidth() - 1) {
-                    x = imageWidth() - 2;
-                }
-                if (y <= 0) {
-                    y = 1;
-                }
-                maskRectangleData.changeX(x);
-                maskRectangleData.setMaxY(y);
-                maskShapeDataChanged();
-            }
-
-        }
-
-    }
-
-    @FXML
-    public void maskHandlerBottomCenterReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerBottomCenter == null || !maskHandlerBottomCenter.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerBottomCenter)) {
-            return;
-        }
-
-        if (maskRectangle != null && maskRectangle.isVisible()) {
-            double y = maskEventY(event);
-            if (y > maskRectangleData.getY()) {
-                if (y <= 0) {
-                    y = 1;
-                }
-                maskRectangleData.setMaxY(y);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = event.getY() - maskHandlerTopCenter.getY();
-            if (r > 0) {
-                maskCircleData.setRadius(r * imageYRatio() / 2);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double ry = event.getY() - maskHandlerTopCenter.getY();
-            if (ry > 0) {
-                ry = ry * imageYRatio();
-                maskEllipseData.setHeight(ry);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskArc != null && maskArc.isVisible()) {
-            double ry = event.getY() - maskHandlerTopCenter.getY();
-            if (ry > 0) {
-                ry = ry * imageYRatio() / 2;
-                maskArcData.setRadiusY(ry);
-                maskShapeDataChanged();
-            }
-
-        }
-
-    }
-
-    @FXML
-    public void maskHandlerBottomRightReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerBottomRight == null || !maskHandlerBottomRight.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerBottomRight)) {
-            return;
-        }
-
-        double x = maskEventX(event);
-        double y = maskEventY(event);
-
-        if (maskLine != null && maskLine.isVisible()) {
-            maskLineData.setEndX(x);
-            maskLineData.setEndY(y);
-            maskShapeDataChanged();
-
-        } else if (x > maskRectangleData.getX() && y > maskRectangleData.getY()) {
-            if (x <= 0) {
-                x = 1;
-            }
-            if (y <= 0) {
-                y = 1;
-            }
-            maskRectangleData.setMaxX(x);
-            maskRectangleData.setMaxY(y);
-            maskShapeDataChanged();
-        }
-    }
-
-    @FXML
-    public void maskHandlerLeftCenterReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerLeftCenter == null || !maskHandlerLeftCenter.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerLeftCenter)) {
-            return;
-        }
-
-        if (maskRectangle != null && maskRectangle.isVisible()) {
-            double x = maskEventX(event);
-            if (x < maskRectangleData.getMaxX()) {
-                if (x >= imageWidth() - 1) {
-                    x = imageWidth() - 2;
-                }
-                maskRectangleData.changeX(x);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = maskHandlerRightCenter.getX() - event.getX();
-            if (r > 0) {
-                maskCircleData.setRadius(r * imageXRatio() / 2);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double rx = maskHandlerRightCenter.getX() - event.getX();
-            if (rx > 0) {
-                rx = rx * imageXRatio();
-                maskEllipseData.setWidth(rx);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskArc != null && maskArc.isVisible()) {
-            double rx = maskHandlerRightCenter.getX() - event.getX();
-            if (rx > 0) {
-                rx = rx * imageXRatio() / 2;
-                maskArcData.setRadiusX(rx);
-                maskShapeDataChanged();
-            }
-
-        }
-
-    }
-
-    @FXML
-    public void maskHandlerRightCenterReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (isPickingColor || maskHandlerRightCenter == null || !maskHandlerRightCenter.isVisible()
-                || !maskPane.getChildren().contains(maskHandlerRightCenter)) {
-            return;
-        }
-
-        if (maskRectangle != null && maskRectangle.isVisible()) {
-            double x = maskEventX(event);
-
-            if (x > maskRectangleData.getX()) {
-                if (x <= 0) {
-                    x = 1;
-                }
-                maskRectangleData.setMaxX(x);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskCircle != null && maskCircle.isVisible()) {
-            double r = event.getX() - maskHandlerLeftCenter.getX();
-            if (r > 0) {
-                maskCircleData.setRadius(r * imageXRatio() / 2);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskEllipse != null && maskEllipse.isVisible()) {
-            double rx = event.getX() - maskHandlerLeftCenter.getX();
-            if (rx > 0) {
-                rx = rx * imageXRatio();
-                maskEllipseData.setWidth(rx);
-                maskShapeDataChanged();
-            }
-
-        } else if (maskArc != null && maskArc.isVisible()) {
-            double rx = event.getX() - maskHandlerLeftCenter.getX();
-            if (rx > 0) {
-                rx = rx * imageXRatio() / 2;
-                maskArcData.setRadiusX(rx);
-                maskShapeDataChanged();
-            }
-
-        }
-
     }
 
     /*

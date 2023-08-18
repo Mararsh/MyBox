@@ -103,7 +103,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("PAGE_DOWN", "", message("Next"), "ALT+PAGE_DOWN", "iconNext.png"));
             tableData.add(new ShortCut("HOME", "", message("First"), "ALT+HOME", "iconFirst.png"));
             tableData.add(new ShortCut("END", "", message("Last"), "ALT+END", "iconLast.png"));
-            tableData.add(new ShortCut("ESCAPE", "", message("Cancel") + " / " + message("Withdraw"), "CTRL+w / ALT+w", "iconCancel.png"));
+            tableData.add(new ShortCut("ESCAPE", "", message("Cancel"), "", "iconCancel.png"));
 
             tableData.add(new ShortCut("CTRL", "e",
                     message("Start") + " /" + message("OK") + " / " + message("Set") + " / " + message("Export"),
@@ -125,7 +125,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "o", message("SelectNone"), "ALT+o", "iconSelectNone.png"));
             tableData.add(new ShortCut("CTRL", "u", message("Select"), "ALT+u", "iconSelect.png"));
             tableData.add(new ShortCut("CTRL", "l", message("Clear"), "ALT+l(" + message("LowercaseL") + ")", "iconClear.png"));
-            tableData.add(new ShortCut("CTRL", "w", message("Cancel") + " / " + message("Withdraw") + " / " + message("ReplaceAll"), "ESCAPE", "iconCancel.png"));
+            tableData.add(new ShortCut("CTRL", "w", message("Withdraw"), "ALT+w", "iconWithdraw.png"));
             tableData.add(new ShortCut("CTRL", "p", message("Pop"), "ALT+p", "iconPop.png"));
             tableData.add(new ShortCut("CTRL", "q", message("Query"), "ALT+q", "iconQuery.png"));
             tableData.add(new ShortCut("CTRL", "k", message("PickColor"), "ALT+k", "iconPickColor.png"));

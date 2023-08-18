@@ -678,10 +678,13 @@ public class StyleButton {
         if (id.startsWith("translate")) {
             return new StyleData(id, "", message("TranslateShape"), "", "iconMove.png");
         }
+        if (id.startsWith("anchor")) {
+            return new StyleData(id, "", message("Anchor"), "", "iconAnchor.png");
+        }
         if (id.startsWith("withdraw")) {
             switch (id) {
                 case "withdrawButton":
-                    return new StyleData(id, message("Withdraw"), "ESC / CTRL+w / ALT+w", "iconWithdraw.png");
+                    return new StyleData(id, message("Withdraw"), "CTRL+w / ALT+w", "iconWithdraw.png");
                 default:
                     return new StyleData(id, message("Withdraw"), "", "iconWithdraw.png");
             }

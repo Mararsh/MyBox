@@ -20,29 +20,29 @@ License:    Apache License Version 2.0
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" minHeight="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShapeTranslateInputController">
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%TranslateShape" textAlignment="CENTER" />
-      <Label fx:id="infoLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../../../../../Mybox归档/2023-07-23-v6.7.5/MyBox-src/MyBox/src/main/resources/styles/MyBox.css" text="shape" wrapText="true" />
-      <VBox layoutX="20.0" layoutY="71.0" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <Label text="%SourceLocation" />
-            <HBox alignment="CENTER_LEFT" spacing="5.0">
-               <children>
-                  <Label text="%Shape" />
-                  <RadioButton fx:id="centerRadio" mnemonicParsing="false" selected="true" text="%Center">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="source" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="leftTopRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="%LeftTop" toggleGroup="$source" />
-                  <RadioButton fx:id="rightBottomRadio" layoutX="137.0" layoutY="10.0" mnemonicParsing="false" text="%RightBottom" toggleGroup="$source" />
-                  <RadioButton fx:id="leftBottomRadio" layoutX="235.0" layoutY="10.0" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$source" />
-                  <RadioButton fx:id="rightTopRadio" layoutX="334.0" layoutY="10.0" mnemonicParsing="false" text="%RightTop" toggleGroup="$source" />
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-      <VBox spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-                  <Label text="%TargetLocation" />
+        <Label fx:id="infoLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="shape" wrapText="true" />
+        <VBox layoutX="20.0" layoutY="71.0" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+            <children>
+                <Label text="%SourceLocation" />
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label text="%Shape" />
+                        <RadioButton fx:id="centerRadio" mnemonicParsing="false" selected="true" text="%Center">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="source" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="leftTopRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="%LeftTop" toggleGroup="$source" />
+                        <RadioButton fx:id="rightBottomRadio" layoutX="137.0" layoutY="10.0" mnemonicParsing="false" text="%RightBottom" toggleGroup="$source" />
+                        <RadioButton fx:id="leftBottomRadio" layoutX="235.0" layoutY="10.0" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$source" />
+                        <RadioButton fx:id="rightTopRadio" layoutX="334.0" layoutY="10.0" mnemonicParsing="false" text="%RightTop" toggleGroup="$source" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+        <VBox spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+            <children>
+                <Label text="%TargetLocation" />
                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                     <children>
                         <Label text="%Image" />
@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                         <Button mnemonicParsing="false" onAction="#imageRightBottom" text="%RightBottom" />
                         <Button mnemonicParsing="false" onAction="#imageLeftBottom" text="%LeftBottom" />
                         <Button mnemonicParsing="false" onAction="#imageRightTop" text="%RightTop" />
-                  <Button fx:id="pointButton" layoutX="254.0" layoutY="10.0" mnemonicParsing="false" onAction="#point" text="%Point" />
+                        <Button fx:id="pointButton" layoutX="254.0" layoutY="10.0" mnemonicParsing="false" onAction="#point" text="%Point" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -72,8 +72,8 @@ License:    Apache License Version 2.0
                         <TextField fx:id="yInput" prefWidth="100.0" />
                     </children>
                 </HBox>
-         </children>
-      </VBox>
+            </children>
+        </VBox>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

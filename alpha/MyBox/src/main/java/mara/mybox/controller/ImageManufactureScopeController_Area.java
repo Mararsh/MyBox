@@ -1,6 +1,12 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
@@ -10,8 +16,11 @@ import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -183,6 +192,38 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 indicateScope();
             }
 
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void popShapeMenu(Event event) {
+        if (UserConfig.getBoolean("ScopeShapeMenuPopWhenMouseHovering", true)) {
+            showShapeMenu(event);
+        }
+    }
+
+    @FXML
+    public void showShapeMenu(Event event) {
+        try {
+            DoubleShape shapeData = currentMaskShapeData();
+            if (event == null || shapeData == null) {
+                return;
+            }
+            List<MenuItem> items = maskShapeMenu(event, shapeData, null);
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("ScopeShapeMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    UserConfig.setBoolean("ScopeShapeMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

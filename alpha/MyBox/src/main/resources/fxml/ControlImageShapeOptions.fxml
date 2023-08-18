@@ -159,61 +159,34 @@
                 </HBox>
             </children>
         </VBox>
-      <FlowPane fx:id="opPane" hgap="5.0" layoutX="10.0" layoutY="10.0" prefWrapLength="0.0" vgap="5.0">
-         <children>
-            <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconFunction.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../../Mybox归档/2023-07-23-v6.7.5/MyBox-src/MyBox/src/main/resources/buttons/Red/iconWithdraw.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-                <CheckBox fx:id="anchorCheck" mnemonicParsing="false" selected="true">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconAnchor.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-                <CheckBox fx:id="popAnchorMenuCheck" mnemonicParsing="false" selected="true">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconPop.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-            <CheckBox fx:id="addPointCheck" layoutX="133.0" layoutY="14.0" mnemonicParsing="false" selected="true">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconAdd.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-         </children>
-      </FlowPane>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
                 <Tab fx:id="shapeTab" text="%Shape">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                             <children>
+                          <FlowPane fx:id="opPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                              <children>
+                                  <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showShapeMenu" onMouseEntered="#popShapeMenu">
+                                      <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                              <image>
+                                                  <Image url="@../buttons/Red/iconFunction.png" />
+                                              </image>
+                                          </ImageView>
+                                      </graphic>
+                                  </Button>
+                                  <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
+                                      <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                              <image>
+                                                  <Image url="@../buttons/Red/iconWithdraw.png" />
+                                              </image>
+                                          </ImageView>
+                                      </graphic>
+                                  </Button>
+                              </children>
+                          </FlowPane>
                                 <fx:include fx:id="parameters" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlShapeParameters.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>

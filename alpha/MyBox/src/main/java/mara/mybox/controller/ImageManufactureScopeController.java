@@ -123,7 +123,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                             ValidationTools.setEditorNormal(opacitySelector);
                             UserConfig.setFloat(baseName + "ScopeOpacity", f);
                             scope.setOpacity(opacity);
-                            redrawMaskShapes();
+                            redrawMaskShape();
                         } else {
                             ValidationTools.setEditorBadStyle(opacitySelector);
                         }
@@ -140,38 +140,6 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
     public void initSetBox() {
         try {
-            showAnchors = UserConfig.getBoolean("ImageScopeShowAnchor", true);
-            anchorCheck.setSelected(showAnchors);
-            anchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageScopeShowAnchor", anchorCheck.isSelected());
-                    popAnchorMenuCheck.setDisable(!anchorCheck.isSelected());
-                    showAnchors = anchorCheck.isSelected();
-                    setMaskAnchorsStyle();
-                }
-            });
-
-            popAnchorMenuCheck.setDisable(!anchorCheck.isSelected());
-            popAnchorMenu = UserConfig.getBoolean("ImageScopeAnchorPopMenu", true);
-            popAnchorMenuCheck.setSelected(popAnchorMenu);
-            popAnchorMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageScopeAnchorPopMenu", popAnchorMenuCheck.isSelected());
-                    popAnchorMenu = popAnchorMenuCheck.isSelected();
-                }
-            });
-
-            addPointWhenClick = UserConfig.getBoolean("ImageScopeAddPointWhenLeftClick", true);
-            addPointCheck.setSelected(addPointWhenClick);
-            addPointCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean("ImageScopeAddPointWhenLeftClick", addPointCheck.isSelected());
-                    addPointWhenClick = addPointCheck.isSelected();
-                }
-            });
 
             areaExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -387,13 +355,13 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         if (task != null) {
             task.cancel();
         }
-        redrawMaskShapes();
+        redrawMaskShape();
     }
 
     @Override
-    public boolean redrawMaskShapes() {
+    public boolean redrawMaskShape() {
         if (scope == null) {
-            super.redrawMaskShapes();
+            super.redrawMaskShape();
             return true;
         }
         if (scope.getScopeType() == ScopeType.Outline) {
