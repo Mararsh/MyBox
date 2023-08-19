@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -19,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
+import static mara.mybox.data.DoubleShape.getBound;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.PopTools;
@@ -97,11 +99,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 info += (info.isBlank() ? "" : "\n")
                         + message("Point") + ": " + scale(p.getX()) + ", " + scale(p.getY());
             }
-            menu = new MenuItem(info);
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
+            if (!info.isBlank()) {
+                menu = new MenuItem(info);
+                menu.setStyle("-fx-text-fill: #2e598a;");
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            }
 
             Menu anchorStyleMenu = new Menu(message("Anchor"), StyleTools.getIconImageView("iconAnchor.png"));
             items.add(anchorStyleMenu);
@@ -174,6 +177,18 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             });
             numberItem.setToggleGroup(anchorGroup);
             anchorStyleMenu.getItems().add(numberItem);
+
+            if (shapeStyle == null) {
+                anchorStyleMenu.getItems().add(new SeparatorMenuItem());
+                menu = new MenuItem(message("Color") + "...", StyleTools.getIconImageView("iconColor.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent mevent) {
+                        settings();
+                    }
+                });
+                anchorStyleMenu.getItems().add(menu);
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -350,23 +365,158 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
-        menu = new MenuItem(message("TranslateShape"), StyleTools.getIconImageView("iconMove.png"));
+        Menu translateMenu = new Menu(message("TranslateShape"), StyleTools.getIconImageView("iconMove.png"));
+        items.add(translateMenu);
+
+        menu = new MenuItem(message("ImageCenter"), StyleTools.getIconImageView("iconMove.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                DoublePoint center = DoubleShape.getCenter(shapeData);
+                double offsetX = imageView.getImage().getWidth() * 0.5 - center.getX();
+                double offsetY = imageView.getImage().getHeight() * 0.5 - center.getY();
+                shapeData.translateRel(offsetX, offsetY);
+                maskShapeDataChanged();
+            }
+        });
+        translateMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("LeftTop"), StyleTools.getIconImageView("iconMove.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                double offsetX = -bound.getMinX();
+                double offsetY = -bound.getMinY();
+                shapeData.translateRel(offsetX, offsetY);
+                maskShapeDataChanged();
+            }
+        });
+        translateMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("RightBottom"), StyleTools.getIconImageView("iconMove.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                double offsetX = imageView.getImage().getWidth() - bound.getMaxX();
+                double offsetY = imageView.getImage().getHeight() - bound.getMaxY();
+                shapeData.translateRel(offsetX, offsetY);
+                maskShapeDataChanged();
+            }
+        });
+        translateMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("LeftBottom"), StyleTools.getIconImageView("iconMove.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                double offsetX = -bound.getMinX();
+                double offsetY = imageView.getImage().getHeight() - bound.getMaxY();
+                shapeData.translateRel(offsetX, offsetY);
+                maskShapeDataChanged();
+            }
+        });
+        translateMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("RightTop"), StyleTools.getIconImageView("iconMove.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                double offsetX = imageView.getImage().getWidth() - bound.getMaxX();
+                double offsetY = -bound.getMinY();
+                shapeData.translateRel(offsetX, offsetY);
+                maskShapeDataChanged();
+            }
+        });
+        translateMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("Set") + "...", StyleTools.getIconImageView("iconMove.png"));
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent mevent) {
                 ShapeTranslateInputController.open((BaseImageController) myController, shapeData, p);
             }
         });
-        items.add(menu);
+        translateMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("ScaleShape"), StyleTools.getIconImageView("iconExpand.png"));
+        Menu scaleMenu = new Menu(message("ScaleShape"), StyleTools.getIconImageView("iconExpand.png"));
+        items.add(scaleMenu);
+
+        menu = new MenuItem(message("ImageSize"), StyleTools.getIconImageView("iconExpand.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                if (DoubleShape.scale(shapeData,
+                        imageView.getImage().getWidth() / bound.getWidth(),
+                        imageView.getImage().getHeight() / bound.getHeight())) {
+                    maskShapeDataChanged();
+                }
+            }
+        });
+        scaleMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("ImageWidth"), StyleTools.getIconImageView("iconExpand.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                if (DoubleShape.scale(shapeData, imageView.getImage().getWidth() / bound.getWidth(), 1)) {
+                    maskShapeDataChanged();
+                }
+            }
+        });
+        scaleMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("ImageWidth") + " - " + message("KeepRatio"), StyleTools.getIconImageView("iconExpand.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                double ratio = imageView.getImage().getWidth() / bound.getWidth();
+                if (DoubleShape.scale(shapeData, ratio, ratio)) {
+                    maskShapeDataChanged();
+                }
+            }
+        });
+        scaleMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("ImageHeight"), StyleTools.getIconImageView("iconExpand.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                if (DoubleShape.scale(shapeData, 1, imageView.getImage().getHeight() / bound.getHeight())) {
+                    maskShapeDataChanged();
+                }
+            }
+        });
+        scaleMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("ImageHeight") + " - " + message("KeepRatio"), StyleTools.getIconImageView("iconExpand.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                Rectangle2D bound = getBound(shapeData);
+                double ratio = imageView.getImage().getHeight() / bound.getHeight();
+                if (DoubleShape.scale(shapeData, ratio, ratio)) {
+                    maskShapeDataChanged();
+                }
+            }
+        });
+        scaleMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("Set") + "...", StyleTools.getIconImageView("iconExpand.png"));
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent mevent) {
                 ShapeScaleInputController.open((BaseImageController) myController, shapeData);
             }
         });
-        items.add(menu);
+        scaleMenu.getItems().add(menu);
 
         if (supportPath) {
             menu = new MenuItem(message("RotateShape"), StyleTools.getIconImageView("iconRotateRight.png"));
@@ -609,6 +759,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
         }
         return color;
+    }
+
+    @FXML
+    public void settings() {
+        SettingsController controller = SettingsController.oneOpen(this);
+        controller.tabPane.getSelectionModel().select(controller.imageTab);
     }
 
 }

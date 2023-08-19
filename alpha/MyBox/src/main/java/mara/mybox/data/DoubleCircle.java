@@ -62,7 +62,7 @@ public class DoubleCircle implements DoubleShape {
 
     @Override
     public boolean scale(double scaleX, double scaleY) {
-        radius *= scaleX;
+        radius *= Math.min(scaleX, scaleY);
         return true;
     }
 

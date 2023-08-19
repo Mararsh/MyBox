@@ -75,7 +75,13 @@ public interface DoubleShape {
             if (shapeData == null) {
                 return true;
             }
-            return shapeData.scale(scaleX, scaleY);
+            DoublePoint c = getCenter(shapeData);
+            if (shapeData.scale(scaleX, scaleY)) {
+                DoubleShape.translateCenterAbs(shapeData, c.getX(), c.getY());
+                return true;
+            } else {
+                return false;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

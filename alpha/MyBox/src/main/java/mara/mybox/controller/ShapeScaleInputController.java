@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -70,10 +69,7 @@ public class ShapeScaleInputController extends BaseShapeTransformController {
     @FXML
     @Override
     public void okAction() {
-        DoublePoint c = DoubleShape.getCenter(shapeData);
         shapeData.scale(xRatio, yRatio);
-        DoubleShape.translateCenterAbs(shapeData, c.getX(), c.getY());
-        imageController.drawMaskShape();
         imageController.maskShapeDataChanged();
         close();
     }

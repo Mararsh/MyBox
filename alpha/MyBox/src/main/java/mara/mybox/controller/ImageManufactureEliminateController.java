@@ -177,7 +177,7 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
             editor.showAnchors = true;
             editor.popAnchorMenu = true;
             editor.addPointWhenClick = false;
-            editor.popShapeMenu = true;
+            editor.popShapeMenu = false;
             editor.supportPath = false;
 
             maskView.setImage(imageView.getImage());

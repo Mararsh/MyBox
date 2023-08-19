@@ -65,7 +65,6 @@ public class ShapeTranslateInputController extends BaseShapeTransformController 
             return;
         }
         shapeData.translateRel(offsetX, offsetY);
-        imageController.drawMaskShape();
         imageController.maskShapeDataChanged();
         close();
     }
