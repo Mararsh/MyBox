@@ -156,7 +156,6 @@ public class ControlImagesBlend extends BaseController {
         this.backImage = backImage;
         this.x = x;
         this.y = y;
-        demoButton.setVisible(false);
         if (task != null) {
             task.cancel();
         }
@@ -218,7 +217,6 @@ public class ControlImagesBlend extends BaseController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                demoButton.setVisible(true);
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b
                             = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);

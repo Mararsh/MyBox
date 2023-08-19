@@ -8,6 +8,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.dev.MyBoxLog;
@@ -146,9 +147,9 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                 scope = new ImageScope();
             }
             scope.setOpacity(opacity);
-            outlineSource = null;
             resetShapeOptions();
 
+            opPane.getChildren().clear();
             scopeDistanceSelector.getItems().clear();
             scopeDistanceSelector.getEditor().setStyle(null);
             areaExcludedCheck.setSelected(false);
@@ -280,6 +281,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
         try {
             setBox.setVisible(!scopeWhole());
             tabPane.getTabs().clear();
+            opPane.getChildren().clear();
             areaBox.getChildren().clear();
             scopeTips.setText("");
             if (image == null || scope == null) {
@@ -295,18 +297,18 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeMattingTips");
                     tabPane.getTabs().addAll(areaTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
+                    opPane.getChildren().addAll(functionsButton, withdrawPointButton, anchorCheck, addPointCheck);
                     areaBox.getChildren().add(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
-                    withdrawPointButton.setVisible(true);
                     break;
 
                 case Rectangle:
                     tips = message("ScopeShapeTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    withdrawPointButton.setVisible(false);
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskRectangleData.getMaxX(), 2) + "");
@@ -318,8 +320,8 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeShapeTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck);
                     areaBox.getChildren().addAll(circleBox, goScopeButton);
-                    withdrawPointButton.setVisible(false);
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
                     circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
@@ -330,7 +332,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    withdrawPointButton.setVisible(false);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck);
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
@@ -342,10 +344,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeShapeTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
+                    opPane.getChildren().addAll(functionsButton, withdrawPointButton, anchorCheck, addPointCheck);
                     areaBox.getChildren().addAll(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
-                    withdrawPointButton.setVisible(true);
                     break;
 
                 case Color:
@@ -361,6 +363,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     if (outlinesList.getItems().isEmpty()) {
                         initPixTab();
                     }
+                    opPane.getChildren().addAll(functionsButton, anchorCheck);
                     break;
 
             }

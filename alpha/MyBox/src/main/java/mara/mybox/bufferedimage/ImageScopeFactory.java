@@ -1088,10 +1088,8 @@ public class ImageScopeFactory {
 
         @Override
         protected boolean inScope(int x, int y, Color color) {
-            if (outline == null) {
-                return false;
-            }
-            return outline.getRGB(x, y) == 0;
+            boolean in = outline != null && outline.getRGB(x, y) > 0;
+            return areaExcluded ? !in : in;
         }
     }
 

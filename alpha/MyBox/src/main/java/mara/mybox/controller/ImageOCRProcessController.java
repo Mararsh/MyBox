@@ -6,10 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -406,13 +404,14 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (imageView.getImage() == null) {
             return;
         }
-        popInformation(message("WaitAndHandling"), 6000);
-        demoButton.setDisable(true);
-        Task demoTask = new Task<Void>() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
             private List<String> files;
 
             @Override
-            protected Void call() {
+            protected boolean handle() {
 
                 try {
                     files = new ArrayList<>();
@@ -427,6 +426,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                             + "-" + message("EightNeighborLaplaceInvert"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
@@ -437,6 +437,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                             + "-" + message("EightNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     ImageContrast imageContrast = new ImageContrast(image,
@@ -445,6 +446,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("HSBHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     imageContrast = new ImageContrast(image,
@@ -453,6 +455,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     imageContrast = new ImageContrast(image,
@@ -463,6 +466,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramStretching"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     imageContrast = new ImageContrast(image,
@@ -472,6 +476,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramShifting"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeUnsharpMasking(3);
@@ -481,6 +486,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("UnsharpMasking"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
@@ -491,6 +497,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                             + "-" + message("FourNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
@@ -501,6 +508,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                             + "-" + message("EightNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeGaussBlur(3);
@@ -510,6 +518,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("GaussianBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeAverageBlur(2);
@@ -519,6 +528,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("AverageBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
@@ -527,38 +537,32 @@ public class ImageOCRProcessController extends ImageViewerController {
                     tmpFile = FileTmpTools.generateFile(message("Invert"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
+                    return !files.isEmpty();
                 } catch (Exception e) {
-
+                    error = e.toString();
+                    return false;
                 }
-                return null;
             }
 
             @Override
-            protected void succeeded() {
-                super.succeeded();
-                demoButton.setDisable(false);
-                if (files.isEmpty()) {
-                    return;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ImagesBrowserController controller
-                                    = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                            controller.loadFiles(files);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e);
-                        }
-                    }
-                });
+            protected void whenSucceeded() {
+            }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (files != null && !files.isEmpty()) {
+                    ImagesBrowserController b
+                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                    b.loadFiles(files);
+                }
             }
 
         };
-        start(demoTask, false);
+        start(task);
     }
 
     @FXML

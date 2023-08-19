@@ -11,10 +11,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
@@ -110,15 +112,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     protected QuadCurve maskQuadratic;
     @FXML
     protected SVGPath maskSVGPath;
+    @FXML
+    protected CheckBox fillCheck, dashCheck, anchorCheck, addPointCheck;
+    @FXML
+    protected FlowPane opPane;
 
     public void initMaskPane() {
-        if (maskPane == null) {
-            return;
-        }
         try {
-
             resetShapeOptions();
 
+            if (maskPane == null) {
+                return;
+            }
             maskPane.prefWidthProperty().bind(imageView.fitWidthProperty());
             maskPane.prefHeightProperty().bind(imageView.fitHeightProperty());
 
@@ -167,6 +172,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 });
             }
 
+            initMaskControls();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -187,6 +194,37 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         popShapeMenu = true;
         supportPath = false;
         maskControlDragged = false;
+    }
+
+    public void initMaskControls() {
+        try {
+            if (anchorCheck != null) {
+                anchorCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeShowAnchor", true));
+                anchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                        UserConfig.setBoolean(baseName + "ImageShapeShowAnchor", anchorCheck.isSelected());
+                        showAnchors = anchorCheck.isSelected();
+                        setMaskAnchorsStyle();
+                    }
+                });
+            }
+
+            if (addPointCheck != null) {
+                addPointCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true));
+                addPointCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                        UserConfig.setBoolean("ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
+                        addPointWhenClick = addPointCheck.isSelected();
+                    }
+                });
+
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*
@@ -1016,6 +1054,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         }
     }
 
+    public boolean canDeleteAnchor() {
+        return isMaskPolylineShown() || isMaskPolygonShown();
+    }
+
     protected List<MenuItem> maskAnchorMenu(int index, String name, String title, DoublePoint p) {
         try {
             List<MenuItem> items = new ArrayList<>();
@@ -1026,7 +1068,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             items.add(menu);
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+            menu = new MenuItem(message("EditAnchor"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 PointInputController inputController = PointInputController.open(this, title, p);
                 inputController.getNotify().addListener(new ChangeListener<Boolean>() {
@@ -1039,8 +1081,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             });
             items.add(menu);
 
-            if (isMaskPolylineShown() || isMaskPolygonShown()) {
-                menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+            if (canDeleteAnchor()) {
+                menu = new MenuItem(message("DeleteAnchor"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteMaskAnchor(index, name);
                 });

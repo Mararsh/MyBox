@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -7,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
@@ -16,7 +18,6 @@ import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
@@ -198,45 +199,94 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @FXML
-    public void popShapeMenu(Event event) {
-        if (UserConfig.getBoolean("ScopeShapeMenuPopWhenMouseHovering", true)) {
-            showShapeMenu(event);
-        }
-    }
-
-    @FXML
-    public void showShapeMenu(Event event) {
-        try {
-            DoubleShape shapeData = currentMaskShapeData();
-            if (event == null || shapeData == null) {
-                return;
-            }
-            List<MenuItem> items = maskShapeMenu(event, shapeData, null);
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean("ScopeShapeMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    UserConfig.setBoolean("ScopeShapeMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            popEventMenu(event, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
     @Override
     public void withdrawAction() {
         if (!isValidScope() || isSettingValues
                 || scope.getScopeType() != ScopeType.Polygon) {
             return;
         }
-        pointsController.removeLastItem();
+        if (scope.getScopeType() == ScopeType.Polygon || scope.getScopeType() == ScopeType.Matting) {
+            pointsController.removeLastItem();
+        }
+
+    }
+
+    @Override
+    protected List<MenuItem> shapePointMenu(Event event, DoublePoint p) {
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+
+        if (!canDeleteAnchor()) {
+            return null;
+        }
+
+        CheckMenuItem pointMenuItem = new CheckMenuItem(message("AddPointWhenLeftClick"), StyleTools.getIconImageView("iconNewItem.png"));
+        pointMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true));
+        pointMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", pointMenuItem.isSelected());
+                addPointWhenClick = pointMenuItem.isSelected();
+            }
+        });
+        items.add(pointMenuItem);
+
+        if (p != null) {
+            menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    pointsController.addPoint(p);
+                }
+            });
+            items.add(menu);
+        }
+
+        menu = new MenuItem(message("RemoveLastPoint"), StyleTools.getIconImageView("iconDelete.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                pointsController.removeLastItem();
+            }
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                pointsController.clear();
+            }
+        });
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+        return items;
+
+    }
+
+    @Override
+    public boolean canDeleteAnchor() {
+        ScopeType type = scope.getScopeType();
+        return type == ScopeType.Polygon || type == ScopeType.Matting;
+    }
+
+    @Override
+    public void moveMaskAnchor(int index, String name, DoublePoint p) {
+        ScopeType type = scope.getScopeType();
+        if (type == ScopeType.Polygon || type == ScopeType.Matting) {
+            pointsController.setPoint(index, p.getX(), p.getY());
+        } else {
+            super.moveMaskAnchor(index, name, p);
+        }
+    }
+
+    @Override
+    public void deleteMaskAnchor(int index, String name) {
+        ScopeType type = scope.getScopeType();
+        if (type == ScopeType.Polygon || type == ScopeType.Matting) {
+            pointsController.deletePoint(index);
+        }
     }
 
 }

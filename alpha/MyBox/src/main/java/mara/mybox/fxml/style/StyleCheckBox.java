@@ -106,7 +106,7 @@ public class StyleCheckBox {
             return new StyleData(id, "", message("ShowAnchors"), "", "iconAnchor.png");
         }
         if (id.startsWith("addPoint")) {
-            return new StyleData(id, "", message("AddPointWhenLeftClick"), "", "iconAdd.png");
+            return new StyleData(id, "", message("AddPointWhenLeftClick"), "", "iconNewItem.png");
         }
         switch (id) {
             case "tableThumbCheck":

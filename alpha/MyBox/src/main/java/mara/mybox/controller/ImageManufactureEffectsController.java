@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -258,14 +256,14 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         if (imageView.getImage() == null) {
             return;
         }
-        editor.popInformation(message("WaitAndHandling"));
-        demoButton.setDisable(true);
-        Task demoTask = new Task<Void>() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
             private List<String> files;
 
             @Override
-            protected Void call() {
-
+            protected boolean handle() {
                 try {
                     files = new ArrayList<>();
                     BufferedImage image = SwingFXUtils.fromFXImage(imageView.getImage(), null);
@@ -285,9 +283,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         scope.setFile(sourceFile.getAbsolutePath());
                     }
                     scope.setRectangle(DoubleRectangle.image(image));
-                    BufferedImage[] outline = AlphaTools.outline(outlineSource,
-                            scope.getRectangle(), image.getWidth(), image.getHeight(),
-                            false, ColorConvertTools.converColor(Color.WHITE), false);
+                    BufferedImage[] outline = AlphaTools.outline(image, outlineSource, scope.getRectangle());
                     scope.setOutlineSource(outlineSource);
                     scope.setOutline(outline[1]);
 
@@ -297,6 +293,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("Posterizing"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     pixelsOperation = PixelsOperationFactory.create(
@@ -309,6 +306,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("Thresholding"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     ImageGray imageGray = new ImageGray(image, scope);
@@ -316,6 +314,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("Gray"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     pixelsOperation = PixelsOperationFactory.create(
@@ -325,6 +324,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("Sepia"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     ImageBinary imageBinary = new ImageBinary(imageView.getImage(), scope, -1);
@@ -333,6 +333,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("BlackOrWhite"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
@@ -342,6 +343,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("EdgeDetection"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeEmbossKernel(Direction.Top, 3, true);
@@ -351,6 +353,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("Emboss"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     ImageMosaic mosaic = ImageMosaic.create(
@@ -359,6 +362,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("Mosaic"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     mosaic = ImageMosaic.create(image, scope,
@@ -367,38 +371,32 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     tmpFile = FileTmpTools.generateFile(message("FrostedGlass"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
+                    return !files.isEmpty();
                 } catch (Exception e) {
-
+                    error = e.toString();
+                    return false;
                 }
-                return null;
             }
 
             @Override
-            protected void succeeded() {
-                super.succeeded();
-                demoButton.setDisable(false);
-                if (files.isEmpty()) {
-                    return;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ImagesBrowserController controller
-                                    = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                            controller.loadFiles(files);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e);
-                        }
-                    }
-                });
+            protected void whenSucceeded() {
+            }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (files != null && !files.isEmpty()) {
+                    ImagesBrowserController b
+                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                    b.loadFiles(files);
+                }
             }
 
         };
-        start(demoTask, false);
+        start(task);
     }
 
     public void addColors() {

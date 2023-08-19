@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
@@ -279,21 +280,25 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         }
 
         if (event.getClickCount() == 1) {
-
-            if (scope.getScopeType() == ScopeType.Matting) {
+            if (event.getButton() == MouseButton.PRIMARY) {
                 if (addPointWhenClick) {
-                    int x = (int) Math.round(p.getX());
-                    int y = (int) Math.round(p.getY());
-                    isSettingValues = true;
-                    pointsController.addPoint(x, y);
-                    isSettingValues = false;
-                    scope.addPoint(x, y);
-                    indicateScope();
+                    if (scope.getScopeType() == ScopeType.Matting) {
+                        int x = (int) Math.round(p.getX());
+                        int y = (int) Math.round(p.getY());
+                        isSettingValues = true;
+                        pointsController.addPoint(x, y);
+                        isSettingValues = false;
+                        scope.addPoint(x, y);
+                        indicateScope();
+
+                    } else if (scope.getScopeType() == ScopeType.Polygon) {
+                        maskPolygonData.add(p.getX(), p.getY());
+                        maskShapeDataChanged();
+                    }
                 }
 
-            } else {
-                super.imageSingleClicked(event, p);
-
+            } else if (event.getButton() == MouseButton.SECONDARY) {
+                popEventMenu(event, maskShapeMenu(event, currentMaskShapeData(), p));
             }
 
         }
@@ -316,38 +321,6 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     public void mouseReleased(MouseEvent event) {
     }
 
-    @Override
-    public void moveMaskAnchor(int index, String name, DoublePoint newValue) {
-        if (scope.getScopeType() == ScopeType.Matting) {
-            int x = (int) Math.round(newValue.getX());
-            int y = (int) Math.round(newValue.getY());
-            scope.setPoint(index, x, y);
-            isSettingValues = true;
-            pointsController.setPoint(index, x, y);
-            isSettingValues = false;
-            indicateScope();
-
-        } else if (scope.getScopeType() == ScopeType.Polygon) {
-            maskPolygonData.set(index, newValue);
-            maskShapeDataChanged();
-        }
-    }
-
-    @Override
-    public void deleteMaskAnchor(int index, String name) {
-        if (scope.getScopeType() == ScopeType.Matting) {
-            scope.deletePoint(index);
-            isSettingValues = true;
-            pointsController.deletePoint(index);
-            isSettingValues = false;
-            indicateScope();
-
-        } else if (scope.getScopeType() == ScopeType.Polygon) {
-            maskPolygonData.remove(index);
-            maskShapeDataChanged();
-        }
-    }
-
     @FXML
     @Override
     public void refreshAction() {
@@ -361,7 +334,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     @Override
     public boolean redrawMaskShape() {
         if (scope == null) {
-            super.redrawMaskShape();
+            clearMaskShapes();
             return true;
         }
         if (scope.getScopeType() == ScopeType.Outline) {

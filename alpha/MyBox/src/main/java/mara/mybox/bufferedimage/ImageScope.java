@@ -629,8 +629,9 @@ public class ImageScope extends BaseData {
         return rectangle;
     }
 
-    public void setRectangle(DoubleRectangle rectangle) {
+    public ImageScope setRectangle(DoubleRectangle rectangle) {
         this.rectangle = rectangle;
+        return this;
     }
 
     public DoubleCircle getCircle() {
@@ -645,8 +646,9 @@ public class ImageScope extends BaseData {
         return image;
     }
 
-    public void setImage(Image image) {
+    public ImageScope setImage(Image image) {
         this.image = image;
+        return this;
     }
 
     public int getColorDistance() {
@@ -665,8 +667,9 @@ public class ImageScope extends BaseData {
         return scopeType;
     }
 
-    public void setScopeType(ScopeType scopeType) {
+    public ImageScope setScopeType(ScopeType scopeType) {
         this.scopeType = scopeType;
+        return this;
     }
 
     public ColorScopeType getColorScopeType() {
@@ -765,16 +768,18 @@ public class ImageScope extends BaseData {
         return outline;
     }
 
-    public void setOutline(BufferedImage outline) {
+    public ImageScope setOutline(BufferedImage outline) {
         this.outline = outline;
+        return this;
     }
 
     public BufferedImage getOutlineSource() {
         return outlineSource;
     }
 
-    public void setOutlineSource(BufferedImage outlineSource) {
+    public ImageScope setOutlineSource(BufferedImage outlineSource) {
         this.outlineSource = outlineSource;
+        return this;
     }
 
     public Image getClip() {

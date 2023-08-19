@@ -96,6 +96,10 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         tableData.remove(index);
     }
 
+    public void clear() {
+        tableData.clear();
+    }
+
     @FXML
     @Override
     public void addAction() {

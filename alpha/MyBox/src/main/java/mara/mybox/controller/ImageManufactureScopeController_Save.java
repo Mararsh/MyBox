@@ -36,7 +36,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
 
     @FXML
     public void saveScope() {
-        if (scope == null || scope.getFile() == null || saveScopeButton.isDisabled()) {
+        if (!isValidScope() || !finalScope() || saveScopeButton.isDisabled()) {
             return;
         }
         String name = scopeNameInput.getText().trim();
@@ -44,14 +44,9 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             popError(message("InvalidParameters"));
             return;
         }
+        scope.setName(name);
         if (task != null) {
             task.cancel();
-        }
-        scope.setName(name);
-        if (sourceFile != null) {
-            scope.setFile(sourceFile.getAbsolutePath());
-        } else {
-            scope.setFile("Unknown");
         }
         task = new SingletonCurrentTask<Void>(this) {
 

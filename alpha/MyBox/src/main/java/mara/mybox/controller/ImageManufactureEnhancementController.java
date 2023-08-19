@@ -3,16 +3,12 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.AlphaTools;
-import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution;
@@ -163,13 +159,14 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
         if (imageView.getImage() == null) {
             return;
         }
-        editor.popInformation(message("WaitAndHandling"));
-        demoButton.setDisable(true);
-        Task demoTask = new Task<Void>() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
             private List<String> files;
 
             @Override
-            protected Void call() {
+            protected boolean handle() {
 
                 try {
                     files = new ArrayList<>();
@@ -182,6 +179,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     String tmpFile = FileTmpTools.generateFile(message("HSBHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     imageContrast = new ImageContrast(image,
@@ -190,6 +188,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     imageContrast = new ImageContrast(image,
@@ -200,6 +199,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramStretching"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     imageContrast = new ImageContrast(image,
@@ -209,6 +209,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramShifting"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     BufferedImage outlineSource = SwingFXUtils.fromFXImage(
@@ -218,9 +219,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     if (sourceFile != null) {
                         scope.setFile(sourceFile.getAbsolutePath());
                     }
-                    BufferedImage[] outline = AlphaTools.outline(outlineSource,
-                            scope.getRectangle(), image.getWidth(), image.getHeight(),
-                            true, ColorConvertTools.converColor(Color.WHITE), false);
+                    BufferedImage[] outline = AlphaTools.outline(image, outlineSource, scope.getRectangle());
                     scope.setOutlineSource(outlineSource);
                     scope.setOutline(outline[1]);
 
@@ -231,6 +230,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("UnsharpMasking"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
@@ -240,6 +240,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("FourNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
@@ -249,6 +250,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("EightNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeGaussBlur(3);
@@ -258,6 +260,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("GaussianBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
                     kernel = ConvolutionKernel.makeAverageBlur(3);
@@ -267,38 +270,32 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     tmpFile = FileTmpTools.generateFile(message("AverageBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
 
+                    return !files.isEmpty();
                 } catch (Exception e) {
-
+                    error = e.toString();
+                    return false;
                 }
-                return null;
             }
 
             @Override
-            protected void succeeded() {
-                super.succeeded();
-                demoButton.setDisable(false);
-                if (files.isEmpty()) {
-                    return;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ImagesBrowserController controller
-                                    = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                            controller.loadFiles(files);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e);
-                        }
-                    }
-                });
+            protected void whenSucceeded() {
+            }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (files != null && !files.isEmpty()) {
+                    ImagesBrowserController b
+                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                    b.loadFiles(files);
+                }
             }
 
         };
-        start(demoTask, false);
+        start(task);
     }
 
 }

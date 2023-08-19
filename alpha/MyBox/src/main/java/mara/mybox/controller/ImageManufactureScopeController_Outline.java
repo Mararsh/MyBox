@@ -12,11 +12,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.AlphaTools;
-import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.PixelsOperation;
+import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.VisitHistory;
@@ -46,16 +46,13 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     return new ListImageCell();
                 }
             });
-            if (task != null) {
-                task.cancel();
-            }
             outlinesList.getItems().clear();
-            task = new SingletonCurrentTask<Void>(this) {
+            SingletonCurrentTask outlinesTask = new SingletonCurrentTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
                     for (ImageItem item : ImageItem.predefined()) {
-                        if (task == null || isCancelled()) {
+                        if (isCancelled()) {
                             return true;
                         }
                         Image image = item.readImage();
@@ -65,7 +62,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                                 outlinesList.getItems().add(image);
                                 isSettingValues = false;
                             });
-                            task.setInfo(item.getName());
+                            this.setInfo(item.getName());
                         }
                     }
                     return true;
@@ -76,7 +73,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                 }
 
             };
-            start(task);
+            start(outlinesTask);
 
             outlinesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Image>() {
                 @Override
@@ -203,17 +200,6 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         loadOutlineSource(bufferedImage, DoubleRectangle.image(bufferedImage));
     }
 
-    public void loadOutlineSource(BufferedImage bufferedImage, DoubleRectangle rect) {
-        if (bufferedImage == null || rect == null) {
-            return;
-        }
-        outlineSource = bufferedImage;
-        maskRectangleData = rect.copy();
-        showMaskRectangle();
-
-        makeOutline();
-    }
-
     public void loadOutlineSource(Image image) {
         if (isSettingValues || image == null) {
             return;
@@ -221,10 +207,19 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         loadOutlineSource(SwingFXUtils.fromFXImage(image, null));
     }
 
+    public void loadOutlineSource(BufferedImage bufferedImage, DoubleRectangle rect) {
+        if (bufferedImage == null || rect == null) {
+            return;
+        }
+        scope.setOutlineSource(bufferedImage);
+        maskRectangleData = rect.copy();
+        makeOutline();
+    }
+
     public void makeOutline() {
         if (isSettingValues || image == null
                 || scope == null || scope.getScopeType() != ImageScope.ScopeType.Outline
-                || outlineSource == null || maskRectangleData == null) {
+                || scope.getOutlineSource() == null || maskRectangleData == null) {
             return;
         }
         if (task != null) {
@@ -237,14 +232,26 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             @Override
             protected boolean handle() {
                 try {
-                    outline = AlphaTools.outline(outlineSource,
-                            maskRectangleData, (int) imageWidth(), (int) imageHeight(),
-                            scopeOutlineKeepRatioCheck.isSelected(),
-                            ColorConvertTools.converColor(Color.WHITE), areaExcludedCheck.isSelected());
+                    Image bgImage = editor.imageView.getImage();
+                    outline = AlphaTools.outline(scope.getOutlineSource(),
+                            maskRectangleData, (int) bgImage.getWidth(), (int) bgImage.getHeight(),
+                            scopeOutlineKeepRatioCheck.isSelected());
                     if (outline == null || task == null || isCancelled()) {
                         return false;
                     }
-                    outlineImage = SwingFXUtils.toFXImage(outline[1], null);
+                    maskRectangleData = DoubleRectangle.xywh(
+                            maskRectangleData.getX(), maskRectangleData.getY(),
+                            outline[0].getWidth(), outline[0].getHeight());
+                    scope.setOutline(outline[1]);
+                    scope.setRectangle(maskRectangleData.copy());
+                    finalScope();
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                            bgImage, scope, PixelsOperation.OperationType.ShowScope);
+                    pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    outlineImage = pixelsOperation.operateFxImage();
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
                     return outlineImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -254,14 +261,9 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
 
             @Override
             protected void whenSucceeded() {
+                image = outlineImage;
                 imageView.setImage(outlineImage);
-                maskRectangleData = DoubleRectangle.xywh(
-                        maskRectangleData.getX(), maskRectangleData.getY(),
-                        outline[0].getWidth(), outline[0].getHeight());
-                drawMaskRectangle();
-                scope.setOutlineSource(outlineSource);
-                scope.setOutline(outline[1]);
-                scope.setRectangle(maskRectangleData.copy());
+                showMaskRectangle();
             }
 
         };

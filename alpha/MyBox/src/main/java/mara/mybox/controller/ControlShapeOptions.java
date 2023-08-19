@@ -5,16 +5,12 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -38,9 +34,7 @@ import static mara.mybox.data.ShapeStyle.DefaultAnchorColor;
 import static mara.mybox.data.ShapeStyle.DefaultStrokeColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -71,11 +65,11 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck;
+    protected CheckBox fillCheck, dashCheck, anchorCheck, addPointCheck;
     @FXML
     protected FlowPane opPane;
     @FXML
-    protected Button functionsButton, anchorButton;
+    protected Button functionsButton;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
@@ -97,6 +91,9 @@ public abstract class ControlShapeOptions extends BaseController {
     public void setParameters(BaseImageController imageController) {
         try {
             this.imageController = imageController;
+            imageController.anchorCheck = anchorCheck;
+            imageController.addPointCheck = addPointCheck;
+            imageController.initMaskControls();
 
             parametersController.imageController = imageController;
             parametersController.optionsOontroller = this;
@@ -491,7 +488,7 @@ public abstract class ControlShapeOptions extends BaseController {
             }
             switch (shapeType) {
                 case Polylines:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton);
+                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastLine") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapePolylinesTips"));
@@ -499,14 +496,14 @@ public abstract class ControlShapeOptions extends BaseController {
                     break;
                 case Polyline:
                 case Polygon:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton);
+                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, addPointCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }
                     break;
                 default:
-                    opPane.getChildren().addAll(functionsButton);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck);
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }
@@ -641,34 +638,12 @@ public abstract class ControlShapeOptions extends BaseController {
 
     @FXML
     public void popShapeMenu(Event event) {
-        if (UserConfig.getBoolean("ImageShapeMenuPopWhenMouseHovering", true)) {
-            showShapeMenu(event);
-        }
+        imageController.popShapeMenu(event);
     }
 
     @FXML
     public void showShapeMenu(Event event) {
-        try {
-            DoubleShape shapeData = imageController.currentMaskShapeData();
-            if (event == null || shapeData == null) {
-                return;
-            }
-            List<MenuItem> items = imageController.maskShapeMenu(event, shapeData, null);
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean("ImageShapeMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    UserConfig.setBoolean("ImageShapeMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            popEventMenu(event, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        imageController.showShapeMenu(event);
     }
 
     @FXML
@@ -686,15 +661,6 @@ public abstract class ControlShapeOptions extends BaseController {
                 parametersController.linesController.removeLastItem();
                 break;
         }
-    }
-
-    @Override
-    public boolean controlAltG() {
-        if (goButton != null && !goButton.isDisabled() && goButton.isVisible()) {
-            goAction();
-            return true;
-        }
-        return false;
     }
 
 }

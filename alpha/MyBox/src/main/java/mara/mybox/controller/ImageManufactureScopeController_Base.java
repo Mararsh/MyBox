@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
@@ -36,7 +35,6 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected ImageManufactureController editor;
     protected ImageManufactureScopesSavedController scopesSavedController;
     protected float opacity;
-    protected BufferedImage outlineSource;
 
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
@@ -61,7 +59,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button goScopeButton, saveScopeButton, withdrawPointButton,
+    protected Button goScopeButton, saveScopeButton, functionsButton, withdrawPointButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
@@ -72,8 +70,29 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     @FXML
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
+    public boolean finalScope() {
+        try {
+            if (editor == null || scope == null) {
+                return false;
+            }
+            if (editor.sourceFile != null) {
+                scope.setFile(editor.sourceFile.getAbsolutePath());
+            } else {
+                scope.setFile("Unknown");
+            }
+            scope.setImage(editor.imageView.getImage());
+            scope.setAreaExcluded(areaExcludedCheck.isSelected());
+            scope.setColorExcluded(colorExcludedCheck.isSelected());
+            scope.setEightNeighbor(eightNeighborCheck.isSelected());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     protected synchronized void indicateScope() {
-        if (!isValidScope()) {
+        if (!isValidScope() || !finalScope()) {
             return;
         }
         if (task != null) {
@@ -85,12 +104,10 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             @Override
             protected boolean handle() {
                 try {
-                    PixelsOperation pixelsOperation
-                            = PixelsOperationFactory.create(editor.imageView.getImage(),
-                                    scope, PixelsOperation.OperationType.ShowScope);
-                    if (!ignoreTransparentCheck.isSelected()) {
-                        pixelsOperation.setSkipTransparent(false);
-                    }
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                            editor.imageView.getImage(),
+                            scope, PixelsOperation.OperationType.ShowScope);
+                    pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
                     scopedImage = pixelsOperation.operateFxImage();
                     if (task == null || isCancelled()) {
                         return false;
@@ -105,7 +122,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             @Override
             protected void whenSucceeded() {
                 image = scopedImage;
-                imageView.setImage(image);
+                imageView.setImage(scopedImage);
                 if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
                     drawMattingPoints();
                 } else {
@@ -170,7 +187,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     }
 
     public boolean isValidScope() {
-        return image != null && scope != null
+        return scope != null
                 && scope.getScopeType() != null
                 && scope.getScopeType() != ScopeType.All;
     }
