@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
@@ -12,6 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -32,6 +34,8 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     protected TextArea styleArea;
     @FXML
     protected ControlPath2D pathController;
+    @FXML
+    protected Button drawButton;
 
     @Override
     public void editNode(TreeItem<XmlTreeNode> item) {
@@ -58,6 +62,8 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         } catch (Exception e) {
         }
         editor.htmlController.loadDoc(editor.treeController.doc, focusedNode);
+        drawButton.setDisable(item == null || item.getValue() == null
+                || !item.getValue().isSvgShape());
     }
 
     @Override
@@ -127,6 +133,15 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         pathController.loadPath("");
         styleArea.clear();
         tabPane.getTabs().removeAll(pathTab, styleTab);
+    }
+
+    @FXML
+    public void drawShape() {
+        if (treeItem == null) {
+            popInformation(message("SelectToHandle"));
+            return;
+        }
+        SvgEditShapeController.open(editor, treeItem);
     }
 
     /*

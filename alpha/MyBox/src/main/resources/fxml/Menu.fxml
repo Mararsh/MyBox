@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
+<VBox fx:id="thisPane" maxHeight="600.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -54,7 +54,7 @@ License:    Apache License Version 2.0
         <Separator prefWidth="200.0" />
       <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
          <content>
-              <VBox fx:id="nodesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" />
+              <VBox fx:id="nodesBox" maxHeight="500.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" />
          </content>
       </ScrollPane>
         <Separator prefWidth="200.0" />

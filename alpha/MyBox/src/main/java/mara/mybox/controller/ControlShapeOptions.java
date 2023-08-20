@@ -470,6 +470,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 shapeType = ShapeType.Path;
 
             }
+
             return shapeType != null;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -487,6 +488,7 @@ public abstract class ControlShapeOptions extends BaseController {
                 }
                 return;
             }
+
             switch (shapeType) {
                 case Polylines:
                     opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck);
@@ -598,6 +600,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
             }
             isSettingValues = false;
+
             return shapeType != null;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -202,7 +202,7 @@
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
                 <Tab fx:id="shapeTab" text="%Shape">
-                    <content>
+               <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                             <children>
                                 <fx:include fx:id="parameters" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlShapeParameters.fxml" VBox.vgrow="ALWAYS" />
@@ -211,7 +211,7 @@
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                         </VBox>
-                    </content>
+               </content>
                 </Tab>
                 <Tab fx:id="styleTab" text="%Style">
                     <content>

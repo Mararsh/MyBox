@@ -2617,24 +2617,23 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             setShapeStyle(maskSVGPath);
 
             DoublePoint p;
-            int index;
             for (int i = 0; i < maskPathData.getSegments().size(); i++) {
                 DoublePathSegment seg = maskPathData.getSegments().get(i);
                 p = seg.getControlPoint1();
-                index = i + 1;
+                String prefix = (i + 1) + seg.getCommand().trim();
                 if (p != null) {
                     String info = seg.text() + "\n" + message("ControlPoint1");
-                    addMaskAnchor(i, "p" + index + ".c1", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, prefix + ".c1", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
                 p = seg.getControlPoint2();
                 if (p != null) {
                     String info = seg.text() + "\n" + message("ControlPoint2");
-                    addMaskAnchor(i, "p" + index + ".c2", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, prefix + ".c2", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
                 p = seg.getEndPoint();
                 if (p != null) {
                     String info = seg.text() + "\n" + message("EndPoint");
-                    addMaskAnchor(i, "p" + index + ".e", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, prefix + ".e", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
 
             }

@@ -18,7 +18,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPath2D">
@@ -128,10 +127,10 @@ License:    Apache License Version 2.0
                 </Tab>
                 <Tab fx:id="textsTab" closable="false" text="%Texts">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                    <children>
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                           <children>
                                   <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                                       <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -141,7 +140,7 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                       </graphic>
                                   </Button>
-                                        <Button fx:id="typesettingButton" layoutX="174.0" layoutY="10.0" mnemonicParsing="false" onAction="#typesettingAction">
+                                        <Button fx:id="typesettingButton" mnemonicParsing="false" onAction="#typesettingAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -177,25 +176,6 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                  <CheckBox fx:id="typesettingCheck" mnemonicParsing="false" selected="true">
-                                      <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                              <image>
-                                                  <Image url="@../buttons/red/iconTypesetting.png" />
-                                              </image>
-                                          </ImageView>
-                                      </graphic>
-                                  </CheckBox>
-                                        <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" selected="true">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/red/iconWrap.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </CheckBox>
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="historyPathButton" mnemonicParsing="false" onAction="#showPathHistories" onMouseEntered="#popPathHistories">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -223,13 +203,31 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                       </graphic>
                                   </Button>
-                                    </children>
-                                </HBox>
+                                  <CheckBox fx:id="typesettingCheck" mnemonicParsing="false" selected="true">
+                                      <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                              <image>
+                                                  <Image url="@../buttons/red/iconTypesetting.png" />
+                                              </image>
+                                          </ImageView>
+                                      </graphic>
+                                  </CheckBox>
+                                        <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" selected="true">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/red/iconWrap.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
+                           </children>
+                        </FlowPane>
                                 <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                                 <Label fx:id="textsLabel" maxWidth="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                             </children>
                             <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                         </VBox>
                     </content>

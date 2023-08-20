@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
@@ -47,6 +48,8 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     protected TextArea textArea;
     @FXML
     protected CheckBox wrapTextsCheck, typesettingCheck;
+    @FXML
+    protected Label textsLabel;
 
     @Override
     public void initControls() {
@@ -81,6 +84,12 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
                     textArea.setWrapText(wrapTextsCheck.isSelected());
                 }
             });
+            textArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    updateTextSize();
+                }
+            });
 
             typesettingCheck.setSelected(UserConfig.getBoolean(baseName + "Typesetting", true));
             typesettingCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -92,6 +101,15 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void updateTextSize() {
+        String s = textArea.getText();
+        if (s == null || s.isBlank()) {
+            textsLabel.setText("");
+        } else {
+            textsLabel.setText(message("Count") + ": " + s.length());
         }
     }
 
@@ -112,10 +130,11 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     public void pickTableValue() {
         if (tableData.isEmpty()) {
             textArea.clear();
-            return;
+        } else {
+            String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
+            textArea.setText(s);
         }
-        String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
-        textArea.setText(s);
+        updateTextSize();
     }
 
     public void loadPath(String contents) {
