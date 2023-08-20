@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -33,7 +34,7 @@ import mara.mybox.value.UserConfig;
 public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     protected ControlShapeOptions optionsOontroller;
-    public int Scale = 3;
+    public int Scale;
 
     @FXML
     protected Tab codesTab, textsTab;
@@ -51,6 +52,8 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     public void initControls() {
         try {
             super.initControls();
+
+            Scale = UserConfig.imageScale();
 
             indexColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<DoublePathSegment, String>, ObservableValue<String>>() {
                 @Override
@@ -106,25 +109,6 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         }
     }
 
-    public void loadPath(String contents) {
-        List<DoublePathSegment> segments = DoublePath.stringToSegments(this, contents, Scale);
-        isSettingValues = true;
-        if (segments == null || segments.isEmpty()) {
-            tableData.clear();
-            textArea.clear();
-            return;
-        } else {
-            tableData.setAll(segments);
-        }
-        String s = contents;
-        if (typesettingCheck.isSelected()) {
-            s = DoublePath.segmentsToString(segments, "\n");
-        }
-        textArea.setText(s);
-        isSettingValues = false;
-//        TableStringValues.add("SvgPathHistories", s);
-    }
-
     public void pickTableValue() {
         if (tableData.isEmpty()) {
             textArea.clear();
@@ -134,36 +118,30 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         textArea.setText(s);
     }
 
-    public boolean pickTextValue() {
-        String s = textArea.getText();
-        List<DoublePathSegment> segments = DoublePath.stringToSegments(this, s, Scale);
-        if (segments == null || segments.isEmpty()) {
-            popError(message("NoData"));
-            return false;
-        }
+    public void loadPath(String contents) {
+        List<DoublePathSegment> segments = DoublePath.stringToSegments(this, contents, Scale);
         isSettingValues = true;
-        tableData.setAll(segments);
+        if (segments != null && !segments.isEmpty()) {
+            tableData.setAll(segments);
+        } else {
+            tableData.clear();
+        }
         isSettingValues = false;
-        return true;
+        pickTableValue();
     }
 
     public boolean pickValue() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == codesTab) {
+        try {
+            String s = textArea.getText();
+            loadPath(s);
             if (tableData.isEmpty()) {
                 popError(message("NoData"));
                 return false;
             }
-        } else {
-            if (!pickTextValue()) {
-                return false;
-            }
-        }
-        String s = textArea.getText();
-        if (s != null && !s.isBlank()) {
             TableStringValues.add("SvgPathHistories", s);
             return true;
-        } else {
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -172,7 +150,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     @Override
     public void goAction() {
         if (tabPane.getSelectionModel().getSelectedItem() == textsTab) {
-            if (pickTextValue() && optionsOontroller != null) {
+            if (pickValue() && optionsOontroller != null) {
                 optionsOontroller.goShape();
             }
         }
@@ -183,12 +161,13 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     }
 
     public List<DoublePathSegment> getSegments() {
-        return tableData;
+        List<DoublePathSegment> list = new ArrayList<>();
+        for (DoublePathSegment seg : tableData) {
+            list.add(seg.copyTo());
+        }
+        return list;
     }
 
-    public DoublePath pathData() {
-        return new DoublePath(tableData);
-    }
 
     /*
         table
@@ -196,7 +175,17 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     @FXML
     @Override
     public void addAction() {
-        ShapePathSegmentEditController.open(this, pathData(), -1, null);
+        ShapePathSegmentEditController.open(this, -1, null);
+    }
+
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        ShapePathSegmentEditController.open(this, index, null);
     }
 
     @FXML
@@ -207,17 +196,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
             popError(message("SelectToHandle"));
             return;
         }
-        ShapePathSegmentEditController.open(this, pathData(), index, tableData.get(index));
-    }
-
-    @FXML
-    public void insertAction() {
-        int index = selectedIndix();
-        if (index < 0) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        ShapePathSegmentEditController.open(this, pathData(), index, null);
+        ShapePathSegmentEditController.open(this, index, tableData.get(index));
     }
 
     /*

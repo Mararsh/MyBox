@@ -103,11 +103,34 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     @FXML
     @Override
     public void addAction() {
+        add(-1);
+    }
+
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        add(index);
+    }
+
+    @FXML
+    public void add(int index) {
         PointInputController inputController = PointInputController.open(this, message("Add"), null);
         inputController.getNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                tableData.add(inputController.picked);
+                DoublePoint picked = inputController.picked;
+                if (picked == null) {
+                    return;
+                }
+                if (index < 0) {
+                    tableData.add(picked);
+                } else {
+                    tableData.add(index, picked);
+                }
                 inputController.close();
             }
         });
@@ -134,16 +157,6 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    public void insertAction() {
-        int index = selectedIndix();
-        if (index < 0) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-
     }
 
 }

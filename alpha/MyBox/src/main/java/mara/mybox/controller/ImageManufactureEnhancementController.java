@@ -8,20 +8,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -212,16 +211,21 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                         task.setInfo(tmpFile);
                     }
 
-                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(
-                            new Image("img/cover" + AppValues.AppYear + "g2.png"), null);
-                    ImageScope scope = new ImageScope(SwingFXUtils.toFXImage(image, null));
-                    scope.setScopeType(ImageScope.ScopeType.Outline);
-                    if (sourceFile != null) {
-                        scope.setFile(sourceFile.getAbsolutePath());
-                    }
-                    BufferedImage[] outline = AlphaTools.outline(image, outlineSource, scope.getRectangle());
-                    scope.setOutlineSource(outlineSource);
-                    scope.setOutline(outline[1]);
+//                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(
+//                            new Image("img/cover" + AppValues.AppYear + "g2.png"), null);
+//                    ImageScope scope = new ImageScope(SwingFXUtils.toFXImage(image, null));
+//                    scope.setScopeType(ImageScope.ScopeType.Outline);
+//                    if (sourceFile != null) {
+//                        scope.setFile(sourceFile.getAbsolutePath());
+//                    }
+//                    BufferedImage[] outline = AlphaTools.outline(image, outlineSource, scope.getRectangle());
+//                    scope.setOutlineSource(outlineSource);
+//                    scope.setOutline(outline[1]);
+                    ImageScope scope = new ImageScope();
+                    scope.setScopeType(ImageScope.ScopeType.Rectangle)
+                            .setRectangle(DoubleRectangle.xywh(
+                                    image.getWidth() / 8, image.getHeight() / 8,
+                                    image.getWidth() * 3 / 4, image.getHeight() * 3 / 4));
 
                     ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                     ImageConvolution imageConvolution = ImageConvolution.create().

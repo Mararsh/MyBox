@@ -13,7 +13,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoublePathSegment;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Arc;
 import static mara.mybox.data.DoublePathSegment.PathSegmentType.Close;
@@ -40,8 +39,7 @@ import mara.mybox.value.UserConfig;
 public class ShapePathSegmentEditController extends BaseInputController {
 
     protected ControlPath2D pathController;
-    protected float x, y;
-    protected DoublePath pathData;
+    protected double x, y, startX, startY;
     protected int index;
     protected DoublePathSegment segment;
     protected float angle;
@@ -163,7 +161,7 @@ public class ShapePathSegmentEditController extends BaseInputController {
         }
         DoublePoint p;
         if (arcRadio.isSelected()) {
-            p = segment.getControlPoint1();
+            p = segment.getArcRadius();
             radiusXInput.setText(p.getX() + "");
             radiusYInput.setText(p.getY() + "");
 
@@ -197,27 +195,44 @@ public class ShapePathSegmentEditController extends BaseInputController {
 
     }
 
-    public void setParameters(ControlPath2D pathController, DoublePath pathData,
-            int index, DoublePathSegment segment) {
+    public void setParameters(ControlPath2D pathController, int pos, DoublePathSegment segment) {
         try {
             super.setParameters(pathController, null);
             this.pathController = pathController;
-            this.pathData = pathData;
-            this.index = index;
+            this.index = pos;
             this.segment = segment;
             setTitle(pathController.getTitle());
 
+            int segIndex;
+            int size = pathController.tableData.size();
+            if (index < 0) {
+                segIndex = size + 1;
+            } else {
+                segIndex = index + 1;
+            }
+            String info;
             if (segment != null) {
                 typePane.setDisable(true);
                 load();
 
+                DoublePoint p = segment.getStartPoint();
+                startX = p.getX();
+                startY = p.getY();
+                info = message("Index") + ": " + segIndex + "\n" + segment.text();
+
             } else {
-                infoLabel.setText(message("Add") + " " + message("Index") + ": " + pathData.getSegments().size());
-                startXInput.setText(pathData.lastPoint().getX() + "");
-                startYInput.setText(pathData.lastPoint().getY() + "");
                 absRadio.setSelected(true);
                 typePane.setDisable(false);
+
+                DoublePoint p = pathController.tableData.get(size - 1).getEndPoint();
+                startX = p.getX();
+                startY = p.getY();
+                info = message("Add") + " " + message("Index") + ": " + segIndex;
             }
+
+            startXInput.setText(startX + "");
+            startYInput.setText(startY + "");
+            infoLabel.setText(info);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -227,10 +242,6 @@ public class ShapePathSegmentEditController extends BaseInputController {
     public void load() {
         try {
             isSettingValues = true;
-            String info = message("Index") + ": " + (index + 1) + "\n" + segment.text();
-            infoLabel.setText(info);
-            startXInput.setText(segment.getStartPoint().getX() + "");
-            startYInput.setText(segment.getStartPoint().getY() + "");
             switch (segment.getType()) {
                 case Move:
                     moveRadio.setSelected(true);
@@ -275,23 +286,194 @@ public class ShapePathSegmentEditController extends BaseInputController {
             checkCoord();
         } catch (Exception e) {
             MyBoxLog.debug(e);
-
         }
+    }
+
+    public DoublePoint checkEndPoint() {
+        double px, py;
+        try {
+            px = Double.parseDouble(endXInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("EndPoint"));
+            return null;
+        }
+        try {
+            py = Double.parseDouble(endYInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("EndPoint"));
+            return null;
+        }
+        return new DoublePoint(px, py);
+    }
+
+    public DoublePoint checkControl1() {
+        double px, py;
+        try {
+            px = Double.parseDouble(control1XInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("ControlPoint1"));
+            return null;
+        }
+        try {
+            py = Double.parseDouble(control1YInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("ControlPoint1"));
+            return null;
+        }
+        return new DoublePoint(px, py);
+    }
+
+    public DoublePoint checkControl2() {
+        double px, py;
+        try {
+            px = Double.parseDouble(control2XInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("ControlPoint2"));
+            return null;
+        }
+        try {
+            py = Double.parseDouble(control2YInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("ControlPoint2"));
+            return null;
+        }
+        return new DoublePoint(px, py);
+    }
+
+    public boolean checkArc(DoublePathSegment seg) {
+        double irx, iry, irotate;
+        try {
+            irx = Double.parseDouble(radiusXInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("Radius"));
+            return false;
+        }
+        try {
+            iry = Double.parseDouble(radiusYInput.getText());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("Radius"));
+            return false;
+        }
+        try {
+            irotate = Double.parseDouble(angleSelector.getValue());
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("RotateAngle"));
+            return false;
+        }
+        seg.setArcRadius(new DoublePoint(irx, iry));
+        seg.setValue(irotate)
+                .setFlag1(largeCheck.isSelected())
+                .setFlag2(closewiseCheck.isSelected());
+        return true;
     }
 
     @FXML
     @Override
     public void okAction() {
+        try {
+            boolean abs = absRadio.isSelected();
+            DoublePathSegment seg = new DoublePathSegment()
+                    .setIsAbsolute(abs)
+                    .setScale(segment != null ? segment.getScale() : UserConfig.imageScale())
+                    .setStartPoint(new DoublePoint(startX, startY))
+                    .setIndex(index);
 
-        close();
+            if (setBox.getChildren().contains(endPane)) {
+                DoublePoint p = checkEndPoint();
+                if (p == null) {
+                    return;
+                }
+                if (abs) {
+                    seg.setEndPoint(p)
+                            .setEndPointRel(new DoublePoint(p.getX() - startX, p.getY() - startY));
+                } else {
+                    seg.setEndPointRel(p)
+                            .setEndPoint(new DoublePoint(p.getX() + startX, p.getY() + startY));
+                }
+            }
+            if (setBox.getChildren().contains(control1Pane)) {
+                DoublePoint p = checkControl1();
+                if (p == null) {
+                    return;
+                }
+                if (abs) {
+                    seg.setControlPoint1(p)
+                            .setControlPoint1Rel(new DoublePoint(p.getX() - startX, p.getY() - startY));
+                } else {
+                    seg.setControlPoint1Rel(p)
+                            .setControlPoint1(new DoublePoint(p.getX() + startX, p.getY() + startY));
+                }
+            }
+            if (setBox.getChildren().contains(control2Pane)) {
+                DoublePoint p = checkControl2();
+                if (p == null) {
+                    return;
+                }
+                if (abs) {
+                    seg.setControlPoint2(p)
+                            .setControlPoint2Rel(new DoublePoint(p.getX() - startX, p.getY() - startY));
+                } else {
+                    seg.setControlPoint2Rel(p)
+                            .setControlPoint2(new DoublePoint(p.getX() + startX, p.getY() + startY));
+                }
+            }
+            if (setBox.getChildren().contains(radiusPane)) {
+                if (!checkArc(seg)) {
+                    return;
+                }
+            }
+            if (moveRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.Move);
+            } else if (lineRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.Line);
+            } else if (hlineRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.LineHorizontal)
+                        .setValue(seg.getEndPoint().getX())
+                        .setValueRel(seg.getEndPointRel().getX());
+            } else if (vlineRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.LineVertical)
+                        .setValue(seg.getEndPoint().getY())
+                        .setValueRel(seg.getEndPointRel().getY());
+            } else if (quadRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.Quadratic);
+            } else if (quadSmoothRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.QuadraticSmooth);
+            } else if (cubicRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.Cubic);
+            } else if (cubicSmoothRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.CubicSmooth);
+            } else if (arcRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.Arc);
+            } else if (closeRadio.isSelected()) {
+                seg.setType(DoublePathSegment.PathSegmentType.Close)
+                        .setEndPoint(seg.getStartPoint().copy());
+            } else {
+                return;
+            }
+
+            pathController.isSettingValues = true;
+            if (segment != null) {
+                pathController.tableData.set(index, seg);
+            } else if (index >= 0 && index < pathController.tableData.size()) {
+                pathController.tableData.add(index, seg);
+            } else {
+                pathController.tableData.add(seg);
+            }
+            pathController.isSettingValues = false;
+            pathController.tableChanged(true);
+
+            close();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public static ShapePathSegmentEditController open(ControlPath2D pathController,
-            DoublePath pathData, int index, DoublePathSegment segment) {
+            int index, DoublePathSegment segment) {
         try {
             ShapePathSegmentEditController controller = (ShapePathSegmentEditController) WindowTools.openChildStage(
                     pathController.getMyWindow(), Fxmls.ShapePathSegmentEditFxml, true);
-            controller.setParameters(pathController, pathData, index, segment);
+            controller.setParameters(pathController, index, segment);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

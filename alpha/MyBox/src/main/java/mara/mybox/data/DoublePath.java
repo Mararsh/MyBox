@@ -96,7 +96,7 @@ public class DoublePath implements DoubleShape {
         if (segments != null) {
             List<DoublePathSegment> list = new ArrayList<>();
             for (DoublePathSegment seg : segments) {
-                list.add(seg.copy());
+                list.add(seg.copyTo());
             }
             path.setSegments(list);
         }
@@ -198,6 +198,34 @@ public class DoublePath implements DoubleShape {
         return segments.get(segments.size() - 1).getEndPoint();
     }
 
+    public boolean replace(int index, DoublePathSegment seg) {
+        if (segments == null || index < 0 || index >= segments.size()) {
+            return false;
+        }
+        segments.set(index, seg);
+        content = segmentsToString(segments, " ");
+        return true;
+    }
+
+    public boolean insert(int index, DoublePathSegment seg) {
+        if (segments == null || index < 0 || index > segments.size()) {
+            return false;
+        }
+        segments.add(index, seg);
+        content = segmentsToString(segments, " ");
+        return true;
+    }
+
+    public boolean add(DoublePathSegment seg) {
+        if (segments == null) {
+            return false;
+        }
+        segments.add(seg);
+        content = segmentsToString(segments, " ");
+        return true;
+    }
+
+
     /*
         static
      */
@@ -264,7 +292,7 @@ public class DoublePath implements DoubleShape {
                         double angle = seg.getValue();
                         Arc2D arc = ExtendedGeneralPath.computeArc(
                                 seg.getStartPoint().getX(), seg.getStartPoint().getY(),
-                                seg.getControlPoint1().getX(), seg.getControlPoint1().getY(),
+                                seg.getArcRadius().getX(), seg.getArcRadius().getY(),
                                 angle,
                                 seg.isFlag1(), seg.isFlag2(),
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());

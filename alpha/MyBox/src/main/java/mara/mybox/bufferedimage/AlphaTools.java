@@ -295,7 +295,7 @@ public class AlphaTools {
             g.setColor(Colors.TRANSPARENT);
             g.fillRect(0, 0, width, height);
             int imagePixel;
-            int inPixel = 100, outPixel = -100;
+            int inPixel = 64, outPixel = -64;
             for (int j = 0; j < scaledHeight; ++j) {
                 for (int i = 0; i < scaledWidth; ++i) {
                     imagePixel = scaledImage.getRGB(i, j);

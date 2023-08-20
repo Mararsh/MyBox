@@ -69,6 +69,20 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
     @FXML
     @Override
     public void addAction() {
+        add(-1);
+    }
+
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        add(index);
+    }
+
+    public void add(int index) {
         LineInputController inputController = LineInputController.open(this, message("Add"), null);
         inputController.getNotify().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -78,7 +92,11 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
                     popError(message("InvalidValue"));
                     return;
                 }
-                tableData.add(line);
+                if (index < 0) {
+                    tableData.add(line);
+                } else {
+                    tableData.add(index, line);
+                }
                 inputController.close();
             }
         });
@@ -111,16 +129,6 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    public void insertAction() {
-        int index = selectedIndix();
-        if (index < 0) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-
     }
 
 }

@@ -159,6 +159,7 @@ public abstract class ControlShapeOptions extends BaseController {
                                 || parametersController.pathController.isSettingTable) {
                             return;
                         }
+                        MyBoxLog.console("here");
                         goShape();
                     }
                 });

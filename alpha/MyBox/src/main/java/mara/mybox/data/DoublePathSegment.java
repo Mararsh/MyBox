@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
 public class DoublePathSegment {
 
     protected PathSegmentType type;
-    protected DoublePoint startPoint, controlPoint1, controlPoint2, endPoint; // absoulte coordinate
+    protected DoublePoint startPoint, controlPoint1, controlPoint2, endPoint, arcRadius; // absoulte coordinate
     protected DoublePoint controlPoint1Rel, controlPoint2Rel, endPointRel; // relative coordinate
     protected double value, valueRel;
     protected boolean isAbsolute, flag1, flag2;
@@ -228,7 +228,7 @@ public class DoublePathSegment {
                 case CubicSmooth:
                     return controlPoint2.text(scale) + " " + endPoint.text(scale);
                 case Arc:
-                    return controlPoint1.text(scale)
+                    return arcRadius.text(scale)
                             + " " + DoubleTools.scaleString(value, scale)
                             + " " + (flag1 ? 1 : 0)
                             + " " + (flag2 ? 1 : 0)
@@ -265,7 +265,7 @@ public class DoublePathSegment {
                 case CubicSmooth:
                     return controlPoint2Rel.text(scale) + " " + endPointRel.text(scale);
                 case Arc:
-                    return controlPoint1.text(scale)
+                    return arcRadius.text(scale)
                             + " " + DoubleTools.scaleString(value, scale)
                             + " " + (flag1 ? 1 : 0)
                             + " " + (flag2 ? 1 : 0)
@@ -280,7 +280,7 @@ public class DoublePathSegment {
         }
     }
 
-    public DoublePathSegment copy() {
+    public DoublePathSegment copyTo() {
         try {
             DoublePathSegment seg = new DoublePathSegment()
                     .setType(type).setIsAbsolute(isAbsolute)
@@ -298,6 +298,9 @@ public class DoublePathSegment {
             }
             if (endPoint != null) {
                 seg.setEndPoint(endPoint.copy());
+            }
+            if (arcRadius != null) {
+                seg.setArcRadius(arcRadius.copy());
             }
             if (controlPoint1Rel != null) {
                 seg.setControlPoint1Rel(controlPoint1Rel.copy());
@@ -320,11 +323,11 @@ public class DoublePathSegment {
             if (type == null) {
                 return this;
             }
-            DoublePathSegment seg = copy();
+            DoublePathSegment seg = copyTo();
             if (startPoint != null) {
                 seg.setStartPoint(startPoint.translate(offsetX, offsetY));
             }
-            if (controlPoint1 != null && type != PathSegmentType.Arc) {
+            if (controlPoint1 != null) {
                 seg.setControlPoint1(controlPoint1.translate(offsetX, offsetY));
             }
             if (controlPoint2 != null) {
@@ -351,7 +354,7 @@ public class DoublePathSegment {
             if (type == null) {
                 return this;
             }
-            DoublePathSegment seg = copy();
+            DoublePathSegment seg = copyTo();
             if (startPoint != null) {
                 seg.setStartPoint(startPoint.scale(scaleX, scaleY));
             }
@@ -363,6 +366,9 @@ public class DoublePathSegment {
             }
             if (endPoint != null) {
                 seg.setEndPoint(endPoint.scale(scaleX, scaleY));
+            }
+            if (arcRadius != null) {
+                seg.setArcRadius(arcRadius.scale(scaleX, scaleY));
             }
             if (controlPoint1Rel != null) {
                 seg.setControlPoint1Rel(controlPoint1Rel.scale(scaleX, scaleY));
@@ -418,7 +424,7 @@ public class DoublePathSegment {
                             segment.endPoint.getX(), segment.endPoint.getY());
                 case Arc:
                     return new ArcTo(
-                            segment.controlPoint1.getX(), segment.controlPoint1.getY(),
+                            segment.arcRadius.getX(), segment.arcRadius.getY(),
                             segment.value,
                             segment.endPoint.getX(), segment.endPoint.getY(),
                             segment.flag1, segment.flag2);
@@ -500,6 +506,11 @@ public class DoublePathSegment {
         return this;
     }
 
+    public DoublePathSegment setArcRadius(DoublePoint arcRadius) {
+        this.arcRadius = arcRadius;
+        return this;
+    }
+
     public DoublePathSegment setValueRel(double valueRel) {
         this.valueRel = valueRel;
         return this;
@@ -563,6 +574,10 @@ public class DoublePathSegment {
 
     public DoublePoint getEndPointRel() {
         return endPointRel;
+    }
+
+    public DoublePoint getArcRadius() {
+        return arcRadius;
     }
 
     public double getValueRel() {

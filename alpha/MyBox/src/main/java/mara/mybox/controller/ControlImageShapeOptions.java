@@ -87,7 +87,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     protected void setBlender() {
         blendController.backImage = imageView.getImage();
         blendController.foreImage = FxImageTools.createImage(
-                (int) (imageView.getImage().getWidth() / 2), (int) (imageView.getImage().getHeight() / 2),
+                (int) (imageView.getImage().getWidth() * 3 / 4), (int) (imageView.getImage().getHeight() * 3 / 4),
                 strokeColorController.color());
         blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
         blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;

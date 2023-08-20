@@ -56,7 +56,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
         MyBoxLog.console("here");
-        if (event == null || p == null) {
+        if (event == null || p == null || maskControlDragged) {
             return;
         }
         if (event.getButton() == MouseButton.PRIMARY) {
@@ -610,15 +610,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
-    public void handlerPressed(MouseEvent event) {
-        controlPressed(event);
-    }
-
-    @FXML
     public void translateShape(MouseEvent event) {
         MyBoxLog.console("here");
         scrollPane.setPannable(true);
-        event.consume();
         if (isPickingColor) {
             return;
         }
@@ -626,6 +620,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (shapeData == null) {
             return;
         }
+        maskControlDragged = true;
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
         if (DoubleShape.translateRel(shapeData, offsetX, offsetY)) {

@@ -417,6 +417,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         }
     }
 
+    @FXML
     public void controlPressed(MouseEvent event) {
         scrollPane.setPannable(false);
         mouseX = event.getX();
@@ -799,7 +800,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             } else {
                 shape.setCursor(Cursor.MOVE);
             }
-            shape.toFront();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -857,6 +858,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void maskShapeDataChanged() {
+        MyBoxLog.console("here");
         drawMaskShape();
         notifyShapeDataChanged();
     }
@@ -865,6 +867,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         if (!isSettingValues && maskShapeDataChanged != null) {
             maskShapeDataChanged.set(!maskShapeDataChanged.get());
         }
+        maskControlDragged = false;
     }
 
     public void hideMaskShape() {
@@ -980,7 +983,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
 
     public Node addMaskAnchor(int index, String name, String title,
             DoublePoint p, double x, double y) {
-        return addMaskAnchor(index, name, title, p, x, y, Cursor.MOVE);
+        return addMaskAnchor(index, name, title, p, x, y, Cursor.HAND);
     }
 
     public Node addMaskAnchor(int index, String name, String title, DoublePoint p,
@@ -1013,6 +1016,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 @Override
                 public void handle(MouseEvent event) {
                     controlPressed(event);
+                    if (isPickingColor) {
+                        return;
+                    }
+                    maskControlDragged = true;
                 }
             });
             anchor.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -1022,6 +1029,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     if (isPickingColor) {
                         return;
                     }
+                    maskControlDragged = true;
                     double nx = maskEventX(event);
                     double ny = maskEventY(event);
                     if (DoubleShape.changed(nx - p.getX(), ny - p.getY())) {
@@ -2516,7 +2524,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         double x1 = maskArcData.getX1();
         double y1 = maskArcData.getY1();
         double x2 = maskArcData.getX2();
-        double y2 = maskArcData.getX2();
+        double y2 = maskArcData.getY2();
         double startAngle = maskArcData.getStartAngle();
         double extentAngle = maskArcData.getExtentAngle();
         int type = maskArcData.getType();
@@ -2606,30 +2614,30 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             maskSVGPath.setContent(path.getContent());
             maskSVGPath.setLayoutX(layoutX);
             maskSVGPath.setLayoutY(layoutY);
+            setShapeStyle(maskSVGPath);
+
             DoublePoint p;
             int index;
             for (int i = 0; i < maskPathData.getSegments().size(); i++) {
                 DoublePathSegment seg = maskPathData.getSegments().get(i);
                 p = seg.getControlPoint1();
                 index = i + 1;
-                if (p != null && seg.getType() != DoublePathSegment.PathSegmentType.Arc) {
+                if (p != null) {
                     String info = seg.text() + "\n" + message("ControlPoint1");
-                    addMaskAnchor(i, "p" + index + ".1", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, "p" + index + ".c1", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
                 p = seg.getControlPoint2();
                 if (p != null) {
                     String info = seg.text() + "\n" + message("ControlPoint2");
-                    addMaskAnchor(i, "p" + index + ".2", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, "p" + index + ".c2", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
                 p = seg.getEndPoint();
                 if (p != null) {
                     String info = seg.text() + "\n" + message("EndPoint");
-                    addMaskAnchor(i, "p" + index + ".3", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    addMaskAnchor(i, "p" + index + ".e", info, p, p.getX() * xRatio, p.getY() * yRatio);
                 }
-            }
 
-            setShapeStyle(maskSVGPath);
-            setMaskAnchorsStyle();
+            }
 
             maskShapeChanged();
             return true;
@@ -2642,18 +2650,25 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     public boolean moveMaskPathAnchor(int index, String name, DoublePoint p) {
         DoublePathSegment seg = maskPathData.getSegments().get(index);
 
-        if (name.endsWith(".1")) {
-            seg.setControlPoint1(p);
+        DoublePoint sp = seg.getStartPoint();
+        if (name.endsWith(".c1")) {
+            seg.setControlPoint1(p)
+                    .setControlPoint1Rel(new DoublePoint(p.getX() - sp.getX(), p.getY() - sp.getY()));
 
-        } else if (name.endsWith(".2")) {
-            seg.setControlPoint2(p);
+        } else if (name.endsWith(".c2")) {
+            seg.setControlPoint2(p)
+                    .setControlPoint2Rel(new DoublePoint(p.getX() - sp.getX(), p.getY() - sp.getY()));
 
-        } else if (name.endsWith(".3")) {
-            seg.setEndPoint(p);
+        } else if (name.endsWith(".e")) {
+            seg.setEndPoint(p)
+                    .setEndPointRel(new DoublePoint(p.getX() - sp.getX(), p.getY() - sp.getY()));
 
         } else {
             return false;
         }
+
+        maskPathData.replace(index, seg);
+        maskPathData.parseContent(this, maskPathData.getContent()); // to fix values
         maskShapeDataChanged();
         return true;
     }

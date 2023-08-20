@@ -24,7 +24,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
@@ -45,7 +44,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -254,9 +252,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             colorLabel.setText(message("Value"));
             colorUnit.setText("0-255");
 
-            if (colorGroup.getSelectedToggle() == null) {
-                return;
-            }
             if (colorReplaceRadio.isSelected()) {
                 editor.imageTab();
                 colorOperationType = OperationType.ReplaceColor;
@@ -367,9 +362,9 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
                 }
 
-                setBox.getChildren().addAll(demoButton);
             }
 
+            setBox.getChildren().addAll(demoButton);
             refreshStyle(setBox);
 
         } catch (Exception e) {
@@ -412,7 +407,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected void setBlender() {
         blendController.backImage = imageView.getImage();
         blendController.foreImage = FxImageTools.createImage(
-                (int) (imageView.getImage().getWidth() / 2), (int) (imageView.getImage().getHeight() / 2),
+                (int) (imageView.getImage().getWidth() * 3 / 4), (int) (imageView.getImage().getHeight() * 3 / 4),
                 valueColorSetController.color());
         blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
         blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
@@ -587,22 +582,53 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     BufferedImage bufferedImage;
                     String tmpFile;
 
-                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(
-                            new Image("img/cover" + AppValues.AppYear + "g5.png"), null);
-                    ImageScope scope = new ImageScope(SwingFXUtils.toFXImage(image, null));
-                    scope.setScopeType(ImageScope.ScopeType.Outline);
-                    if (sourceFile != null) {
-                        scope.setFile(sourceFile.getAbsolutePath());
+                    ImageScope rscope = new ImageScope();
+                    rscope.setScopeType(ImageScope.ScopeType.Color);
+                    rscope.setColorScopeType(ImageScope.ColorScopeType.Color);
+                    List<java.awt.Color> colors = new ArrayList();
+                    colors.add(ColorConvertTools.converColor(Color.LIGHTGRAY));
+                    rscope.setColors(colors);
+                    rscope.setColorScopeType(ImageScope.ColorScopeType.Color);
+                    rscope.setColorDistance(60);
+                    pixelsOperation = PixelsOperationFactory.create(image,
+                            rscope, OperationType.ReplaceColor, colorActionType)
+                            .setColorPara1(ColorConvertTools.converColor(Color.LIGHTGRAY))
+                            .setColorPara2(ColorConvertTools.converColor(Color.GOLD))
+                            .setSkipTransparent(false)
+                            .setBoolPara1(true)
+                            .setBoolPara2(true)
+                            .setBoolPara3(true);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = FileTmpTools.generateFile(message("ReplaceColor"), "png")
+                            .getAbsolutePath();
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                        task.setInfo(tmpFile);
                     }
-                    scope.setRectangle(DoubleRectangle.image(image));
-                    BufferedImage[] outline = AlphaTools.outline(image, outlineSource, scope.getRectangle());
-                    scope.setOutlineSource(outlineSource);
-                    scope.setOutline(outline[1]);
+
+//                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(
+//                            new Image("img/cover" + AppValues.AppYear + "g5.png"), null);
+//                    ImageScope scope = new ImageScope(SwingFXUtils.toFXImage(image, null));
+//                    scope.setScopeType(ImageScope.ScopeType.Outline);
+//                    if (sourceFile != null) {
+//                        scope.setFile(sourceFile.getAbsolutePath());
+//                    }
+//                    scope.setRectangle(DoubleRectangle.image(image));
+//                    BufferedImage[] outline = AlphaTools.outline(image, outlineSource, scope.getRectangle());
+//                    scope.setOutlineSource(outlineSource);
+//                    scope.setOutline(outline[1]);
+                    ImageScope scope = new ImageScope();
+                    scope.setScopeType(ImageScope.ScopeType.Rectangle)
+                            .setRectangle(DoubleRectangle.xywh(
+                                    image.getWidth() / 8, image.getHeight() / 8,
+                                    image.getWidth() * 3 / 4, image.getHeight() * 3 / 4));
 
                     pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Color, ColorActionType.Filter);
-                    pixelsOperation.setColorPara1(ColorConvertTools.converColor(Color.LIGHTPINK));
-                    pixelsOperation.setFloatPara1(0.5f);
+                            scope, OperationType.Color, ColorActionType.Set);
+                    pixelsOperation.setColorPara1(ColorConvertTools.converColor(Color.LIGHTPINK))
+                            .setBoolPara1(true)
+                            .setBoolPara2(false)
+                            .setBoolPara3(false);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = FileTmpTools.generateFile(message("Color") + "_" + message("Filter"), "png")
                             .getAbsolutePath();

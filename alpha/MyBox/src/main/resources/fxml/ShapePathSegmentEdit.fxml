@@ -64,36 +64,36 @@
                <children>
                   <Label minWidth="-Infinity" text="%ControlPoint1" textOverrun="WORD_ELLIPSIS" />
                   <Label fx:id="indexLabel1" text="x" />
-                  <TextField fx:id="control1XInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="control1XInput" prefWidth="100.0" />
                   <Label fx:id="indexLabel11" text="y" />
-                  <TextField fx:id="control1YInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="control1YInput" prefWidth="100.0" />
                </children>
             </FlowPane>
             <FlowPane fx:id="control2Pane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                <children>
                   <Label minWidth="-Infinity" text="%ControlPoint2" textOverrun="WORD_ELLIPSIS" />
                   <Label fx:id="indexLabel11" text="x" />
-                  <TextField fx:id="control2XInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="control2XInput" prefWidth="100.0" />
                   <Label fx:id="indexLabel111" text="y" />
-                  <TextField fx:id="control2YInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="control2YInput" prefWidth="100.0" />
                </children>
             </FlowPane>
             <FlowPane fx:id="radiusPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                <children>
                   <Label minWidth="-Infinity" text="%Radius" textOverrun="WORD_ELLIPSIS" />
                   <Label fx:id="indexLabel111" text="x" />
-                  <TextField fx:id="radiusXInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="radiusXInput" prefWidth="100.0" />
                   <Label fx:id="indexLabel1111" text="y" />
-                  <TextField fx:id="radiusYInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="radiusYInput" prefWidth="100.0" />
                </children>
             </FlowPane>
             <FlowPane fx:id="endPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                <children>
                   <Label minWidth="-Infinity" text="%EndPoint" textOverrun="WORD_ELLIPSIS" />
                   <Label fx:id="indexLabel1111" text="x" />
-                  <TextField fx:id="endXInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="endXInput" prefWidth="100.0" />
                   <Label fx:id="indexLabel11111" text="y" />
-                  <TextField fx:id="endYInput" editable="false" prefWidth="100.0" />
+                  <TextField fx:id="endYInput" prefWidth="100.0" />
                </children>
             </FlowPane>
             <FlowPane fx:id="rotatePane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">

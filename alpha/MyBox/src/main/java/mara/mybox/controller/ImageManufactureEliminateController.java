@@ -174,8 +174,8 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
             editor.imageTab();
             editor.shapeStyle = new ShapeStyle(interfaceName);
             editor.shapeStyle.setStrokeWidth(strokeWidth);
-            editor.showAnchors = true;
-            editor.popAnchorMenu = true;
+            editor.showAnchors = false;
+            editor.popAnchorMenu = false;
             editor.addPointWhenClick = false;
             editor.popShapeMenu = false;
             editor.supportPath = false;
