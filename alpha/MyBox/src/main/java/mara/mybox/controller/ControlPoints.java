@@ -100,6 +100,14 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         tableData.clear();
     }
 
+    public List<DoublePoint> getPoints() {
+        List<DoublePoint> list = new ArrayList<>();
+        for (DoublePoint p : tableData) {
+            list.add(p.copy());
+        }
+        return list;
+    }
+
     @FXML
     @Override
     public void addAction() {

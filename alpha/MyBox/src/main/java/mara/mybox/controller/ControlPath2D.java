@@ -182,7 +182,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     public List<DoublePathSegment> getSegments() {
         List<DoublePathSegment> list = new ArrayList<>();
         for (DoublePathSegment seg : tableData) {
-            list.add(seg.copyTo());
+            list.add(seg.copy());
         }
         return list;
     }

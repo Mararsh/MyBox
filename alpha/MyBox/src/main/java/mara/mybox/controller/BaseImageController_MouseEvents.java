@@ -37,7 +37,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
-        MyBoxLog.console("here");
         if (p == null || imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -55,7 +54,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        MyBoxLog.console("here");
         if (event == null || p == null || maskControlDragged) {
             return;
         }
@@ -540,23 +538,50 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("SVGPath") + " - " + message("AbsoluteCoordinate"), StyleTools.getIconImageView("iconSVG.png"));
+        Menu svgMenu = new Menu(message("SVGPathSegment"), StyleTools.getIconImageView("iconSVG.png"));
+        items.add(svgMenu);
+
+        if (shapeData == maskPathData) {
+            menu = new MenuItem(message("ConvertToAbsoluteCoordinates"), StyleTools.getIconImageView("iconDelimiter.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    if (maskPathData.toAbs(myController)) {
+                        maskShapeDataChanged();
+                    }
+                }
+            });
+            svgMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ConvertToRelativeCoordinates"), StyleTools.getIconImageView("iconDelimiter.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    if (maskPathData.toRel(myController)) {
+                        maskShapeDataChanged();
+                    }
+                }
+            });
+            svgMenu.getItems().add(menu);
+        }
+
+        menu = new MenuItem(message("DisplayAbsoluteCoordinates"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent mevent) {
                 TextPopController.loadText(myController, shapeData.svgAbs());
             }
         });
-        items.add(menu);
+        svgMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("SVGPath") + " - " + message("RelativeCoordinate"), StyleTools.getIconImageView("iconSVG.png"));
+        menu = new MenuItem(message("DisplayRelativeCoordinates"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent mevent) {
                 TextPopController.loadText(myController, shapeData.svgRel());
             }
         });
-        items.add(menu);
+        svgMenu.getItems().add(menu);
 
         items.add(new SeparatorMenuItem());
 
@@ -611,7 +636,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     @FXML
     public void translateShape(MouseEvent event) {
-        MyBoxLog.console("here");
         scrollPane.setPannable(true);
         if (isPickingColor) {
             return;

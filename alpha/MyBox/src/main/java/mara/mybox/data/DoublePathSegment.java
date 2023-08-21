@@ -280,7 +280,7 @@ public class DoublePathSegment {
         }
     }
 
-    public DoublePathSegment copyTo() {
+    public DoublePathSegment copy() {
         try {
             DoublePathSegment seg = new DoublePathSegment()
                     .setType(type).setIsAbsolute(isAbsolute)
@@ -323,7 +323,7 @@ public class DoublePathSegment {
             if (type == null) {
                 return this;
             }
-            DoublePathSegment seg = copyTo();
+            DoublePathSegment seg = copy();
             if (startPoint != null) {
                 seg.setStartPoint(startPoint.translate(offsetX, offsetY));
             }
@@ -354,7 +354,7 @@ public class DoublePathSegment {
             if (type == null) {
                 return this;
             }
-            DoublePathSegment seg = copyTo();
+            DoublePathSegment seg = copy();
             if (startPoint != null) {
                 seg.setStartPoint(startPoint.scale(scaleX, scaleY));
             }

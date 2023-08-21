@@ -32,6 +32,7 @@ import org.w3c.dom.Node;
  */
 public class ControlSvgOptions extends BaseController {
 
+    protected ControlSvgShape svgShapeControl;
     protected Document doc;
     protected Node focusedNode;
     protected float width, height, bgOpacity;

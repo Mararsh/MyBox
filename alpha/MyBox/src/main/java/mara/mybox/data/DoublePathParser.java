@@ -44,7 +44,14 @@ public class DoublePathParser implements PathHandler {
     }
 
     public List<DoublePathSegment> getSegments() {
-        return segments;
+        if (segments == null || segments.isEmpty()) {
+            return null;
+        }
+        List<DoublePathSegment> list = new ArrayList<>();
+        for (DoublePathSegment seg : segments) {
+            list.add(seg.copy());
+        }
+        return list;
     }
 
     @Override

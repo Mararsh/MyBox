@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -64,6 +65,18 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
             tableData.setAll(DoublePoint.scaleLists(list, UserConfig.imageScale()));
         }
         isSettingValues = false;
+    }
+
+    public List<List<DoublePoint>> getLines() {
+        List<List<DoublePoint>> list = new ArrayList<>();
+        for (List<DoublePoint> line : tableData) {
+            List<DoublePoint> nline = new ArrayList<>();
+            for (DoublePoint p : line) {
+                nline.add(p.copy());
+            }
+            list.add(nline);
+        }
+        return list;
     }
 
     @FXML

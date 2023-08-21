@@ -392,7 +392,7 @@ public class ControlShapeParameters extends BaseController {
 
     public boolean pickPolyline() {
         try {
-            imageController.maskPolylineData.setAll(pointsController.tableData);
+            imageController.maskPolylineData.setAll(pointsController.getPoints());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -402,7 +402,7 @@ public class ControlShapeParameters extends BaseController {
 
     public boolean pickPolygon() {
         try {
-            imageController.maskPolygonData.setAll(pointsController.tableData);
+            imageController.maskPolygonData.setAll(pointsController.getPoints());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -412,7 +412,7 @@ public class ControlShapeParameters extends BaseController {
 
     public boolean pickLines() {
         try {
-            imageController.maskPolylinesData.setLines(linesController.tableData);
+            imageController.maskPolylinesData.setLines(linesController.getLines());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

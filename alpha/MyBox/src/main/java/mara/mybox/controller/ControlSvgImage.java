@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -16,10 +13,6 @@ import mara.mybox.tools.FileDeleteTools;
 public class ControlSvgImage extends BaseImageController {
 
     protected ControlSvgShape svgShapeControl;
-    protected DoublePoint lastPoint;
-
-    @FXML
-    protected Label infoLabel;
 
     @Override
     public void initControls() {
@@ -40,7 +33,6 @@ public class ControlSvgImage extends BaseImageController {
             if (tmpFile != null && tmpFile.exists()) {
                 loadImage(FxImageTools.readImage(tmpFile));
                 FileDeleteTools.delete(tmpFile);
-                setBackGroundOpacity();
             } else {
                 loadImage(null);
             }
@@ -49,12 +41,9 @@ public class ControlSvgImage extends BaseImageController {
         }
     }
 
-    public void setBackGroundOpacity() {
-        imageView.setOpacity(svgShapeControl.optionsController.bgOpacity);
-    }
-
     @Override
     protected void finalRefineView() {
+        paneSize();
     }
 
 }

@@ -355,7 +355,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
      */
     @FXML
     public void paneClicked(MouseEvent event) {
-        MyBoxLog.console("here");
         if (imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -858,7 +857,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void maskShapeDataChanged() {
-        MyBoxLog.console("here");
         drawMaskShape();
         notifyShapeDataChanged();
     }

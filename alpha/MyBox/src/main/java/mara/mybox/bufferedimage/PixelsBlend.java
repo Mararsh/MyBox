@@ -179,6 +179,13 @@ public abstract class PixelsBlend {
         return (int) (A * w + B * (1.0f - w));
     }
 
+    public static PixelsBlend normalBlender(float opacity) {
+        return PixelsBlendFactory.create(ImagesBlendMode.NORMAL)
+                .setOpacity(opacity)
+                .setOrderReversed(false)
+                .setIgnoreTransparency(false);
+    }
+
     public static PixelsBlend blender(ImagesBlendMode blendMode, float opacity,
             boolean orderReversed, boolean ignoreTransparent) {
         return PixelsBlendFactory.create(blendMode)

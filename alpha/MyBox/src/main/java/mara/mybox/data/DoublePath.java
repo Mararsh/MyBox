@@ -96,7 +96,7 @@ public class DoublePath implements DoubleShape {
         if (segments != null) {
             List<DoublePathSegment> list = new ArrayList<>();
             for (DoublePathSegment seg : segments) {
-                list.add(seg.copyTo());
+                list.add(seg.copy());
             }
             path.setSegments(list);
         }
@@ -225,6 +225,25 @@ public class DoublePath implements DoubleShape {
         return true;
     }
 
+    public boolean toAbs(BaseController controller) {
+        try {
+            parseContent(controller, svgAbs());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return false;
+        }
+    }
+
+    public boolean toRel(BaseController controller) {
+        try {
+            parseContent(controller, svgRel());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return false;
+        }
+    }
 
     /*
         static

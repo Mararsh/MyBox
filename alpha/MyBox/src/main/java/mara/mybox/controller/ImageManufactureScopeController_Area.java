@@ -188,7 +188,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
             } else if (scope.getScopeType() == ScopeType.Polygon) {
                 maskPolygonData = new DoublePolygon();
-                maskPolygonData.setAll(pointsController.tableData);
+                maskPolygonData.setAll(pointsController.getPoints());
                 scope.setPolygon(maskPolygonData.copy());
                 indicateScope();
             }

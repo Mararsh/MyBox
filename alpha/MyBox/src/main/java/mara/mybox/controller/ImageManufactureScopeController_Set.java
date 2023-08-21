@@ -106,7 +106,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
                 case Polygon:
                     maskPolygonData = new DoublePolygon();
-                    maskPolygonData.setAll(pointsController.tableData);
+                    maskPolygonData.setAll(pointsController.getPoints());
                     showMaskPolygon();
                     scope.setPolygon(maskPolygonData.copy());
                     checkMatchType();
