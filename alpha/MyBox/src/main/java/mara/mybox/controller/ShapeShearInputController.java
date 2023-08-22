@@ -86,7 +86,7 @@ public class ShapeShearInputController extends BaseShapeTransformController {
             imageController.maskPathData = pathData;
             imageController.maskShapeDataChanged();
         } else {
-            TextPopController.loadText(imageController, pathData.svgAbs());
+            TextPopController.loadText(imageController, pathData.pathAbs());
         }
         close();
     }

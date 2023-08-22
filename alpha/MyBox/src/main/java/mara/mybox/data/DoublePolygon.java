@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -206,7 +207,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         String path = "";
         DoublePoint p = points.get(0);
         path += "M " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
@@ -219,7 +220,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         String path = "";
         DoublePoint p = points.get(0);
         path += "m " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
@@ -233,6 +234,17 @@ public class DoublePolygon implements DoubleShape {
         }
         path += "z";
         return path;
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<polygon points=\""
+                + DoublePoint.toText(points, UserConfig.imageScale(), " ") + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
     }
 
     public DoublePoint get(int i) {

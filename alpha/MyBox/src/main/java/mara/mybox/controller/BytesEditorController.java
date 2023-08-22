@@ -352,7 +352,15 @@ public class BytesEditorController extends BaseFileEditorController {
     public static BytesEditorController open(File file) {
         BytesEditorController controller = open();
         if (controller != null) {
-            controller.openFile(file);
+            controller.sourceFileChanged(file);
+        }
+        return controller;
+    }
+
+    public static BytesEditorController edit(String texts) {
+        BytesEditorController controller = open();
+        if (controller != null) {
+            controller.loadContents(texts);
         }
         return controller;
     }

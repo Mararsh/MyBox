@@ -113,29 +113,42 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         double sx = imageScale(x);
         double sy = imageScale(y);
         double sw = imageScale(x + width);
         double sh = imageScale(y + height);
         return "M " + sx + "," + sy + " \n"
-                + "L " + sw + "," + sy + " \n"
-                + "L " + sw + "," + sh + " \n"
-                + "L " + sx + "," + sh + " \n"
-                + "L " + sx + "," + sy;
+                + "H " + sw + " \n"
+                + "V " + sh + " \n"
+                + "H " + sx + " \n"
+                + "V " + sy;
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         double sx = imageScale(x);
         double sy = imageScale(y);
         double sw = imageScale(width);
         double sh = imageScale(height);
         return "m " + sx + "," + sy + " \n"
-                + "l " + sw + "," + 0 + " \n"
-                + "l " + 0 + "," + sh + " \n"
-                + "l " + (-sw) + "," + 0 + " \n"
-                + "l " + 0 + "," + (-sh);
+                + "h " + sw + " \n"
+                + "v " + sh + " \n"
+                + "h " + (-sw) + " \n"
+                + "v " + (-sh);
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<rect x=\"" + imageScale(x) + "\""
+                + " y=\"" + imageScale(y) + "\""
+                + " width=\"" + imageScale(width) + "\""
+                + " height=\"" + imageScale(height) + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
     }
 
     public boolean same(DoubleRectangle rect) {

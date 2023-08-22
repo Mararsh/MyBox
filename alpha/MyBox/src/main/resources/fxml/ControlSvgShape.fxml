@@ -320,7 +320,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
-                                        <Tab text="%Options" fx:id="xmlTab1">
+                                        <Tab text="SVG" fx:id="xmlTab1">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <padding>
@@ -374,6 +374,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
+                              <CheckBox fx:id="popAnchorCheck" mnemonicParsing="false">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconMenu.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </CheckBox>
                                         <CheckBox fx:id="addPointCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

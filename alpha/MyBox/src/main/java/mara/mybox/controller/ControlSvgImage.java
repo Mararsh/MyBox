@@ -4,6 +4,9 @@ import java.io.File;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.SvgTools;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * @Author Mara
@@ -14,13 +17,17 @@ public class ControlSvgImage extends BaseImageController {
 
     protected ControlSvgShape svgShapeControl;
 
-    @Override
-    public void initControls() {
+    public void loadDoc(Document doc, Element node) {
         try {
-            super.initControls();
-
-            imageView.toBack();
-
+            doc = SvgTools.focus(doc, node, 0.5f);
+//            doc = SvgTools.removeSize(doc);
+            File tmpFile = SvgTools.docToImage(this, doc, -1, -1, null);
+            if (tmpFile != null && tmpFile.exists()) {
+                loadImage(FxImageTools.readImage(tmpFile));
+                FileDeleteTools.delete(tmpFile);
+            } else {
+                loadImage(null);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -28,7 +35,6 @@ public class ControlSvgImage extends BaseImageController {
 
     public void loadBackGround() {
         try {
-            imageView.toBack();
             File tmpFile = svgShapeControl.optionsController.toImage();
             if (tmpFile != null && tmpFile.exists()) {
                 loadImage(FxImageTools.readImage(tmpFile));

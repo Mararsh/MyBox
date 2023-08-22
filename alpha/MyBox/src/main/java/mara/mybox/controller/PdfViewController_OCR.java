@@ -17,13 +17,11 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -207,8 +205,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
             popError(message("NoData"));
             return;
         }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(ocrArea.getText());
+        TextEditorController.edit(ocrArea.getText());
     }
 
 }

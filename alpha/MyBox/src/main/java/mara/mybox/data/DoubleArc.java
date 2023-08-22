@@ -98,21 +98,31 @@ public class DoubleArc implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         DoublePath pathData = DoubleShape.pathData(this);
         if (pathData == null) {
             return null;
         }
-        return pathData.svgAbs();
+        return pathData.pathAbs();
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         DoublePath pathData = DoublePath.shapeToPathData(getShape());
         if (pathData == null) {
             return null;
         }
-        return pathData.svgRel();
+        return pathData.pathRel();
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<path d=\"\n" + pathAbs() + "\n\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return "<path d=\"\n" + pathRel() + "\n\"> ";
     }
 
     /*

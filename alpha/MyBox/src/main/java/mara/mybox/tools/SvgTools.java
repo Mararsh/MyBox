@@ -346,6 +346,18 @@ public class SvgTools {
         return clonedDoc;
     }
 
+    public static Document removeSize(Document doc) {
+        if (doc == null) {
+            return doc;
+        }
+        Document clonedDoc = (Document) doc.cloneNode(true);
+        Element svgNode = XmlTools.findName(clonedDoc, "svg", 0);
+        svgNode.removeAttribute("width");
+        svgNode.removeAttribute("height");
+        svgNode.removeAttribute("viewBox");
+        return clonedDoc;
+    }
+
     public static File toFile(SVGGraphics2D g, File file) {
         if (g == null || file == null) {
             return null;

@@ -150,7 +150,7 @@ public class DoublePath implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         try {
             if (segments == null || segments.isEmpty()) {
                 return null;
@@ -171,7 +171,7 @@ public class DoublePath implements DoubleShape {
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         try {
             if (segments == null || segments.isEmpty()) {
                 return null;
@@ -189,6 +189,16 @@ public class DoublePath implements DoubleShape {
             MyBoxLog.console(e);
             return null;
         }
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<path d=\"\n" + pathAbs() + "\n\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return "<path d=\"\n" + pathRel() + "\n\"> ";
     }
 
     public DoublePoint lastPoint() {
@@ -227,7 +237,7 @@ public class DoublePath implements DoubleShape {
 
     public boolean toAbs(BaseController controller) {
         try {
-            parseContent(controller, svgAbs());
+            parseContent(controller, pathAbs());
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -237,7 +247,7 @@ public class DoublePath implements DoubleShape {
 
     public boolean toRel(BaseController controller) {
         try {
-            parseContent(controller, svgRel());
+            parseContent(controller, pathRel());
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);

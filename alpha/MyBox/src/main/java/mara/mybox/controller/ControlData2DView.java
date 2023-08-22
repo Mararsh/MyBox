@@ -18,7 +18,6 @@ import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -369,8 +368,7 @@ public class ControlData2DView extends BaseController {
 
     @FXML
     public void editText() {
-        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textArea.getText());
+        TextEditorController.edit(textArea.getText());
     }
 
     @Override

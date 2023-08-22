@@ -65,7 +65,7 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck, addPointCheck;
+    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorCheck, addPointCheck;
     @FXML
     protected FlowPane opPane;
     @FXML
@@ -92,6 +92,7 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             this.imageController = imageController;
             imageController.anchorCheck = anchorCheck;
+            imageController.popAnchorCheck = popAnchorCheck;
             imageController.addPointCheck = addPointCheck;
             imageController.initMaskControls();
 
@@ -491,7 +492,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
             switch (shapeType) {
                 case Polylines:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck);
+                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastLine") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapePolylinesTips"));
@@ -499,14 +500,14 @@ public abstract class ControlShapeOptions extends BaseController {
                     break;
                 case Polyline:
                 case Polygon:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, addPointCheck);
+                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorCheck, addPointCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }
                     break;
                 default:
-                    opPane.getChildren().addAll(functionsButton, anchorCheck);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorCheck);
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }

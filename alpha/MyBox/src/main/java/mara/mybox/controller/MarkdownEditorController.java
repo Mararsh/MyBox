@@ -377,4 +377,12 @@ public class MarkdownEditorController extends TextEditorController {
         }
     }
 
+    public static MarkdownEditorController edit(String texts) {
+        MarkdownEditorController controller = open();
+        if (controller != null) {
+            controller.loadContents(texts);
+        }
+        return controller;
+    }
+
 }

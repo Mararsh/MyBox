@@ -66,15 +66,28 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "L " + imageScale(endX) + "," + imageScale(endY);
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "l " + imageScale(endX - startX) + "," + imageScale(endY - startY);
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<line x1=\"" + imageScale(startX) + "\""
+                + " y1=\"" + imageScale(startY) + "\""
+                + " x2=\"" + imageScale(endX) + "\""
+                + " y2=\"" + imageScale(endY) + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
     }
 
     public double getStartX() {

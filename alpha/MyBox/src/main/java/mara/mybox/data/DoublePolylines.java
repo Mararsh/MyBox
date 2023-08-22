@@ -7,6 +7,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
 import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -189,7 +190,7 @@ public class DoublePolylines implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         String path = "";
         for (List<DoublePoint> line : points) {
             DoublePoint p = line.get(0);
@@ -203,7 +204,7 @@ public class DoublePolylines implements DoubleShape {
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         String path = "";
         double lastx = 0, lasty = 0;
         for (List<DoublePoint> line : points) {
@@ -219,6 +220,22 @@ public class DoublePolylines implements DoubleShape {
             }
         }
         return path;
+    }
+
+    @Override
+    public String elementAbs() {
+        String e = "";
+        int scale = UserConfig.imageScale();
+        for (List<DoublePoint> line : points) {
+            e += "<polygon points=\""
+                    + DoublePoint.toText(line, scale, " ") + "\">\n";
+        }
+        return e;
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
     }
 
     public int getLinesSize() {

@@ -415,9 +415,7 @@ public class JsonEditorController extends BaseFileController {
 
     @FXML
     protected void editTexts() {
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textsArea.getText());
-        controller.requestMouse();
+        TextEditorController.edit(textsArea.getText());
     }
 
     @FXML

@@ -1706,9 +1706,7 @@ public class ControlWebView extends BaseController {
                 if (toc == null || toc.isBlank()) {
                     popInformation(message("NoData"));
                 } else {
-                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                    c.loadContents(toc);
-                    c.toFront();
+                    TextEditorController.edit(toc);
                 }
             }
 
@@ -1737,9 +1735,7 @@ public class ControlWebView extends BaseController {
                 if (texts == null || texts.isBlank()) {
                     popInformation(message("NoData"));
                 } else {
-                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                    c.loadContents(texts);
-                    c.toFront();
+                    TextEditorController.edit(texts);
                 }
             }
 

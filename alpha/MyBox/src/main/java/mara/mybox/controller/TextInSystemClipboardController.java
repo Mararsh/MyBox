@@ -205,9 +205,7 @@ public class TextInSystemClipboardController extends BaseController {
 
     @FXML
     public void editAction() {
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textArea.getText());
-        controller.requestMouse();
+        TextEditorController.edit(textArea.getText());
     }
 
     @FXML

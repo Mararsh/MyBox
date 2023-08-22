@@ -25,7 +25,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -297,8 +296,7 @@ public class Base64Controller extends BaseController {
                 bottomLabel.setText(s);
                 popSuccessful();
                 if (textRadio.isSelected() || fileRadio.isSelected()) {
-                    TextEditorController c = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-                    c.sourceFileChanged(file);
+                    TextEditorController.open(file);
                 } else {
                     browseURI(file.getParentFile().toURI());
                 }

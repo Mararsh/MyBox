@@ -83,7 +83,7 @@ public class DoubleCubic implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "C " + imageScale(controlX1) + "," + imageScale(controlY1) + " "
                 + imageScale(controlX2) + "," + imageScale(controlY2) + " "
@@ -91,11 +91,21 @@ public class DoubleCubic implements DoubleShape {
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "c " + imageScale(controlX1 - startX) + "," + imageScale(controlY1 - startY) + " "
                 + imageScale(controlX2 - startX) + "," + imageScale(controlY2 - startY) + " "
                 + imageScale(endX - startX) + "," + imageScale(endY - startY);
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<path d=\"\n" + pathAbs() + "\n\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return "<path d=\"\n" + pathRel() + "\n\"> ";
     }
 
     public double getStartX() {

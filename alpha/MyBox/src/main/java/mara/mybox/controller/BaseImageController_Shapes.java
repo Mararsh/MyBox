@@ -113,7 +113,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     @FXML
     protected SVGPath maskSVGPath;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck, addPointCheck;
+    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorCheck, addPointCheck;
     @FXML
     protected FlowPane opPane;
 
@@ -206,6 +206,17 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                         UserConfig.setBoolean(baseName + "ImageShapeShowAnchor", anchorCheck.isSelected());
                         showAnchors = anchorCheck.isSelected();
                         setMaskAnchorsStyle();
+                    }
+                });
+            }
+
+            if (popAnchorCheck != null) {
+                popAnchorCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true));
+                popAnchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                        UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", popAnchorCheck.isSelected());
+                        popAnchorMenu = popAnchorCheck.isSelected();
                     }
                 });
             }

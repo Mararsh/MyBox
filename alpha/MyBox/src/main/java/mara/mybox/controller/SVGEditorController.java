@@ -109,6 +109,7 @@ public class SvgEditorController extends XmlEditorController {
         try {
             Menu w3menu = new Menu("w3");
             List<MenuItem> items = new ArrayList<>();
+            items.add(exampleMenu("yinyang.svg"));
             items.add(exampleMenu("accessible.svg"));
             items.add(exampleMenu("AJ_Digital_Camera.svg"));
             items.add(exampleMenu("alphachannel.svg"));
@@ -133,7 +134,6 @@ public class SvgEditorController extends XmlEditorController {
             items.add(exampleMenu("svg2009.svg"));
             items.add(exampleMenu("tiger.svg"));
             items.add(exampleMenu("USStates.svg"));
-            items.add(exampleMenu("yinyang.svg"));
 
             items.add(new SeparatorMenuItem());
 
@@ -151,8 +151,8 @@ public class SvgEditorController extends XmlEditorController {
 
             Menu batikMenu = new Menu("batik");
             items.clear();
-            items.add(exampleMenu("3D.svg"));
             items.add(exampleMenu("anne.svg"));
+            items.add(exampleMenu("3D.svg"));
             items.add(exampleMenu("asf-logo.svg"));
             items.add(exampleMenu("barChart.svg"));
             items.add(exampleMenu("batik3D.svg"));

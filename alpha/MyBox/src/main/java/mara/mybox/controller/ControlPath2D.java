@@ -20,10 +20,8 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableRowIndexCell;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -47,7 +45,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     @FXML
     protected TextArea textArea;
     @FXML
-    protected CheckBox wrapTextsCheck, typesettingCheck;
+    protected CheckBox wrapTextsCheck;
     @FXML
     protected Label textsLabel;
 
@@ -91,14 +89,6 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
                 }
             });
 
-            typesettingCheck.setSelected(UserConfig.getBoolean(baseName + "Typesetting", true));
-            typesettingCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Typesetting", typesettingCheck.isSelected());
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -131,7 +121,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         if (tableData.isEmpty()) {
             textArea.clear();
         } else {
-            String s = DoublePath.segmentsToString(tableData, typesettingCheck.isSelected() ? "\n" : " ");
+            String s = DoublePath.segmentsToString(tableData, "\n");
             textArea.setText(s);
         }
         updateTextSize();
@@ -221,16 +211,6 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
     /*
         text
      */
-    @FXML
-    public void editTexts() {
-        if (textArea.getText().isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textArea.getText());
-    }
-
     @FXML
     public void typesettingAction() {
         String text = textArea.getText();

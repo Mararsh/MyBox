@@ -447,8 +447,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
     @FXML
     @Override
     public void editAction() {
-        MarkdownEditorController controller = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
-        controller.loadContents(textInput.getText());
+        MarkdownEditorController.edit(textInput.getText());
     }
 
     @FXML

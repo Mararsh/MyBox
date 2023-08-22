@@ -75,17 +75,27 @@ public class DoubleQuadratic implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "Q " + imageScale(controlX) + "," + imageScale(controlY) + " "
                 + imageScale(endX) + "," + imageScale(endY);
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "q " + imageScale(controlX - startX) + "," + imageScale(controlY - startY) + " "
                 + imageScale(endX - startX) + "," + imageScale(endY - startY);
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<path d=\"\n" + pathAbs() + "\n\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return "<path d=\"\n" + pathRel() + "\n\"> ";
     }
 
     /*

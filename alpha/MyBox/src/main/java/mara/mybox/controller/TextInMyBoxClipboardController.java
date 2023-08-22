@@ -188,9 +188,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
             popError(Languages.message("NoData"));
             return;
         }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(s);
-        controller.requestMouse();
+        TextEditorController.edit(s);
     }
 
     @FXML

@@ -112,9 +112,13 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             anchorShowItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent cevent) {
-                    UserConfig.setBoolean(baseName + "ImageShapeShowAnchor", anchorShowItem.isSelected());
-                    showAnchors = anchorShowItem.isSelected();
-                    setMaskAnchorsStyle();
+                    if (anchorCheck != null) {
+                        anchorCheck.setSelected(anchorShowItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "ImageShapeShowAnchor", anchorShowItem.isSelected());
+                        showAnchors = anchorShowItem.isSelected();
+                        setMaskAnchorsStyle();
+                    }
                 }
             });
             anchorStyleMenu.getItems().add(anchorShowItem);
@@ -126,8 +130,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent cevent) {
-                    UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", anchorMenuItem.isSelected());
-                    popAnchorMenu = anchorMenuItem.isSelected();
+                    if (popAnchorCheck != null) {
+                        popAnchorCheck.setSelected(anchorMenuItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", anchorMenuItem.isSelected());
+                        popAnchorMenu = anchorMenuItem.isSelected();
+                    }
                 }
             });
             anchorStyleMenu.getItems().add(anchorMenuItem);
@@ -194,9 +202,17 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (pointItems != null) {
                 items.addAll(pointItems);
             }
+
             List<MenuItem> opItems = shapeOperationMenu(event, shapeData, p);
             if (opItems != null) {
                 items.addAll(opItems);
+            }
+
+            List<MenuItem> svgItems = DoubleShape.svgMenu(this, shapeData);
+            if (svgItems != null) {
+                Menu svgMenu = new Menu("SVG", StyleTools.getIconImageView("iconSVG.png"));
+                svgMenu.getItems().addAll(svgItems);
+                items.add(svgMenu);
             }
 
             menu = new MenuItem(message("ImageCoordinateDecimalDigits"), StyleTools.getIconImageView("iconNumber.png"));
@@ -248,8 +264,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             pointMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent cevent) {
-                    UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", pointMenuItem.isSelected());
-                    addPointWhenClick = pointMenuItem.isSelected();
+                    if (addPointCheck != null) {
+                        addPointCheck.setSelected(pointMenuItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", pointMenuItem.isSelected());
+                        addPointWhenClick = pointMenuItem.isSelected();
+                    }
                 }
             });
             items.add(pointMenuItem);
@@ -535,53 +555,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             });
             items.add(menu);
         }
-
-        items.add(new SeparatorMenuItem());
-
-        Menu svgMenu = new Menu(message("SVGPathSegment"), StyleTools.getIconImageView("iconSVG.png"));
-        items.add(svgMenu);
-
-        if (shapeData == maskPathData) {
-            menu = new MenuItem(message("ConvertToAbsoluteCoordinates"), StyleTools.getIconImageView("iconDelimiter.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    if (maskPathData.toAbs(myController)) {
-                        maskShapeDataChanged();
-                    }
-                }
-            });
-            svgMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ConvertToRelativeCoordinates"), StyleTools.getIconImageView("iconDelimiter.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    if (maskPathData.toRel(myController)) {
-                        maskShapeDataChanged();
-                    }
-                }
-            });
-            svgMenu.getItems().add(menu);
-        }
-
-        menu = new MenuItem(message("DisplayAbsoluteCoordinates"), StyleTools.getIconImageView("iconPop.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
-                TextPopController.loadText(myController, shapeData.svgAbs());
-            }
-        });
-        svgMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("DisplayRelativeCoordinates"), StyleTools.getIconImageView("iconPop.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
-                TextPopController.loadText(myController, shapeData.svgRel());
-            }
-        });
-        svgMenu.getItems().add(menu);
 
         items.add(new SeparatorMenuItem());
 

@@ -161,8 +161,7 @@ public class MenuBytesEditController extends MenuTextEditController {
     @FXML
     @Override
     public void editAction() {
-        BytesEditorController controller = (BytesEditorController) openStage(Fxmls.BytesEditorFxml);
-        controller.loadContents(textInput.getText());
+        BytesEditorController.edit(textInput.getText());
     }
 
     @FXML

@@ -67,7 +67,7 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         double cx = imageScale(centerX);
         double cy = imageScale(centerY);
         double r = imageScale(radius);
@@ -78,7 +78,7 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         double cx = imageScale(centerX);
         double cy = imageScale(centerY);
         double r = imageScale(radius);
@@ -89,6 +89,17 @@ public class DoubleCircle implements DoubleShape {
                 + "z";
     }
 
+    @Override
+    public String elementAbs() {
+        return "<circle cx=\"" + imageScale(centerX) + "\""
+                + " cy=\"" + imageScale(centerY) + "\""
+                + " r=\"" + imageScale(radius) + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
+    }
 
     /*
         set

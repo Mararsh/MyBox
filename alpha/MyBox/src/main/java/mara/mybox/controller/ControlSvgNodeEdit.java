@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.FlowPane;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.data.XmlTreeNode;
 import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 import mara.mybox.db.table.TableStringValues;
@@ -35,7 +38,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     @FXML
     protected ControlPath2D pathController;
     @FXML
-    protected Button drawButton;
+    protected FlowPane shapeOpPane;
 
     @Override
     public void editNode(TreeItem<XmlTreeNode> item) {
@@ -47,9 +50,9 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 if (!name.equalsIgnoreCase("svg")) {
                     if (name.equalsIgnoreCase("path")) {
                         tabPane.getTabs().add(0, pathTab);
-                        tabPane.getTabs().add(1, styleTab);
+                        tabPane.getTabs().add(2, styleTab);
                     } else {
-                        tabPane.getTabs().add(0, styleTab);
+                        tabPane.getTabs().add(1, styleTab);
                     }
                     tabPane.getSelectionModel().select(0);
                     refreshStyle(tabPane);
@@ -62,8 +65,8 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         } catch (Exception e) {
         }
         editor.htmlController.loadDoc(editor.treeController.doc, focusedNode);
-        drawButton.setDisable(item == null || item.getValue() == null
-                || !item.getValue().isSvgShape());
+        shapeOpPane.setVisible(item != null && item.getValue() != null
+                && item.getValue().isSvgShape());
     }
 
     @Override
@@ -135,15 +138,6 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         tabPane.getTabs().removeAll(pathTab, styleTab);
     }
 
-    @FXML
-    public void drawShape() {
-        if (treeItem == null) {
-            popInformation(message("SelectToHandle"));
-            return;
-        }
-        SvgEditShapeController.open(editor, treeItem);
-    }
-
     /*
         style
      */
@@ -174,6 +168,45 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     @FXML
     protected void clearStyle() {
         styleArea.clear();
+    }
+
+    /*
+        shape
+     */
+    @FXML
+    public void drawShape() {
+        if (treeItem == null) {
+            popInformation(message("SelectToHandle"));
+            return;
+        }
+        SvgEditShapeController.open(editor, treeItem);
+    }
+
+    @FXML
+    public void popShapeMenu(Event event) {
+        if (UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", false)) {
+            showShapeMenu(event);
+        }
+    }
+
+    @FXML
+    public void showShapeMenu(Event event) {
+        if (node == null || !(node instanceof Element)) {
+            return;
+        }
+        List<MenuItem> items = DoubleShape.elementMenu(this, (Element) node);
+        if (items == null) {
+            return;
+        }
+        popEventMenu(event, items);
+    }
+
+    public void loadPath(String content) {
+        if (content == null || content.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        pathController.loadPath(content);
     }
 
 }

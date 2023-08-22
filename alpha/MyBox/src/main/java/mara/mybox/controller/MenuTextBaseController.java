@@ -16,7 +16,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
 /**
@@ -130,8 +129,7 @@ public class MenuTextBaseController extends MenuController {
         if (textInput == null) {
             return;
         }
-        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textInput.getText());
+        TextEditorController.edit(textInput.getText());
     }
 
     @FXML

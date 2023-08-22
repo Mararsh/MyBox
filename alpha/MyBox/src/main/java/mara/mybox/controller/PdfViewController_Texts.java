@@ -8,9 +8,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -79,8 +77,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
             popError(message("NoData"));
             return;
         }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textsArea.getText());
+        TextEditorController.edit(textsArea.getText());
     }
 
 }

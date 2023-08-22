@@ -136,7 +136,7 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
-    public String svgAbs() {
+    public String pathAbs() {
         double sx = imageScale(x);
         double sy = imageScale(y + height / 2);
         double rx = imageScale(width / 2);
@@ -147,7 +147,7 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
-    public String svgRel() {
+    public String pathRel() {
         double sx = imageScale(x);
         double sy = imageScale(y + height / 2);
         double rx = imageScale(width / 2);
@@ -157,6 +157,20 @@ public class DoubleEllipse implements DoubleShape {
                 + "a " + rx + "," + ry + " 0,0,1 " + r2 + "," + 0 + " \n"
                 + "a " + rx + "," + ry + " 0,0,1 " + (-r2) + "," + 0;
     }
+
+    @Override
+    public String elementAbs() {
+        return "<ellipse cx=\"" + imageScale(getCenterX()) + "\""
+                + " cy=\"" + imageScale(getCenterY()) + "\""
+                + " rx=\"" + imageScale(getRadiusX()) + "\""
+                + " ry=\"" + imageScale(getRadiusY()) + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
+    }
+
 
     /*
         get
