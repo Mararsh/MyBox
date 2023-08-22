@@ -226,7 +226,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 addPointCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean("ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
                         addPointWhenClick = addPointCheck.isSelected();
                     }
                 });
@@ -1949,14 +1949,16 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                         if (isPickingColor) {
                             return;
                         }
-                        maskControlDragged = true;
                         double offsetX = imageOffsetX(event);
                         double offsetY = imageOffsetY(event);
                         if (!DoubleShape.changed(offsetX, offsetY)) {
+                            maskControlDragged = false;
                             return;
                         }
                         maskPolylinesData.translateLineRel(index, offsetX, offsetY);
                         maskShapeDataChanged();
+                        event.consume();
+                        maskControlDragged = true;
                     }
                 });
                 pline.hoverProperty().addListener(new ChangeListener<Boolean>() {

@@ -79,7 +79,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         String tips = message("PickingColorsForScope");
         scopeTips.setText(tips);
         scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
-        NodeStyleTools.setTooltip(scopeTips, tips);
         popInformation(tips);
     }
 
@@ -89,11 +88,9 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             String tips = imageLabelOriginal.getText();
             scopeTips.setText(tips);
             scopeTips.setStyle(imageLabelOriginal.getStyle());
-            NodeStyleTools.setTooltip(scopeTips, tips);
             imageLabelOriginal = null;
         } else {
             scopeTips.setText("");
-            NodeStyleTools.setTooltip(scopeTips, "");
         }
 
     }

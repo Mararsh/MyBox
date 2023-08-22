@@ -265,7 +265,6 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
-        MyBoxLog.console("here");
         if (p == null || imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -291,7 +290,8 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                         scope.addPoint(x, y);
                         indicateScope();
 
-                    } else if (scope.getScopeType() == ScopeType.Polygon) {
+                    } else if (scope.getScopeType() == ScopeType.Polygon
+                            && !maskControlDragged) {
                         maskPolygonData.add(p.getX(), p.getY());
                         maskShapeDataChanged();
                     }
@@ -302,8 +302,8 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             }
 
         }
-        maskControlDragged = false;
 
+        maskControlDragged = false;
     }
 
     @FXML

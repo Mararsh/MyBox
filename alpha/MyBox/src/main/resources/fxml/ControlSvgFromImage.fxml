@@ -39,12 +39,11 @@ License:    Apache License Version 2.0
                      <children>
                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
                            <children>
-                              <RadioButton fx:id="myboxRadio" mnemonicParsing="false" selected="true" text="MyBox">
+                              <RadioButton fx:id="jankovicsandrasRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="jankovicsandras">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="algorithmGroup" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="jankovicsandras" toggleGroup="$algorithmGroup" />
+                                 </toggleGroup></RadioButton>
+                              <RadioButton fx:id="myboxRadio" mnemonicParsing="false" text="MyBox" toggleGroup="$algorithmGroup" />
                            </children>
                         </FlowPane>
                         <VBox fx:id="jankovicsandrasBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

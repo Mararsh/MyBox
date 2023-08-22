@@ -224,9 +224,15 @@ public class ShapePathSegmentEditController extends BaseInputController {
                 absRadio.setSelected(true);
                 typePane.setDisable(false);
 
-                DoublePoint p = pathController.tableData.get(size - 1).getEndPoint();
-                startX = p.getX();
-                startY = p.getY();
+                if (size <= 0) {
+                    startX = 0;
+                    startY = 0;
+                } else {
+                    DoublePoint p = pathController.tableData.get(size - 1).getEndPoint();
+                    startX = p.getX();
+                    startY = p.getY();
+                }
+
                 info = message("Add") + " " + message("Index") + ": " + segIndex;
             }
 

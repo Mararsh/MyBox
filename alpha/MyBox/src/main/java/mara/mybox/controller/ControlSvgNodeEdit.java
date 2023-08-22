@@ -1,8 +1,11 @@
 package mara.mybox.controller;
 
 import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
@@ -15,6 +18,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -184,7 +188,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     public void popShapeMenu(Event event) {
-        if (UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", true)) {
             showShapeMenu(event);
         }
     }
@@ -198,6 +202,17 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         if (items == null) {
             return;
         }
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                UserConfig.setBoolean("SvgNodeShapeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
         popEventMenu(event, items);
     }
 

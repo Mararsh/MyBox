@@ -300,8 +300,8 @@ public class HelpTools {
             table.newLinkRow(message(lang, "SvgTutorial") + " - " + message(lang, "English"), svgEnLink());
             table.newLinkRow(message(lang, "SvgSpecification"), svgSpecification());
             table.newLinkRow("SVGPath in JavaFX", javafxSVGPathLink());
-            table.newLinkRow("Path in JavaFX", javafxPathLink());
-            table.newLinkRow("Path 2D in Java", javaPath2DLink());
+            table.newLinkRow("Shape 2D in JavaFX", javafxShape2DLink());
+            table.newLinkRow("Shape 2D in Java", javaShape2DLink());
 
             String html = HtmlWriteTools.html(message(lang, "Links"), HtmlStyles.DefaultStyle, table.div());
 
@@ -625,6 +625,9 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "Shortcuts")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ShortcutsTips")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message(lang, "ChildWindow")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ChildWindowTips")).append("</PRE>\n");
+
             s.append("    <H3>").append(message(lang, "ClearExpiredData")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ClearExpiredDataComments")).append("</PRE>\n");
 
@@ -764,12 +767,12 @@ public class HelpTools {
         return "https://www.w3.org/Graphics/SVG/";
     }
 
-    public static String javaPath2DLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/geom/Path2D.html";
+    public static String javaShape2DLink() {
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/Shape.html";
     }
 
-    public static String javafxPathLink() {
-        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/Path.html";
+    public static String javafxShape2DLink() {
+        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/Shape.html";
     }
 
     public static String javafxSVGPathLink() {
@@ -1114,20 +1117,20 @@ public class HelpTools {
             });
             items.add(menuItem);
 
-            menuItem = new MenuItem("Path in JavaFX");
+            menuItem = new MenuItem("Shape 2D in JavaFX");
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.javafxPathLink(), true);
+                    WebBrowserController.openAddress(HelpTools.javafxShape2DLink(), true);
                 }
             });
             items.add(menuItem);
 
-            menuItem = new MenuItem("Path 2D in Java");
+            menuItem = new MenuItem("Shape 2D in Java");
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.javaPath2DLink(), true);
+                    WebBrowserController.openAddress(HelpTools.javaShape2DLink(), true);
                 }
             });
             items.add(menuItem);

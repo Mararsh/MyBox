@@ -32,7 +32,7 @@ public class StyleCheckBox {
             return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
         }
         if (id.startsWith("childWindow")) {
-            return new StyleData(id, "", message("ChildWindowCheck"), "", "iconWindow.png");
+            return new StyleData(id, "", message("ChildWindowTips"), "", "iconWindow.png");
         }
         if (id.startsWith("scope")) {
             return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
@@ -96,8 +96,8 @@ public class StyleCheckBox {
         }
         if (id.startsWith("pop")) {
             switch (id) {
-                case "popMenuCheck":
-                    return new StyleData(id, message("PopMenu"), "", "iconPop.png");
+                case "popAnchorCheck":
+                    return new StyleData(id, message("PopAnchorMenu"), "", "iconPop.png");
                 default:
                     return new StyleData(id, message("Pop"), "", "iconPop.png");
             }

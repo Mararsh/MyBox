@@ -64,7 +64,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                     maskShapeDataChanged();
 
                 } else if (maskPolygon != null && maskPolygon.isVisible()) {
-                    MyBoxLog.console("here");
                     maskPolygonData.add(p.getX(), p.getY());
                     maskShapeDataChanged();
                 }
@@ -617,11 +616,14 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (shapeData == null) {
             return;
         }
-        maskControlDragged = true;
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
         if (DoubleShape.translateRel(shapeData, offsetX, offsetY)) {
             maskShapeDataChanged();
+            event.consume();
+            maskControlDragged = true;
+        } else {
+            maskControlDragged = false;
         }
     }
 

@@ -297,7 +297,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeMattingTips");
                     tabPane.getTabs().addAll(areaTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(functionsButton, withdrawPointButton, anchorCheck, addPointCheck);
+                    opPane.getChildren().addAll(functionsButton, withdrawPointButton, anchorCheck, popAnchorCheck, addPointCheck);
                     areaBox.getChildren().add(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
@@ -307,7 +307,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeShapeTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(functionsButton, anchorCheck);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorCheck);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
@@ -320,7 +320,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeShapeTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(functionsButton, anchorCheck);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorCheck);
                     areaBox.getChildren().addAll(circleBox, goScopeButton);
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
@@ -332,7 +332,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    opPane.getChildren().addAll(functionsButton, anchorCheck);
+                    opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorCheck);
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
@@ -344,7 +344,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeShapeTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(functionsButton, withdrawPointButton, anchorCheck, addPointCheck);
+                    opPane.getChildren().addAll(functionsButton, withdrawPointButton, anchorCheck, popAnchorCheck, addPointCheck);
                     areaBox.getChildren().addAll(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);

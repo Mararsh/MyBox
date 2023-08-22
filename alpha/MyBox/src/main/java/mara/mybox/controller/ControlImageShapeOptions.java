@@ -131,6 +131,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
+                editor.imageTab();
                 editor.drawMaskShape();
                 editor.hideMaskShape();
             }

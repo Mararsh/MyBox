@@ -32,7 +32,7 @@ public class ControlSvgFromImage extends BaseController {
     @FXML
     protected CheckBox colorSamplingCheck, viewboxCheck, descCheck;
     @FXML
-    protected RadioButton myboxRadio,
+    protected RadioButton myboxRadio, jankovicsandrasRadio,
             blur0Radio, blur1Radio, blur2Radio, blur3Radio, blur4Radio, blur5Radio;
     @FXML
     protected ToggleGroup algorithmGroup;
@@ -145,7 +145,7 @@ public class ControlSvgFromImage extends BaseController {
             viewboxCheck.setSelected(false);
             descCheck.setSelected(true);
 
-            myboxRadio.setSelected(true);
+            jankovicsandrasRadio.setSelected(true);
             quantizationController.defaultForSvg();
 
         } catch (Exception e) {
