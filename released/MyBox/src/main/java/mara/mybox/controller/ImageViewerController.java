@@ -110,19 +110,19 @@ public class ImageViewerController extends BaseImageController {
             }
 
             loadWidth = defaultLoadWidth;
-            if (loadWidthBox != null) {
+            if (loadWidthSelector != null) {
                 List<String> values = Arrays.asList(message("OriginalSize"),
                         "512", "1024", "256", "128", "2048", "100", "80", "4096");
-                loadWidthBox.getItems().addAll(values);
+                loadWidthSelector.getItems().addAll(values);
                 int v = UserConfig.getInt(baseName + "LoadWidth", defaultLoadWidth);
                 if (v <= 0) {
                     loadWidth = -1;
-                    loadWidthBox.getSelectionModel().select(0);
+                    loadWidthSelector.getSelectionModel().select(0);
                 } else {
                     loadWidth = v;
-                    loadWidthBox.setValue(v + "");
+                    loadWidthSelector.setValue(v + "");
                 }
-                loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                loadWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         if (message("OriginalSize").equals(newValue)) {
@@ -130,12 +130,12 @@ public class ImageViewerController extends BaseImageController {
                         } else {
                             try {
                                 loadWidth = Integer.parseInt(newValue);
-                                ValidationTools.setEditorNormal(loadWidthBox);
                             } catch (Exception e) {
-                                ValidationTools.setEditorBadStyle(loadWidthBox);
+                                ValidationTools.setEditorBadStyle(loadWidthSelector);
                                 return;
                             }
                         }
+                        ValidationTools.setEditorNormal(loadWidthSelector);
                         setLoadWidth();
                     }
                 });
@@ -267,11 +267,8 @@ public class ImageViewerController extends BaseImageController {
     @Override
     public boolean afterImageLoaded() {
         try {
-            if (!super.afterImageLoaded()) {
+            if (!super.afterImageLoaded() || imageView == null) {
                 return false;
-            }
-            if (imageView == null) {
-                return true;
             }
             if (saveAsBox != null && saveFramesPane != null) {
                 if (framesNumber <= 1) {
@@ -311,7 +308,6 @@ public class ImageViewerController extends BaseImageController {
 
             setFilesBrowse();
 
-            refinePane();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -421,7 +417,6 @@ public class ImageViewerController extends BaseImageController {
             protected void whenSucceeded() {
                 imageView.setImage(areaImage);
                 setImageChanged(true);
-                redrawMaskShapes();
             }
 
         };
@@ -438,7 +433,7 @@ public class ImageViewerController extends BaseImageController {
                 || imageHeight() != image.getHeight();
         imageView.setImage(image);
         if (sizeChanged) {
-            redrawMaskShapes();
+            redrawMaskShape();
         }
         setImageChanged(false);
         popInformation(message("Recovered"));
@@ -726,14 +721,14 @@ public class ImageViewerController extends BaseImageController {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageViewController.open(this, x, y);
+        MenuImageViewController.imageViewMenu(this, x, y);
     }
 
     @FXML
     @Override
     public boolean menuAction() {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-        MenuImageViewController.open(this, localToScreen.getX(), localToScreen.getY());
+        MenuImageViewController.imageViewMenu(this, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 

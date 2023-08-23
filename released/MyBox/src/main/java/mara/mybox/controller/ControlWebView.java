@@ -369,28 +369,6 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    public void alert(WebEvent<String> ev) {
-        try {
-//            MyBoxLog.console(ev.toString());
-            Platform.runLater(() -> {
-                alertInformation(ev.getData());
-            });
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void error(WebErrorEvent ev) {
-        try {
-//            MyBoxLog.console(ev.toString());
-            Platform.runLater(() -> {
-                alertError(ev.getMessage());
-            });
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void locationChanged(String ov, String nv) {
         try {
             if (webViewLabel != null && nv != null) {
@@ -403,8 +381,39 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public void alert(WebEvent<String> ev) {
+        try {
+            if (UserConfig.getBoolean("WebViewInterceptPopWindow", false)) {
+                return;
+            }
+//            MyBoxLog.console(ev.toString());
+            Platform.runLater(() -> {
+                alertInformation(ev.getData());
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void error(WebErrorEvent ev) {
+        try {
+            if (UserConfig.getBoolean("WebViewInterceptPopWindow", false)) {
+                return;
+            }
+//            MyBoxLog.console(ev.toString());
+            Platform.runLater(() -> {
+                alertError(ev.getMessage());
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public String prompt(PromptData p) {
         try {
+            if (UserConfig.getBoolean("WebViewInterceptPopWindow", false)) {
+                return null;
+            }
             return PopTools.askValue(getTitle(), null, p.getMessage(), p.getDefaultValue());
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -414,6 +423,9 @@ public class ControlWebView extends BaseController {
 
     public Boolean confirm(String message) {
         try {
+            if (UserConfig.getBoolean("WebViewInterceptPopWindow", false)) {
+                return false;
+            }
             return PopTools.askSure(getTitle(), message);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -977,7 +989,7 @@ public class ControlWebView extends BaseController {
     public void popElementMenu(Element element) {
         try {
             Robot robot = new Robot();
-            MenuWebviewController.pop(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
+            MenuWebviewController.webviewMenu(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -1357,7 +1369,7 @@ public class ControlWebView extends BaseController {
                             frameItems.add(menu);
                         }
                         if (!frameItems.isEmpty()) {
-                            Menu frameMenu = new Menu(message("Frame"), StyleTools.getIconImageView("iconRef.png"));
+                            Menu frameMenu = new Menu(message("Frame"), StyleTools.getIconImageView("iconMove.png"));
                             frameMenu.getItems().addAll(frameItems);
                             items.add(frameMenu);
                         }
@@ -1460,6 +1472,16 @@ public class ControlWebView extends BaseController {
                 }
             });
             items.add(editableMenu);
+
+            CheckMenuItem interceptMenu = new CheckMenuItem(message("InterceptPopWindow"), StyleTools.getIconImageView("iconArc.png"));
+            interceptMenu.setSelected(UserConfig.getBoolean("WebViewInterceptPopWindow", false));
+            interceptMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WebViewInterceptPopWindow", interceptMenu.isSelected());
+                }
+            });
+            items.add(interceptMenu);
 
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true));
@@ -1684,9 +1706,7 @@ public class ControlWebView extends BaseController {
                 if (toc == null || toc.isBlank()) {
                     popInformation(message("NoData"));
                 } else {
-                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                    c.loadContents(toc);
-                    c.toFront();
+                    TextEditorController.edit(toc);
                 }
             }
 
@@ -1715,9 +1735,7 @@ public class ControlWebView extends BaseController {
                 if (texts == null || texts.isBlank()) {
                     popInformation(message("NoData"));
                 } else {
-                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                    c.loadContents(texts);
-                    c.toFront();
+                    TextEditorController.edit(texts);
                 }
             }
 
@@ -1916,7 +1934,7 @@ public class ControlWebView extends BaseController {
     public boolean menuAction() {
         try {
             Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-            MenuWebviewController.pop(this, null, localToScreen.getX(), localToScreen.getY());
+            MenuWebviewController.webviewMenu(this, null, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

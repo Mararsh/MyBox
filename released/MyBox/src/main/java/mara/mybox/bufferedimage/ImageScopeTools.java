@@ -70,10 +70,10 @@ public class ImageScopeTools {
                 ncolors.addAll(sourceScope.getColors());
             }
             targetScope.setColors(ncolors);
-            targetScope.setRectangle(sourceScope.getRectangle().cloneValues());
-            targetScope.setCircle(sourceScope.getCircle().cloneValues());
-            targetScope.setEllipse(sourceScope.getEllipse().cloneValues());
-            targetScope.setPolygon(sourceScope.getPolygon().cloneValues());
+            targetScope.setRectangle(sourceScope.getRectangle().copy());
+            targetScope.setCircle(sourceScope.getCircle().copy());
+            targetScope.setEllipse(sourceScope.getEllipse().copy());
+            targetScope.setPolygon(sourceScope.getPolygon().copy());
             targetScope.setColorDistance(sourceScope.getColorDistance());
             targetScope.setColorDistanceSquare(sourceScope.getColorDistanceSquare());
             targetScope.setHsbDistance(sourceScope.getHsbDistance());
@@ -107,9 +107,9 @@ public class ImageScopeTools {
 
     public static boolean inShape(DoubleShape shape, boolean areaExcluded, int x, int y) {
         if (areaExcluded) {
-            return !shape.contains(x, y);
+            return !DoubleShape.contains(shape, x, y);
         } else {
-            return shape.contains(x, y);
+            return DoubleShape.contains(shape, x, y);
         }
     }
 
@@ -281,9 +281,8 @@ public class ImageScopeTools {
             BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
                 lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
-            DoubleRectangle rect = ellipse.getRectangle();
-            g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()),
-                    (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
+            g.drawOval((int) Math.round(ellipse.getX()), (int) Math.round(ellipse.getY()),
+                    (int) Math.round(ellipse.getWidth()), (int) Math.round(ellipse.getHeight()));
             g.dispose();
             return target;
         } catch (Exception e) {
@@ -296,9 +295,6 @@ public class ImageScopeTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            if (!rect.isValid(width, height)) {
-                return source;
-            }
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
@@ -312,7 +308,7 @@ public class ImageScopeTools {
             BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
                 lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
-            g.drawRect((int) rect.getSmallX(), (int) rect.getSmallY(), (int) rect.getWidth(), (int) rect.getHeight());
+            g.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
             g.dispose();
             return target;
         } catch (Exception e) {

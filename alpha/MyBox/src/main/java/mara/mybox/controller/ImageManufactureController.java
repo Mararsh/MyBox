@@ -154,10 +154,10 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         recoverButton.setDisable(!imageChanged);
     }
 
-    @Override
-    public void maskShapeDataChanged() {
-        notifyShapeDataChanged();
-    }
+//    @Override
+//    public void maskShapeDataChanged() {
+//        notifyShapeDataChanged();
+//    }
 
     /*
         static methods

@@ -11,7 +11,7 @@
                 <TitledPane fx:id="copyPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Copy" />
                 <TitledPane fx:id="cropPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Crop" />
                 <TitledPane fx:id="clipboardPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Clipboard" />
-                <TitledPane fx:id="scalePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Scale2" />
+                <TitledPane fx:id="scalePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%ScaleImage" />
                 <TitledPane fx:id="marginsPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Margins" />
                 <TitledPane fx:id="colorPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Color" />
                 <TitledPane fx:id="effectPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Effects" />

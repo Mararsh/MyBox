@@ -340,7 +340,7 @@ public class MenuWebviewController extends MenuController {
     /*
         static methods
      */
-    public static MenuWebviewController pop(ControlWebView parent, Element element, double x, double y) {
+    public static MenuWebviewController webviewMenu(ControlWebView parent, Element element, double x, double y) {
         try {
             if (parent == null) {
                 return null;

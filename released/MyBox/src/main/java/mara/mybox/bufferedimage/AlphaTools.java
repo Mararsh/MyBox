@@ -267,20 +267,24 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage[] outline(BufferedImage srcImage, DoubleRectangle rect,
-            int targetWidth, int targetHeight, boolean keepRatio, Color bgColor, boolean exclude) {
+    public static BufferedImage[] outline(BufferedImage bgImage, BufferedImage alphaImage, DoubleRectangle rect) {
+        return outline(alphaImage, rect, bgImage.getWidth(), bgImage.getHeight(), false);
+    }
+
+    public static BufferedImage[] outline(BufferedImage alphaImage,
+            DoubleRectangle rect, int bgWidth, int bgHeight, boolean keepRatio) {
         try {
-            if (srcImage == null) {
+            if (alphaImage == null) {
                 return null;
             }
-            BufferedImage scaledImage = ScaleTools.scaleImage(srcImage,
+            BufferedImage scaledImage = ScaleTools.scaleImage(alphaImage,
                     (int) rect.getWidth(), (int) rect.getHeight(), keepRatio, BufferedImageTools.KeepRatioType.BaseOnWidth);
-            int offsetX = (int) rect.getSmallX();
-            int offsetY = (int) rect.getSmallY();
+            int offsetX = (int) rect.getX();
+            int offsetY = (int) rect.getY();
             int scaledWidth = scaledImage.getWidth();
             int scaledHeight = scaledImage.getHeight();
-            int width = offsetX >= 0 ? Math.max(targetWidth, scaledWidth + offsetX) : Math.max(targetWidth - offsetX, scaledWidth);
-            int height = offsetY >= 0 ? Math.max(targetHeight, scaledHeight + offsetY) : Math.max(targetHeight - offsetY, scaledHeight);
+            int width = offsetX >= 0 ? Math.max(bgWidth, scaledWidth + offsetX) : Math.max(bgWidth - offsetX, scaledWidth);
+            int height = offsetY >= 0 ? Math.max(bgHeight, scaledHeight + offsetY) : Math.max(bgHeight - offsetY, scaledHeight);
             int startX = offsetX >= 0 ? offsetX : 0;
             int startY = offsetY >= 0 ? offsetY : 0;
             BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -288,30 +292,14 @@ public class AlphaTools {
             if (AppVariables.imageRenderHints != null) {
                 g.addRenderingHints(AppVariables.imageRenderHints);
             }
-            if (!exclude) {
-                g.setColor(bgColor);
-            } else {
-                g.setColor(Colors.TRANSPARENT);
-            }
+            g.setColor(Colors.TRANSPARENT);
             g.fillRect(0, 0, width, height);
-            int pixel;
-            int bgPixel = bgColor.getRGB();
+            int imagePixel;
+            int inPixel = 64, outPixel = -64;
             for (int j = 0; j < scaledHeight; ++j) {
                 for (int i = 0; i < scaledWidth; ++i) {
-                    pixel = scaledImage.getRGB(i, j);
-                    if (!exclude) {
-                        if (pixel == 0) {
-                            target.setRGB(i + startX, j + startY, bgPixel);
-                        } else {
-                            target.setRGB(i + startX, j + startY, 0);
-                        }
-                    } else {
-                        if (pixel == 0) {
-                            target.setRGB(i + startX, j + startY, 0);
-                        } else {
-                            target.setRGB(i + startX, j + startY, bgPixel);
-                        }
-                    }
+                    imagePixel = scaledImage.getRGB(i, j);
+                    target.setRGB(i + startX, j + startY, imagePixel == 0 ? outPixel : inPixel);
                 }
             }
             g.dispose();

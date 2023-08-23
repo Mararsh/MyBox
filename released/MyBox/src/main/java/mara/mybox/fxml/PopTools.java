@@ -258,6 +258,7 @@ public class PopTools {
             } else {
                 Platform.runLater(() -> {
                     controller.alertError(error);
+                    MyBoxLog.debug(error);
                 });
             }
         } else {
@@ -628,6 +629,99 @@ public class PopTools {
 
     public static void popStringValues(BaseController parent, TextInputControl input, Event event, String menuName) {
         popStringValues(parent, input, event, menuName, false, true);
+    }
+
+    public static void popValues(BaseController parent, TextInputControl input,
+            String menuName, LinkedHashMap<String, String> values, Event event) {
+        try {
+            MenuController controller = MenuController.open(parent, input, event);
+
+            List<Node> topButtons = new ArrayList<>();
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
+            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.replaceText(input.getSelection(), "\n");
+                    input.requestFocus();
+                }
+            });
+            topButtons.add(newLineButton);
+
+            Button clearButton = new Button(message("ClearInputArea"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                }
+            });
+            topButtons.add(clearButton);
+
+            CheckBox clearCheck = new CheckBox();
+            clearCheck.setGraphic(StyleTools.getIconImageView("iconClear.png"));
+            NodeStyleTools.setTooltip(clearCheck, new Tooltip(message("ClearAndPaste")));
+            clearCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesClearAndSet", false));
+            clearCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(menuName + "ValuesClearAndSet", clearCheck.isSelected());
+                }
+            });
+            topButtons.add(clearCheck);
+
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
+            List<Node> nodes = new ArrayList<>();
+            for (String value : values.keySet()) {
+                String msg = values.get(value);
+                Button button = new Button(value + (msg != null && !msg.isBlank() ? "    " + msg : ""));
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (UserConfig.getBoolean(menuName + "ValuesClearAndSet", true)) {
+                            input.setText(value);
+                        } else {
+                            input.replaceText(input.getSelection(), value);
+                        }
+                        if (UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true)) {
+                            controller.close();
+                        } else {
+                            controller.getThisPane().requestFocus();
+                        }
+                        input.requestFocus();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*
@@ -1291,102 +1385,6 @@ public class PopTools {
             }
             controller.addFlowPane(nodes);
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    /*
-        values
-     */
-    public static void popValues(BaseController parent, TextInputControl input,
-            String menuName, LinkedHashMap<String, String> values, Event event) {
-        try {
-            MenuController controller = MenuController.open(parent, input, event);
-
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
-            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    input.replaceText(input.getSelection(), "\n");
-                    input.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-
-            Button clearButton = new Button(message("ClearInputArea"));
-            clearButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    input.clear();
-                }
-            });
-            topButtons.add(clearButton);
-
-            CheckBox clearCheck = new CheckBox();
-            clearCheck.setGraphic(StyleTools.getIconImageView("iconClear.png"));
-            NodeStyleTools.setTooltip(clearCheck, new Tooltip(message("ClearAndPaste")));
-            clearCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesClearAndSet", false));
-            clearCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(menuName + "ValuesClearAndSet", clearCheck.isSelected());
-                }
-            });
-            topButtons.add(clearCheck);
-
-            CheckBox closeCheck = new CheckBox();
-            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
-            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
-            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
-            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent aevent) {
-                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
-                }
-            });
-            topButtons.add(closeCheck);
-
-            CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
-                }
-            });
-            topButtons.add(popCheck);
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
-
-            List<Node> nodes = new ArrayList<>();
-            for (String value : values.keySet()) {
-                String msg = values.get(value);
-                Button button = new Button(value + (msg != null && !msg.isBlank() ? "    " + msg : ""));
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        if (UserConfig.getBoolean(menuName + "ValuesClearAndSet", true)) {
-                            input.setText(value);
-                        } else {
-                            input.replaceText(input.getSelection(), value);
-                        }
-                        if (UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true)) {
-                            controller.close();
-                        } else {
-                            controller.getThisPane().requestFocus();
-                        }
-                        input.requestFocus();
-                    }
-                });
-                nodes.add(button);
-            }
-            controller.addFlowPane(nodes);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

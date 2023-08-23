@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageShapeOptions">
+    <children>
+        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconTips.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </FlowPane>
+        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <RadioButton fx:id="lineRadio" layoutX="56.0" layoutY="10.0" mnemonicParsing="false" selected="true">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconLine.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <toggleGroup>
+                                <ToggleGroup fx:id="typeGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="polylineRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconPolyline.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="polygonRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconStar.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="117.0" spacing="5.0">
+                    <children>
+                        <RadioButton fx:id="rectangleRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconRectangle.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="circleRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconCircle.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="ellipseRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconEllipse.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="45.0" spacing="5.0">
+                    <children>
+                        <RadioButton fx:id="quadraticRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconQuadratic.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="cubicRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconCubic.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="arcRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconArc.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="106.0" spacing="5.0">
+                    <children>
+                        <RadioButton fx:id="polylinesRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconPolylines.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="svgRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$typeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconSVG.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+        <FlowPane fx:id="opPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showShapeMenu" onMouseEntered="#popShapeMenu">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFunction.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconWithdraw.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <CheckBox fx:id="anchorCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconAnchor.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="popAnchorCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconMenu.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="addPointCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconNewItem.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            </children>
+        </FlowPane>
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab fx:id="shapeTab" text="%Shape">
+               <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                            <children>
+                                <fx:include fx:id="parameters" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlShapeParameters.fxml" VBox.vgrow="ALWAYS" />
+                            </children>
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                        </VBox>
+               </content>
+                </Tab>
+                <Tab fx:id="styleTab" text="%Style">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox fx:id="styleBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                    <children>
+                                        <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%StrokeColor" wrapText="true" />
+                                                <fx:include fx:id="strokeColor" source="ControlColorSet.fxml" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%StrokeWidth" wrapText="true" />
+                                                <ComboBox fx:id="strokeWidthSelector" editable="true" prefWidth="120.0" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="2.0" layoutX="15.0" layoutY="81.0" prefWrapLength="0.0" vgap="2.0">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%StrokeLinecap" wrapText="true" />
+                                                <RadioButton fx:id="linecapButtRadio" mnemonicParsing="false" selected="true" text="%Butt">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="linecap" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="linecapRoundRadio" layoutX="63.0" layoutY="10.0" mnemonicParsing="false" text="%Round" toggleGroup="$linecap" />
+                                                <RadioButton fx:id="linecapSquareRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%SquareShape" toggleGroup="$linecap" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="2.0" layoutX="15.0" layoutY="109.0" prefWrapLength="0.0" vgap="2.0">
+                                            <children>
+                                                <CheckBox fx:id="dashCheck" mnemonicParsing="false" text="%Dotted" />
+                                                <Label minHeight="-Infinity" text="%StrokeDasharray" wrapText="true">
+                                                    <padding>
+                                                        <Insets left="10.0" />
+                                                    </padding>
+                                                </Label>
+                                                <TextField fx:id="dashInput" prefWidth="160.0" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane fx:id="fillPane1" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                                            <children>
+                                                <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%Fill" />
+                                                <fx:include fx:id="fillColor" source="ControlColorSet.fxml" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="2.0" layoutX="15.0" layoutY="276.0" prefWrapLength="0.0" vgap="2.0">
+                                            <children>
+                                                <Label text="%AnchorColor" />
+                                                <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="2.0" vgap="2.0">
+                                            <children>
+                                                <Label text="%AnchorSize" />
+                                                <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="100.0" />
+                                            </children>
+                                        </FlowPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+                <Tab text="%Blend" fx:id="xmlTab">
+                    <content>
+                        <VBox fx:id="blendBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                            <children>
+                                <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

@@ -79,15 +79,15 @@ public class ImageScope extends BaseData {
         colorDistance = 50;
         colorDistanceSquare = colorDistance * colorDistance;
         hsbDistance = 0.5f;
-        opacity = 0.3;
+        opacity = 0.5f;
         areaExcluded = colorExcluded = distanceSquareRoot = false;
         eightNeighbor = true;
         if (image != null) {
-            rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                    image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            rectangle = DoubleRectangle.xywh(image.getWidth() / 4, image.getHeight() / 4,
+                    image.getWidth() / 2, image.getHeight() / 2);
             circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
                     Math.min(image.getWidth(), image.getHeight()) / 4);
-            ellipse = new DoubleEllipse(rectangle);
+            ellipse = DoubleEllipse.rect(rectangle);
         } else {
             rectangle = new DoubleRectangle();
             circle = new DoubleCircle();
@@ -122,6 +122,21 @@ public class ImageScope extends BaseData {
         addPoint(point);
     }
 
+    public void setPoint(int index, int x, int y) {
+        if (x < 0 || y < 0 || points == null || index < 0 || index >= points.size()) {
+            return;
+        }
+        IntPoint point = new IntPoint(x, y);
+        points.set(index, point);
+    }
+
+    public void deletePoint(int index) {
+        if (points == null || index < 0 || index >= points.size()) {
+            return;
+        }
+        points.remove(index);
+    }
+
     public void clearPoints() {
         points = new ArrayList<>();
     }
@@ -143,21 +158,6 @@ public class ImageScope extends BaseData {
 
     public void clearColors() {
         colors = new ArrayList<>();
-    }
-
-    public void setCircleCenter(int x, int y) {
-        if (circle == null) {
-            circle = new DoubleCircle();
-        }
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-    }
-
-    public void setCircleRadius(int r) {
-        if (circle == null) {
-            circle = new DoubleCircle();
-        }
-        circle.setRadius(r);
     }
 
     public String getScopeText() {
@@ -371,8 +371,8 @@ public class ImageScope extends BaseData {
                 case Outline:
                     DoubleRectangle rect = scope.getRectangle();
                     if (rect != null) {
-                        s = (int) rect.getSmallX() + DataSeparator + (int) rect.getSmallY() + DataSeparator
-                                + (int) rect.getBigX() + DataSeparator + (int) rect.getBigY();
+                        s = (int) rect.getX() + DataSeparator + (int) rect.getY() + DataSeparator
+                                + (int) rect.getMaxX() + DataSeparator + (int) rect.getMaxY();
                     }
                     break;
                 case Circle:
@@ -386,11 +386,8 @@ public class ImageScope extends BaseData {
                 case Ellipse:
                     DoubleEllipse ellipse = scope.getEllipse();
                     if (ellipse != null) {
-                        DoubleRectangle erect = ellipse.getRectangle();
-                        if (erect != null) {
-                            s = (int) (erect.getSmallX()) + DataSeparator + (int) erect.getSmallY() + DataSeparator
-                                    + (int) erect.getBigX() + DataSeparator + (int) erect.getBigY();
-                        }
+                        s = (int) ellipse.getX() + DataSeparator + (int) ellipse.getY() + DataSeparator
+                                + (int) ellipse.getMaxX() + DataSeparator + (int) ellipse.getMaxY();
                     }
                     break;
                 case Polygon:
@@ -450,12 +447,12 @@ public class ImageScope extends BaseData {
         }
         String s = "";
         try {
-            String filename = AppPaths.getImageScopePath() + File.separator
-                    + scope.getScopeType() + "_" + (new Date().getTime())
+            String prefix = AppPaths.getImageScopePath() + File.separator
+                    + scope.getScopeType() + "_";
+            String filename = prefix + (new Date().getTime())
                     + "_" + new Random().nextInt(1000) + ".png";
             while (new File(filename).exists()) {
-                filename = AppPaths.getImageScopePath() + File.separator
-                        + scope.getScopeType() + "_" + (new Date().getTime())
+                filename = prefix + (new Date().getTime())
                         + "_" + new Random().nextInt(1000) + ".png";
             }
             if (ImageFileWriters.writeImageFile(scope.getOutlineSource(), "png", filename)) {
@@ -488,7 +485,7 @@ public class ImageScope extends BaseData {
                 case Outline: {
                     String[] items = areaData.split(DataSeparator);
                     if (items.length == 4) {
-                        DoubleRectangle rect = new DoubleRectangle(
+                        DoubleRectangle rect = DoubleRectangle.xy12(
                                 Double.parseDouble(items[0]), Double.parseDouble(items[1]),
                                 Double.parseDouble(items[2]), Double.parseDouble(items[3])
                         );
@@ -514,7 +511,7 @@ public class ImageScope extends BaseData {
                 case Ellipse: {
                     String[] items = areaData.split(DataSeparator);
                     if (items.length == 4) {
-                        DoubleEllipse ellipse = new DoubleEllipse(
+                        DoubleEllipse ellipse = DoubleEllipse.xy12(
                                 Double.parseDouble(items[0]), Double.parseDouble(items[1]),
                                 Double.parseDouble(items[2]), Double.parseDouble(items[3])
                         );
@@ -632,8 +629,9 @@ public class ImageScope extends BaseData {
         return rectangle;
     }
 
-    public void setRectangle(DoubleRectangle rectangle) {
+    public ImageScope setRectangle(DoubleRectangle rectangle) {
         this.rectangle = rectangle;
+        return this;
     }
 
     public DoubleCircle getCircle() {
@@ -648,8 +646,9 @@ public class ImageScope extends BaseData {
         return image;
     }
 
-    public void setImage(Image image) {
+    public ImageScope setImage(Image image) {
         this.image = image;
+        return this;
     }
 
     public int getColorDistance() {
@@ -668,8 +667,9 @@ public class ImageScope extends BaseData {
         return scopeType;
     }
 
-    public void setScopeType(ScopeType scopeType) {
+    public ImageScope setScopeType(ScopeType scopeType) {
         this.scopeType = scopeType;
+        return this;
     }
 
     public ColorScopeType getColorScopeType() {
@@ -768,16 +768,18 @@ public class ImageScope extends BaseData {
         return outline;
     }
 
-    public void setOutline(BufferedImage outline) {
+    public ImageScope setOutline(BufferedImage outline) {
         this.outline = outline;
+        return this;
     }
 
     public BufferedImage getOutlineSource() {
         return outlineSource;
     }
 
-    public void setOutlineSource(BufferedImage outlineSource) {
+    public ImageScope setOutlineSource(BufferedImage outlineSource) {
         this.outlineSource = outlineSource;
+        return this;
     }
 
     public Image getClip() {

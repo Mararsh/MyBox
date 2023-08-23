@@ -141,7 +141,7 @@ public class ControlImagesBlend extends BaseController {
 
     protected void setImage(Image image, Color color) {
         backImage = image;
-        foreImage = FxImageTools.createImage((int) (image.getWidth() / 2), (int) (image.getHeight() / 2), color);
+        foreImage = FxImageTools.createImage((int) (image.getWidth() * 3 / 4), (int) (image.getHeight() * 3 / 4), color);
         x = (int) (backImage.getWidth() - foreImage.getWidth()) / 2;
         y = (int) (backImage.getHeight() - foreImage.getHeight()) / 2;
     }
@@ -151,12 +151,11 @@ public class ControlImagesBlend extends BaseController {
         demo(foreImage, backImage, x, y);
     }
 
-    public void demo(Image foreImage, Image backImage, int x, int y) {
-        this.foreImage = foreImage;
-        this.backImage = backImage;
+    public void demo(Image fImage, Image bImage, int x, int y) {
+        this.foreImage = fImage;
+        this.backImage = bImage;
         this.x = x;
         this.y = y;
-        demoButton.setVisible(false);
         if (task != null) {
             task.cancel();
         }
@@ -166,11 +165,17 @@ public class ControlImagesBlend extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    BufferedImage foreBI = SwingFXUtils.fromFXImage(
-                            foreImage == null ? new Image("img/cover" + AppValues.AppYear + "g2.png") : foreImage, null);
+                    if (backImage == null) {
+                        backImage = new Image("img/cover" + AppValues.AppYear + "g5.png");
+                    }
+                    if (foreImage == null) {
+                        foreImage = FxImageTools.createImage(
+                                (int) (backImage.getWidth() * 3 / 4), (int) (backImage.getHeight() * 3 / 4),
+                                Color.WHITE);
+                    }
+                    BufferedImage foreBI = SwingFXUtils.fromFXImage(foreImage, null);
                     foreBI = ScaleTools.scaleImageLess(foreBI, 1000000);
-                    BufferedImage backBI = SwingFXUtils.fromFXImage(
-                            backImage == null ? new Image("img/cover" + AppValues.AppYear + "g5.png") : backImage, null);
+                    BufferedImage backBI = SwingFXUtils.fromFXImage(backImage, null);
                     backBI = ScaleTools.scaleImageLess(backBI, 1000000);
                     files = new ArrayList<>();
                     boolean reversed = !isTop();
@@ -217,7 +222,7 @@ public class ControlImagesBlend extends BaseController {
 
             @Override
             protected void finalAction() {
-                demoButton.setVisible(true);
+                super.finalAction();
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b
                             = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);

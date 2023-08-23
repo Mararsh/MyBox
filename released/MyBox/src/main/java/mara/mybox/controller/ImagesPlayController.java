@@ -447,46 +447,23 @@ public class ImagesPlayController extends BaseImagesListController {
     }
 
     public void loadImages(List<ImageInformation> infos) {
-        clearList();
-        if (infos == null || infos.isEmpty()) {
-            return;
+        try {
+            clearList();
+            if (infos == null || infos.isEmpty()) {
+                return;
+            }
+            for (ImageInformation info : infos) {
+                ImageInformation ninfo = info.cloneAttributes();
+                if (ninfo.getDuration() < 0) {
+                    ninfo.setDuration(playController.timeValue);
+                }
+                imageInfos.add(ninfo);
+            }
+            framesNumber = imageInfos.size();
+            playImages();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        task = new SingletonCurrentTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    for (ImageInformation info : infos) {
-                        imageInfos.add(info.cloneAttributes());
-                    }
-                    framesNumber = imageInfos.size();
-                    for (int i = 0; i < framesNumber; i++) {
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        ImageInformation info = imageInfos.get(i);
-                        if (info.getDuration() < 0) {
-                            info.setDuration(playController.timeValue);
-                        }
-                    }
-                    return true;
-                } catch (Exception e) {
-                    if (task != null) {
-                        task.setError(e.toString());
-                    }
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (error != null && !error.isBlank()) {
-                    alertError(error);
-                }
-                playImages();
-            }
-        };
-        start(task);
     }
 
     public synchronized boolean playImages() {
@@ -612,8 +589,7 @@ public class ImagesPlayController extends BaseImagesListController {
             } else {
                 info.loadThumbnail(loadWidth);
             }
-            thumb = info.getThumbnail();
-            return thumb;
+            return info.getThumbnail();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -682,7 +658,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 }
             });
 
-            imageInformation.setThumbnail(null);
+            imageInformation.setThumbnail(null); // release memory
 //            if (playController.stopped.get()) {
 //                return;
 //            }

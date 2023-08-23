@@ -1,7 +1,6 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,8 +9,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -26,10 +23,11 @@ public abstract class PixelsOperation {
     protected boolean isDithering, boolPara1, boolPara2, boolPara3, skipTransparent = true, excludeScope;
     protected int intPara1, intPara2, intPara3, scopeColor = 0;
     protected float floatPara1, floatPara2;
-    protected Color colorPara1, colorPara2, bkColor;
+    protected Color colorPara1, colorPara2;
     protected ImageScope scope;
     protected OperationType operationType;
     protected ColorActionType colorActionType;
+    protected int currentX, currentY;
 
     protected Color[] thisLine, nextLine;
     protected int thisLineY;
@@ -48,7 +46,6 @@ public abstract class PixelsOperation {
     }
 
     public PixelsOperation() {
-        this.bkColor = ColorConvertTools.alphaColor();
         excludeScope = false;
     }
 
@@ -106,7 +103,7 @@ public abstract class PixelsOperation {
                 thisLine[0] = new Color(image.getRGB(0, 0), true);
             }
             Color newColor;
-            int pixel, white = Color.WHITE.getRGB();
+            int pixel;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     pixel = image.getRGB(x, y);
@@ -121,24 +118,17 @@ public abstract class PixelsOperation {
                         if (excludeScope) {
                             inScope = !inScope;
                         }
+                        if (isShowScope) {
+                            inScope = !inScope;
+                        }
                         if (isDithering && y == thisLineY) {
                             color = thisLine[x];
                         }
-                        if (isShowScope) {
-                            newColor = color;
-                            if (inScope) {
-                                target.setRGB(x, y, scopeColor);
-                            } else {
-                                target.setRGB(x, y, white);
-                            }
+                        if (inScope) {
+                            newColor = operatePixel(target, color, x, y);
                         } else {
-                            if (inScope) {
-                                newColor = operatePixel(target, color, x, y);
-
-                            } else {
-                                newColor = color;
-                                target.setRGB(x, y, color.getRGB());
-                            }
+                            newColor = color;
+                            target.setRGB(x, y, color.getRGB());
                         }
                     }
                     dithering(color, newColor, x, y);
@@ -172,34 +162,16 @@ public abstract class PixelsOperation {
                 excluded = !excluded;
             }
             if (isShowScope) {
-                if (excluded) {
-                    Graphics2D g2d = target.createGraphics();
-                    if (AppVariables.imageRenderHints != null) {
-                        g2d.addRenderingHints(AppVariables.imageRenderHints);
+                excluded = !excluded;
+            }
+            if (excluded) {
+                for (int y = 0; y < imageHeight; y++) {
+                    for (int x = 0; x < imageWidth; x++) {
+                        operatePixel(target, x, y);
                     }
-                    g2d.setColor(Colors.TRANSPARENT);
-                    g2d.fillRect(0, 0, imageWidth, imageHeight);
-                    g2d.dispose();
-                } else {
-                    Graphics2D g2d = target.createGraphics();
-                    if (AppVariables.imageRenderHints != null) {
-                        g2d.addRenderingHints(AppVariables.imageRenderHints);
-                    }
-                    g2d.setColor(Color.WHITE);
-                    g2d.fillRect(0, 0, imageWidth, imageHeight);
-                    g2d.dispose();
                 }
-
             } else {
-                if (excluded) {
-                    for (int y = 0; y < imageHeight; y++) {
-                        for (int x = 0; x < imageWidth; x++) {
-                            operatePixel(target, x, y);
-                        }
-                    }
-                } else {
-                    target = image.getSubimage(0, 0, imageWidth, imageHeight);
-                }
+                target = image.getSubimage(0, 0, imageWidth, imageHeight);
             }
             List<IntPoint> points = scope.getPoints();
             if (points == null || points.isEmpty()) {
@@ -208,7 +180,6 @@ public abstract class PixelsOperation {
 
             boolean[][] visited = new boolean[imageHeight][imageWidth];
             Queue<IntPoint> queue = new LinkedList<>();
-            int white = Color.WHITE.getRGB();
             boolean eightNeighbor = scope.isEightNeighbor();
             for (IntPoint point : points) {
                 Color startColor = new Color(image.getRGB(point.getX(), point.getY()), true);
@@ -226,12 +197,6 @@ public abstract class PixelsOperation {
                     if (scope.inColorMatch(startColor, color)) {
                         if (pixel == 0 && skipTransparent) {
                             target.setRGB(x, y, pixel);
-                        } else if (isShowScope) {
-                            if (excluded) {
-                                target.setRGB(x, y, white);
-                            } else {
-                                target.setRGB(x, y, scopeColor);
-                            }
                         } else {
                             if (excluded) {
                                 target.setRGB(x, y, pixel);
@@ -272,6 +237,8 @@ public abstract class PixelsOperation {
     }
 
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
+        currentX = x;
+        currentY = y;
         Color newColor = operateColor(color);
         if (newColor == null) {
             newColor = color;
@@ -545,15 +512,6 @@ public abstract class PixelsOperation {
 
     public PixelsOperation setExcludeScope(boolean excludeScope) {
         this.excludeScope = excludeScope;
-        return this;
-    }
-
-    public Color getBkColor() {
-        return bkColor;
-    }
-
-    public PixelsOperation setBkColor(Color bkColor) {
-        this.bkColor = bkColor;
         return this;
     }
 

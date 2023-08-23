@@ -3,15 +3,16 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowIndexCell;
-import mara.mybox.fxml.cell.TableTextAreaEditCell;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -19,8 +20,6 @@ import mara.mybox.fxml.cell.TableTextAreaEditCell;
  * @License Apache License Version 2.0
  */
 public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
-
-    public final int Scale = 2;
 
     @FXML
     protected TableColumn<List<DoublePoint>, String> indexColumn, pointsColumn;
@@ -46,57 +45,103 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
                         if (points == null) {
                             return null;
                         }
-                        return new SimpleStringProperty(DoublePoint.toText(points, Scale));
+                        return new SimpleStringProperty(DoublePoint.imageCoordinatesToText(points, " "));
                     } catch (Exception e) {
                         return null;
                     }
                 }
             });
-            pointsColumn.setCellFactory(TableTextAreaEditCell.create(myController, null));
-            pointsColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<DoublePoint>, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<List<DoublePoint>, String> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int row = e.getTablePosition().getRow();
-                    String s = e.getNewValue();
-                    if (row < 0 || s == null || s.isBlank()) {
-                        return;
-                    }
-                    List<DoublePoint> points = DoublePoint.parseList(s.replaceAll("\n", " "));
-                    if (points == null || points.isEmpty()) {
-                        return;
-                    }
-                    tableData.set(row, points);
-                }
-            });
-            pointsColumn.setEditable(true);
-            pointsColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void tableChanged(boolean changed) {
-    }
-
     public void loadList(List<List<DoublePoint>> list) {
+        isSettingValues = true;
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
-            tableData.setAll(DoublePoint.scaleLists(list, Scale));
+            tableData.setAll(DoublePoint.scaleLists(list, UserConfig.imageScale()));
         }
+        isSettingValues = false;
+    }
+
+    public List<List<DoublePoint>> getLines() {
+        List<List<DoublePoint>> list = new ArrayList<>();
+        for (List<DoublePoint> line : tableData) {
+            List<DoublePoint> nline = new ArrayList<>();
+            for (DoublePoint p : line) {
+                nline.add(p.copy());
+            }
+            list.add(nline);
+        }
+        return list;
     }
 
     @FXML
     @Override
     public void addAction() {
-        List<DoublePoint> line = new ArrayList<>();
-        line.add(new DoublePoint(0, 0));
-        tableData.add(line);
+        add(-1);
+    }
+
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        add(index);
+    }
+
+    public void add(int index) {
+        LineInputController inputController = LineInputController.open(this, message("Add"), null);
+        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                List<DoublePoint> line = inputController.picked;
+                if (line == null || line.isEmpty()) {
+                    popError(message("InvalidValue"));
+                    return;
+                }
+                if (index < 0) {
+                    tableData.add(line);
+                } else {
+                    tableData.add(index, line);
+                }
+                inputController.close();
+            }
+        });
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        try {
+            int index = selectedIndix();
+            if (index < 0) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            List<DoublePoint> line = tableData.get(index);
+            LineInputController inputController = LineInputController.open(this,
+                    message("Line") + " " + (index + 1), line);
+            inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    List<DoublePoint> line = inputController.picked;
+                    if (line == null || line.isEmpty()) {
+                        popError(message("InvalidValue"));
+                        return;
+                    }
+                    inputController.close();
+                    tableData.set(index, line);
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }

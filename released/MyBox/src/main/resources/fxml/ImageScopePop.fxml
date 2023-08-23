@@ -144,49 +144,9 @@ License:    Apache License Version 2.0
                         </Text>
                         <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
                         </ImageView>
-                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="144.0" layoutY="150.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="144.0" layoutY="150.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  stroke="RED" strokeType="INSIDE" width="334.0">
                             <cursor>
                                 <Cursor fx:constant="MOVE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="W_RESIZE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="NE_RESIZE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="N_RESIZE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="E_RESIZE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="SE_RESIZE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="N_RESIZE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="SW_RESIZE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="NW_RESIZE" />
                             </cursor>
                         </Rectangle>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />

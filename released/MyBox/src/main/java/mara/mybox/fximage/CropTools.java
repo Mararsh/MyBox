@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -16,26 +15,26 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class CropTools {
 
-    public static Image cropInsideFx(Image image, DoubleShape shape, Color bgColor) {
-        if (image == null || shape == null || !shape.isValid() || bgColor == null) {
+    public static Image cropInsideFx(Image image, DoubleRectangle rect, Color bgColor) {
+        if (image == null || rect == null || rect.isEmpty() || bgColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.CropTools.cropInside(source, shape, ColorConvertTools.converColor(bgColor));
+        BufferedImage target = mara.mybox.bufferedimage.CropTools.cropInside(source, rect, ColorConvertTools.converColor(bgColor));
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
-    public static Image cropOutsideFx(Image image, DoubleShape shape, Color bgColor) {
+    public static Image cropOutsideFx(Image image, DoubleRectangle rect, Color bgColor) {
         try {
-            if (image == null || shape == null || !shape.isValid() || bgColor == null) {
+            if (image == null || rect == null || rect.isEmpty() || bgColor == null) {
                 return image;
             }
             BufferedImage source = SwingFXUtils.fromFXImage(image, null);
             if (source == null) {
                 return image;
             }
-            BufferedImage target = mara.mybox.bufferedimage.CropTools.cropOutside(source, shape, ColorConvertTools.converColor(bgColor));
+            BufferedImage target = mara.mybox.bufferedimage.CropTools.cropOutside(source, rect, ColorConvertTools.converColor(bgColor));
             Image newImage = SwingFXUtils.toFXImage(target, null);
             return newImage;
         } catch (Exception e) {
@@ -49,7 +48,7 @@ public class CropTools {
     }
 
     public static Image cropOutsideFx(Image image, double x1, double y1, double x2, double y2) {
-        return cropOutsideFx(image, new DoubleRectangle(x1, y1, x2, y2), Color.TRANSPARENT);
+        return cropOutsideFx(image, DoubleRectangle.xy12(x1, y1, x2, y2), Color.TRANSPARENT);
     }
 
 }

@@ -36,7 +36,7 @@ public class ImageViewTools {
             if (iView == null || iView.getImage() == null || sPane == null) {
                 return;
             }
-            Bounds bounds = sPane.getBoundsInLocal();
+            Bounds bounds = sPane.getBoundsInParent();
             double ratioW = bounds.getWidth() / iView.getImage().getWidth();
             double ratioH = bounds.getHeight() / iView.getImage().getHeight();
             if (ratioW < ratioH) {
@@ -94,10 +94,10 @@ public class ImageViewTools {
         }
         double offsetX = event.getX() - view.getLayoutX() - view.getX();
         double offsetY = event.getY() - view.getLayoutY() - view.getY();
-        if (offsetX < 0 || offsetX >= view.getBoundsInParent().getWidth()
-                || offsetY < 0 || offsetY >= view.getBoundsInParent().getHeight()) {
-            return null;
-        }
+//        if (offsetX < 0 || offsetX >= view.getBoundsInParent().getWidth()
+//                || offsetY < 0 || offsetY >= view.getBoundsInParent().getHeight()) {
+//            return null;
+//        }
         double x = offsetX * view.getImage().getWidth() / view.getBoundsInParent().getWidth();
         double y = offsetY * view.getImage().getHeight() / view.getBoundsInParent().getHeight();
         return new DoublePoint(x, y);

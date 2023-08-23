@@ -775,7 +775,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     @FXML
     protected void showHelps(Event event) {
-        editor.popEventMenu(event, HelpTools.svgHelps(true));
+        popEventMenu(event, HelpTools.svgHelps(true));
     }
 
 }

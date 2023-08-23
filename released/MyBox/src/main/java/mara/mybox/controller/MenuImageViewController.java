@@ -130,7 +130,7 @@ public class MenuImageViewController extends MenuImageBaseController {
     /*
         static methods
      */
-    public static MenuImageViewController open(ImageViewerController imageViewerController, double x, double y) {
+    public static MenuImageViewController imageViewMenu(ImageViewerController imageViewerController, double x, double y) {
         try {
             try {
                 if (imageViewerController == null) {

@@ -29,7 +29,6 @@ import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
@@ -802,7 +801,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 }
             } else {
                 shape.setFill(Color.TRANSPARENT);
-                shape.setStrokeLineCap(StrokeLineCap.BUTT);
+//                shape.setStrokeLineCap(StrokeLineCap.BUTT);
                 shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
             }
             if (isPickingColor) {
@@ -1957,7 +1956,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                         }
                         maskPolylinesData.translateLineRel(index, offsetX, offsetY);
                         maskShapeDataChanged();
-                        event.consume();
                         maskControlDragged = true;
                     }
                 });

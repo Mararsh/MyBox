@@ -319,7 +319,6 @@ public class FilesArrangeController extends BaseBatchFileController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                task = null;
                 afterTask();
             }
 

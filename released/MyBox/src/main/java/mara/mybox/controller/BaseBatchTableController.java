@@ -206,7 +206,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             MenuItem menu;
 
             if (addFilesButton != null && addFilesButton.isVisible() && !addFilesButton.isDisabled()) {
-                menu = new MenuItem(message("AddFiles"), StyleTools.getIconImageView("iconFileAdd.png"));
+                menu = new MenuItem(message("AddFiles"), StyleTools.getIconImageView("iconSelectFile.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     addFilesAction();
                 });
@@ -214,14 +214,14 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             if (addDirectoryButton != null && addDirectoryButton.isVisible() && !addDirectoryButton.isDisabled()) {
-                menu = new MenuItem(message("AddDirectory"), StyleTools.getIconImageView("iconFolderAdd.png"));
+                menu = new MenuItem(message("AddDirectory"), StyleTools.getIconImageView("iconSelectPath.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     addDirectoryAction();
                 });
                 items.add(menu);
             }
             if (insertFilesButton != null && insertFilesButton.isVisible() && !insertFilesButton.isDisabled()) {
-                menu = new MenuItem(message("InsertFiles"), StyleTools.getIconImageView("iconFileInsert.png"));
+                menu = new MenuItem(message("InsertFiles"), StyleTools.getIconImageView("iconInsertFile.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     insertFilesAction();
                 });
@@ -229,7 +229,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             if (insertDirectoryButton != null && insertDirectoryButton.isVisible() && !insertDirectoryButton.isDisabled()) {
-                menu = new MenuItem(message("InsertDirectory"), StyleTools.getIconImageView("iconFolderInsert.png"));
+                menu = new MenuItem(message("InsertDirectory"), StyleTools.getIconImageView("iconInsertPath.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     insertDirectoryAction();
                 });
@@ -383,7 +383,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             return;
         }
         checkButtons();
-        countSize(false);
     }
 
     @Override

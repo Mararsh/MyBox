@@ -9,36 +9,35 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is desktop application based on JavaFx to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2023-7-23 v6.7.5</p>
+  <p>2023-8-23 v6.7.6</p>
   <ul>
    <li>Added: 
     <ul>
-     <li>SVG editor</li>
-     <li>Make typesetting of SVG files in batch</li>
-     <li>Convert SVG files to images/PDFs in batch</li>
+     <li>Convert images to SVG files in batch. Algorithms and parameters can be chosen.</li>
+     <li>More shapes: line, arc, quadratic Bézier curve, cubic Bézier curve, and SVG path.</li>
+     <li>When edit shape, parameters can be inputted while archors and shape can be dragged. Anchor menu and shape menu are provided.</li>
     </ul></li>
    <li>Improved: 
     <ul>
-     <li>In file interface, provide pane to list files of same types under same directory.</li>
-     <li>When edit image, points of polyline and polygon can be edited and dragged to adjust the shape.</li>
-     <li>WHen edit image, simplify types of scopes: if colors list is empty then match all colors.</li>
-     <li>When analyse image, option to sort colors data.</li>
-     <li>When repeat image, option to crop and scale original image.</li>
-     <li>When edit XML file, XML codes can be inputted to add new node.</li>
-     <li>Function menu in tabs of web browser to close tabs more easily.</li>
-     <li>Shortcuts of button “Go” are F9 and CTRL+g. Shortcut of button “Clear” is CTRL+l(lowercase of ‘L’).</li>
+     <li>For popped values(examples or histories), options to show the pane as child window or as pop window.</li>
+     <li>For existed palette, colors can be customized.</li>
+     <li>Pop color menu by right click color block.</li>
+     <li>Lines can be dragged when split image.</li>
+     <li>Drag lines in image to add mosaic.</li>
     </ul></li>
-   <li>Removed: Event “double-click” is not handled for image any more.</li>
    <li>Solved problems: 
     <ul>
-     <li>Image OCR fails in last 2 versions.</li>
-     <li>When scale image, the inputted width and height do not work.</li>
-     <li>When edit image, shadow should be behind the text.</li>
-     <li>Dominant pie is not picked in the generated html when analyse image.</li>
-     <li>Frames pane should be always shown for tif/gif file.</li>
+     <li>Node is not updated in the tree after its modification is saved.</li>
+     <li>The new node is displayed incompletely after XML is pasted.</li>
+     <li>“Load width” does not work for image.</li>
+     <li>Wrong result may be generated when scale image.</li>
+     <li>Result may be cutted wrongly when rotate image.</li>
+     <li>Indices of image edit histories are recorded and accessed incorrectly.</li>
+     <li>List of splitted images are loaded incorrectly when play them.</li>
+     <li>Shortcuts F4 and F5(show/hide panes) do not work in some interfaces.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.5">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.6">Closed requirements/bugs in this version</a></p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -62,7 +61,7 @@
    <tbody>
     <tr>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip">MyBox-src.zip</a></td>
-     <td>65M-</td>
+     <td>68M-</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf">pdf</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps_en.html">html</a></td>
     </tr>
@@ -83,19 +82,19 @@
     <tr>
      <td>win10 x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip">MyBox-win-x64.zip</a></td>
-     <td>260MB-</td>
+     <td>280MB-</td>
      <td>MyBox.exe</td>
     </tr>
     <tr>
      <td>CentOS 7 x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz">MyBox-CentOS7-x64.tar.gz</a></td>
-     <td>300MB-</td>
+     <td>320MB-</td>
      <td>MyBox</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg">MyBox-mac.dmg</a></td>
-     <td>280MB-</td>
+     <td>300MB-</td>
      <td>MyBox.app</td>
     </tr>
    </tbody>
@@ -116,19 +115,19 @@
     <tr>
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
-     <td>200MB-</td>
+     <td>240MB-</td>
      <td>Java 20 or higher</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
-     <td>220MB-</td>
+     <td>240MB-</td>
      <td>Java 20 or higher</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz">MyBox-mac.jar.gz</a></td>
-     <td>200MB-</td>
+     <td>240MB-</td>
      <td>Java 20 or higher</td>
     </tr>
    </tbody>
@@ -199,12 +198,10 @@
    <li>MyBox is backward compatibility: Later version can work on data of previous versions. While forward compatibility is not supported: Wrong may happen when old version handles data of new version.</li>
   </ol>
   <h2>Backup and Recover</h2>
-  <ol>
-   <li>To backup, copy directories to other places.</li>
-   <li>To recover, override current directories with backup directories.</li>
-   <li>Need not backup each directory under data path.<br>
-     Predefined directories under data path are listed below. Only directories of “referred by database” need backups:</li>
-  </ol>
+  <p>In MyBox:<br>
+    1. To backup, copy directories to other places.<br>
+    2. To recover, override current directories with backup directories. 3. Need not backup each directory under data path.<br>
+    Predefined directories under data path are listed below. Only directories of “referred by functions” need backups:</p>
   <table>
    <thead>
     <tr>
@@ -212,8 +209,8 @@
      <th>role</th>
      <th>internal referred</th>
      <th>read/write automatically</th>
-     <th>referred by database</th>
-     <th>cleared automatically</th>
+     <th>referred by functions</th>
+     <th>comments</th>
     </tr>
    </thead>
    <tbody>
@@ -223,7 +220,7 @@
      <td>yes</td>
      <td>yes</td>
      <td></td>
-     <td>yes</td>
+     <td>cleared automatically</td>
     </tr>
     <tr>
      <td>buttons</td>
@@ -279,7 +276,7 @@
      <td></td>
      <td>yes</td>
      <td></td>
-     <td></td>
+     <td>may need backup</td>
     </tr>
     <tr>
      <td>ICC</td>
@@ -366,7 +363,7 @@
      <td>customized languages</td>
      <td>yes</td>
      <td>yes</td>
-     <td></td>
+     <td>yes</td>
      <td></td>
     </tr>
     <tr>
@@ -440,10 +437,10 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Shortcuts</td>
@@ -454,8 +451,8 @@
     </tr>
     <tr>
      <td>Functions list</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -475,8 +472,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -531,8 +528,8 @@
     </tr>
     <tr>
      <td>Tips in Interfaces</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
@@ -755,15 +752,15 @@
     </tr>
     <tr>
      <td>Stories of Images</td>
-     <td>6.7.2</td>
-     <td>2023-4-16</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
     <tr>
      <td>Useful links</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_zh.html">html</a></td>
     </tr>
@@ -1089,6 +1086,11 @@
      <td>batik</td>
      <td>SVG</td>
      <td><a target=_blank href="https://xmlgraphics.apache.org/batik/">https://xmlgraphics.apache.org/batik/</a></td>
+    </tr>
+    <tr>
+     <td>imagetracerjava</td>
+     <td>SVG</td>
+     <td><a target=_blank href="https://github.com/jankovicsandras/imagetracerjava">https://github.com/jankovicsandras/imagetracerjava</a></td>
     </tr>
    </tbody>
   </table>

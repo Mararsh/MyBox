@@ -335,7 +335,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             textInput.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuTextEditController.open(myController, node, event);
+                    MenuTextEditController.textMenu(myController, node, event);
                 }
             });
         } catch (Exception e) {
@@ -956,6 +956,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             if (rightPaneCheck != null) {
                 rightPaneCheck.setSelected(UserConfig.getBoolean(interfaceName + "DisplayRightPane", true));
+                checkRightPane();
                 rightPaneCheck.selectedProperty().addListener(
                         (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                             if (isSettingValues) {
@@ -964,7 +965,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                             UserConfig.setBoolean(interfaceName + "DisplayRightPane", rightPaneCheck.isSelected());
                             checkRightPane();
                         });
-                checkRightPane();
+
             }
 
             if (leftPaneCheck != null) {
@@ -973,6 +974,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 leftPaneCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
                         UserConfig.setBoolean(interfaceName + "DisplayLeftPane", leftPaneCheck.isSelected());
                         checkLeftPane();
                     }

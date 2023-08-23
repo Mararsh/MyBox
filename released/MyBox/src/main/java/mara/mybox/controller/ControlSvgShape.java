@@ -53,9 +53,9 @@ public class ControlSvgShape extends ControlShapeOptions {
     @FXML
     protected TextArea styleArea, xmlArea;
     @FXML
-    protected ControlPoints polylinePointsController, polygonPointsController;
-    @FXML
     protected CheckBox wrapXmlCheck;
+    @FXML
+    protected Label xmlLabel;
     @FXML
     protected ControlSvgOptions optionsController;
     @FXML
@@ -66,11 +66,28 @@ public class ControlSvgShape extends ControlShapeOptions {
         try {
             super.initControls();
 
+            optionsController.svgShapeControl = this;
             showController.svgShapeControl = this;
 
             initXML();
             initSvgOptions();
 
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void editShape(SvgEditorController editor, Element node) {
+        try {
+            super.setParameters(showController);
+
+            this.editor = editor;
+            doc = (Document) editor.treeController.doc.cloneNode(true);
+            svg = new SVG(doc);
+            optionsController.loadDoc(doc, node);
+
+            loadElement(node);
+            addListener();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -93,26 +110,10 @@ public class ControlSvgShape extends ControlShapeOptions {
             optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    showController.setBackGroundOpacity();
+                    showController.loadBackGround();
                 }
             });
 
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void editShape(SvgEditorController editor, Element node) {
-        try {
-            super.setParameters(showController);
-
-            this.editor = editor;
-            doc = (Document) editor.treeController.doc.cloneNode(true);
-            svg = new SVG(doc);
-            optionsController.loadDoc(doc, null);
-
-            loadElement(node);
-            addListener();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -125,11 +126,11 @@ public class ControlSvgShape extends ControlShapeOptions {
                 element = (Element) node.cloneNode(false);
                 loadShape(element);
                 loadStyle(element);
-                pickStyle();
-                super.switchShape();
+                super.switchShapeBySelection();
                 loadXml(element);
             } else {
-                switchShape();
+                element = null;
+                switchShapeBySelection();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -137,55 +138,29 @@ public class ControlSvgShape extends ControlShapeOptions {
     }
 
     public String scaleValue(double d) {
-        return DoubleTools.scale2(d) + "";
+        return DoubleTools.imageScale(d) + "";
     }
 
     /*
         shape
      */
     @Override
-    public void switchShape() {
+    public void switchShapeBySelection() {
         if (isSettingValues) {
             return;
         }
+        super.switchShapeBySelection();
+        redrawShape();
         element = null;
-        super.switchShape();
         if (shape2Element() && style2Element()) {
             loadXml(element);
         }
     }
 
     @Override
-    public void setShapeControls() {
-        try {
-            super.setShapeControls();
-            showController.infoLabel.setText("");
-            if (imageController == null || shapeType == null) {
-                return;
-            }
-            isSettingValues = true;
-            switch (shapeType) {
-                case Circle:
-                case Rectangle:
-                case Ellipse:
-                case Line:
-                    showController.infoLabel.setText(message("ShapeDragMoveComments"));
-                    break;
-                case Polyline:
-                case Polygon:
-                case Lines:
-                    showController.infoLabel.setText(message("ShapePointsMoveComments"));
-                    break;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        isSettingValues = false;
-    }
-
-    @Override
     public void shapeDataChanged() {
-        setShapeControls();
+        super.shapeDataChanged();
+        redrawShape();
         shape2Element();
     }
 
@@ -228,7 +203,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                     break;
                 case "path":
                     if (loadPath(node)) {
-                        pathRadio.setSelected(true);
+                        svgRadio.setSelected(true);
                     }
                     break;
                 default:
@@ -273,7 +248,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 popError(message("InvalidParameter") + ": " + message("Height"));
                 return false;
             }
-            imageController.maskRectangleData = new DoubleRectangle(x, y, x + w - 1, y + h - 1);
+            imageController.maskRectangleData = DoubleRectangle.xywh(x, y, w, h);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -315,15 +290,15 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadEllipse(Element node) {
         try {
-            float x, y, rx, ry;
+            float cx, cy, rx, ry;
             try {
-                x = Float.parseFloat(node.getAttribute("cx"));
+                cx = Float.parseFloat(node.getAttribute("cx"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": x");
                 return false;
             }
             try {
-                y = Float.parseFloat(node.getAttribute("cy"));
+                cy = Float.parseFloat(node.getAttribute("cy"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": y");
                 return false;
@@ -346,7 +321,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 popError(message("InvalidParameter") + ": " + message("Radius"));
                 return false;
             }
-            imageController.maskEllipseData = new DoubleEllipse(x, y, x + rx * 2 - 1, y + ry * 2 - 1);
+            imageController.maskEllipseData = DoubleEllipse.ellipse(cx, cy, rx, ry);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -391,7 +366,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadPolyline(Element node) {
         try {
-            List<DoublePoint> list = DoublePoint.parseList(node.getAttribute("points"));
+            List<DoublePoint> list = DoublePoint.parseImageCoordinates(node.getAttribute("points"));
             if (list != null && !list.isEmpty()) {
                 imageController.maskPolylineData.setAll(list);
             } else {
@@ -406,7 +381,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadPolygon(Element node) {
         try {
-            List<DoublePoint> list = DoublePoint.parseList(node.getAttribute("points"));
+            List<DoublePoint> list = DoublePoint.parseImageCoordinates(node.getAttribute("points"));
             if (list != null && !list.isEmpty()) {
                 imageController.maskPolygonData.setAll(list);
             } else {
@@ -421,7 +396,8 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadPath(Element node) {
         try {
-            imageController.pathData = new DoublePath(node.getAttribute("d"));
+            String d = node.getAttribute("d");
+            imageController.maskPathData = new DoublePath(this, d);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -440,8 +416,8 @@ public class ControlSvgShape extends ControlShapeOptions {
                     if (element == null) {
                         element = doc.createElement("rect");
                     }
-                    element.setAttribute("x", scaleValue(imageController.maskRectangleData.getSmallX()));
-                    element.setAttribute("y", scaleValue(imageController.maskRectangleData.getSmallY()));
+                    element.setAttribute("x", scaleValue(imageController.maskRectangleData.getX()));
+                    element.setAttribute("y", scaleValue(imageController.maskRectangleData.getY()));
                     element.setAttribute("width", scaleValue(imageController.maskRectangleData.getWidth()));
                     element.setAttribute("height", scaleValue(imageController.maskRectangleData.getHeight()));
                     return true;
@@ -475,19 +451,19 @@ public class ControlSvgShape extends ControlShapeOptions {
                     if (element == null) {
                         element = doc.createElement("polyline");
                     }
-                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolylineData.getPoints(), 2));
+                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolylineData.getPoints(), 3, " "));
                     return true;
                 case Polygon:
                     if (element == null) {
                         element = doc.createElement("polygon");
                     }
-                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolygonData.getPoints(), 2));
+                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolygonData.getPoints(), 3, " "));
                     return true;
                 case Path:
                     if (element == null) {
                         element = doc.createElement("path");
                     }
-                    element.setAttribute("d", imageController.pathData.getContent());
+                    element.setAttribute("d", imageController.maskPathData.getContent());
                     return true;
             }
             popError(message("InvalidData"));
@@ -497,17 +473,10 @@ public class ControlSvgShape extends ControlShapeOptions {
         return false;
     }
 
-    @Override
-    public boolean pickShape() {
-        if (!super.pickShape()) {
-            return false;
-        }
-        return shape2Element();
-    }
-
     @FXML
+    @Override
     public void goShape() {
-        if (pickShape()) {
+        if (pickShape() && shape2Element()) {
             loadXml(element);
             redrawShape();
         }
@@ -516,6 +485,35 @@ public class ControlSvgShape extends ControlShapeOptions {
     /*
         style
      */
+    @Override
+    public void initStyleControls() {
+        try {
+            super.initStyleControls();
+
+            styleArea.setText(style.getMore());
+            styleArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue o, Boolean ov, Boolean nv) {
+                    if (isSettingValues || nv) {
+                        return;
+                    }
+                    String v = styleArea.getText();
+                    if (v != null && !v.isBlank()) {
+                        v = StringTools.trimBlanks(v);
+                        style.setMore(v);
+                        TableStringValues.add("SvgStyleHistories", v);
+                    } else {
+                        style.setMore(null);
+                    }
+                    goStyle();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void loadStyle(Element node) {
         try {
             if (node == null) {
@@ -578,27 +576,6 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
-    @Override
-    public boolean pickStyle() {
-        try {
-            if (!super.pickStyle()) {
-                return false;
-            }
-            String v = styleArea.getText();
-            if (v != null && !v.isBlank()) {
-                v = StringTools.trimBlanks(v);
-                style.setMore(v);
-                TableStringValues.add("SvgStyleHistories", v);
-            } else {
-                style.setMore(null);
-            }
-            return style2Element();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
     public boolean style2Element() {
         try {
             if (style == null || element == null) {
@@ -656,8 +633,9 @@ public class ControlSvgShape extends ControlShapeOptions {
     }
 
     @FXML
+    @Override
     public void goStyle() {
-        if (pickStyle()) {
+        if (style2Element()) {
             loadXml(element);
             redrawShape();
         }
@@ -708,8 +686,24 @@ public class ControlSvgShape extends ControlShapeOptions {
 
             xmlArea.setWrapText(wrapXmlCheck.isSelected());
 
+            xmlArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    updateXmlCount();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void updateXmlCount() {
+        String s = xmlArea.getText();
+        if (s == null || s.isBlank()) {
+            xmlLabel.setText("");
+        } else {
+            xmlLabel.setText(message("Count") + ": " + s.length());
         }
     }
 
@@ -718,6 +712,7 @@ public class ControlSvgShape extends ControlShapeOptions {
             isSettingValues = true;
             xmlArea.setText(XmlTools.transform(element, true));
             isSettingValues = false;
+            updateXmlCount();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -726,8 +721,12 @@ public class ControlSvgShape extends ControlShapeOptions {
     @FXML
     public void goXml() {
         try {
-            element = XmlTools.toElement(this, xmlArea.getText());
-            element = (Element) doc.importNode(element, true);
+            Element e = XmlTools.toElement(this, xmlArea.getText());
+            updateXmlCount();
+            if (e == null) {
+                return;
+            }
+            element = (Element) doc.importNode(e, true);
             loadElement(element);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -753,7 +752,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 return true;
 
             } else if (tab == styleTab) {
-                goStyle();
+                goShape();
                 return true;
 
             } else if (tab == xmlTab) {
@@ -776,7 +775,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     @FXML
     protected void showHelps(Event event) {
-        editor.popEventMenu(event, HelpTools.svgHelps(true));
+        popEventMenu(event, HelpTools.svgHelps(true));
     }
 
 }

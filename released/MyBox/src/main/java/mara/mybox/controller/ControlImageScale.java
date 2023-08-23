@@ -26,7 +26,6 @@ public class ControlImageScale extends ControlImageSize {
         editor = scaleController.editor;
         imageController = editor;
         infoLabel = scaleController.commentsLabel;
-        image = editor.imageView.getImage();
         checkScaleType();
     }
 
@@ -47,6 +46,15 @@ public class ControlImageScale extends ControlImageSize {
     }
 
     @Override
+    protected Image getImage() {
+        if (editor == null) {
+            return null;
+        } else {
+            return editor.imageView.getImage();
+        }
+    }
+
+    @Override
     protected void switchType() {
         try {
             if (dragRadio.isSelected()) {
@@ -59,10 +67,8 @@ public class ControlImageScale extends ControlImageSize {
                 adjustRadio();
 
             } else {
-
                 super.switchType();
             }
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -70,12 +76,16 @@ public class ControlImageScale extends ControlImageSize {
 
     protected void initDrag() {
         try {
-            if (image == null || !dragRadio.isSelected()) {
+            if (!dragRadio.isSelected()) {
+                return;
+            }
+            Image image = getImage();
+            if (image == null) {
                 return;
             }
             width = image.getWidth();
             height = image.getHeight();
-            editor.maskRectangleData = new DoubleRectangle(0, 0, width - 1, height - 1);
+            editor.maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
             editor.showMaskRectangle();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -89,11 +99,6 @@ public class ControlImageScale extends ControlImageSize {
                 || editor.maskRectangleData == null) {
             return;
         }
-        editor.maskRectangleData = new DoubleRectangle(
-                editor.maskRectangleData.getSmallX(),
-                editor.maskRectangleData.getSmallY(),
-                editor.maskRectangleData.getSmallX() + width - 1,
-                editor.maskRectangleData.getSmallY() + height - 1);
         editor.drawMaskRectangle();
     }
 
@@ -116,9 +121,9 @@ public class ControlImageScale extends ControlImageSize {
         editor.popSuccessful();
         String newSize = (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight());
         if (scaleType == ScaleType.Scale) {
-            editor.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, scale + "", newSize, newImage, cost);
+            editor.updateImage(ImageManufactureController_Image.ImageOperation.ScaleImage, scale + "", newSize, newImage, cost);
         } else if (scaleType == ScaleType.Dragging || scaleType == ScaleType.Pixels) {
-            editor.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, "Pixels", newSize, newImage, cost);
+            editor.updateImage(ImageManufactureController_Image.ImageOperation.ScaleImage, "Pixels", newSize, newImage, cost);
         }
 
         String info = message("OriginalSize") + ": " + (int) Math.round(editor.image.getWidth())

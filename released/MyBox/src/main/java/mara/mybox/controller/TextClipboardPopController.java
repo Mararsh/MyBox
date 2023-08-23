@@ -151,13 +151,6 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
         return false;
     }
 
-    @Override
-    public boolean keyF6() {
-        closeStage();
-        return false;
-    }
-
-
     /*
         static methods
      */

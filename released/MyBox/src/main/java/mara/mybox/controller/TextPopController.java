@@ -132,9 +132,7 @@ public class TextPopController extends BaseChildController {
 
     @FXML
     public void editAction() {
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textArea.getText());
-        controller.requestMouse();
+        TextEditorController.edit(textArea.getText());
     }
 
     @FXML
@@ -163,8 +161,7 @@ public class TextPopController extends BaseChildController {
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(file);
-                TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                controller.sourceFileChanged(file);
+                TextEditorController.open(file);
             }
         };
         start(task);

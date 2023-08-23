@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,6 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -22,41 +22,62 @@ import mara.mybox.fxml.ValidationTools;
  */
 public class ImageManufactureTransformController extends ImageManufactureOperationController {
 
-    protected float shearX;
+    protected float shearX, shearY;
     protected int rotateAngle;
 
     @FXML
-    protected ComboBox angleBox, shearBox;
+    protected ComboBox angleSelector, xSelector, ySelector;
     @FXML
     protected Slider angleSlider;
     @FXML
-    protected Button shearButton;
+    protected Button shearButton, rotateLeftButton, rotateRightButton;
 
     @Override
     public void initPane() {
         try {
             super.initPane();
 
-            List<String> shears = Arrays.asList(
-                    "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
+            shearX = UserConfig.getFloat("ImageShearX", 0.5f);
+            xSelector.getItems().addAll(Arrays.asList(
+                    "0.5", "-0.5", "0", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
                     "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
-                    "1.5", "-1.5", "2", "-2");
-            shearBox.getItems().addAll(shears);
-            shearBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    "1.5", "-1.5", "2", "-2"));
+            xSelector.setValue(shearX + "");
+            xSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         shearX = Float.parseFloat(newValue);
+                        UserConfig.setFloat("ImageShearX", shearX);
                         shearButton.setDisable(false);
-                        ValidationTools.setEditorNormal(shearBox);
+                        ValidationTools.setEditorNormal(xSelector);
                     } catch (Exception e) {
-                        shearX = 0;
                         shearButton.setDisable(true);
-                        ValidationTools.setEditorBadStyle(shearBox);
+                        ValidationTools.setEditorBadStyle(xSelector);
                     }
                 }
             });
-            shearBox.getSelectionModel().select(0);
+
+            shearY = UserConfig.getFloat("ImageShearY", 0f);
+            ySelector.getItems().addAll(Arrays.asList(
+                    "0", "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
+                    "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
+                    "1.5", "-1.5", "2", "-2"));
+            ySelector.setValue(shearY + "");
+            ySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        shearY = Float.parseFloat(newValue);
+                        UserConfig.setFloat("ImageShearY", shearY);
+                        shearButton.setDisable(false);
+                        ValidationTools.setEditorNormal(ySelector);
+                    } catch (Exception e) {
+                        shearButton.setDisable(true);
+                        ValidationTools.setEditorBadStyle(ySelector);
+                    }
+                }
+            });
 
             angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -65,24 +86,28 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 }
             });
 
-            angleBox.getItems().addAll(Arrays.asList("90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
-            angleBox.setVisibleRowCount(10);
-            angleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            rotateAngle = UserConfig.getInt("ImageRotateAngle", 45);
+            angleSelector.getItems().addAll(Arrays.asList(
+                    "45", "90", "180", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
+            angleSelector.setVisibleRowCount(10);
+            angleSelector.setValue(rotateAngle + "");
+            angleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         rotateAngle = Integer.parseInt(newValue);
+                        UserConfig.setInt("ImageRotateAngle", rotateAngle);
                         rotateLeftButton.setDisable(false);
                         rotateRightButton.setDisable(false);
-                        ValidationTools.setEditorNormal(angleBox);
+                        ValidationTools.setEditorNormal(angleSelector);
                     } catch (Exception e) {
                         rotateLeftButton.setDisable(true);
                         rotateRightButton.setDisable(true);
-                        ValidationTools.setEditorBadStyle(angleBox);
+                        ValidationTools.setEditorBadStyle(angleSelector);
                     }
                 }
             });
-            angleBox.getSelectionModel().select(0);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -97,7 +122,6 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     }
 
     @FXML
-    @Override
     public void rotateRight() {
         if (task != null) {
             task.cancel();
@@ -126,7 +150,6 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     }
 
     @FXML
-    @Override
     public void rotateLeft() {
         if (task != null) {
             task.cancel();
@@ -222,7 +245,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected boolean handle() {
-                newImage = TransformTools.shearImage(imageView.getImage(), shearX, 0);
+                newImage = TransformTools.shearImage(imageView.getImage(), shearX, shearY);
                 if (task == null || isCancelled()) {
                     return false;
                 }
@@ -239,7 +262,6 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         start(task);
     }
 
-    @Override
     public void rotate(int angle) {
         imageView.setRotate(angle);
     }

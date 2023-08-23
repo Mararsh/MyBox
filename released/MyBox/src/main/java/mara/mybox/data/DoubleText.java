@@ -12,8 +12,23 @@ public class DoubleText extends DoubleRectangle {
     public DoubleText() {
     }
 
-    public DoubleText(int x1, int y1, int x2, int y2) {
-        super(Integer.MAX_VALUE, Integer.MAX_VALUE, x1, y1, x2, y2);
+    public static DoubleText xywh(double x, double y, double width, double height) {
+        DoubleText t = new DoubleText();
+        t.setX(x);
+        t.setY(y);
+        t.setWidth(width);
+        t.setHeight(height);
+        return t;
+    }
+
+    @Override
+    public boolean isValid() {
+        return text != null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid();
     }
 
     /*

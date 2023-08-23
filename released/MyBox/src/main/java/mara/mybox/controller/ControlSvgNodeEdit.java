@@ -1,17 +1,26 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.data.XmlTreeNode;
 import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -27,9 +36,13 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     protected SvgEditorController editor;
 
     @FXML
-    protected VBox pathBox, styleBox;
+    protected Tab pathTab, styleTab;
     @FXML
-    protected TextArea pathArea, styleArea;
+    protected TextArea styleArea;
+    @FXML
+    protected ControlPath2D pathController;
+    @FXML
+    protected FlowPane shapeOpPane;
 
     @Override
     public void editNode(TreeItem<XmlTreeNode> item) {
@@ -40,12 +53,13 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 String name = currentTreeNode.getNode().getNodeName();
                 if (!name.equalsIgnoreCase("svg")) {
                     if (name.equalsIgnoreCase("path")) {
-                        setBox.getChildren().add(0, pathBox);
-                        setBox.getChildren().add(1, styleBox);
+                        tabPane.getTabs().add(0, pathTab);
+                        tabPane.getTabs().add(2, styleTab);
                     } else {
-                        setBox.getChildren().add(0, styleBox);
+                        tabPane.getTabs().add(1, styleTab);
                     }
-                    refreshStyle(setBox);
+                    tabPane.getSelectionModel().select(0);
+                    refreshStyle(tabPane);
                 }
             }
         }
@@ -55,6 +69,8 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         } catch (Exception e) {
         }
         editor.htmlController.loadDoc(editor.treeController.doc, focusedNode);
+        shapeOpPane.setVisible(item != null && item.getValue() != null
+                && item.getValue().isSvgShape());
     }
 
     @Override
@@ -70,7 +86,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 String attrName = attr.getNodeName();
                 String value = attr.getNodeValue();
                 if (isPath && "d".equalsIgnoreCase(attrName)) {
-                    pathArea.setText(value);
+                    pathController.loadPath(value);
                     continue;
                 }
                 if ("style".equalsIgnoreCase(attrName)) {
@@ -102,11 +118,11 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 element.removeAttribute("style");
             }
             if ("path".equalsIgnoreCase(node.getNodeName())) {
-                String path = pathArea.getText();
+                pathController.pickValue();
+                String path = pathController.getText();
                 if (path != null && !path.isBlank()) {
                     path = StringTools.trimBlanks(path);
                     element.setAttribute("d", path);
-                    TableStringValues.add("SvgPathHistories", path);
                 } else {
                     element.removeAttribute("d");
                 }
@@ -121,42 +137,10 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     @Override
     public void clearNode() {
         super.clearNode();
-        pathArea.clear();
+        pathController.loadPath("");
         styleArea.clear();
+        tabPane.getTabs().removeAll(pathTab, styleTab);
     }
-
-    /*
-        path
-     */
-    @FXML
-    public void popExamplesPathMenu(Event event) {
-        if (UserConfig.getBoolean("SvgPathExamplesPopWhenMouseHovering", false)) {
-            showExamplesPathMenu(event);
-        }
-    }
-
-    @FXML
-    public void showExamplesPathMenu(Event event) {
-        PopTools.popValues(this, pathArea, "SvgPathExamples", HelpTools.svgPathExamples(), event);
-    }
-
-    @FXML
-    protected void popPathHistories(Event event) {
-        if (UserConfig.getBoolean("SvgPathHistoriesPopWhenMouseHovering", false)) {
-            showPathHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showPathHistories(Event event) {
-        PopTools.popStringValues(this, pathArea, event, "SvgPathHistories", false, true);
-    }
-
-    @FXML
-    protected void clearPath() {
-        pathArea.clear();
-    }
-
 
     /*
         style
@@ -188,6 +172,56 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     @FXML
     protected void clearStyle() {
         styleArea.clear();
+    }
+
+    /*
+        shape
+     */
+    @FXML
+    public void drawShape() {
+        if (treeItem == null) {
+            popInformation(message("SelectToHandle"));
+            return;
+        }
+        SvgEditShapeController.open(editor, treeItem);
+    }
+
+    @FXML
+    public void popShapeMenu(Event event) {
+        if (UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", true)) {
+            showShapeMenu(event);
+        }
+    }
+
+    @FXML
+    public void showShapeMenu(Event event) {
+        if (node == null || !(node instanceof Element)) {
+            return;
+        }
+        List<MenuItem> items = DoubleShape.elementMenu(this, (Element) node);
+        if (items == null) {
+            return;
+        }
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                UserConfig.setBoolean("SvgNodeShapeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        popEventMenu(event, items);
+    }
+
+    public void loadPath(String content) {
+        if (content == null || content.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        pathController.loadPath(content);
     }
 
 }

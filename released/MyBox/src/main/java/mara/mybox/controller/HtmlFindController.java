@@ -302,8 +302,8 @@ public class HtmlFindController extends WebAddressController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 loading = null;
-                task = null;
             }
 
         };

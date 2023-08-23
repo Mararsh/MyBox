@@ -218,7 +218,7 @@ public class BytesEditorController extends BaseFileEditorController {
                 node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                     @Override
                     public void handle(ContextMenuEvent event) {
-                        MenuBytesEditController.open(myController, node, event);
+                        MenuBytesEditController.openBytes(myController, node, event);
                     }
                 });
             } else {
@@ -240,7 +240,6 @@ public class BytesEditorController extends BaseFileEditorController {
             return;
         }
         sourceInformation.setCharset(Charset.forName(c));
-        pairArea.setDisable(true);
         SingletonTask pairTask = new SingletonTask<Void>(this) {
 
             private String pairText;
@@ -290,12 +289,8 @@ public class BytesEditorController extends BaseFileEditorController {
                 updateNumbers(fileChanged.get());
             }
 
-            @Override
-            protected void finalAction() {
-                pairArea.setDisable(false);
-            }
         };
-        start(pairTask, false, null);
+        start(pairTask, pairArea);
     }
 
     @Override
@@ -322,7 +317,7 @@ public class BytesEditorController extends BaseFileEditorController {
     @Override
     public boolean menuAction() {
         Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
-        MenuBytesEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+        MenuBytesEditController.openBytes(myController, mainArea, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 
@@ -357,7 +352,15 @@ public class BytesEditorController extends BaseFileEditorController {
     public static BytesEditorController open(File file) {
         BytesEditorController controller = open();
         if (controller != null) {
-            controller.openFile(file);
+            controller.sourceFileChanged(file);
+        }
+        return controller;
+    }
+
+    public static BytesEditorController edit(String texts) {
+        BytesEditorController controller = open();
+        if (controller != null) {
+            controller.loadContents(texts);
         }
         return controller;
     }

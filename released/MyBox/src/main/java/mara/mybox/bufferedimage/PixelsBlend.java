@@ -3,6 +3,7 @@ package mara.mybox.bufferedimage;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -115,13 +116,12 @@ public abstract class PixelsBlend {
                 return null;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            DoubleRectangle rect = new DoubleRectangle(x, y,
-                    x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
+            DoubleRectangle rect = DoubleRectangle.xywh(x, y, foreImage.getWidth(), foreImage.getHeight());
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
                     int backPixel = backImage.getRGB(i, j);
-                    if (rect.contains(i, j)) {
+                    if (DoubleShape.contains(rect, i, j)) {
                         int forePixel = foreImage.getRGB(i - x, j - y);
                         target.setRGB(i, j, blend(forePixel, backPixel));
                     } else {
@@ -179,6 +179,13 @@ public abstract class PixelsBlend {
         return (int) (A * w + B * (1.0f - w));
     }
 
+    public static PixelsBlend normalBlender(float opacity) {
+        return PixelsBlendFactory.create(ImagesBlendMode.NORMAL)
+                .setOpacity(opacity)
+                .setOrderReversed(false)
+                .setIgnoreTransparency(false);
+    }
+
     public static PixelsBlend blender(ImagesBlendMode blendMode, float opacity,
             boolean orderReversed, boolean ignoreTransparent) {
         return PixelsBlendFactory.create(blendMode)
@@ -195,13 +202,12 @@ public abstract class PixelsBlend {
                 return null;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            DoubleRectangle rect = new DoubleRectangle(x, y,
-                    x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
+            DoubleRectangle rect = DoubleRectangle.xywh(x, y, foreImage.getWidth(), foreImage.getHeight());
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
                     int backPixel = backImage.getRGB(i, j);
-                    if (rect.contains(i, j)) {
+                    if (DoubleShape.contains(rect, i, j)) {
                         int forePixel = foreImage.getRGB(i - x, j - y);
                         target.setRGB(i, j, blender.blend(forePixel, backPixel));
                     } else {

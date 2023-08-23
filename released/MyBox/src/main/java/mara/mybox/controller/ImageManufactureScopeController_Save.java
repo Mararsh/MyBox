@@ -7,8 +7,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.data.DoublePoint;
-import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -38,7 +36,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
 
     @FXML
     public void saveScope() {
-        if (scope == null || scope.getFile() == null || saveScopeButton.isDisabled()) {
+        if (!isValidScope() || !finalScope() || saveScopeButton.isDisabled()) {
             return;
         }
         String name = scopeNameInput.getText().trim();
@@ -46,14 +44,9 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             popError(message("InvalidParameters"));
             return;
         }
+        scope.setName(name);
         if (task != null) {
             task.cancel();
-        }
-        scope.setName(name);
-        if (sourceFile != null) {
-            scope.setFile(sourceFile.getAbsolutePath());
-        } else {
-            scope.setFile("Unknown");
         }
         task = new SingletonCurrentTask<Void>(this) {
 
@@ -133,18 +126,14 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             return false;
         }
         try {
+            isSettingValues = true;
             pointsController.clearAction();
+            isSettingValues = false;
             areaExcludedCheck.setSelected(scope.isAreaExcluded());
             switch (scope.getScopeType()) {
-                case Matting: {
-                    List<IntPoint> points = scope.getPoints();
-                    if (points != null) {
-                        for (IntPoint p : points) {
-                            pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
-                        }
-                    }
+                case Matting:
+                    pointsController.loadIntList(scope.getPoints());
                     return true;
-                }
                 case Rectangle:
                 case Outline:
                     maskRectangleData = scope.getRectangle();
@@ -156,16 +145,12 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                     maskEllipseData = scope.getEllipse();
                     return showMaskEllipse();
                 case Polygon: {
-                    List<IntPoint> points = scope.getPoints();
-                    if (points != null) {
-                        for (IntPoint p : points) {
-                            pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
-                        }
-                    }
+                    pointsController.loadIntList(scope.getPoints());
                     maskPolygonData = scope.getPolygon();
                     return showMaskPolygon();
                 }
             }
+
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

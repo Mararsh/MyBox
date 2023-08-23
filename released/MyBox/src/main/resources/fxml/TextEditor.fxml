@@ -152,7 +152,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <FlowPane hgap="2.0" vgap="2.0">
                                                             <children>
-                                                                <Label text="%LineNumber" />
+                                                                <Label text="%RowNumber" />
                                                                 <TextField fx:id="lineInput" prefWidth="120.0" />
                                                                 <Button fx:id="goLineButton" mnemonicParsing="false" onAction="#locateLine">
                                                                     <graphic>
@@ -182,7 +182,7 @@ License:    Apache License Version 2.0
                                                         </FlowPane>
                                                         <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <Label text="%LinesRange" />
+                                                                <Label text="%RowsRange" />
                                                                 <FlowPane hgap="2.0" vgap="2.0">
                                                                     <children>
                                                                         <Label text="%From" />
@@ -417,7 +417,7 @@ License:    Apache License Version 2.0
                         </Label>
                         <HBox fx:id="pageBox" alignment="CENTER_LEFT" minWidth="-Infinity" spacing="2.0">
                             <children>
-                                <Label text="%LinesPerPage" /> 
+                                <Label text="%RowsPerPage" /> 
                                 <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
                                 <Label minWidth="-Infinity" text="%Page" />
                                 <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" HBox.hgrow="NEVER" />

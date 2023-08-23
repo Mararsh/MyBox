@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -38,7 +39,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
-    protected int keepRatioType;
+    protected int keepRatioType, rotateAngle, currentAngle;
 
     @FXML
     protected ControlImagesClipboard clipsController;
@@ -48,6 +49,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     protected ComboBox<String> angleBox, ratioBox;
     @FXML
     protected CheckBox keepRatioCheck, enlargeCheck;
+    @FXML
+    protected Button rotateLeftButton, rotateRightButton;
     @FXML
     protected Label listLabel;
     @FXML
@@ -218,9 +221,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             clipSource = image;
             currentClip = clipSource;
             editor.scope = new ImageScope();
-            editor.maskRectangleData = new DoubleRectangle(0, 0,
-                    currentClip.getWidth() - 1, currentClip.getHeight() - 1);
-            editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
+            editor.maskRectangleData = DoubleRectangle.image(currentClip);
+            editor.scope.setRectangle(editor.maskRectangleData.copy());
             pasteClip(0);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -272,8 +274,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         }
                     }
                     blendedImage = blendController.blend(finalClip, bgImage,
-                            (int) editor.scope.getRectangle().getSmallX(),
-                            (int) editor.scope.getRectangle().getSmallY());
+                            (int) editor.scope.getRectangle().getX(),
+                            (int) editor.scope.getRectangle().getY());
                     if (task == null || isCancelled()) {
                         return false;
                     }
@@ -290,13 +292,11 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 if (enlarged) {
                     editor.setImage(ImageOperation.Margins, bgImage);
                 }
-                editor.maskRectangleData = new DoubleRectangle(
-                        editor.maskRectangleData.getSmallX(),
-                        editor.maskRectangleData.getSmallY(),
-                        editor.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
-                        editor.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
+                editor.maskRectangleData = DoubleRectangle.xywh(
+                        editor.maskRectangleData.getX(), editor.maskRectangleData.getY(),
+                        finalClip.getWidth(), finalClip.getHeight());
                 editor.showMaskRectangle();
-                editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
+                editor.scope.setRectangle(editor.maskRectangleData.copy());
                 maskView.setImage(blendedImage);
                 maskView.setOpacity(1.0);
                 maskView.setVisible(true);
@@ -313,13 +313,11 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @FXML
-    @Override
     public void rotateRight() {
         pasteClip(rotateAngle);
     }
 
     @FXML
-    @Override
     public void rotateLeft() {
         pasteClip(360 - rotateAngle);
 
@@ -331,7 +329,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             return;
         }
         if (!editor.scope.getRectangle().same(editor.maskRectangleData)) {
-            editor.scope.setRectangle(editor.maskRectangleData.cloneValues());
+            editor.scope.setRectangle(editor.maskRectangleData.copy());
             pasteClip(0);
         }
     }

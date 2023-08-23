@@ -61,8 +61,8 @@ public class LocateTools {
         if (node == null || refer == null) {
             return;
         }
-        Bounds regionBounds = node.getBoundsInParent();
-        Bounds referBounds = refer.getBoundsInParent();
+        Bounds regionBounds = node.getBoundsInLocal();
+        Bounds referBounds = refer.getBoundsInLocal();
         double xOffset = referBounds.getWidth() - regionBounds.getWidth();
         node.setLayoutX(referBounds.getMinX() + xOffset / 2);
         node.setLayoutY(referBounds.getMinY() - 10);
@@ -72,8 +72,8 @@ public class LocateTools {
         if (node == null || refer == null) {
             return;
         }
-        Bounds regionBounds = node.getBoundsInParent();
-        Bounds referBounds = refer.getBoundsInParent();
+        Bounds regionBounds = node.getBoundsInLocal();
+        Bounds referBounds = refer.getBoundsInLocal();
         double xOffset = referBounds.getWidth() - regionBounds.getWidth();
         node.setLayoutX(referBounds.getMinX() + xOffset / 2);
         node.setLayoutY(referBounds.getMaxY() + 10);
@@ -83,8 +83,8 @@ public class LocateTools {
         if (node == null || refer == null) {
             return;
         }
-        Bounds regionBounds = node.getBoundsInParent();
-        Bounds referBounds = refer.getBoundsInParent();
+        Bounds regionBounds = node.getBoundsInLocal();
+        Bounds referBounds = refer.getBoundsInLocal();
         double xOffset = referBounds.getWidth() - regionBounds.getWidth();
         double yOffset = referBounds.getHeight() - regionBounds.getHeight();
         node.setLayoutX(referBounds.getMinX() + xOffset / 2);
@@ -126,7 +126,7 @@ public class LocateTools {
         if (node == null || pNnode == null) {
             return;
         }
-        double xOffset = pNnode.getBoundsInParent().getWidth() - node.getBoundsInParent().getWidth();
+        double xOffset = pNnode.getBoundsInLocal().getWidth() - node.getBoundsInLocal().getWidth();
         if (xOffset > 0) {
             node.setLayoutX(xOffset / 2);
         } else {
@@ -138,7 +138,7 @@ public class LocateTools {
         if (node == null) {
             return;
         }
-        double xOffset = node.getBoundsInParent().getWidth() - node.getBoundsInParent().getWidth();
+        double xOffset = node.getBoundsInLocal().getWidth() - node.getBoundsInLocal().getWidth();
         if (xOffset > 0) {
             node.setLayoutX(xOffset / 2);
         } else {
@@ -150,7 +150,7 @@ public class LocateTools {
         if (node == null || pNnode == null) {
             return;
         }
-        double yOffset = pNnode.getBoundsInParent().getHeight() - node.getBoundsInParent().getHeight();
+        double yOffset = pNnode.getBoundsInLocal().getHeight() - node.getBoundsInLocal().getHeight();
         if (yOffset > 0) {
             node.setLayoutY(yOffset / 2);
         } else {
@@ -162,7 +162,7 @@ public class LocateTools {
         if (node == null) {
             return;
         }
-        double yOffset = node.getBoundsInParent().getHeight() - node.getBoundsInParent().getHeight();
+        double yOffset = node.getBoundsInLocal().getHeight() - node.getBoundsInLocal().getHeight();
         if (yOffset > 0) {
             node.setLayoutY(yOffset / 2);
         } else {

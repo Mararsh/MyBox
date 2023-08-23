@@ -97,7 +97,7 @@ public class NodeStyleTools {
             node.applyCss();
             node.layout();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.console(e);
         }
     }
 

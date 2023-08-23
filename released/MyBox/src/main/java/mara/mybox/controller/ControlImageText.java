@@ -44,7 +44,7 @@ import mara.mybox.value.UserConfig;
 public class ControlImageText extends BaseController {
 
     protected ImageView imageView;
-    protected int margin, lineHeight, x, y, fontSize, shadow, angle, baseX, baseY, textY,
+    protected int margin, rowHeight, x, y, fontSize, shadow, angle, baseX, baseY, textY,
             textWidth, textHeight, bordersStrokeWidth, bordersArc, bordersMargin;
     protected String text, fontFamily, fontName;
     protected FontPosture fontPosture;
@@ -57,7 +57,7 @@ public class ControlImageText extends BaseController {
     @FXML
     protected TextField xInput, yInput, marginInput, bordersMarginInput;
     @FXML
-    protected ComboBox<String> lineHeightSelector, fontSizeSelector, fontStyleSelector,
+    protected ComboBox<String> rowHeightSelector, fontSizeSelector, fontStyleSelector,
             fontFamilySelector, angleSelector, shadowSelector,
             bordersStrokeWidthSelector, bordersArcSelector;
     @FXML
@@ -175,29 +175,29 @@ public class ControlImageText extends BaseController {
     public void initStyle() {
         try {
 
-            lineHeight = UserConfig.getInt(baseName + "TextLineHeight", -1);
+            rowHeight = UserConfig.getInt(baseName + "TextRowHeight", -1);
             List<String> heights = Arrays.asList(
                     message("Automatic"), "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
-            lineHeightSelector.getItems().addAll(heights);
-            if (lineHeight <= 0) {
-                lineHeightSelector.setValue(message("Automatic"));
+            rowHeightSelector.getItems().addAll(heights);
+            if (rowHeight <= 0) {
+                rowHeightSelector.setValue(message("Automatic"));
             } else {
-                lineHeightSelector.setValue(lineHeight + "");
+                rowHeightSelector.setValue(rowHeight + "");
             }
-            lineHeightSelector.valueProperty().addListener(new ChangeListener<String>() {
+            rowHeightSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.parseInt(newValue);
                         if (v >= 0) {
-                            lineHeight = v;
+                            rowHeight = v;
                         } else {
-                            lineHeight = -1;
+                            rowHeight = -1;
                         }
                     } catch (Exception e) {
-                        lineHeight = -1;;
+                        rowHeight = -1;;
                     }
-                    UserConfig.setInt(baseName + "TextLineHeight", lineHeight);
+                    UserConfig.setInt(baseName + "TextRowHeight", rowHeight);
                     notifyChanged();
                 }
             });
@@ -595,16 +595,16 @@ public class ControlImageText extends BaseController {
     public void countValues(Graphics2D g, FontMetrics metrics, double imageWidth, double imageHeight) {
         countTextBound(g, metrics);
         if (rightBottomRadio.isSelected()) {
-            baseX = (int) imageWidth - 1 - margin - textWidth;
-            baseY = (int) imageHeight - 1 - margin - textHeight;
+            baseX = (int) imageWidth - margin - textWidth;
+            baseY = (int) imageHeight - margin - textHeight;
 
         } else if (rightTopRadio.isSelected()) {
-            baseX = (int) imageWidth - 1 - margin - textWidth;
+            baseX = (int) imageWidth - margin - textWidth;
             baseY = margin;
 
         } else if (leftBottomRadio.isSelected()) {
             baseX = margin;
-            baseY = (int) imageHeight - 1 - margin - textHeight;
+            baseY = (int) imageHeight - margin - textHeight;
 
         } else if (leftTopRadio.isSelected()) {
             baseX = margin;
@@ -638,15 +638,15 @@ public class ControlImageText extends BaseController {
                     String c = line.charAt(i) + "";
                     Rectangle2D cBound = metrics.getStringBounds(c, g);
                     rHeight += (int) cBound.getHeight();
-                    if (lineHeight <= 0) {
+                    if (rowHeight <= 0) {
                         int charWidth = (int) cBound.getWidth();
                         if (charWidth > charWidthMax) {
                             charWidthMax = charWidth;
                         }
                     }
                 }
-                if (lineHeight > 0) {
-                    textWidth += lineHeight;
+                if (rowHeight > 0) {
+                    textWidth += rowHeight;
                 } else {
                     textWidth += charWidthMax;
                 }
@@ -658,8 +658,8 @@ public class ControlImageText extends BaseController {
         } else {
             for (String line : lines) {
                 Rectangle2D sBound = metrics.getStringBounds(line, g);
-                if (lineHeight > 0) {
-                    textHeight += lineHeight;
+                if (rowHeight > 0) {
+                    textHeight += rowHeight;
                 } else {
                     textHeight += sBound.getHeight();
                 }
@@ -828,8 +828,8 @@ public class ControlImageText extends BaseController {
     /*
         get
      */
-    public int getLineHeight() {
-        return lineHeight;
+    public int getRowHeight() {
+        return rowHeight;
     }
 
     public int getX() {

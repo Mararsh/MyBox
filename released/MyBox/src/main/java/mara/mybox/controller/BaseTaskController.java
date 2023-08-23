@@ -140,8 +140,7 @@ public class BaseTaskController extends BaseLogs {
 
             @Override
             protected void finalAction() {
-                super.taskQuit();
-                task = null;
+                super.finalAction();
                 if (startButton != null) {
                     StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
                     startButton.applyCss();

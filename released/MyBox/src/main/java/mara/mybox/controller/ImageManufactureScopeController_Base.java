@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
@@ -13,11 +12,14 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.data.DoublePoint;
+import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -30,13 +32,10 @@ import mara.mybox.fxml.SingletonCurrentTask;
 public abstract class ImageManufactureScopeController_Base extends ImageViewerController {
 
     protected TableColor tableColor;
-    protected ImageManufactureController imageController;
+    protected ImageManufactureController editor;
     protected ImageManufactureScopesSavedController scopesSavedController;
     protected float opacity;
-    protected BufferedImage outlineSource;
 
-    @FXML
-    protected ImageView scopeView;
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
@@ -60,7 +59,8 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button saveScopeButton, scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
+    protected Button goScopeButton, saveScopeButton, functionsButton, withdrawPointButton,
+            scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
     protected RadioButton scopeAllRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
@@ -70,12 +70,33 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     @FXML
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
+    public boolean finalScope() {
+        try {
+            if (editor == null || scope == null) {
+                return false;
+            }
+            if (editor.sourceFile != null) {
+                scope.setFile(editor.sourceFile.getAbsolutePath());
+            } else {
+                scope.setFile("Unknown");
+            }
+            scope.setImage(editor.imageView.getImage());
+            scope.setAreaExcluded(areaExcludedCheck.isSelected());
+            scope.setColorExcluded(colorExcludedCheck.isSelected());
+            scope.setEightNeighbor(eightNeighborCheck.isSelected());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     protected synchronized void indicateScope() {
-        if (isSettingValues || imageView == null || !scopeView.isVisible() || scope == null) {
+        if (!isValidScope() || !finalScope()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
             private Image scopedImage;
@@ -83,11 +104,10 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             @Override
             protected boolean handle() {
                 try {
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                            editor.imageView.getImage(),
                             scope, PixelsOperation.OperationType.ShowScope);
-                    if (!ignoreTransparentCheck.isSelected()) {
-                        pixelsOperation.setSkipTransparent(false);
-                    }
+                    pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
                     scopedImage = pixelsOperation.operateFxImage();
                     if (task == null || isCancelled()) {
                         return false;
@@ -101,15 +121,41 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
             @Override
             protected void whenSucceeded() {
-                scopeView.setImage(scopedImage);
-                scopeView.setFitWidth(imageView.getFitWidth());
-                scopeView.setFitHeight(imageView.getFitHeight());
-                scopeView.setLayoutX(imageView.getLayoutX());
-                scopeView.setLayoutY(imageView.getLayoutY());
+                image = scopedImage;
+                imageView.setImage(scopedImage);
+                if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
+                    drawMattingPoints();
+                } else {
+                    drawMaskShape();
+                }
+            }
+
+            @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
             }
 
         };
-        parentController.start(task);
+        start(task, thisPane);
+    }
+
+    public void drawMattingPoints() {
+        try {
+            clearMaskAnchors();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
+            for (int i = 0; i < scope.getPoints().size(); i++) {
+                IntPoint p = scope.getPoints().get(i);
+                double x = p.getX() * xRatio;
+                double y = p.getY() * yRatio;
+                addMaskAnchor(i, new DoublePoint(p.getX(), p.getY()), x, y);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
@@ -117,7 +163,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageScopeController.open((ImageManufactureScopeController) this, x, y);
+        MenuImageScopeController.scopeMenu((ImageManufactureScopeController) this, x, y);
     }
 
     @FXML
@@ -125,7 +171,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     public boolean menuAction() {
         try {
             Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-            MenuImageScopeController.open((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
+            popImageMenu(localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -138,6 +184,12 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     public boolean popAction() {
         ImageScopePopController.open((ImageManufactureScopeController) this);
         return true;
+    }
+
+    public boolean isValidScope() {
+        return scope != null
+                && scope.getScopeType() != null
+                && scope.getScopeType() != ScopeType.All;
     }
 
 }

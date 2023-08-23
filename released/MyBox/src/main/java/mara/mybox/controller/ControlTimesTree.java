@@ -204,13 +204,8 @@ public class ControlTimesTree extends ControlConditionTree {
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                thisPane.setDisable(false);
-            }
-
         };
-        start(task, false);
+        start(task, thisPane);
     }
 
     protected void loadDays(CheckBoxTreeItem<ConditionNode> monthItem) {
@@ -271,13 +266,8 @@ public class ControlTimesTree extends ControlConditionTree {
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                thisPane.setDisable(false);
-            }
-
         };
-        start(task, false);
+        start(task, thisPane);
     }
 
     protected void loadHours(CheckBoxTreeItem<ConditionNode> dayItem) {
@@ -338,13 +328,8 @@ public class ControlTimesTree extends ControlConditionTree {
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                thisPane.setDisable(false);
-            }
-
         };
-        start(task, false);
+        start(task, thisPane);
     }
 
     protected void loadMinutes(CheckBoxTreeItem<ConditionNode> hourItem) {
@@ -405,13 +390,8 @@ public class ControlTimesTree extends ControlConditionTree {
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                thisPane.setDisable(false);
-            }
-
         };
-        start(task, false);
+        start(task, thisPane);
     }
 
     protected void loadTimes(CheckBoxTreeItem<ConditionNode> minuteItem) {
@@ -460,13 +440,8 @@ public class ControlTimesTree extends ControlConditionTree {
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                thisPane.setDisable(false);
-            }
-
         };
-        start(task, false);
+        start(task, thisPane);
     }
 
     protected boolean loaded(TreeItem item) {

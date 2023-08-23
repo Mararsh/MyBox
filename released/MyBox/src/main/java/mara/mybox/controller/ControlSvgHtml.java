@@ -5,12 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -131,9 +129,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
             popError(message("NoData"));
             return;
         }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(currentXML);
-        controller.requestMouse();
+        TextEditorController.edit(currentXML);
     }
 
     @FXML

@@ -478,9 +478,8 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 data2D.stopTask();
-                task = null;
-
             }
         };
         start(task);
@@ -528,9 +527,9 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 data2D.stopTask();
                 targetData.stopTask();
-                task = null;
             }
         };
         start(task);

@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.geometry.Bounds;
-import javafx.scene.shape.Polygon;
+import static mara.mybox.tools.DoubleTools.imageScale;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -22,6 +23,20 @@ public class DoublePolygon implements DoubleShape {
         points = new ArrayList<>();
     }
 
+    @Override
+    public String name() {
+        return message("Polygon");
+    }
+
+    @Override
+    public java.awt.Polygon getShape() {
+        java.awt.Polygon polygon = new java.awt.Polygon();
+        for (DoublePoint p : points) {
+            polygon.addPoint((int) p.getX(), (int) p.getY());
+        }
+        return polygon;
+    }
+
     public boolean add(double x, double y) {
         points.add(new DoublePoint(x, y));
         return true;
@@ -36,7 +51,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean addAll(String values) {
-        return addAll(DoublePoint.parseList(values));
+        return addAll(DoublePoint.parseImageCoordinates(values));
     }
 
     public boolean setAll(List<DoublePoint> ps) {
@@ -45,6 +60,14 @@ public class DoublePolygon implements DoubleShape {
         }
         points.clear();
         return addAll(ps);
+    }
+
+    public boolean set(int index, DoublePoint p) {
+        if (p == null || index < 0 || index >= points.size()) {
+            return false;
+        }
+        points.set(index, p);
+        return true;
     }
 
     public boolean remove(double x, double y) {
@@ -63,7 +86,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean remove(int i) {
-        if (i < 0 || points == null || points.isEmpty()) {
+        if (points == null || i < 0 || i >= points.size()) {
             return false;
         }
         points.remove(i);
@@ -71,6 +94,9 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean removeLast() {
+        if (points == null || points.isEmpty()) {
+            return false;
+        }
         if (remove(points.size() - 1)) {
             return true;
         } else {
@@ -81,6 +107,11 @@ public class DoublePolygon implements DoubleShape {
     @Override
     public boolean isValid() {
         return points != null && points.size() > 2;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return !isValid() || points.isEmpty();
     }
 
     public boolean same(DoublePolygon polygon) {
@@ -105,33 +136,10 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public DoublePolygon cloneValues() {
+    public DoublePolygon copy() {
         DoublePolygon np = new DoublePolygon();
         np.addAll(points);
         return np;
-    }
-
-    @Override
-    public boolean contains(double x, double y) {
-        return isValid() && makePolygon().contains(x, y);
-    }
-
-    @Override
-    public DoubleRectangle getBound() {
-        Bounds bound = makePolygon().getBoundsInLocal();
-        return new DoubleRectangle(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
-    }
-
-    @Override
-    public DoublePoint getCenter() {
-        DoubleRectangle bound = getBound();
-        return bound != null ? bound.getCenter() : null;
-    }
-
-    public Polygon makePolygon() {
-        Polygon polygon = new Polygon();
-        polygon.getPoints().addAll(getData());
-        return polygon;
     }
 
     public void clear() {
@@ -175,29 +183,68 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public DoublePolygon move(double offset) {
-        DoublePolygon np = new DoublePolygon();
+    public boolean translateRel(double offsetX, double offsetY) {
+        List<DoublePoint> moved = new ArrayList<>();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
-            np.add(p.getX() + offset, p.getY() + offset);
+            moved.add(p.translate(offsetX, offsetY));
         }
-        return np;
+        points.clear();
+        points.addAll(moved);
+        return true;
     }
 
     @Override
-    public DoublePolygon move(double offsetX, double offsetY) {
-        DoublePolygon np = new DoublePolygon();
+    public boolean scale(double scaleX, double scaleY) {
+        List<DoublePoint> scaled = new ArrayList<>();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
-            np.add(p.getX() + offsetX, p.getY() + offsetY);
+            scaled.add(p.scale(scaleX, scaleY));
         }
-        return np;
+        points.clear();
+        points.addAll(scaled);
+        return true;
     }
 
     @Override
-    public DoublePolygon moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
-        return moved != null ? (DoublePolygon) moved : null;
+    public String pathAbs() {
+        String path = "";
+        DoublePoint p = points.get(0);
+        path += "M " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
+        for (int i = 1; i < points.size(); i++) {
+            p = points.get(i);
+            path += "L " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
+        }
+        path += "Z";
+        return path;
+    }
+
+    @Override
+    public String pathRel() {
+        String path = "";
+        DoublePoint p = points.get(0);
+        path += "m " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
+        double lastx = p.getX();
+        double lasty = p.getY();
+        for (int i = 1; i < points.size(); i++) {
+            p = points.get(i);
+            path += "l " + imageScale(p.getX() - lastx) + "," + imageScale(p.getY() - lasty) + "\n";
+            lastx = p.getX();
+            lasty = p.getY();
+        }
+        path += "z";
+        return path;
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<polygon points=\""
+                + DoublePoint.toText(points, UserConfig.imageScale(), " ") + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
     }
 
     public DoublePoint get(int i) {

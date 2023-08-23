@@ -23,9 +23,9 @@
 <!-- @version $Id$        -->
 <!-- ====================================================================== -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-     contentScriptType="text/ecmascript" contentStyleType="text/css"  viewBox="0 0 450 500" 
+     contentScriptType="text/ecmascript" contentStyleType="text/css"  viewBox="0 0 450 650" 
      preserveAspectRatio="xMidYMid meet" version="1.0"     xml:space="preserve" zoomAndPan="magnify">
-<g transform="scale(.5, .5)">
+<g >
 <g id="Layer_x0020_3" style="fill-rule:nonzero;clip-rule:nonzero;stroke:#000000;stroke-miterlimit:4;">
 <rect height="644.021" style="fill:#92cacc; stroke:none;" width="434.65" x="0" y="0"/>
 </g>

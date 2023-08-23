@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageQuantization">
+    <children>
+        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+            <children>
+                <Label text="%Algorithm" />
+                <ImageView fx:id="imageQuantizationTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconTips.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </FlowPane>
+        <RadioButton fx:id="kmeansQuanRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%KMeansClustering" wrapText="true">
+         <toggleGroup>
+                <ToggleGroup fx:id="quanGroup" />
+         </toggleGroup></RadioButton>
+        <RadioButton fx:id="popularQuanRadio" minHeight="-Infinity" mnemonicParsing="false" text="%PopularityQuantization" toggleGroup="$quanGroup" wrapText="true" />
+        <RadioButton fx:id="rgbQuanRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RGBUniformQuantization" toggleGroup="$quanGroup" wrapText="true" />
+        <RadioButton fx:id="hsbQuanRadio" minHeight="-Infinity" mnemonicParsing="false" text="%HSBUniformQuantization" toggleGroup="$quanGroup" wrapText="true" />
+      <VBox fx:id="setBox" spacing="5.0">
+         <children>
+              <FlowPane fx:id="regionPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label fx:id="depthLabel" minHeight="-Infinity" text="%ColorsRegionSize" wrapText="true" />
+                      <ComboBox fx:id="regionSizeSelector" editable="true" prefWidth="120.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane fx:id="numberPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label fx:id="stringLabel1" minHeight="-Infinity" text="%ColorsNumber" wrapText="true" />
+                      <ComboBox fx:id="quanColorsSelector" editable="true" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane fx:id="rgbWeightPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%RGBWeight" wrapText="true" />
+                      <ComboBox fx:id="rgbWeightSelector" editable="true" prefWidth="160.0" />
+                  </children>
+              </FlowPane>
+            <FlowPane fx:id="hsbWeightPane" alignment="CENTER_LEFT" hgap="2.0" layoutX="10.0" layoutY="66.0" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%HSBWeight" wrapText="true" />
+                  <ComboBox fx:id="hsbWeightSelector" editable="true" prefWidth="160.0" />
+               </children>
+            </FlowPane>
+              <FlowPane fx:id="loopPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label fx:id="intBoxLabel2" minHeight="-Infinity" text="%MaximumLoop" wrapText="true" />
+                      <ComboBox fx:id="kmeansLoopSelector" editable="true" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+         </children>
+      </VBox>
+        <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="10.0" layoutY="329.0" prefWrapLength="100.0" vgap="2.0" />
+        <CheckBox fx:id="quanDitherCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Dithering" wrapText="true" />
+        <CheckBox fx:id="firstColorCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ImageQuantizationFirstColor" wrapText="true" />
+        <CheckBox fx:id="quanDataCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ShowData" wrapText="true" />
+        <Label fx:id="resultsLabel" minHeight="-Infinity" wrapText="true" />
+    </children>
+</VBox>

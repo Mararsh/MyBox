@@ -93,7 +93,7 @@ License:    Apache License Version 2.0
                             </graphic>
                         </Button>
                   <Label minWidth="-Infinity" text="%LoadWidth" />
-                  <ComboBox fx:id="loadWidthBox" editable="true" prefWidth="100.0" />
+                  <ComboBox fx:id="loadWidthSelector" editable="true" prefWidth="100.0" />
                </children>
             </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="-Infinity" spacing="5.0">

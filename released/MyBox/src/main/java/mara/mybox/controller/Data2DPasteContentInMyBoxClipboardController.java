@@ -63,13 +63,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
         return false;
     }
 
-    @Override
-    public boolean keyF6() {
-        close();
-        return false;
-    }
-
-
     /*
         static methods
      */

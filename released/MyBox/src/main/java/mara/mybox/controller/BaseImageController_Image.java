@@ -279,11 +279,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 return true;
             }
 
-            if (isPop) {
-                paneSize();
-            } else {
-                fitSize();
-            }
             refinePane();
 
             if (imageInformation == null) {
@@ -294,7 +289,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
             isPickingColor = false;
             checkPickingColor();
-            checkSelect();
+            finalRefineView();
 
             notifyLoad();
             return true;
@@ -344,24 +339,45 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
     }
 
-    protected void checkSelect() {
+    protected boolean canPickColor() {
+        return imageView != null && imageView.getImage() != null
+                && !(this instanceof ImageSplitController)
+                && !(this instanceof ImageSampleController);
+    }
+
+    protected boolean canSelect() {
+        return imageView != null && imageView.getImage() != null
+                && maskRectangle != null && maskCircle == null
+                && !(this instanceof ImageSplitController)
+                && !(this instanceof ImageSampleController)
+                && !(this instanceof ImageManufactureController);
+    }
+
+    protected void finalRefineView() {
         if (isSettingValues) {
             return;
         }
-        boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
-        if (cropButton != null) {
-            cropButton.setDisable(!selected);
-        }
-        if (selectAllButton != null) {
-            selectAllButton.setDisable(!selected);
+        if (isPop) {
+            paneSize();
+        } else {
+            fitSize();
         }
         clearMask();
-        if (selected) {
-            showMaskRectangle();
-        } else {
-            maskShapeChanged();
+        if (canSelect()) {
+            boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
+            if (cropButton != null) {
+                cropButton.setDisable(!selected);
+            }
+            if (selectAllButton != null) {
+                selectAllButton.setDisable(!selected);
+            }
+            if (selected) {
+                showMaskRectangle();
+            } else {
+                maskShapeChanged();
+            }
         }
-        updateLabelsTitle();
+        refinePane();
     }
 
 }

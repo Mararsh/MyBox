@@ -146,7 +146,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
-                task = null;
+                super.finalAction();
                 tabPane.getSelectionModel().select(filesTab);
                 filesBox.setDisable(false);
                 filesTreeView.setRoot(rootItem);
@@ -256,7 +256,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
-                task = null;
+                super.finalAction();
                 tabPane.getSelectionModel().select(filesTab);
                 treeItem.getChildren().setAll(children);
                 if (!children.isEmpty()) {
@@ -331,6 +331,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 loadPath();
             }
         };
@@ -381,6 +382,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 loadPath();
             }
         };
@@ -435,6 +437,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 showLogs(message("Deleted") + ": " + remoteController.count);
                 loadPath();
             }

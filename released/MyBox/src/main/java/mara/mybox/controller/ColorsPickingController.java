@@ -52,7 +52,6 @@ public class ColorsPickingController extends BaseChildController {
             super.initControls();
 
             palettesController.setParameter(null, false);
-            colorsController.setParameter(null, true);
 
             onlyNewCheck.setSelected(UserConfig.getBoolean("ColorsOnlyPickNew", true));
             onlyNewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

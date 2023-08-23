@@ -1,15 +1,17 @@
 package mara.mybox.data;
 
+import java.awt.geom.Ellipse2D;
+import static mara.mybox.tools.DoubleTools.imageScale;
+import static mara.mybox.value.Languages.message;
+
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:29:29
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class DoubleCircle implements DoubleShape {
 
-    private double centerX, centerY, radius, radius2;
+    private double centerX, centerY, radius;
 
     public DoubleCircle() {
 
@@ -19,11 +21,20 @@ public class DoubleCircle implements DoubleShape {
         centerX = x;
         centerY = y;
         radius = r;
-        radius2 = r * r;
     }
 
     @Override
-    public DoubleCircle cloneValues() {
+    public String name() {
+        return message("Circle");
+    }
+
+    @Override
+    public Ellipse2D.Double getShape() {
+        return new Ellipse2D.Double(centerX - radius, centerY - radius, 2 * radius, 2 * radius);
+    }
+
+    @Override
+    public DoubleCircle copy() {
         return new DoubleCircle(centerX, centerY, radius);
     }
 
@@ -32,71 +43,84 @@ public class DoubleCircle implements DoubleShape {
         return radius > 0;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return !isValid();
+    }
+
     public boolean same(DoubleCircle circle) {
         return centerX == circle.getCenterX() && centerY == circle.getCenterY()
                 && radius == circle.getRadius();
     }
 
     @Override
-    public boolean contains(double x, double y) {
-        double distanceX = centerX - x;
-        double distaneY = centerY - y;
-        return distanceX * distanceX + distaneY * distaneY <= radius2;
+    public boolean translateRel(double offsetX, double offsetY) {
+        centerX += offsetX;
+        centerY += offsetY;
+        return true;
     }
 
     @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint(centerX, centerY);
+    public boolean scale(double scaleX, double scaleY) {
+        radius *= Math.min(scaleX, scaleY);
+        return true;
     }
 
     @Override
-    public DoubleCircle move(double offset) {
-        DoubleCircle nCircle = new DoubleCircle(
-                centerX + offset, centerY + offset, radius);
-        return nCircle;
+    public String pathAbs() {
+        double cx = imageScale(centerX);
+        double cy = imageScale(centerY);
+        double r = imageScale(radius);
+        return "M " + (cx - r) + "," + cy + " \n"
+                + "A " + r + "," + r + " 0,0,1 " + (cx + r) + "," + cy + " \n"
+                + "A " + r + "," + r + " 0,0,1 " + (cx - r) + "," + cy + " \n"
+                + "Z";
     }
 
     @Override
-    public DoubleCircle move(double offsetX, double offsetY) {
-        DoubleCircle nCircle = new DoubleCircle(
-                centerX + offsetX, centerY + offsetY, radius);
-        return nCircle;
+    public String pathRel() {
+        double cx = imageScale(centerX);
+        double cy = imageScale(centerY);
+        double r = imageScale(radius);
+        double r2 = imageScale(2 * radius);
+        return "m " + (cx - r) + "," + cy + " \n"
+                + "a " + r + "," + r + " 0,0,1 " + r2 + "," + 0 + " \n"
+                + "a " + r + "," + r + " 0,0,1 " + (-r2) + "," + 0 + " \n"
+                + "z";
     }
 
     @Override
-    public DoubleCircle moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
-        return moved != null ? (DoubleCircle) moved : null;
+    public String elementAbs() {
+        return "<circle cx=\"" + imageScale(centerX) + "\""
+                + " cy=\"" + imageScale(centerY) + "\""
+                + " r=\"" + imageScale(radius) + "\"> ";
     }
 
     @Override
-    public DoubleRectangle getBound() {
-        return new DoubleRectangle(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+    public String elementRel() {
+        return elementAbs();
     }
 
+    /*
+        set
+     */
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    /*
+        get
+     */
     public double getCenterX() {
         return centerX;
-    }
-
-    public void setCenterX(double centerX) {
-        this.centerX = centerX;
     }
 
     public double getCenterY() {
         return centerY;
     }
 
-    public void setCenterY(double centerY) {
-        this.centerY = centerY;
-    }
-
     public double getRadius() {
         return radius;
-    }
-
-    public void setRadius(double radius) {
-        radius2 = radius * radius;
-        this.radius = radius;
     }
 
 }

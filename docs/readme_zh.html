@@ -9,36 +9,35 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2023-7-23 版本6.7.5</p>
+  <p>2023-8-23 版本6.7.6</p>
   <ul>
    <li>新增： 
     <ul>
-     <li>SVG编辑器</li>
-     <li>批量排版SVG文件</li>
-     <li>批量转换SVG文件为图片/PDF</li>
+     <li>批量转换图片为SVG文件，可选算法和参数。</li>
+     <li>更多的形状：线条、弧曲线、二次贝塞尔曲线、三次贝塞尔曲线、SVG路径。</li>
+     <li>编辑形状时，可输入参数、也可拖动锚点和形状，并提供锚点菜单和形状菜单。</li>
     </ul></li>
    <li>改进： 
     <ul>
-     <li>在处理文件的界面中，提供浏览同目录下同类文件的面板。</li>
-     <li>编辑图片时，对于多边形和折线，可编辑点列表、并可拖动数据点以调整图形。</li>
-     <li>编辑图片时，简化范围的类型：若颜色列表为空，则匹配所有颜色。</li>
-     <li>图片统计时，可选是否排序颜色值。</li>
-     <li>重复/平铺图片时，可先裁剪和缩放原图。</li>
-     <li>编辑XML时，可直接输入XML代码以添加节点。</li>
-     <li>网页浏览器的页签上提供菜单以方便关闭页签。</li>
-     <li>按钮“执行”的快捷键为F9和CTRL+g，按钮“清除”的快捷键CTRL+l（小写的"L"）。</li>
+     <li>对于弹出的值（示例或历史），可选面板为子窗口或弹出窗口。</li>
+     <li>对已存在的调色板定制颜色列表。</li>
+     <li>右键点击颜色块以弹出颜色菜单。</li>
+     <li>分割图片时可拖动分割线。</li>
+     <li>在图片上可拖动线条来加马赛克。</li>
     </ul></li>
-   <li>移除：对于图片不再处理“双击”事件。</li>
    <li>解决问题： 
     <ul>
-     <li>图片OCR在上两个版本失效了。</li>
-     <li>缩放图片时，输入的宽度、高度未生效。</li>
-     <li>编辑图片时，阴影应在文字后面。</li>
-     <li>在图片的统计html文件中缺失了主色饼图。</li>
-     <li>对于tif/gif文件应总是显示帧面板。</li>
+     <li>树形的节点在修改保存后未更新树节点。</li>
+     <li>粘贴XML后在树上未完整显示新节点。</li>
+     <li>图片的“加载宽度”未生效。</li>
+     <li>缩放图片时可能输出错误的结果。</li>
+     <li>旋转图片的结果可能被切掉一角。</li>
+     <li>图片的编辑历史未正确记录和使用索引。</li>
+     <li>分割图片后的列表在播放时未被正确加载。</li>
+     <li>一些界面上快捷键F4和F5（开关左右面板）未生效。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.5">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.6">此版本关闭的需求/问题列表</a></p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -62,7 +61,7 @@
    <tbody>
     <tr>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip">MyBox-src.zip</a></td>
-     <td>65M-</td>
+     <td>68M-</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf">pdf</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps.html">html</a></td>
     </tr>
@@ -83,19 +82,19 @@
     <tr>
      <td>win10 x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip">MyBox-win10-x64.zip</a></td>
-     <td>260MB-</td>
+     <td>280MB-</td>
      <td>MyBox.exe</td>
     </tr>
     <tr>
      <td>CentOS 7 x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz">MyBox-CentOS7-x64.tar.gz</a></td>
-     <td>300MB-</td>
+     <td>320MB-</td>
      <td>MyBox</td>
     </tr>
     <tr>
      <td>mac x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg">MyBox-mac.dmg</a></td>
-     <td>280MB-</td>
+     <td>300MB-</td>
      <td>MyBox.app</td>
     </tr>
    </tbody>
@@ -116,19 +115,19 @@
     <tr>
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
-     <td>200MB-</td>
+     <td>240MB-</td>
      <td>Java 20或更高版本</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
-     <td>220MB-</td>
+     <td>240MB-</td>
      <td>Java 20或更高版本</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz">MyBox-mac.jar.gz</a></td>
-     <td>200MB-</td>
+     <td>240MB-</td>
      <td>Java 20或更高版本</td>
     </tr>
    </tbody>
@@ -198,12 +197,10 @@
    <li>MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。</li>
   </ol>
   <h2>备份与恢复</h2>
-  <ol>
-   <li>将目录复制到别处，即为备份。</li>
-   <li>将备份的目录覆盖当前目录，即为恢复。</li>
-   <li>不必备份数据目录的每个子目录。<br>
-     以下列出数据目录中预定义的子目录，其中只有“被数据库引用”的子目录是必须备份的：</li>
-  </ol>
+  <p>在MyBox中：<br>
+    1. 将目录复制到别处，即为备份。<br>
+    2. 将备份的目录覆盖当前目录，即为恢复。 3. 不必备份数据目录的每个子目录。<br>
+    以下列出数据目录中预定义的子目录，其中只有“被功能引用”的子目录是必须备份的：</p>
   <table>
    <thead>
     <tr>
@@ -211,8 +208,8 @@
      <th>作用</th>
      <th>内部引用</th>
      <th>自动读写</th>
-     <th>被数据库引用</th>
-     <th>自动删除</th>
+     <th>被功能引用</th>
+     <th>说明</th>
     </tr>
    </thead>
    <tbody>
@@ -222,7 +219,7 @@
      <td>是</td>
      <td>是</td>
      <td></td>
-     <td>是</td>
+     <td>自动清除</td>
     </tr>
     <tr>
      <td>buttons</td>
@@ -278,7 +275,7 @@
      <td></td>
      <td>是</td>
      <td></td>
-     <td></td>
+     <td>用户决定是否备份</td>
     </tr>
     <tr>
      <td>ICC</td>
@@ -365,7 +362,7 @@
      <td>用户定制的语言</td>
      <td>是</td>
      <td>是</td>
-     <td></td>
+     <td>是</td>
      <td></td>
     </tr>
     <tr>
@@ -439,10 +436,10 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
      <td>快捷键</td>
@@ -453,8 +450,8 @@
     </tr>
     <tr>
      <td>功能列表</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -474,8 +471,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -530,8 +527,8 @@
     </tr>
     <tr>
      <td>界面中的提示信息</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
@@ -754,15 +751,15 @@
     </tr>
     <tr>
      <td>图片的故事</td>
-     <td>6.7.2</td>
-     <td>2023-4-16</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
     <tr>
      <td>有用的链接</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>6.7.6</td>
+     <td>2023-8-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_zh.html">html</a></td>
     </tr>
@@ -1088,6 +1085,11 @@
      <td>batik</td>
      <td>SVG</td>
      <td><a target=_blank href="https://xmlgraphics.apache.org/batik/">https://xmlgraphics.apache.org/batik/</a></td>
+    </tr>
+    <tr>
+     <td>imagetracerjava</td>
+     <td>SVG</td>
+     <td><a target=_blank href="https://github.com/jankovicsandras/imagetracerjava">https://github.com/jankovicsandras/imagetracerjava</a></td>
     </tr>
    </tbody>
   </table>

@@ -49,7 +49,7 @@ public class MenuImageManufactureController extends MenuImageViewController {
     /*
         static methods
      */
-    public static MenuImageManufactureController open(ImageManufactureController manufactureController, double x, double y) {
+    public static MenuImageManufactureController manufactureMenu(ImageManufactureController manufactureController, double x, double y) {
         try {
             try {
                 if (manufactureController == null) {

@@ -7,9 +7,9 @@ This is desktop application based on JavaFx to provide simple and easy functions
 2023-8-23 v6.7.6                
                 
 * Added:                                   
-     - Convert images to SVG files in batch.                                                       
-     - More shapes: line, arc, quadratic Bézier curve, cubic Bézier curve, SVG path.                                                       
-     - When edit shape, parameters can be inputted, archors and shape can be dragged. Anchor menu and shape menu are provided.                                                                                                            
+     - Convert images to SVG files in batch. Algorithms and parameters can be chosen.                                                      
+     - More shapes: line, arc, quadratic Bézier curve, cubic Bézier curve, and SVG path.                                                       
+     - When edit shape, parameters can be inputted while archors and shape can be dragged. Anchor menu and shape menu are provided.                                                                                                            
 * Improved:                                                                                            
      - For popped values(examples or histories), options to show the pane as child window or as pop window.                                                       
      - For existed palette, colors can be customized.                                                       
@@ -102,22 +102,23 @@ Function "Settings" can be used to change configuration values.
 3. MyBox is backward compatibility: Later version can work on data of previous versions.
 While forward compatibility is not supported: Wrong may happen when old version handles data of new version.          
 
-## Backup and Recover
+## Backup and Recover         
+In MyBox:         
 1. To backup, copy directories to other places.       
 2. To recover, override current directories with backup directories.
 3. Need not backup each directory under data path.       
-   Predefined directories under data path are listed below. Only directories of "referred by database" need backups:               
+   Predefined directories under data path are listed below. Only directories of "referred by functions" need backups:               
 
-|    directory    |         role         | internal referred | read/write automatically | referred by database | cleared automatically |
+|    directory    |         role         | internal referred | read/write automatically | referred by functions | comments              |
 |-----------------|----------------------|-------------------|--------------------------|----------------------|-----------------------|
-| AppTemp         | temporary files      | yes               | yes                      |                      | yes                   |
+| AppTemp         | temporary files      | yes               | yes                      |                      | cleared automatically |
 | buttons         | customized buttons   | yes               | yes                      |                      |                       |
 | data            | internal data        | yes               | yes                      |                      |                       |
 | dataClipboard   | data clipboard       | yes               | yes                      | yes                  |                       |
 | doc             | internal documents   | yes               | yes                      |                      |                       |
 | downloads       | download files       |                   | yes                      |                      |                       |
 | fileBackups     | files' backups       | yes               | yes                      | yes                  |                       |
-| generated       | generated files      |                   | yes                      |                      |                       |
+| generated       | generated files      |                   | yes                      |                      | may need backup       |
 | ICC             | ICC profiles         | yes               | yes                      |                      |                       |
 | icons           | icon files           | yes               | yes                      |                      |                       |
 | image           | image files          | yes               | yes                      |                      |                       |

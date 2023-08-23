@@ -49,28 +49,34 @@ public class StyleRadioButton {
         switch (id) {
             case "miaoRadio":
                 return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
-            case "polylineRadio":
-                return new StyleData(id, "", message("Polyline"), "", "iconPolyline.png");
-            case "linesRadio":
-                return new StyleData(id, "", message("DrawLines"), "", "iconDraw.png");
+            case "lineRadio":
+                return new StyleData(id, "", message("StraightLine"), "", "iconLine.png");
             case "rectangleRadio":
                 return new StyleData(id, "", message("Rectangle"), "", "iconRectangle.png");
             case "circleRadio":
                 return new StyleData(id, "", message("Circle"), "", "iconCircle.png");
             case "ellipseRadio":
                 return new StyleData(id, "", message("Ellipse"), "", "iconEllipse.png");
+            case "polylineRadio":
+                return new StyleData(id, "", message("Polyline"), "", "iconPolyline.png");
+            case "polylinesRadio":
+                return new StyleData(id, "", message("Polylines"), "", "iconPolylines.png");
             case "polygonRadio":
                 return new StyleData(id, "", message("Polygon"), "", "iconStar.png");
+            case "quadraticRadio":
+                return new StyleData(id, "", message("QuadraticCurve"), "", "iconQuadratic.png");
+            case "cubicRadio":
+                return new StyleData(id, "", message("CubicCurve"), "", "iconCubic.png");
+            case "arcRadio":
+                return new StyleData(id, "", message("ArcCurve"), "", "iconArc.png");
+            case "svgRadio":
+                return new StyleData(id, "", message("SVGPath"), "", "iconSVG.png");
             case "eraserRadio":
                 return new StyleData(id, "", message("Eraser"), "", "iconEraser.png");
             case "mosaicRadio":
                 return new StyleData(id, "", message("Mosaic"), "", "iconMosaic.png");
             case "frostedRadio":
                 return new StyleData(id, "", message("FrostedGlass"), "", "iconFrosted.png");
-            case "shapeRectangleRadio":
-                return new StyleData(id, "", message("Rectangle"), "", "iconRectangle.png");
-            case "shapeCircleRadio":
-                return new StyleData(id, "", message("Circle"), "", "iconCircle.png");
             case "horizontalBarChartRadio":
                 return new StyleData(id, "", message("HorizontalBarChart"), "", "iconBarChartH.png");
             case "barChartRadio":

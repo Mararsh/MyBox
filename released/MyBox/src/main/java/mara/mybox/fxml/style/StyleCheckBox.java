@@ -14,10 +14,10 @@ public class StyleCheckBox {
             return null;
         }
         if (id.startsWith("leftPane")) {
-            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
+            return new StyleData(id, "", message("LeftPane"), "F4", "iconDoubleLeft.png");
         }
         if (id.startsWith("rightPane")) {
-            return new StyleData(id, "", message("RightPane"), "", "iconDoubleRight.png");
+            return new StyleData(id, "", message("RightPane"), "F5", "iconDoubleRight.png");
         }
         if (id.startsWith("contextMenu")) {
             return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
@@ -30,6 +30,9 @@ public class StyleCheckBox {
         }
         if (id.startsWith("editable")) {
             return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
+        }
+        if (id.startsWith("childWindow")) {
+            return new StyleData(id, "", message("ChildWindowTips"), "", "iconWindow.png");
         }
         if (id.startsWith("scope")) {
             return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
@@ -86,10 +89,24 @@ public class StyleCheckBox {
             return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
         }
         if (id.startsWith("typesetting")) {
-            return new StyleData(id, "", message("TypesettingWhenWrite"), "", "iconTree.png");
+            return new StyleData(id, "", message("TypesettingWhenWrite"), "", "iconTypesetting.png");
         }
         if (id.startsWith("lostFocusCommit")) {
             return new StyleData(id, "", message("CommitModificationWhenDataCellLoseFocusComments"), "", "iconInput.png");
+        }
+        if (id.startsWith("pop")) {
+            switch (id) {
+                case "popAnchorCheck":
+                    return new StyleData(id, message("PopAnchorMenu"), "", "iconPop.png");
+                default:
+                    return new StyleData(id, message("Pop"), "", "iconPop.png");
+            }
+        }
+        if (id.startsWith("anchor")) {
+            return new StyleData(id, "", message("ShowAnchors"), "", "iconAnchor.png");
+        }
+        if (id.startsWith("addPoint")) {
+            return new StyleData(id, "", message("AddPointWhenLeftClick"), "", "iconNewItem.png");
         }
         switch (id) {
             case "tableThumbCheck":
@@ -118,14 +135,12 @@ public class StyleCheckBox {
                 return new StyleData("displaySizeCheck", "", message("DisplaySize"), "", "iconNumber.png");
             case "topCheck":
                 return new StyleData("topCheck", "", message("AlwayOnTop"), "", "iconTop.png");
-            case "saveCloseCheck":
+            case "closeAfterCheck":
                 return new StyleData(id, "", message("CloseAfterHandled"), "", "iconClose.png");
             case "deskewCheck":
                 return new StyleData("deskewCheck", "", message("Deskew"), "", "iconShear.png");
             case "invertCheck":
                 return new StyleData("invertCheck", "", message("Invert"), "", "iconInvert.png");
-            case "popCheck":
-                return new StyleData(id, message("Pop"), "", "iconPop.png");
             case "pickColorCheck":
                 return new StyleData(id, message("PickColor"), message("ColorPickerComments"), "CTRL+k / ALT+k", "iconPickColor.png");
             case "ditherCheck":

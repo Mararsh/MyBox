@@ -100,15 +100,16 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             imageChanged = false;
             resetImagePane();
 
-            scopeController.setParameters(this);
-            scopeSavedController.setParameters(this);
-            operationsController.resetOperationPanes();
-
-//            autoSize();
             hisTab.setDisable(sourceFile == null);
             backupTab.setDisable(sourceFile == null);
             hisController.loadHistories();
             backupController.loadBackups(sourceFile);
+
+            finalRefineView();
+
+            scopeController.setParameters(this);
+            scopeSavedController.setParameters(this);
+            operationsController.resetOperationPanes();
 
             updateLabelString(message("Loaded"));
 
@@ -152,6 +153,11 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         super.setImageChanged(imageChanged);
         recoverButton.setDisable(!imageChanged);
     }
+
+//    @Override
+//    public void maskShapeDataChanged() {
+//        notifyShapeDataChanged();
+//    }
 
     /*
         static methods

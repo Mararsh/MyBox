@@ -20,9 +20,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 /**
  * @Author Mara
@@ -283,6 +281,15 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().canAddNode());
         items.add(menu);
 
+        String clip = TextClipboardTools.getSystemClipboardString();
+        menu = new MenuItem(message("PasteXmlCodesAsNewNode"), StyleTools.getIconImageView("iconPaste.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            paste(clip, treeItem);
+        });
+        menu.setDisable(clip == null || clip.isBlank()
+                || treeItem.getValue() == null || !treeItem.getValue().canAddNode());
+        items.add(menu);
+
         menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             deleteNode(treeItem);
@@ -343,6 +350,33 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         }
 
         return items;
+    }
+
+    public void paste(String text, TreeItem<XmlTreeNode> treeItem) {
+        try {
+            if (treeItem == null || text == null || text.isBlank()) {
+                popError(message("NoData"));
+                return;
+            }
+            Element element = XmlTools.toElement(this, text);
+            if (element == null) {
+                return;
+            }
+            Node newNode = doc.importNode(element, true);
+            if (newNode == null) {
+                popError(message("InvalidFormat"));
+                return;
+            }
+            treeItem.getValue().getNode().appendChild(newNode);
+
+            TreeItem<XmlTreeNode> newItem = addTreeItem(treeItem, -1, new XmlTreeNode(newNode));
+
+            focusItem(newItem);
+            xmlEditor.domChanged(true);
+            xmlEditor.popInformation(message("CreatedSuccessfully"));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void xml(TreeItem<XmlTreeNode> treeItem) {

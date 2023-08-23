@@ -282,7 +282,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         menu.setDisable(isRoot);
         items.add(menu);
 
-        menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
+        menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconMove.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             moveNode(treeItem);
         });

@@ -106,8 +106,6 @@ public class SettingsController extends BaseController {
             derbyStatus;
     @FXML
     protected ControlImageRender renderController;
-    @FXML
-    protected ControlImageRulerOptions rulerController;
 
     public SettingsController() {
         baseTitle = message("Settings");
@@ -808,7 +806,6 @@ public class SettingsController extends BaseController {
         }
         DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
         ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
-        derbyBox.setDisable(true);
         task = new SingletonCurrentTask<Void>(this) {
             private String ret;
 
@@ -824,14 +821,8 @@ public class SettingsController extends BaseController {
                 setDerbyMode();
             }
 
-            @Override
-            protected void finalAction() {
-                derbyBox.setDisable(false);
-                task = null;
-            }
-
         };
-        start(task);
+        start(task, thisPane);
     }
 
     /*

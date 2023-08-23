@@ -164,7 +164,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             codesArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuHtmlCodesController.open(myController, codesArea, event);
+                    MenuHtmlCodesController.htmlMenu(myController, codesArea, event);
                 }
             });
 
@@ -198,7 +198,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             markdownArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuMarkdownEditController.open(myController, markdownArea, event);
+                    MenuMarkdownEditController.mdMenu(myController, markdownArea, event);
                 }
             });
 
@@ -590,9 +590,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     @FXML
     public void editTextFile() {
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(codesArea.getText());
-        controller.requestMouse();
+        TextEditorController.edit(codesArea.getText());
     }
 
     public String htmlCodes(String html) {
@@ -723,8 +721,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     @FXML
     protected void editMarkdown() {
-        MarkdownEditorController controller = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
-        controller.loadMarkdown(markdownArea.getText());
+        MarkdownEditorController.edit(markdownArea.getText());
     }
 
     @FXML
@@ -765,9 +762,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     @FXML
     protected void editTexts() {
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textsArea.getText());
-        controller.requestMouse();
+        TextEditorController.edit(textsArea.getText());
     }
 
     @FXML
@@ -930,7 +925,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return menuViewAction();
 
             } else if (tab == codesTab) {
-                MenuHtmlCodesController.open(this, codesArea);
+                MenuHtmlCodesController.htmlMenu(this, codesArea);
                 return true;
 
             } else if (tab == domTab) {
@@ -938,15 +933,15 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return true;
 
             } else if (tab == richEditorTab) {
-//                MenuHtmlCodesController.open(this, richEditorController.htmlEditor);
+//                MenuHtmlCodesController.openHtml(this, richEditorController.htmlEditor);
                 return true;
 
             } else if (tab == markdownTab) {
-                MenuMarkdownEditController.open(this, markdownArea);
+                MenuMarkdownEditController.mdMenu(this, markdownArea);
                 return true;
 
             } else if (tab == textsTab) {
-                MenuTextEditController.open(this, textsArea);
+                MenuTextEditController.textMenu(this, textsArea);
                 return true;
 
             }
@@ -959,7 +954,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     public boolean menuViewAction() {
         Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-        MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
+        MenuWebviewController.webviewMenu(webViewController, null, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 

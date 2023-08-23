@@ -114,6 +114,7 @@ public class Fxmls {
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
     public static final String ImageAnalyseFxml = "/fxml/ImageAnalyse.fxml";
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
+    public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
 
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
@@ -153,7 +154,16 @@ public class Fxmls {
     public static final String SvgTypesettingFxml = "/fxml/SvgTypesetting.fxml";
     public static final String SvgToImageFxml = "/fxml/SvgToImage.fxml";
     public static final String SvgToPDFFxml = "/fxml/SvgToPDF.fxml";
-    public static final String SvgTranscodeOptionsFxml = "/fxml/SvgTranscodeOptions.fxml";
+    public static final String SvgFromImageFxml = "/fxml/SvgFromImage.fxml";
+    public static final String SvgFromImageBatchFxml = "/fxml/SvgFromImageBatch.fxml";
+
+    public static final String PointInputFxml = "/fxml/PointInput.fxml";
+    public static final String LineInputFxml = "/fxml/LineInput.fxml";
+    public static final String ShapeTranslateInputFxml = "/fxml/ShapeTranslateInput.fxml";
+    public static final String ShapeScaleInputFxml = "/fxml/ShapeScaleInput.fxml";
+    public static final String ShapeShearInputFxml = "/fxml/ShapeShearInput.fxml";
+    public static final String ShapeRotateInputFxml = "/fxml/ShapeRotateInput.fxml";
+    public static final String ShapePathSegmentEditFxml = "/fxml/ShapePathSegmentEdit.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
@@ -174,7 +184,7 @@ public class Fxmls {
     public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
     public static final String ColorPaletteInputFxml = "/fxml/ColorPaletteInput.fxml";
     public static final String ColorPaletteSelectorFxml = "/fxml/ColorPaletteSelector.fxml";
-    public static final String ColorPaletteCustomizeFxml = "/fxml/ColorPaletteCustomize.fxml";
+    public static final String ColorsCustomizeFxml = "/fxml/ColorsCustomize.fxml";
 
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";

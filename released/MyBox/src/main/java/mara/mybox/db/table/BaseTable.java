@@ -83,17 +83,11 @@ public abstract class BaseTable<D> {
         try {
             D data = newData();
             for (int i = 0; i < columns.size(); ++i) {
-                if (results == null) {
-                    return null;
-                }
                 ColumnDefinition column = columns.get(i);
                 Object value = readColumnValue(results, column);
                 setValue(data, column.getColumnName(), value);
             }
             for (int i = 0; i < foreignColumns.size(); ++i) {
-                if (results == null) {
-                    return null;
-                }
                 ColumnDefinition column = foreignColumns.get(i);
                 String name = column.getColumnName();
                 Object value = readForeignValue(results, name);

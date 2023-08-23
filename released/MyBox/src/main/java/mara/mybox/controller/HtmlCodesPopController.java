@@ -48,7 +48,7 @@ public class HtmlCodesPopController extends TextPopController {
             textArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuHtmlCodesController.open(myController, textArea, event);
+                    MenuHtmlCodesController.htmlMenu(myController, textArea, event);
                 }
             });
 

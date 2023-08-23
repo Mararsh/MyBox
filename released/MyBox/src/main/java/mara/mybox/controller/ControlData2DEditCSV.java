@@ -142,12 +142,6 @@ public class ControlData2DEditCSV extends BaseController {
                 isSettingValues = false;
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
-            }
-
         };
         start(task, thisPane);
     }
@@ -238,12 +232,6 @@ public class ControlData2DEditCSV extends BaseController {
                 popInformation(message("UpdateSuccessfully"));
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
-            }
-
         };
         start(task);
     }
@@ -297,7 +285,7 @@ public class ControlData2DEditCSV extends BaseController {
     @Override
     public boolean menuAction() {
         Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
-        MenuTextEditController.open(myController, textArea, localToScreen.getX(), localToScreen.getY());
+        MenuTextEditController.textMenu(myController, textArea, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 

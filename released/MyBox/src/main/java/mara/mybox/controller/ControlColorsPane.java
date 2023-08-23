@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
@@ -27,7 +31,10 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonBackgroundTask;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -37,13 +44,13 @@ import mara.mybox.value.AppVariables;
 public class ControlColorsPane extends BaseController {
 
     protected ColorsManageController manageController;
+    protected ColorPalettePopupController popController;
     protected ColorPaletteName palette;
     protected TableColorPalette tableColorPalette;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
     protected double rectSize;
     protected SimpleBooleanProperty clickNotify, loadedNotify;
-    protected boolean canDragDrop;
 
     @FXML
     protected ScrollPane scrollPane;
@@ -62,22 +69,18 @@ public class ControlColorsPane extends BaseController {
             loadedNotify = new SimpleBooleanProperty(false);
             shadowEffect = new DropShadow();
             rectSize = AppVariables.iconSize * 0.8;
-            canDragDrop = false;
+            colorsPaneLabel.setStyle("-fx-font-size: " + AppVariables.sceneFontSize * 0.8 + "px;");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void setParameter(ColorsManageController manageController, boolean canDragDrop) {
+    public void setParameter(ColorsManageController manageController) {
         this.manageController = manageController;
-        this.canDragDrop = canDragDrop;
     }
 
-    public boolean canDragDrop() {
-        if (!canDragDrop) {
-            return false;
-        }
-        return manageController == null || !manageController.palettesController.isAllColors();
+    public void setParameter(ColorPalettePopupController popController) {
+        this.popController = popController;
     }
 
     public void loadPalette(ColorPaletteName palette, boolean scrollEnd) {
@@ -102,7 +105,7 @@ public class ControlColorsPane extends BaseController {
             }
 
         };
-        start(task);
+        start(task, colorsPane);
     }
 
     public void loadColors(ColorPaletteName palette, List<ColorData> colors) {
@@ -111,15 +114,6 @@ public class ControlColorsPane extends BaseController {
 
     public synchronized void loadColors(ColorPaletteName palette, List<ColorData> colors, boolean scrollEnd) {
         this.palette = palette;
-        if (canDragDrop()) {
-            if (!thisPane.getChildren().contains(colorsPaneLabel)) {
-                thisPane.getChildren().add(0, colorsPaneLabel);
-            }
-        } else {
-            if (thisPane.getChildren().contains(colorsPaneLabel)) {
-                thisPane.getChildren().remove(colorsPaneLabel);
-            }
-        }
         colorsPane.getChildren().clear();
         if (colors == null || colors.isEmpty()) {
             return;
@@ -175,6 +169,7 @@ public class ControlColorsPane extends BaseController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 loadedNotify.set(!loadedNotify.get());
             }
 
@@ -197,7 +192,11 @@ public class ControlColorsPane extends BaseController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        rectClicked(rect);
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            rectRightClicked(event, rect);
+                        } else {
+                            rectClicked(rect);
+                        }
                     }
                 });
             });
@@ -209,40 +208,38 @@ public class ControlColorsPane extends BaseController {
                     }
                 });
             });
-            if (canDragDrop()) {
-                rect.setOnDragDetected(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        try {
-                            Dragboard dragboard = rect.startDragAndDrop(TransferMode.ANY);
-                            ClipboardContent content = new ClipboardContent();
-                            content.putString(FxColorTools.color2rgba(color));
-                            dragboard.setContent(content);
-                            event.consume();
-                        } catch (Exception e) {
-                            MyBoxLog.debug(e);
-                        }
+            rect.setOnDragDetected(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    try {
+                        Dragboard dragboard = rect.startDragAndDrop(TransferMode.ANY);
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(FxColorTools.color2rgba(color));
+                        dragboard.setContent(content);
+                        event.consume();
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e);
                     }
-                });
-                rect.setOnDragOver(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-                        try {
-                            rectEntered(rect);
-                            event.acceptTransferModes(TransferMode.ANY);
-                            event.consume();
-                        } catch (Exception e) {
-                            MyBoxLog.debug(e);
-                        }
+                }
+            });
+            rect.setOnDragOver(new EventHandler<DragEvent>() {
+                @Override
+                public void handle(DragEvent event) {
+                    try {
+                        rectEntered(rect);
+                        event.acceptTransferModes(TransferMode.ANY);
+                        event.consume();
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e);
                     }
-                });
-                rect.setOnDragDropped(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-                        colorDropped(event, rect);
-                    }
-                });
-            }
+                }
+            });
+            rect.setOnDragDropped(new EventHandler<DragEvent>() {
+                @Override
+                public void handle(DragEvent event) {
+                    colorDropped(event, rect);
+                }
+            });
             return rect;
         } catch (Exception e) {
             return null;
@@ -275,6 +272,40 @@ public class ControlColorsPane extends BaseController {
         clickNotify.set(!clickNotify.get());
     }
 
+    public void rectRightClicked(MouseEvent event, Rectangle rect) {
+        if (rect == null || rect.getUserData() == null) {
+            return;
+        }
+        ColorData colorData = (ColorData) rect.getUserData();
+
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(colorData.title()));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        Rectangle dis = new Rectangle(rectSize, rectSize);
+        dis.setFill(colorData.getColor());
+        dis.setStroke(Color.BLACK);
+        menu.setGraphic(dis);
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            delete(colorData);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            HtmlPopController.openHtml(colorData.html());
+        });
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+
+        popEventMenu(event, items);
+    }
+
     public void rectEntered(Rectangle rect) {
         if (isSettingValues || rect.equals(enteredRect) || rect.equals(clickedRect)) {
             return;
@@ -295,7 +326,7 @@ public class ControlColorsPane extends BaseController {
     }
 
     public synchronized void colorDropped(DragEvent event, Rectangle targetRect) {
-        if (event == null || !canDragDrop()) {
+        if (event == null) {
             return;
         }
         if (task != null && !task.isQuit()) {
@@ -372,13 +403,50 @@ public class ControlColorsPane extends BaseController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 event.setDropCompleted(true);
                 event.consume();
-                task = null;
             }
 
         };
-        start(task);
+        start(task, colorsPane);
+    }
+
+    public void delete(ColorData colorData) {
+        if (colorData == null) {
+            return;
+        }
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            private int deletedCount = 0;
+
+            @Override
+            protected boolean handle() {
+                deletedCount = tableColorPalette.delete(colorData);
+                return deletedCount >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Deleted") + ":" + deletedCount);
+                if (manageController != null) {
+                    manageController.refreshPalette();
+                } else {
+                    loadPalette(palette, false);
+                }
+            }
+        };
+        start(task, colorsPane);
+    }
+
+    public ColorData clickedColor() {
+        if (clickedRect == null) {
+            return null;
+        }
+        return (ColorData) clickedRect.getUserData();
     }
 
     @FXML
@@ -389,13 +457,6 @@ public class ControlColorsPane extends BaseController {
             enteredRect.setHeight(rectSize);
             enteredRect = null;
         }
-    }
-
-    public ColorData clickedColor() {
-        if (clickedRect == null) {
-            return null;
-        }
-        return (ColorData) clickedRect.getUserData();
     }
 
 }

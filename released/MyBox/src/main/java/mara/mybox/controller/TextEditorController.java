@@ -73,7 +73,7 @@ public class TextEditorController extends BaseFileEditorController {
             pairArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuBytesEditController.open(myController, pairArea, event);
+                    MenuBytesEditController.openBytes(myController, pairArea, event);
                 }
             });
 
@@ -159,7 +159,15 @@ public class TextEditorController extends BaseFileEditorController {
     public static TextEditorController open(File file) {
         TextEditorController controller = open();
         if (controller != null) {
-            controller.openFile(file);
+            controller.sourceFileChanged(file);
+        }
+        return controller;
+    }
+
+    public static TextEditorController edit(String texts) {
+        TextEditorController controller = open();
+        if (controller != null) {
+            controller.loadContents(texts);
         }
         return controller;
     }

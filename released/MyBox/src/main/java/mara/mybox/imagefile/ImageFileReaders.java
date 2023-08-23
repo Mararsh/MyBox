@@ -27,7 +27,6 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.color.ColorBase;
 import mara.mybox.controller.LoadingController;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
@@ -134,7 +133,7 @@ public class ImageFileReaders {
         }
         try {
             ImageReadParam param = reader.getDefaultReadParam();
-            Rectangle region = imageInfo.getRegion();
+            Rectangle region = imageInfo.getIntRegion();
             if (region != null) {
                 param.setSourceRegion(region);
             }
@@ -184,6 +183,7 @@ public class ImageFileReaders {
             ImageInformation imageInfo = null;
             File file = readInfo.getFile();
             int index = readInfo.getIndex();
+            int requiredWidth = (int) readInfo.getRequiredWidth();
             SingletonTask task = readInfo.getTask();
             LoadingController loading = task != null ? task.getLoading() : null;
             String format = readInfo.getImageFormat();
@@ -196,6 +196,7 @@ public class ImageFileReaders {
                 if (size > 0 && index < size) {
                     imageInfo = fileInfo.getImagesInformation().get(index);
                     if (!onlyInformation) {
+                        imageInfo.setRequiredWidth(requiredWidth);
                         BufferedImage bufferedImage = readIcon(imageInfo);
                         imageInfo.loadBufferedImage(bufferedImage);
                     }
@@ -204,16 +205,12 @@ public class ImageFileReaders {
                 try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                     ImageReader reader = getReader(iis, format);
                     if (reader != null) {
-                        if (fileInfo == null) {
-                            reader.setInput(iis, false, false);
-                            fileInfo = new ImageFileInformation(file);
-                            if (loading != null) {
-                                loading.setInfo(message("Reading") + ": " + message("MetaData"));
-                            }
-                            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
-                        } else {
-                            reader.setInput(iis, false, true);
+                        reader.setInput(iis, false, false);
+                        fileInfo = new ImageFileInformation(file);
+                        if (loading != null) {
+                            loading.setInfo(message("Reading") + ": " + message("MetaData"));
                         }
+                        ImageFileReaders.readImageFileMetaData(reader, fileInfo);
                         int size = fileInfo.getNumberOfImages();
                         if (size > 0 && index < size) {
                             imageInfo = fileInfo.getImagesInformation().get(index);
@@ -222,6 +219,7 @@ public class ImageFileReaders {
                                     loading.setInfo(message("Reading") + ": Image " + index + " / " + size);
                                 }
                                 imageInfo.setTask(task);
+                                imageInfo.setRequiredWidth(requiredWidth);
                                 BufferedImage bufferedImage = readFrame(reader, imageInfo);
                                 imageInfo.loadBufferedImage(bufferedImage);
                             }
@@ -277,7 +275,7 @@ public class ImageFileReaders {
             int bmWidth = bufferedImage.getWidth();
             int xscale = imageInfo.getXscale();
             int yscale = imageInfo.getYscale();
-            Rectangle region = imageInfo.getRegion();
+            Rectangle region = imageInfo.getIntRegion();
             if (region == null) {
                 if (xscale != 1 || yscale != 1) {
                     bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, xscale, yscale);
@@ -286,9 +284,11 @@ public class ImageFileReaders {
                 }
             } else {
                 if (xscale != 1 || yscale != 1) {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage, new DoubleRectangle(region), xscale, yscale);
+                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
+                            imageInfo.getRegion(), xscale, yscale);
                 } else {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage, new DoubleRectangle(region), requiredWidth);
+                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
+                            imageInfo.getRegion(), requiredWidth);
                 }
             }
             return bufferedImage;

@@ -6,6 +6,35 @@
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>Development Logs</h1>
+  <p>2023-8-23 v6.7.6</p>
+  <ul>
+   <li>Added: 
+    <ul>
+     <li>Convert images to SVG files in batch. Algorithms and parameters can be chosen.</li>
+     <li>More shapes: line, arc, quadratic Bézier curve, cubic Bézier curve, and SVG path.</li>
+     <li>When edit shape, parameters can be inputted while archors and shape can be dragged. Anchor menu and shape menu are provided.</li>
+    </ul></li>
+   <li>Improved: 
+    <ul>
+     <li>For popped values(examples or histories), options to show the pane as child window or as pop window.</li>
+     <li>For existed palette, colors can be customized.</li>
+     <li>Pop color menu by right click color block.</li>
+     <li>Lines can be dragged when split image.</li>
+     <li>Drag lines in image to add mosaic.</li>
+    </ul></li>
+   <li>Solved problems: 
+    <ul>
+     <li>Node is not updated in the tree after its modification is saved.</li>
+     <li>The new node is displayed incompletely after XML is pasted.</li>
+     <li>“Load width” does not work for image.</li>
+     <li>Wrong result may be generated when scale image.</li>
+     <li>Result may be cutted wrongly when rotate image.</li>
+     <li>Indices of image edit histories are recorded and accessed incorrectly.</li>
+     <li>List of splitted images are loaded incorrectly when play them.</li>
+     <li>Shortcuts F4 and F5(show/hide panes) do not work in some interfaces.</li>
+    </ul></li>
+  </ul>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.6">Closed requirements/bugs in this version</a></p>
   <p>2023-7-23 v6.7.5</p>
   <ul>
    <li>Added: 

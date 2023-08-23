@@ -4,11 +4,11 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -26,7 +26,7 @@ public class ControlXmlNodeBase extends BaseTableViewController<Node> {
     protected ControlXmlTree treeController;
 
     @FXML
-    protected VBox setBox, docBox, valueBox, attrBox;
+    protected Tab attrTab, valueTab, docTab, baseTab;
     @FXML
     protected TextField typeInput, baseUriInput, nameInput, namespaceInput, prefixInput,
             uriInput, versionInput, encodingInput;
@@ -38,9 +38,9 @@ public class ControlXmlNodeBase extends BaseTableViewController<Node> {
     protected CheckBox standaloneCheck;
 
     @Override
-    public void initTable() {
+    public void initControls() {
         try {
-            super.initTable();
+            super.initControls();
 
             attrColumn.setCellValueFactory(new PropertyValueFactory<>("nodeName"));
             attrColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
@@ -75,7 +75,7 @@ public class ControlXmlNodeBase extends BaseTableViewController<Node> {
             });
             valueColumn.getStyleClass().add("editable-column");
 
-            thisPane.getChildren().remove(tabPane);
+            clearNode();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -93,7 +93,7 @@ public class ControlXmlNodeBase extends BaseTableViewController<Node> {
         versionInput.clear();
         encodingInput.clear();
         tableData.clear();
-        setBox.getChildren().clear();
+        tabPane.getTabs().removeAll(attrTab, valueTab, docTab);
     }
 
     @FXML

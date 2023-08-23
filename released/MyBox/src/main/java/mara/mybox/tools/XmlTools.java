@@ -79,6 +79,9 @@ public class XmlTools {
     public static Document doc(BaseController controller, InputSource inputSource) {
         try {
             Document doc = builder(controller).parse(inputSource);
+            if (doc == null) {
+                return null;
+            }
             Strip(controller, doc);
             return doc;
         } catch (Exception e) {
@@ -89,7 +92,11 @@ public class XmlTools {
 
     public static Element toElement(BaseController controller, String xml) {
         try {
-            return textToDoc(controller, xml).getDocumentElement();
+            Document doc = textToDoc(controller, xml);
+            if (doc == null) {
+                return null;
+            }
+            return doc.getDocumentElement();
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
@@ -117,17 +124,17 @@ public class XmlTools {
         builder.setErrorHandler(new ErrorHandler() {
             @Override
             public void error(SAXParseException e) {
-                PopTools.showError(controller, e.toString());
+//                PopTools.showError(controller, e.toString());
             }
 
             @Override
             public void fatalError(SAXParseException e) {
-                PopTools.showError(controller, e.toString());
+//                PopTools.showError(controller, e.toString());
             }
 
             @Override
             public void warning(SAXParseException e) {
-                PopTools.showError(controller, e.toString());
+//                PopTools.showError(controller, e.toString());
             }
         });
         return builder;

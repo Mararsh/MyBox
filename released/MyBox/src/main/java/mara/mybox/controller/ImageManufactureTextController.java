@@ -15,6 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -44,7 +45,6 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 }
             });
 
-            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -55,6 +55,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         editor.showRightPane();
         editor.resetImagePane();
         editor.imageTab();
+        editor.infoLabel.setText(message("ImageTextComments"));
     }
 
     @FXML

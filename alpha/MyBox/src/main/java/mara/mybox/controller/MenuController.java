@@ -250,7 +250,7 @@ public class MenuController extends BaseChildController {
             }
             if (UserConfig.getBoolean(name(parent, node) + "AsChildWindow", true)) {
                 MenuController controller = (MenuController) WindowTools.openChildStage(
-                        parent.getMyWindow(), Fxmls.MenuFxml);
+                        parent.getMyWindow(), Fxmls.MenuFxml, false);
                 if (controller == null) {
                     return null;
                 }

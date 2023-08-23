@@ -18,6 +18,6 @@
                 </ImageView>
             </graphic>
         </Button>
-        <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
+      <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
     </children>
 </VBox>

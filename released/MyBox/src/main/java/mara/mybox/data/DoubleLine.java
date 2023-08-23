@@ -1,5 +1,9 @@
 package mara.mybox.data;
 
+import java.awt.geom.Line2D;
+import static mara.mybox.tools.DoubleTools.imageScale;
+import static mara.mybox.value.Languages.message;
+
 /**
  * @Author Mara
  * @CreateDate 2023-7-6
@@ -21,7 +25,17 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
-    public DoubleLine cloneValues() {
+    public String name() {
+        return message("StraightLine");
+    }
+
+    @Override
+    public Line2D.Double getShape() {
+        return new Line2D.Double(startX, startY, endX, endY);
+    }
+
+    @Override
+    public DoubleLine copy() {
         return new DoubleLine(startX, startY, endX, endY);
     }
 
@@ -31,64 +45,49 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
-    public boolean contains(double x, double y) {
-        if (startX == x && startY == y //  same points
-                || endX == x && endY == y) {
-            return true;
-
-        } else if (startX == endX) {           // veriical line
-            if (x == startX) {
-                return startY > y && y > endY
-                        || startY < y && y < endY;
-            } else {
-                return false;
-            }
-
-        } else if (startY == endY) {       // horizontal line
-            if (y == startY) {
-                return startX > x && x > endX
-                        || startX < x && x < endX;
-            } else {
-                return false;
-            }
-        } else if (startX == x || startY == y // oblique line
-                || endX == x || endY == y) {
-            return false;
-
-        } else {                               // slop
-            double s1 = (endX - startX) / (endY - startY);
-            double s2 = (endX - x) / (endY - y);
-            return Math.abs(s1 - s2) < 1e-6;
-        }
+    public boolean isEmpty() {
+        return !isValid();
     }
 
     @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint((startX + endX) / 2, (startY + endY) / 2);
+    public boolean translateRel(double offsetX, double offsetY) {
+        startX += offsetX;
+        startY += offsetY;
+        endX += offsetX;
+        endY += offsetY;
+        return true;
     }
 
     @Override
-    public DoubleLine move(double offset) {
-        return move(offset, offset);
+    public boolean scale(double scaleX, double scaleY) {
+        endX *= scaleX;
+        endY *= scaleY;
+        return true;
     }
 
     @Override
-    public DoubleLine move(double offsetX, double offsetY) {
-        DoubleLine nline = new DoubleLine(
-                startX + offsetX, startY + offsetY,
-                endX + offsetX, endY + offsetY);
-        return nline;
+    public String pathAbs() {
+        return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
+                + "L " + imageScale(endX) + "," + imageScale(endY);
     }
 
     @Override
-    public DoubleLine moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
-        return moved != null ? (DoubleLine) moved : null;
+    public String pathRel() {
+        return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
+                + "l " + imageScale(endX - startX) + "," + imageScale(endY - startY);
     }
 
     @Override
-    public DoubleRectangle getBound() {
-        return new DoubleRectangle(startX, startY, endX, endY);
+    public String elementAbs() {
+        return "<line x1=\"" + imageScale(startX) + "\""
+                + " y1=\"" + imageScale(startY) + "\""
+                + " x2=\"" + imageScale(endX) + "\""
+                + " y2=\"" + imageScale(endY) + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
     }
 
     public double getStartX() {

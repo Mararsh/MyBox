@@ -271,6 +271,15 @@ public class HelpTools {
             StringTable table = new StringTable(null, message(lang, "Links"));
             table.newLinkRow(message(lang, "DecimalFormat"), decimalFormatLink());
             table.newLinkRow(message(lang, "DateFormat"), simpleDateFormatLink());
+            table.newLinkRow(message(lang, "Charset"), charsetLink());
+            table.newLinkRow("URI", uriLink());
+            table.newLinkRow("URL", urlLink());
+            table.newLinkRow("Full list of Math functions", javaMathLink());
+            table.newLinkRow("Learning the Java Language", javaLink());
+            table.newLinkRow("Java Development Kit (JDK) APIs", javaAPILink());
+            table.newLinkRow(message(lang, "JavafxCssGuide"), javaFxCssLink());
+            table.newLinkRow(message(lang, "DerbyReferenceManual"), derbyLink());
+            table.newLinkRow(message(lang, "SqlIdentifier"), sqlLink());
             table.newLinkRow(message(lang, "HtmlTutorial") + " - " + message(lang, "Chinese"), htmlZhLink());
             table.newLinkRow(message(lang, "HtmlTutorial") + " - " + message(lang, "English"), htmlEnLink());
             table.newLinkRow(message(lang, "JavaScriptTutorial") + " - " + message(lang, "Chinese"), javaScriptZhLink());
@@ -280,12 +289,6 @@ public class HelpTools {
             table.newLinkRow(message(lang, "CssTutorial") + " - " + message(lang, "Chinese"), cssZhLink());
             table.newLinkRow(message(lang, "CssTutorial") + " - " + message(lang, "English"), cssEnLink());
             table.newLinkRow(message(lang, "CssReference"), cssSpecificationLink());
-            table.newLinkRow(message(lang, "JavafxCssGuide"), javaFxCssLink());
-            table.newLinkRow("Full list of Math functions", javaMathLink());
-            table.newLinkRow("Learning the Java Language", javaLink());
-            table.newLinkRow("Java Development Kit (JDK) APIs", javaAPILink());
-            table.newLinkRow(message(lang, "DerbyReferenceManual"), derbyLink());
-            table.newLinkRow(message(lang, "SqlIdentifier"), sqlLink());
             table.newLinkRow("RenderingHints", renderingHintsLink());
             table.newLinkRow(message(lang, "JsonTutorial") + " - " + message(lang, "Chinese"), jsonZhLink());
             table.newLinkRow(message(lang, "JsonTutorial") + " - " + message(lang, "English"), jsonEnLink());
@@ -293,9 +296,12 @@ public class HelpTools {
             table.newLinkRow(message(lang, "XmlTutorial") + " - " + message(lang, "Chinese"), xmlZhLink());
             table.newLinkRow(message(lang, "XmlTutorial") + " - " + message(lang, "English"), xmlEnLink());
             table.newLinkRow(message(lang, "DomSpecification"), domSpecification());
-            table.newLinkRow(message(lang, "Charset"), "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/nio/charset/Charset.html");
-            table.newLinkRow("URI", "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URI.html");
-            table.newLinkRow("URL", "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URL.html");
+            table.newLinkRow(message(lang, "SvgTutorial") + " - " + message(lang, "Chinese"), svgZhLink());
+            table.newLinkRow(message(lang, "SvgTutorial") + " - " + message(lang, "English"), svgEnLink());
+            table.newLinkRow(message(lang, "SvgSpecification"), svgSpecification());
+            table.newLinkRow("SVGPath in JavaFX", javafxSVGPathLink());
+            table.newLinkRow("Shape 2D in JavaFX", javafxShape2DLink());
+            table.newLinkRow("Shape 2D in Java", javaShape2DLink());
 
             String html = HtmlWriteTools.html(message(lang, "Links"), HtmlStyles.DefaultStyle, table.div());
 
@@ -619,6 +625,9 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "Shortcuts")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ShortcutsTips")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message(lang, "ChildWindow")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ChildWindowTips")).append("</PRE>\n");
+
             s.append("    <H3>").append(message(lang, "ClearExpiredData")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ClearExpiredDataComments")).append("</PRE>\n");
 
@@ -636,6 +645,18 @@ public class HelpTools {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public static String charsetLink() {
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/nio/charset/Charset.html";
+    }
+
+    public static String uriLink() {
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URI.html";
+    }
+
+    public static String urlLink() {
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URL.html";
     }
 
     public static String javaFxCssLink() {
@@ -744,6 +765,18 @@ public class HelpTools {
 
     public static String svgSpecification() {
         return "https://www.w3.org/Graphics/SVG/";
+    }
+
+    public static String javaShape2DLink() {
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/Shape.html";
+    }
+
+    public static String javafxShape2DLink() {
+        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/Shape.html";
+    }
+
+    public static String javafxSVGPathLink() {
+        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/SVGPath.html";
     }
 
     public static List<MenuItem> htmlHelps(boolean popMenu) {
@@ -1042,6 +1075,84 @@ public class HelpTools {
         }
     }
 
+    public static List<MenuItem> svgPathHelps() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("SvgTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("SvgTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("SvgSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem("SVGPath in JavaFX");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javafxSVGPathLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("Shape 2D in JavaFX");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javafxShape2DLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("Shape 2D in Java");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaShape2DLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("SvgPathHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("SvgPathHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static List<MenuItem> colorHelps(boolean popMenu) {
         try {
             List<MenuItem> items = new ArrayList<>();
@@ -1126,25 +1237,25 @@ public class HelpTools {
     public static LinkedHashMap<String, String> svgPathExamples() {
         try {
             LinkedHashMap<String, String> values = new LinkedHashMap<>();
-            values.put("M x,y; ", message("SvgPathM"));
-            values.put("m dx,dy; ", message("SvgPathm"));
-            values.put("L x,y; ", message("SvgPathL"));
-            values.put("l dx,dy; ", message("SvgPathl"));
-            values.put("H x; ", message("SvgPathH"));
-            values.put("h dx; ", message("SvgPathh"));
-            values.put("V y; ", message("SvgPathV"));
-            values.put("v dy; ", message("SvgPathv"));
-            values.put("Q x1,y1 x,y; ", message("SvgPathQ"));
-            values.put("q dx1,dy1 dx,dy; ", message("SvgPathq"));
-            values.put("T x,y; ", message("SvgPathT"));
-            values.put("t dx,dy; ", message("SvgPatht"));
-            values.put("C x1,y1 x2,y2 x,y; ", message("SvgPathC"));
-            values.put("c dx1,dy1 dx2,dy2 dx,dy; ", message("SvgPathc"));
-            values.put("S x2,y2 x,y; ", message("SvgPathS"));
-            values.put("s dx2,dy2 dx,dy; ", message("SvgPaths"));
-            values.put("A rx ry angle large-arc-flag sweep-flag x,y; ", message("SvgPathA"));
-            values.put("s rx ry angle large-arc-flag sweep-flag x,y; ", message("SvgPatha"));
-            values.put("Z; ", message("SvgPathZ"));
+            values.put("M x,y ", message("SvgPathM"));
+            values.put("m dx,dy ", message("SvgPathm"));
+            values.put("L x,y ", message("SvgPathL"));
+            values.put("l dx,dy ", message("SvgPathl"));
+            values.put("H x ", message("SvgPathH"));
+            values.put("h dx ", message("SvgPathh"));
+            values.put("V y ", message("SvgPathV"));
+            values.put("v dy ", message("SvgPathv"));
+            values.put("Q x1,y1 x,y ", message("SvgPathQ"));
+            values.put("q dx1,dy1 dx,dy ", message("SvgPathq"));
+            values.put("T x,y ", message("SvgPathT"));
+            values.put("t dx,dy ", message("SvgPatht"));
+            values.put("C x1,y1 x2,y2 x,y ", message("SvgPathC"));
+            values.put("c dx1,dy1 dx2,dy2 dx,dy ", message("SvgPathc"));
+            values.put("S x2,y2 x,y ", message("SvgPathS"));
+            values.put("s dx2,dy2 dx,dy ", message("SvgPaths"));
+            values.put("A rx ry angle large-arc-flag sweep-flag x,y ", message("SvgPathA"));
+            values.put("s rx ry angle large-arc-flag sweep-flag x,y ", message("SvgPatha"));
+            values.put("Z ", message("SvgPathZ"));
 
             return values;
         } catch (Exception e) {

@@ -47,6 +47,6 @@ License:    Apache License Version 2.0
                 </ImageView>
             </graphic>
         </Button>
-        <CheckBox fx:id="filterLineNumberCheck" maxWidth="1.7976931348623157E308" mnemonicParsing="false" selected="true" text="%LineNumber" VBox.vgrow="NEVER" />
+        <CheckBox fx:id="filterLineNumberCheck" maxWidth="1.7976931348623157E308" mnemonicParsing="false" selected="true" text="%RowNumber" VBox.vgrow="NEVER" />
     </children>
 </VBox>

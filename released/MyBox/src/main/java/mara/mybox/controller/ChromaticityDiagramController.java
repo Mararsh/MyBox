@@ -48,7 +48,7 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import static mara.mybox.tools.DoubleTools.scale;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.TextFileTools;
@@ -737,12 +737,17 @@ public class ChromaticityDiagramController extends ImageViewerController {
         displayChromaticityDiagram();
     }
 
+    @Override
+    public double scale(double d) {
+        return DoubleTools.scale(d, 8);
+    }
+
     protected void calculateColor() {
         CIEData d = new CIEData((Color) colorSetController.rect.getFill());
         isSettingValues = true;
-        XInput.setText(scale(d.getX(), 8) + "");
-        YInput.setText(scale(d.getY(), 8) + "");
-        ZInput.setText(scale(d.getZ(), 8) + "");
+        XInput.setText(scale(d.getX()) + "");
+        YInput.setText(scale(d.getY()) + "");
+        ZInput.setText(scale(d.getZ()) + "");
         calculateXYZAction();
         isSettingValues = false;
         if (calculateCheck.isSelected()) {
@@ -753,17 +758,17 @@ public class ChromaticityDiagramController extends ImageViewerController {
     @FXML
     public void calculateXYZAction() {
         CIEData d = new CIEData(-1, X, Y, Z);
-        xInput.setText(scale(d.getNormalizedX(), 8) + "");
-        yInput.setText(scale(d.getNormalizedY(), 8) + "");
+        xInput.setText(scale(d.getNormalizedX()) + "");
+        yInput.setText(scale(d.getNormalizedY()) + "");
         displayCalculatedValued();
     }
 
     @FXML
     public void calculateXYAction() {
         CIEData d = new CIEData(x, y);
-        XInput.setText(scale(d.getX(), 8) + "");
-        YInput.setText(scale(d.getY(), 8) + "");
-        ZInput.setText(scale(d.getZ(), 8) + "");
+        XInput.setText(scale(d.getX()) + "");
+        YInput.setText(scale(d.getY()) + "");
+        ZInput.setText(scale(d.getZ()) + "");
         displayCalculatedValued();
     }
 

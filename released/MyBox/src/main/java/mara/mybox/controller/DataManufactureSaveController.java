@@ -82,8 +82,8 @@ public class DataManufactureSaveController extends BaseChildController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 tableController.data2D.stopTask();
-                task = null;
             }
         };
         start(task);

@@ -21,10 +21,10 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-9-5
  * @License Apache License Version 2.0
  */
-public class ImageManufactureOperationsController extends ImageViewerController {
-    
+public class ImageManufactureOperationsController extends BaseController {
+
     protected ImageManufactureController editor;
-    
+
     protected ImageManufactureCopyController copyController;
     protected ImageManufactureClipboardController clipboardController;
     protected ImageManufactureCropController cropController;
@@ -40,200 +40,290 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     protected ImageManufactureShadowController shadowController;
     protected ImageManufactureMarginsController marginsController;
     protected ImageManufactureOperationController currentController;
-    
+
     @FXML
     protected Accordion accordionPane;
     @FXML
     protected TitledPane copyPane, clipboardPane, cropPane, scalePane, colorPane,
             effectPane, enhancementPane, transformPane, shadowPane,
             marginsPane, arcPane, shapePane, eliminatePane, textPane, richTextPane;
-    
+
     public ImageManufactureOperationsController() {
         baseTitle = Languages.message("ImageManufacture");
     }
-    
+
     public void setParameters(ImageManufactureController parent) {
         this.parentController = parent;
         editor = parent;
-        imageView = editor.imageView;
         baseName = editor.baseName;
         initPanes();
     }
-    
+
     public void initPanes() {
         try {
+            accordionPane.expandedPaneProperty().addListener(new ChangeListener<TitledPane>() {
+                @Override
+                public void changed(ObservableValue<? extends TitledPane> v, TitledPane o, TitledPane n) {
+                    paneSwitched(n);
+                }
+            });
+
             copyPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(copyPane, Fxmls.ImageManufactureCopyFxml);
-                    if (controller != null) {
-                        copyController = (ImageManufactureCopyController) controller;
+                    if (!n && copyController != null) {
+                        copyController.paneUnexpanded();
                     }
-                    paneExpanded(copyController, n);
                 }
             });
-            
+
             clipboardPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(clipboardPane, Fxmls.ImageManufactureClipboardFxml);
-                    if (controller != null) {
-                        clipboardController = (ImageManufactureClipboardController) controller;
+                    if (!n && clipboardController != null) {
+                        clipboardController.paneUnexpanded();
                     }
-                    paneExpanded(clipboardController, n);
                 }
             });
-            
+
             cropPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(cropPane, Fxmls.ImageManufactureCropFxml);
-                    if (controller != null) {
-                        cropController = (ImageManufactureCropController) controller;
+                    if (!n && cropController != null) {
+                        cropController.paneUnexpanded();
                     }
-                    paneExpanded(cropController, n);
                 }
             });
-            
+
             colorPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(colorPane, Fxmls.ImageManufactureColorFxml);
-                    if (controller != null) {
-                        colorController = (ImageManufactureColorController) controller;
+                    if (!n && colorController != null) {
+                        colorController.paneUnexpanded();
                     }
-                    paneExpanded(colorController, n);
                 }
             });
-            
+
             effectPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(effectPane, Fxmls.ImageManufactureEffectsFxml);
-                    if (controller != null) {
-                        effectController = (ImageManufactureEffectsController) controller;
+                    if (!n && effectController != null) {
+                        effectController.paneUnexpanded();
                     }
-                    paneExpanded(effectController, n);
                 }
             });
-            
+
             enhancementPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(enhancementPane, Fxmls.ImageManufactureEnhancementFxml);
-                    if (controller != null) {
-                        enhancementController = (ImageManufactureEnhancementController) controller;
+                    if (!n && enhancementController != null) {
+                        enhancementController.paneUnexpanded();
                     }
-                    paneExpanded(enhancementController, n);
                 }
             });
-            
+
             scalePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(scalePane, Fxmls.ImageManufactureScaleFxml);
-                    if (controller != null) {
-                        scaleController = (ImageManufactureScaleController) controller;
+                    if (!n && scaleController != null) {
+                        scaleController.paneUnexpanded();
                     }
-                    paneExpanded(scaleController, n);
                 }
             });
-            
+
             transformPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(transformPane, Fxmls.ImageManufactureTransformFxml);
-                    if (controller != null) {
-                        transformController = (ImageManufactureTransformController) controller;
+                    if (!n && transformController != null) {
+                        transformController.paneUnexpanded();
                     }
-                    paneExpanded(transformController, n);
                 }
             });
-            
+
             shadowPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(shadowPane, Fxmls.ImageManufactureShadowFxml);
-                    if (controller != null) {
-                        shadowController = (ImageManufactureShadowController) controller;
+                    if (!n && shadowController != null) {
+                        shadowController.paneUnexpanded();
                     }
-                    paneExpanded(shadowController, n);
                 }
             });
-            
+
             marginsPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(marginsPane, Fxmls.ImageManufactureMarginsFxml);
-                    if (controller != null) {
-                        marginsController = (ImageManufactureMarginsController) controller;
+                    if (!n && marginsController != null) {
+                        marginsController.paneUnexpanded();
                     }
-                    paneExpanded(marginsController, n);
                 }
             });
-            
+
             arcPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(arcPane, Fxmls.ImageManufactureArcFxml);
-                    if (controller != null) {
-                        arcController = (ImageManufactureArcController) controller;
+                    if (!n && arcController != null) {
+                        arcController.paneUnexpanded();
                     }
-                    paneExpanded(arcController, n);
                 }
             });
-            
+
             shapePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(shapePane, Fxmls.ImageManufactureShapeFxml);
-                    if (controller != null) {
-                        shapeController = (ImageManufactureShapeController) controller;
+                    if (!n && shapeController != null) {
+                        shapeController.paneUnexpanded();
                     }
-                    paneExpanded(shapeController, n);
                 }
             });
-            
+
             eliminatePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(eliminatePane, Fxmls.ImageManufactureEliminateFxml);
-                    if (controller != null) {
-                        eliminateController = (ImageManufactureEliminateController) controller;
+                    if (!n && eliminateController != null) {
+                        eliminateController.paneUnexpanded();
                     }
-                    paneExpanded(eliminateController, n);
                 }
             });
-            
+
             textPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
-                    ImageManufactureOperationController controller = loadPane(textPane, Fxmls.ImageManufactureTextFxml);
-                    if (controller != null) {
-                        textController = (ImageManufactureTextController) controller;
+                    if (!n && textController != null) {
+                        textController.paneUnexpanded();
                     }
-                    paneExpanded(textController, n);
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-    
-    public void paneExpanded(ImageManufactureOperationController controller, boolean expanded) {
-        if (controller == null) {
-            return;
+
+    public void paneSwitched(TitledPane currentPane) {
+        try {
+            if (currentPane == null) {
+                editor.resetImagePane();
+                currentController = null;
+
+            } else if (currentPane == copyPane) {
+                if (copyController == null) {
+                    copyController = (ImageManufactureCopyController) loadPane(
+                            copyPane, Fxmls.ImageManufactureCopyFxml);
+                }
+                currentController = copyController;
+                copyController.paneExpanded();
+
+            } else if (currentPane == clipboardPane) {
+                if (clipboardController == null) {
+                    clipboardController = (ImageManufactureClipboardController) loadPane(
+                            clipboardPane, Fxmls.ImageManufactureClipboardFxml);
+                }
+                currentController = clipboardController;
+                clipboardController.paneExpanded();
+
+            } else if (currentPane == cropPane) {
+                if (cropController == null) {
+                    cropController = (ImageManufactureCropController) loadPane(
+                            cropPane, Fxmls.ImageManufactureCropFxml);
+                }
+                currentController = cropController;
+                cropController.paneExpanded();
+
+            } else if (currentPane == scalePane) {
+                if (scaleController == null) {
+                    scaleController = (ImageManufactureScaleController) loadPane(
+                            scalePane, Fxmls.ImageManufactureScaleFxml);
+                }
+                currentController = scaleController;
+                scaleController.paneExpanded();
+
+            } else if (currentPane == colorPane) {
+                if (colorController == null) {
+                    colorController = (ImageManufactureColorController) loadPane(
+                            colorPane, Fxmls.ImageManufactureColorFxml);
+                }
+                currentController = colorController;
+                colorController.paneExpanded();
+
+            } else if (currentPane == effectPane) {
+                if (effectController == null) {
+                    effectController = (ImageManufactureEffectsController) loadPane(
+                            effectPane, Fxmls.ImageManufactureEffectsFxml);
+                }
+                currentController = effectController;
+                effectController.paneExpanded();
+
+            } else if (currentPane == enhancementPane) {
+                if (enhancementController == null) {
+                    enhancementController = (ImageManufactureEnhancementController) loadPane(
+                            enhancementPane, Fxmls.ImageManufactureEnhancementFxml);
+                }
+                currentController = enhancementController;
+                enhancementController.paneExpanded();
+
+            } else if (currentPane == transformPane) {
+                if (transformController == null) {
+                    transformController = (ImageManufactureTransformController) loadPane(
+                            transformPane, Fxmls.ImageManufactureTransformFxml);
+                }
+                currentController = transformController;
+                transformController.paneExpanded();
+
+            } else if (currentPane == shadowPane) {
+                if (shadowController == null) {
+                    shadowController = (ImageManufactureShadowController) loadPane(
+                            shadowPane, Fxmls.ImageManufactureShadowFxml);
+                }
+                currentController = shadowController;
+                shadowController.paneExpanded();
+
+            } else if (currentPane == marginsPane) {
+                if (marginsController == null) {
+                    marginsController = (ImageManufactureMarginsController) loadPane(
+                            marginsPane, Fxmls.ImageManufactureMarginsFxml);
+                }
+                currentController = marginsController;
+                marginsController.paneExpanded();
+
+            } else if (currentPane == arcPane) {
+                if (arcController == null) {
+                    arcController = (ImageManufactureArcController) loadPane(
+                            arcPane, Fxmls.ImageManufactureArcFxml);
+                }
+                currentController = arcController;
+                arcController.paneExpanded();
+
+            } else if (currentPane == shapePane) {
+                if (shapeController == null) {
+                    shapeController = (ImageManufactureShapeController) loadPane(
+                            shapePane, Fxmls.ImageManufactureShapeFxml);
+
+                }
+                currentController = shapeController;
+                shapeController.paneExpanded();
+
+            } else if (currentPane == eliminatePane) {
+                if (eliminateController == null) {
+                    eliminateController = (ImageManufactureEliminateController) loadPane(
+                            eliminatePane, Fxmls.ImageManufactureEliminateFxml);
+                }
+                currentController = eliminateController;
+                eliminateController.paneExpanded();
+
+            } else if (currentPane == textPane) {
+                if (textController == null) {
+                    textController = (ImageManufactureTextController) loadPane(
+                            textPane, Fxmls.ImageManufactureTextFxml);
+                }
+                currentController = textController;
+                textController.paneExpanded();
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        if (expanded) {
-            currentController = controller;
-            controller.paneExpanded();
-        } else {
-            controller.paneUnexpanded();
-        }
-//        editor.adjustRightPane();
     }
-    
+
     protected ImageManufactureOperationController loadPane(TitledPane titledPane, String fxml) {
         try {
             if (titledPane.getContent() == null) {
@@ -248,7 +338,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                 controller.baseName = editor.baseName;
                 controller.baseTitle = editor.baseTitle;
                 controller.initPane();
-                
+
                 VBox box = new VBox();
                 box.getChildren().add(controller.getMyScene().getRoot());
                 box.setMinHeight(Region.USE_PREF_SIZE);
@@ -264,14 +354,13 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         }
         return null;
     }
-    
+
     public void resetOperationPanes() {
-        if (currentController == null) {
-            return;
+        if (currentController != null) {
+            currentController.resetOperationPane();
         }
-        currentController.resetOperationPane();
     }
-    
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (currentController != null) {
@@ -279,7 +368,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         }
         return false;
     }
-    
+
     @Override
     public BaseImageController refreshInterfaceAndFile() {
         return null;  //Bypass since this is part of frame
@@ -288,31 +377,24 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     /*
         events passed from image pane
      */
-    @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
         if (currentController != null) {
             currentController.paneClicked(event, p);
         }
     }
-    
-    @FXML
-    @Override
+
     public void mousePressed(MouseEvent event) {
         if (currentController != null) {
             currentController.mousePressed(event);
         }
     }
-    
-    @FXML
-    @Override
+
     public void mouseDragged(MouseEvent event) {
         if (currentController != null) {
             currentController.mouseDragged(event);
         }
     }
-    
-    @FXML
-    @Override
+
     public void mouseReleased(MouseEvent event) {
         if (currentController != null) {
             currentController.mouseReleased(event);
@@ -325,9 +407,9 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     public ImageManufactureClipboardController getClipboardController() {
         return clipboardController;
     }
-    
+
     public void setClipboardController(ImageManufactureClipboardController clipboardController) {
         this.clipboardController = clipboardController;
     }
-    
+
 }

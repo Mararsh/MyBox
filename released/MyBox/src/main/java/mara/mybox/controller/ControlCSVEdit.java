@@ -59,8 +59,7 @@ public class ControlCSVEdit extends BaseController {
     }
 
     protected void editCSVFile(List<String> fields) {
-        TextEditorController controller
-                = (TextEditorController) openStage(Fxmls.TextEditorFxml);
+        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.hideLeftPane();
         controller.hideRightPane();
         if (fields == null || fields.isEmpty()) {

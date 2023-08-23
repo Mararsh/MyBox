@@ -290,7 +290,6 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                 if (digests.isEmpty()) {
                     filesTreeView.setRoot(null);
                 }
-                task = null;
             }
 
         };

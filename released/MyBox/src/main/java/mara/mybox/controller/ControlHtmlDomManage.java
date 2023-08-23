@@ -113,7 +113,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
             });
             items.add(menuItem);
 
-            menuItem = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
+            menuItem = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconMove.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 move(item);
             });

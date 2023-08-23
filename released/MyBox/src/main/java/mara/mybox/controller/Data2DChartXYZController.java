@@ -260,7 +260,6 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
             }
 
         };

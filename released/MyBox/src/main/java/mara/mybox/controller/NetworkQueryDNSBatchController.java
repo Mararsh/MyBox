@@ -97,13 +97,13 @@ public class NetworkQueryDNSBatchController extends BaseController {
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 dnsList.setText(s.toString());
                 dnsList.setScrollTop(0);
                 String failed = f.toString();
                 if (!failed.isBlank()) {
                     alertError(Languages.message("Failed") + ":\n" + failed);
                 }
-                task = null;
             }
 
         };

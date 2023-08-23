@@ -21,6 +21,9 @@ public class JsonAddFieldController extends ControlJsonNodeBase {
         try {
             this.treeController = treeController;
             this.treeItem = item;
+
+            setTitle(treeController.getMyStage().getTitle());
+
             checkValue();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -72,12 +75,6 @@ public class JsonAddFieldController extends ControlJsonNodeBase {
 
     @Override
     public boolean keyESC() {
-        close();
-        return false;
-    }
-
-    @Override
-    public boolean keyF6() {
         close();
         return false;
     }

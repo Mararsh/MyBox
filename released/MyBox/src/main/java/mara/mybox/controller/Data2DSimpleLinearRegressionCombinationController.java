@@ -121,7 +121,6 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
             }
 
         };

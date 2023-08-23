@@ -207,7 +207,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
     }
 
     @Override
-    public boolean controlAltG() {
+    public boolean controlAltL() {
         if (nodeController.valueInput.isFocused()) {
             nodeController.clearValue();
         } else {
@@ -382,7 +382,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
                 break;
             }
         }
-        nodesController.updateNode(nodeController.parentNode);
+        nodesController.updateNode(nodeController.currentNode);
     }
 
     public void newNodeSaved() {
@@ -595,7 +595,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconRef.png"));
+            menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconMove.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveAction();
             });

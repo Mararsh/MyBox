@@ -306,7 +306,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (ok) {
                     drawPoints();
                     valuesController.loadData(csvData);
@@ -444,7 +443,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (ok) {
                     framesNumber = dataPoints.size();
                     lastFrameid = -1;

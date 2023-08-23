@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -33,15 +32,13 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
         Text, RichText, Convolution,
-        Effects, Enhancement, Shadow, Scale2, Picture, Transform, Shape, Eliminate, Margins
+        Effects, Enhancement, Shadow, ScaleImage, Picture, Transform, Shape, Eliminate, Margins
     }
 
     @FXML
     protected TitledPane createPane;
     @FXML
     protected Tab imageTab, scopeTab, hisTab, backupTab;
-    @FXML
-    protected FlowPane buttonsPane;
     @FXML
     protected ImageView maskView;
     @FXML
@@ -71,12 +68,16 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     public void resetImagePane() {
         operation = null;
         scope = null;
+        infoLabel.setText("");
 
         imageView.setRotate(0);
         imageView.setVisible(true);
         maskView.setImage(null);
         maskView.setVisible(false);
         maskView.toBack();
+
+        resetShapeOptions();
+
         clearMask();
     }
 
@@ -138,23 +139,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             } else if (tab == scopeTab) {
                 return scopeController.controlAltK();
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean controlAltT() {
-        try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == imageTab) {
-                return super.controlAltT();
-
-            } else if (tab == scopeTab) {
-                return scopeController.controlAltT();
 
             }
         } catch (Exception e) {
@@ -240,19 +224,21 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     @Override
     public void mousePressed(MouseEvent event) {
+        super.mousePressed(event);
         operationsController.mousePressed(event);
     }
 
     @FXML
     @Override
     public void mouseDragged(MouseEvent event) {
+        super.mouseDragged(event);
         operationsController.mouseDragged(event);
     }
 
     @FXML
     @Override
     public void mouseReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
+        super.mouseReleased(event);
         operationsController.mouseReleased(event);
     }
 
@@ -314,14 +300,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     }
 
     public void updateLabelString(String info) {
-        try {
-            if (imageLabel == null) {
-                return;
-            }
-            imageLabel.setText(info);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+        infoLabel.setText(info);
     }
 
 }

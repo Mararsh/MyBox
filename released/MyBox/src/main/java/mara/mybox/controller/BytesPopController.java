@@ -40,7 +40,7 @@ public class BytesPopController extends TextPopController {
             textArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuBytesEditController.open(myController, textArea, event);
+                    MenuBytesEditController.openBytes(myController, textArea, event);
                 }
             });
 
@@ -52,9 +52,7 @@ public class BytesPopController extends TextPopController {
     @FXML
     @Override
     public void editAction() {
-        BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
-        controller.loadContents(textArea.getText());
-        controller.requestMouse();
+        BytesEditorController.edit(textArea.getText());
     }
 
     @FXML
@@ -84,8 +82,7 @@ public class BytesPopController extends TextPopController {
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(file);
-                BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
-                controller.sourceFileChanged(file);
+                BytesEditorController.open(file);
             }
         };
         start(task);

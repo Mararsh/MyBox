@@ -81,7 +81,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     @FXML
     protected TableColumn<ColorData, Float> orderColumn;
     @FXML
-    protected Button addColorsButton, trimButton;
+    protected Button addColorsButton, customizeButton, trimButton;
     @FXML
     protected ToggleGroup showGroup;
     @FXML
@@ -132,7 +132,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             super.initControls();
 
             palettesController.setParameter(this, true);
-            colorsController.setParameter(this, true);
+            colorsController.setParameter(this);
 
             palettesController.renamedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -148,15 +148,6 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     refreshPalette();
                 }
             });
-
-            paletteTabPane.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) -> {
-                        if (newTab == dataTab) {
-                            deleteButton.setDisable(isNoneSelected());
-                        } else {
-                            deleteButton.setDisable(colorsController.clickedRect == null);
-                        }
-                    });
 
             refreshPalettes();
 
@@ -340,6 +331,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(addColorsButton, message("AddColors"));
             NodeStyleTools.setTooltip(trimButton, message("TrimOrderInPalette"));
+            NodeStyleTools.setTooltip(customizeButton, message("CustomizeColors"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -739,6 +731,11 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     @FXML
     public void queryAction() {
         openStage(Fxmls.ColorQueryFxml);
+    }
+
+    @FXML
+    public void customizePalette() {
+        ColorsCustomizeController.open(this);
     }
 
     /*

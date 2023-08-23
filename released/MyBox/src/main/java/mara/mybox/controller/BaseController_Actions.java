@@ -486,7 +486,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             sTask.setController(myController);
             sTask.setSelf(sTask);
             if (node != null) {
-                sTask.setDisbaleNode(node);
+                sTask.setDisableNode(node);
             }
         }
         Thread thread = new Thread(task);

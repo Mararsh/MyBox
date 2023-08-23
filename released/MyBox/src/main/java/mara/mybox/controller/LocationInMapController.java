@@ -262,12 +262,6 @@ public class LocationInMapController extends GeographyCodeMapController {
         return false;
     }
 
-    @Override
-    public boolean keyF6() {
-        close();
-        return false;
-    }
-
     public static LocationInMapController load(double longitude, double latitude) {
         try {
             LocationInMapController controller = (LocationInMapController) WindowTools.openStage(Fxmls.LocationInMapFxml);

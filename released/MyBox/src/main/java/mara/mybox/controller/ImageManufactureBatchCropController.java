@@ -256,8 +256,8 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             }
             if (x1 >= x2 || y1 >= y2
                     || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
-                    || x1 > width - 1 || y1 > height - 1
-                    || x2 > width - 1 || y2 > height - 1) {
+                    || x1 > width || y1 > height
+                    || x2 > width || y2 > height) {
                 errorString = Languages.message("BeyondSize");
                 return null;
             }

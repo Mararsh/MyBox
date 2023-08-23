@@ -185,6 +185,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%FormatsConversion" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaExtract" text="%ImageAlphaExtract" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
+                                        <MenuItem mnemonicParsing="false" onAction="#ImageToSvg" text="%ImageToSvg" /> 
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" /> 
                                     </items>
@@ -198,6 +199,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#SvgTypesetting" text="%SvgTypesetting" /> 
                                         <MenuItem mnemonicParsing="false" onAction="#SvgToImage" text="%SvgToImage" /> 
                                         <MenuItem mnemonicParsing="false" onAction="#SvgToPDF" text="%SvgToPDF" /> 
+                                        <MenuItem mnemonicParsing="false" onAction="#ImageToSvg" text="%ImageToSvg" /> 
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />

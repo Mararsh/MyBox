@@ -422,9 +422,7 @@ public class XmlEditorController extends BaseFileController {
 
     @FXML
     protected void editTexts() {
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textsArea.getText());
-        controller.requestMouse();
+        TextEditorController.edit(textsArea.getText());
     }
 
     @FXML
@@ -521,7 +519,7 @@ public class XmlEditorController extends BaseFileController {
                 return true;
 
             } else if (tab == textsTab) {
-                MenuTextEditController.open(this, textsArea);
+                MenuTextEditController.textMenu(this, textsArea);
                 return true;
 
             }

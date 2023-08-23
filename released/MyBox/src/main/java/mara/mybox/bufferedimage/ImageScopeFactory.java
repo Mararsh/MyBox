@@ -3,9 +3,7 @@ package mara.mybox.bufferedimage;
 import java.awt.Color;
 import javafx.scene.image.Image;
 import mara.mybox.data.DoubleCircle;
-import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePolygon;
-import mara.mybox.data.DoubleRectangle;
 
 /**
  * @Author Mara
@@ -186,12 +184,6 @@ public class ImageScopeFactory {
         public Rectangle(Image image) {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -224,14 +216,6 @@ public class ImageScopeFactory {
         public Ellipse(Image image) {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -415,12 +399,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
             this.colorScopeType = ImageScope.ColorScopeType.Color;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -443,12 +421,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
             this.colorScopeType = ImageScope.ColorScopeType.Red;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -471,12 +443,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
             this.colorScopeType = ImageScope.ColorScopeType.Green;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -499,12 +465,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
             this.colorScopeType = ImageScope.ColorScopeType.Blue;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -527,12 +487,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
             this.colorScopeType = ImageScope.ColorScopeType.Brightness;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -555,12 +509,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
             this.colorScopeType = ImageScope.ColorScopeType.Saturation;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -583,12 +531,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Rectangle;
             this.colorScopeType = ImageScope.ColorScopeType.Hue;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-            } else {
-                rectangle = new DoubleRectangle();
-            }
         }
 
         @Override
@@ -807,14 +749,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
             this.colorScopeType = ImageScope.ColorScopeType.Color;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -837,14 +771,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
             this.colorScopeType = ImageScope.ColorScopeType.Red;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -867,14 +793,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
             this.colorScopeType = ImageScope.ColorScopeType.Green;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -897,14 +815,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
             this.colorScopeType = ImageScope.ColorScopeType.Blue;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -927,14 +837,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
             this.colorScopeType = ImageScope.ColorScopeType.Brightness;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -957,14 +859,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
             this.colorScopeType = ImageScope.ColorScopeType.Saturation;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -987,14 +881,6 @@ public class ImageScopeFactory {
             this.image = image;
             this.scopeType = ImageScope.ScopeType.Ellipse;
             this.colorScopeType = ImageScope.ColorScopeType.Hue;
-            if (image != null) {
-                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
-                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
-                ellipse = new DoubleEllipse(rectangle);
-            } else {
-                rectangle = new DoubleRectangle();
-                ellipse = new DoubleEllipse();
-            }
         }
 
         @Override
@@ -1202,10 +1088,8 @@ public class ImageScopeFactory {
 
         @Override
         protected boolean inScope(int x, int y, Color color) {
-            if (outline == null) {
-                return false;
-            }
-            return outline.getRGB(x, y) == 0;
+            boolean in = outline != null && outline.getRGB(x, y) > 0;
+            return areaExcluded ? !in : in;
         }
     }
 

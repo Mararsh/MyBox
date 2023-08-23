@@ -68,16 +68,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
     }
 
     @Override
-    public boolean controlAltK() {
-        if (tabPane.getTabs().contains(colorsTab)) {
-            pickColorCheck.setSelected(!pickColorCheck.isSelected());
-        } else {
-            isPickingColor = false;
-        }
-        return true;
-    }
-
-    @Override
     protected void startPickingColor() {
         if (!tabPane.getTabs().contains(colorsTab)) {
             isPickingColor = false;
@@ -89,7 +79,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         String tips = message("PickingColorsForScope");
         scopeTips.setText(tips);
         scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
-        NodeStyleTools.setTooltip(scopeTips, tips);
         popInformation(tips);
     }
 
@@ -99,11 +88,9 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             String tips = imageLabelOriginal.getText();
             scopeTips.setText(tips);
             scopeTips.setStyle(imageLabelOriginal.getStyle());
-            NodeStyleTools.setTooltip(scopeTips, tips);
             imageLabelOriginal = null;
         } else {
             scopeTips.setText("");
-            NodeStyleTools.setTooltip(scopeTips, "");
         }
 
     }

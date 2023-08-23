@@ -32,7 +32,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -58,7 +57,7 @@ public class ControlColorPaletteSelector extends BaseController {
     @FXML
     protected HBox selectOpBox, manageOpBox;
     @FXML
-    protected Button customizeButton, examplesButton, functionsButton;
+    protected Button examplesButton, functionsButton;
 
     public ControlColorPaletteSelector() {
         baseTitle = message("ColorPalettes");
@@ -79,16 +78,6 @@ public class ControlColorPaletteSelector extends BaseController {
             ignore = null;
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(customizeButton, message("CustomizeColorPalette"));
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 
@@ -557,11 +546,6 @@ public class ControlColorPaletteSelector extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    public void customizePalette() {
-        ColorPaletteCustomizeController.open(this);
     }
 
 }

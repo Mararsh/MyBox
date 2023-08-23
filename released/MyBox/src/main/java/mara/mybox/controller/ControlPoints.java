@@ -1,14 +1,17 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableRowIndexCell;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -16,8 +19,6 @@ import mara.mybox.fxml.cell.TableRowIndexCell;
  * @License Apache License Version 2.0
  */
 public class ControlPoints extends BaseTableViewController<DoublePoint> {
-
-    public final int Scale = 2;
 
     @FXML
     protected TableColumn<DoublePoint, Double> indexColumn, xColumn, yColumn;
@@ -31,72 +32,139 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
             indexColumn.setCellFactory(new TableRowIndexCell());
 
             xColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
-            xColumn.setCellFactory(TableAutoCommitCell.forDoubleColumn());
-            xColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<DoublePoint, Double>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<DoublePoint, Double> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int row = e.getTablePosition().getRow();
-                    if (row < 0) {
-                        return;
-                    }
-                    DoublePoint point = tableData.get(row);
-                    point.setX(e.getNewValue());
-                    tableData.set(row, point);
-                }
-            });
-            xColumn.getStyleClass().add("editable-column");
-
             yColumn.setCellValueFactory(new PropertyValueFactory<>("y"));
-            yColumn.setCellFactory(TableAutoCommitCell.forDoubleColumn());
-            yColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<DoublePoint, Double>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<DoublePoint, Double> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int row = e.getTablePosition().getRow();
-                    if (row < 0) {
-                        return;
-                    }
-                    DoublePoint point = tableData.get(row);
-                    point.setY(e.getNewValue());
-                    tableData.set(row, point);
-                }
-            });
-            yColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void tableChanged(boolean changed) {
-    }
-
     public void loadText(String values) {
-        loadList(DoublePoint.parseList(values));
+        loadList(DoublePoint.parseImageCoordinates(values));
     }
 
     public void loadList(List<DoublePoint> list) {
+        isSettingValues = true;
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
-            tableData.setAll(DoublePoint.scaleList(list, Scale));
+            tableData.setAll(DoublePoint.scaleImageCoordinates(list));
         }
+        isSettingValues = false;
     }
 
-    public String toText() {
-        return DoublePoint.toText(tableData, Scale);
+    public void loadIntList(List<IntPoint> list) {
+        if (list == null || list.isEmpty()) {
+            tableData.clear();
+            return;
+        }
+        List<DoublePoint> dlist = new ArrayList<>();
+        for (IntPoint p : list) {
+            dlist.add(new DoublePoint(p.getX(), p.getY()));
+        }
+        isSettingValues = true;
+        tableData.setAll(dlist);
+        isSettingValues = false;
+    }
+
+    public void addPoint(DoublePoint point) {
+        if (point == null) {
+            return;
+        }
+        addPoint(point.getX(), point.getY());
+    }
+
+    public void addPoint(double x, double y) {
+        tableData.add(point(x, y));
+    }
+
+    public DoublePoint point(double x, double y) {
+        return DoublePoint.imageCoordinate(x, y);
+    }
+
+    public void setPoint(int index, double x, double y) {
+        if (index < 0 || index >= tableData.size()) {
+            return;
+        }
+        tableData.set(index, point(x, y));
+    }
+
+    public void deletePoint(int index) {
+        if (index < 0 || index >= tableData.size()) {
+            return;
+        }
+        tableData.remove(index);
+    }
+
+    public void clear() {
+        tableData.clear();
+    }
+
+    public List<DoublePoint> getPoints() {
+        List<DoublePoint> list = new ArrayList<>();
+        for (DoublePoint p : tableData) {
+            list.add(p.copy());
+        }
+        return list;
     }
 
     @FXML
     @Override
     public void addAction() {
-        tableData.add(new DoublePoint(0, 0));
+        add(-1);
+    }
+
+    @FXML
+    public void insertAction() {
+        int index = selectedIndix();
+        if (index < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        add(index);
+    }
+
+    @FXML
+    public void add(int index) {
+        PointInputController inputController = PointInputController.open(this, message("Add"), null);
+        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                DoublePoint picked = inputController.picked;
+                if (picked == null) {
+                    return;
+                }
+                if (index < 0) {
+                    tableData.add(picked);
+                } else {
+                    tableData.add(index, picked);
+                }
+                inputController.close();
+            }
+        });
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        try {
+            int index = selectedIndix();
+            if (index < 0) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            DoublePoint point = tableData.get(index);
+            PointInputController inputController = PointInputController.open(this, message("Point") + " " + (index + 1), point);
+            inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    tableData.set(index, inputController.picked);
+                    inputController.close();
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }

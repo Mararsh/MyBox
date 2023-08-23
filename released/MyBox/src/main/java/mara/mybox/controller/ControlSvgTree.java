@@ -25,7 +25,7 @@ public class ControlSvgTree extends ControlXmlTree {
     @FXML
     protected ControlSvgNodeEdit svgNodeController;
     @FXML
-    protected Button addShapeButton, drawButton;
+    protected Button addShapeButton;
 
     @Override
     public void initValues() {
@@ -54,7 +54,6 @@ public class ControlSvgTree extends ControlXmlTree {
     public void setRoot(TreeItem<XmlTreeNode> root) {
         super.setRoot(root);
         addShapeButton.setDisable(true);
-        drawButton.setVisible(true);
     }
 
     @Override
@@ -62,8 +61,6 @@ public class ControlSvgTree extends ControlXmlTree {
         super.itemClicked(event, item);
         addShapeButton.setDisable(item == null || item.getValue() == null
                 || !item.getValue().canAddSvgShape());
-        drawButton.setDisable(item == null || item.getValue() == null
-                || !item.getValue().isSvgShape());
     }
 
     @Override
@@ -103,11 +100,6 @@ public class ControlSvgTree extends ControlXmlTree {
             return;
         }
         SvgAddShapeController.open(editorController, treeItem);
-    }
-
-    @FXML
-    public void drawShape() {
-        drawShape(selected());
     }
 
     public void drawShape(TreeItem<XmlTreeNode> treeItem) {

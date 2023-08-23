@@ -804,7 +804,6 @@ public class MediaPlayerController extends BaseController {
                     updateStatus();
 
                     currentMedia.readMediaInfo(player.getMedia());
-                    NodeStyleTools.setTooltip(infoButton, currentMedia.getInfo());
                     tableController.tableData.set(currentIndex, currentMedia);
                 } catch (Exception e) {
                     popMediaError(e.toString());

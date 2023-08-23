@@ -209,6 +209,10 @@ public class VisitHistoryTools {
             if (!suffix.equalsIgnoreCase("ppt") && !suffix.equalsIgnoreCase("pptx")) {
                 return false;
             }
+        } else if (fileType == FileType.SVG) {
+            if (!suffix.equalsIgnoreCase("svg")) {
+                return false;
+            }
         }
         return true;
     }

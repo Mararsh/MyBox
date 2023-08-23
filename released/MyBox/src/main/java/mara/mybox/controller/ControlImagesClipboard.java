@@ -343,6 +343,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
             @Override
             protected void finalAction() {
+                super.finalAction();
                 refreshAction();
             }
         };

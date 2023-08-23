@@ -7,6 +7,8 @@ import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
+import static mara.mybox.value.UserConfig.imageScale;
 
 /**
  * @Author Mara
@@ -172,8 +174,15 @@ public class DoubleTools {
         return DoubleTools.scale(invalue, 6);
     }
 
+    public static double imageScale(double invalue) {
+        return DoubleTools.scale(invalue, UserConfig.imageScale());
+    }
+
     public static double scale(double v, int scale) {
         try {
+            if (scale < 0) {
+                return v;
+            }
             return Double.parseDouble(scaleString(v, scale));
         } catch (Exception e) {
             return v;

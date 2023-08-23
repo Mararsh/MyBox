@@ -149,7 +149,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
 
     @Override
     protected void taskQuit() {
-        endTime = new Date();
+        super.taskQuit();
         progress();
     }
 

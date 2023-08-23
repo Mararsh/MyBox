@@ -7,6 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
@@ -17,12 +18,13 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureOperationController extends ImageViewerController {
+public class ImageManufactureOperationController extends BaseController {
 
     protected ImageManufactureController editor;
     protected ImageManufactureScopeController scopeController;
     protected ImageManufactureOperationsController operationsController;
-    protected ImageView maskView;
+    protected ImageView imageView, maskView;
+    protected AnchorPane maskPane;
     protected boolean isTabbing;
 
     @FXML
@@ -34,6 +36,7 @@ public class ImageManufactureOperationController extends ImageViewerController {
 
     protected void initPane() {
         try {
+
             if (scopeCheck != null) {
                 scopeCheck.setSelected(editor.isScopeTabSelected());
                 scopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -58,6 +61,7 @@ public class ImageManufactureOperationController extends ImageViewerController {
                     }
                 });
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -107,9 +111,17 @@ public class ImageManufactureOperationController extends ImageViewerController {
     /*
         events passed from image pane
      */
-    @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
 
+    }
+
+    public void mousePressed(MouseEvent event) {
+    }
+
+    public void mouseDragged(MouseEvent event) {
+    }
+
+    public void mouseReleased(MouseEvent event) {
     }
 
     public void quitPane() {

@@ -18,7 +18,7 @@ import mara.mybox.value.Languages;
 public class ImageManufactureBatchEnhancementController extends BaseImageManufactureBatchController {
 
     @FXML
-    protected ImageManufactureEnhancementOptionsController optionsController;
+    protected ControlImageEnhancementOptions optionsController;
 
     public ImageManufactureBatchEnhancementController() {
         baseTitle = Languages.message("ImageManufactureBatchEnhancement");

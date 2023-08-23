@@ -83,7 +83,6 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
                 }
@@ -139,7 +138,6 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
             }
 
         };

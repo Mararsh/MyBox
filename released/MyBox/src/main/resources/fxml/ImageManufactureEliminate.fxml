@@ -63,32 +63,6 @@
                         <ComboBox fx:id="intensitySelector" editable="true" prefWidth="80.0" />
                     </children>
                 </FlowPane>
-                <FlowPane fx:id="shapePane" hgap="5.0" layoutX="10.0" layoutY="201.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                    <children>
-                        <Label text="%Shape" />
-                        <RadioButton fx:id="shapeCircleRadio" mnemonicParsing="false" selected="true">
-                            <graphic>
-                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconCircle.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <toggleGroup>
-                                <ToggleGroup fx:id="shapeGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="shapeRectangleRadio" mnemonicParsing="false" toggleGroup="$shapeGroup">
-                            <graphic>
-                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconRectangle.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </RadioButton>
-                    </children>
-                </FlowPane>
             </children>
         </VBox>
         <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">

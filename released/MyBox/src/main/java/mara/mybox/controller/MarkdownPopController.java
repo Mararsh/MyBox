@@ -37,7 +37,7 @@ public class MarkdownPopController extends TextPopController {
             textArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    MenuMarkdownEditController.open(myController, textArea, event);
+                    MenuMarkdownEditController.mdMenu(myController, textArea, event);
                 }
             });
 
@@ -49,9 +49,7 @@ public class MarkdownPopController extends TextPopController {
     @FXML
     @Override
     public void editAction() {
-        MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
-        controller.loadContents(textArea.getText());
-        controller.requestMouse();
+        MarkdownEditorController.edit(textArea.getText());
     }
 
     @FXML
@@ -80,8 +78,7 @@ public class MarkdownPopController extends TextPopController {
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(file);
-                MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
-                controller.sourceFileChanged(file);
+                MarkdownEditorController.open(file);
             }
         };
         start(task);

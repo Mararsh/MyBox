@@ -20,10 +20,11 @@ public abstract class BaseImageController extends BaseImageController_Actions {
             super.initControls();
 
             initImageView();
-            initViewControls();
             initMaskPane();
-            clearMask();
             initCheckboxs();
+
+            clearMask();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -48,9 +49,9 @@ public abstract class BaseImageController extends BaseImageController_Actions {
         if (selectAreaCheck != null) {
             selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
             return true;
-        } else if (imageView != null && imageView.getImage() != null) {
+        } else if (canSelect()) {
             UserConfig.setBoolean(baseName + "SelectArea", !UserConfig.getBoolean(baseName + "SelectArea", false));
-            checkSelect();
+            finalRefineView();
             return true;
         } else {
             return false;

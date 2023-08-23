@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorsCustomizeController">
+    <children>
+        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%AddColors" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER" />
+            </children>
+        </HBox>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <RadioButton fx:id="rybRadio" mnemonicParsing="false" selected="true" text="%RYBAngle">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="hueGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton layoutX="10.0" layoutY="14.0" mnemonicParsing="false" text="%Hue" toggleGroup="$hueGroup" />
+                        <Label minWidth="-Infinity" text="%From" />
+                        <TextField fx:id="hueFromInput" prefWidth="100.0" promptText="0~359" text="0" />
+                        <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
+                        <TextField fx:id="hueToInput" prefWidth="100.0" promptText="0~359" text="359" />
+                        <Label layoutX="161.0" layoutY="14.0" minWidth="-Infinity" text="%ValueStep" />
+                        <TextField fx:id="hueStepInput" layoutX="178.0" layoutY="10.0" prefWidth="100.0" text="1" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" spacing="5.0">
+                    <children>
+                        <Label minWidth="-Infinity" text="%Brightness" />
+                        <Label minWidth="-Infinity" text="%From" />
+                        <TextField fx:id="brightnessFromInput" prefWidth="100.0" promptText="1~100" text="100" />
+                        <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
+                        <TextField fx:id="brightnessToInput" prefWidth="100.0" promptText="1~100" text="100" />
+                        <Label minWidth="-Infinity" text="%ValueStep" />
+                        <TextField fx:id="brightnessStepInput" prefWidth="100.0" text="10" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="35.0" spacing="5.0">
+                    <children>
+                        <Label minWidth="-Infinity" text="%Saturation" />
+                        <Label minWidth="-Infinity" text="%From" />
+                        <TextField fx:id="saturationFromInput" prefWidth="100.0" promptText="1~100" text="100" />
+                        <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
+                        <TextField fx:id="saturationToInput" prefWidth="100.0" promptText="1~100" text="100" />
+                        <Label minWidth="-Infinity" text="%ValueStep" />
+                        <TextField fx:id="saturationStepInput" prefWidth="100.0" text="10" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

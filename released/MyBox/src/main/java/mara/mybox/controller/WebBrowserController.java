@@ -110,8 +110,8 @@ public class WebBrowserController extends BaseController {
     }
 
     @FXML
-    public void showFunctionsMenu(Event fevent) {
-        showFunctionsMenu(fevent, initTab, null);
+    public void showFunctionsMenu(Event event) {
+        showFunctionsMenu(event, initTab, null);
     }
 
     public void popFunctionsMenu(Event event, Tab tab, String title) {
@@ -132,13 +132,33 @@ public class WebBrowserController extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
+            int index = tabPane.getTabs().indexOf(tab);
+
+            menu = new MenuItem(message("AddAtRight"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                newTab(true);
+                newTab(index + 1, true);
             });
             items.add(menu);
 
             if (tab != initTab) {
+                menu = new MenuItem(message("AddAtLeft"), StyleTools.getIconImageView("iconAdd.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    newTab(index, true);
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("AddAtEnd"), StyleTools.getIconImageView("iconAdd.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    newTab(-1, true);
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("AddAtHead"), StyleTools.getIconImageView("iconAdd.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    newTab(1, true);
+                });
+                items.add(menu);
+
                 menu = new MenuItem(message("View"), StyleTools.getIconImageView("iconView.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     tabPane.getSelectionModel().select(tab);
@@ -162,8 +182,6 @@ public class WebBrowserController extends BaseController {
                     }
                 });
                 items.add(menu);
-
-                int index = tabPane.getTabs().indexOf(tab);
 
                 if (index > 1) {
                     menu = new MenuItem(message("CloseAllInLeft"), StyleTools.getIconImageView("iconClose.png"));
@@ -198,6 +216,20 @@ public class WebBrowserController extends BaseController {
                 }
             });
             menu.setDisable(tabPane.getTabs().size() < 2);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStarFilled.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebFavoritesController.oneOpen();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("WebHistories"), StyleTools.getIconImageView("iconHistory.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebHistoriesController.oneOpen();
+            });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
@@ -240,14 +272,18 @@ public class WebBrowserController extends BaseController {
         }
     }
 
-    protected WebAddressController newTab(boolean focus) {
+    protected WebAddressController newTab(int index, boolean focus) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(WindowTools.class.getResource(
                     Fxmls.WebAddressFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
             tab.setContent(pane);
-            tabPane.getTabs().add(tab);
+            if (index < 0) {
+                tabPane.getTabs().add(tab);
+            } else {
+                tabPane.getTabs().add(index, tab);
+            }
             if (focus) {
                 getMyStage().setIconified(false);
                 tabPane.getSelectionModel().select(tab);
@@ -275,7 +311,7 @@ public class WebBrowserController extends BaseController {
     }
 
     public WebAddressController loadAddress(String address, boolean focus) {
-        WebAddressController controller = newTab(focus);
+        WebAddressController controller = newTab(-1, focus);
         if (address != null) {
             controller.loadAddress(address);
         }
@@ -283,7 +319,7 @@ public class WebBrowserController extends BaseController {
     }
 
     public WebAddressController loadContents(String contents, boolean focus) {
-        WebAddressController controller = newTab(focus);
+        WebAddressController controller = newTab(-1, focus);
         if (contents != null) {
             controller.loadContents(contents);
         }
@@ -291,7 +327,7 @@ public class WebBrowserController extends BaseController {
     }
 
     public WebAddressController loadContents(String contents, String style, boolean focus) {
-        WebAddressController controller = newTab(focus);
+        WebAddressController controller = newTab(-1, focus);
         if (contents != null) {
             controller.initStyle(style);
             controller.loadContents(contents);
@@ -300,7 +336,7 @@ public class WebBrowserController extends BaseController {
     }
 
     public WebAddressController loadFile(File file) {
-        WebAddressController controller = newTab(true);
+        WebAddressController controller = newTab(-1, true);
         controller.loadFile(file);
         return controller;
     }

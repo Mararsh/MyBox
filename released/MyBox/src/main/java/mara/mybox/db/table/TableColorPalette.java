@@ -178,13 +178,13 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         if (conn == null || color == null) {
             return null;
         }
-        long paletteid = color.getPaletteid();
-        if (paletteid < 0) {
-            return null;
-        }
         try {
             ColorData savedColor = getTableColor().write(conn, color, false);
             if (savedColor == null) {
+                return null;
+            }
+            long paletteid = color.getPaletteid();
+            if (paletteid < 0) {
                 return null;
             }
             boolean ac = conn.getAutoCommit();

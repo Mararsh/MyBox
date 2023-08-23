@@ -52,7 +52,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected Image image, thumbnail, regionImage;
     protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
-    protected Rectangle region;
+    protected DoubleRectangle region;
     protected SingletonTask task;
 
     public ImageInformation() {
@@ -135,7 +135,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public Image loadThumbnail(int thumbWidth) {
         if (region != null) {
-            return readRegion(this, thumbWidth);
+            thumbnail = readRegion(this, thumbWidth);
         }
         if (thumbnail == null || (int) (thumbnail.getWidth()) != thumbWidth) {
             thumbnail = readImage(this, thumbWidth);
@@ -328,9 +328,9 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setWidth(imageWidth);
             imageInfo.setHeight(bufferedImage.getHeight());
             imageInfo.setImageType(bufferedImage.getType());
-            Rectangle region = imageInfo.getRegion();
+            DoubleRectangle region = imageInfo.getRegion();
             if (region != null) {
-                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, new DoubleRectangle(region));
+                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, region);
                 if (task != null && task.isCancelled()) {
                     return null;
                 }
@@ -425,29 +425,29 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         if (imageInfo == null) {
             return null;
         }
-        Rectangle region = imageInfo.getRegion();
+        DoubleRectangle region = imageInfo.getRegion();
         if (region == null) {
             return readImage(imageInfo, requireWidth);
         }
         Image regionImage = imageInfo.getRegionImage();
         try {
             int infoWidth = (int) imageInfo.getWidth();
-            int regionWidth = requireWidth <= 0 ? (int) region.getWidth() : requireWidth;
-            if (regionImage != null && (int) regionImage.getWidth() == regionWidth) {
+            int targetWidth = requireWidth <= 0 ? (int) region.getWidth() : requireWidth;
+            if (regionImage != null && (int) regionImage.getWidth() == targetWidth) {
                 return regionImage;
             }
             regionImage = null;
-            imageInfo.setRequiredWidth(regionWidth);
+            imageInfo.setRequiredWidth(targetWidth);
             Image image = imageInfo.getImage();
             if (image != null && (int) image.getWidth() == infoWidth) {
-                regionImage = CropTools.cropOutsideFx(image, new DoubleRectangle(region));
-                regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, regionWidth);
+                regionImage = CropTools.cropOutsideFx(image, region);
+                regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, targetWidth);
             }
             if (regionImage == null) {
                 Image thumb = imageInfo.getThumbnail();
                 if (thumb != null && (int) thumb.getWidth() == infoWidth) {
-                    regionImage = CropTools.cropOutsideFx(thumb, new DoubleRectangle(region));
-                    regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, regionWidth);
+                    regionImage = CropTools.cropOutsideFx(thumb, region);
+                    regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, targetWidth);
                 }
             }
             if (regionImage == null) {
@@ -456,9 +456,9 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     BufferedImage bufferedImage;
                     String suffix = FileNameTools.suffix(file.getName());
                     if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
-                        bufferedImage = readPDF(imageInfo, regionWidth);
+                        bufferedImage = readPDF(imageInfo, targetWidth);
                     } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
-                        bufferedImage = readPPT(imageInfo, regionWidth);
+                        bufferedImage = readPPT(imageInfo, targetWidth);
                     } else {
                         bufferedImage = ImageFileReaders.readFrame(imageInfo);
                     }
@@ -576,7 +576,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         if (region == null) {
             pixelsString = (int) width + "x" + (int) height;
         } else {
-            pixelsString = message("Region") + " " + (int) region.width + "x" + (int) region.height;
+            pixelsString = message("Region") + " " + (int) region.getWidth() + "x" + (int) region.getHeight();
         }
         return pixelsString;
     }
@@ -600,7 +600,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     }
 
     public ImageInformation setRegion(double x1, double y1, double x2, double y2) {
-        region = new Rectangle((int) x1, (int) y1, Math.abs((int) (x2 - x1)), Math.abs((int) (y2 - y1)));
+        region = DoubleRectangle.xy12(x1, y1, x2, y2);
         regionImage = null;
         return this;
     }
@@ -1483,8 +1483,16 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         this.thumbnailRotation = thumbnailRotation;
     }
 
-    public Rectangle getRegion() {
+    public DoubleRectangle getRegion() {
         return region;
+    }
+
+    public Rectangle getIntRegion() {
+        if (region == null) {
+            return null;
+        }
+        return new Rectangle((int) region.getX(), (int) region.getY(),
+                (int) region.getWidth(), (int) region.getHeight());
     }
 
     public Image getRegionImage() {

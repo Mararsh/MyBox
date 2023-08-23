@@ -239,8 +239,8 @@ public class NodeTools {
 
     public static void setScrollPane(ScrollPane scrollPane, double xOffset, double yOffset) {
         final Bounds visibleBounds = scrollPane.getViewportBounds();
-        double scrollWidth = scrollPane.getContent().getBoundsInParent().getWidth() - visibleBounds.getWidth();
-        double scrollHeight = scrollPane.getContent().getBoundsInParent().getHeight() - visibleBounds.getHeight();
+        double scrollWidth = scrollPane.getContent().getBoundsInLocal().getWidth() - visibleBounds.getWidth();
+        double scrollHeight = scrollPane.getContent().getBoundsInLocal().getHeight() - visibleBounds.getHeight();
 
         scrollPane.setHvalue(scrollPane.getHvalue() + xOffset / scrollWidth);
         scrollPane.setVvalue(scrollPane.getVvalue() + yOffset / scrollHeight);
@@ -279,11 +279,14 @@ public class NodeTools {
     }
 
     public static Image snap(Node node) {
+        return snap(node, dpiScale());
+    }
+
+    public static Image snap(Node node, double scale) {
         try {
             if (node == null) {
                 return null;
             }
-            double scale = dpiScale();
             final SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
             snapPara.setTransform(javafx.scene.transform.Transform.scale(scale, scale));

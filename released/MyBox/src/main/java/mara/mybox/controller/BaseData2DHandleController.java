@@ -383,7 +383,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (ok) {
                     startOperation();
                 }
@@ -587,12 +586,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     @Override
     public boolean keyESC() {
-        close();
-        return false;
-    }
-
-    @Override
-    public boolean keyF6() {
         close();
         return false;
     }

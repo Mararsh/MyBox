@@ -49,10 +49,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean(baseName + "SelectArea", selectAreaCheck.isSelected());
-                        checkSelect();
+                        finalRefineView();
                     }
                 });
-                checkSelect();
+                finalRefineView();
             }
 
             if (pickColorCheck != null) {
@@ -63,6 +63,42 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                         checkPickingColor();
                     }
                 });
+            }
+
+            if (rulerXCheck != null) {
+                rulerXCheck.setSelected(UserConfig.getBoolean("ImageRulerXY", false));
+                rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImageRulerXY", rulerXCheck.isSelected());
+                        drawMaskRulers();
+                    }
+                });
+            }
+            if (gridCheck != null) {
+                gridCheck.setSelected(UserConfig.getBoolean("ImageGridLines", false));
+                gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImageGridLines", gridCheck.isSelected());
+                        drawMaskGrid();
+                    }
+                });
+            }
+
+            if (coordinateCheck != null) {
+                coordinateCheck.setSelected(UserConfig.getBoolean("ImagePopCooridnate", false));
+                coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
+                        checkCoordinate();
+                    }
+                });
+            }
+
+            if (renderController != null) {
+                renderController.setParentController(this);
             }
 
         } catch (Exception e) {
@@ -80,22 +116,13 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 return null;
             }
             if (maskRectangle != null && maskRectangle.isVisible() && maskRectangleData != null) {
-                if ((int) maskRectangleData.getSmallX() == 0
-                        && (int) maskRectangleData.getSmallY() == 0
-                        && (int) maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
-                        && (int) maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+                if ((int) maskRectangleData.getX() == 0
+                        && (int) maskRectangleData.getY() == 0
+                        && (int) maskRectangleData.getMaxX() == (int) inImage.getWidth()
+                        && (int) maskRectangleData.getMaxY() == (int) inImage.getHeight()) {
                     return inImage;
                 }
                 return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
-
-            } else if (maskCircle != null && maskCircle.isVisible() && maskCircle != null) {
-                return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
-
-            } else if (maskEllipse != null && maskEllipse.isVisible() && maskEllipse != null) {
-                return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
-
-            } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygon != null) {
-                return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
 
             } else {
                 return inImage;
@@ -195,17 +222,19 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     public void convertAction() {
-        ImageConverterBatchController controller = (ImageConverterBatchController) openStage(Fxmls.ImageConverterBatchFxml);
         File file = imageFile();
         if (file != null) {
-            controller.tableController.addFile(file);
+            ImageConverterController.open(file);
         }
     }
 
     @FXML
-    public void settings() {
-        SettingsController controller = SettingsController.oneOpen(this);
-        controller.tabPane.getSelectionModel().select(controller.imageTab);
+    public void svgAction() {
+        File file = imageFile();
+        if (file == null) {
+            return;
+        }
+        SvgFromImageController.open(file);
     }
 
     @FXML
@@ -275,7 +304,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView.getImage() == null || maskRectangle == null || !maskRectangle.isVisible()) {
             return;
         }
-        maskRectangleData = new DoubleRectangle(0, 0, imageWidth() - 1, imageHeight() - 1);
+        maskRectangleData = DoubleRectangle.xywh(0, 0, imageWidth(), imageHeight());
         drawMaskRectangle();
     }
 
@@ -308,7 +337,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             } else {
                 if (imageInformation != null && imageInformation.getRegion() != null) {
                     imageController.loadRegion(imageInformation);
-                } else if (imageController instanceof ImageSampleController || imageController instanceof ImageSplitController) {
+                } else if (operateOriginalSize()) {
                     imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
                 } else if (imageInformation != null && imageInformation.isIsScaled()) {
                     imageController.loadImage(imageView.getImage());
@@ -451,6 +480,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     convertAction();
                 });
                 handleMenu.getItems().add(menu);
+
+                menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    svgAction();
+                });
+                handleMenu.getItems().add(menu);
             }
 
             Menu copyMenu = new Menu(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
@@ -510,7 +545,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @Override
     public boolean menuAction() {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-        MenuImageBaseController.open((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
+        MenuImageBaseController.imageMenu((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
         return true;
     }
 
@@ -550,9 +585,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             @Override
             protected void whenSucceeded() {
                 imageView.setImage(newImage);
-                checkSelect();
+                finalRefineView();
                 setImageChanged(true);
-                refinePane();
             }
 
         };

@@ -32,7 +32,7 @@ public class MenuImageScopeController extends MenuImageViewController {
     /*
         static methods
      */
-    public static MenuImageScopeController open(ImageManufactureScopeController scopeController, double x, double y) {
+    public static MenuImageScopeController scopeMenu(ImageManufactureScopeController scopeController, double x, double y) {
         try {
             try {
                 if (scopeController == null) {

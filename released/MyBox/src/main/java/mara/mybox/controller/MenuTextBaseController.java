@@ -16,7 +16,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
 /**
@@ -100,7 +99,7 @@ public class MenuTextBaseController extends MenuController {
         if (parentController == null || node == null) {
             return false;
         }
-        MenuTextEditController.open(parentController, node, initX, initY);
+        MenuTextEditController.textMenu(parentController, node, initX, initY);
         return true;
     }
 
@@ -111,7 +110,7 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindPopController.open(parentController, node, window.getX(), window.getY());
+        FindPopController.findMenu(parentController, node, window.getX(), window.getY());
         window.hide();
     }
 
@@ -122,7 +121,7 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindReplacePopController.open(parentController, node, window.getX(), window.getY());
+        FindReplacePopController.replaceMenu(parentController, node, window.getX(), window.getY());
     }
 
     @FXML
@@ -130,8 +129,7 @@ public class MenuTextBaseController extends MenuController {
         if (textInput == null) {
             return;
         }
-        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textInput.getText());
+        TextEditorController.edit(textInput.getText());
     }
 
     @FXML

@@ -229,11 +229,6 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                 loadInfo();
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                backgroundTask = null;
-            }
         };
         start(backgroundTask);
     }

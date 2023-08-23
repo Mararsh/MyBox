@@ -216,7 +216,7 @@ public class ControlData2DAttributes extends BaseController {
             if (!data2D.isMutiplePages()) {
                 info += message("RowsNumber") + ": " + data2D.tableRowsNumber() + "\n";
             } else {
-                info += message("LinesNumberInFile") + ": " + data2D.getDataSize() + "\n";
+                info += message("RowsNumberInFile") + ": " + data2D.getDataSize() + "\n";
             }
             info += message("ColumnsNumber") + ": " + data2D.columnsNumber() + "\n"
                     + message("CurrentPage") + ": " + StringTools.format(data2D.getCurrentPage() + 1)

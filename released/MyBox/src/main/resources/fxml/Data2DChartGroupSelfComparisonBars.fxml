@@ -382,7 +382,7 @@ License:    Apache License Version 2.0
                                                       <VBox fx:id="otherColumnsBox11" layoutX="10.0" layoutY="178.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                          <children>
                                                             <Label text="%AccordingTo" />
-                                                            <RadioButton fx:id="absoluateRadio" mnemonicParsing="false" selected="true" text="%AbsoluateValue">
+                                                            <RadioButton fx:id="absoluateRadio" mnemonicParsing="false" selected="true" text="%AbsoluteValue">
                                                                <toggleGroup>
                                                                   <ToggleGroup fx:id="compareGroup" />
                                                                </toggleGroup>

@@ -84,18 +84,18 @@ License:    Apache License Version 2.0
                                                 <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
                                             </children>
                                         </HBox>
-                              <FlowPane fx:id="sortPane" hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0" visible="false">
-                                 <children>
-                                    <Label maxWidth="1.7976931348623157E308" text="%Sort" />
-                                    <RadioButton mnemonicParsing="false" selected="true" text="%None">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="sortGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="sortVertivalRadio" mnemonicParsing="false" text="%VerticalAxis" toggleGroup="$sortGroup" />
-                                    <RadioButton fx:id="sortHorizontalRadio" mnemonicParsing="false" text="%HorizontalAxis" toggleGroup="$sortGroup" />
-                                 </children>
-                              </FlowPane>
+                                        <FlowPane fx:id="sortPane" hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0" visible="false">
+                                            <children>
+                                                <Label maxWidth="1.7976931348623157E308" text="%Sort" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%None">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="sortGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="sortVertivalRadio" mnemonicParsing="false" text="%VerticalAxis" toggleGroup="$sortGroup" />
+                                                <RadioButton fx:id="sortHorizontalRadio" mnemonicParsing="false" text="%HorizontalAxis" toggleGroup="$sortGroup" />
+                                            </children>
+                                        </FlowPane>
                                     </children>
                                 </VBox>
                             </content>
@@ -198,8 +198,8 @@ License:    Apache License Version 2.0
                                                 </FlowPane>
                                                 <HBox fx:id="lineWidthBox" alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
-                                                        <Label minWidth="-Infinity" text="%LineWdith" />
-                                                        <ComboBox fx:id="lineWdithSelector" editable="true" prefWidth="100.0" />
+                                                        <Label minWidth="-Infinity" text="%LineWidth" />
+                                                        <ComboBox fx:id="lineWidthSelector" editable="true" prefWidth="100.0" />
                                                         <Label text="px" />
                                                     </children>
                                                 </HBox>
@@ -220,8 +220,8 @@ License:    Apache License Version 2.0
                                                         <RadioButton fx:id="sizeLogarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$sizeCoordinateGroup" />
                                                     </children>
                                                 </FlowPane>
-                                                  <Label minWidth="-Infinity" text="%BubbleStyle" />
-                                    <TextArea fx:id="bubbleStyleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="120.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                <Label minWidth="-Infinity" text="%BubbleStyle" />
+                                                <TextArea fx:id="bubbleStyleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="120.0" wrapText="true" VBox.vgrow="ALWAYS" />
                                                 <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#cssGuide" text="%JavafxCssGuide" wrapText="true" />
                                             </children>
                                         </VBox>

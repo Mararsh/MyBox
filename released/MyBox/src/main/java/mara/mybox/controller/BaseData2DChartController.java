@@ -279,7 +279,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (ok) {
                     outputData();
                 }
@@ -480,7 +479,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                task = null;
                 if (ok) {
                     loadChartData();
                     playController.play(framesNumber);

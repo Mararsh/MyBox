@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                             <children>
                                                                 <Label minHeight="-Infinity" text="%LoadWidth" wrapText="true" />
-                                                                <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                                                <ComboBox fx:id="loadWidthSelector" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
                                                             </children>
                                                         </HBox>
                                                         <VBox fx:id="fileBox" spacing="2.0" VBox.vgrow="NEVER">
@@ -158,7 +158,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="150.0" />
                                                             </children>
                                                         </FlowPane>
-                                          <fx:include fx:id="ruler" source="ControlImageRulerOptions.fxml" />
+                                          <fx:include fx:id="ruler" source="ControlImageOptions.fxml" />
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                                             <children>
                                                                 <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
@@ -260,15 +260,6 @@ License:    Apache License Version 2.0
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/Red/iconGrid.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </CheckBox>
-                                                <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconNumber.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -471,10 +462,33 @@ License:    Apache License Version 2.0
                                                                                           </ImageView>
                                                                                       </graphic>
                                                                                   </Button>
+                                                                              <Label fx:id="promptLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
                                                                             </children>
                                                                         </VBox>
-                                                                        <Label fx:id="promptLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
                                                                         <Label fx:id="sizeLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
+                                                      <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                                         <children>
+                                                                        <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconNumber.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </CheckBox>
+                                                            <CheckBox fx:id="popMenuCheck" mnemonicParsing="false" selected="true">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconPop.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </CheckBox>
+                                                         </children>
+                                                      </FlowPane>
+                                                      <Label text="%SplitImageComments" />
                                                                     </children>
                                                                     <padding>
                                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

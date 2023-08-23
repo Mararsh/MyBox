@@ -6,11 +6,15 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -23,7 +27,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.IntTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -55,7 +62,7 @@ public class ImageSplitController extends BaseImagesListController {
     protected TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
             widthInput, heightInput;
     @FXML
-    protected CheckBox displaySizeCheck;
+    protected CheckBox displaySizeCheck, popMenuCheck;
     @FXML
     protected VBox splitOptionsBox, splitCustomizeBox;
     @FXML
@@ -71,7 +78,6 @@ public class ImageSplitController extends BaseImagesListController {
         try {
             super.initValues();
 
-            operateOriginalSize = true;
             splitValid = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
@@ -86,10 +92,20 @@ public class ImageSplitController extends BaseImagesListController {
 
             rightPane.disableProperty().bind(imageView.imageProperty().isNull());
 
+            displaySizeCheck.setSelected(UserConfig.getBoolean(baseName + "DisplaySize", true));
             displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    UserConfig.setBoolean(baseName + "DisplaySize", displaySizeCheck.isSelected());
                     indicateSplit();
+                }
+            });
+
+            popMenuCheck.setSelected(UserConfig.getBoolean(baseName + "PopMenu", true));
+            popMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "PopMenu", popMenuCheck.isSelected());
                 }
             });
 
@@ -141,8 +157,8 @@ public class ImageSplitController extends BaseImagesListController {
 
             } else if (customizeRadio.isSelected()) {
                 splitMethod = SplitMethod.Customize;
-                splitOptionsBox.getChildren().addAll(splitCustomizeBox, goButton);
-                promptLabel.setText(message("SplitCustomComments"));
+                splitOptionsBox.getChildren().addAll(splitCustomizeBox, goButton, promptLabel);
+                promptLabel.setText(message("SplitImageCustom"));
 
             } else if (numbersRadio.isSelected()) {
                 splitMethod = SplitMethod.ByNumber;
@@ -153,8 +169,8 @@ public class ImageSplitController extends BaseImagesListController {
 
             } else if (sizeRadio.isSelected()) {
                 splitMethod = SplitMethod.BySize;
-                splitOptionsBox.getChildren().addAll(splitSizePane, goButton);
-                promptLabel.setText(message("SplitSizeComments"));
+                splitOptionsBox.getChildren().addAll(splitSizePane, goButton, promptLabel);
+                promptLabel.setText(message("SplitImageSize"));
                 widthInput.setText((int) (imageWidth() / (widthRatio() * 3)) + "");
                 heightInput.setText((int) (imageHeight() / (heightRatio() * 3)) + "");
 
@@ -505,7 +521,6 @@ public class ImageSplitController extends BaseImagesListController {
                 if (node != null && node.getId() != null
                         && node.getId().startsWith("SplitLines")) {
                     maskPane.getChildren().remove(node);
-                    node = null;
                 }
             }
             imageView.setImage(image);
@@ -525,59 +540,47 @@ public class ImageSplitController extends BaseImagesListController {
                 splitValid.set(false);
                 return;
             }
+            IntTools.sortList(rows);
+            IntTools.sortList(cols);
             Color strokeColor = strokeColor();
             double strokeWidth = strokeWidth();
             double w = viewWidth();
             double h = viewHeight();
-            double ratiox = w / imageWidth();
-            double ratioy = h / imageHeight();
+            double ratiox = viewXRatio() * widthRatio();
+            double ratioy = viewXRatio() * heightRatio();
             for (int i = 0; i < rows.size(); ++i) {
-                double row = rows.get(i) * ratioy * heightRatio();
+                double row = rows.get(i) * ratioy;
                 if (row <= 0 || row >= h - 1) {
                     continue;
                 }
                 Line line = new Line(0, row, w, row);
-                line.setId("SplitLinesRows" + i);
-                line.setStroke(strokeColor);
-                line.setStrokeWidth(strokeWidth);
-                line.getStrokeDashArray().clear();
-                line.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
-                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
-                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
-                maskPane.getChildren().add(line);
+                addLine(i, line, false, ratioy, strokeColor, strokeWidth);
             }
             for (int i = 0; i < cols.size(); ++i) {
-                double col = cols.get(i) * ratiox * widthRatio();
+                double col = cols.get(i) * ratiox;
                 if (col <= 0 || col >= w - 1) {
                     continue;
                 }
                 Line line = new Line(col, 0, col, h);
-                line.setId("SplitLinesCols" + i);
-                line.setStroke(strokeColor);
-                line.setStrokeWidth(strokeWidth);
-                line.getStrokeDashArray().clear();
-                line.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
-                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
-                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
-                maskPane.getChildren().add(line);
+                addLine(i, line, true, ratiox, strokeColor, strokeWidth);
             }
 
             if (displaySizeCheck.isSelected()) {
                 String style = " -fx-font-size: 1.2em; ";
-                IntTools.sortList(rows);
-                IntTools.sortList(cols);
                 for (int i = 0; i < rows.size() - 1; ++i) {
-                    double row = rows.get(i) * ratioy * heightRatio();
+                    double row = rows.get(i) * ratioy;
                     int hv = rows.get(i + 1) - rows.get(i);
                     for (int j = 0; j < cols.size() - 1; ++j) {
-                        double col = cols.get(j) * ratiox * widthRatio();
+                        double col = cols.get(j) * ratiox;
                         int wv = cols.get(j + 1) - cols.get(j);
                         Text text = new Text(wv + "x" + hv);
                         text.setStyle(style);
                         text.setFill(strokeColor);
-                        text.setLayoutX(imageView.getLayoutX() + col + 2);
-                        text.setLayoutY(imageView.getLayoutY() + row + 20);
                         text.setId("SplitLinesText" + i + "x" + j);
+                        text.setLayoutX(imageView.getLayoutX());
+                        text.setLayoutY(imageView.getLayoutY());
+                        text.setX(col + 10);
+                        text.setY(row + 10);
                         maskPane.getChildren().add(text);
                     }
                 }
@@ -585,14 +588,6 @@ public class ImageSplitController extends BaseImagesListController {
 
             String comments = message("SplittedNumber") + ": "
                     + (cols.size() - 1) * (rows.size() - 1);
-            if (splitMethod == SplitMethod.ByNumber) {
-                comments += "  " + message("EachSplittedImageActualSize") + ": "
-                        + operationWidth() / (cols.size() - 1)
-                        + " x " + operationHeight() / (rows.size() - 1);
-
-            } else {
-                comments += "  " + message("EachSplittedImageActualSizeComments");
-            }
             sizeLabel.setText(comments);
             splitValid.set(true);
 
@@ -601,6 +596,177 @@ public class ImageSplitController extends BaseImagesListController {
             splitValid.set(false);
         }
         makeList();
+    }
+
+    protected void addLine(int index, Line line, boolean isCol,
+            double ratio, Color strokeColor, double strokeWidth) {
+        if (isCol) {
+            line.setId("SplitLinesCols" + index);
+        } else {
+            line.setId("SplitLinesRows" + index);
+        }
+        line.setStroke(strokeColor);
+        line.setStrokeWidth(strokeWidth);
+        line.getStrokeDashArray().clear();
+        line.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
+        line.setLayoutX(imageView.getLayoutX());
+        line.setLayoutY(imageView.getLayoutY());
+        maskPane.getChildren().add(line);
+        line.setCursor(Cursor.MOVE);
+        line.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                controlPressed(event);
+            }
+        });
+        line.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
+            }
+        });
+        line.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                scrollPane.setPannable(true);
+                double offsetX = imageOffsetX(event);
+                double offsetY = imageOffsetY(event);
+                if (!DoubleShape.changed(offsetX, offsetY)) {
+                    return;
+                }
+                if (isCol) {
+                    double x = event.getX();
+                    line.setStartX(x);
+                    line.setEndX(x);
+                    cols.set(index, (int) (x / ratio));
+                } else {
+                    double y = event.getY();
+                    line.setStartY(y);
+                    line.setEndY(y);
+                    rows.set(index, (int) (y / ratio));
+                }
+                lineChanged();
+            }
+        });
+        line.hoverProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (newValue && popMenuCheck.isSelected()) {
+                    popNodeMenu(line, lineMenu(line, index, isCol, ratio));
+                }
+            }
+        });
+
+    }
+
+    protected List<MenuItem> lineMenu(Line line, int index, boolean isCol, double ratio) {
+        try {
+            if (line == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            int currentValue;
+            String name, type;
+            if (isCol) {
+                name = message("Column");
+                type = "x";
+                currentValue = cols.get(index);
+            } else {
+                name = message("Row");
+                type = "y";
+                currentValue = rows.get(index);
+            }
+
+            menu = new MenuItem(name + " " + index + "\n" + type + ": " + currentValue);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("MoveTo"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                String value = PopTools.askValue(baseTitle, name, type, currentValue + "");
+                if (value == null || value.isBlank()) {
+                    return;
+                }
+                try {
+                    int iv = Integer.parseInt(value);
+                    double vv = iv * ratio;
+                    if (isCol) {
+                        line.setStartX(vv);
+                        line.setEndX(vv);
+                        cols.set(index, iv);
+                    } else {
+                        line.setStartY(vv);
+                        line.setEndY(vv);
+                        rows.set(index, iv);
+                    }
+                    lineChanged();
+                } catch (Exception e) {
+                    popError(message("InvalidValue"));
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                if (isCol) {
+                    cols.remove(index);
+                } else {
+                    rows.remove(index);
+                }
+                lineChanged();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    protected void lineChanged() {
+        try {
+            customizeRadio.setSelected(true);
+
+            String s = "";
+            for (int col : cols) {
+                if (col <= 0 || col >= operationWidth()) {
+                    continue;
+                }
+                if (s.isEmpty()) {
+                    s += col;
+                } else {
+                    s += "," + col;
+
+                }
+            }
+            customizedColsInput.setText(s);
+
+            s = "";
+            for (int row : rows) {
+                if (row <= 0 || row >= operationHeight()) {
+                    continue;
+                }
+                if (s.isEmpty()) {
+                    s += row;
+                } else {
+                    s += "," + row;
+
+                }
+            }
+            customizedRowsInput.setText(s);
+
+            indicateSplit();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public synchronized void makeList() {
@@ -638,40 +804,66 @@ public class ImageSplitController extends BaseImagesListController {
 
     @Override
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        if (image == null || splitMethod != SplitMethod.Customize) {
+        if (image == null || splitMethod != SplitMethod.Customize
+                || event.getButton() != MouseButton.SECONDARY) {
             return;
         }
-//        imageView.setCursor(Cursor.OPEN_HAND);
-        promptLabel.setText(message("SplitCustomComments"));
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+            double px = scale(p.getX());
+            double py = scale(p.getY());
+            menu = new MenuItem(message("Point") + ": " + px + ", " + py);
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
-        if (event.getButton() == MouseButton.PRIMARY) {
+            menu = new MenuItem(message("AddRowAtPoint"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    int y = (int) Math.round(p.getY() / heightRatio());
+                    String str = customizedRowsInput.getText().trim();
+                    if (str.isEmpty()) {
+                        customizedRowsInput.setText(y + "");
+                    } else {
+                        customizedRowsInput.setText(str + "," + y);
+                    }
+                    pickCustomize();
+                }
+            });
+            items.add(menu);
 
-            int y = (int) Math.round(p.getY() / heightRatio());
-            String str = customizedRowsInput.getText().trim();
-            if (str.isEmpty()) {
-                customizedRowsInput.setText(y + "");
-            } else {
-                customizedRowsInput.setText(str + "," + y);
-            }
+            menu = new MenuItem(message("AddColAtPoint"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    int x = (int) Math.round(p.getX() / widthRatio());
+                    String str = customizedColsInput.getText().trim();
+                    if (str.isEmpty()) {
+                        customizedColsInput.setText(x + "");
+                    } else {
+                        customizedColsInput.setText(str + "," + x);
+                    }
+                    pickCustomize();
+                }
+            });
+            items.add(menu);
 
-            pickCustomize();
+            items.add(new SeparatorMenuItem());
 
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-            int x = (int) Math.round(p.getX() / widthRatio());
-            String str = customizedColsInput.getText().trim();
-            if (str.isEmpty()) {
-                customizedColsInput.setText(x + "");
-            } else {
-                customizedColsInput.setText(str + "," + x);
-            }
-            pickCustomize();
+            popEventMenu(event, items);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
     @Override
-    public void redrawMaskShapes() {
-        super.redrawMaskShapes();
+    public boolean redrawMaskShape() {
+        super.redrawMaskShape();
         indicateSplit();
+        return true;
     }
 
     @Override

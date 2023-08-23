@@ -455,9 +455,7 @@ public class ImageManufactureHistory extends BaseTablePagesController<ImageEditH
                         DateTools.datetimeToString(his.getOperationTime()) + " " + his.getDesc());
                 popInformation(info);
                 imageController.updateImage(hisImage, message("History"));
-                tableData.remove(index);
-                tableData.add(0, his);
-                setHistoryIndex(0);
+                setHistoryIndex(index);
                 tableView.scrollTo(his);
             }
 

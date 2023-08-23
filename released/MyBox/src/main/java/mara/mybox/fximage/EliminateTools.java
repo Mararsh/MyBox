@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageMosaic;
-import mara.mybox.data.DoubleLines;
+import mara.mybox.data.DoublePolylines;
 
 /**
  * @Author Mara
@@ -13,7 +13,7 @@ import mara.mybox.data.DoubleLines;
  */
 public class EliminateTools {
 
-    public static Image drawErase(Image image, DoubleLines penData, int strokeWidth) {
+    public static Image drawErase(Image image, DoublePolylines penData, int strokeWidth) {
         if (penData == null) {
             return image;
         }
@@ -23,13 +23,14 @@ public class EliminateTools {
         return newImage;
     }
 
-    public static Image drawMosaic(Image image, DoubleLines penData,
-            ImageMosaic.MosaicType mosaicType, int strokeWidth) {
+    public static Image drawMosaic(Image image, DoublePolylines penData,
+            ImageMosaic.MosaicType mosaicType, int strokeWidth, int intensity) {
         if (penData == null || mosaicType == null || strokeWidth < 1) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.EliminateTools.drawMosaic(source, penData, mosaicType, strokeWidth);
+        BufferedImage target = mara.mybox.bufferedimage.EliminateTools.drawMosaic(
+                source, penData, mosaicType, strokeWidth, intensity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

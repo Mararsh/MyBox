@@ -1,6 +1,12 @@
 package mara.mybox.data;
 
-import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
+import static mara.mybox.tools.DoubleTools.imageScale;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -9,101 +15,179 @@ import java.awt.Rectangle;
  */
 public class DoubleRectangle implements DoubleShape {
 
-    protected double smallX, smallY, bigX, bigY, width, height;
-    protected double maxX, maxY;
+    protected double x, y, width, height, round;
 
     public DoubleRectangle() {
-        maxX = Integer.MAX_VALUE;
-        maxY = Integer.MAX_VALUE;
     }
 
-    public DoubleRectangle(Rectangle rectangle) {
-        maxX = Integer.MAX_VALUE;
-        maxY = Integer.MAX_VALUE;
-        smallX = rectangle.getX();
-        smallY = rectangle.getY();
-        width = rectangle.getWidth();
-        height = rectangle.getHeight();
-        bigX = rectangle.getX() + width - 1;
-        bigY = rectangle.getY() + height - 1;
+    public static DoubleRectangle xywh(double x, double y, double width, double height) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(x);
+        rect.setY(y);
+        rect.setWidth(width);
+        rect.setHeight(height);
+        return rect;
     }
 
-    public DoubleRectangle(double x1, double y1, double x2, double y2) {
-        this(Integer.MAX_VALUE, Integer.MAX_VALUE, x1, y1, x2, y2);
+    public static DoubleRectangle xy12(double x1, double y1, double x2, double y2) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(Math.min(x1, x2));
+        rect.setY(Math.min(y1, y2));
+        rect.setWidth(Math.abs(x2 - x1));
+        rect.setHeight(Math.abs(y2 - y1));
+        return rect;
     }
 
-    public DoubleRectangle(double maxX, double maxY, double x1, double y1, double x2, double y2) {
-        this.maxX = maxX;
-        this.maxY = maxY;
-        smallX = x1;
-        smallY = y1;
-        bigX = x2;
-        bigY = y2;
-        width = getWidth();
-        height = getHeight();
+    public static DoubleRectangle rect(Rectangle2D.Double rect2D) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(rect2D.getX());
+        rect.setY(rect2D.getY());
+        rect.setWidth(rect2D.getWidth());
+        rect.setHeight(rect2D.getHeight());
+        return rect;
+    }
+
+    public static DoubleRectangle image(Image image) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(0);
+        rect.setY(0);
+        rect.setWidth(image.getWidth());
+        rect.setHeight(image.getHeight());
+        return rect;
+    }
+
+    public static DoubleRectangle image(BufferedImage image) {
+        DoubleRectangle rect = new DoubleRectangle();
+        rect.setX(0);
+        rect.setY(0);
+        rect.setWidth(image.getWidth());
+        rect.setHeight(image.getHeight());
+        return rect;
     }
 
     @Override
-    public DoubleRectangle cloneValues() {
-        return new DoubleRectangle(maxX, maxY, smallX, smallY, bigX, bigY);
+    public String name() {
+        return message("Rectangle");
+    }
+
+    @Override
+    public Shape getShape() {
+        if (round > 0) {
+            return new RoundRectangle2D.Double(x, y, width, height, round, round);
+        } else {
+            return new Rectangle2D.Double(x, y, width, height);
+        }
+    }
+
+    @Override
+    public DoubleRectangle copy() {
+        return DoubleRectangle.xywh(x, y, width, height);
     }
 
     @Override
     public boolean isValid() {
-        return isValid(maxX, maxY);
+        return true;
     }
 
-    public boolean isValid(double maxX, double maxY) {
-        return bigX > smallX && bigY > smallY
-                && bigX < maxX && bigY < maxY;
+    @Override
+    public boolean isEmpty() {
+        return !isValid() || width <= 0 || height <= 0;
+    }
+
+    public boolean contains(double px, double py) {
+        return px >= x && px < x + width && py >= y && py < y + height;
+    }
+
+    @Override
+    public boolean translateRel(double offsetX, double offsetY) {
+        x += offsetX;
+        y += offsetY;
+        return true;
+    }
+
+    @Override
+    public boolean scale(double scaleX, double scaleY) {
+        width *= scaleX;
+        height *= scaleY;
+        return true;
+    }
+
+    @Override
+    public String pathAbs() {
+        double sx = imageScale(x);
+        double sy = imageScale(y);
+        double sw = imageScale(x + width);
+        double sh = imageScale(y + height);
+        return "M " + sx + "," + sy + " \n"
+                + "H " + sw + " \n"
+                + "V " + sh + " \n"
+                + "H " + sx + " \n"
+                + "V " + sy;
+    }
+
+    @Override
+    public String pathRel() {
+        double sx = imageScale(x);
+        double sy = imageScale(y);
+        double sw = imageScale(width);
+        double sh = imageScale(height);
+        return "m " + sx + "," + sy + " \n"
+                + "h " + sw + " \n"
+                + "v " + sh + " \n"
+                + "h " + (-sw) + " \n"
+                + "v " + (-sh);
+    }
+
+    @Override
+    public String elementAbs() {
+        return "<rect x=\"" + imageScale(x) + "\""
+                + " y=\"" + imageScale(y) + "\""
+                + " width=\"" + imageScale(width) + "\""
+                + " height=\"" + imageScale(height) + "\"> ";
+    }
+
+    @Override
+    public String elementRel() {
+        return elementAbs();
     }
 
     public boolean same(DoubleRectangle rect) {
         return rect != null
-                && smallX == rect.getSmallX() && smallY == rect.getSmallY()
-                && bigX == rect.getBigX() && bigY == rect.getBigY();
+                && x == rect.getX() && y == rect.getY()
+                && width == rect.getWidth() && height == rect.getHeight();
     }
 
-    @Override
-    public boolean contains(double x, double y) {
-        return x >= smallX && y >= smallY && x <= bigX && y <= bigY;
+    // exclude maxX and maxY
+    public double getMaxX() {
+        return x + width;
     }
 
-    @Override
-    public DoublePoint getCenter() {
-        return new DoublePoint((bigX + smallX) / 2, (bigY + smallY) / 2);
+    public double getMaxY() {
+        return y + height;
     }
 
-    @Override
-    public DoubleRectangle move(double offset) {
-        return move(offset, offset);
+    public void setMaxX(double maxX) {
+        width = Math.abs(maxX - x);
     }
 
-    @Override
-    public DoubleRectangle move(double offsetX, double offsetY) {
-        DoubleRectangle nRectangle = new DoubleRectangle(
-                smallX + offsetX, smallY + offsetY,
-                bigX + offsetX, bigY + offsetY);
-        return nRectangle;
+    public void setMaxY(double maxY) {
+        height = Math.abs(maxY - y);
     }
 
-    @Override
-    public DoubleRectangle moveTo(double x, double y) {
-        DoubleShape moved = DoubleShape.moveTo(this, x, y);
-        return moved != null ? (DoubleRectangle) moved : null;
+    public void changeX(double nx) {
+        width = width + x - nx;
+        x = nx;
     }
 
-    @Override
-    public DoubleRectangle getBound() {
-        return this;
+    public void changeY(double ny) {
+        height = height + y - ny;
+        y = ny;
     }
 
-    public Rectangle rectangle() {
-        return new Rectangle((int) smallX, (int) smallY, (int) getWidth(), (int) getHeight());
-    }
-
+    /*
+        get
+     */
     public final double getWidth() {
-        width = Math.abs(bigX - smallX) + 1;
         return width;
     }
 
@@ -112,7 +196,6 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public final double getHeight() {
-        height = Math.abs(bigY - smallY) + 1;
         return height;
     }
 
@@ -120,52 +203,28 @@ public class DoubleRectangle implements DoubleShape {
         this.height = height;
     }
 
-    public double getSmallX() {
-        return smallX;
+    public double getX() {
+        return x;
     }
 
-    public void setSmallX(double smallX) {
-        this.smallX = smallX;
+    public void setX(double x) {
+        this.x = x;
     }
 
-    public double getSmallY() {
-        return smallY;
+    public double getY() {
+        return y;
     }
 
-    public void setSmallY(double smallY) {
-        this.smallY = smallY;
+    public void setY(double y) {
+        this.y = y;
     }
 
-    public double getBigX() {
-        return bigX;
+    public double getRound() {
+        return round;
     }
 
-    public void setBigX(double bigX) {
-        this.bigX = bigX;
-    }
-
-    public double getBigY() {
-        return bigY;
-    }
-
-    public void setBigY(double bigY) {
-        this.bigY = bigY;
-    }
-
-    public double getMaxX() {
-        return maxX;
-    }
-
-    public void setMaxX(double maxX) {
-        this.maxX = maxX;
-    }
-
-    public double getMaxY() {
-        return maxY;
-    }
-
-    public void setMaxY(double maxY) {
-        this.maxY = maxY;
+    public void setRound(double round) {
+        this.round = round;
     }
 
 }

@@ -3,10 +3,12 @@ package mara.mybox.bufferedimage;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import javafx.scene.shape.Line;
-import mara.mybox.data.DoubleLines;
+import mara.mybox.data.DoublePolylines;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 
@@ -17,9 +19,9 @@ import mara.mybox.value.AppVariables;
  */
 public class EliminateTools {
 
-    public static BufferedImage drawErase(BufferedImage srcImage, DoubleLines linesData, int strokeWidth) {
+    public static BufferedImage drawErase(BufferedImage srcImage, DoublePolylines linesData, int strokeWidth) {
         try {
-            if (linesData == null || linesData.getPointsSize() == 0 || strokeWidth < 1) {
+            if (linesData == null || linesData.getLinesSize() == 0 || strokeWidth < 1) {
                 return srcImage;
             }
             int width = srcImage.getWidth();
@@ -33,7 +35,7 @@ public class EliminateTools {
             linesg.setBackground(Color.WHITE);
             linesg.setColor(Color.BLACK);
             linesg.setStroke(new BasicStroke(strokeWidth));
-            for (Line line : linesData.lines()) {
+            for (Line line : linesData.getLineList()) {
                 int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
                 int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
                 int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));
@@ -59,10 +61,11 @@ public class EliminateTools {
         }
     }
 
-    public static BufferedImage drawMosaic(BufferedImage source, DoubleLines linesData,
-            ImageMosaic.MosaicType mosaicType, int strokeWidth) {
+    public static BufferedImage drawMosaic(BufferedImage source, DoublePolylines linesData,
+            ImageMosaic.MosaicType mosaicType, int strokeWidth, int intensity) {
         try {
-            if (linesData == null || mosaicType == null || linesData.getPointsSize() == 0 || strokeWidth < 1) {
+            if (linesData == null || mosaicType == null || linesData.getLinesSize() == 0
+                    || strokeWidth < 1 || intensity < 1) {
                 return source;
             }
             int width = source.getWidth();
@@ -75,43 +78,28 @@ public class EliminateTools {
             }
             gt.drawImage(source, 0, 0, width, height, null);
             gt.dispose();
-            int pixel;
-            for (Line line : linesData.lines()) {
+            int pixel, w = strokeWidth / 2;
+            for (Line line : linesData.getLineList()) {
                 int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
                 int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
                 int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));
                 int y2 = Math.min(height, Math.max(0, (int) line.getEndY()));
-                if (x1 == x2) {
-                    if (y2 > y1) {
-                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
-                            for (int y = y1; y <= y2; y++) {
-                                pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
-                                target.setRGB(x, y, pixel);
-                            }
-                        }
-                    } else {
-                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
-                            for (int y = y2; y <= y1; y++) {
-                                pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
-                                target.setRGB(x, y, pixel);
-                            }
-                        }
-                    }
-                } else if (x2 > x1) {
-                    for (int x = x1; x <= x2; x++) {
-                        int y0 = (x - x1) * (y2 - y1) / (x2 - x1) + y1;
-                        int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
-                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
-                            pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
-                            target.setRGB(x, y, pixel);
-                        }
-                    }
-                } else {
-                    for (int x = x2; x <= x1; x++) {
-                        int y0 = (x - x2) * (y1 - y2) / (x1 - x2) + y2;
-                        int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
-                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
-                            pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
+                Polygon polygon = new Polygon();
+                polygon.addPoint(x1 - w, y1);
+                polygon.addPoint(x1, y1 - w);
+                polygon.addPoint(x1 + w, y1);
+                polygon.addPoint(x2 - w, y2);
+                polygon.addPoint(x2, y2 + w);
+                polygon.addPoint(x2 + w, y2);
+                Rectangle rect = polygon.getBounds();
+                int bx = (int) rect.getX();
+                int by = (int) rect.getY();
+                int bw = (int) rect.getWidth();
+                int bh = (int) rect.getHeight();
+                for (int x = bx; x < bx + bw; x++) {
+                    for (int y = by; y < by + bh; y++) {
+                        if (polygon.contains(x, y)) {
+                            pixel = mosaic(source, width, height, x, y, mosaicType, intensity);
                             target.setRGB(x, y, pixel);
                         }
                     }

@@ -54,7 +54,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected CheckBox allRowsCheck, lostFocusCommitCheck;
     @FXML
     protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton,
-            copyItemsButton, deleteItemsButton, clearItemsButton;
+            copyItemsButton, deleteItemsButton, clearItemsButton, insertItemButton;
 
     @FXML
     protected Label dataSizeLabel, selectedLabel;
@@ -123,8 +123,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             tableView.setItems(tableData);
-            tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
-                tableChanged();
+            tableData.addListener(new ListChangeListener<P>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends P> c) {
+                    tableChanged();
+                    checkSelected();
+                }
             });
 
             if (lostFocusCommitCheck != null) {
@@ -204,7 +208,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void tableChanged(boolean changed) {
-        if (isSettingValues) {
+        if (isSettingValues || isSettingTable) {
             return;
         }
         updateStatus();
@@ -327,6 +331,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (deleteItemsButton != null) {
             deleteItemsButton.setDisable(none);
         }
+        if (insertItemButton != null) {
+            insertItemButton.setDisable(none);
+        }
         if (clearButton != null) {
             clearButton.setDisable(isEmpty);
         }
@@ -384,7 +391,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @Override
     public void deleteAction() {
         try {
-            List<P> selected = tableView.getSelectionModel().getSelectedItems();
+            List<P> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;
@@ -402,6 +409,14 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return;
         }
         tableData.clear();
+    }
+
+    @FXML
+    public void removeLastItem() {
+        if (tableData.isEmpty()) {
+            return;
+        }
+        tableData.remove(tableData.size() - 1);
     }
 
     @FXML

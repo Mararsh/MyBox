@@ -695,6 +695,10 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         if (leftPaneControl != null) {
             controlLeftPane();
             return true;
+
+        } else if (leftPaneCheck != null) {
+            leftPaneCheck.setSelected(!leftPaneCheck.isSelected());
+            return true;
         }
         return false;
     }
@@ -703,14 +707,16 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         if (rightPaneControl != null) {
             controlRightPane();
             return true;
+
+        } else if (rightPaneCheck != null) {
+            rightPaneCheck.setSelected(!rightPaneCheck.isSelected());
+            return true;
         }
         return false;
     }
 
     public boolean keyF6() {
-        WindowTools.closeAllPopup();
-        MenuController.closeAll();
-        return true;
+        return keyESC();
     }
 
     public boolean keyF7() {

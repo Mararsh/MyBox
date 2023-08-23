@@ -620,7 +620,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         double offsetY = imageOffsetY(event);
         if (DoubleShape.translateRel(shapeData, offsetX, offsetY)) {
             maskShapeDataChanged();
-            event.consume();
             maskControlDragged = true;
         } else {
             maskControlDragged = false;

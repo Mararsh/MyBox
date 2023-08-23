@@ -32,6 +32,7 @@ import org.w3c.dom.Node;
  */
 public class ControlSvgOptions extends BaseController {
 
+    protected ControlSvgShape svgShapeControl;
     protected Document doc;
     protected Node focusedNode;
     protected float width, height, bgOpacity;
@@ -132,22 +133,28 @@ public class ControlSvgOptions extends BaseController {
             focusedNode = focus;
             SVG svg = new SVG(doc);
             width = svg.getWidth();
+            height = svg.getHeight();
+            viewBox = svg.getViewBox();
+            if (viewBox != null) {
+                viewBoxInput.setText(SvgTools.viewBoxString(viewBox));
+                if (width <= 0) {
+                    width = (float) viewBox.getWidth();
+                }
+                if (height <= 0) {
+                    height = (float) viewBox.getHeight();
+                }
+            } else {
+                viewBoxInput.clear();
+            }
             if (width > 0) {
                 widthInput.setText(width + "");
             } else {
                 widthInput.clear();
             }
-            height = svg.getHeight();
             if (height > 0) {
                 heightInput.setText(height + "");
             } else {
                 heightInput.clear();
-            }
-            viewBox = svg.getViewBox();
-            if (viewBox != null) {
-                viewBoxInput.setText(SvgTools.viewBoxString(viewBox));
-            } else {
-                viewBoxInput.clear();
             }
             sizeChanged();
         } catch (Exception e) {

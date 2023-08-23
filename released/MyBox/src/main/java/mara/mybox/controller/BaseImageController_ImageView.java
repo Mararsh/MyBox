@@ -5,7 +5,9 @@ import java.util.Arrays;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -21,7 +23,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
@@ -47,7 +48,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     protected Image image;
     protected ImageAttributes attributes;
     protected final SimpleBooleanProperty loadNotify;
-    protected boolean imageChanged, isPickingColor, operateOriginalSize;
+    protected boolean imageChanged, isPickingColor;
     protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, // 0-based
             sizeChangeAware, zoomStep, xZoomStep, yZoomStep;
     protected LoadingController loadingController;
@@ -67,7 +68,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     @FXML
     protected Text sizeText, xyText;
     @FXML
-    protected Label imageLabel, imageInfoLabel;
+    protected Label imageLabel, imageInfoLabel, infoLabel;
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
@@ -75,7 +76,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck,
             selectAreaCheck;
     @FXML
-    protected ComboBox<String> zoomStepSelector, loadWidthBox;
+    protected ComboBox<String> zoomStepSelector, loadWidthSelector;
     @FXML
     protected ControlImageRender renderController;
 
@@ -89,7 +90,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         try {
             super.initValues();
 
-            isPickingColor = imageChanged = operateOriginalSize = false;
+            isPickingColor = imageChanged = false;
             loadWidth = defaultLoadWidth = -1;
             frameIndex = framesNumber = 0;
             sizeChangeAware = 1;
@@ -138,8 +139,8 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             if (pickColorCheck != null) {
                 NodeStyleTools.setTooltip(pickColorCheck, new Tooltip(message("PickColor") + "\nCTRL+k"));
             }
-            if (loadWidthBox != null) {
-                NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(message("ImageLoadWidthCommnets")));
+            if (loadWidthSelector != null) {
+                NodeStyleTools.setTooltip(loadWidthSelector, new Tooltip(message("ImageLoadWidthCommnets")));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -326,7 +327,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
                 loadInfo = message("LoadedSize") + ":"
                         + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "\n"
                         + message("DisplayedSize") + ":"
-                        + (int) imageView.getBoundsInLocal().getWidth() + "x" + (int) imageView.getBoundsInLocal().getHeight();
+                        + (int) imageView.getBoundsInParent().getWidth() + "x" + (int) imageView.getBoundsInParent().getHeight();
             }
             String more = moreDisplayInfo();
             loadInfo += (!loadInfo.isBlank() && !more.isBlank() ? "\n" : "") + more;
@@ -413,8 +414,13 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         return imageView.getBoundsInParent().getHeight();
     }
 
+    protected boolean operateOriginalSize() {
+        return (this instanceof ImageSplitController)
+                || (this instanceof ImageSampleController);
+    }
+
     public double widthRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
+        if (!operateOriginalSize() || imageInformation == null || image == null) {
             return 1;
         }
         double ratio = imageWidth() / imageInformation.getWidth();
@@ -422,7 +428,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     }
 
     public double heightRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
+        if (!operateOriginalSize() || imageInformation == null || image == null) {
             return 1;
         }
         double ratio = imageHeight() / imageInformation.getHeight();
@@ -535,42 +541,15 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageBaseController.open((BaseImageController) this, x, y);
+        MenuImageBaseController.imageMenu((BaseImageController) this, x, y);
     }
 
-    /*
-        pick color
-     */
-    protected void checkPickingColor() {
-        if (isPickingColor) {
-            startPickingColor();
-        } else {
-            stopPickingColor();
+    protected void popImageMenu(Event event) {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
         }
-    }
-
-    protected void startPickingColor() {
-        if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = ColorsPickingController.oneOpen(this);
-        }
-    }
-
-    protected void stopPickingColor() {
-        if (paletteController != null) {
-            paletteController.closeStage();
-            paletteController = null;
-        }
-    }
-
-    protected Color pickColor(DoublePoint p, ImageView view) {
-        Color color = ImageViewTools.imagePixel(p, view);
-        if (color != null) {
-            startPickingColor();
-            if (paletteController != null && paletteController.getMyStage().isShowing()) {
-                paletteController.pickColor(color);
-            }
-        }
-        return color;
+        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+        popImageMenu(everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
     }
 
 }

@@ -13,7 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
-import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -103,18 +102,13 @@ public class ColorInputController extends BaseController {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection();) {
-                    TableColor tableColor = null;
                     TableColorPalette tableColorPalette = null;
                     long paletteid = -1;
                     if (colorsManager != null) {
-                        tableColor = colorsManager.tableColor;
+                        tableColorPalette = colorsManager.tableColorPalette;
                         if (!colorsManager.palettesController.isAllColors()) {
                             paletteid = colorsManager.palettesController.currentPaletteId();
                         }
-                        tableColorPalette = colorsManager.tableColorPalette;
-                    }
-                    if (tableColor == null) {
-                        tableColor = new TableColor();
                     }
                     if (tableColorPalette == null) {
                         tableColorPalette = new TableColorPalette();
@@ -122,15 +116,12 @@ public class ColorInputController extends BaseController {
                     conn.setAutoCommit(false);
                     for (String value : values) {
                         value = value.trim();
-                        ColorData color = new ColorData(value).calculate();
-                        if (color.getSrgb() == null) {
+                        ColorData colorData = new ColorData(value);
+                        if (colorData.getColor() == null) {
                             continue;
                         }
-                        tableColor.write(conn, color, true);
-                        if (paletteid >= 0) {
-                            color.setPaletteid(paletteid);
-                            tableColorPalette.findAndCreate(conn, color, false, false);
-                        }
+                        colorData.calculate().setPaletteid(paletteid);
+                        tableColorPalette.findAndCreate(conn, colorData, false, false);
                         TableStringValues.add(conn, "ColorInputHistories", value);
                     }
                     conn.commit();
