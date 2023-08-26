@@ -36,7 +36,7 @@ public class Languages {
         AppVariables.isChinese = lang.startsWith("zh");
     }
 
-    public static String getLanguage() {
+    public static String readLangName() {
         String lang = UserConfig.getString("language", Locale.getDefault().getLanguage());
         lang = lang != null ? lang.toLowerCase() : Locale.getDefault().getLanguage().toLowerCase();
         AppVariables.isChinese = lang.startsWith("zh");
@@ -53,7 +53,7 @@ public class Languages {
 
     public static ResourceBundle getBundle() {
         if (currentBundle == null) {
-            currentBundle = getBundle(getLanguage());
+            currentBundle = getBundle(readLangName());
         }
         return currentBundle;
     }
@@ -88,7 +88,7 @@ public class Languages {
     }
 
     public static ResourceBundle refreshBundle() {
-        currentBundle = getBundle(getLanguage());
+        currentBundle = getBundle(readLangName());
         return currentBundle;
     }
 

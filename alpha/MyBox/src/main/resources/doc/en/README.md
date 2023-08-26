@@ -4,30 +4,26 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## What's New                       
-2023-8-23 v6.7.6                
+2023-9-30 v6.7.7                
                 
 * Added:                                   
-     - Convert images to SVG files in batch. Algorithms and parameters can be chosen.                                                      
-     - More shapes: line, arc, quadratic Bézier curve, cubic Bézier curve, and SVG path.                                                       
-     - When edit shape, parameters can be inputted while archors and shape can be dragged. Anchor menu and shape menu are provided.                                                                                                            
+     -                                                       
+     -                                                       
+     -                                                       
 * Improved:                                                                                            
-     - For popped values(examples or histories), options to show the pane as child window or as pop window.                                                       
-     - For existed palette, colors can be customized.                                                       
-     - Pop color menu by right click color block.                                                       
-     - Lines can be dragged when split image.                                                       
-     - Drag lines in image to add mosaic.                                                                                                            
+     -                                                       
+     -                                                       
+     -                                                       
+     -                                                       
 * Solved problems:                                      
-     - Node is not updated in the tree after its modification is saved.                                                       
-     - The new node is displayed incompletely after XML is pasted.                                                       
-     - "Load width" does not work for image.                                                       
-     - Wrong result may be generated when scale image.                                                       
-     - Result may be cutted wrongly when rotate image.                                                       
-     - Indices of image edit histories are recorded and accessed incorrectly.               
-     - List of splitted images are loaded incorrectly when play them.                
-     - Shortcuts F4 and F5(show/hide panes) do not work in some interfaces.                     
+     -                                                       
+     -                                                       
+     -                                                       
+     -                                                       
+     -                                                       
                                                 
                                                                                                                                                
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.6)                           
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.7)                           
 
 ## Notice         
 Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
@@ -105,11 +101,11 @@ While forward compatibility is not supported: Wrong may happen when old version 
 ## Backup and Recover         
 In MyBox:         
 1. To backup, copy directories to other places.       
-2. To recover, override current directories with backup directories.
+2. To recover, override current directories with backup directories.         
 3. Need not backup each directory under data path.       
-   Predefined directories under data path are listed below. Only directories of "referred by functions" need backups:               
+   Predefined directories under data path are listed below:               
 
-|    directory    |         role         | internal referred | read/write automatically | referred by functions | comments              |
+|    directory    |         role         | internal referred | read/write automatically | need backup          | comments              |
 |-----------------|----------------------|-------------------|--------------------------|----------------------|-----------------------|
 | AppTemp         | temporary files      | yes               | yes                      |                      | cleared automatically |
 | buttons         | customized buttons   | yes               | yes                      |                      |                       |
@@ -118,7 +114,7 @@ In MyBox:
 | doc             | internal documents   | yes               | yes                      |                      |                       |
 | downloads       | download files       |                   | yes                      |                      |                       |
 | fileBackups     | files' backups       | yes               | yes                      | yes                  |                       |
-| generated       | generated files      |                   | yes                      |                      | may need backup       |
+| generated       | generated files      |                   | yes                      | user decides                     |        |
 | ICC             | ICC profiles         | yes               | yes                      |                      |                       |
 | icons           | icon files           | yes               | yes                      |                      |                       |
 | image           | image files          | yes               | yes                      |                      |                       |

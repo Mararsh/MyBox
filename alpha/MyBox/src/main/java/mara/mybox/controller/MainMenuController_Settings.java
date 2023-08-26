@@ -99,7 +99,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         List<MenuItem> items = new ArrayList();
         List<String> languages = Languages.userLanguages();
         if (languages != null && !languages.isEmpty()) {
-            String lang = Languages.getLanguage();
+            String lang = Languages.getLangName();
             for (int i = 0; i < languages.size(); ++i) {
                 final String name = languages.get(i);
                 RadioMenuItem langItem = new RadioMenuItem(name);

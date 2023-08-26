@@ -34,6 +34,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -160,11 +161,13 @@ public class ControlColorPaletteSelector extends BaseController {
         }
         task = new SingletonCurrentTask<Void>(this) {
             private List<ColorPaletteName> palettes;
+            private String lang;
 
             @Override
             protected boolean handle() {
+                lang = Languages.getLangName();
                 try (Connection conn = DerbyBase.getConnection()) {
-                    PaletteTools.defaultPalette(conn);
+                    PaletteTools.defaultPalette(lang, conn);
                     palettes = tableColorPaletteName.readAll(conn);
                 } catch (Exception e) {
                     error = e.toString();
@@ -186,7 +189,7 @@ public class ControlColorPaletteSelector extends BaseController {
                         palettesList.getItems().addAll(palettes);
                     }
                     palettesList.refresh();
-                    String s = UserConfig.getString(baseName + "Palette", PaletteTools.defaultPaletteName());
+                    String s = UserConfig.getString(baseName + "Palette", PaletteTools.defaultPaletteName(lang));
                     for (ColorPaletteName palette : palettes) {
                         if (palette.getName().equals(s)) {
                             palettesList.getSelectionModel().select(palette);

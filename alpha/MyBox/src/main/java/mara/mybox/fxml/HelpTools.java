@@ -233,27 +233,7 @@ public class HelpTools {
 
             @Override
             protected boolean handle() {
-                try {
-                    StringTable table = new StringTable(null, message("StoriesOfImages"));
-                    List<ImageItem> predefinedItems = ImageItem.predefined();
-                    for (ImageItem item : predefinedItems) {
-                        String comments = item.getComments();
-                        File file = item.getFile();
-                        if (comments == null || comments.isBlank()
-                                || file == null || !file.exists()) {
-                            continue;
-                        }
-                        setInfo(file.getAbsolutePath());
-                        table.newNameValueRow(
-                                "<Img src='" + file.toURI().toString() + "' width=" + item.getWidth() + ">",
-                                comments);
-                    }
-                    String html = HtmlWriteTools.html(table.getTitle(), "utf-8",
-                            HtmlStyles.styleValue("Table"), table.body());
-                    htmFile = HtmlWriteTools.writeHtml(html);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
+                htmFile = imageStories(this, false, Languages.getLangName());
                 return htmFile != null && htmFile.exists();
             }
 
@@ -264,6 +244,38 @@ public class HelpTools {
 
         };
         controller.start(task);
+    }
+
+    public static File imageStories(SingletonTask task, boolean isRemote, String lang) {
+        try {
+            StringTable table = new StringTable(null, message(lang, "StoriesOfImages"));
+            List<ImageItem> predefinedItems = ImageItem.predefined(lang);
+            for (ImageItem item : predefinedItems) {
+                String comments = item.getComments();
+                File file = item.getFile();
+                if (comments == null || comments.isBlank()
+                        || file == null || !file.exists()) {
+                    continue;
+                }
+                task.setInfo(file.getAbsolutePath());
+                table.newNameValueRow(
+                        "<Img src='" + (isRemote
+                                ? "https://mara-mybox.sourceforge.io/images/" + file.getName()
+                                : file.toURI().toString())
+                        + "' width=" + item.getWidth() + ">",
+                        comments);
+            }
+
+            String html = HtmlWriteTools.html(table.getTitle(), "utf-8",
+                    HtmlStyles.styleValue("Table"), table.body());
+            File file = new File(FileTmpTools.generatePath("html")
+                    + "/MyBox-StoriesOfImages-" + lang + ".html");
+            return TextFileTools.writeFile(file, html);
+
+        } catch (Exception e) {
+            task.setError(e.toString());
+            return null;
+        }
     }
 
     public static File usefulLinks(String lang) {

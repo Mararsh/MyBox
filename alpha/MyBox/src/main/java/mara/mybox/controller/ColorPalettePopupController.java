@@ -33,6 +33,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -155,7 +156,7 @@ public class ColorPalettePopupController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
+                    ColorPaletteName defaultPalette = PaletteTools.defaultPalette(Languages.getLangName(), conn);
                     if (defaultPalette == null) {
                         return false;
                     }

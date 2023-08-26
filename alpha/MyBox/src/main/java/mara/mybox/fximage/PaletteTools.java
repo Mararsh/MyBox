@@ -43,9 +43,11 @@ public class PaletteTools {
 
             MenuItem menu;
 
-            menu = new MenuItem(defaultPaletteName());
+            String lang = Languages.getLangName();
+
+            menu = new MenuItem(defaultPaletteName(lang));
             menu.setOnAction((ActionEvent e) -> {
-                importPalette(parent, defaultPaletteName());
+                importPalette(parent, defaultPaletteName(lang));
             });
             menus.add(menu);
 
@@ -146,8 +148,9 @@ public class PaletteTools {
             @Override
             protected boolean handle() {
                 List<ColorData> colors;
-                if (defaultPaletteName().equals(paletteName)) {
-                    colors = defaultColors();
+                String lang = Languages.getLangName();
+                if (defaultPaletteName(lang).equals(paletteName)) {
+                    colors = defaultColors(lang);
 
                 } else if (message("WebCommonColors").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv",
@@ -182,28 +185,26 @@ public class PaletteTools {
                     }
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
-                    String lang = Languages.getLangName();
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + lang + ".csv",
                             "data", "ColorsRYB12_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(file, true);
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
-                    colors = artHuesWheel(1);
+                    colors = artHuesWheel(lang, 1);
 
                 } else if ((message("OpticalHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
-                    colors = opticalHuesWheel(30);
+                    colors = opticalHuesWheel(lang, 30);
 
                 } else if ((message("OpticalHuesWheel") + "-" + message("Colors24")).equals(paletteName)) {
-                    colors = opticalHuesWheel(15);
+                    colors = opticalHuesWheel(lang, 15);
 
                 } else if ((message("OpticalHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
-                    colors = opticalHuesWheel(1);
+                    colors = opticalHuesWheel(lang, 1);
 
                 } else if (message("GrayScale").equals(paletteName)) {
-                    colors = greyScales();
+                    colors = greyScales(lang);
 
                 } else {
-                    String lang = Languages.getLangName();
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
                             "data", "ColorsRYB24_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(file, true);
@@ -212,7 +213,7 @@ public class PaletteTools {
                 if (colors == null || colors.isEmpty()) {
                     return false;
                 }
-                colors.addAll(speicalColors());
+                colors.addAll(speicalColors(lang));
                 try (Connection conn = DerbyBase.getConnection()) {
                     ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, paletteName);
                     if (palette == null) {
@@ -277,13 +278,13 @@ public class PaletteTools {
         parent.start(task);
     }
 
-    public static List<ColorData> opticalHuesWheel(int step) {
+    public static List<ColorData> opticalHuesWheel(String lang, int step) {
         try {
             List<ColorData> colors = new ArrayList<>();
             for (int hue = 0; hue < 360; hue += step) {
                 Color color = Color.hsb(hue, 1f, 1f);
                 ColorData data = new ColorData(color).calculate();
-                data.setColorName(message("Hue") + ":" + Math.round(data.getColor().getHue()));
+                data.setColorName(message(lang, "Hue") + ":" + Math.round(data.getColor().getHue()));
                 colors.add(data);
             }
             return colors;
@@ -293,14 +294,14 @@ public class PaletteTools {
         }
     }
 
-    public static List<ColorData> artHuesWheel(int step) {
+    public static List<ColorData> artHuesWheel(String lang, int step) {
         try {
             List<ColorData> colors = new ArrayList<>();
             for (int angle = 0; angle < 360; angle += step) {
                 java.awt.Color color = ColorConvertTools.ryb2rgb(angle);
                 ColorData data = new ColorData(color.getRGB()).calculate();
-                data.setColorName(message("RYBAngle") + ":" + angle + " "
-                        + message("Hue") + ":" + Math.round(data.getColor().getHue()));
+                data.setColorName(message(lang, "RYBAngle") + ":" + angle + " "
+                        + message(lang, "Hue") + ":" + Math.round(data.getColor().getHue()));
                 colors.add(data);
             }
             return colors;
@@ -310,14 +311,14 @@ public class PaletteTools {
         }
     }
 
-    public static List<ColorData> greyScales() {
+    public static List<ColorData> greyScales(String lang) {
         try {
             List<ColorData> colors = new ArrayList<>();
             for (int v = 255; v >= 0; v--) {
                 float c = v / 255f;
                 Color color = new Color(c, c, c, 1);
                 ColorData data = new ColorData(color).calculate();
-                data.setColorName(message("Brightness") + ":" + Math.round(color.getBrightness() * 255));
+                data.setColorName(message(lang, "Brightness") + ":" + Math.round(color.getBrightness() * 255));
                 colors.add(data);
             }
             return colors;
@@ -327,14 +328,14 @@ public class PaletteTools {
         }
     }
 
-    public static List<ColorData> speicalColors() {
+    public static List<ColorData> speicalColors(String lang) {
         try {
             List<ColorData> colors = new ArrayList<>();
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTGREY), message("LightGrey")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREY), message("Grey")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")).calculate());
-            colors.add(new ColorData(0, message("Transparent")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message(lang, "White")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTGREY), message(lang, "LightGrey")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREY), message(lang, "Grey")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message(lang, "Black")).calculate());
+            colors.add(new ColorData(0, message(lang, "Transparent")).calculate());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -342,25 +343,25 @@ public class PaletteTools {
         }
     }
 
-    public static String defaultPaletteName() {
-        return message("DefaultPalette");
+    public static String defaultPaletteName(String lang) {
+        return message(lang, "DefaultPalette");
     }
 
-    public static List<ColorData> defaultColors() {
+    public static List<ColorData> defaultColors(String lang) {
         try {
             List<ColorData> colors = new ArrayList<>();
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.RED), message("Red")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.ORANGE), message("Orange")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.YELLOW), message("Yellow")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREENYELLOW), message("GreenYellow")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREEN), message("Green")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTSEAGREEN), message("SeaGreen")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.DODGERBLUE), message("Blue")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLUE), message("MediumBlue")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.PURPLE), message("Purple")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.PINK), message("Pink")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.DEEPSKYBLUE), message("SkyBlue")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GOLD), message("GoldColor")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.RED), message(lang, "Red")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.ORANGE), message(lang, "Orange")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.YELLOW), message(lang, "Yellow")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREENYELLOW), message(lang, "GreenYellow")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREEN), message(lang, "Green")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTSEAGREEN), message(lang, "SeaGreen")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.DODGERBLUE), message(lang, "Blue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLUE), message(lang, "MediumBlue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.PURPLE), message(lang, "Purple")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.PINK), message(lang, "Pink")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.DEEPSKYBLUE), message(lang, "SkyBlue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GOLD), message(lang, "GoldColor")).calculate());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -368,14 +369,14 @@ public class PaletteTools {
         }
     }
 
-    public static ColorPaletteName defaultPalette(Connection conn) {
+    public static ColorPaletteName defaultPalette(String lang, Connection conn) {
         try {
             if (conn == null) {
                 return null;
             }
             boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(true);
-            ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, defaultPaletteName());
+            ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, defaultPaletteName(lang));
             if (palette == null) {
                 conn.setAutoCommit(ac);
                 return null;
@@ -384,8 +385,8 @@ public class PaletteTools {
             long paletteid = palette.getCpnid();
             TableColorPalette tableColorPalette = new TableColorPalette();
             if (tableColorPalette.size(conn, paletteid) == 0) {
-                List<ColorData> colors = defaultColors();
-                colors.addAll(speicalColors());
+                List<ColorData> colors = defaultColors(lang);
+                colors.addAll(speicalColors(lang));
                 tableColorPalette.write(conn, palette.getCpnid(), colors, true, false);
                 conn.commit();
             }

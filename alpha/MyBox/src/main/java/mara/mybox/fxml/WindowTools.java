@@ -237,6 +237,10 @@ public class WindowTools {
         return openStage(parent, newFxml, AppVariables.currentBundle, false, Modality.NONE, null);
     }
 
+    public static BaseController openStage(String fxml, ResourceBundle bundle) {
+        return openStage(null, fxml, bundle, false, Modality.NONE, null);
+    }
+
     public static BaseController openChildStage(Window parent, String newFxml) {
         return openChildStage(parent, newFxml, true);
     }

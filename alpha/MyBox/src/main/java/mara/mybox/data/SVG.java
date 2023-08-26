@@ -35,6 +35,9 @@ public class SVG {
     public SVG(Document doc) {
         try {
             this.doc = doc;
+            width = -1;
+            height = -1;
+            viewBox = null;
             if (doc == null) {
                 return;
             }
@@ -65,6 +68,16 @@ public class SVG {
                 } catch (Exception e) {
                 }
             }
+
+            if (viewBox != null) {
+                if (width <= 0) {
+                    width = (float) viewBox.getWidth();
+                }
+                if (height <= 0) {
+                    height = (float) viewBox.getHeight();
+                }
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

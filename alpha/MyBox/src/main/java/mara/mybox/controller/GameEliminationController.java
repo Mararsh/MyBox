@@ -769,9 +769,10 @@ public class GameEliminationController extends BaseController {
         isSettingValues = true;
         List<ImageItem> selected = new ArrayList();
         selected.addAll(imagesListview.getSelectionModel().getSelectedItems());
+        List<ImageItem> predefined = ImageItem.predefined();
         for (int i = 0; i < selected.size(); ++i) {
             ImageItem item = selected.get(i);
-            if (!item.isPredefined()) {
+            if (item.getAddress() == null || !predefined.contains(item)) {
                 imagesListview.getItems().remove(item);
                 TableStringValues.delete("GameEliminationImage", item.getAddress());
             }

@@ -60,7 +60,7 @@ public class AppVariables {
         try {
             userConfigValues.clear();
             systemConfigValues.clear();
-            getBundle();
+            currentBundle = getBundle();
             getPdfMem();
             closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);

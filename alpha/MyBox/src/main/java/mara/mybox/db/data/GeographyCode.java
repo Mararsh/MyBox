@@ -490,7 +490,7 @@ public class GeographyCode extends BaseData {
     }
 
     public static short sourceValue(String source) {
-        return sourceValue(Languages.getLanguage(), source);
+        return sourceValue(Languages.getLangName(), source);
     }
 
     public static short sourceValue(String lang, String source) {

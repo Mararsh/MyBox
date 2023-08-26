@@ -315,7 +315,7 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
         if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
             return;
         }
-        String lang = Languages.getLanguage();
+        String lang = Languages.getLangName();
         for (String name : selected) {
             File interfaceFile = Languages.interfaceLanguageFile(name);
             FileDeleteTools.delete(interfaceFile);

@@ -38,7 +38,7 @@ public abstract class MyBoxController_Settings extends MyBoxController_Recent {
 
     @FXML
     protected void showSettingsMenu(Event event) {
-        String lang = Languages.getLanguage();
+        String lang = Languages.getLangName();
         List<MenuItem> langItems = new ArrayList();
         ToggleGroup langGroup = new ToggleGroup();
         RadioMenuItem English = new RadioMenuItem("English");

@@ -18,8 +18,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
-import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
@@ -323,41 +321,8 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
-    public void makeReadMe() {
-        openHtml(HelpTools.makeReadMe("en"));
-        File zh = HelpTools.makeReadMe("zh");
-        openHtml(zh);
-        File index = new File(AppVariables.MyboxDataPath + "/doc/index.html");
-        FileCopyTools.copyFile(zh, index, true, true);
-        browse(index.getParentFile());
-    }
-
-    @FXML
-    public void makeShortcuts() {
-        ShortcutsController.html();
-    }
-
-    @FXML
-    public void makeInterfaceTips() {
-        openHtml(HelpTools.makeInterfaceTips("en"));
-        File zh = HelpTools.makeInterfaceTips("zh");
-        openHtml(zh);
-        browse(zh.getParentFile());
-    }
-
-    @FXML
-    public void makeFunctionsList() {
-        File list = HelpTools.makeFunctionsList(menuBar);
-        openHtml(list);
-        browse(list.getParentFile());
-    }
-
-    @FXML
-    public void makeSomeLinks() {
-        openHtml(HelpTools.usefulLinks("en"));
-        File zh = HelpTools.usefulLinks("zh");
-        openHtml(zh);
-        browse(zh.getParentFile());
+    public void makeDocuments() {
+        ShortcutsController.documents((MainMenuController) this);
     }
 
     @FXML

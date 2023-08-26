@@ -1023,7 +1023,7 @@ public class DataMigration {
             try (Statement statement = conn.createStatement();
                     ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
-                ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
+                ColorPaletteName defaultPalette = PaletteTools.defaultPalette(Languages.getLangName(), conn);
                 long paletteid = defaultPalette.getCpnid();
 
                 TableColorPalette tableColorPalette = new TableColorPalette();
