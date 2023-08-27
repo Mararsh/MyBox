@@ -177,6 +177,8 @@ public class Fxmls {
     public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
     public static final String ImageRepeatFxml = "/fxml/ImageRepeat.fxml";
 
+    public static final String ImageMaterialFxml = "/fxml/ImageMaterial.fxml";
+
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";

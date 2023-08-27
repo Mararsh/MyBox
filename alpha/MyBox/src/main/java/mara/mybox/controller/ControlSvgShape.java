@@ -66,11 +66,13 @@ public class ControlSvgShape extends ControlShapeOptions {
         try {
             super.initControls();
 
-            optionsController.svgShapeControl = this;
             showController.svgShapeControl = this;
 
             initXML();
-            initSvgOptions();
+            if (optionsController != null) {
+                optionsController.svgShapeControl = this;
+                initSvgOptions();
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -98,6 +100,9 @@ public class ControlSvgShape extends ControlShapeOptions {
      */
     public void initSvgOptions() {
         try {
+            if (optionsController == null) {
+                return;
+            }
             optionsController.noBgColor();
 
             optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {

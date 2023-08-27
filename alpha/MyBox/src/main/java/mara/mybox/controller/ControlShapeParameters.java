@@ -31,7 +31,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlShapeParameters extends BaseController {
 
-    protected ControlShapeOptions optionsOontroller;
+    protected ControlShapeOptions optionsController;
     protected BaseImageController imageController;
 
     @FXML
@@ -598,7 +598,7 @@ public class ControlShapeParameters extends BaseController {
     @FXML
     @Override
     public void goAction() {
-        optionsOontroller.goShape();
+        optionsController.goShape();
     }
 
 }

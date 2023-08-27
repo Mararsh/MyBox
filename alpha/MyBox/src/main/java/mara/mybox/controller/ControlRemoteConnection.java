@@ -76,6 +76,8 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             hostColumn.setCellValueFactory(new PropertyValueFactory<>("host"));
             pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
 
+            hostInput.setText("frs.sourceforge.net");
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

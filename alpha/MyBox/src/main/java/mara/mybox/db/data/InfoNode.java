@@ -29,6 +29,7 @@ public class InfoNode extends BaseData {
     public static final String JavaScript = "JavaScript";
     public static final String MathFunction = "MathFunction";
     public static final String RowFilter = "RowFilter";
+    public static final String ImageMaterial = "ImageMaterial";
 
     protected long nodeid, parentid;
     protected String category, title, value, more;

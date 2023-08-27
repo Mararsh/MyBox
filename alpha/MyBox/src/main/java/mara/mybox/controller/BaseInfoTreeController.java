@@ -410,6 +410,8 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                 return RowFilterController.open();
             case InfoNode.MathFunction:
                 return MathFunctionController.open();
+            case InfoNode.ImageMaterial:
+                return ImageMaterialController.open();
 
         }
         return null;
