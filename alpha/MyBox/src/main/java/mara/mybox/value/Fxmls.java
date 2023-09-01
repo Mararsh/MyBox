@@ -323,6 +323,7 @@ public class Fxmls {
         file
      */
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
+    public static final String FilesRenameResultsFxml = "/fxml/FilesRenameResults.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
     public static final String FilesDeleteEmptyDirFxml = "/fxml/FilesDeleteEmptyDir.fxml";

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -20,28 +21,25 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2018-7-4
- * @Description
  * @License Apache License Version 2.0
  */
 public class FilesRenameController extends BaseBatchFileController {
 
-    protected List<String> targetDatas;
+    protected LinkedHashMap<String, String> names;
     protected int currentAccum, digit, startNumber;
     protected RenameType renameType;
-
-    protected List<File> includeFiles;
 
     @FXML
     protected VBox renameOptionsBox, numberBox, replaceBox;
@@ -56,7 +54,7 @@ public class FilesRenameController extends BaseBatchFileController {
     @FXML
     protected ToggleGroup sortGroup, renameGroup;
     @FXML
-    protected RadioButton targetReplaceRadio, targetSkipRadio, replaceAllRadio;
+    protected RadioButton replaceAllRadio;
 
     public static enum RenameType {
         ReplaceSubString, AppendSuffix, AddPrefix, AddSequenceNumber, ChangeExtension
@@ -168,6 +166,7 @@ public class FilesRenameController extends BaseBatchFileController {
             case ChangeExtension:
 
         }
+        names = new LinkedHashMap<>();
         return super.makeMoreParameters();
 
     }
@@ -227,53 +226,16 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        FileInformation f = tableController.row(currentParameters.currentIndex);
-        String newName = renameFile(srcFile);
-        if (newName != null) {
-            f.setFile(new File(newName));
-            return message("Successful");
-        } else {
-            return message("Skipped");
-        }
+        String newName = makeName(srcFile);
+        names.put(srcFile.getAbsolutePath(), newName);
+        return message("Handling");
     }
 
-    protected String renameFile(File file) {
+    protected String makeName(File file) {
         if (file == null || !file.exists() || !file.isFile()) {
             return null;
         }
         try {
-            String newName = makeNewFilename(file);
-            if (newName == null || newName.isBlank()) {
-                return null;
-            }
-            File newFile = new File(newName);
-            if (file.getAbsolutePath().equals(newFile.getAbsolutePath())) {
-                return null;
-            }
-            if (newFile.isFile() && newFile.exists()) {
-                if (targetSkipRadio.isSelected()) {
-                    return null;
-                }
-                FileDeleteTools.delete(newFile);
-            }
-            if (FileTools.rename(file, newFile)) {
-                newName = newFile.getAbsolutePath();
-                targetFileGenerated(newFile);
-                return newName;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            showLogs(e.toString());
-            return null;
-        }
-    }
-
-    protected String makeNewFilename(File file) {
-        try {
-            if (file == null || !file.exists() || !file.isFile()) {
-                return null;
-            }
             String filePath = file.getParent() + File.separator;
             String currentName = file.getName();
             String newName = null;
@@ -360,7 +322,8 @@ public class FilesRenameController extends BaseBatchFileController {
                     if (!match(file)) {
                         continue;
                     }
-                    String newName = renameFile(file);
+                    String newName = makeName(file);
+                    names.put(file.getAbsolutePath(), newName);
                     if (newName != null) {
                         dirFilesHandled++;
                     }
@@ -376,23 +339,15 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @Override
-    public void viewTarget(File file) {
-        openTarget();
-    }
-
-    @Override
-    public void openTarget() {
+    public void afterTask() {
         try {
-            if (tableData == null || tableData.isEmpty()) {
+            if (names == null || names.isEmpty()) {
+                popError(message("SelectToHandle"));
                 return;
             }
-            File f = tableData.get(0).getFile();
-            if (f.isDirectory()) {
-                browseURI(new File(f.getPath()).toURI());
-            } else {
-                browseURI(new File(f.getParent()).toURI());
-            }
-            recordFileOpened(f);
+            FilesRenameResultsController controller
+                    = (FilesRenameResultsController) WindowTools.openChildStage(getMyStage(), Fxmls.FilesRenameResultsFxml, false);
+            controller.handleFiles(names);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

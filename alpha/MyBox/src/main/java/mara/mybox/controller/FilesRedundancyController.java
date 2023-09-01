@@ -14,7 +14,6 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -248,15 +247,15 @@ public class FilesRedundancyController extends BaseBatchFileController {
     @FXML
     @Override
     public void goAction() {
-        if (redundancy.size() > 0) {
+        if (redundancy.isEmpty()) {
+            popInformation(message("NoRedundancy"));
+
+        } else {
             FilesRedundancyResultsController controller
-                    = (FilesRedundancyResultsController) WindowTools.openStage(Fxmls.FilesRedundancyResultsFxml);
+                    = (FilesRedundancyResultsController) WindowTools.openChildStage(getMyStage(), Fxmls.FilesRedundancyResultsFxml, false);
             if (controller != null) {
                 controller.loadRedundancy(redundancy);
             }
-
-        } else {
-            popInformation(message("NoRedundancy"));
         }
 
     }

@@ -164,6 +164,14 @@ public class FileInformation {
         }
     }
 
+    public String getPath() {
+        if (file != null) {
+            return file.getParent();
+        } else {
+            return null;
+        }
+    }
+
     public String getName() {
         if (file != null) {
             return file.getName();

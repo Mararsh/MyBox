@@ -283,6 +283,11 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                         }
                         colorsDoc("en", colors, message("en", "MyBoxColors"), "mybox");
 
+                        colors = PaletteTools.defaultColors("zh");
+                        colorsDoc("zh", colors, message("zh", "DefaultPalette"), "default");
+                        colors = PaletteTools.defaultColors("en");
+                        colorsDoc("en", colors, message("en", "DefaultPalette"), "default");
+
                         file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_zh.csv",
                                 "data", "ColorsRYB12_zh.csv", true);
                         colors = ColorDataTools.readCSV(file, true);
