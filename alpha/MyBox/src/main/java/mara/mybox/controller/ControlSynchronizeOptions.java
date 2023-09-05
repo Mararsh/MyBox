@@ -18,6 +18,7 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
@@ -128,7 +129,7 @@ public class ControlSynchronizeOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (deleteNonExistedCheck.isSelected()) {
-                        deleteNonExistedCheck.setStyle("-fx-text-fill: #961c1c; -fx-font-weight: bolder;");
+                        deleteNonExistedCheck.setStyle(NodeStyleTools.darkRedTextStyle());
                     } else {
                         deleteNonExistedCheck.setStyle(null);
                     }
@@ -191,7 +192,7 @@ public class ControlSynchronizeOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (deleteSourceCheck.isSelected()) {
-                        deleteSourceCheck.setStyle("-fx-text-fill: #961c1c; -fx-font-weight: bolder;");
+                        deleteSourceCheck.setStyle(NodeStyleTools.darkRedTextStyle());
                     } else {
                         deleteSourceCheck.setStyle(null);
                     }

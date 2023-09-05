@@ -9,13 +9,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileNode;
@@ -46,8 +44,6 @@ public class FilesRedundancyController extends BaseBatchFileController {
     protected HBox currentBox;
     @FXML
     protected Label currentLabel;
-    @FXML
-    protected Button goButton;
 
     public FilesRedundancyController() {
         baseTitle = message("FilesRedundancy");
@@ -95,6 +91,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             filesList.add(d);
             return done;
         } catch (Exception e) {
+            showLogs(e.toString());
             return done;
         }
     }
@@ -121,7 +118,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             }
             return done;
         } catch (Exception e) {
-//            MyBoxLog.error(e);
+            showLogs(e.toString());
             return done;
         }
     }
@@ -146,7 +143,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                     }
                 }
             });
-            showStatus(message("FindingFilesRedundancy"));
+            showStatus(message("RedundancyFindingFiles"));
             updateTaskProgress(0, filesList.size());
             FileNode f = filesList.get(0);
             long size = f.getFileSize(), big = 50 * 1024 * 1024L;
@@ -158,7 +155,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                     return;
                 }
                 f = filesList.get(i);
-                if (i % 200 == 0 || size > big) {
+                if (verboseCheck.isSelected() || i % 200 == 0 || size > big) {
                     showStatus(MessageFormat.format(message("RedundancyCurrentValues"),
                             redundancy.size(), totalRedundancy.get()), f);
                     updateTaskProgress(i, filesList.size());
@@ -180,7 +177,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             }
             filesList.clear();
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            showLogs(e.toString());
         }
     }
 
@@ -231,17 +228,11 @@ public class FilesRedundancyController extends BaseBatchFileController {
     }
 
     public void showStatus(String info, FileNode file) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                currentLabel.setText(info);
-                String s = message("FindingFilesRedundancy") + "   "
-                        + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ".   "
-                        + MessageFormat.format(message("HandlingObject"),
-                                file.getFile().getAbsolutePath() + "   " + FileTools.showFileSize(file.getFileSize()));
-                statusInput.setText(s);
-            }
-        });
+        updateLogs(info);
+        String s = message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ".   "
+                + MessageFormat.format(message("HandlingObject"),
+                        file.getFile().getAbsolutePath() + "   " + FileTools.showFileSize(file.getFileSize()));
+        updateLogs(s);
     }
 
     @FXML
@@ -286,6 +277,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         statusInput.setText(s);
         currentLabel.setText("");
+        showLogs(s);
     }
 
     @FXML

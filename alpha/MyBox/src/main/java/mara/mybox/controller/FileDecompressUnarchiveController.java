@@ -44,7 +44,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
 // http://commons.apache.org/proper/commons-compress/examples.html
 public class FileDecompressUnarchiveController extends FilesTreeController {
 
-    protected String compressor, archiver, archiverChoice, compressorChoice, error;
+    protected String compressor, archiver, archiverChoice, compressorChoice;
     protected SevenZMethod sevenCompress;
     protected List<FileNode> entries;
     protected List<String> selected;
@@ -557,8 +557,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
 
     public static FileDecompressUnarchiveController open(File file) {
         FileDecompressUnarchiveController controller = open();
-        if (controller != null) {
-            controller.sourceFileChanged(file);
+        if (controller != null && file != null) {
+            controller.sourceFileInput.setText(file.getAbsolutePath());
         }
         return controller;
     }

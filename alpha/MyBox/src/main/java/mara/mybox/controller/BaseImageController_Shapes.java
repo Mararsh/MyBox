@@ -796,7 +796,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     shape.setFill(Color.TRANSPARENT);
                 }
                 shape.setStrokeLineCap(shapeStyle.getLineCap());
-                if (shapeStyle.isIsStrokeDash()) {
+                if (shapeStyle.isIsStrokeDash() && shapeStyle.getStrokeDash() != null) {
                     shape.getStrokeDashArray().addAll(shapeStyle.getStrokeDash());
                 }
             } else {
@@ -2396,7 +2396,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     new DoublePoint(maskCubicData.getEndX(), maskCubicData.getEndY()),
                     ex, ey);
 
-            setShapeStyle(maskQuadratic);
+            setShapeStyle(maskCubic);
 
             maskShapeChanged();
 

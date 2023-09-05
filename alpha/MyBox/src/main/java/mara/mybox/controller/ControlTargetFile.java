@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.UserConfig;
@@ -110,8 +111,10 @@ public class ControlTargetFile extends ControlFileSelecter {
 
     public void checkTargetExistType() {
         targetAppendInput.setStyle(null);
+        targetReplaceRadio.setStyle(null);
         if (targetReplaceRadio.isSelected()) {
             targetExistType = TargetExistType.Replace;
+            targetReplaceRadio.setStyle(NodeStyleTools.darkRedTextStyle());
 
         } else if (targetRenameRadio.isSelected()) {
             targetExistType = TargetExistType.Rename;
