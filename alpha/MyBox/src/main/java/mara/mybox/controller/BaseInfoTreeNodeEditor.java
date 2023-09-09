@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.NodeSeparater;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.DateTools;
@@ -24,10 +25,16 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class TreeNodeEditor extends ControlTreeNodeAttributes {
+public class BaseInfoTreeNodeEditor extends BaseController {
+
+    protected TreeManageController treeController;
+    protected String defaultExt;
+    protected boolean nodeChanged;
 
     @FXML
-    protected Tab valueTab;
+    protected Tab attributesTab, valueTab;
+    @FXML
+    protected ControlInfoTreeAttributes attributesController;
     @FXML
     protected TextInputControl valueInput, moreInput;
     @FXML
@@ -35,7 +42,13 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
     @FXML
     protected CheckBox wrapCheck;
 
-    public TreeNodeEditor() {
+    public BaseInfoTreeNodeEditor() {
+        defaultExt = "txt";
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override
@@ -50,7 +63,7 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
                         if (isSettingValues) {
                             return;
                         }
-                        nodeChanged(true);
+                        attributesController.nodeChanged(true);
                         if (valueTab != null) {
                             valueTab.setText(treeController.valueMsg + "*");
                         } else if (attributesTab != null) {
@@ -67,7 +80,7 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
                         if (isSettingValues) {
                             return;
                         }
-                        nodeChanged(true);
+                        attributesController.nodeChanged(true);
                         if (attributesTab != null) {
                             attributesTab.setText(message("Attributes") + "*");
                         }
@@ -80,10 +93,10 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
         }
     }
 
-    @Override
     public void setParameters(TreeManageController treeController) {
         try {
-            super.setParameters(treeController);
+            this.treeController = treeController;
+            attributesController.setParameters(treeController);
 
             if (valueLabel != null) {
                 valueLabel.setText(treeController.valueMsg);
@@ -93,11 +106,11 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
             }
 
             if (wrapCheck != null && (valueInput instanceof TextArea)) {
-                wrapCheck.setSelected(UserConfig.getBoolean(category + "ValueWrap", false));
+                wrapCheck.setSelected(UserConfig.getBoolean(treeController.category + "ValueWrap", false));
                 wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(category + "ValueWrap", newValue);
+                        UserConfig.setBoolean(treeController.category + "ValueWrap", newValue);
                         ((TextArea) valueInput).setWrapText(newValue);
                     }
                 });
@@ -109,7 +122,6 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
         }
     }
 
-    @Override
     protected void editNode(InfoNode node) {
         isSettingValues = true;
         if (node != null) {
@@ -128,15 +140,16 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
             }
         }
         isSettingValues = false;
-        super.editNode(node);
+
+        attributesController.editNode(node);
+        showEditorPane();
         if (valueTab != null) {
             valueTab.setText(treeController.valueMsg);
         }
     }
 
-    @Override
     public InfoNode pickNodeData() {
-        String name = nameInput.getText();
+        String name = attributesController.nameInput.getText();
         if (name == null || name.isBlank()) {
             popError(message("InvalidParameters") + ": " + treeController.nameMsg);
             if (tabPane != null && attributesTab != null) {
@@ -148,7 +161,14 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
             popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
             return null;
         }
-        InfoNode node = super.pickNodeData();
+
+        if (name.contains(NodeSeparater)) {
+            popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
+            return null;
+        }
+        InfoNode node = InfoNode.create()
+                .setCategory(treeController.category).setTitle(name);
+
         if (valueInput != null) {
             node.setValue(valueInput.getText());
         }
@@ -156,6 +176,17 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
             node.setMore(moreInput.getText());
         }
         return node;
+    }
+
+    protected void showEditorPane() {
+        treeController.showRightPane();
+    }
+
+    public void nodeChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        this.nodeChanged = changed;
     }
 
     @FXML
@@ -166,7 +197,7 @@ public class TreeNodeEditor extends ControlTreeNodeAttributes {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(message(category) + "-" + DateTools.nowFileString() + "." + defaultExt);
+        File file = chooseSaveFile(message(treeController.category) + "-" + DateTools.nowFileString() + "." + defaultExt);
         if (file == null) {
             return;
         }

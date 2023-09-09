@@ -15,13 +15,13 @@ import static mara.mybox.value.Languages.message;
 public class TreeNodeParentController extends ControlInfoTreeSelector {
 
     protected TreeManageController manageController;
-    protected ControlTreeNodeAttributes nodeController;
+    protected ControlInfoTreeAttributes nodeController;
 
     public TreeNodeParentController() {
         baseTitle = message("Owner");
     }
 
-    public void setParamters(ControlTreeNodeAttributes nodeController) {
+    public void setParamters(ControlInfoTreeAttributes nodeController) {
         this.nodeController = nodeController;
         this.manageController = nodeController.treeController;
         setCaller(manageController.nodesController);
@@ -46,7 +46,7 @@ public class TreeNodeParentController extends ControlInfoTreeSelector {
     /*
         static methods
      */
-    public static TreeNodeParentController open(ControlTreeNodeAttributes nodeController) {
+    public static TreeNodeParentController open(ControlInfoTreeAttributes nodeController) {
         TreeNodeParentController controller = (TreeNodeParentController) WindowTools.openChildStage(
                 nodeController.getMyWindow(), Fxmls.TreeNodeParentFxml, false);
         controller.setParamters(nodeController);

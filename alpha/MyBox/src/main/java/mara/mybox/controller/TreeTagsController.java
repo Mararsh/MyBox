@@ -210,11 +210,11 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             @Override
             protected void whenSucceeded() {
                 tableData.add(0, tag);
-                treeController.nodeController.tableData.add(0, tag);
+                treeController.nodeController.attributesController.tableData.add(0, tag);
                 if (forCurrentNode) {
-                    treeController.nodeController.tableView.getSelectionModel().select(tag);
+                    treeController.nodeController.attributesController.tableView.getSelectionModel().select(tag);
                 }
-                treeController.nodeController.nodeChanged(true);
+                treeController.nodeController.attributesController.nodeChanged(true);
                 popSuccessful();
             }
 
@@ -299,15 +299,15 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     }
 
     public void synchronizedTables() {
-        if (this.equals(treeController.nodeController)) {
+        if (this.equals(treeController.nodeController.attributesController)) {
             treeController.tagsController.isSettingValues = true;
             treeController.tagsController.tableData.setAll(tableData);
             treeController.tagsController.isSettingValues = false;
         } else {
             treeController.nodeController.isSettingValues = true;
-            treeController.nodeController.tableData.setAll(tableData);
+            treeController.nodeController.attributesController.tableData.setAll(tableData);
             treeController.nodeController.isSettingValues = false;
-            treeController.nodeController.markTags();
+            treeController.nodeController.attributesController.markTags();
         }
     }
 

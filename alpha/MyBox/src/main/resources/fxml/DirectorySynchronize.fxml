@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DirectorySynchronizeController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DirectorySynchronizeController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -54,15 +54,19 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                        <fx:include fx:id="targetPathInput" maxWidth="1.7976931348623157E308" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>
+                                                <fx:include fx:id="options" source="ControlSynchronizeOptions.fxml" />
                                                 <Separator prefWidth="200.0">
                                                     <VBox.margin>
                                                         <Insets bottom="5.0" top="5.0" />
                                                     </VBox.margin>
                                                 </Separator>
-                                                <fx:include fx:id="options" source="ControlSynchronizeOptions.fxml" />
+                                    <VBox fx:id="dirsBox1" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                                        <fx:include fx:id="targetPathInput" maxWidth="1.7976931348623157E308" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
                                             </children>
                                             <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -246,7 +246,7 @@ MyBox基于以下开放资源：
 | 中国出土壁画全集 | 素材 | <https://book.douban.com/subject/10465940/>    |
 | sfds | 书法 | <http://www.sfds.cn/725B/>    |
 | PaginatedPdfTable | PDF | <https://github.com/eduardohl/Paginated-PDFBox-Table-Sample>   |
-| jsoup | DOM | <https://jsoup.org/>    |
+| jsoup | html | <https://jsoup.org/>    |
 | 知乎 | 素材 | <https://www.zhihu.com/question/41580677/answer/1300242801>   |
 | commons-math | 计算 | <https://commons.apache.org/proper/commons-math/index.html>   |
 | JEXL | 计算 | <https://commons.apache.org/proper/commons-jexl>   |

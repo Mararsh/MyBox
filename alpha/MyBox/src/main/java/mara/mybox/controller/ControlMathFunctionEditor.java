@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-8
  * @License Apache License Version 2.0
  */
-public class ControlMathFunctionEditor extends TreeNodeEditor {
+public class ControlMathFunctionEditor extends BaseInfoTreeNodeEditor {
 
     protected MathFunctionController functionController;
     protected String outputs = "";

@@ -214,6 +214,7 @@ public class Fxmls {
         data
      */
     public static final String Data2DManageFxml = "/fxml/Data2DManage.fxml";
+    public static final String Data2DDefinitionFxml = "/fxml/Data2DDefinition.fxml";
     public static final String Data2DManageQueryFxml = "/fxml/Data2DManageQuery.fxml";
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";

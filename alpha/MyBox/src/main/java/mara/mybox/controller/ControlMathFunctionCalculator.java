@@ -197,7 +197,7 @@ public class ControlMathFunctionCalculator extends BaseController {
     }
 
     public String functionName() {
-        String name = editorController.nameInput.getText();
+        String name = editorController.attributesController.nameInput.getText();
         return name == null || name.isBlank() ? message("MathFunction") : name;
     }
 
@@ -593,7 +593,7 @@ public class ControlMathFunctionCalculator extends BaseController {
     }
 
     public String title() {
-        String title = editorController.nameInput.getText();
+        String title = editorController.attributesController.nameInput.getText();
         if (title == null || title.isBlank()) {
             int pos = expression.indexOf("\n");
             title = pos < 0 ? expression : expression.substring(0, pos);

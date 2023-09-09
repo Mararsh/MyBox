@@ -8,13 +8,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.NodeSeparater;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
@@ -26,27 +23,18 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class ControlTreeNodeAttributes extends TreeTagsController {
+public class ControlInfoTreeAttributes extends TreeTagsController {
 
-    protected boolean nodeChanged;
-    protected String defaultExt;
+    protected BaseInfoTreeNodeEditor nodeEditor;
     protected InfoNode parentNode;
     protected SingletonTask tagsTask;
 
-    @FXML
-    protected Tab attributesTab;
     @FXML
     protected TextField idInput, nameInput, timeInput;
     @FXML
     protected Label chainLabel, nameLabel, timeLabel;
 
-    public ControlTreeNodeAttributes() {
-        defaultExt = "txt";
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
+    public ControlInfoTreeAttributes() {
     }
 
     @Override
@@ -61,9 +49,6 @@ public class ControlTreeNodeAttributes extends TreeTagsController {
                         return;
                     }
                     nodeChanged(true);
-                    if (attributesTab != null) {
-                        attributesTab.setText(message("Attributes") + "*");
-                    }
                 }
             });
 
@@ -76,6 +61,7 @@ public class ControlTreeNodeAttributes extends TreeTagsController {
     public void setParameters(TreeManageController treeController) {
         try {
             super.setParameters(treeController);
+            this.nodeEditor = treeController.nodeController;
 
             nameLabel.setText(treeController.nameMsg);
             timeLabel.setText(treeController.timeMsg);
@@ -99,8 +85,11 @@ public class ControlTreeNodeAttributes extends TreeTagsController {
         if (isSettingValues) {
             return;
         }
-        nodeChanged = changed;
+        nodeEditor.nodeChanged(changed);
         treeController.nodeChanged();
+        if (nodeEditor.attributesTab != null) {
+            nodeEditor.attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
+        }
     }
 
     @Override
@@ -109,15 +98,15 @@ public class ControlTreeNodeAttributes extends TreeTagsController {
             return;
         }
         nodeChanged(true);
-        if (attributesTab != null) {
-            attributesTab.setText(message("Attributes") + "*");
+        if (nodeEditor.attributesTab != null) {
+            nodeEditor.attributesTab.setText(message("Attributes") + "*");
         }
         selectedNotify.set(!selectedNotify.get());
     }
 
     protected void editNode(InfoNode node) {
-        isSettingValues = true;
         currentNode = node;
+        isSettingValues = true;
         if (node != null) {
             parentController.setTitle(parentController.baseTitle + ": " + node.getNodeid() + " - " + node.getTitle());
             idInput.setText(node.getNodeid() + "");
@@ -132,17 +121,9 @@ public class ControlTreeNodeAttributes extends TreeTagsController {
             selectButton.setVisible(true);
         }
         isSettingValues = false;
-        nodeChanged(false);
+        nodeChanged(node == null);
         refreshParentNode();
         refreshAction();
-        showEditorPane();
-        if (attributesTab != null) {
-            attributesTab.setText(message("Attributes"));
-        }
-    }
-
-    protected void showEditorPane() {
-        treeController.showRightPane();
     }
 
     protected void checkParentNode(InfoNode node) {
@@ -199,29 +180,12 @@ public class ControlTreeNodeAttributes extends TreeTagsController {
         currentNode = null;
         selectButton.setVisible(true);
         isSettingValues = false;
-        nodeChanged(false);
-    }
-
-    public InfoNode pickNodeData() {
-        String name = nameInput.getText();
-        if (name == null || name.isBlank()) {
-            popError(message("InvalidParameters") + ": " + treeController.nameMsg);
-            if (tabPane != null && attributesTab != null) {
-                tabPane.getSelectionModel().select(attributesTab);
-            }
-            return null;
-        }
-        if (name.contains(NodeSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
-            return null;
-        }
-        InfoNode node = InfoNode.create()
-                .setCategory(category).setTitle(name);
-        return node;
+        nodeChanged(true);
     }
 
     public void saveNode() {
-        InfoNode node = pickNodeData();
+        MyBoxLog.debug("here");
+        InfoNode node = nodeEditor.pickNodeData();
         if (node == null) {
             return;
         }

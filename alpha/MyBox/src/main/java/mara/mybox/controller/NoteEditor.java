@@ -22,7 +22,7 @@ public class NoteEditor extends ControlHtmlEditor {
     @FXML
     protected Tab attributesTab;
     @FXML
-    protected NoteAttributes attributesController;
+    protected NoteAttributes infoController;
 
     public void setParameters(NotesController notesController) {
         try {
@@ -31,8 +31,8 @@ public class NoteEditor extends ControlHtmlEditor {
             saveButton = notesController.saveButton;
             webViewController.defaultStyle = HtmlStyles.styleValue("Default");
 
-            attributesController.setEditor(this);
-            notesController.nodeController = attributesController;
+            infoController.setEditor(this);
+            notesController.nodeController = infoController;
 
             webViewController.linkInNewTab = true;
 
@@ -56,17 +56,11 @@ public class NoteEditor extends ControlHtmlEditor {
     }
 
     public void attributesChanged() {
-        attributesTab.setText(message("Attributes") + (attributesController.nodeChanged ? " *" : ""));
+        attributesTab.setText(message("Attributes") + (infoController.nodeChanged ? " *" : ""));
     }
 
     protected void editNote(InfoNode note) {
-        updateFileStatus(false);
-        attributesController.editNode(note);
-        if (note != null) {
-            loadContents(note.getValue());
-        } else {
-            loadContents("");
-        }
+        infoController.editNode(note);
     }
 
     protected void addNote() {
@@ -74,12 +68,12 @@ public class NoteEditor extends ControlHtmlEditor {
     }
 
     protected void copyNote() {
-        attributesController.copyNode();
+        infoController.attributesController.copyNode();
         updateFileStatus(true);
     }
 
     protected void recoverNote() {
-        editNote(attributesController.currentNode);
+        editNote(infoController.attributesController.currentNode);
     }
 
     @Override

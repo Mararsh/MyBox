@@ -412,6 +412,8 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                 return MathFunctionController.open();
             case InfoNode.ImageMaterial:
                 return ImageMaterialController.open();
+            case InfoNode.Data2DDefinition:
+                return Data2DDefinitionController.open();
 
         }
         return null;

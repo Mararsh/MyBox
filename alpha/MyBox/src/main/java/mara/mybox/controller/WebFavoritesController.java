@@ -34,7 +34,7 @@ public class WebFavoritesController extends TreeManageController {
 
             moreColumn.setCellFactory(new TableImageFileCell(20));
 
-            goButton.disableProperty().bind(Bindings.isEmpty(nodeController.nameInput.textProperty()));
+            goButton.disableProperty().bind(Bindings.isEmpty(nodeController.attributesController.nameInput.textProperty()));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

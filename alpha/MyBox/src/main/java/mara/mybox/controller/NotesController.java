@@ -74,6 +74,12 @@ public class NotesController extends TreeManageController {
     }
 
     @Override
+    public void newNodeSaved() {
+        super.newNodeSaved();
+        editorController.updateFileStatus(false);
+    }
+
+    @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (editorController.keyEventsFilter(event)) {
             return true;

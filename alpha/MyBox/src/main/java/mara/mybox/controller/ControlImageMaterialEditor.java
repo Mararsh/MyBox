@@ -13,7 +13,7 @@ public class ControlImageMaterialEditor extends ControlSvgShape {
     protected ImageMaterialController materialsController;
 
     @FXML
-    protected TreeNodeEditor attributesController;
+    protected ControlInfoTreeAttributes attributesController;
 
     public ControlImageMaterialEditor() {
     }

@@ -30,6 +30,7 @@ public class InfoNode extends BaseData {
     public static final String MathFunction = "MathFunction";
     public static final String RowFilter = "RowFilter";
     public static final String ImageMaterial = "ImageMaterial";
+    public static final String Data2DDefinition = "Data2DDefinition";
 
     protected long nodeid, parentid;
     protected String category, title, value, more;

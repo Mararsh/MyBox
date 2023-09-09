@@ -29,7 +29,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -42,6 +42,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     protected String lastFileName;
     private boolean startHandle, isCopy, byModifyTime;
     private int dirType, replaceType;
+    private long count;
     protected String renameAppdex = "-m";
     protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strDeleteSuccessfully, strFailedDelete;
     protected FileSynchronizeAttributes copyAttr;
@@ -75,7 +76,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     protected CheckBox handleSubdirCheck;
 
     public FilesArrangeController() {
-        baseTitle = Languages.message("FilesArrangement");
+        baseTitle = message("FilesArrangement");
     }
 
     @Override
@@ -123,7 +124,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) filesGroup.getSelectedToggle();
-                isCopy = Languages.message("Copy").equals(selected.getText());
+                isCopy = message("Copy").equals(selected.getText());
                 UserConfig.setBoolean(baseName + "Copy", isCopy);
             }
         });
@@ -164,7 +165,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) byGroup.getSelectedToggle();
-                byModifyTime = Languages.message("ModifyTime").equals(selected.getText());
+                byModifyTime = message("ModifyTime").equals(selected.getText());
                 UserConfig.setBoolean(baseName + "ModifyTime", byModifyTime);
             }
         });
@@ -201,16 +202,16 @@ public class FilesArrangeController extends BaseBatchFileController {
 
     private void checkReplaceType() {
         RadioButton selected = (RadioButton) replaceGroup.getSelectedToggle();
-        if (Languages.message("ReplaceModified").equals(selected.getText())) {
+        if (message("ReplaceModified").equals(selected.getText())) {
             replaceType = ReplaceType.ReplaceModified;
             UserConfig.setString(baseName + "Exist", "ReplaceModified");
-        } else if (Languages.message("NotCopy").equals(selected.getText())) {
+        } else if (message("NotCopy").equals(selected.getText())) {
             replaceType = ReplaceType.NotCopy;
             UserConfig.setString(baseName + "Exist", "NotCopy");
-        } else if (Languages.message("Replace").equals(selected.getText())) {
+        } else if (message("Replace").equals(selected.getText())) {
             replaceType = ReplaceType.Replace;
             UserConfig.setString(baseName + "Exist", "Replace");
-        } else if (Languages.message("Rename").equals(selected.getText())) {
+        } else if (message("Rename").equals(selected.getText())) {
             replaceType = ReplaceType.Rename;
             UserConfig.setString(baseName + "Exist", "Rename");
         } else {
@@ -222,13 +223,13 @@ public class FilesArrangeController extends BaseBatchFileController {
 
     private void checkDirType() {
         RadioButton selected = (RadioButton) dirGroup.getSelectedToggle();
-        if (Languages.message("Year").equals(selected.getText())) {
+        if (message("Year").equals(selected.getText())) {
             dirType = DirType.Year;
             UserConfig.setString(baseName + "Category", "Year");
-        } else if (Languages.message("Month").equals(selected.getText())) {
+        } else if (message("Month").equals(selected.getText())) {
             dirType = DirType.Month;
             UserConfig.setString(baseName + "Category", "Month");
-        } else if (Languages.message("Day").equals(selected.getText())) {
+        } else if (message("Day").equals(selected.getText())) {
             dirType = DirType.Day;
             UserConfig.setString(baseName + "Category", "Day");
         } else {
@@ -252,21 +253,21 @@ public class FilesArrangeController extends BaseBatchFileController {
                 targetPath.setExecutable(true);
 
                 initLogs();
-                logsTextArea.setText(Languages.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
-                logsTextArea.appendText(Languages.message("TargetPath") + ": " + targetPath.getAbsolutePath() + "\n");
+                logsTextArea.setText(message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
+                logsTextArea.appendText(message("TargetPath") + ": " + targetPath.getAbsolutePath() + "\n");
 
-                strFailedCopy = Languages.message("FailedCopy") + ": ";
-                strCreatedSuccessfully = Languages.message("CreatedSuccessfully") + ": ";
-                strCopySuccessfully = Languages.message("CopySuccessfully") + ": ";
-                strDeleteSuccessfully = Languages.message("DeletedSuccessfully") + ": ";
-                strFailedDelete = Languages.message("FailedDelete") + ": ";
+                strFailedCopy = message("FailedCopy") + ": ";
+                strCreatedSuccessfully = message("CreatedSuccessfully") + ": ";
+                strCopySuccessfully = message("CopySuccessfully") + ": ";
+                strDeleteSuccessfully = message("DeletedSuccessfully") + ": ";
+                strFailedDelete = message("FailedDelete") + ": ";
 
                 startHandle = true;
                 lastFileName = null;
 
             } else {
                 startHandle = false;
-                updateLogs(Languages.message("LastHanldedFile") + " " + lastFileName, true);
+                updateLogs(message("LastHanldedFile") + " " + lastFileName, true);
             }
 
             paused = false;
@@ -334,16 +335,16 @@ public class FilesArrangeController extends BaseBatchFileController {
             public void run() {
                 try {
                     if (paused) {
-                        updateLogs(Languages.message("Paused"), true, true);
+                        updateLogs(message("Paused"), true, true);
                     } else {
-                        updateLogs(Languages.message(newStatus), true, true);
+                        updateLogs(message(newStatus), true, true);
                     }
                     switch (newStatus) {
                         case "Started":
-                            operationBarController.statusInput.setText(Languages.message("Handling...") + " "
-                                    + Languages.message("StartTime")
+                            operationBarController.statusInput.setText(message("Handling...") + " "
+                                    + message("StartTime")
                                     + ": " + DateTools.datetimeToString(processStartTime));
-                            StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
+                            StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
                             startButton.applyCss();
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -353,7 +354,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                             });
                             operationBarController.pauseButton.setVisible(true);
                             operationBarController.pauseButton.setDisable(false);
-                            StyleTools.setNameIcon(operationBarController.pauseButton, Languages.message("Pause"), "iconPause.png");
+                            StyleTools.setNameIcon(operationBarController.pauseButton, message("Pause"), "iconPause.png");
                             operationBarController.pauseButton.applyCss();
                             operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -368,7 +369,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                         case "Done":
                         default:
                             if (paused) {
-                                StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
+                                StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
                                 startButton.applyCss();
                                 startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -378,7 +379,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                                 });
                                 operationBarController.pauseButton.setVisible(true);
                                 operationBarController.pauseButton.setDisable(false);
-                                StyleTools.setNameIcon(operationBarController.pauseButton, Languages.message("Start"), "iconStart.png");
+                                StyleTools.setNameIcon(operationBarController.pauseButton, message("Start"), "iconStart.png");
                                 operationBarController.pauseButton.applyCss();
                                 operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -388,7 +389,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                                 });
                                 disableControls(true);
                             } else {
-                                StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
+                                StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
                                 startButton.applyCss();
                                 startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -429,33 +430,33 @@ public class FilesArrangeController extends BaseBatchFileController {
         }
         String s;
         if (paused) {
-            s = Languages.message("Paused");
+            s = message("Paused");
         } else {
-            s = Languages.message(currentStatus);
+            s = message(currentStatus);
         }
-        s += ". " + Languages.message("HandledFiles") + ": " + copyAttr.getCopiedFilesNumber() + " "
-                + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
-                + Languages.message("Average") + ": " + avg + " " + Languages.message("SecondsPerItem") + ". "
-                + Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
-                + Languages.message("EndTime") + ": " + DateTools.datetimeToString(new Date());
+        s += ". " + message("HandledFiles") + ": " + copyAttr.getCopiedFilesNumber() + " "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
+                + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
+                + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
+                + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         operationBarController.statusInput.setText(s);
     }
 
     @Override
     public void afterTask() {
         recordTargetFiles();
-        updateLogs(Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
-                + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
-        updateLogs(Languages.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
-                + Languages.message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
-                + Languages.message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
-        updateLogs(Languages.message("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
-                + Languages.message("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
-                + Languages.message("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
+        updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
+        updateLogs(message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
+                + message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
+                + message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
+        updateLogs(message("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
+                + message("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
+                + message("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
         if (!isCopy) {
-            updateLogs(Languages.message("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
-                    + Languages.message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
-                    + Languages.message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
+            updateLogs(message("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
+                    + message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
+                    + message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
         }
         showCost();
         if (operationBarController.miaoCheck.isSelected()) {
@@ -498,7 +499,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                 if (!startHandle) {
                     if (lastFileName.equals(srcFileName)) {
                         startHandle = true;
-                        updateLogs(Languages.message("ReachFile") + " " + lastFileName, true, true);
+                        updateLogs(message("ReachFile") + " " + lastFileName, true, true);
                     }
                     if (srcFile.isFile()) {
                         continue;
@@ -506,6 +507,9 @@ public class FilesArrangeController extends BaseBatchFileController {
                 } else {
                     if (srcFile.isFile()) {
                         copyAttr.setTotalFilesNumber(copyAttr.getTotalFilesNumber() + 1);
+                        if (copyAttr.getTotalFilesNumber() % 100 == 0) {
+                            showLogs(message("HandledFiles") + ": " + copyAttr.getTotalFilesNumber());
+                        }
                     } else if (srcFile.isDirectory()) {
                         copyAttr.setTotalDirectoriesNumber(copyAttr.getTotalDirectoriesNumber() + 1);
                     }
@@ -513,8 +517,9 @@ public class FilesArrangeController extends BaseBatchFileController {
                 }
                 if (srcFile.isDirectory()) {
                     if (handleSubdirCheck.isSelected()) {
-                        if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(Languages.message("HandlingDirectory") + " " + srcFileName, true, true);
+                        if (verboseCheck.isSelected()
+                                || copyAttr.getTotalDirectoriesNumber() % 10 == 0) {
+                            updateLogs(message("HandlingDirectory") + " " + srcFileName, true, true);
                         }
                         arrangeFiles(srcFile);
                     }
@@ -546,7 +551,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                             path = new File(targetPath + File.separator + c.get(Calendar.YEAR));
                             if (!path.exists()) {
                                 path.mkdirs();
-                                if (verboseCheck == null || verboseCheck.isSelected()) {
+                                if (verboseCheck.isSelected()) {
                                     updateLogs(strCreatedSuccessfully + path.getAbsolutePath(), true, true);
                                 }
                             }
@@ -557,7 +562,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                                     + File.separator + c.get(Calendar.YEAR) + "-" + month + "-" + day);
                             if (!path.exists()) {
                                 path.mkdirs();
-                                if (verboseCheck == null || verboseCheck.isSelected()) {
+                                if (verboseCheck.isSelected()) {
                                     updateLogs(strCreatedSuccessfully + path.getAbsolutePath(), true, true);
                                 }
                             }
@@ -568,7 +573,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                                     + File.separator + c.get(Calendar.YEAR) + "-" + month);
                             if (!path.exists()) {
                                 path.mkdirs();
-                                if (verboseCheck == null || verboseCheck.isSelected()) {
+                                if (verboseCheck.isSelected()) {
                                     updateLogs(strCreatedSuccessfully + path.getAbsolutePath(), true, true);
                                 }
                             }
@@ -596,13 +601,13 @@ public class FilesArrangeController extends BaseBatchFileController {
                     if (!isCopy) {
                         FileDeleteTools.delete(srcFile);
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                        if (verboseCheck == null || verboseCheck.isSelected()) {
+                        if (verboseCheck.isSelected()) {
                             updateLogs(strDeleteSuccessfully + srcFileName, true, true);
                         }
                     }
                     copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                     copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                    if (verboseCheck == null || verboseCheck.isSelected()) {
+                    if (verboseCheck.isSelected()) {
                         updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
                                 + srcFileName + " -> " + newFile.getAbsolutePath(), true, true);
                     }

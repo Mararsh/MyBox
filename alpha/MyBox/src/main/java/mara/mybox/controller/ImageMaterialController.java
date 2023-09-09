@@ -30,7 +30,7 @@ public class ImageMaterialController extends TreeManageController {
     public void initValues() {
         try {
             super.initValues();
-            nodeController = editorController.attributesController;
+//            nodeController = editorController.attributesController;
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

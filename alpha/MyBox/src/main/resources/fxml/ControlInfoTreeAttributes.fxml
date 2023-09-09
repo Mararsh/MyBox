@@ -11,16 +11,15 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodeEditor">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlInfoTreeAttributes">
     <children>
-        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="27.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label fx:id="chainLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectParent">
@@ -34,21 +33,19 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="73.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label fx:id="idLabel" minHeight="-Infinity" text="%ID" wrapText="true" />
                 <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
-                <Label fx:id="nameLabel" minHeight="-Infinity" text="%Title" wrapText="true" />
+                <Label fx:id="nameLabel" minHeight="-Infinity" text="%Name" wrapText="true" />
                 <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <Label fx:id="valueLabel" minHeight="-Infinity" text="%Value" wrapText="true" />
-        <TextArea fx:id="valueInput" prefHeight="200.0" wrapText="true" />
-        <HBox alignment="CENTER_RIGHT" layoutX="15.0" layoutY="96.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label fx:id="timeLabel" minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
                 <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
@@ -56,7 +53,7 @@ License:    Apache License Version 2.0
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
-                <Label maxWidth="1.7976931348623157E308" text="%Tags" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="refreshTagsButton" mnemonicParsing="false" onAction="#refreshAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

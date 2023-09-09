@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-1
  * @License Apache License Version 2.0
  */
-public class DataTableQueryEditor extends TreeNodeEditor {
+public class DataTableQueryEditor extends BaseInfoTreeNodeEditor {
 
     protected DataTable dataTable;
 
