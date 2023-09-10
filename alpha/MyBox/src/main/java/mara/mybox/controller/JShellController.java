@@ -35,19 +35,9 @@ public class JShellController extends TreeManageController {
     }
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            nodeController = editorController;
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
     public void initControls() {
         try {
+            nodeController = editorController;
             super.initControls();
 
             webViewController.setParent(this, ControlWebView.ScrollType.Bottom);

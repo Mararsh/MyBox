@@ -20,20 +20,17 @@ import mara.mybox.color.ColorConversion.RangeType;
 import mara.mybox.color.ColorConversion.SpaceType;
 import mara.mybox.color.Illuminant;
 import mara.mybox.color.RGBColorSpace;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2019-6-7
  * @License Apache License Version 2.0
  */
-public class ColorController extends BaseController {
+public class ColorAttributesController extends BaseController {
 
     protected double d1, d2, d3, d4;
     protected SpaceType spaceType;
@@ -56,7 +53,7 @@ public class ColorController extends BaseController {
     @FXML
     protected HBox paraBox1, paraBox2, paraBox3, gammaBox, rangeBox;
 
-    public ColorController() {
+    public ColorAttributesController() {
     }
 
     @Override

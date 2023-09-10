@@ -384,7 +384,7 @@ License:    Apache License Version 2.0
                                                 </FlowPane>
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="editor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMathFunctionEditor.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="editor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="MathFunctionEditor.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -393,9 +393,9 @@ License:    Apache License Version 2.0
                             </content>
                         </ScrollPane>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" pannable="true">
-                     <content>
-                        <fx:include fx:id="calculate" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMathFunctionCalculator.fxml" VBox.vgrow="ALWAYS" />
-                     </content>
+                            <content>
+                                <fx:include fx:id="calculate" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMathFunctionCalculator.fxml" VBox.vgrow="ALWAYS" />
+                            </content>
                         </ScrollPane>
                     </items>
                 </SplitPane>

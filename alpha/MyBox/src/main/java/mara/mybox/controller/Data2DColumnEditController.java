@@ -29,8 +29,8 @@ public class Data2DColumnEditController extends BaseChildController {
             this.index = index;
 
             columnEditController.setParameters(columnsController, index);
-            titleLabel.setText(columnsController.data2D.displayName() + "\n"
-                    + message("Column") + " " + (index + 1));
+            String t = columnsController.data2D == null ? "" : (columnsController.data2D.displayName() + "\n");
+            titleLabel.setText(t + message("Column") + " " + (index + 1));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-8
  * @License Apache License Version 2.0
  */
-public class ControlMathFunctionEditor extends BaseInfoTreeNodeEditor {
+public class MathFunctionEditor extends BaseInfoTreeNodeEditor {
 
     protected MathFunctionController functionController;
     protected String outputs = "";
@@ -29,7 +29,7 @@ public class ControlMathFunctionEditor extends BaseInfoTreeNodeEditor {
     @FXML
     protected TextField variablesInput, resultNameInput;
 
-    public ControlMathFunctionEditor() {
+    public MathFunctionEditor() {
         defaultExt = "txt";
     }
 

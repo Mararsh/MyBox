@@ -7,10 +7,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -60,8 +58,6 @@ public class ColorPalettePopupController extends BaseChildController {
     protected Label label;
     @FXML
     protected Button paletteButton;
-    @FXML
-    protected CheckBox popCheck;
 
     public ColorPalettePopupController() {
         baseTitle = message("ColorPalette");
@@ -98,7 +94,6 @@ public class ColorPalettePopupController extends BaseChildController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(popCheck, message("PopColorSetWhenMouseHovering"));
             NodeStyleTools.setTooltip(cancelButton, message("PopupClose"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -111,14 +106,6 @@ public class ColorPalettePopupController extends BaseChildController {
             super.initControls();
 
             colorsController.setParameter(this);
-
-            popCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("PopColorSetWhenMouseHovering", popCheck.isSelected());
-                }
-            });
 
             colorsController.clickNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -201,7 +188,8 @@ public class ColorPalettePopupController extends BaseChildController {
         try {
             parentRect.setFill(colorData.getColor());
             parentRect.setUserData(colorData);
-            NodeStyleTools.setTooltip(parentRect, colorData.display());
+            NodeStyleTools.setTooltip(parentRect,
+                    message("ClickToEdit") + "\n---------\n" + colorData.display());
             parentController.closePopup();
             setNotify.set(!setNotify.get());
         } catch (Exception e) {

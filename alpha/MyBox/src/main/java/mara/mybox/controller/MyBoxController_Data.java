@@ -53,6 +53,11 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.RowFilterFxml);
         });
 
+        MenuItem Data2DDefinition = new MenuItem(message("Data2DDefinition"));
+        Data2DDefinition.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.Data2DDefinitionFxml);
+        });
+
         MenuItem DataInSystemClipboard = new MenuItem(message("DataInSystemClipboard"));
         DataInSystemClipboard.setOnAction((ActionEvent event1) -> {
             DataInSystemClipboardController.oneOpen();
@@ -236,8 +241,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(
-                DataManufacture, DataFile, matrix, database, ManageData, SpliceData, RowFilter,
-                DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
+                DataManufacture, DataFile, matrix, database, ManageData, SpliceData,
+                Data2DDefinition, RowFilter, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
                 Location, miscellaneousMenu));
 

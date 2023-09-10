@@ -39,7 +39,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected CheckMenuItem shortcutsCanNotOmitCheck, loseFocusCommitDataCheck, clearExpiredDataCheck,
             closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
-            popColorSetCheck, controlPanesCheck, controlTextCheck;
+            controlPanesCheck, controlTextCheck;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
@@ -86,7 +86,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
-        popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
         shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
         loseFocusCommitDataCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
         clearExpiredDataCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
@@ -338,11 +337,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             AppVariables.fileRecentNumber = 0;
         }
         UserConfig.setInt("FileRecentNumber", AppVariables.fileRecentNumber);
-    }
-
-    @FXML
-    protected void popColorSetAction() {
-        UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
     }
 
     @FXML

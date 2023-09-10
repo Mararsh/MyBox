@@ -19,6 +19,9 @@ import static mara.mybox.value.Languages.message;
  */
 public class WebFavoritesController extends TreeManageController {
 
+    @FXML
+    protected WebFavoriteEditor editorController;
+
     public WebFavoritesController() {
         baseTitle = message("WebFavorites");
         category = InfoNode.WebFavorite;
@@ -30,6 +33,7 @@ public class WebFavoritesController extends TreeManageController {
     @Override
     public void initControls() {
         try {
+            nodeController = editorController;
             super.initControls();
 
             moreColumn.setCellFactory(new TableImageFileCell(20));

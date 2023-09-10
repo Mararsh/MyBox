@@ -36,7 +36,6 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
@@ -178,7 +177,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 }
             });
 
-            blendController.setParameters(this);
+            blendController.setParameters(this, imageView);
 
             checkDistance();
         } catch (Exception e) {
@@ -278,7 +277,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorOperationType = OperationType.Blend;
                     setBox.getChildren().addAll(blendBox, opBox);
                     opBox.getChildren().addAll(goButton);
-                    setBlender();
 
                 } else if (colorRGBRadio.isSelected()) {
                     colorOperationType = OperationType.RGB;
@@ -402,15 +400,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    protected void setBlender() {
-        blendController.backImage = imageView.getImage();
-        blendController.foreImage = FxImageTools.createImage(
-                (int) (imageView.getImage().getWidth() * 3 / 4), (int) (imageView.getImage().getHeight() * 3 / 4),
-                valueColorSetController.color());
-        blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
-        blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
     }
 
     @Override

@@ -20,53 +20,53 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorAttributesController">
     <children>
         <HBox fx:id="paraBox1" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-            <Label text="%RGBBased" />
+                <Label text="%RGBBased" />
                 <ComboBox fx:id="rgbSelector" prefHeight="30.0" prefWidth="200.0" />
-            <Label text="%CIEBased" />
-            <ComboBox fx:id="cieSelector" layoutX="220.0" layoutY="10.0" prefHeight="30.0" prefWidth="120.0" />
-            <Label text="%CMYKBased" />
-            <ComboBox fx:id="cmykSelector" layoutX="385.0" layoutY="10.0" prefHeight="30.0" prefWidth="100.0" />
-            <Label text="%Others" />
-            <ComboBox fx:id="othersSelector" prefWidth="120.0" />
+                <Label text="%CIEBased" />
+                <ComboBox fx:id="cieSelector" layoutX="220.0" layoutY="10.0" prefHeight="30.0" prefWidth="120.0" />
+                <Label text="%CMYKBased" />
+                <ComboBox fx:id="cmykSelector" layoutX="385.0" layoutY="10.0" prefHeight="30.0" prefWidth="100.0" />
+                <Label text="%Others" />
+                <ComboBox fx:id="othersSelector" prefWidth="120.0" />
             </children>
         </HBox>
-      <HBox fx:id="paraBox2" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
-         <children>
-            <Label text="%ReferenceWhite" />
-            <ComboBox fx:id="whiteSelector" prefWidth="180.0" />
-            <HBox fx:id="gammaBox" alignment="CENTER_LEFT" spacing="5.0">
-               <children>
-                      <Label text="%Gamma" />
-                  <RadioButton fx:id="gammaRadio1" mnemonicParsing="false" selected="true" text="sRGB">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="gammaGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="gammaRadio2" mnemonicParsing="false" text="%Linear" toggleGroup="$gammaGroup" />
-               </children>
-            </HBox>
+        <HBox fx:id="paraBox2" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
+            <children>
+                <Label text="%ReferenceWhite" />
+                <ComboBox fx:id="whiteSelector" prefWidth="180.0" />
+                <HBox fx:id="gammaBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label text="%Gamma" />
+                        <RadioButton fx:id="gammaRadio1" mnemonicParsing="false" selected="true" text="sRGB">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="gammaGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="gammaRadio2" mnemonicParsing="false" text="%Linear" toggleGroup="$gammaGroup" />
+                    </children>
+                </HBox>
                 <ColorPicker fx:id="colorPicker">
                     <HBox.margin>
                         <Insets left="10.0" />
                     </HBox.margin>
                 </ColorPicker>
-            <HBox fx:id="rangeBox" alignment="CENTER_LEFT" spacing="5.0">
-               <children>
+                <HBox fx:id="rangeBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
                         <Label text="%Range" />
                         <RadioButton fx:id="rangeRatio1" mnemonicParsing="false" selected="true" text="0.0~1.0">
                             <toggleGroup>
                                 <ToggleGroup fx:id="rangeGroup" />
                             </toggleGroup>
-                  </RadioButton>
+                        </RadioButton>
                         <RadioButton fx:id="rangeRatio2" mnemonicParsing="false" text="0~255" toggleGroup="$rangeGroup" />
-               </children>
-            </HBox>
-         </children>
-      </HBox>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
         <HBox fx:id="paraBox3" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label fx:id="vLabel1" text="v1" />

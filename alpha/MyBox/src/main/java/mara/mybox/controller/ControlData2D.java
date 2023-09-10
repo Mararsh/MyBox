@@ -68,7 +68,7 @@ public class ControlData2D extends BaseController {
     @FXML
     protected ControlData2DAttributes attributesController;
     @FXML
-    protected ControlData2DColumns columnsController;
+    protected ControlData2DColumnsSource columnsController;
     @FXML
     protected FlowPane paginationPane;
     @FXML
@@ -308,9 +308,9 @@ public class ControlData2D extends BaseController {
         attributesTab.setText(title);
 
         title = message("Columns");
-        if (columnsController.status == ControlData2DColumns.Status.Applied) {
+        if (columnsController.status == ControlData2DColumnsSource.Status.Applied) {
             title += "*";
-        } else if (columnsController.status == ControlData2DColumns.Status.Modified) {
+        } else if (columnsController.status == ControlData2DColumnsSource.Status.Modified) {
             title += "**";
         }
         columnsTab.setText(title);
@@ -367,7 +367,7 @@ public class ControlData2D extends BaseController {
             return -1;
         }
         if (attributesController.status == ControlData2DAttributes.Status.Modified
-                || columnsController.status == ControlData2DColumns.Status.Modified
+                || columnsController.status == ControlData2DColumnsSource.Status.Modified
                 || csvController.status == ControlData2DEditCSV.Status.Modified) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
@@ -399,9 +399,9 @@ public class ControlData2D extends BaseController {
                         return -3;
                     }
                 }
-                if (columnsController.status == ControlData2DColumns.Status.Modified) {
+                if (columnsController.status == ControlData2DColumnsSource.Status.Modified) {
                     columnsController.okAction();
-                    if (columnsController.status != ControlData2DColumns.Status.Applied) {
+                    if (columnsController.status != ControlData2DColumnsSource.Status.Applied) {
                         return -4;
                     }
                 }

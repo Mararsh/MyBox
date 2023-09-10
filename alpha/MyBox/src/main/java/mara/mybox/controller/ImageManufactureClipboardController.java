@@ -101,13 +101,19 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             });
 
-            blendController.setParameters(this);
+            blendController.setParameters(this, imageView);
             blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (editor != null) {
                         pasteClip(currentAngle);
                     }
+                }
+            });
+            blendController.demoNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    blendController.demo(imageView.getImage(), finalClip);
                 }
             });
 

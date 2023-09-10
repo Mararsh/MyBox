@@ -126,7 +126,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
                 }
             });
 
-            blendController.setParameters(this);
+            blendController.setParameters(this, null);
 
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

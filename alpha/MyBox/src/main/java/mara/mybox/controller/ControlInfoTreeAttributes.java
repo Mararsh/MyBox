@@ -25,7 +25,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlInfoTreeAttributes extends TreeTagsController {
 
-    protected BaseInfoTreeNodeEditor nodeEditor;
+    protected BaseInfoTreeNodeEditor editor;
     protected InfoNode parentNode;
     protected SingletonTask tagsTask;
 
@@ -61,7 +61,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
     public void setParameters(TreeManageController treeController) {
         try {
             super.setParameters(treeController);
-            this.nodeEditor = treeController.nodeController;
+            this.editor = treeController.nodeController;
 
             nameLabel.setText(treeController.nameMsg);
             timeLabel.setText(treeController.timeMsg);
@@ -85,10 +85,10 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         if (isSettingValues) {
             return;
         }
-        nodeEditor.nodeChanged(changed);
+        editor.nodeChanged(changed);
         treeController.nodeChanged();
-        if (nodeEditor.attributesTab != null) {
-            nodeEditor.attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
+        if (editor.attributesTab != null) {
+            editor.attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
         }
     }
 
@@ -98,8 +98,8 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
             return;
         }
         nodeChanged(true);
-        if (nodeEditor.attributesTab != null) {
-            nodeEditor.attributesTab.setText(message("Attributes") + "*");
+        if (editor.attributesTab != null) {
+            editor.attributesTab.setText(message("Attributes") + "*");
         }
         selectedNotify.set(!selectedNotify.get());
     }
@@ -185,7 +185,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
 
     public void saveNode() {
         MyBoxLog.debug("here");
-        InfoNode node = nodeEditor.pickNodeData();
+        InfoNode node = editor.pickNodeData();
         if (node == null) {
             return;
         }

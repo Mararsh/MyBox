@@ -75,7 +75,7 @@ public class SettingsController extends BaseController {
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
             controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
             lostFocusCommitCheck, copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
-            mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
+            mousePassControlPanesCheck, stopAlarmCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
             tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput,
@@ -191,7 +191,6 @@ public class SettingsController extends BaseController {
             icons40pxCheck.setSelected(AppVariables.icons40px);
             splitPaneSensitiveCheck.setSelected(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
-            popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
             shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
             lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
 
@@ -491,11 +490,6 @@ public class SettingsController extends BaseController {
     @FXML
     protected void mousePassControlPanes() {
         UserConfig.setBoolean("MousePassControlPanes", mousePassControlPanesCheck.isSelected());
-    }
-
-    @FXML
-    protected void popColorSet() {
-        UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
     }
 
     @FXML

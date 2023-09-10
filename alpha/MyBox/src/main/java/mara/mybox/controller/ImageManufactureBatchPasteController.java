@@ -82,7 +82,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 }
             });
 
-            blendController.setParameters(this);
+            blendController.setParameters(this, null);
 
             angleSelector.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
             angleSelector.setVisibleRowCount(10);

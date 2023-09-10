@@ -263,6 +263,7 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
                                 <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
+                                <MenuItem mnemonicParsing="false" onAction="#Data2DDefinition" text="%Data2DDefinition" />
                                 <MenuItem mnemonicParsing="false" onAction="#RowFilter" text="%RowFilter" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
@@ -385,7 +386,6 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="shortcutsCanNotOmitCheck" mnemonicParsing="false" onAction="#shortcutsCanNotOmitCtrlAlt" text="%ShortcutsCanNotOmitCtrlAlt" />
                                 <CheckMenuItem fx:id="loseFocusCommitDataCheck" mnemonicParsing="false" onAction="#loseFocusCommitData" text="%CommitModificationWhenDataCellLoseFocus" />
                                 <CheckMenuItem fx:id="clearExpiredDataCheck" mnemonicParsing="false" onAction="#clearExpiredDataBeforeExit" text="%ClearExpiredDataBeforeExit" />
-                                <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMouseHovering" />
                                 <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMouseHovering" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />

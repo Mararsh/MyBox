@@ -50,7 +50,7 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class ControlMathFunctionCalculator extends BaseController {
 
-    protected ControlMathFunctionEditor editorController;
+    protected MathFunctionEditor editorController;
     protected String expression, domain, outputs = "";
     protected ExpressionCalculator calculator;
     protected int calculateScale, dataScale, variablesSize;
@@ -125,7 +125,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         }
     }
 
-    public void setParameters(ControlMathFunctionEditor editorController) {
+    public void setParameters(MathFunctionEditor editorController) {
         try {
             this.editorController = editorController;
             calculateButton.disableProperty().bind(editorController.valueInput.textProperty().isEmpty());
@@ -649,7 +649,7 @@ public class ControlMathFunctionCalculator extends BaseController {
     /*
         static
      */
-    public static ControlMathFunctionCalculator open(ControlMathFunctionEditor editorController) {
+    public static ControlMathFunctionCalculator open(MathFunctionEditor editorController) {
         try {
             ControlMathFunctionCalculator controller = (ControlMathFunctionCalculator) WindowTools.openChildStage(
                     editorController.getMyWindow(), Fxmls.MathFunctionCalculatorFxml, false);

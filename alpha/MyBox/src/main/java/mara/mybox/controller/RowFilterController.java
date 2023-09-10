@@ -36,7 +36,7 @@ public class RowFilterController extends TreeManageController {
             editorController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 

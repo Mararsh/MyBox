@@ -153,6 +153,13 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
 
             infoController.initStyle(HtmlStyles.styleValue("Table") + "\n body { width: 400px; } \n");
 
+            colorsController.clickNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    displayColorInfo(colorsController.clickedColor());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -790,11 +797,15 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         }
         ColorData color = selectedItem();
         copyButton.setDisable(color == null);
-        if (color != null) {
-//            showRightPane();
-            infoController.displayHtml(color.html());
-        }
+        displayColorInfo(color);
         checkButtons();
+    }
+
+    protected void displayColorInfo(ColorData color) {
+        if (color == null) {
+            return;
+        }
+        infoController.displayHtml(color.html());
     }
 
     @Override

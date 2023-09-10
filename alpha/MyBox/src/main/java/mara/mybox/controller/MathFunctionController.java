@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
 public class MathFunctionController extends TreeManageController {
 
     @FXML
-    protected ControlMathFunctionEditor editorController;
+    protected MathFunctionEditor editorController;
     @FXML
     protected ControlMathFunctionCalculator calculateController;
 
@@ -29,19 +29,9 @@ public class MathFunctionController extends TreeManageController {
     }
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            nodeController = editorController;
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
     public void initControls() {
         try {
+            nodeController = editorController;
             super.initControls();
 
             editorController.setParameters(this);

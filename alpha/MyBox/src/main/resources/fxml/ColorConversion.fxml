@@ -61,7 +61,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <TitledPane text="%SourceColor" VBox.vgrow="NEVER">
                     <content>
-                        <fx:include fx:id="source" source="Color.fxml" />
+                        <fx:include fx:id="source" source="ColorAttributes.fxml" />
                     </content>
                 </TitledPane>
                 <TitledPane layoutX="30.0" layoutY="30.0" maxWidth="1.7976931348623157E308" text="%CalculationResults" VBox.vgrow="ALWAYS">

@@ -31,7 +31,8 @@ public class Data2DColumnCreateController extends BaseChildController {
     protected void setParameters(ControlData2DColumns columnsController) {
         try {
             this.columnsController = columnsController;
-            buttomLabel.setVisible(columnsController.data2D.isTable() && columnsController.data2D.getSheet() != null);
+            buttomLabel.setVisible(columnsController.data2D != null
+                    && columnsController.data2D.isTable() && columnsController.data2D.getSheet() != null);
 
             columnEditController.setParameters(columnsController);
 

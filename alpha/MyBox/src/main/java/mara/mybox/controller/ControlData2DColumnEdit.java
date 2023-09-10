@@ -29,10 +29,8 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
@@ -97,7 +95,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
             centuryPane.disableProperty().bind(fixYearCheck.selectedProperty().not());
 
-            rightTipsView.setVisible(columnsController.data2D.isTable());
+            rightTipsView.setVisible(columnsController.data2D != null && columnsController.data2D.isTable());
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -262,10 +260,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 invalidAsSkipRadio.setSelected(true);
             }
 
-            boolean canChange = columnsController.data2D.isTable() && columnIndex >= 0;
-            nameInput.setDisable(canChange);
+            boolean canNotChange = columnsController.data2D != null
+                    && columnsController.data2D.isTable() && columnIndex >= 0;
+            nameInput.setDisable(canNotChange);
             for (int i = 1; i < typesPane.getChildren().size(); i++) {
-                typesPane.getChildren().get(i).setDisable(canChange);
+                typesPane.getChildren().get(i).setDisable(canNotChange);
             }
 
         } catch (Exception e) {
@@ -276,7 +275,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     public Data2DColumn pickValues() {
         try {
             String name = nameInput.getText();
-            if (columnsController.data2D.isTable()) {
+            if (columnsController.data2D != null && columnsController.data2D.isTable()) {
                 name = DerbyBase.fixedIdentifier(name);
             }
             if (name == null || name.isBlank()) {
@@ -528,22 +527,6 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    /*
-        static
-     */
-    public static ControlData2DColumnEdit open(ControlData2DColumns columnsController) {
-        try {
-            ControlData2DColumnEdit controller = (ControlData2DColumnEdit) WindowTools.openChildStage(
-                    columnsController.getMyWindow(), Fxmls.Data2DColumnCreateFxml, false);
-            controller.setParameters(columnsController);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
         }
     }
 

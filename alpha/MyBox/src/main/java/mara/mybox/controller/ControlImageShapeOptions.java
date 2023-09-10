@@ -9,7 +9,6 @@ import javafx.scene.input.KeyEvent;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 
@@ -52,7 +51,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         try {
             super.initShapeControls();
 
-            blendController.setParameters(this);
+            blendController.setParameters(this, imageView);
 
             blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -77,20 +76,10 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             maskView.setVisible(true);
             imageView.setVisible(false);
             imageView.toBack();
-            setBlender();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    protected void setBlender() {
-        blendController.backImage = imageView.getImage();
-        blendController.foreImage = FxImageTools.createImage(
-                (int) (imageView.getImage().getWidth() * 3 / 4), (int) (imageView.getImage().getHeight() * 3 / 4),
-                strokeColorController.color());
-        blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
-        blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
     }
 
     @Override
