@@ -80,7 +80,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <FlowPane fx:id="fixPane" hgap="2.0" vgap="2.0">
                     <children>
-                        <CheckBox fx:id="fixYearCheck" minHeight="-Infinity" mnemonicParsing="false" text="%FixTwoDigitYears" wrapText="true" />
+                        <CheckBox fx:id="fixYearCheck" minHeight="-Infinity" mnemonicParsing="false" text="%FixTwoDigitYearsComments" wrapText="true" />
                         <FlowPane fx:id="centuryPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
                             <children>
                                 <Label text="%Century" />

@@ -42,7 +42,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DColumnEdit extends BaseChildController {
 
-    protected ControlData2DColumns columnsController;
+    protected BaseData2DColumnsController columnsController;
     protected int columnIndex;
 
     @FXML
@@ -78,7 +78,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void init(ControlData2DColumns columnsController) {
+    protected void init(BaseData2DColumnsController columnsController) {
         try {
             this.columnsController = columnsController;
             columnIndex = -1;
@@ -102,12 +102,12 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void setParameters(ControlData2DColumns columnsController) {
+    protected void setParameters(BaseData2DColumnsController columnsController) {
         init(columnsController);
         loadColumn(-1);
     }
 
-    public void setParameters(ControlData2DColumns columnsController, int index) {
+    public void setParameters(BaseData2DColumnsController columnsController, int index) {
         init(columnsController);
         loadColumn(index);
     }

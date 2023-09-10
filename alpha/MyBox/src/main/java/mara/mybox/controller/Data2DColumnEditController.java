@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DColumnEditController extends BaseChildController {
 
-    protected ControlData2DColumns columnsController;
+    protected BaseData2DColumnsController columnsController;
     protected int index;
 
     @FXML
@@ -23,7 +23,7 @@ public class Data2DColumnEditController extends BaseChildController {
     @FXML
     protected Label titleLabel;
 
-    public void setParameters(ControlData2DColumns columnsController, int index) {
+    public void setParameters(BaseData2DColumnsController columnsController, int index) {
         try {
             this.columnsController = columnsController;
             this.index = index;
@@ -58,7 +58,7 @@ public class Data2DColumnEditController extends BaseChildController {
     /*
         static
      */
-    public static Data2DColumnEditController open(ControlData2DColumns columnsController, int index) {
+    public static Data2DColumnEditController open(BaseData2DColumnsController columnsController, int index) {
         try {
             Data2DColumnEditController controller = (Data2DColumnEditController) WindowTools.openChildStage(
                     columnsController.getMyWindow(), Fxmls.Data2DColumnEditFxml, true);

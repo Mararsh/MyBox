@@ -43,7 +43,7 @@ public class ControlImagesBlend extends BaseController {
     protected ImagesBlendMode blendMode;
     protected float opacity;
     protected int keepRatioType;
-    protected SimpleBooleanProperty optionChangedNotify, demoNotify;
+    protected SimpleBooleanProperty optionChangedNotify;
 
     @FXML
     protected ComboBox<String> blendSelector, opacitySelector;
@@ -54,7 +54,6 @@ public class ControlImagesBlend extends BaseController {
 
     public ControlImagesBlend() {
         optionChangedNotify = new SimpleBooleanProperty(false);
-        demoNotify = new SimpleBooleanProperty(false);
     }
 
     public void setParameters(BaseController parent) {
@@ -145,10 +144,6 @@ public class ControlImagesBlend extends BaseController {
 
     @FXML
     public void demo() {
-        if (parentController instanceof ImageManufactureClipboardController) {
-            demoNotify.set(!demoNotify.get());
-            return;
-        }
         Image backImage = null;
         if (backView != null) {
             backImage = backView.getImage();
@@ -156,23 +151,25 @@ public class ControlImagesBlend extends BaseController {
         if (backImage == null) {
             backImage = new Image("img/cover" + AppValues.AppYear + "g5.png");
         }
-        demo(backImage);
+        Image foreImage = null;
+        Color foreColor = Color.PINK;
+        if (parentController instanceof ImageManufactureClipboardController) {
+            foreImage = ((ImageManufactureClipboardController) parentController).finalClip;
+        } else if (parentController instanceof ImageManufactureColorController) {
+            foreColor = ((ImageManufactureColorController) parentController).valueColorSetController.color();
+        }
+        if (foreImage == null) {
+            foreImage = FxImageTools.createImage(
+                    (int) (backImage.getWidth() * 3 / 4), (int) (backImage.getHeight() * 3 / 4),
+                    foreColor);
+        }
+        demo(backImage, foreImage);
     }
 
-    public void demo(Image backImage) {
-        demo(backImage, null);
-    }
-
-    public void demo(Image backImage, Image inImage) {
-        if (backImage == null) {
+    public void demo(Image backImage, Image foreImage) {
+        if (backImage == null || foreImage == null) {
             return;
         }
-        Image foreImage = inImage != null ? inImage
-                : FxImageTools.createImage(
-                        (int) (backImage.getWidth() * 3 / 4), (int) (backImage.getHeight() * 3 / 4),
-                        Color.PINK);
-        int x = (int) (backImage.getWidth() - foreImage.getWidth()) / 2;
-        int y = (int) (backImage.getHeight() - foreImage.getHeight()) / 2;
         if (task != null) {
             task.cancel();
         }
@@ -182,6 +179,8 @@ public class ControlImagesBlend extends BaseController {
             @Override
             protected boolean handle() {
                 try {
+                    int x = (int) (backImage.getWidth() - foreImage.getWidth()) / 2;
+                    int y = (int) (backImage.getHeight() - foreImage.getHeight()) / 2;
                     BufferedImage foreBI = SwingFXUtils.fromFXImage(foreImage, null);
                     foreBI = ScaleTools.scaleImageLess(foreBI, 1000000);
                     BufferedImage backBI = SwingFXUtils.fromFXImage(backImage, null);

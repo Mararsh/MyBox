@@ -19,20 +19,29 @@ License:    Apache License Version 2.0
     <children>
         <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
             <children>
-            <CheckBox fx:id="lostFocusCommitCheck" mnemonicParsing="false" onAction="#autoCommitCheck">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/red/iconInput.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
+                <CheckBox fx:id="lostFocusCommitCheck" mnemonicParsing="false" onAction="#autoCommitCheck">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/red/iconInput.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
                 <Button fx:id="dataButton" layoutX="535.0" layoutY="10.0" mnemonicParsing="false" onAction="#dataAction">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/Red/iconData.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="cancelEditButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -64,15 +73,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconClear.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -91,20 +100,29 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconEdit.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconEdit.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="addRowsButton" mnemonicParsing="false" onAction="#addRowsAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/Red/iconNewItem.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -123,12 +141,14 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="typeColumn" prefWidth="120.0" text="%Type" />
                 <TableColumn fx:id="notNullColumn" text="%NotNull" />
                 <TableColumn fx:id="editableColumn" text="%Editable" />
-            <TableColumn fx:id="formatColumn" prefWidth="120.0" text="%Format" />
+                <TableColumn fx:id="formatColumn" prefWidth="120.0" text="%Format" />
                 <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
                 <TableColumn fx:id="widthColumn" prefWidth="75.0" text="%Width" />
                 <TableColumn fx:id="lengthColumn" prefWidth="75.0" text="%Length" />
                 <TableColumn fx:id="defaultColumn" prefWidth="75.0" text="%DefaultValue" />
-            <TableColumn fx:id="descColumn" prefWidth="200.0" text="%Description" />
+                <TableColumn fx:id="primaryColumn" text="%PrimaryKey" />
+                <TableColumn fx:id="autoColumn" text="%AutoGenerated" />
+                <TableColumn fx:id="descColumn" prefWidth="200.0" text="%Description" />
             </columns>
         </TableView>
     </children>

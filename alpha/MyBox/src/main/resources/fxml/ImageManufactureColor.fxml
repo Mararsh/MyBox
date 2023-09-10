@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureColorController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureColorController">
     <children>
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
@@ -154,7 +154,7 @@
                       <children>
                         <FlowPane fx:id="originalColorPane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                             <children>
-                                <Label fx:id="colorUnit1" text="%OriginalColor" />
+                                <Label text="%OriginalColor" />
                                 <fx:include fx:id="originalColorSet" source="ControlColorSet.fxml" />
                             </children>
                         </FlowPane>
@@ -192,7 +192,7 @@
                <children>
                         <FlowPane fx:id="newColorPane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                             <children>
-                                <Label fx:id="colorUnit11" text="%NewColor" />
+                                <Label text="%NewColor" />
                                 <fx:include fx:id="newColorSet" source="ControlColorSet.fxml" />
                             </children>
                         </FlowPane>
@@ -260,6 +260,7 @@
                <children>
                       <HBox alignment="CENTER_LEFT" spacing="5.0">
                           <children>
+                        <Label text="%Blend" />
                               <fx:include fx:id="valueColorSet" source="ControlColorSet.fxml" />
                           </children>
                       </HBox>

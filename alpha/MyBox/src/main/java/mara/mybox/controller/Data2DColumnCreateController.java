@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DColumnCreateController extends BaseChildController {
 
-    protected ControlData2DColumns columnsController;
+    protected BaseData2DColumnsController columnsController;
 
     @FXML
     protected ControlData2DColumnEdit columnEditController;
@@ -28,7 +28,7 @@ public class Data2DColumnCreateController extends BaseChildController {
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
-    protected void setParameters(ControlData2DColumns columnsController) {
+    protected void setParameters(BaseData2DColumnsController columnsController) {
         try {
             this.columnsController = columnsController;
             buttomLabel.setVisible(columnsController.data2D != null
@@ -60,7 +60,7 @@ public class Data2DColumnCreateController extends BaseChildController {
     /*
         static
      */
-    public static Data2DColumnCreateController open(ControlData2DColumns columnsController) {
+    public static Data2DColumnCreateController open(BaseData2DColumnsController columnsController) {
         try {
             Data2DColumnCreateController controller = (Data2DColumnCreateController) WindowTools.openChildStage(
                     columnsController.getMyWindow(), Fxmls.Data2DColumnCreateFxml, false);

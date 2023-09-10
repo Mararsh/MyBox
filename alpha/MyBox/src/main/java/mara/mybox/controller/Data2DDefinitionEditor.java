@@ -12,7 +12,7 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeEditor {
     protected Data2DDefinitionController manageController;
 
     @FXML
-    protected ControlData2DColumns columnsController;
+    protected ControlData2DDefColumns columnsController;
 
     public Data2DDefinitionEditor() {
         defaultExt = "csv";

@@ -63,26 +63,26 @@ License:    Apache License Version 2.0
                     </content>
                 </Tab>
                 <Tab fx:id="attributesTab" text="%Attributes">
-               <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" pannable="true" VBox.vgrow="ALWAYS">
-                     <content>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
-                                  <children>
-                                      <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DAttributes.fxml" VBox.vgrow="ALWAYS" />
-                                  </children>
-                                  <padding>
-                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                  </padding>
-                              </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" pannable="true" VBox.vgrow="ALWAYS">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
+                                    <children>
+                                        <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DAttributes.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
                 </Tab>
                 <Tab fx:id="columnsTab" text="%Columns">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <children>
-                                <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DColumnsSource.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DColumns.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

@@ -110,12 +110,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                 }
             });
-            blendController.demoNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    blendController.demo(imageView.getImage(), finalClip);
-                }
-            });
 
             keepRatioCheck.setSelected(UserConfig.getBoolean(baseName + "KeepClipRatio", true));
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
