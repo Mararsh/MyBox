@@ -204,7 +204,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     }
 
     public static DataFileCSVController loadCSV(DataFileCSV csvData) {
-        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        DataFileCSVController controller = open();
         if (controller != null) {
             controller.loadCSVData(csvData);
         }

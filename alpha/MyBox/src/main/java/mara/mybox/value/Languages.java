@@ -64,9 +64,9 @@ public class Languages {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
         ResourceBundle bundle;
-        if (lang.startsWith("zh")) {
+        if (lang.equals("zh") || lang.startsWith("zh_")) {
             bundle = BundleZhCN;
-        } else if (lang.startsWith("en")) {
+        } else if (lang.equals("en") || lang.startsWith("en_")) {
             bundle = BundleEn;
         } else {
             File file = interfaceLanguageFile(lang);
@@ -159,6 +159,32 @@ public class Languages {
 
     public static Locale locale() {
         return isChinese() ? Languages.LocaleZhCN : Languages.LocaleEn;
+    }
+
+    public static boolean match(String s, String ref) {
+        try {
+            if (s == null || ref == null) {
+                return false;
+            }
+            return message("en", s).equals(ref)
+                    || message("zh", s).equals(ref)
+                    || message(s).equals(ref);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean matchIgnoreCase(String s, String ref) {
+        try {
+            if (s == null || ref == null) {
+                return false;
+            }
+            return message("en", s).equalsIgnoreCase(ref)
+                    || message("zh", s).equalsIgnoreCase(ref)
+                    || message(s).equalsIgnoreCase(ref);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

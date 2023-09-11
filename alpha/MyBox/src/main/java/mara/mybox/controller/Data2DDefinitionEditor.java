@@ -22,4 +22,10 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeEditor {
         this.manageController = manageController;
     }
 
+    @FXML
+    @Override
+    public void clearValue() {
+        columnsController.clearAction();
+    }
+
 }

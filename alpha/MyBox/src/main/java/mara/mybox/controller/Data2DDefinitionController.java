@@ -37,7 +37,9 @@ public class Data2DDefinitionController extends TreeManageController {
     }
 
     @Override
-    public void itemClicked() {
+    public boolean controlAltL() {
+        editorController.columnsController.clearAction();
+        return true;
     }
 
     /*

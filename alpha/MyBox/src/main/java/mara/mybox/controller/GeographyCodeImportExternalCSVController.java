@@ -4,11 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableGeographyCode;
-import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVRecord;
 
@@ -33,9 +31,15 @@ public class GeographyCodeImportExternalCSVController extends BaseImportCsvContr
 
     @Override
     protected boolean validHeader(List<String> names) {
-        boolean invalid = !names.contains("chinese_name") && !names.contains(Languages.message("en", "ChineseName")) && !names.contains(Languages.message("zh", "ChineseName"))
-                && !names.contains("english_name") && !names.contains(Languages.message("en", "EnglishName")) && !names.contains(Languages.message("zh", "EnglishName"));
-        invalid = invalid || (!names.contains("level") && !names.contains(Languages.message("en", "Level")) && !names.contains(Languages.message("zh", "Level")));
+        boolean invalid = !names.contains("chinese_name")
+                && !names.contains(Languages.message("en", "ChineseName"))
+                && !names.contains(Languages.message("zh", "ChineseName"))
+                && !names.contains("english_name")
+                && !names.contains(Languages.message("en", "EnglishName"))
+                && !names.contains(Languages.message("zh", "EnglishName"));
+        invalid = invalid || (!names.contains("level")
+                && !names.contains(Languages.message("en", "Level"))
+                && !names.contains(Languages.message("zh", "Level")));
         if (invalid) {
             updateLogs(Languages.message("InvalidFormat"), true);
             return false;

@@ -614,7 +614,7 @@ public class ControlDataConvert extends BaseController {
                     }
                     s.append(indent).append(indent)
                             .append("<Col name=\"").append(names.get(i)).append("\" >")
-                            .append(value)
+                            .append("<![CDATA[").append(value).append("]]>")
                             .append("</Col>").append("\n");
                 }
                 s.append(indent).append("</Row>").append("\n");

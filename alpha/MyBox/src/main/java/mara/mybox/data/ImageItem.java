@@ -166,7 +166,7 @@ public class ImageItem {
                     "Function", "Go", "Import", "Menu", "NewItem", "OK", "OpenPath",
                     "Panes", "Play", "Permission", "Polylines", "Pop", "Query", "Random", "Recover", "Refresh", "Repeat",
                     "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Style", "SVG", "Tips", "Typesetting",
-                    "Undo", "Verify", "Window"));
+                    "Undo", "Verify", "View", "Window"));
             for (String name : icons) {
                 item = new ImageItem()
                         .setName("icon" + name + ".png")

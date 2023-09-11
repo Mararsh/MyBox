@@ -11,6 +11,6 @@ License:    Apache License Version 2.0
 
 <HBox fx:id="thisPane" alignment="CENTER_LEFT" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlColorSet">
     <children>
-        <Rectangle fx:id="rect" fill="#ffffff00" height="20.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="20.0" />
+        <Rectangle fx:id="rect" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="20.0" stroke="#cccccc" strokeLineCap="ROUND" strokeMiterLimit="0.0" strokeType="OUTSIDE" strokeWidth="2.0" width="20.0" />
     </children>
 </HBox>

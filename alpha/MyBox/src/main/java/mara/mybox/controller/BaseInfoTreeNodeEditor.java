@@ -224,7 +224,9 @@ public class BaseInfoTreeNodeEditor extends BaseController {
 
     @FXML
     public void clearValue() {
-        valueInput.clear();
+        if (valueInput != null) {
+            valueInput.clear();
+        }
     }
 
     public void loadFile(File file) {
