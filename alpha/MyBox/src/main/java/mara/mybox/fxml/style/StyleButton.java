@@ -689,6 +689,9 @@ public class StyleButton {
                     return new StyleData(id, message("Withdraw"), "", "iconUndo.png");
             }
         }
+        if (id.startsWith("backup")) {
+            return new StyleData(id, "", message("FileBackups"), "", "iconBackup.png");
+        }
         return null;
     }
 

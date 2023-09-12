@@ -57,6 +57,9 @@ public class ShapeRotateInputController extends BaseShapeTransformController {
     @Override
     public void okAction() {
         DoublePoint c = DoubleShape.getCenter(shapeData);
+        if (c == null) {
+            return;
+        }
         DoublePath pathData = DoubleShape.rorate(shapeData, angle, c.getX(), c.getY());
         if (pathData == null) {
             return;

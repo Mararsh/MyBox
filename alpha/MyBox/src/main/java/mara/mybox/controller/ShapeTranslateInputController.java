@@ -40,25 +40,25 @@ public class ShapeTranslateInputController extends BaseShapeTransformController 
         if (!checkInput()) {
             return;
         }
+        Rectangle2D bounds = DoubleShape.getBound(shapeData);
+        if (bounds == null) {
+            return;
+        }
         double offsetX, offsetY;
         if (centerRadio.isSelected()) {
             DoublePoint center = DoubleShape.getCenter(shapeData);
             offsetX = x - center.getX();
             offsetY = y - center.getY();
         } else if (leftTopRadio.isSelected()) {
-            Rectangle2D bounds = DoubleShape.getBound(shapeData);
             offsetX = x - bounds.getMinX();
             offsetY = y - bounds.getMinY();
         } else if (rightBottomRadio.isSelected()) {
-            Rectangle2D bounds = DoubleShape.getBound(shapeData);
             offsetX = x - bounds.getMaxX();
             offsetY = y - bounds.getMaxY();
         } else if (leftBottomRadio.isSelected()) {
-            Rectangle2D bounds = DoubleShape.getBound(shapeData);
             offsetX = x - bounds.getMinX();
             offsetY = y - bounds.getMaxY();
         } else if (rightTopRadio.isSelected()) {
-            Rectangle2D bounds = DoubleShape.getBound(shapeData);
             offsetX = x - bounds.getMaxX();
             offsetY = y - bounds.getMinY();
         } else {

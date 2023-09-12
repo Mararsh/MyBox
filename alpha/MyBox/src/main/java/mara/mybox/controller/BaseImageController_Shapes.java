@@ -1775,6 +1775,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         if (imageView == null || maskPane == null || maskPolyline == null) {
             return;
         }
+        maskPolylineData = new DoublePolyline();
+    }
+
+    public void setMaskPolylineExample() {
+        if (imageView == null || maskPane == null || maskPolyline == null) {
+            return;
+        }
         double w = imageWidth();
         double h = imageHeight();
         maskPolylineData = new DoublePolyline();
@@ -1866,6 +1873,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void setMaskPolylinesDefaultValues() {
+        if (imageView == null || maskPane == null || maskPolylines == null) {
+            return;
+        }
+        maskPolylinesData = new DoublePolylines();
+    }
+
+    public void setMaskPolylinesExample() {
         if (imageView == null || maskPane == null || maskPolylines == null) {
             return;
         }
@@ -2133,6 +2147,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void setMaskPolygonDefaultValues() {
+        if (imageView == null || maskPane == null || maskPolygon == null) {
+            return;
+        }
+        maskPolygonData = new DoublePolygon();
+    }
+
+    public void setMaskPolygonExample() {
         if (imageView == null || maskPane == null || maskPolygon == null) {
             return;
         }
@@ -2595,6 +2616,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         if (imageView == null || maskPane == null || maskSVGPath == null) {
             return;
         }
+        maskPathData = new DoublePath();
+    }
+
+    public void setMaskPathExample() {
+        if (imageView == null || maskPane == null || maskSVGPath == null) {
+            return;
+        }
         double w = imageWidth();
         double h = imageHeight();
         int r = (int) (Math.min(w, h) / 8);
@@ -2625,26 +2653,29 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             maskSVGPath.setLayoutY(layoutY);
             setShapeStyle(maskSVGPath);
 
-            DoublePoint p;
-            for (int i = 0; i < maskPathData.getSegments().size(); i++) {
-                DoublePathSegment seg = maskPathData.getSegments().get(i);
-                p = seg.getControlPoint1();
-                String prefix = (i + 1) + seg.getCommand().trim();
-                if (p != null) {
-                    String info = seg.text() + "\n" + message("ControlPoint1");
-                    addMaskAnchor(i, prefix + ".c1", info, p, p.getX() * xRatio, p.getY() * yRatio);
-                }
-                p = seg.getControlPoint2();
-                if (p != null) {
-                    String info = seg.text() + "\n" + message("ControlPoint2");
-                    addMaskAnchor(i, prefix + ".c2", info, p, p.getX() * xRatio, p.getY() * yRatio);
-                }
-                p = seg.getEndPoint();
-                if (p != null) {
-                    String info = seg.text() + "\n" + message("EndPoint");
-                    addMaskAnchor(i, prefix + ".e", info, p, p.getX() * xRatio, p.getY() * yRatio);
-                }
+            List<DoublePathSegment> segments = maskPathData.getSegments();
+            if (segments != null) {
+                DoublePoint p;
+                for (int i = 0; i < segments.size(); i++) {
+                    DoublePathSegment seg = segments.get(i);
+                    p = seg.getControlPoint1();
+                    String prefix = (i + 1) + seg.getCommand().trim();
+                    if (p != null) {
+                        String info = seg.text() + "\n" + message("ControlPoint1");
+                        addMaskAnchor(i, prefix + ".c1", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    }
+                    p = seg.getControlPoint2();
+                    if (p != null) {
+                        String info = seg.text() + "\n" + message("ControlPoint2");
+                        addMaskAnchor(i, prefix + ".c2", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    }
+                    p = seg.getEndPoint();
+                    if (p != null) {
+                        String info = seg.text() + "\n" + message("EndPoint");
+                        addMaskAnchor(i, prefix + ".e", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    }
 
+                }
             }
 
             maskShapeChanged();

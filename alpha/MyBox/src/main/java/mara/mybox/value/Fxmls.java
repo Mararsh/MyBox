@@ -434,6 +434,7 @@ public class Fxmls {
     public static final String DateInputFxml = "/fxml/DateInput.fxml";
     public static final String SettingCustomColorsFxml = "/fxml/SettingCustomColors.fxml";
     public static final String HtmlStyleInputFxml = "/fxml/HtmlStyleInput.fxml";
+    public static final String FileBackupFxml = "/fxml/FileBackup.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

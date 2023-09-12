@@ -84,7 +84,6 @@ public class ControlShapeParameters extends BaseController {
             if (imageController == null || shapeType == null) {
                 return;
             }
-            isSettingValues = true;
             switch (shapeType) {
                 case Rectangle:
                     shapeBox.getChildren().setAll(rectangleBox, goButton);

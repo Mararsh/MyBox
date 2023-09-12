@@ -212,7 +212,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @Override
-    protected List<MenuItem> shapePointMenu(Event event, DoublePoint p) {
+    protected List<MenuItem> shapeDataMenu(Event event, DoublePoint p) {
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 

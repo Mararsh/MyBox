@@ -56,7 +56,7 @@ public class DoublePath implements DoubleShape {
     }
 
     final public void init() {
-        content = null;
+        content = "";
         segments = null;
         scale = UserConfig.imageScale();
     }
@@ -253,6 +253,11 @@ public class DoublePath implements DoubleShape {
             MyBoxLog.console(e);
             return false;
         }
+    }
+
+    public void clear() {
+        content = "";
+        segments = null;
     }
 
     /*

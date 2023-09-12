@@ -159,7 +159,7 @@
                 </HBox>
             </children>
         </VBox>
-        <FlowPane fx:id="opPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+        <FlowPane fx:id="opPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
             <children>
                 <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showShapeMenu" onMouseEntered="#popShapeMenu">
                     <graphic>

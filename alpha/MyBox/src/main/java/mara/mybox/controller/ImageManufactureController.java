@@ -101,7 +101,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             resetImagePane();
 
             hisTab.setDisable(sourceFile == null);
-            backupTab.setDisable(sourceFile == null);
             hisController.loadHistories();
             backupController.loadBackups(sourceFile);
 
