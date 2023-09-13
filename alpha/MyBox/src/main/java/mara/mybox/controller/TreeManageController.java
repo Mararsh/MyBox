@@ -87,7 +87,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
     @FXML
     protected Label conditionLabel;
     @FXML
-    protected BaseInfoTreeNodeEditor nodeController;
+    protected BaseInfoTreeNodeController nodeController;
     @FXML
     protected Button refreshTimesButton, queryTimesButton;
     @FXML

@@ -31,6 +31,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
@@ -414,11 +415,6 @@ public class JsonEditorController extends BaseFileController {
     }
 
     @FXML
-    protected void editTexts() {
-        TextEditorController.edit(textsArea.getText());
-    }
-
-    @FXML
     protected void clearTexts() {
         textsArea.clear();
         textsChanged(true);
@@ -531,6 +527,32 @@ public class JsonEditorController extends BaseFileController {
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    @FXML
+    protected void editTexts() {
+        String json = currentJSON(false);
+        if (json == null || json.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        TextEditorController.edit(json);
+    }
+
+    @FXML
+    public void systemWebBrowser() {
+        String json = currentJSON(false);
+        if (json == null || json.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        File tmpFile = FileTmpTools.getTempFile(".json");
+        TextFileTools.writeFile(tmpFile, json);
+        if (tmpFile != null && tmpFile.exists()) {
+            browse(tmpFile);
+        } else {
+            popError(message("Failed"));
         }
     }
 

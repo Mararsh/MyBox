@@ -25,7 +25,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlInfoTreeAttributes extends TreeTagsController {
 
-    protected BaseInfoTreeNodeEditor editor;
+    protected BaseInfoTreeNodeController editor;
     protected InfoNode parentNode;
     protected SingletonTask tagsTask;
 

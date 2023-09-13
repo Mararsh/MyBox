@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-10-15
  * @License Apache License Version 2.0
  */
-public class RowFilterEditor extends BaseInfoTreeNodeEditor {
+public class RowFilterEditor extends BaseInfoTreeNodeController {
 
     protected RowFilterController manageController;
     protected long maxData = -1;

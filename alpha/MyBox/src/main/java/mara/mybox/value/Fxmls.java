@@ -456,4 +456,6 @@ public class Fxmls {
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";
 
+    public static final String WindowsListFxml = "/fxml/WindowsList.fxml";
+
 }

@@ -741,13 +741,13 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public File defaultTargetPath(int type) {
-        File defaultPath = UserConfig.getPath(baseName + "TargetPath");
-        if (defaultPath != null) {
-            return defaultPath;
-        }
         File savedPath = VisitHistoryTools.getSavedPath(type);
         if (savedPath != null) {
             return savedPath;
+        }
+        File defaultPath = UserConfig.getPath(baseName + "TargetPath");
+        if (defaultPath != null) {
+            return defaultPath;
         }
         return AppPaths.defaultPath();
     }

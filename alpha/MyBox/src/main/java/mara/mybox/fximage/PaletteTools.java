@@ -201,7 +201,7 @@ public class PaletteTools {
                 } else if ((message("OpticalHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
                     colors = opticalHuesWheel(lang, 1);
 
-                } else if (message("GrayScale").equals(paletteName)) {
+                } else if ((message("GrayScale")).equals(paletteName)) {
                     colors = greyScales(lang);
 
                 } else {
@@ -314,11 +314,10 @@ public class PaletteTools {
     public static List<ColorData> greyScales(String lang) {
         try {
             List<ColorData> colors = new ArrayList<>();
-            for (int v = 255; v >= 0; v--) {
-                float c = v / 255f;
-                Color color = new Color(c, c, c, 1);
+            for (int v = 100; v >= 0; v--) {
+                Color color = Color.gray(v / 100d);
                 ColorData data = new ColorData(color).calculate();
-                data.setColorName(message(lang, "Brightness") + ":" + Math.round(color.getBrightness() * 255));
+                data.setColorName(message(lang, "Brightness") + ":" + Math.round(color.getBrightness() * 100));
                 colors.add(data);
             }
             return colors;

@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +23,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2DColumnTools;
 import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
@@ -44,13 +42,9 @@ import mara.mybox.fxml.cell.TableDataColumnCell;
 import mara.mybox.fxml.cell.TableTextAreaEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.CsvTools;
-import mara.mybox.tools.FileTmpTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -629,52 +623,13 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    File tmpFile = FileTmpTools.getTempFile();
-                    List<Data2DColumn> columns = Data2DColumn.definition();
-                    try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile,
-                            Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
-                        List<String> row = new ArrayList<>();
-                        for (Data2DColumn col : columns) {
-                            row.add(col.getColumnName());
-                        }
-                        csvPrinter.printRecord(row);
-                        for (Data2DColumn col : tableData) {
-                            row.clear();
-                            row.add(col.getColumnName());
-                            row.add(col.getType().name());
-                            row.add(col.getLength() + "");
-                            row.add(col.getWidth() + "");
-                            row.add(col.getFormat());
-                            row.add(col.isNotNull() ? "1" : "0");
-                            row.add(col.isEditable() ? "1" : "0");
-                            row.add(col.isIsPrimaryKey() ? "1" : "0");
-                            row.add(col.isAuto() ? "1" : "0");
-                            row.add(col.getDefaultValue());
-                            row.add(col.getColor().toString());
-                            row.add(col.getInvalidAs().name());
-                            row.add(col.getScale() + "");
-                            row.add(col.getCentury() + "");
-                            row.add(col.isFixTwoDigitYear() ? "1" : "0");
-                            row.add(col.getDescription());
-                            csvPrinter.printRecord(row);
-                        }
-                        csvPrinter.flush();
-                        csvPrinter.close();
-                    }
-                    if (!FileTools.rename(tmpFile, file, true)) {
+                    csv = Data2DColumnTools.toCSVFile(tableData, file);
+                    if (file != null && file.exists()) {
+                        recordFileWritten(file, VisitHistory.FileType.CSV);
+                        return true;
+                    } else {
                         return false;
                     }
-                    recordFileWritten(file, VisitHistory.FileType.CSV);
-                    csv = new DataFileCSV();
-                    csv.setColumns(columns)
-                            .setFile(file)
-                            .setCharset(Charset.forName("UTF-8"))
-                            .setDelimiter(",")
-                            .setHasHeader(true)
-                            .setColsNumber(columns.size())
-                            .setRowsNumber(tableData.size());
-                    csv.saveAttributes();
-                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -701,72 +656,13 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    String indent = "    ";
-                    File tmpFile = FileTmpTools.getTempFile();
-                    try (BufferedWriter xmlWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8")))) {
-                        xmlWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Data2DDefiniton>\n");
-                        for (Data2DColumn col : tableData) {
-                            StringBuilder s = new StringBuilder();
-                            s.append(indent).append("<column>\n");
-                            if (col.getColumnName() != null) {
-                                s.append(indent).append(indent).append("<name>")
-                                        .append(col.getColumnName()).append("</name>\n");
-                            }
-                            if (col.getType() != null) {
-                                s.append(indent).append(indent).append("<type>")
-                                        .append(col.getType().name()).append("</type>\n");
-                            }
-                            s.append(indent).append(indent).append("<name>")
-                                    .append(col.getLength()).append("</name>\n");
-                            s.append(indent).append(indent).append("<width>")
-                                    .append(col.getWidth()).append("</width>\n");
-                            if (col.getFormat() != null) {
-                                s.append(indent).append(indent).append("<format>")
-                                        .append("<![CDATA[").append(col.getFormat()).append("]]>")
-                                        .append("</format>\n");
-                            }
-                            s.append(indent).append(indent).append("<isNotNull>")
-                                    .append(col.isNotNull() ? "true" : "false").append("</isNotNull>\n");
-                            s.append(indent).append(indent).append("<isEditable>")
-                                    .append(col.isEditable() ? "true" : "false").append("</isEditable>\n");
-                            s.append(indent).append(indent).append("<isPrimaryKey>")
-                                    .append(col.isIsPrimaryKey() ? "true" : "false").append("</isPrimaryKey>\n");
-                            s.append(indent).append(indent).append("<isAuto>")
-                                    .append(col.isAuto() ? "true" : "false").append("</isAuto>\n");
-                            if (col.getDefaultValue() != null) {
-                                s.append(indent).append(indent).append("<defaultValue>")
-                                        .append(col.getDefaultValue()).append("</defaultValue>\n");
-                            }
-                            if (col.getColor() != null) {
-                                s.append(indent).append(indent).append("<color>")
-                                        .append(col.getColor()).append("</color>\n");
-                            }
-                            if (col.getInvalidAs() != null) {
-                                s.append(indent).append(indent).append("<invalidAs>")
-                                        .append(col.getInvalidAs().name()).append("</invalidAs>\n");
-                            }
-                            s.append(indent).append(indent).append("<scale>")
-                                    .append(col.getScale()).append("</scale>\n");
-                            s.append(indent).append(indent).append("<century>")
-                                    .append(col.getCentury()).append("</century>\n");
-                            s.append(indent).append(indent).append("<isFixTwoDigitYear>")
-                                    .append(col.isFixTwoDigitYear() ? "true" : "false").append("</isFixTwoDigitYear>\n");
-                            if (col.getDescription() != null) {
-                                s.append(indent).append(indent).append("<description>")
-                                        .append(col.getDescription()).append("</description>\n");
-                            }
-                            s.append(indent).append("</column>\n");
-                            xmlWriter.write(s.toString());
-                        }
-                        xmlWriter.write("</Data2DDefiniton>\n");
-                        xmlWriter.flush();
-                        xmlWriter.close();
-                    }
-                    if (!FileTools.rename(tmpFile, file, true)) {
+                    if (Data2DColumnTools.toXMLFile(tableData, file)
+                            && file != null && file.exists()) {
+                        recordFileWritten(file, VisitHistory.FileType.XML);
+                        return true;
+                    } else {
                         return false;
                     }
-                    recordFileWritten(file, VisitHistory.FileType.XML);
-                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -792,14 +688,23 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
-
-                return file.exists();
+                try {
+                    if (Data2DColumnTools.toJSONFile(tableData, file)
+                            && file != null && file.exists()) {
+                        recordFileWritten(file, VisitHistory.FileType.JSON);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
             @Override
             protected void whenSucceeded() {
-                recordFileWritten(file, VisitHistory.FileType.JSON);
-                DataFileCSVController.open(file, Charset.forName("UTF-8"), true, ",");
+                JsonEditorController.open(file);
             }
         };
         start(task);

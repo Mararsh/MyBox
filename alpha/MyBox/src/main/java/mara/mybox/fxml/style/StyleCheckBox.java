@@ -14,10 +14,10 @@ public class StyleCheckBox {
             return null;
         }
         if (id.startsWith("leftPane")) {
-            return new StyleData(id, "", message("LeftPane"), "F4", "iconDoubleLeft.png");
+            return new StyleData(id, "", message("ControlLeftPane"), "", "iconDoubleLeft.png");
         }
         if (id.startsWith("rightPane")) {
-            return new StyleData(id, "", message("RightPane"), "F5", "iconDoubleRight.png");
+            return new StyleData(id, "", message("ControlRightPane"), "", "iconDoubleRight.png");
         }
         if (id.startsWith("contextMenu")) {
             return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
@@ -133,8 +133,6 @@ public class StyleCheckBox {
                 return new StyleData(id, "", message("CountTransparent"), "", "iconOpacity.png");
             case "displaySizeCheck":
                 return new StyleData("displaySizeCheck", "", message("DisplaySize"), "", "iconNumber.png");
-            case "topCheck":
-                return new StyleData("topCheck", "", message("AlwayOnTop"), "", "iconTop.png");
             case "closeAfterCheck":
                 return new StyleData(id, "", message("CloseAfterHandled"), "", "iconClose.png");
             case "deskewCheck":

@@ -183,10 +183,6 @@ public class TreeNodeExportController extends BaseTaskController {
                 }
             });
         } else {
-            if (treeController instanceof NotesController) {
-                jsonCheck.setSelected(false);
-                jsonCheck.setVisible(false);
-            }
             iconCheck.setSelected(false);
             iconCheck.setVisible(false);
         }
@@ -210,11 +206,9 @@ public class TreeNodeExportController extends BaseTaskController {
         framesetNavWriter = null;
         level = count = 0;
         if (!textsCheck.isSelected() && !htmlCheck.isSelected()
-                && !framesetCheck.isSelected() && !xmlCheck.isSelected()) {
-            if (treeController instanceof NotesController || !jsonCheck.isSelected()) {
-                popError(message("NothingSave"));
-                return false;
-            }
+                && !framesetCheck.isSelected() && !xmlCheck.isSelected() && !jsonCheck.isSelected()) {
+            popError(message("NothingSave"));
+            return false;
         }
         selectedNode = nodesController.selected();
         if (selectedNode == null || selectedNode.getValue() == null) {
@@ -719,14 +713,14 @@ public class TreeNodeExportController extends BaseTaskController {
                 t = t.replaceAll("\\[|\\]", "");
                 s.append(",\n");
                 s.append(indent).append(indent)
-                        .append("\"").append(message("Tags")).append("\": \"")
-                        .append(JsonTools.replaceSpecialChars(t)).append("\"");
+                        .append("\"").append(message("Tags")).append("\": ")
+                        .append(JsonTools.encode(t));
             }
             if (node.getValue() != null) {
                 s.append(",\n");
                 s.append(indent).append(indent)
-                        .append("\"").append(treeController.valueMsg).append("\": \"")
-                        .append(JsonTools.replaceSpecialChars(node.getValue())).append("\"");
+                        .append("\"").append(treeController.valueMsg).append("\": ")
+                        .append(JsonTools.encode(node.getValue()));
             }
             if (node.getMore() != null && !node.getMore().isBlank()) {
                 if (!(treeController instanceof WebFavoritesController) || iconCheck.isSelected()) {

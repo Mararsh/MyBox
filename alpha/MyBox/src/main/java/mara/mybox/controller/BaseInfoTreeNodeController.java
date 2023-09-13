@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class BaseInfoTreeNodeEditor extends BaseController {
+public class BaseInfoTreeNodeController extends BaseController {
 
     protected TreeManageController treeController;
     protected String defaultExt;
@@ -42,7 +42,7 @@ public class BaseInfoTreeNodeEditor extends BaseController {
     @FXML
     protected CheckBox wrapCheck;
 
-    public BaseInfoTreeNodeEditor() {
+    public BaseInfoTreeNodeController() {
         defaultExt = "txt";
     }
 

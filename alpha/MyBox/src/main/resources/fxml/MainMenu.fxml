@@ -21,6 +21,7 @@ License:    Apache License Version 2.0
                         <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
+                                <MenuItem mnemonicParsing="false" onAction="#WindowsList" text="%WindowsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotPane" text="%SnapshotPane" />

@@ -41,7 +41,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-2-14
  * @License Apache License Version 2.0
  */
-public class DatabaseSqlEditor extends BaseInfoTreeNodeEditor {
+public class DatabaseSqlEditor extends BaseInfoTreeNodeController {
 
     protected boolean internal;
 
