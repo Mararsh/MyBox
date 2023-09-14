@@ -9,6 +9,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -24,6 +26,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -46,6 +49,19 @@ public class Data2DExampleTools {
             items.add(location(lang, controller));
 
             items.add(projectManagement(lang, controller));
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem onlyMenu = new CheckMenuItem(message("ImportDefinitionOnly"),
+                    StyleTools.getIconImageView("iconHeader.png"));
+            onlyMenu.setSelected(UserConfig.getBoolean("Data2DExampleImportDefinitionOnly", false));
+            onlyMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("Data2DExampleImportDefinitionOnly", onlyMenu.isSelected());
+                }
+            });
+            items.add(onlyMenu);
 
             return items;
         } catch (Exception e) {
@@ -579,8 +595,10 @@ public class Data2DExampleTools {
                     } else {
                         writer.write(line + System.lineSeparator());
                     }
-                    while ((line = reader.readLine()) != null) {
-                        writer.write(line + System.lineSeparator());
+                    if (!UserConfig.getBoolean("Data2DExampleImportDefinitionOnly", false)) {
+                        while ((line = reader.readLine()) != null) {
+                            writer.write(line + System.lineSeparator());
+                        }
                     }
                 }
                 writer.flush();

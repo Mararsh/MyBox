@@ -2,6 +2,7 @@ package mara.mybox.data2d;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -19,6 +20,12 @@ import mara.mybox.tools.JsonTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @Author Mara
@@ -359,6 +366,65 @@ public class Data2DColumnTools {
             }
             s.append("\n]}\n");
             return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static DataFileExcel toExcelFile(List<Data2DColumn> columns, File file) {
+        try {
+            File tmpFile = FileTmpTools.getTempFile();
+            List<Data2DColumn> definition = Data2DColumnTools.definition();
+            try (XSSFWorkbook xssfBook = new XSSFWorkbook()) {
+                XSSFSheet xssfSheet = xssfBook.createSheet("sheet1");
+                xssfSheet.setDefaultColumnWidth(20);
+                XSSFRow titleRow = xssfSheet.createRow(0);
+                XSSFCellStyle horizontalCenter = xssfBook.createCellStyle();
+                horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
+                for (int i = 0; i < definition.size(); i++) {
+                    XSSFCell cell = titleRow.createCell(i);
+                    cell.setCellValue(definition.get(i).getColumnName());
+                    cell.setCellStyle(horizontalCenter);
+                    xssfSheet.autoSizeColumn(i);
+                }
+                int rowIndex = 0;
+                for (Data2DColumn col : columns) {
+                    XSSFRow sheetRow = xssfSheet.createRow(++rowIndex);
+                    int cellIndex = 0;
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getColumnName());
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getType().name());
+                    sheetRow.createCell(cellIndex++).setCellValue(ColumnType.String == col.getType() ? col.getLength() + "" : "");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getWidth() + "");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getFormat());
+                    sheetRow.createCell(cellIndex++).setCellValue(col.isNotNull() ? "1" : "0");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.isEditable() ? "1" : "0");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.isIsPrimaryKey() ? "1" : "0");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.isAuto() ? "1" : "0");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getDefaultValue());
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getColor().toString());
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getInvalidAs().name());
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getScale() + "");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getCentury() + "");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.isFixTwoDigitYear() ? "1" : "0");
+                    sheetRow.createCell(cellIndex++).setCellValue(col.getDescription());
+                }
+                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                    xssfBook.write(fileOut);
+                }
+                xssfBook.close();
+            }
+            if (!FileTools.rename(tmpFile, file, true)) {
+                return null;
+            }
+            DataFileExcel excel = new DataFileExcel();
+            excel.setColumns(definition)
+                    .setFile(file).setSheet("sheet1")
+                    .setHasHeader(true)
+                    .setColsNumber(columns.size())
+                    .setRowsNumber(columns.size());
+            excel.saveAttributes();
+            return excel;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

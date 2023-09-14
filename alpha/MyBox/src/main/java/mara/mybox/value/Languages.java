@@ -33,13 +33,13 @@ public class Languages {
         }
         UserConfig.setString("language", lang);
         AppVariables.currentBundle = getBundle(lang);
-        AppVariables.isChinese = lang.startsWith("zh");
+        AppVariables.isChinese = lang.equals("zh") || lang.startsWith("zh_");
     }
 
     public static String readLangName() {
         String lang = UserConfig.getString("language", Locale.getDefault().getLanguage());
         lang = lang != null ? lang.toLowerCase() : Locale.getDefault().getLanguage().toLowerCase();
-        AppVariables.isChinese = lang.startsWith("zh");
+        AppVariables.isChinese = lang.equals("zh") || lang.startsWith("zh_");
         return lang;
     }
 

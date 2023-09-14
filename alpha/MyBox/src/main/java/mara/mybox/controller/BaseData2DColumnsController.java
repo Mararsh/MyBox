@@ -26,6 +26,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DColumnTools;
 import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -719,16 +720,29 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
+
+            DataFileExcel excel;
+
             @Override
             protected boolean handle() {
-
-                return file.exists();
+                try {
+                    excel = Data2DColumnTools.toExcelFile(tableData, file);
+                    if (file != null && file.exists()) {
+                        recordFileWritten(file, VisitHistory.FileType.CSV);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
             @Override
             protected void whenSucceeded() {
                 recordFileWritten(file, VisitHistory.FileType.Excel);
-                DataFileExcelController.open(file, true);
+                DataFileExcelController.open(excel);
             }
         };
         start(task);

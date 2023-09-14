@@ -20,6 +20,7 @@ import mara.mybox.db.data.VisitHistory.OperationType;
 import mara.mybox.db.data.VisitHistory.ResourceType;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -40,8 +41,12 @@ public class VisitHistoryTools {
         return "FilePath" + type;
     }
 
+    public static String defaultPath(int type) {
+        return FileTmpTools.generatePath(defaultExt(type));
+    }
+
     public static File getSavedPath(int type) {
-        return UserConfig.getPath(getPathKey(type));
+        return UserConfig.getPath(getPathKey(type), defaultPath(type));
     }
 
     public static String defaultExt(int type) {

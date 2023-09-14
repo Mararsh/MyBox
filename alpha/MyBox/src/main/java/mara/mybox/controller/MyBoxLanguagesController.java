@@ -296,8 +296,14 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
                 return;
             }
         }
-        String name = PopTools.askValue(getTitle(), message("InputLangaugeName"), "", null);
+        String name = PopTools.askValue(getTitle(), message("InputLangaugeComments"),
+                message("InputLangaugeName"), null);
         if (name == null) {
+            return;
+        }
+        if ("en".equalsIgnoreCase(name) || "zh".equalsIgnoreCase(name)
+                || name.startsWith("en_") || name.startsWith("zh_")) {
+            popError(message("InputLangaugeComments"));
             return;
         }
         langName = name.trim();
