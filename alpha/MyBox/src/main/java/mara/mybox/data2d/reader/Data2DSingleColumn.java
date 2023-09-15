@@ -1,7 +1,7 @@
 package mara.mybox.data2d.reader;
 
 import java.sql.Connection;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;

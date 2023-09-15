@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
@@ -68,6 +67,10 @@ public class ColumnDefinition extends BaseData {
 
     public static enum DataFormat {
         ScientificNotation, CommaSeparated, None
+    }
+
+    public enum InvalidAs {
+        Zero, Blank, Skip
     }
 
     public final void initColumnDefinition() {
@@ -747,6 +750,18 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    public static ColumnType columnType(String name) {
+        if (name == null || name.isBlank()) {
+            return ColumnType.String;
+        }
+        for (ColumnType t : ColumnType.values()) {
+            if (t.name().equalsIgnoreCase(name)) {
+                return t;
+            }
+        }
+        return ColumnType.String;
+    }
+
     public static List<ColumnType> editTypes() {
         List<ColumnType> types = new ArrayList<>();
         types.addAll(Arrays.asList(ColumnType.String, ColumnType.Boolean,
@@ -805,6 +820,18 @@ public class ColumnDefinition extends BaseData {
             default:
                 return OnDelete.NoAction;
         }
+    }
+
+    public static InvalidAs invalidAs(String name) {
+        if (name == null || name.isBlank()) {
+            return InvalidAs.Skip;
+        }
+        for (InvalidAs v : InvalidAs.values()) {
+            if (v.name().equalsIgnoreCase(name)) {
+                return v;
+            }
+        }
+        return InvalidAs.Skip;
     }
 
     public static boolean isNumberType(ColumnType type) {

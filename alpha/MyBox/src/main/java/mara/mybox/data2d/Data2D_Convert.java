@@ -24,6 +24,7 @@ import mara.mybox.data2d.reader.Data2DSingleColumn;
 import mara.mybox.data2d.reader.Data2DWriteTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;

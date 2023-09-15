@@ -2,7 +2,7 @@ package mara.mybox.data2d.reader;
 
 import java.util.List;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.fxml.SingletonTask;
 import org.apache.commons.csv.CSVPrinter;

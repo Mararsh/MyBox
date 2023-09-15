@@ -60,15 +60,7 @@ public class BaseInfoTreeNodeController extends BaseController {
                 valueInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        attributesController.nodeChanged(true);
-                        if (valueTab != null) {
-                            valueTab.setText(treeController.valueMsg + "*");
-                        } else if (attributesTab != null) {
-                            attributesTab.setText(message("Attributes") + "*");
-                        }
+                        valueChanged(true);
                     }
                 });
             }
@@ -77,13 +69,7 @@ public class BaseInfoTreeNodeController extends BaseController {
                 moreInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        attributesController.nodeChanged(true);
-                        if (attributesTab != null) {
-                            attributesTab.setText(message("Attributes") + "*");
-                        }
+                        valueChanged(true);
                     }
                 });
             }
@@ -143,9 +129,7 @@ public class BaseInfoTreeNodeController extends BaseController {
 
         attributesController.editNode(node);
         showEditorPane();
-        if (valueTab != null) {
-            valueTab.setText(treeController.valueMsg);
-        }
+        nodeChanged(false);
     }
 
     public InfoNode pickNodeData() {
@@ -182,11 +166,31 @@ public class BaseInfoTreeNodeController extends BaseController {
         treeController.showRightPane();
     }
 
+    public void valueChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        if (valueTab != null) {
+            valueTab.setText(treeController.valueMsg + (changed ? "*" : ""));
+        }
+        if (changed) {
+            nodeChanged(changed);
+        }
+    }
+
     public void nodeChanged(boolean changed) {
         if (isSettingValues) {
             return;
         }
         this.nodeChanged = changed;
+        if (!changed) {
+            if (valueTab != null) {
+                valueTab.setText(treeController.valueMsg);
+            }
+            if (attributesTab != null) {
+                attributesTab.setText(message("Attributes"));
+            }
+        }
     }
 
     @FXML

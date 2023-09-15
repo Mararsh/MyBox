@@ -37,6 +37,13 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
         try {
             this.functionController = controller;
 
+            variablesInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    valueChanged(true);
+                }
+            });
+
             variablesInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
@@ -44,6 +51,13 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
                         return;
                     }
                     functionController.calculateController.variablesChanged();
+                }
+            });
+
+            resultNameInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    valueChanged(true);
                 }
             });
 

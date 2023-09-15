@@ -552,10 +552,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return size;
     }
 
-    public boolean categoryEmpty(String category) {
+    public boolean categoryEmpty(Connection conn, String category) {
+        if (conn == null) {
+            return true;
+        }
         boolean isEmpty = true;
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
+        try (PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
             statement.setString(1, category);
             conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {

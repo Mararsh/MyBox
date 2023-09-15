@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
+import mara.mybox.data2d.Data2DColumnTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableCheckboxCell;
@@ -13,6 +15,8 @@ import mara.mybox.fxml.cell.TableCheckboxCell;
  * @License Apache License Version 2.0
  */
 public class ControlData2DDefColumns extends BaseData2DColumnsController {
+
+    protected Data2DDefinitionEditor editor;
 
     public ControlData2DDefColumns() {
     }
@@ -113,6 +117,38 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void status(Status newStatus) {
+        if (isSettingValues) {
+            return;
+        }
+        status = newStatus;
+        if (editor == null) {
+            return;
+        }
+        editor.valueChanged(status == Status.Modified);
+    }
+
+    public void load(String def) {
+        try {
+            isSettingValues = true;
+            tableData.clear();
+            List<Data2DColumn> columns = Data2DColumnTools.fromXML(def);
+            if (columns != null) {
+                tableData.setAll(columns);
+            }
+            isSettingValues = false;
+            checkSelected();
+            status(Status.Loaded);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public String toXML() {
+        return Data2DColumnTools.toXML(tableData);
     }
 
 }

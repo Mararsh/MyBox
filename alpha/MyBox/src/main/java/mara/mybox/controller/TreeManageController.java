@@ -391,6 +391,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             }
         }
         nodesController.updateNode(nodeController.attributesController.currentNode);
+        nodeController.nodeChanged(false);
     }
 
     public void newNodeSaved() {
@@ -401,8 +402,9 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
                 nodeController.attributesController.currentNode, false);
         if (loadedParent != null
                 && nodeController.attributesController.parentNode.getNodeid() == loadedParent.getNodeid()) {
-            loadNodes(nodeController.attributesController.parentNode);
+            loadNodes(nodeController.attributesController.currentNode);
         }
+        nodeController.nodeChanged(false);
     }
 
     public void nodeChanged() {
@@ -426,21 +428,20 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
         tree
      */
     public void loadTree() {
-        try {
-            if (tableTreeNode.categoryEmpty(category)) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (tableTreeNode.categoryEmpty(conn, category)) {
                 File file = InfoNode.exampleFile(category);
-                if (file == null) {
-                    return;
-                }
-                if (AppVariables.isTesting
-                        || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
-                    nodesController.importExamples();
-                    return;
+                if (file != null) {
+                    if (AppVariables.isTesting
+                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
+                        nodesController.importExamples();
+                        return;
+                    }
                 }
             }
             nodesController.loadTree();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
     }
 

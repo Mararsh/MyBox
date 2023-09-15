@@ -21,7 +21,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;

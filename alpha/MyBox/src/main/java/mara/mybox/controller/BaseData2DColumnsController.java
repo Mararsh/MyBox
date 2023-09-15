@@ -770,28 +770,28 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             MenuItem menu = new MenuItem(message("Notes"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.Notes(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Contacts"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.Contacts(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
             menu = new MenuItem(message("CashFlow"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.CashFlow(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
             menu = new MenuItem(message("PrivateProperty"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.PrivateProperty(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
@@ -800,28 +800,28 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             menu = new MenuItem(message("Eyesight"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.Eyesight(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Weight"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.Weight(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Height"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.Height(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Menstruation"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.Menstruation(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             myMenu.getItems().add(menu);
 
@@ -831,84 +831,84 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             menu = new MenuItem(message("ChinaPopulation"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaPopulation(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaCensus"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaCensus(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaGDP"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaGDP(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaCPI"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaCPI(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaFoodConsumption"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaFoodConsumption(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaGraduates"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaGraduates(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaMuseums"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaMuseums(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaHealthPersonnel"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaHealthPersonnel(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaMarriage"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaMarriage(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChinaSportWorldChampions"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChinaSportWorldChampions(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("CrimesFiledByChinaPolice"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaPolice(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
             menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaProcuratorate(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             chinaMenu.getItems().add(menu);
 
@@ -927,77 +927,77 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             menu = new MenuItem(message("IncomeHappiness"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.IncomeHappiness(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ExperienceSalary"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ExperienceSalary(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("IrisSpecies"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.IrisSpecies(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("DiabetesPrediction"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.DiabetesPrediction(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("DiabetesPredictionStandardized"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.DiabetesPredictionStandardized(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("HeartFailure"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.HeartFailure(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ConcreteCompressiveStrength"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ConcreteCompressiveStrength(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("DogRadiographsDataset"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.DogRadiographsDataset(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("BaseballSalaries"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.BaseballSalaries(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SouthGermanCredit"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.SouthGermanCredit(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
             menu = new MenuItem(message("BostonHousingPrices"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.BostonHousingPrices(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             regressionMenu.getItems().add(menu);
 
@@ -1016,28 +1016,28 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             menu = new MenuItem(message("ChineseHistoricalCapitals"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ChineseHistoricalCapitals(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             locationMenu.getItems().add(menu);
 
             menu = new MenuItem(message("AutumnMovementPatternsOfEuropeanGadwalls"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.AutumnMovementPatternsOfEuropeanGadwalls(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             locationMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SpermWhalesGulfOfMexico"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.SpermWhalesGulfOfMexico(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             locationMenu.getItems().add(menu);
 
             menu = new MenuItem(message("EpidemicReportsCOVID19"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.EpidemicReportsCOVID19(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             locationMenu.getItems().add(menu);
 
@@ -1049,77 +1049,77 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             menu = new MenuItem(isChinese ? "项目登记" : "Project register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ProjectRegister(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "项目状态" : "Project Status");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ProjectStatus(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "任务登记" : "Task register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.TaskRegister(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "任务状态" : "Task Status");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.TaskStatus(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "人员登记" : "Person register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.PersonRegister(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "人员状态" : "Person Status");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.PersonStatus(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "资源登记" : "Resource register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ResourceRegister(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "资源状态" : "Resource Status");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ResourceStatus(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "风险分析" : "Risk Analysis");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.RiskAnalysis(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "成本记录" : "Cost Record");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.CostRecord(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 
             menu = new MenuItem(isChinese ? "检验记录" : "Verification Record");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.VerificationRecord(lang);
-                tableData.addAll(data.getColumns());
+                tableData.setAll(data.getColumns());
             });
             pmMenu.getItems().add(menu);
 

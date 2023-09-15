@@ -25,15 +25,6 @@ public class NoteAttributes extends BaseInfoTreeNodeController {
     }
 
     @Override
-    public void nodeChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        super.nodeChanged(changed);
-        editorController.attributesChanged();
-    }
-
-    @Override
     public InfoNode pickNodeData() {
         InfoNode node = super.pickNodeData();
         if (node == null) {

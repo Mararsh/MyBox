@@ -7,6 +7,8 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
@@ -27,6 +29,8 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
     protected long maxData = -1;
 
     @FXML
+    protected ToggleGroup takeGroup;
+    @FXML
     protected RadioButton trueRadio, othersRadio;
     @FXML
     protected TextField maxInput;
@@ -39,6 +43,19 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
         try {
             this.manageController = manageController;
             baseName = manageController.baseName;
+
+            if (takeGroup != null) {
+                takeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        valueChanged(true);
+                    }
+                });
+
+            }
 
             if (maxInput != null) {
                 maxData = -1;
@@ -57,6 +74,7 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
                             try {
                                 maxData = Long.parseLong(maxs);
                                 maxInput.setStyle(null);
+                                valueChanged(true);
                             } catch (Exception e) {
                                 maxInput.setStyle(UserConfig.badStyle());
                             }

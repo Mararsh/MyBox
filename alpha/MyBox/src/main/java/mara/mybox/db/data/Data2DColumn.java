@@ -1,7 +1,7 @@
 package mara.mybox.db.data;
 
 import javafx.scene.paint.Color;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.columnType;
 import static mara.mybox.db.data.ColumnDefinition.number2String;
 import mara.mybox.dev.MyBoxLog;

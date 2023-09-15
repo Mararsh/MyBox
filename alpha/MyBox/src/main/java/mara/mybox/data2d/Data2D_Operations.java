@@ -24,6 +24,7 @@ import mara.mybox.data2d.reader.Data2DSimpleLinearRegression;
 import mara.mybox.data2d.reader.Data2DSplit;
 import mara.mybox.data2d.reader.Data2DStatistic;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;

@@ -10,8 +10,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.Data2D_Attributes;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
@@ -102,9 +101,9 @@ public class Data2DTableCreateController extends BaseTaskController {
         optionsBox.setDisable(true);
 
         if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
-            invalidAs = Data2D_Attributes.InvalidAs.Zero;
+            invalidAs = InvalidAs.Zero;
         } else {
-            invalidAs = Data2D_Attributes.InvalidAs.Blank;
+            invalidAs = InvalidAs.Blank;
         }
     }
 

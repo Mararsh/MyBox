@@ -90,8 +90,8 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
     }
 
     public void loadTree(InfoNode selectNode) {
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         clearTree();
         task = new SingletonCurrentTask<Void>(this) {

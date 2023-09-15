@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import mara.mybox.controller.BaseData2DHandleController;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;

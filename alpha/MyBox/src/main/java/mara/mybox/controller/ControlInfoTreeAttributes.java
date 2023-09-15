@@ -45,10 +45,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
             nameInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    nodeChanged(true);
+                    attributesChanged();
                 }
             });
 
@@ -81,15 +78,14 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         }
     }
 
-    public void nodeChanged(boolean changed) {
-        if (isSettingValues) {
+    public void attributesChanged() {
+        if (isSettingValues || editor == null) {
             return;
         }
-        editor.nodeChanged(changed);
-        treeController.nodeChanged();
         if (editor.attributesTab != null) {
-            editor.attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
+            editor.attributesTab.setText(message("Attributes") + "*");
         }
+        editor.nodeChanged(true);
     }
 
     @Override
@@ -97,10 +93,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         if (isSettingValues) {
             return;
         }
-        nodeChanged(true);
-        if (editor.attributesTab != null) {
-            editor.attributesTab.setText(message("Attributes") + "*");
-        }
+        attributesChanged();
         selectedNotify.set(!selectedNotify.get());
     }
 
@@ -121,7 +114,6 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
             selectButton.setVisible(true);
         }
         isSettingValues = false;
-        nodeChanged(node == null);
         refreshParentNode();
         refreshAction();
     }
@@ -180,11 +172,10 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         currentNode = null;
         selectButton.setVisible(true);
         isSettingValues = false;
-        nodeChanged(true);
+        attributesChanged();
     }
 
     public void saveNode() {
-        MyBoxLog.debug("here");
         InfoNode node = editor.pickNodeData();
         if (node == null) {
             return;
@@ -193,8 +184,8 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
             selectParent();
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
             private boolean newData = false;

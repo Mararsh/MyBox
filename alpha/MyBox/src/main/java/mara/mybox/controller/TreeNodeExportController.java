@@ -215,6 +215,11 @@ public class TreeNodeExportController extends BaseTaskController {
             popError(message("SelectToHandle"));
             return false;
         }
+        targetPath = targetPathController.file();
+        if (targetPath == null) {
+            popError(message("InvalidParameters") + ": " + message("TargetPath"));
+            return false;
+        }
         return true;
     }
 
@@ -442,7 +447,7 @@ public class TreeNodeExportController extends BaseTaskController {
                 jsonWriter.flush();
                 jsonWriter.close();
                 jsonWriter = null;
-                targetFileGenerated(jsonFile, VisitHistory.FileType.Text);
+                targetFileGenerated(jsonFile, VisitHistory.FileType.JSON);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;

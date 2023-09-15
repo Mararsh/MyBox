@@ -3,7 +3,7 @@ package mara.mybox.tools;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Random;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;

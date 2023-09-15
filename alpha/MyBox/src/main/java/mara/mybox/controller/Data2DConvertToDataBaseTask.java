@@ -1,8 +1,8 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import mara.mybox.data2d.Data2D_Attributes;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 
@@ -52,9 +52,9 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             convertController.optionsBox.setDisable(true);
 
             if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
-                invalidAs = Data2D_Attributes.InvalidAs.Zero;
+                invalidAs = InvalidAs.Zero;
             } else {
-                invalidAs = Data2D_Attributes.InvalidAs.Blank;
+                invalidAs = InvalidAs.Blank;
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

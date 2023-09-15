@@ -22,7 +22,7 @@ public class Data2DDefinitionController extends TreeManageController {
         TipsLabelKey = "Data2DDefinitionTips";
         category = InfoNode.Data2DDefinition;
         nameMsg = message("Title");
-        valueMsg = message("Codes");
+        valueMsg = message("Columns");
     }
 
     @Override
@@ -30,6 +30,8 @@ public class Data2DDefinitionController extends TreeManageController {
         try {
             nodeController = editorController;
             super.initControls();
+
+            editorController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

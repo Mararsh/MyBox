@@ -18,8 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.Data2D_Attributes;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -352,7 +351,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             for (int i = 0; i < nodes.size(); i += 2) {
                 Label label = (Label) nodes.get(i);
                 TextField input = (TextField) nodes.get(i + 1);
-                double d = DoubleTools.toDouble(input.getText(), Data2D_Attributes.InvalidAs.Blank);
+                double d = DoubleTools.toDouble(input.getText(), InvalidAs.Blank);
                 vars += "var " + label.getText() + "=" + d + ";\n";
             }
             return vars + script;

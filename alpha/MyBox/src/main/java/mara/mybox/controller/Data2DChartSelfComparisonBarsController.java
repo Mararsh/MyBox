@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.Normalization;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;

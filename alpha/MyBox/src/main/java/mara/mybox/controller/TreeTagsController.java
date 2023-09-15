@@ -214,7 +214,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                 if (forCurrentNode) {
                     treeController.nodeController.attributesController.tableView.getSelectionModel().select(tag);
                 }
-                treeController.nodeController.attributesController.nodeChanged(true);
+                treeController.nodeController.attributesController.attributesChanged();
                 popSuccessful();
             }
 

@@ -13,7 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;

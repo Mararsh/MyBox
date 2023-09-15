@@ -7,7 +7,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlReadTools;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -53,10 +52,6 @@ public class NoteEditor extends ControlHtmlEditor {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-    }
-
-    public void attributesChanged() {
-        attributesTab.setText(message("Attributes") + (infoController.nodeChanged ? " *" : ""));
     }
 
     protected void editNote(InfoNode note) {
