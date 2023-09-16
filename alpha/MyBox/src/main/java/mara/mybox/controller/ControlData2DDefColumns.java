@@ -1,10 +1,9 @@
 package mara.mybox.controller;
 
-import java.util.List;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import mara.mybox.data2d.Data2DColumnTools;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableCheckboxCell;
@@ -119,6 +118,27 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
         }
     }
 
+    protected void setParameters(Data2DDefinitionEditor defEditor) {
+        editor = defEditor;
+        data2D = null;
+    }
+
+    public void load(Data2D data) {
+        try {
+            data2D = data;
+            isSettingValues = true;
+            tableData.clear();
+            if (data2D != null && data2D.getColumns() != null) {
+                tableData.setAll(data2D.getColumns());
+            }
+            isSettingValues = false;
+            checkSelected();
+            status(Status.Loaded);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @Override
     public void status(Status newStatus) {
         if (isSettingValues) {
@@ -129,26 +149,6 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
             return;
         }
         editor.valueChanged(status == Status.Modified);
-    }
-
-    public void load(String def) {
-        try {
-            isSettingValues = true;
-            tableData.clear();
-            List<Data2DColumn> columns = Data2DColumnTools.fromXML(def);
-            if (columns != null) {
-                tableData.setAll(columns);
-            }
-            isSettingValues = false;
-            checkSelected();
-            status(Status.Loaded);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public String toXML() {
-        return Data2DColumnTools.toXML(tableData);
     }
 
 }

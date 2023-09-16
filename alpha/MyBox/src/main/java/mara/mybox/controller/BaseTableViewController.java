@@ -23,7 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2DColumnTools;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.NodeTools;
@@ -551,7 +551,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.open(null, Data2DColumnTools.toColumns(names), data);
+                DataFileCSVController.open(null, Data2DTools.toColumns(names), data);
             }
         };
         start(dataTask, false, message("LoadingTableData"));

@@ -9,7 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DColumnTools;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -244,7 +244,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             if (convertController != null || tableController == null) {
                 return false;
             }
-            StringTable validateTable = Data2DColumnTools.validate(tableData);
+            StringTable validateTable = Data2DTools.validate(tableData);
             if (validateTable != null && !validateTable.isEmpty()) {
                 Platform.runLater(new Runnable() {
                     @Override

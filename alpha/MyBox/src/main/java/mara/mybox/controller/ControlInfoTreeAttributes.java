@@ -101,13 +101,11 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         currentNode = node;
         isSettingValues = true;
         if (node != null) {
-            parentController.setTitle(parentController.baseTitle + ": " + node.getNodeid() + " - " + node.getTitle());
             idInput.setText(node.getNodeid() + "");
             nameInput.setText(node.getTitle());
             timeInput.setText(DateTools.datetimeToString(node.getUpdateTime()));
             selectButton.setVisible(node.getNodeid() < 0 || node.getParentid() < 0);
         } else {
-            parentController.setTitle(parentController.baseTitle);
             idInput.setText(message("NewData"));
             nameInput.setText("");
             timeInput.setText("");
@@ -267,7 +265,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
                     copyNode();
                     popError(message("NotExist"));
                 } else {
-                    editNode(currentNode);
+                    editor.editNode(currentNode);
                     if (newData) {
                         treeController.newNodeSaved();
                     } else {

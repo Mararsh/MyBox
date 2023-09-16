@@ -111,6 +111,7 @@ public class BaseInfoTreeNodeController extends BaseController {
     protected void editNode(InfoNode node) {
         isSettingValues = true;
         if (node != null) {
+            treeController.setTitle(treeController.baseTitle + ": " + node.getNodeid() + " - " + node.getTitle());
             if (valueInput != null) {
                 valueInput.setText(node.getValue());
             }
@@ -118,6 +119,7 @@ public class BaseInfoTreeNodeController extends BaseController {
                 moreInput.setText(node.getMore());
             }
         } else {
+            treeController.setTitle(treeController.baseTitle);
             if (valueInput != null) {
                 valueInput.setText("");
             }

@@ -12,7 +12,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
@@ -23,8 +22,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DColumnTools;
-import mara.mybox.data2d.Data2DExampleTools;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.data.Data2DColumn;
@@ -34,7 +32,6 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
@@ -43,7 +40,6 @@ import mara.mybox.fxml.cell.TableDataColumnCell;
 import mara.mybox.fxml.cell.TableTextAreaEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -565,28 +561,31 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     @FXML
     protected void showExportMenu(Event mevent) {
         try {
+            Data2D currentData = data2D != null ? data2D.cloneAll() : new DataFileCSV();
+            currentData.setColumns(tableData);
+
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
             menu.setOnAction((ActionEvent event) -> {
-                exportCSV();
+                exportCSV(currentData);
             });
             items.add(menu);
 
             menu = new MenuItem("JSON", StyleTools.getIconImageView("iconJSON.png"));
             menu.setOnAction((ActionEvent event) -> {
-                exportJSON();
+                exportJSON(currentData);
             });
             items.add(menu);
 
             menu = new MenuItem("XML", StyleTools.getIconImageView("iconXML.png"));
             menu.setOnAction((ActionEvent event) -> {
-                exportXML();
+                exportXML(currentData);
             });
             items.add(menu);
 
             menu = new MenuItem("Excel", StyleTools.getIconImageView("iconExcel.png"));
             menu.setOnAction((ActionEvent event) -> {
-                exportExcel();
+                exportExcel(currentData);
             });
             items.add(menu);
 
@@ -609,7 +608,11 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         }
     }
 
-    public void exportCSV() {
+    public void exportCSV(Data2D currentData) {
+        if (currentData == null) {
+            popError(message("NoData"));
+            return;
+        }
         File file = chooseSaveFile(VisitHistory.FileType.CSV);
         if (file == null) {
             return;
@@ -624,7 +627,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    csv = Data2DColumnTools.toCSVFile(tableData, file);
+                    csv = Data2DTools.toCSVFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;
@@ -645,7 +648,11 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         start(task);
     }
 
-    public void exportXML() {
+    public void exportXML(Data2D currentData) {
+        if (currentData == null) {
+            popError(message("NoData"));
+            return;
+        }
         File file = chooseSaveFile(VisitHistory.FileType.XML);
         if (file == null) {
             return;
@@ -657,7 +664,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    if (Data2DColumnTools.toXMLFile(tableData, file)
+                    if (Data2DTools.toXMLFile(currentData, file)
                             && file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.XML);
                         return true;
@@ -678,7 +685,11 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         start(task);
     }
 
-    public void exportJSON() {
+    public void exportJSON(Data2D currentData) {
+        if (currentData == null) {
+            popError(message("NoData"));
+            return;
+        }
         File file = chooseSaveFile(VisitHistory.FileType.JSON);
         if (file == null) {
             return;
@@ -690,7 +701,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    if (Data2DColumnTools.toJSONFile(tableData, file)
+                    if (Data2DTools.toJSONFile(currentData, file)
                             && file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.JSON);
                         return true;
@@ -711,7 +722,11 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         start(task);
     }
 
-    public void exportExcel() {
+    public void exportExcel(Data2D currentData) {
+        if (currentData == null) {
+            popError(message("NoData"));
+            return;
+        }
         File file = chooseSaveFile(VisitHistory.FileType.Excel);
         if (file == null) {
             return;
@@ -726,7 +741,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    excel = Data2DColumnTools.toExcelFile(tableData, file);
+                    excel = Data2DTools.toExcelFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;
@@ -746,399 +761,6 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             }
         };
         start(task);
-    }
-
-    /*
-        examples
-     */
-    @FXML
-    protected void popExamplesMenu(Event event) {
-        if (UserConfig.getBoolean("Data2DColumnsExamplesPopWhenMouseHovering", false)) {
-            showExamplesMenu(event);
-        }
-    }
-
-    @FXML
-    protected void showExamplesMenu(Event mevent) {
-        try {
-            String lang = Languages.getLangName();
-            List<MenuItem> items = new ArrayList<>();
-
-            Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImageView("iconCat.png"));
-            items.add(myMenu);
-
-            MenuItem menu = new MenuItem(message("Notes"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Notes(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Contacts"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Contacts(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("CashFlow"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CashFlow(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PrivateProperty"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PrivateProperty(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            myMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Eyesight"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Eyesight(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Weight"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Weight(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Height"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Height(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Menstruation"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Menstruation(lang);
-                tableData.setAll(data.getColumns());
-            });
-            myMenu.getItems().add(menu);
-
-            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImageView("iconChina.png"));
-            items.add(chinaMenu);
-
-            menu = new MenuItem(message("ChinaPopulation"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaPopulation(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaCensus"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCensus(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaGDP"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGDP(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaCPI"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCPI(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaFoodConsumption"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaFoodConsumption(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaGraduates"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGraduates(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaMuseums"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMuseums(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaHealthPersonnel"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaHealthPersonnel(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaMarriage"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMarriage(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaSportWorldChampions"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaSportWorldChampions(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("CrimesFiledByChinaPolice"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaPolice(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaProcuratorate(lang);
-                tableData.setAll(data.getColumns());
-            });
-            chinaMenu.getItems().add(menu);
-
-            chinaMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                myController.browse("https://data.stats.gov.cn/");
-            });
-            chinaMenu.getItems().add(menu);
-
-            Menu regressionMenu = new Menu(message("RegressionData"), StyleTools.getIconImageView("iconLinearPgression.png"));
-            items.add(regressionMenu);
-
-            menu = new MenuItem(message("IncomeHappiness"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IncomeHappiness(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ExperienceSalary"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ExperienceSalary(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("IrisSpecies"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IrisSpecies(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("DiabetesPrediction"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPrediction(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("DiabetesPredictionStandardized"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPredictionStandardized(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("HeartFailure"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.HeartFailure(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ConcreteCompressiveStrength"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ConcreteCompressiveStrength(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("DogRadiographsDataset"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DogRadiographsDataset(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("BaseballSalaries"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BaseballSalaries(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SouthGermanCredit"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SouthGermanCredit(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("BostonHousingPrices"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BostonHousingPrices(lang);
-                tableData.setAll(data.getColumns());
-            });
-            regressionMenu.getItems().add(menu);
-
-            regressionMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("AboutDataAnalysis"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                myController.openHtml(HelpTools.aboutDataAnalysis());
-            });
-            regressionMenu.getItems().add(menu);
-
-            Menu locationMenu = new Menu(message("LocationData"), StyleTools.getIconImageView("iconLocation.png"));
-            items.add(locationMenu);
-
-            menu = new MenuItem(message("ChineseHistoricalCapitals"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChineseHistoricalCapitals(lang);
-                tableData.setAll(data.getColumns());
-            });
-            locationMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("AutumnMovementPatternsOfEuropeanGadwalls"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.AutumnMovementPatternsOfEuropeanGadwalls(lang);
-                tableData.setAll(data.getColumns());
-            });
-            locationMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SpermWhalesGulfOfMexico"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SpermWhalesGulfOfMexico(lang);
-                tableData.setAll(data.getColumns());
-            });
-            locationMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("EpidemicReportsCOVID19"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.EpidemicReportsCOVID19(lang);
-                tableData.setAll(data.getColumns());
-            });
-            locationMenu.getItems().add(menu);
-
-            boolean isChinese = "zh".equals(lang);
-
-            Menu pmMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
-            items.add(pmMenu);
-
-            menu = new MenuItem(isChinese ? "项目登记" : "Project register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectRegister(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "项目状态" : "Project Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectStatus(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "任务登记" : "Task register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskRegister(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "任务状态" : "Task Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskStatus(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "人员登记" : "Person register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonRegister(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "人员状态" : "Person Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonStatus(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "资源登记" : "Resource register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceRegister(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "资源状态" : "Resource Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceStatus(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "风险分析" : "Risk Analysis");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.RiskAnalysis(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "成本记录" : "Cost Record");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CostRecord(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "检验记录" : "Verification Record");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.VerificationRecord(lang);
-                tableData.setAll(data.getColumns());
-            });
-            pmMenu.getItems().add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            pMenu.setSelected(UserConfig.getBoolean("Data2DColumnsExamplesPopWhenMouseHovering", false));
-            pMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("Data2DColumnsExamplesPopWhenMouseHovering", pMenu.isSelected());
-                }
-            });
-            items.add(pMenu);
-
-            popEventMenu(mevent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
 }

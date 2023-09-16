@@ -20,7 +20,7 @@ import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DColumnTools;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
@@ -348,7 +348,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                 column.setIndex(data2D.newColumnIndex());
             }
             data2D.setColumns(columns);
-            StringTable validateTable = Data2DColumnTools.validate(columns);
+            StringTable validateTable = Data2DTools.validate(columns);
             List<List<String>> rows = new ArrayList<>();
             if (data != null) {
                 for (int i = 0; i < data.size(); i++) {

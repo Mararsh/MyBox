@@ -33,8 +33,8 @@ License:    Apache License Version 2.0
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
-                            <children> 
-                                <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlInfoTreeAttributes.fxml" VBox.vgrow="ALWAYS" />
+                            <children>
+                        <fx:include fx:id="defAttributes" source="ControlData2DDefAttributes.fxml" />
                             </children>
                         </VBox>
                     </content>

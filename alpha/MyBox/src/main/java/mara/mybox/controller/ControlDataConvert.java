@@ -20,7 +20,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DColumnTools;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -404,7 +404,7 @@ public class ControlDataConvert extends BaseController {
             names.add(0, message("RowNumber"));
         }
         if (columns == null || columns.isEmpty()) {
-            columns = Data2DColumnTools.toColumns(names);
+            columns = Data2DTools.toColumns(names);
         }
         return openWriters();
     }

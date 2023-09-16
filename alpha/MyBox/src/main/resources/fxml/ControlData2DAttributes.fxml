@@ -46,17 +46,14 @@ License:    Apache License Version 2.0
             <children>
                 <Label minHeight="-Infinity" text="%ID" wrapText="true" />
                 <TextField fx:id="idInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                <Label minHeight="-Infinity" text="%DataType" wrapText="true" />
+                <TextField fx:id="dataTypeInput" editable="false" prefWidth="200.0" styleClass="uneditable" stylesheets="@../styles/MyBox.css" />
             </children>
             <VBox.margin>
                 <Insets />
             </VBox.margin>
         </HBox>
-        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-            <children>
-                <Label minHeight="-Infinity" text="%DataType" wrapText="true" />
-                <TextField fx:id="dataTypeInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-            </children>
-        </HBox>
+        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" />
         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="108.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
                 <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
@@ -67,10 +64,6 @@ License:    Apache License Version 2.0
             <children>
                 <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
                 <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="40.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-            <children>
                 <Label minHeight="-Infinity" text="%MaxRandom" wrapText="true" />
                 <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
             </children>
