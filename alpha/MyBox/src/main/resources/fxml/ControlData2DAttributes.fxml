@@ -41,7 +41,6 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-      <Label fx:id="nameLabel" minHeight="-Infinity" wrapText="true" />
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
                 <Label minHeight="-Infinity" text="%ID" wrapText="true" />

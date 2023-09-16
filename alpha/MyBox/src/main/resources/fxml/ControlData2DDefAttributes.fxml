@@ -23,6 +23,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
+            <Label fx:id="parentLabel" minHeight="-Infinity" text="%ParentNode" wrapText="true" />
                 <Label fx:id="chainLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectParent">
                     <graphic>

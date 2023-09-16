@@ -24,45 +24,49 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ControlInfoTreeAttributes extends TreeTagsController {
-
+    
     protected BaseInfoTreeNodeController editor;
     protected InfoNode parentNode;
     protected SingletonTask tagsTask;
-
+    
     @FXML
     protected TextField idInput, nameInput, timeInput;
     @FXML
-    protected Label chainLabel, nameLabel, timeLabel;
-
+    protected Label parentLabel, chainLabel, nameLabel, timeLabel;
+    
     public ControlInfoTreeAttributes() {
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             nameInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
                     attributesChanged();
                 }
             });
-
+            
+            if (parentLabel != null) {
+                parentLabel.setText(message("ParentNode") + ": ");
+            }
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @Override
     public void setParameters(TreeManageController treeController) {
         try {
             super.setParameters(treeController);
             this.editor = treeController.nodeController;
-
+            
             nameLabel.setText(treeController.nameMsg);
             timeLabel.setText(treeController.timeMsg);
-
+            
             treeController.tagsController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
@@ -72,12 +76,12 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
                     markTags();
                 }
             });
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void attributesChanged() {
         if (isSettingValues || editor == null) {
             return;
@@ -87,7 +91,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         }
         editor.nodeChanged(true);
     }
-
+    
     @Override
     public void notifySelected() {
         if (isSettingValues) {
@@ -96,7 +100,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         attributesChanged();
         selectedNotify.set(!selectedNotify.get());
     }
-
+    
     protected void editNode(InfoNode node) {
         currentNode = node;
         isSettingValues = true;
@@ -115,23 +119,23 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         refreshParentNode();
         refreshAction();
     }
-
+    
     protected void checkParentNode(InfoNode node) {
         if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
             return;
         }
         refreshParentNode();
     }
-
+    
     protected void setParentNode(InfoNode node) {
         parentNode = node;
         refreshParentNode();
     }
-
+    
     protected void refreshParentNode() {
         SingletonTask updateTask = new SingletonTask<Void>(this) {
             private String chainName;
-
+            
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -153,7 +157,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
                 }
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 chainLabel.setText(chainName);
@@ -161,7 +165,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         };
         start(updateTask, false);
     }
-
+    
     protected void copyNode() {
         isSettingValues = true;
         parentController.setTitle(parentController.baseTitle + ": " + message("NewData"));
@@ -172,7 +176,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         isSettingValues = false;
         attributesChanged();
     }
-
+    
     public void saveNode() {
         InfoNode node = editor.pickNodeData();
         if (node == null) {
@@ -187,7 +191,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         }
         task = new SingletonCurrentTask<Void>(this) {
             private boolean newData = false;
-
+            
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -255,7 +259,7 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
                 }
                 return currentNode != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (parentNode == null) {
@@ -274,11 +278,11 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
                     popSaved();
                 }
             }
-
+            
         };
         start(task, false);
     }
-
+    
     public void renamed(String newName) {
         if (nameInput == null) {
             return;
@@ -287,14 +291,14 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         nameInput.setText(newName);
         isSettingValues = false;
     }
-
+    
     @FXML
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
         markTags();
     }
-
+    
     public void markTags() {
         if (tableData.isEmpty() || currentNode == null) {
             return;
@@ -304,13 +308,13 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         }
         tagsTask = new SingletonTask<Void>(this) {
             private List<String> nodeTags;
-
+            
             @Override
             protected boolean handle() {
                 nodeTags = tableTreeNodeTag.nodeTagNames(currentNode.getNodeid());
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (nodeTags != null && !nodeTags.isEmpty()) {
@@ -323,22 +327,22 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
                     isSettingValues = false;
                 }
             }
-
+            
         };
         start(tagsTask, false);
     }
-
+    
     @FXML
     @Override
     public void addTag() {
         treeController.tagsController.addTag(true);
     }
-
+    
     @FXML
     public void selectParent() {
         TreeNodeParentController.open(this);
     }
-
+    
     @Override
     public void cleanPane() {
         try {
@@ -349,5 +353,5 @@ public class ControlInfoTreeAttributes extends TreeTagsController {
         }
         super.cleanPane();
     }
-
+    
 }
