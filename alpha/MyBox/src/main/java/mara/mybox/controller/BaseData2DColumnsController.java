@@ -75,6 +75,11 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.XML);
+    }
+
+    @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
@@ -549,11 +554,27 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     }
 
     /*
+        import
+     */
+    @Override
+    public void sourceFileChanged(File file) {
+        DataFileCSV csv = Data2DTools.fromXMLFile(file);
+        if (csv == null) {
+            return;
+        }
+        loadDefinition(csv);
+    }
+
+    public void loadDefinition(Data2D def) {
+
+    }
+
+    /*
         export
      */
     @FXML
     public void popExportMenu(Event event) {
-        if (UserConfig.getBoolean("Data2DColumnsExportMenuPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("Data2DDefinitionExportMenuPopWhenMouseHovering", true)) {
             showExportMenu(event);
         }
     }
@@ -591,12 +612,23 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
 
             items.add(new SeparatorMenuItem());
 
+            CheckMenuItem attrMenu = new CheckMenuItem(message("ExportDataAttributes"),
+                    StyleTools.getIconImageView("iconInfo.png"));
+            attrMenu.setSelected(UserConfig.getBoolean("Data2DDefinitionExportAtributes", true));
+            attrMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("Data2DDefinitionExportAtributes", attrMenu.isSelected());
+                }
+            });
+            items.add(attrMenu);
+
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("Data2DColumnsExportMenuPopWhenMouseHovering", true));
+            hoverMenu.setSelected(UserConfig.getBoolean("Data2DDefinitionExportMenuPopWhenMouseHovering", true));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("Data2DColumnsExportMenuPopWhenMouseHovering", hoverMenu.isSelected());
+                    UserConfig.setBoolean("Data2DDefinitionExportMenuPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
             items.add(hoverMenu);

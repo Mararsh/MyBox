@@ -19,9 +19,11 @@ import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.XmlTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -352,6 +354,10 @@ public class Data2DTools {
         }
     }
 
+    public static DataFileCSV fromXMLFile(File file) {
+        return fromXML(TextFileTools.readTexts(file));
+    }
+
     /*
         to
      */
@@ -380,30 +386,32 @@ public class Data2DTools {
             List<Data2DColumn> definition = Data2DTools.definition();
             try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile,
                     Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
-                csvPrinter.printComment("The first row defines attributes of the data. And other rows define columns.");
                 List<String> row = new ArrayList<>();
                 for (Data2DColumn col : definition) {
                     row.add(col.getColumnName());
                 }
                 csvPrinter.printRecord(row);
-                row.clear();
-                row.add(data2d.getDataName());
-                row.add("TableAttributes");
-                row.add(data2d.getMaxRandom() + "");
-                row.add("");
-                row.add("");
-                row.add("");
-                row.add("");
-                row.add("");
-                row.add("");
-                row.add("");
-                row.add("");
-                row.add("");
-                row.add(data2d.getScale() + "");
-                row.add("");
-                row.add("");
-                row.add(data2d.getComments());
-                csvPrinter.printRecord(row);
+                if (UserConfig.getBoolean("Data2DDefinitionExportAtributes", true)) {
+                    csvPrinter.printComment("The first row defines attributes of the data. And other rows define columns.");
+                    row.clear();
+                    row.add(data2d.getDataName());
+                    row.add("TableAttributes");
+                    row.add(data2d.getMaxRandom() + "");
+                    row.add("");
+                    row.add("");
+                    row.add("");
+                    row.add("");
+                    row.add("");
+                    row.add("");
+                    row.add("");
+                    row.add("");
+                    row.add("");
+                    row.add(data2d.getScale() + "");
+                    row.add("");
+                    row.add("");
+                    row.add(data2d.getComments());
+                    csvPrinter.printRecord(row);
+                }
                 List<Data2DColumn> columns = data2d.getColumns();
                 if (columns != null) {
                     for (Data2DColumn col : columns) {
@@ -473,24 +481,26 @@ public class Data2DTools {
             String indent = AppValues.Indent;
             StringBuilder s = new StringBuilder();
             s.append("<data2d>\n");
-            s.append(indent).append("<attributes>\n");
-            String v = data2d.getDataName();
-            if (v != null && !v.isBlank()) {
-                s.append(indent).append(indent).append("<dataName>")
-                        .append("<![CDATA[").append(v).append("]]>")
-                        .append("</dataName>\n");
+            if (UserConfig.getBoolean("Data2DDefinitionExportAtributes", true)) {
+                s.append(indent).append("<attributes>\n");
+                String v = data2d.getDataName();
+                if (v != null && !v.isBlank()) {
+                    s.append(indent).append(indent).append("<dataName>")
+                            .append("<![CDATA[").append(v).append("]]>")
+                            .append("</dataName>\n");
+                }
+                s.append(indent).append(indent).append("<scale>")
+                        .append(data2d.getScale()).append("</scale>\n");
+                s.append(indent).append(indent).append("<maxRandom>")
+                        .append(data2d.getMaxRandom()).append("</maxRandom>\n");
+                v = data2d.getComments();
+                if (v != null && !v.isBlank()) {
+                    s.append(indent).append(indent).append("<description>")
+                            .append("<![CDATA[").append(v).append("]]>")
+                            .append("</description>\n");
+                }
+                s.append(indent).append("</attributes>\n");
             }
-            s.append(indent).append(indent).append("<scale>")
-                    .append(data2d.getScale()).append("</scale>\n");
-            s.append(indent).append(indent).append("<maxRandom>")
-                    .append(data2d.getMaxRandom()).append("</maxRandom>\n");
-            v = data2d.getComments();
-            if (v != null && !v.isBlank()) {
-                s.append(indent).append(indent).append("<description>")
-                        .append("<![CDATA[").append(v).append("]]>")
-                        .append("</description>\n");
-            }
-            s.append(indent).append("</attributes>\n");
             s.append(indent).append("<columns>\n");
             List<Data2DColumn> columns = data2d.getColumns();
             if (columns != null) {
@@ -590,22 +600,24 @@ public class Data2DTools {
             String indent = AppValues.Indent;
             StringBuilder s = new StringBuilder();
             s.append("{\"data2d\": {\n");
-            s.append(indent).append("\"attributes\": {\n");
-            String v = data2d.getDataName();
-            if (v != null && !v.isBlank()) {
-                s.append(indent).append(indent)
-                        .append("\"dataName\": ")
-                        .append(JsonTools.encode(v));
+            if (UserConfig.getBoolean("Data2DDefinitionExportAtributes", true)) {
+                s.append(indent).append("\"attributes\": {\n");
+                String v = data2d.getDataName();
+                if (v != null && !v.isBlank()) {
+                    s.append(indent).append(indent)
+                            .append("\"dataName\": ")
+                            .append(JsonTools.encode(v)).append(",\n");
+                }
+                s.append(indent).append(indent).append("\"scale\": ").append(data2d.getScale()).append(",\n");
+                s.append(indent).append(indent).append("\"maxRandom\": ").append(data2d.getMaxRandom());
+                v = data2d.getComments();
+                if (v != null && !v.isBlank()) {
+                    s.append(",\n").append(indent).append(indent)
+                            .append("\"description\": ")
+                            .append(JsonTools.encode(v));
+                }
+                s.append(indent).append("},\n");
             }
-            s.append(indent).append(indent).append("\"scale\": ").append(data2d.getScale());
-            s.append(indent).append(indent).append("\"maxRandom\": ").append(data2d.getMaxRandom());
-            v = data2d.getComments();
-            if (v != null && !v.isBlank()) {
-                s.append(indent).append(indent)
-                        .append("\"description\": ")
-                        .append(JsonTools.encode(v));
-            }
-            s.append(indent).append("},\n");
             s.append(indent).append("\"columns\": [\n");
             boolean firstRow = true;
             List<Data2DColumn> columns = data2d.getColumns();
@@ -614,7 +626,7 @@ public class Data2DTools {
                     if (firstRow) {
                         firstRow = false;
                     } else {
-                        s.append(indent).append(indent).append(",\n");
+                        s.append(",\n");
                     }
                     s.append(indent).append(indent).append("{").append("\n");
                     if (col.getColumnName() == null) {
@@ -672,8 +684,8 @@ public class Data2DTools {
                     }
                     s.append("\n").append(indent).append(indent).append("}");
                 }
-                s.append(indent).append(indent).append("\n]\n");
-                s.append("}");
+                s.append("\n").append(indent).append("]\n");
+                s.append("}}");
             }
             return s.toString();
         } catch (Exception e) {
@@ -690,8 +702,7 @@ public class Data2DTools {
                 XSSFSheet xssfSheet = xssfBook.createSheet("sheet1");
                 xssfSheet.setDefaultColumnWidth(20);
                 int rowIndex = 0;
-                XSSFRow commentsRow = xssfSheet.createRow(rowIndex++);
-                commentsRow.createCell(0).setCellValue("The first row defines attributes of the data. And other rows define columns.");
+
                 XSSFRow titleRow = xssfSheet.createRow(rowIndex++);
                 XSSFCellStyle horizontalCenter = xssfBook.createCellStyle();
                 horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
@@ -701,24 +712,28 @@ public class Data2DTools {
                     cell.setCellStyle(horizontalCenter);
                     xssfSheet.autoSizeColumn(i);
                 }
-                XSSFRow attributesRow = xssfSheet.createRow(rowIndex++);
                 int cellIndex = 0;
-                attributesRow.createCell(cellIndex++).setCellValue(data2d.getDataName());
-                attributesRow.createCell(cellIndex++).setCellValue("TableAttributes");
-                attributesRow.createCell(cellIndex++).setCellValue(data2d.getMaxRandom() + "");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue(data2d.getScale() + "");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue("");
-                attributesRow.createCell(cellIndex++).setCellValue(data2d.getComments());
+                if (UserConfig.getBoolean("Data2DDefinitionExportAtributes", true)) {
+                    XSSFRow commentsRow = xssfSheet.createRow(rowIndex++);
+                    commentsRow.createCell(0).setCellValue("The first row defines attributes of the data. And other rows define columns.");
+                    XSSFRow attributesRow = xssfSheet.createRow(rowIndex++);
+                    attributesRow.createCell(cellIndex++).setCellValue(data2d.getDataName());
+                    attributesRow.createCell(cellIndex++).setCellValue("TableAttributes");
+                    attributesRow.createCell(cellIndex++).setCellValue(data2d.getMaxRandom() + "");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue(data2d.getScale() + "");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue(data2d.getComments());
+                }
                 List<Data2DColumn> columns = data2d.getColumns();
                 if (columns != null) {
                     for (Data2DColumn col : columns) {

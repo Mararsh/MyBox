@@ -83,6 +83,9 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             case "Paste":
                 pasteNode(item);
                 break;
+            case "View":
+                viewNode(item);
+                break;
             case "Execute":
                 executeNode(item);
                 break;
@@ -99,11 +102,10 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
-        if (nodeExecutable && !"Execute".equals(clickAction)) {
+        if (nodeExecutable) {
             executeNode(item);
-        } else if (!"Edit".equals(clickAction)) {
-            editNode(item);
+        } else {
+            viewNode(item);
         }
     }
 
@@ -137,7 +139,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         });
         clickPopMenu.setToggleGroup(clickGroup);
 
-        RadioMenuItem editNodeMenu = new RadioMenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+        RadioMenuItem editNodeMenu = new RadioMenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
         editNodeMenu.setSelected("Edit".equals(currentClick));
         editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -156,6 +158,16 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             }
         });
         pasteNodeMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem viewNodeMenu = new RadioMenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
+        viewNodeMenu.setSelected("View".equals(currentClick));
+        viewNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "TreeWhenClickNode", "View");
+            }
+        });
+        viewNodeMenu.setToggleGroup(clickGroup);
 
         clickMenu.getItems().addAll(nothingMenu, clickPopMenu, editNodeMenu, pasteNodeMenu);
 
@@ -287,6 +299,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             moveNode(treeItem);
         });
         menu.setDisable(isRoot);
+        menu.setDisable(treeItem == null);
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
@@ -296,6 +309,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 executeNode(treeItem);
             });
+            menu.setDisable(treeItem == null);
             items.add(menu);
         }
 
@@ -303,6 +317,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             editNode(treeItem);
         });
+        menu.setDisable(treeItem == null);
         items.add(menu);
 
         menu = new MenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
@@ -312,6 +327,13 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
                 pasteNode(treeItem);
             }
         });
+        items.add(menu);
+
+        menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            viewNode(treeItem);
+        });
+        menu.setDisable(treeItem == null);
         items.add(menu);
 
         menu = new MenuItem(message("CopyValue"), StyleTools.getIconImageView("iconCopySystem.png"));

@@ -295,7 +295,6 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> CsvExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("csv", "*.csv"));
-            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 

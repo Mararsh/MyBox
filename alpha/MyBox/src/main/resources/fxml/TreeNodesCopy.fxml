@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
@@ -20,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodesCopyController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodesCopyController">
     <children>
         <FlowPane hgap="2.0" vgap="2.0">
             <children>
@@ -68,6 +69,15 @@ License:    Apache License Version 2.0
       <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>
             <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%TreeTargetComments" wrapText="true" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconView.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
             <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

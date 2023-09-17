@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -125,18 +126,13 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
         super.editNode(node);
         isSettingValues = true;
         if (node != null) {
-            String script = node.getValue();
-            String more = node.getMore();
-            if (more != null && more.contains(InfoNode.TagsSeparater)) {
-                try {
-                    String[] v = more.strip().split(InfoNode.TagsSeparater);
-                    load(script, StringTools.isTrue(v[0]), Long.parseLong(v[1]));
-                } catch (Exception e) {
-                    load(script, true, -1);
-                }
-            } else {
-                load(script, true, -1);
+            Map<String, String> values = InfoNode.parse(node);
+            long max = -1;
+            try {
+                max = Long.parseLong(values.get("Maximum"));
+            } catch (Exception e) {
             }
+            load(values.get("Script"), !StringTools.isFalse(values.get("True")), max);
         } else {
             load(null, true, -1);
         }

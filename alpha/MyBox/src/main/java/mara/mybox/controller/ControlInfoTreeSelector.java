@@ -2,11 +2,18 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -16,6 +23,40 @@ import static mara.mybox.value.Languages.message;
 public class ControlInfoTreeSelector extends BaseInfoTreeController {
 
     protected BaseInfoTreeController caller;
+
+    @FXML
+    protected CheckBox viewCheck;
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            if (viewCheck != null) {
+                StyleTools.setIconTooltips(viewCheck, "iconView.png", message("InfoTreeDoubleClickComments"));
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+            if (viewCheck != null) {
+                viewCheck.setSelected(UserConfig.getBoolean(interfaceName + "DoubleClickView", true));
+                viewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(interfaceName + "DoubleClickView", viewCheck.isSelected());
+                    }
+                });
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     public void setCaller(BaseInfoTreeController caller) {
         if (caller == null) {
@@ -64,7 +105,11 @@ public class ControlInfoTreeSelector extends BaseInfoTreeController {
         if (item == null) {
             return;
         }
-        okAction();
+        if (viewCheck == null || viewCheck.isSelected()) {
+            viewNode(item);
+        } else {
+            okAction();
+        }
     }
 
     @Override

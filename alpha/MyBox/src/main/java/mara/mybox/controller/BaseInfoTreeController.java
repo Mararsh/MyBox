@@ -293,6 +293,17 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
     }
 
     @Override
+    protected void viewNode(TreeItem<InfoNode> item) {
+        if (item == null) {
+            return;
+        }
+        InfoNode node = item.getValue();
+        if (node != null) {
+            InfoNode.view(node, message("HierarchyNumber") + ": " + hierarchyNumber(item));
+        }
+    }
+
+    @Override
     public void unfold(TreeItem<InfoNode> item, boolean descendants) {
         if (item == null) {
             return;

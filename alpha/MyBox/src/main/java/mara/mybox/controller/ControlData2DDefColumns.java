@@ -151,4 +151,12 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
         editor.valueChanged(status == Status.Modified);
     }
 
+    /*
+        import
+     */
+    @Override
+    public void loadDefinition(Data2D def) {
+        editor.load(def);
+    }
+
 }

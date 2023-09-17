@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -73,39 +74,19 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
     @Override
     protected synchronized void editNode(InfoNode node) {
         super.editNode(node);
-        if (node == null) {
-            functionController.calculateController.variablesChanged();
-            return;
+        if (node != null) {
+            isSettingValues = true;
+            Map<String, String> values = InfoNode.parse(node);
+            Object o = values.get("Expression");
+            valueInput.setText(o != null ? (String) o : null);
+            o = values.get("ResultName");
+            resultNameInput.setText(o != null ? (String) o : null);
+            o = values.get("Variables");
+            variablesInput.setText(o != null ? (String) o : null);
+            o = values.get("FunctionDomain");
+            moreInput.setText(o != null ? (String) o : null);
+            isSettingValues = false;
         }
-        isSettingValues = true;
-        variablesInput.clear();
-        resultNameInput.clear();
-        String v = node.getValue();
-        if (v != null && v.startsWith(NamesPrefix)) {
-            String namesString, script;
-            int pos = v.indexOf("\n");
-            if (pos > 0) {
-                namesString = v.substring(NamesPrefix.length(), pos);
-                script = v.substring(pos + 1);
-            } else {
-                namesString = v;
-                script = "";
-            }
-            valueInput.setText(script);
-            String[] names = namesString.split(",");
-            resultNameInput.setText(names[0]);
-            namesString = "";
-            if (names.length > 1) {
-                namesString = names[1];
-                for (int i = 2; i < names.length; i++) {
-                    namesString += ", " + names[i];
-                }
-            }
-            variablesInput.setText(namesString);
-        } else {
-            resultNameInput.setText("f");
-        }
-        isSettingValues = false;
         functionController.calculateController.variablesChanged();
     }
 

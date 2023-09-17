@@ -470,16 +470,25 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     public List<MenuItem> viewItems(TreeItem<NodeP> item) {
         List<MenuItem> items = foldItems(item);
 
-        MenuItem menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            viewNode(item);
+        });
+        menu.setDisable(item == null);
+        items.add(menu);
+
+        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
         });
+        menu.setDisable(item == null);
         items.add(menu);
 
         menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
         });
+        menu.setDisable(item == null);
         items.add(menu);
 
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
@@ -493,6 +502,18 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     public void showItemMenu(TreeItem<NodeP> item) {
         popNodeMenu(treeView, makeFunctionsMenu(item));
+    }
+
+    protected void viewNode(TreeItem<NodeP> item) {
+        if (item == null) {
+            return;
+        }
+        String s = label(item);
+        NodeP node = item.getValue();
+        if (node != null) {
+            s += "\n" + value(node);
+        }
+        TextPopController.loadText(this, s);
     }
 
     @FXML
