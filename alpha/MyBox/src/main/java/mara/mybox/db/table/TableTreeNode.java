@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -39,6 +38,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("more", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("info", ColumnType.Clob));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long)
                 .setReferName("Tree_Node_parent_fk").setReferTable("Tree_Node").setReferColumn("nodeid")
@@ -85,9 +85,6 @@ public class TableTreeNode extends BaseTable<InfoNode> {
 
     public static final String DeleteChildren
             = "DELETE FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
-
-    public static final String Times
-            = "SELECT DISTINCT update_time FROM Tree_Node WHERE category=? ORDER BY update_time DESC";
 
     public InfoNode find(long id) {
         if (id < 0) {
@@ -337,12 +334,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try {
             long parentid = categoryRoot.getNodeid();
             String chain = ownerChain;
-            if (chain.startsWith(categoryRoot.getTitle() + InfoNode.NodeSeparater)) {
-                chain = chain.substring((categoryRoot.getTitle() + InfoNode.NodeSeparater).length());
-            } else if (chain.startsWith(message(categoryRoot.getTitle()) + InfoNode.NodeSeparater)) {
-                chain = chain.substring((message(categoryRoot.getTitle()) + InfoNode.NodeSeparater).length());
+            if (chain.startsWith(categoryRoot.getTitle() + InfoNode.TitleSeparater)) {
+                chain = chain.substring((categoryRoot.getTitle() + InfoNode.TitleSeparater).length());
+            } else if (chain.startsWith(message(categoryRoot.getTitle()) + InfoNode.TitleSeparater)) {
+                chain = chain.substring((message(categoryRoot.getTitle()) + InfoNode.TitleSeparater).length());
             }
-            String[] nodes = chain.split(InfoNode.NodeSeparater);
+            String[] nodes = chain.split(InfoNode.TitleSeparater);
             InfoNode owner = null;
             for (String node : nodes) {
                 owner = findAndCreate(conn, parentid, node);
@@ -600,38 +597,6 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
         condition += " ) ) ";
         return condition;
-    }
-
-    public List<Date> times(String category) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            conn.setReadOnly(true);
-            return times(conn, category);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public List<Date> times(Connection conn, String category) {
-        List<Date> times = new ArrayList();
-        if (conn == null) {
-            return times;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(Times)) {
-            statement.setString(1, category);
-            conn.setAutoCommit(true);
-            try (ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    Date time = results.getTimestamp("update_time");
-                    if (time != null) {
-                        times.add(time);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return times;
     }
 
 }

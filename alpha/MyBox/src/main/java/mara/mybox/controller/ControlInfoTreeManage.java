@@ -15,7 +15,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.NodeSeparater;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -24,6 +23,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.db.data.InfoNode.TitleSeparater;
 
 /**
  * @Author Mara
@@ -57,7 +57,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         List<InfoNode> ancestor = ancestor(conn, node);
         if (ancestor != null) {
             for (InfoNode a : ancestor) {
-                chainName += a.getTitle() + NodeSeparater;
+                chainName += a.getTitle() + TitleSeparater;
             }
         }
         chainName += node.getTitle();
@@ -338,7 +338,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
         menu = new MenuItem(message("CopyValue"), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getValue());
+            TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getInfo());
         });
         menu.setDisable(treeItem == null);
         items.add(menu);
@@ -458,8 +458,8 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         if (name == null || name.isBlank()) {
             return;
         }
-        if (name.contains(NodeSeparater)) {
-            popError(message("NodeNameNotInclude") + " \"" + NodeSeparater + "\"");
+        if (name.contains(TitleSeparater)) {
+            popError(message("NodeNameNotInclude") + " \"" + TitleSeparater + "\"");
             return;
         }
         if (task != null) {

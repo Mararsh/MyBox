@@ -25,7 +25,6 @@ public class MathFunctionController extends TreeManageController {
         category = InfoNode.MathFunction;
         nameMsg = message("Title");
         valueMsg = message("MathFunction");
-        moreMsg = message("FunctionDomain");
     }
 
     @Override

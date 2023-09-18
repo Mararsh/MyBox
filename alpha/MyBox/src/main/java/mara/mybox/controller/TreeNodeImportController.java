@@ -230,7 +230,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 if (time == null) {
                     time = new Date(baseTime - count * 1000); // to keep the order of id
                 }
-                if (writeNode(conn, parentid, time, name, value, more, tagsString)) {
+                if (writeNode(conn, parentid, time, name, value, tagsString)) {
                     count++;
                 }
                 while ((line = reader.readLine()) != null && line.isBlank()) {
@@ -250,18 +250,16 @@ public class TreeNodeImportController extends BaseBatchFileController {
         long count = 0;
         try {
             conn.setAutoCommit(false);
-            String line, name, value, more, tagsString;
+            String line, name, info, tagsString;
             Date time;
             long parentid, baseTime = new Date().getTime();
-            int morePrefixLen = InfoNode.MorePrefix.length();
             while ((line = reader.readLine()) != null && !line.isBlank()) {
                 parentid = getParent(conn, line);
                 if (parentid < -1) {
                     break;
                 }
-                value = null;
+                info = null;
                 time = null;
-                more = null;
                 tagsString = null;
                 while ((line = reader.readLine()) != null && line.isBlank()) {
                 }
@@ -288,40 +286,17 @@ public class TreeNodeImportController extends BaseBatchFileController {
                         tagsString = line.substring(InfoNode.TagsPrefix.length());
                         line = reader.readLine();
                     }
-                    value = line;
-                    if (value != null && !value.startsWith(AppValues.MyBoxSeparator)) {
+                    info = line;
+                    if (info != null && !info.startsWith(AppValues.MyBoxSeparator)) {
                         while ((line = reader.readLine()) != null && !line.startsWith(AppValues.MyBoxSeparator)) {
-                            value += "\n" + line;
-                        }
-                    }
-
-                    if (value != null && !value.isBlank()) {
-                        int pos = value.indexOf(InfoNode.MorePrefix);
-                        if (pos >= 0) {
-                            more = value.substring(pos + morePrefixLen).strip();
-                            value = value.substring(0, pos);
-                        } else if (isWebFavorite) {
-                            String[] lines = value.split("\n");
-                            if (lines.length > 1) {
-                                value = lines[0];
-                                more = lines[0];
-                            }
-                            if (more == null || more.isBlank()) {
-                                try {
-                                    File iconFile = IconTools.readIcon(value, iconCheck.isSelected());
-                                    if (iconFile != null && iconFile.exists()) {
-                                        more = iconFile.getAbsolutePath();
-                                    }
-                                } catch (Exception e) {
-                                }
-                            }
+                            info += "\n" + line;
                         }
                     }
                 }
                 if (time == null) {
                     time = new Date(baseTime - count * 1000); // to keep the order of id
                 }
-                if (writeNode(conn, parentid, time, name, value, more, tagsString)) {
+                if (writeNode(conn, parentid, time, name, info, tagsString)) {
                     count++;
                 }
             }
@@ -343,18 +318,18 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     parentid = parents.get(parentChain);
                 } else {
                     String chain = parentChain;
-                    String prefix = rootNode.getTitle() + InfoNode.NodeSeparater;
+                    String prefix = rootNode.getTitle() + InfoNode.TitleSeparater;
                     if (chain.startsWith(prefix)) {
                         chain = chain.substring(prefix.length());
                     } else {
-                        prefix = message(rootNode.getTitle()) + InfoNode.NodeSeparater;
+                        prefix = message(rootNode.getTitle()) + InfoNode.TitleSeparater;
                         if (chain.startsWith(prefix)) {
                             chain = chain.substring(prefix.length());
                         } else {
                             prefix = "";
                         }
                     }
-                    String[] nodes = chain.split(InfoNode.NodeSeparater);
+                    String[] nodes = chain.split(InfoNode.TitleSeparater);
                     for (String node : nodes) {
                         InfoNode parentNode = tableTreeNode.find(conn, parentid, node);
                         if (parentNode == null) {
@@ -367,7 +342,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                         }
                         parentid = parentNode.getNodeid();
                         parents.put(prefix + node, parentid);
-                        prefix = prefix + node + InfoNode.NodeSeparater;
+                        prefix = prefix + node + InfoNode.TitleSeparater;
                     }
                 }
                 return parentid;
@@ -380,7 +355,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
     }
 
     public boolean writeNode(Connection conn, long parentid, Date time,
-            String name, String value, String more, String tags) {
+            String name, String info, String tags) {
         try {
             if (conn == null || name == null || name.isBlank()) {
                 return false;
@@ -391,11 +366,11 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     currentNode = tableTreeNode.findAndCreateRoot(conn, category);
                 }
             } else {
+                info = InfoNode.encodeInfo(category, info);
                 currentNode = tableTreeNode.find(conn, parentid, name);
                 if (currentNode != null) {
                     if (replaceCheck.isSelected()) {
-                        currentNode.setValue(value == null ? null : value.trim())
-                                .setMore(more == null || more.isBlank() ? null : more)
+                        currentNode.setInfo(info)
                                 .setUpdateTime(time);
                         currentNode = tableTreeNode.updateData(conn, currentNode);
                     }
@@ -404,8 +379,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                             .setCategory(category)
                             .setParentid(parentid)
                             .setTitle(name)
-                            .setValue(value == null ? null : value.trim())
-                            .setMore(more == null || more.isBlank() ? null : more)
+                            .setInfo(info)
                             .setUpdateTime(time);
                     currentNode = tableTreeNode.insertData(conn, currentNode);
                 }
@@ -426,7 +400,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             if (conn == null || s == null || s.isBlank()) {
                 return;
             }
-            String[] values = s.split(InfoNode.TagsSeparater);
+            String[] values = s.split(InfoNode.TagSeparater);
             if (values == null || values.length == 0) {
                 return;
             }

@@ -3,11 +3,13 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -55,6 +57,34 @@ public class WebFavoriteEditor extends BaseInfoTreeNodeController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    protected void editInfo(InfoNode node) {
+        Map<String, String> values = InfoNode.parseInfo(node);
+        if (values != null) {
+            valueInput.setText(values.get("Address"));
+            moreInput.setText(values.get("Icon"));
+        } else {
+            valueInput.setText("");
+            moreInput.setText("");
+        }
+    }
+
+    @Override
+    protected String nodeInfo() {
+        String info;
+        String address = valueInput.getText();
+        if (address != null && !address.isBlank()) {
+            info = address.trim() + "\n";
+        } else {
+            info = "";
+        }
+        String icon = moreInput.getText();
+        if (icon != null && !icon.isBlank()) {
+            info += InfoNode.ValueSeparater + "\n" + icon.trim();
+        }
+        return info;
     }
 
     protected void updateIcon(String icon) {

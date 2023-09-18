@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,7 +17,7 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.NodeSeparater;
+import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
@@ -161,7 +162,7 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
 
     @Override
     public String value(InfoNode node) {
-        return node == null ? null : node.getValue();
+        return node == null ? null : node.getInfo();
     }
 
     @Override
@@ -224,7 +225,7 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
         List<TreeItem<InfoNode>> ancestor = ancestor(item);
         if (ancestor != null) {
             for (TreeItem<InfoNode> a : ancestor) {
-                chainName += a.getValue().getTitle() + NodeSeparater;
+                chainName += a.getValue().getTitle() + TitleSeparater;
             }
         }
         chainName += item.getValue().getTitle();
@@ -263,8 +264,8 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
         if (name == null || name.isBlank()) {
             return;
         }
-        if (name.contains(NodeSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
+        if (name.contains(TitleSeparater)) {
+            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
             return;
         }
         if (task != null && !task.isQuit()) {
@@ -539,35 +540,34 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                 s.append(indentTag).append("</SPAN>\n");
             }
             s.append(indentNode).append("</DIV>\n");
-            String nodeValue = node.getValue();
-            String moreValue = node.getMore();
+            String nodeValue = node.getInfo();
             if (nodeValue != null && !nodeValue.isBlank()) {
                 s.append(indentNode).append("<DIV class=\"nodeValue\">")
                         .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
                         .append("<DIV class=\"valueBox\">\n");
-                String nodeDisplay;
+                String nodeDisplay = "";
                 if (category.equals(InfoNode.WebFavorite)) {
-                    nodeDisplay = "<A href=\"" + nodeValue + "\">";
-                    if (moreValue != null && !moreValue.isBlank()) {
-                        try {
-                            nodeDisplay += "<IMG src=\"" + new File(node.getMore()).toURI().toString() + "\" width=40/>";
-                        } catch (Exception e) {
+                    Map<String, String> values = InfoNode.parseInfo(node);
+                    if (values != null) {
+                        String address = values.get("Address");
+                        String icon = values.get("Icon");
+                        if (address != null && !address.isBlank()) {
+                            nodeDisplay = "<A href=\"" + address + "\">";
                         }
+                        if (icon != null && !icon.isBlank()) {
+                            try {
+                                nodeDisplay += "<IMG src=\"" + new File(icon).toURI().toString() + "\" width=40/>";
+                            } catch (Exception e) {
+                            }
+                        }
+                        nodeDisplay += address + "</A>";
                     }
-                    nodeDisplay += nodeValue + "</A>";
                 } else if (category.equals(InfoNode.Notebook)) {
                     nodeDisplay = nodeValue;
                 } else {
                     nodeDisplay = HtmlWriteTools.stringToHtml(nodeValue);
                 }
                 s.append(indentNode).append(nodeDisplay).append("\n");
-                s.append(indentNode).append("</DIV></DIV></DIV>\n");
-            }
-            if (moreValue != null && !moreValue.isBlank() && !category.equals(InfoNode.WebFavorite)) {
-                s.append(indentNode).append("<DIV class=\"nodeValue\">")
-                        .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
-                        .append("<DIV class=\"valueBox\">\n");
-                s.append(indentNode).append(HtmlWriteTools.stringToHtml(moreValue)).append("\n");
                 s.append(indentNode).append("</DIV></DIV></DIV>\n");
             }
             if (children != null && !children.isEmpty()) {

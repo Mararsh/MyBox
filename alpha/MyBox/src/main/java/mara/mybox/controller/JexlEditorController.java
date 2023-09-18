@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -15,6 +16,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -73,6 +75,44 @@ public class JexlEditorController extends JShellEditorController {
 
     @Override
     protected void showEditorPane() {
+    }
+
+    @Override
+    protected void editInfo(InfoNode node) {
+        if (node != null) {
+            Map<String, String> values = InfoNode.parseInfo(node);
+            valueInput.setText(values.get("Script"));
+            moreInput.setText(values.get("Context"));
+            parametersInput.setText(values.get("Parameters"));
+        }
+    }
+
+    @Override
+    protected String nodeInfo() {
+        String info;
+        String script = valueInput.getText();
+        if (script != null && !script.isBlank()) {
+            info = script.trim() + "\n";
+        } else {
+            info = "";
+        }
+        String more;
+        String context = moreInput.getText();
+        if (context != null && !context.isBlank()) {
+            more = context.trim() + "\n";
+        } else {
+            more = "";
+        }
+        String parameters = parametersInput.getText();
+        if (parameters != null && !parameters.isBlank()) {
+            more += InfoNode.ValueSeparater + "\n" + parameters.trim();
+        } else {
+            more += InfoNode.ValueSeparater;
+        }
+        if (more != null && !more.isBlank()) {
+            info += InfoNode.ValueSeparater + "\n" + more;
+        }
+        return info;
     }
 
     @Override

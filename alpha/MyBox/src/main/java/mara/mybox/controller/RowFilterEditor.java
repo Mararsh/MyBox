@@ -122,11 +122,9 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
     }
 
     @Override
-    protected synchronized void editNode(InfoNode node) {
-        super.editNode(node);
-        isSettingValues = true;
-        if (node != null) {
-            Map<String, String> values = InfoNode.parse(node);
+    protected void editInfo(InfoNode node) {
+        Map<String, String> values = InfoNode.parseInfo(node);
+        if (values != null) {
             long max = -1;
             try {
                 max = Long.parseLong(values.get("Maximum"));
@@ -136,19 +134,20 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
         } else {
             load(null, true, -1);
         }
-        isSettingValues = false;
     }
 
     @Override
-    public InfoNode pickNodeData() {
-        InfoNode node = super.pickNodeData();
-        if (node != null) {
-            String more = trueRadio.isSelected() ? "true" : "false";
-            more += InfoNode.TagsSeparater;
-            more += maxData > 0 ? maxData + "" : "";
-            node.setMore(more);
+    protected String nodeInfo() {
+        String info = valueInput.getText();
+        if (info == null) {
+            info = "";
         }
-        return node;
+        if (trueRadio.isSelected() && maxData <= 0) {
+            return info;
+        }
+        info += "\n" + InfoNode.ValueSeparater + "\n" + (trueRadio.isSelected() ? "true" : "false");
+        info += "\n" + InfoNode.ValueSeparater + "\n" + (maxData > 0 ? maxData + "" : "");
+        return info;
     }
 
     @FXML

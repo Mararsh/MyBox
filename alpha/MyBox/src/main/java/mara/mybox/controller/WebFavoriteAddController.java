@@ -79,15 +79,25 @@ public class WebFavoriteAddController extends BaseInfoTreeController {
             @Override
             protected boolean handle() {
                 try {
+                    File icon = IconTools.readIcon(address, true);
+                    String info;
+                    if (address != null && !address.isBlank()) {
+                        info = address.trim() + "\n";
+                    } else {
+                        info = "";
+                    }
+                    if (icon != null && icon.exists()) {
+                        info += InfoNode.ValueSeparater + "\n" + icon.getAbsolutePath();
+                    }
+                    if (info.isBlank()) {
+                        error = message("NoData");
+                        return false;
+                    }
                     data = InfoNode.create()
                             .setParentid(node.getNodeid())
                             .setCategory(category)
                             .setTitle(title)
-                            .setValue(address);
-                    File icon = IconTools.readIcon(address, true);
-                    if (icon != null) {
-                        data.setMore(icon.getAbsolutePath());
-                    }
+                            .setInfo(info);
                     data = tableTreeNode.insertData(data);
                     return data != null;
                 } catch (Exception e) {

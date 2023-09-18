@@ -84,7 +84,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             if (node == null) {
                 return;
             }
-            Map<String, String> values = InfoNode.parse(node);
+            Map<String, String> values = InfoNode.parseInfo(node);
             scriptInput.setText(values.get("Script"));
             if (maxInput != null) {
                 maxInput.setText(values.get("Maximum"));

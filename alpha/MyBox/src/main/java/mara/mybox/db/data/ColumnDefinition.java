@@ -1,5 +1,7 @@
 package mara.mybox.db.data;
 
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -408,18 +410,17 @@ public class ColumnDefinition extends BaseData {
             if (o == null) {
                 return null;
             }
-            String s = o + "";
             switch (type) {
                 case String:
                 case Enumeration:
                 case Color:
                 case File:
                 case Image:
-                    return s;
+                    return (String) o;
                 case Era:
                     long lv;
                     try {
-                        lv = Long.parseLong(s);
+                        lv = Long.parseLong((String) o);
                         if (lv >= 10000 || lv <= -10000) {
                             return lv;
                         }
@@ -431,7 +432,7 @@ public class ColumnDefinition extends BaseData {
                 case Latitude:
                     double d;
                     try {
-                        d = Double.parseDouble(s);
+                        d = Double.parseDouble(o + "");
                         if (DoubleTools.invalidDouble(d)) {
                             d = Double.NaN;
                         }
@@ -442,7 +443,7 @@ public class ColumnDefinition extends BaseData {
                 case Float:
                     float f;
                     try {
-                        f = Float.parseFloat(s);
+                        f = Float.parseFloat(o + "");
                         if (FloatTools.invalidFloat(f)) {
                             f = Float.NaN;
                         }
@@ -453,7 +454,7 @@ public class ColumnDefinition extends BaseData {
                 case Long:
                     long l;
                     try {
-                        l = Long.parseLong(s);
+                        l = Long.parseLong(o + "");
                     } catch (Exception e) {
                         l = AppValues.InvalidLong;
                     }
@@ -461,7 +462,7 @@ public class ColumnDefinition extends BaseData {
                 case Integer:
                     int i;
                     try {
-                        i = Integer.parseInt(s);
+                        i = Integer.parseInt(o + "");
                     } catch (Exception e) {
                         i = AppValues.InvalidInteger;
                     }
@@ -469,21 +470,25 @@ public class ColumnDefinition extends BaseData {
                 case Short:
                     short ss;
                     try {
-                        ss = Short.parseShort(s);
+                        ss = Short.parseShort(o + "");
                     } catch (Exception e) {
                         ss = AppValues.InvalidShort;
                     }
                     return ss;
                 case Boolean:
-                    return StringTools.isTrue(s);
+                    return StringTools.isTrue(o + "");
                 case Datetime:
-                    return DateTools.encodeDate(s);
+                    return DateTools.encodeDate(o + "");
                 case Date:
-                    return DateTools.encodeDate(s);
-//                case Blob:
-//                    return results.getBlob(savedName);
-//                case Clob:
-//                    return results.getClob(savedName);
+                    return DateTools.encodeDate(o + "");
+                case Clob:
+                    // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
+                    Clob clob = (Clob) o;
+                    return clob.getSubString(1, (int) clob.length());
+                case Blob:
+                    // BLOB is handled as InputStream internally
+                    Blob blob = (Blob) o;
+                    return blob.getBinaryStream();
                 default:
                     MyBoxLog.debug(savedName + " " + type);
             }
@@ -597,6 +602,7 @@ public class ColumnDefinition extends BaseData {
             case File:
             case Image:
             case Color:
+            case Clob:
                 if (v != null) {
                     return "'" + defaultValue + "'";
                 } else {
@@ -646,6 +652,7 @@ public class ColumnDefinition extends BaseData {
             case File:
             case Image:
             case Color:
+            case Clob:
                 if (v != null) {
                     return defaultValue;
                 } else {
@@ -860,9 +867,9 @@ public class ColumnDefinition extends BaseData {
             }
             switch (sourceType) {
                 case Double:
-                    return Double.parseDouble(string.replaceAll(",", ""));
+                    return Double.valueOf(string.replaceAll(",", ""));
                 case Float:
-                    return Float.parseFloat(string.replaceAll(",", ""));
+                    return Float.valueOf(string.replaceAll(",", ""));
                 case Long:
                     return Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Integer:

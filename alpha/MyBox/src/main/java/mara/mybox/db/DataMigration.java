@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -75,6 +74,7 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
+            updateIn677(conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion
@@ -169,6 +169,9 @@ public class DataMigration {
                 if (lastVersion < 6007003) {
                     updateIn673(conn);
                 }
+                if (lastVersion < 6007007) {
+                    updateIn677(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -177,6 +180,39 @@ public class DataMigration {
             MyBoxLog.debug(e);
         }
         return true;
+    }
+
+    private static void updateIn677(Connection conn) {
+        try (Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.7.7...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Tree_Node ADD COLUMN info CLOB ");
+            TableTreeNode tableTreeNode = new TableTreeNode();
+            ResultSet query = statement.executeQuery("SELECT * FROM Tree_Node");
+            while (query.next()) {
+                InfoNode node = tableTreeNode.readData(query);
+                String value = query.getString("value");
+                String more = query.getString("more");
+                String info;
+                if (value != null && !value.isBlank()) {
+                    info = value.trim() + "\n";
+                } else {
+                    info = "";
+                }
+                if (more != null && !more.isBlank()) {
+                    info += InfoNode.ValueSeparater + "\n" + more.trim();
+                }
+                node.setInfo(info);
+                tableTreeNode.updateData(conn, node);
+            }
+
+            statement.executeUpdate("ALTER TABLE Tree_Node DROP COLUMN value");
+            statement.executeUpdate("ALTER TABLE Tree_Node DROP COLUMN more");
+
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn673(Connection conn) {
@@ -491,8 +527,8 @@ public class DataMigration {
             TableData2DStyle tableData2DStyle = new TableData2DStyle();
             ResultSet query = statement.executeQuery("SELECT * FROM Data2D_Style ORDER BY d2id,sequence,d2sid");
             while (query.next()) {
-                Data2DStyle style = tableData2DStyle.readData(query);
                 String rowFilter = query.getString("rowFilter");
+                Data2DStyle style = tableData2DStyle.readData(query);
                 if (rowFilter != null && !rowFilter.isBlank()) {
                     if (rowFilter.startsWith("Reversed::")) {
                         style.setFilter(rowFilter.substring("Reversed::".length()));
@@ -505,7 +541,6 @@ public class DataMigration {
                 // discard data about column filter. Sorry!
                 tableData2DStyle.updateData(conn, style);
             }
-
             statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN rowFilter");
             statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN columnFilter");
 
@@ -623,21 +658,21 @@ public class DataMigration {
             }
 
             conn.setAutoCommit(false);
-            TableTreeNode tableTreeNode = new TableTreeNode();
-            ResultSet query = statement.executeQuery("SELECT * FROM Tree_Node "
-                    + "WHERE category='" + InfoNode.WebFavorite + "' AND more is not null");
-            while (query.next()) {
-                InfoNode node = tableTreeNode.readData(query);
-                String icon = node.getMore();
-                if (icon != null && icon.endsWith(".ico")) {
-                    icon = icon.replace(".ico", ".png");
-                    node.setMore(icon);
-                    tableTreeNode.updateData(conn, node);
-                }
-            }
-            conn.commit();
+//            TableTreeNode tableTreeNode = new TableTreeNode();
+//            ResultSet query = statement.executeQuery("SELECT * FROM Tree_Node "
+//                    + "WHERE category='" + InfoNode.WebFavorite + "' AND more is not null");
+//            while (query.next()) {
+//                InfoNode node = tableTreeNode.readData(query);
+//                String icon = node.getMore();
+//                if (icon != null && icon.endsWith(".ico")) {
+//                    icon = icon.replace(".ico", ".png");
+//                    node.setMore(icon);
+//                    tableTreeNode.updateData(conn, node);
+//                }
+//            }
+//            conn.commit();
 
-            query = statement.executeQuery("SELECT * FROM Web_History "
+            ResultSet query = statement.executeQuery("SELECT * FROM Web_History "
                     + "WHERE icon is not null");
             TableWebHistory tableWebHistory = new TableWebHistory();
             while (query.next()) {
@@ -1605,17 +1640,19 @@ public class DataMigration {
                         }
                     }
 
-                    String path = AppVariables.MyboxDataPath + File.separator + "data" + File.separator;
-                    List<String> names = new ArrayList<>();
-                    names.addAll(Arrays.asList("Notebook_Examples_en.txt", "Notebook_Examples_zh.txt",
-                            "WebFavorite_Examples_en.txt", "WebFavorite_Examples_zh.txt"));
-                    for (String name : names) {
-                        try {
-                            new File(path + name).delete();
-                        } catch (Exception e) {
+                    dir = new File(AppVariables.MyboxDataPath + File.separator + "data");
+                    list = dir.listFiles();
+                    if (list != null) {
+                        for (File file : list) {
+                            if (file.isDirectory()) {
+                                continue;
+                            }
+                            String name = file.getName();
+                            if (name.endsWith("_Examples_en.txt") && name.endsWith("_Examples_zh.txt")) {
+                                file.delete();
+                            }
                         }
                     }
-
                     MyBoxLog.info("Internal resources refreshed.");
 
                 } catch (Exception e) {

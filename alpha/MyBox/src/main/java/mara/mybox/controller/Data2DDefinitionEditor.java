@@ -47,7 +47,7 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeController {
     @Override
     protected void editNode(InfoNode node) {
         if (node != null) {
-            data2D = Data2DTools.fromXML(node.getValue());
+            data2D = Data2DTools.fromXML(node.getInfo());
         } else {
             data2D = null;
         }
@@ -57,14 +57,11 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeController {
         columnsController.load(data2D);
         defAttributesController.editNode(node, data2D);
         nodeChanged(false);
+        updateTitle(node);
     }
 
     @Override
-    public InfoNode pickNodeData() {
-        InfoNode node = super.pickNodeData();
-        if (node == null) {
-            return null;
-        }
+    protected String nodeInfo() {
         if (data2D == null) {
             data2D = new DataFileCSV();
         }
@@ -73,9 +70,9 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeController {
                 .setScale(defAttributesController.scale)
                 .setMaxRandom(defAttributesController.maxRandom)
                 .setComments(defAttributesController.descInput.getText())
-                .setDataName(node.getTitle());
-        node.setValue(Data2DTools.toXML(data2D));
-        return node;
+                .setDataName(nodeTitle());
+        String info = Data2DTools.toXML(data2D);
+        return info;
     }
 
     @FXML

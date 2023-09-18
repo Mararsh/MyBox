@@ -125,7 +125,7 @@ public class ControlInfoTreeSelector extends BaseInfoTreeController {
             return null;
         }
         try {
-            InfoNode newNode = sourceNode.copyTo(targetNode);
+            InfoNode newNode = sourceNode.copyIn(targetNode);
             newNode = tableTreeNode.insertData(conn, newNode);
             if (newNode == null) {
                 return null;
@@ -158,8 +158,11 @@ public class ControlInfoTreeSelector extends BaseInfoTreeController {
             if (children != null && !children.isEmpty()) {
                 conn.setAutoCommit(true);
                 for (InfoNode child : children) {
-                    InfoNode newNode = InfoNode.create().setParentid(targetid).setCategory(category)
-                            .setTitle(child.getTitle()).setValue(child.getValue()).setMore(child.getMore());
+                    InfoNode newNode = InfoNode.create()
+                            .setParentid(targetid)
+                            .setCategory(category)
+                            .setTitle(child.getTitle())
+                            .setInfo(child.getInfo());
                     tableTreeNode.insertData(conn, newNode);
                     copyDescendants(conn, child, newNode);
                 }

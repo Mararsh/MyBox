@@ -25,24 +25,18 @@ public class NoteAttributes extends BaseInfoTreeNodeController {
     }
 
     @Override
-    public InfoNode pickNodeData() {
-        InfoNode node = super.pickNodeData();
-        if (node == null) {
-            return null;
-        }
-        node.setValue(editorController.currentHtml(true));
-        return node;
-    }
-
-    @Override
-    protected void editNode(InfoNode node) {
+    protected void editInfo(InfoNode node) {
         if (node != null) {
-            editorController.loadContents(node.getValue());
+            editorController.loadContents(node.getInfo());
         } else {
             editorController.loadContents(null);
         }
-        super.editNode(node);
         editorController.updateFileStatus(false);
+    }
+
+    @Override
+    protected String nodeInfo() {
+        return editorController.currentHtml(true);
     }
 
     @Override

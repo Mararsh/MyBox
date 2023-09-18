@@ -25,7 +25,6 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
 
     protected MathFunctionController functionController;
     protected String outputs = "";
-    public static final String NamesPrefix = "Names:::";
 
     @FXML
     protected TextField variablesInput, resultNameInput;
@@ -72,38 +71,47 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
     }
 
     @Override
-    protected synchronized void editNode(InfoNode node) {
-        super.editNode(node);
+    protected void editInfo(InfoNode node) {
         if (node != null) {
             isSettingValues = true;
-            Map<String, String> values = InfoNode.parse(node);
-            Object o = values.get("Expression");
-            valueInput.setText(o != null ? (String) o : null);
-            o = values.get("ResultName");
-            resultNameInput.setText(o != null ? (String) o : null);
-            o = values.get("Variables");
-            variablesInput.setText(o != null ? (String) o : null);
-            o = values.get("FunctionDomain");
-            moreInput.setText(o != null ? (String) o : null);
+            Map<String, String> values = InfoNode.parseInfo(node);
+            valueInput.setText(values.get("Expression"));
+            resultNameInput.setText(values.get("ResultName"));
+            variablesInput.setText(values.get("Variables"));
+            moreInput.setText(values.get("FunctionDomain"));
             isSettingValues = false;
         }
         functionController.calculateController.variablesChanged();
     }
 
     @Override
-    public InfoNode pickNodeData() {
-        InfoNode node = super.pickNodeData();
-        if (node == null) {
-            return node;
-        }
-        List<String> variableNames = variableNames();
-        String script = valueInput.getText();
-        if (variableNames == null || variableNames.isEmpty()) {
-            node.setValue(script);
+    protected String nodeInfo() {
+        String info;
+        String resultName = resultName();
+        if (resultName != null && !resultName.isBlank()) {
+            info = resultName.trim() + "\n";
         } else {
-            node.setValue(makeNames(variableNames) + "\n" + script);
+            info = "";
         }
-        return node;
+        String variableNames = variablesInput.getText();
+        if (variableNames != null && !variableNames.isBlank()) {
+            info += InfoNode.ValueSeparater + "\n" + variableNames.trim() + "\n";
+        } else {
+            info += InfoNode.ValueSeparater + "\n";
+        }
+        String exp = valueInput.getText();
+        if (exp != null && !exp.isBlank()) {
+            info += InfoNode.ValueSeparater + "\n" + exp.trim() + "\n";
+        } else {
+            info += InfoNode.ValueSeparater + "\n";
+        }
+        String domain = moreInput.getText();
+        if (domain != null && !domain.isBlank()) {
+            info += InfoNode.ValueSeparater + "\n" + domain.trim();
+        } else {
+            info += InfoNode.ValueSeparater;
+        }
+        return info;
     }
 
     public List<String> variableNames() {
@@ -129,19 +137,6 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
             return "f";
         } else {
             return resultName;
-        }
-    }
-
-    public String makeNames(List<String> variableNames) {
-        if (variableNames == null || variableNames.isEmpty()) {
-            return null;
-        } else {
-            String resultName = resultName();
-            String finalNames = NamesPrefix + resultName.trim();
-            for (String name : variableNames) {
-                finalNames += "," + name.trim();
-            }
-            return finalNames;
         }
     }
 

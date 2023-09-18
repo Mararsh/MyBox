@@ -78,10 +78,10 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
             return;
         }
         InfoNode node = item.getValue();
-        if (node == null || node.getValue() == null) {
+        if (node == null || node.getInfo() == null) {
             return;
         }
-        scriptInput.replaceText(scriptInput.getSelection(), node.getValue());
+        scriptInput.replaceText(scriptInput.getSelection(), node.getInfo());
     }
 
     @FXML

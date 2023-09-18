@@ -46,6 +46,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.cell.TableTextTrimCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -65,7 +66,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
     protected TableTag tableTag;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected String queryLabel;
-    protected String nameMsg, valueMsg, moreMsg, timeMsg;
+    protected String nameMsg, valueMsg, timeMsg;
     protected InfoNode loadedParent;
 
     @FXML
@@ -73,7 +74,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
     @FXML
     protected TableColumn<InfoNode, Long> nodeidColumn;
     @FXML
-    protected TableColumn<InfoNode, String> nameColumn, valueColumn, moreColumn;
+    protected TableColumn<InfoNode, String> nameColumn, valueColumn;
     @FXML
     protected TableColumn<InfoNode, Date> timeColumn;
     @FXML
@@ -108,7 +109,6 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
         category = InfoNode.InformationInTree;
         nameMsg = message("Title");
         valueMsg = message("Value");
-        moreMsg = message("More");
         timeMsg = message("UpdateTime");
     }
 
@@ -181,11 +181,8 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             nameColumn.setText(nameMsg);
             if (valueColumn != null) {
                 valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
+                valueColumn.setCellFactory(new TableTextTrimCell());
                 valueColumn.setText(valueMsg);
-            }
-            if (moreColumn != null) {
-                moreColumn.setCellValueFactory(new PropertyValueFactory<>("more"));
-                moreColumn.setText(moreMsg);
             }
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
             timeColumn.setText(timeMsg);
@@ -702,7 +699,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
         if (node == null) {
             return;
         }
-        String v = node.getValue();
+        String v = node.getInfo();
         if (v == null || v.isBlank()) {
             return;
         }
@@ -713,7 +710,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
         if (node == null) {
             return;
         }
-        String v = node.getValue();
+        String v = node.getInfo();
         if (v == null || v.isBlank()) {
             return;
         }

@@ -11,7 +11,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.NodeSeparater;
+import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -38,7 +38,7 @@ public class BaseInfoTreeNodeController extends BaseController {
     @FXML
     protected TextInputControl valueInput, moreInput;
     @FXML
-    protected Label valueLabel, moreLabel;
+    protected Label valueLabel;
     @FXML
     protected CheckBox wrapCheck;
 
@@ -65,15 +65,6 @@ public class BaseInfoTreeNodeController extends BaseController {
                 });
             }
 
-            if (moreInput != null) {
-                moreInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue v, String ov, String nv) {
-                        valueChanged(true);
-                    }
-                });
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -86,9 +77,6 @@ public class BaseInfoTreeNodeController extends BaseController {
 
             if (valueLabel != null) {
                 valueLabel.setText(treeController.valueMsg);
-            }
-            if (moreLabel != null) {
-                moreLabel.setText(treeController.moreMsg);
             }
 
             if (wrapCheck != null && (valueInput instanceof TextArea)) {
@@ -109,59 +97,75 @@ public class BaseInfoTreeNodeController extends BaseController {
     }
 
     protected void editNode(InfoNode node) {
-        isSettingValues = true;
-        if (node != null) {
-            treeController.setTitle(treeController.baseTitle + ": " + node.getNodeid() + " - " + node.getTitle());
-            if (valueInput != null) {
-                valueInput.setText(node.getValue());
-            }
-            if (moreInput != null) {
-                moreInput.setText(node.getMore());
-            }
-        } else {
-            treeController.setTitle(treeController.baseTitle);
-            if (valueInput != null) {
-                valueInput.setText("");
-            }
-            if (moreInput != null) {
-                moreInput.setText("");
-            }
-        }
-        isSettingValues = false;
-
+        updateTitle(node);
+        editInfo(node);
         attributesController.editNode(node);
         showEditorPane();
         nodeChanged(false);
     }
 
+    protected void updateTitle(InfoNode node) {
+        if (node != null) {
+            treeController.setTitle(treeController.baseTitle + ": "
+                    + node.getNodeid() + " - " + node.getTitle());
+        } else {
+            treeController.setTitle(treeController.baseTitle);
+        }
+    }
+
+    protected void editInfo(InfoNode node) {
+        if (valueInput == null) {
+            return;
+        }
+        isSettingValues = true;
+        if (node != null) {
+            valueInput.setText(node.getInfo());
+        } else {
+            valueInput.setText("");
+        }
+        isSettingValues = false;
+    }
+
     public InfoNode pickNodeData() {
-        String name = attributesController.nameInput.getText();
-        if (name == null || name.isBlank()) {
+        String title = nodeTitle();
+        if (title == null || title.isBlank()) {
+            return null;
+        }
+        String info = nodeInfo();
+        InfoNode node = InfoNode.create()
+                .setCategory(treeController.category)
+                .setTitle(title)
+                .setInfo(info);
+        return node;
+    }
+
+    protected String nodeInfo() {
+        String info = null;
+        if (valueInput != null) {
+            info = valueInput.getText();
+        }
+        return info;
+    }
+
+    protected String nodeTitle() {
+        String title = attributesController.nameInput.getText();
+        if (title == null || title.isBlank()) {
             popError(message("InvalidParameters") + ": " + treeController.nameMsg);
             if (tabPane != null && attributesTab != null) {
                 tabPane.getSelectionModel().select(attributesTab);
             }
             return null;
         }
-        if (name.contains(NodeSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
+        if (title.contains(TitleSeparater)) {
+            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
             return null;
         }
 
-        if (name.contains(NodeSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
+        if (title.contains(TitleSeparater)) {
+            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
             return null;
         }
-        InfoNode node = InfoNode.create()
-                .setCategory(treeController.category).setTitle(name);
-
-        if (valueInput != null) {
-            node.setValue(valueInput.getText());
-        }
-        if (moreInput != null) {
-            node.setMore(moreInput.getText());
-        }
-        return node;
+        return title;
     }
 
     protected void showEditorPane() {

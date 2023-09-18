@@ -23,7 +23,6 @@ public class ImageMaterialController extends TreeManageController {
         category = InfoNode.ImageMaterial;
         nameMsg = message("Title");
         valueMsg = message("ImageMaterial");
-        moreMsg = message("More");
     }
 
     @Override
