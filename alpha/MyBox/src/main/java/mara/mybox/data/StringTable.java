@@ -106,6 +106,10 @@ public class StringTable {
         return data == null || data.isEmpty();
     }
 
+    public int size() {
+        return data == null ? 0 : data.size();
+    }
+
 
     /*
         Static methods

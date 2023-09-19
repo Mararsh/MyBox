@@ -1,11 +1,9 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -540,34 +538,12 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                 s.append(indentTag).append("</SPAN>\n");
             }
             s.append(indentNode).append("</DIV>\n");
-            String nodeValue = node.getInfo();
-            if (nodeValue != null && !nodeValue.isBlank()) {
+            String infoDisplay = InfoNode.infoHtml(category, node.getInfo(), true);
+            if (infoDisplay != null && !infoDisplay.isBlank()) {
                 s.append(indentNode).append("<DIV class=\"nodeValue\">")
                         .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
                         .append("<DIV class=\"valueBox\">\n");
-                String nodeDisplay = "";
-                if (category.equals(InfoNode.WebFavorite)) {
-                    Map<String, String> values = InfoNode.parseInfo(node);
-                    if (values != null) {
-                        String address = values.get("Address");
-                        String icon = values.get("Icon");
-                        if (address != null && !address.isBlank()) {
-                            nodeDisplay = "<A href=\"" + address + "\">";
-                        }
-                        if (icon != null && !icon.isBlank()) {
-                            try {
-                                nodeDisplay += "<IMG src=\"" + new File(icon).toURI().toString() + "\" width=40/>";
-                            } catch (Exception e) {
-                            }
-                        }
-                        nodeDisplay += address + "</A>";
-                    }
-                } else if (category.equals(InfoNode.Notebook)) {
-                    nodeDisplay = nodeValue;
-                } else {
-                    nodeDisplay = HtmlWriteTools.stringToHtml(nodeValue);
-                }
-                s.append(indentNode).append(nodeDisplay).append("\n");
+                s.append(indentNode).append(infoDisplay).append("\n");
                 s.append(indentNode).append("</DIV></DIV></DIV>\n");
             }
             if (children != null && !children.isEmpty()) {

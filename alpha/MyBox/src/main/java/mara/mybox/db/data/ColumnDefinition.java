@@ -315,8 +315,8 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.Double || type == ColumnType.Float;
     }
 
-    public boolean isStringType() {
-        return type == ColumnType.String;
+    public boolean supportMultipleLine() {
+        return type == ColumnType.String || type == ColumnType.Clob;
     }
 
     public boolean isDBStringType() {

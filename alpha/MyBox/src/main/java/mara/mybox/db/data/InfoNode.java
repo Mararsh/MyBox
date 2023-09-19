@@ -27,6 +27,7 @@ public class InfoNode extends BaseData {
     public static final String TagsPrefix = "Tags:";
     public static final String TagSeparater = ";;;";
     public static final String ValueSeparater = ".:;MyBoxNodeValue;:.";
+    public static final String MoreSeparater = "MyBoxTreeNodeMore:";
     public static final String Root = "Root";
     public static final String InformationInTree = "InformationInTree";
     public static final String Notebook = "Notebook";
@@ -181,7 +182,6 @@ public class InfoNode extends BaseData {
             if (category == null) {
                 return values;
             }
-            String moreSperator = "MyBoxTreeNodeMore:";
             switch (category) {
                 case InfoNode.WebFavorite:
                     if (info != null) {
@@ -191,8 +191,8 @@ public class InfoNode extends BaseData {
                             if (ss.length > 1) {
                                 values.put("Icon", ss[1].trim());
                             }
-                        } else if (info.contains(moreSperator)) {
-                            String[] ss = info.split(moreSperator);
+                        } else if (info.contains(MoreSeparater)) {
+                            String[] ss = info.split(MoreSeparater);
                             values.put("Address", ss[0].trim());
                             if (ss.length > 1) {
                                 values.put("Icon", ss[1].trim());
@@ -228,12 +228,16 @@ public class InfoNode extends BaseData {
                             values.put("Script", ss[0].trim());
                             if (ss.length > 1) {
                                 values.put("Context", ss[1].trim());
+                            } else {
+                                values.put("Context", null);
                             }
                             if (ss.length > 2) {
                                 values.put("Parameters", ss[2].trim());
+                            } else {
+                                values.put("Parameters", null);
                             }
-                        } else if (info.contains(moreSperator)) {
-                            String[] ss = info.split(moreSperator);
+                        } else if (info.contains(MoreSeparater)) {
+                            String[] ss = info.split(MoreSeparater);
                             values.put("Script", ss[0].trim());
                             if (ss.length > 1) {
                                 values.put("Context", ss[1].trim());
@@ -262,34 +266,34 @@ public class InfoNode extends BaseData {
                             String[] ss = info.split(ValueSeparater);
                             values.put("Script", ss[0].trim());
                             if (ss.length > 1) {
-                                values.put("True", ss[1].trim());
+                                values.put("Condition", ss[1].trim());
                             }
                             if (ss.length > 2) {
                                 values.put("Maximum", ss[2].trim());
                             }
-                        } else if (info.contains(moreSperator)) {
-                            String[] ss = info.split(moreSperator);
+                        } else if (info.contains(MoreSeparater)) {
+                            String[] ss = info.split(MoreSeparater);
                             values.put("Script", ss[0].trim());
                             if (ss.length > 1) {
                                 ss = ss[1].split(";;;");
-                                values.put("True", ss[0].trim());
+                                values.put("Condition", ss[0].trim());
                                 if (ss.length > 1) {
                                     values.put("Maximum", ss[1].trim());
                                 } else {
                                     values.put("Maximum", "-1");
                                 }
                             } else {
-                                values.put("True", "true");
+                                values.put("Condition", "true");
                                 values.put("Maximum", "-1");
                             }
                         } else {
                             values.put("Script", info);
-                            values.put("True", "true");
+                            values.put("Condition", "true");
                             values.put("Maximum", "-1");
                         }
                     } else {
                         values.put("Script", info);
-                        values.put("True", "true");
+                        values.put("Condition", "true");
                         values.put("Maximum", "-1");
                     }
                     break;
@@ -299,13 +303,13 @@ public class InfoNode extends BaseData {
                             String[] ss = info.split(ValueSeparater);
                             values.put("ResultName", ss[0].trim());
                             if (ss.length > 1) {
-                                values.put("Variables", ss[0].trim());
+                                values.put("Variables", ss[1].trim());
                             }
                             if (ss.length > 2) {
-                                values.put("Expression", ss[1].trim());
+                                values.put("Expression", ss[2].trim());
                             }
                             if (ss.length > 3) {
-                                values.put("FunctionDomain", ss[2].trim());
+                                values.put("FunctionDomain", ss[3].trim());
                             }
                         } else {
                             String prefix = "Names:::";
@@ -337,8 +341,8 @@ public class InfoNode extends BaseData {
                                 values.put("ResultName", null);
                                 values.put("Variables", null);
                             }
-                            if (info != null && info.contains(moreSperator)) {
-                                String[] ss = info.split(moreSperator);
+                            if (info != null && info.contains(MoreSeparater)) {
+                                String[] ss = info.split(MoreSeparater);
                                 values.put("Expression", ss[0].trim());
                                 if (ss.length > 1) {
                                     values.put("FunctionDomain", ss[1].trim());
@@ -425,7 +429,7 @@ public class InfoNode extends BaseData {
                     } else {
                         info = "";
                     }
-                    String isTrue = values.get("True");
+                    String isTrue = values.get("Condition");
                     if (isTrue != null && !isTrue.isBlank()) {
                         info += ValueSeparater + "\n" + isTrue.trim();
                     } else {
@@ -500,6 +504,61 @@ public class InfoNode extends BaseData {
         row.addAll(Arrays.asList(message("UpdateTime"), DateTools.datetimeToString(node.getUpdateTime())));
         table.add(row);
         table.htmlTable();
+    }
+
+    public static String infoHtml(String category, String s, boolean showIcon) {
+        if (s == null || s.isBlank()) {
+            return "";
+        }
+        String html = "";
+        switch (category) {
+            case InfoNode.Notebook:
+                html = s;
+                break;
+            case InfoNode.WebFavorite: {
+                Map<String, String> values = InfoNode.parseInfo(category, s);
+                if (values != null) {
+                    String address = values.get("Address");
+                    String icon = values.get("Icon");
+                    if (address != null && !address.isBlank()) {
+                        html = "<A href=\"" + address + "\">";
+                    }
+                    if (showIcon && icon != null && !icon.isBlank()) {
+                        try {
+                            html += "<IMG src=\"" + new File(icon).toURI().toString() + "\" width=40/>";
+                        } catch (Exception e) {
+                        }
+                    }
+                    html += address + "</A>\n";
+                }
+                break;
+            }
+            default:
+                Map<String, String> values = parseInfo(category, s);
+                if (values != null) {
+                    StringTable table = new StringTable();
+                    String pv = s;
+                    for (String key : values.keySet()) {
+                        String v = values.get(key);
+                        if (v == null || v.isBlank()) {
+                            continue;
+                        }
+                        pv = v;
+                        List<String> row = new ArrayList<>();
+                        row.addAll(Arrays.asList(message(key), v));
+                        table.add(row);
+                    }
+                    if (!table.isEmpty()) {
+                        if (table.size() == 1) {
+                            html = "<PRE><CODE>" + pv + "</CODE></PRE>\n";
+                        } else {
+                            html = table.div();
+                        }
+                    }
+                }
+                break;
+        }
+        return html;
     }
 
     /*

@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
@@ -21,9 +22,10 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
@@ -51,7 +53,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio,
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio, textsRadio,
             invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsSkipRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
@@ -65,6 +67,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected HBox formatBox;
     @FXML
     protected FlowPane typesPane, fixPane, centuryPane, invalidPane;
+    @FXML
+    protected Label lengthLabel;
 
     @Override
     public void setControlsStyle() {
@@ -146,6 +150,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
             }
 
+            if (textsRadio.isSelected()) {
+                lengthInput.setText("2G");
+                lengthInput.setDisable(true);
+                lengthLabel.setText("(<= 2G)");
+            } else {
+                lengthInput.setText("32672");
+                lengthInput.setDisable(false);
+                lengthLabel.setText("(<= 32672)");
+            }
+
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -214,6 +228,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     break;
                 case Color:
                     colorRadio.setSelected(true);
+                    break;
+                case Clob:
+                    textsRadio.setSelected(true);
                     break;
                 default:
                     stringRadio.setSelected(true);
@@ -290,14 +307,18 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 }
             }
             int length;
-            try {
-                length = Integer.parseInt(lengthInput.getText());
-                if (length < 0 || length > BaseTable.StringMaxLength) {
-                    length = BaseTable.StringMaxLength;
+            if (textsRadio.isSelected()) {
+                length = Integer.MAX_VALUE;
+            } else {
+                try {
+                    length = Integer.parseInt(lengthInput.getText());
+                    if (length < 0 || length > BaseTable.StringMaxLength) {
+                        length = BaseTable.StringMaxLength;
+                    }
+                } catch (Exception ee) {
+                    popError(message("InvalidParameter") + ": " + message("Length"));
+                    return null;
                 }
-            } catch (Exception ee) {
-                popError(message("InvalidParameter") + ": " + message("Length"));
-                return null;
             }
             int width;
             try {
@@ -385,6 +406,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Latitude).setFormat(null);
             } else if (colorRadio.isSelected()) {
                 column.setType(ColumnType.Color).setFormat(null);
+            } else if (textsRadio.isSelected()) {
+                column.setType(ColumnType.Clob).setFormat(null);
             }
 
             String dv = defaultInput.getText();

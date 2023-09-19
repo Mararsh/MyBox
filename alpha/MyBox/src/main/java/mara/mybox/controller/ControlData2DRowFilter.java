@@ -89,7 +89,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             if (maxInput != null) {
                 maxInput.setText(values.get("Maximum"));
             }
-            trueRadio.setSelected(!StringTools.isFalse(values.get("True")));
+            trueRadio.setSelected(!StringTools.isFalse(values.get("Condition")));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

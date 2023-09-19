@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DColumnEdit">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DColumnEdit">
     <children>
         <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="55.0" spacing="2.0">
             <children>
@@ -59,6 +59,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="latitudeRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Latitude" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="enumRadio" layoutX="58.0" layoutY="28.0" minWidth="-Infinity" mnemonicParsing="false" text="%Enumeration" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="colorRadio" layoutX="205.0" layoutY="28.0" minWidth="-Infinity" mnemonicParsing="false" text="%Color" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="textsRadio" layoutX="260.0" layoutY="32.0" minWidth="-Infinity" mnemonicParsing="false" text="%Texts" toggleGroup="$typeGroup" />
             </children>
         </FlowPane>
         <VBox fx:id="optionsBox" spacing="10.0">
@@ -67,7 +68,7 @@ License:    Apache License Version 2.0
                     <children>
                         <Label minWidth="-Infinity" text="%DisplayFormat" />
                         <TextField fx:id="formatInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="examplesButton" mnemonicParsing="false"   onAction="#showExamples" onMouseEntered="#popExamples">
+                        <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#showExamples" onMouseEntered="#popExamples">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -105,13 +106,17 @@ License:    Apache License Version 2.0
             <children>
                 <Label text="%DecimalScale" />
                 <TextField fx:id="scaleInput" prefWidth="100.0" text="8" />
-                <Label fx:id="lengthLabel" text="%Length">
-                    <padding>
-                        <Insets left="10.0" />
-                    </padding>
-                </Label>
-                <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
-                <Label text="(&lt;= 32672)" />
+            <FlowPane fx:id="lengthPane" hgap="2.0" vgap="2.0">
+               <children>
+                      <Label fx:id="lengthLabel" text="%Length">
+                          <padding>
+                              <Insets left="10.0" />
+                          </padding>
+                      </Label>
+                      <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
+                      <Label fx:id="lengthLabel" text="(&lt;= 32672)" />
+               </children>
+            </FlowPane>
             </children>
         </FlowPane>
         <FlowPane fx:id="invalidPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">

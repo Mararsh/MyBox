@@ -9,6 +9,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -36,8 +37,6 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("category", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("value", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("more", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("info", ColumnType.Clob));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long)
@@ -334,12 +333,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try {
             long parentid = categoryRoot.getNodeid();
             String chain = ownerChain;
-            if (chain.startsWith(categoryRoot.getTitle() + InfoNode.TitleSeparater)) {
-                chain = chain.substring((categoryRoot.getTitle() + InfoNode.TitleSeparater).length());
-            } else if (chain.startsWith(message(categoryRoot.getTitle()) + InfoNode.TitleSeparater)) {
-                chain = chain.substring((message(categoryRoot.getTitle()) + InfoNode.TitleSeparater).length());
+            if (chain.startsWith(categoryRoot.getTitle() + TitleSeparater)) {
+                chain = chain.substring((categoryRoot.getTitle() + TitleSeparater).length());
+            } else if (chain.startsWith(message(categoryRoot.getTitle()) + TitleSeparater)) {
+                chain = chain.substring((message(categoryRoot.getTitle()) + TitleSeparater).length());
             }
-            String[] nodes = chain.split(InfoNode.TitleSeparater);
+            String[] nodes = chain.split(TitleSeparater);
             InfoNode owner = null;
             for (String node : nodes) {
                 owner = findAndCreate(conn, parentid, node);

@@ -130,7 +130,7 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
                 max = Long.parseLong(values.get("Maximum"));
             } catch (Exception e) {
             }
-            load(values.get("Script"), !StringTools.isFalse(values.get("True")), max);
+            load(values.get("Script"), !StringTools.isFalse(values.get("Condition")), max);
         } else {
             load(null, true, -1);
         }

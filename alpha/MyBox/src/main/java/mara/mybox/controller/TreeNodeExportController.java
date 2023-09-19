@@ -23,6 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.parseInfo;
 import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTreeNode;
@@ -603,34 +604,10 @@ public class TreeNodeExportController extends BaseTaskController {
                 }
                 writer.write("</H4>\n");
             }
-            if (treeController instanceof WebFavoritesController) {
-                writer.write(indent + indent + indent + "<H4>");
-                Map<String, String> values = InfoNode.parseInfo(node);
-                if (values == null) {
-                    return;
-                }
-                String address = values.get("Address");
-                String icon = values.get("Icon");
-                if (iconCheck.isSelected() && icon != null && !icon.isBlank()) {
-                    try {
-                        writer.write("<IMG src=\"" + new File(icon).toURI().toString() + "\" width=40/>");
-                    } catch (Exception e) {
-                    }
-                }
-                if (address != null && !address.isBlank()) {
-                    writer.write("<A href=\"" + address + "\">" + node.getTitle() + "</A></H4>\n");
-                }
-            } else {
-                writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
-                if (node.getInfo() != null) {
-                    if (treeController instanceof NotesController) {
-                        writer.write(indent + indent + indent + node.getInfo() + "\n"
-                                + indent + indent + "</div>\n\n");
-                    } else {
-                        writer.write(indent + indent + indent + "<PRE><CODE>" + InfoNode.encodeInfo(node) + "</CODE></PRE>\n"
-                                + indent + indent + "</div>\n\n");
-                    }
-                }
+            writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
+            String infoDisplay = InfoNode.infoHtml(node.getCategory(), node.getInfo(), iconCheck.isSelected());
+            if (infoDisplay != null && !infoDisplay.isBlank()) {
+                writer.write(indent + indent + indent + infoDisplay + "\n");
             }
             writer.write(indent + indent + "</div><HR>\n\n");
         } catch (Exception e) {
@@ -666,9 +643,19 @@ public class TreeNodeExportController extends BaseTaskController {
                         + "><![CDATA[" + s + "]]></" + message("Tags") + ">\n");
             }
             if (node.getInfo() != null) {
-                xmlWriter.write(indent + indent + indent + "<" + treeController.valueMsg + ">\n"
-                        + "<![CDATA[" + InfoNode.encodeInfo(node) + "]]>\n"
-                        + indent + indent + indent + "</" + treeController.valueMsg + ">\n");
+                Map<String, String> values = parseInfo(node);
+                if (values != null) {
+                    for (String key : values.keySet()) {
+                        String v = values.get(key);
+                        if (v == null || v.isBlank()) {
+                            continue;
+                        }
+                        String name = message(key);
+                        xmlWriter.write(indent + indent + indent + "<" + name + ">\n"
+                                + "<![CDATA[" + values.get(key) + "]]>\n"
+                                + indent + indent + indent + "</" + name + ">\n");
+                    }
+                }
             }
             xmlWriter.write(indent + indent + "</" + treeController.category + ">\n\n");
 
@@ -710,17 +697,25 @@ public class TreeNodeExportController extends BaseTaskController {
                         t += InfoNode.TagSeparater + v;
                     }
                 }
-                t = t.replaceAll("\\[|\\]", "");
                 s.append(",\n");
                 s.append(indent).append(indent)
                         .append("\"").append(message("Tags")).append("\": ")
                         .append(JsonTools.encode(t));
             }
             if (node.getInfo() != null) {
-                s.append(",\n");
-                s.append(indent).append(indent)
-                        .append("\"").append(treeController.valueMsg).append("\": ")
-                        .append(JsonTools.encode(InfoNode.encodeInfo(node)));
+                Map<String, String> values = parseInfo(node);
+                if (values != null) {
+                    for (String key : values.keySet()) {
+                        String v = values.get(key);
+                        if (v == null || v.isBlank()) {
+                            continue;
+                        }
+                        s.append(",\n");
+                        s.append(indent).append(indent)
+                                .append("\"").append(message(key)).append("\": ")
+                                .append(JsonTools.encode(v));
+                    }
+                }
             }
             s.append("\n");
             s.append(indent).append("}").append("\n");
