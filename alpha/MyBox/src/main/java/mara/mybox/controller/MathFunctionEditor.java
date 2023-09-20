@@ -27,7 +27,7 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
     protected String outputs = "";
 
     @FXML
-    protected TextField variablesInput, resultNameInput;
+    protected TextField variablesInput, functionNameInput;
 
     public MathFunctionEditor() {
         defaultExt = "txt";
@@ -54,7 +54,7 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
                 }
             });
 
-            resultNameInput.textProperty().addListener(new ChangeListener<String>() {
+            functionNameInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
                     valueChanged(true);
@@ -76,10 +76,12 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
             isSettingValues = true;
             Map<String, String> values = InfoNode.parseInfo(node);
             valueInput.setText(values.get("Expression"));
-            resultNameInput.setText(values.get("ResultName"));
+            functionNameInput.setText(values.get("MathFunctionName"));
             variablesInput.setText(values.get("Variables"));
             moreInput.setText(values.get("FunctionDomain"));
             isSettingValues = false;
+        } else {
+            functionNameInput.setText("f");
         }
         functionController.calculateController.variablesChanged();
     }
@@ -87,9 +89,9 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
     @Override
     protected String nodeInfo() {
         String info;
-        String resultName = resultName();
-        if (resultName != null && !resultName.isBlank()) {
-            info = resultName.trim() + "\n";
+        String functionName = functionName();
+        if (functionName != null && !functionName.isBlank()) {
+            info = functionName.trim() + "\n";
         } else {
             info = "";
         }
@@ -131,12 +133,12 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
         }
     }
 
-    public String resultName() {
-        String resultName = resultNameInput.getText();
-        if (resultName == null || resultName.isBlank()) {
+    public String functionName() {
+        String name = functionNameInput.getText();
+        if (name == null || name.isBlank()) {
             return "f";
         } else {
-            return resultName;
+            return name;
         }
     }
 

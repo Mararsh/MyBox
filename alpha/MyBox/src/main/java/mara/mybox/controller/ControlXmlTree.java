@@ -229,7 +229,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         actions
      */
     @Override
-    public List<MenuItem> functionItems(TreeItem<XmlTreeNode> treeItem) {
+    public List<MenuItem> functionMenuItems(TreeItem<XmlTreeNode> treeItem) {
         if (treeItem == null) {
             return null;
         }
@@ -238,7 +238,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
 
-        viewMenu.getItems().addAll(foldItems(treeItem));
+        viewMenu.getItems().addAll(foldMenuItems(treeItem));
 
         viewMenu.getItems().add(new SeparatorMenuItem());
 

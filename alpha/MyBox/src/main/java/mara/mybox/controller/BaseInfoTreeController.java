@@ -234,8 +234,8 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
         actions
      */
     @Override
-    public List<MenuItem> functionItems(TreeItem<InfoNode> inItem) {
-        List<MenuItem> items = viewItems(inItem);
+    public List<MenuItem> functionMenuItems(TreeItem<InfoNode> inItem) {
+        List<MenuItem> items = viewMenuItems(inItem);
 
         TreeItem<InfoNode> item = validItem(inItem);
         MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));

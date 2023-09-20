@@ -135,7 +135,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                     }
                     TreeItem<NodeP> item = selected();
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        showItemMenu(item);
+                        rightClicked(event, item);
                     } else if (event.getClickCount() > 1) {
                         doubleClicked(event, item);
                     } else {
@@ -185,6 +185,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     public void doubleClicked(MouseEvent event, TreeItem<NodeP> item) {
+    }
+
+    public void rightClicked(MouseEvent event, TreeItem<NodeP> item) {
+        showItemMenu(item);
     }
 
     public void addNewNode(TreeItem<NodeP> parent, NodeP node, boolean select) {
@@ -427,17 +431,17 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        items.addAll(functionItems(item));
+        items.addAll(functionMenuItems(item));
 
         items.add(new SeparatorMenuItem());
         return items;
     }
 
-    public List<MenuItem> functionItems(TreeItem<NodeP> item) {
-        return viewItems(item);
+    public List<MenuItem> functionMenuItems(TreeItem<NodeP> item) {
+        return viewMenuItems(item);
     }
 
-    public List<MenuItem> foldItems(TreeItem<NodeP> item) {
+    public List<MenuItem> foldMenuItems(TreeItem<NodeP> item) {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
@@ -467,8 +471,8 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return items;
     }
 
-    public List<MenuItem> viewItems(TreeItem<NodeP> item) {
-        List<MenuItem> items = foldItems(item);
+    public List<MenuItem> viewMenuItems(TreeItem<NodeP> item) {
+        List<MenuItem> items = foldMenuItems(item);
 
         MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -590,7 +594,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        items.addAll(operationsItems(item));
+        items.addAll(operationsMenuItems(item));
 
         items.add(new SeparatorMenuItem());
 
@@ -611,8 +615,8 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         }
     }
 
-    public List<MenuItem> operationsItems(TreeItem<NodeP> item) {
-        return viewItems(item);
+    public List<MenuItem> operationsMenuItems(TreeItem<NodeP> item) {
+        return viewMenuItems(item);
     }
 
     @FXML

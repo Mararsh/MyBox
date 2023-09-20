@@ -53,7 +53,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio, textsRadio,
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio, clobRadio,
             invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsSkipRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
@@ -150,7 +150,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
             }
 
-            if (textsRadio.isSelected()) {
+            if (clobRadio.isSelected()) {
                 lengthInput.setText("2G");
                 lengthInput.setDisable(true);
                 lengthLabel.setText("(<= 2G)");
@@ -230,7 +230,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     colorRadio.setSelected(true);
                     break;
                 case Clob:
-                    textsRadio.setSelected(true);
+                    clobRadio.setSelected(true);
                     break;
                 default:
                     stringRadio.setSelected(true);
@@ -307,7 +307,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 }
             }
             int length;
-            if (textsRadio.isSelected()) {
+            if (clobRadio.isSelected()) {
                 length = Integer.MAX_VALUE;
             } else {
                 try {
@@ -406,7 +406,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Latitude).setFormat(null);
             } else if (colorRadio.isSelected()) {
                 column.setType(ColumnType.Color).setFormat(null);
-            } else if (textsRadio.isSelected()) {
+            } else if (clobRadio.isSelected()) {
                 column.setType(ColumnType.Clob).setFormat(null);
             }
 

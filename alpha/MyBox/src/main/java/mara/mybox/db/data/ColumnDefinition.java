@@ -55,7 +55,8 @@ public class ColumnDefinition extends BaseData {
         File, Image, // string of the path
         Double, Float, Long, Integer, Short,
         Datetime, Date, Era, // Looks Derby does not support date of BC(before Christ)
-        Clob, Blob,
+        Clob, // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
+        Blob, // BLOB is handled as InputStream internally
         Longitude, Latitude
     }
 
@@ -482,11 +483,9 @@ public class ColumnDefinition extends BaseData {
                 case Date:
                     return DateTools.encodeDate(o + "");
                 case Clob:
-                    // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
                     Clob clob = (Clob) o;
                     return clob.getSubString(1, (int) clob.length());
                 case Blob:
-                    // BLOB is handled as InputStream internally
                     Blob blob = (Blob) o;
                     return blob.getBinaryStream();
                 default:

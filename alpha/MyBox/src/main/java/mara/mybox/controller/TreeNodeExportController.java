@@ -675,7 +675,7 @@ public class TreeNodeExportController extends BaseTaskController {
             s.append(indent).append("{").append("\n");
             if (parentName != null) {
                 s.append(indent).append(indent)
-                        .append("\"node\": \"")
+                        .append("\"").append(message("Node")).append("\": \"")
                         .append(parentName).append("\",\n");
             }
             s.append(indent).append(indent)

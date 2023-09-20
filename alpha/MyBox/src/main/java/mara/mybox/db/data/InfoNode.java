@@ -26,7 +26,7 @@ public class InfoNode extends BaseData {
     public static final String TimePrefix = "Time:";
     public static final String TagsPrefix = "Tags:";
     public static final String TagSeparater = ";;;";
-    public static final String ValueSeparater = ".:;MyBoxNodeValue;:.";
+    public static final String ValueSeparater = "_:;MyBoxNodeValue;:_";
     public static final String MoreSeparater = "MyBoxTreeNodeMore:";
     public static final String Root = "Root";
     public static final String InformationInTree = "InformationInTree";
@@ -184,26 +184,28 @@ public class InfoNode extends BaseData {
             }
             switch (category) {
                 case InfoNode.WebFavorite:
+                    values.put("Address", null);
+                    values.put("Icon", null);
                     if (info != null) {
                         if (info.contains(ValueSeparater)) {
                             String[] ss = info.split(ValueSeparater);
-                            values.put("Address", ss[0].trim());
+                            if (ss.length > 0) {
+                                values.put("Address", ss[0].trim());
+                            }
                             if (ss.length > 1) {
                                 values.put("Icon", ss[1].trim());
                             }
                         } else if (info.contains(MoreSeparater)) {
                             String[] ss = info.split(MoreSeparater);
-                            values.put("Address", ss[0].trim());
+                            if (ss.length > 0) {
+                                values.put("Address", ss[0].trim());
+                            }
                             if (ss.length > 1) {
                                 values.put("Icon", ss[1].trim());
                             }
                         } else {
                             values.put("Address", info);
-                            values.put("Icon", null);
                         }
-                    } else {
-                        values.put("Address", info);
-                        values.put("Icon", null);
                     }
                     break;
                 case InfoNode.Notebook:
@@ -222,49 +224,41 @@ public class InfoNode extends BaseData {
                     values.put("Info", info);
                     break;
                 case InfoNode.JEXLCode:
+                    values.put("Script", null);
+                    values.put("Context", null);
+                    values.put("Parameters", null);
                     if (info != null) {
+                        String[] ss = null;
                         if (info.contains(ValueSeparater)) {
-                            String[] ss = info.split(ValueSeparater);
-                            values.put("Script", ss[0].trim());
-                            if (ss.length > 1) {
-                                values.put("Context", ss[1].trim());
-                            } else {
-                                values.put("Context", null);
-                            }
-                            if (ss.length > 2) {
-                                values.put("Parameters", ss[2].trim());
-                            } else {
-                                values.put("Parameters", null);
-                            }
+                            ss = info.split(ValueSeparater);
                         } else if (info.contains(MoreSeparater)) {
-                            String[] ss = info.split(MoreSeparater);
-                            values.put("Script", ss[0].trim());
+                            ss = info.split(MoreSeparater);
+                        }
+                        if (ss != null) {
+                            if (ss.length > 0) {
+                                values.put("Script", ss[0].trim());
+                            }
                             if (ss.length > 1) {
                                 values.put("Context", ss[1].trim());
-                            } else {
-                                values.put("Context", null);
                             }
                             if (ss.length > 2) {
                                 values.put("Parameters", ss[2].trim());
-                            } else {
-                                values.put("Parameters", null);
                             }
                         } else {
                             values.put("Script", info);
-                            values.put("Context", null);
-                            values.put("Parameters", null);
                         }
-                    } else {
-                        values.put("Script", null);
-                        values.put("Context", null);
-                        values.put("Parameters", null);
                     }
                     break;
                 case InfoNode.RowFilter:
+                    values.put("Script", null);
+                    values.put("Condition", "true");
+                    values.put("Maximum", "-1");
                     if (info != null) {
                         if (info.contains(ValueSeparater)) {
                             String[] ss = info.split(ValueSeparater);
-                            values.put("Script", ss[0].trim());
+                            if (ss.length > 0) {
+                                values.put("Script", ss[0].trim());
+                            }
                             if (ss.length > 1) {
                                 values.put("Condition", ss[1].trim());
                             }
@@ -276,32 +270,29 @@ public class InfoNode extends BaseData {
                             values.put("Script", ss[0].trim());
                             if (ss.length > 1) {
                                 ss = ss[1].split(";;;");
-                                values.put("Condition", ss[0].trim());
+                                if (ss.length > 0) {
+                                    values.put("Condition", ss[0].trim());
+                                }
                                 if (ss.length > 1) {
                                     values.put("Maximum", ss[1].trim());
-                                } else {
-                                    values.put("Maximum", "-1");
                                 }
-                            } else {
-                                values.put("Condition", "true");
-                                values.put("Maximum", "-1");
                             }
                         } else {
                             values.put("Script", info);
-                            values.put("Condition", "true");
-                            values.put("Maximum", "-1");
                         }
-                    } else {
-                        values.put("Script", info);
-                        values.put("Condition", "true");
-                        values.put("Maximum", "-1");
                     }
                     break;
                 case InfoNode.MathFunction:
+                    values.put("MathFunctionName", null);
+                    values.put("Variables", null);
+                    values.put("Expression", null);
+                    values.put("FunctionDomain", null);
                     if (info != null) {
                         if (info.contains(ValueSeparater)) {
                             String[] ss = info.split(ValueSeparater);
-                            values.put("ResultName", ss[0].trim());
+                            if (ss.length > 0) {
+                                values.put("MathFunctionName", ss[0].trim());
+                            }
                             if (ss.length > 1) {
                                 values.put("Variables", ss[1].trim());
                             }
@@ -326,32 +317,23 @@ public class InfoNode extends BaseData {
                                 }
                                 pos = names.indexOf(",");
                                 if (pos >= 0) {
-                                    values.put("ResultName", names.substring(0, pos));
+                                    values.put("MathFunctionName", names.substring(0, pos));
                                     String vs = names.substring(pos).trim();
                                     if (vs.length() > 0) {
                                         values.put("Variables", vs.substring(1));
-                                    } else {
-                                        values.put("Variables", null);
                                     }
                                 } else {
-                                    values.put("ResultName", names);
-                                    values.put("Variables", null);
+                                    values.put("MathFunctionName", names);
                                 }
-                            } else {
-                                values.put("ResultName", null);
-                                values.put("Variables", null);
                             }
                             if (info != null && info.contains(MoreSeparater)) {
                                 String[] ss = info.split(MoreSeparater);
                                 values.put("Expression", ss[0].trim());
                                 if (ss.length > 1) {
                                     values.put("FunctionDomain", ss[1].trim());
-                                } else {
-                                    values.put("FunctionDomain", null);
                                 }
                             } else {
                                 values.put("Expression", info);
-                                values.put("FunctionDomain", null);
                             }
                         }
                     }
@@ -369,7 +351,6 @@ public class InfoNode extends BaseData {
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
-            values.put("Info", info);
         }
         return values;
     }
@@ -441,7 +422,7 @@ public class InfoNode extends BaseData {
                     }
                     return info;
                 case InfoNode.MathFunction:
-                    info = values.get("ResultName");
+                    info = values.get("MathFunctionName");
                     if (info != null && !info.isBlank()) {
                         info = info.trim() + "\n";
                     } else {
@@ -495,8 +476,12 @@ public class InfoNode extends BaseData {
         Map<String, String> values = parseInfo(node);
         if (values != null) {
             for (String key : values.keySet()) {
+                String v = values.get(key);
+                if (v == null || v.isBlank()) {
+                    continue;
+                }
                 row = new ArrayList<>();
-                row.addAll(Arrays.asList(message(key), values.get(key)));
+                row.addAll(Arrays.asList(message(key), v));
                 table.add(row);
             }
         }
@@ -519,17 +504,17 @@ public class InfoNode extends BaseData {
                 Map<String, String> values = InfoNode.parseInfo(category, s);
                 if (values != null) {
                     String address = values.get("Address");
-                    String icon = values.get("Icon");
                     if (address != null && !address.isBlank()) {
                         html = "<A href=\"" + address + "\">";
-                    }
-                    if (showIcon && icon != null && !icon.isBlank()) {
-                        try {
-                            html += "<IMG src=\"" + new File(icon).toURI().toString() + "\" width=40/>";
-                        } catch (Exception e) {
+                        String icon = values.get("Icon");
+                        if (showIcon && icon != null && !icon.isBlank()) {
+                            try {
+                                html += "<IMG src=\"" + new File(icon).toURI().toString() + "\" width=40/>";
+                            } catch (Exception e) {
+                            }
                         }
+                        html += address + "</A>\n";
                     }
-                    html += address + "</A>\n";
                 }
                 break;
             }

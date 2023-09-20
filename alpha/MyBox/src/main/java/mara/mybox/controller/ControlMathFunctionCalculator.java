@@ -190,12 +190,12 @@ public class ControlMathFunctionCalculator extends BaseController {
         return StringTools.replaceLineBreak(d);
     }
 
-    public String resultName() {
-        String name = editorController.resultNameInput.getText();
+    public String functionName() {
+        String name = editorController.functionNameInput.getText();
         return name == null || name.isBlank() ? "f" : name;
     }
 
-    public String functionName() {
+    public String titleName() {
         String name = editorController.attributesController.nameInput.getText();
         return name == null || name.isBlank() ? message("MathFunction") : name;
     }
@@ -328,7 +328,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                     + HtmlWriteTools.stringToHtml(finalScript)
                     + "</div>";
             outputs += "<div class=\"valueBox\">"
-                    + HtmlWriteTools.stringToHtml(resultName() + "=" + ret)
+                    + HtmlWriteTools.stringToHtml(functionName() + "=" + ret)
                     + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             outputController.loadContents(html);
@@ -394,11 +394,11 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             variablesSize = variables.size();
             count = 0;
-            File csvFile = generateFile(functionName(), "csv");
+            File csvFile = generateFile(titleName(), "csv");
             List<Data2DColumn> db2Columns = new ArrayList<>();
             try (CSVPrinter printer = CsvTools.csvPrinter(csvFile)) {
                 csvPrinter = printer;
-                String resultName = resultName();
+                String resultName = functionName();
                 row = new ArrayList<>();
                 row.addAll(variables);
                 row.add(resultName);

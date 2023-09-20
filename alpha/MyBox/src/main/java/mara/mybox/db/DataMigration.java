@@ -201,7 +201,7 @@ public class DataMigration {
                     info = "";
                 }
                 if (more != null && !more.isBlank()) {
-                    info += InfoNode.ValueSeparater + "\n" + more.trim();
+                    info += InfoNode.MoreSeparater + "\n" + more.trim();
                 }
                 node.setInfo(info);
                 tableTreeNode.updateData(conn, node);

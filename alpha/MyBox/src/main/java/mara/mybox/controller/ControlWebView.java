@@ -317,7 +317,7 @@ public class ControlWebView extends BaseController {
                                     + ".document.readyState==\"complete\") control.frameNameReady('" + target + "'); }");
                         });
                     } else if (!href.startsWith("javascript:")) {
-                        String clickAction = UserConfig.getString("WebViewWhenClickImageOrLink", "PopMenu");
+                        String clickAction = UserConfig.getString("WebViewWhenLeftClickImageOrLink", "PopMenu");
                         if (linkInNewTab) {
                             ev.preventDefault();
                             WebBrowserController.openAddress(htmlElement.getDecodedAddress(), true);
@@ -1165,16 +1165,16 @@ public class ControlWebView extends BaseController {
 
     public Menu clickedMenu() {
         try {
-            Menu clickMenu = new Menu(message("WhenClickImageOrLink"), StyleTools.getIconImageView("iconSelect.png"));
+            Menu clickMenu = new Menu(message("WhenLeftClickImageOrLink"), StyleTools.getIconImageView("iconSelect.png"));
             ToggleGroup clickGroup = new ToggleGroup();
-            String currentClick = UserConfig.getString("WebViewWhenClickImageOrLink", "PopMenu");
+            String currentClick = UserConfig.getString("WebViewWhenLeftClickImageOrLink", "PopMenu");
 
             RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
             clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
             clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("WebViewWhenClickImageOrLink", "PopMenu");
+                    UserConfig.setString("WebViewWhenLeftClickImageOrLink", "PopMenu");
                 }
             });
             clickPopMenu.setToggleGroup(clickGroup);
@@ -1184,7 +1184,7 @@ public class ControlWebView extends BaseController {
             clickAsPageMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("WebViewWhenClickImageOrLink", "AsPage");
+                    UserConfig.setString("WebViewWhenLeftClickImageOrLink", "AsPage");
                 }
             });
             clickAsPageMenu.setToggleGroup(clickGroup);
@@ -1194,7 +1194,7 @@ public class ControlWebView extends BaseController {
             clickOpenSwitchMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("WebViewWhenClickImageOrLink", "OpenSwitch");
+                    UserConfig.setString("WebViewWhenLeftClickImageOrLink", "OpenSwitch");
                 }
             });
             clickOpenSwitchMenu.setToggleGroup(clickGroup);
@@ -1204,7 +1204,7 @@ public class ControlWebView extends BaseController {
             clickOpenMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("WebViewWhenClickImageOrLink", "Open");
+                    UserConfig.setString("WebViewWhenLeftClickImageOrLink", "Open");
                 }
             });
             clickOpenMenu.setToggleGroup(clickGroup);
@@ -1214,7 +1214,7 @@ public class ControlWebView extends BaseController {
             clickLoadMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("WebViewWhenClickImageOrLink", "Load");
+                    UserConfig.setString("WebViewWhenLeftClickImageOrLink", "Load");
                 }
             });
             clickLoadMenu.setToggleGroup(clickGroup);

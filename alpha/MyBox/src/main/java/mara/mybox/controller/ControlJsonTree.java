@@ -247,7 +247,7 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
         actions
      */
     @Override
-    public List<MenuItem> functionItems(TreeItem<JsonTreeNode> treeItem) {
+    public List<MenuItem> functionMenuItems(TreeItem<JsonTreeNode> treeItem) {
         if (treeItem == null) {
             return null;
         }
@@ -257,7 +257,7 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
 
-        viewMenu.getItems().addAll(foldItems(treeItem));
+        viewMenu.getItems().addAll(foldMenuItems(treeItem));
 
         MenuItem menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {

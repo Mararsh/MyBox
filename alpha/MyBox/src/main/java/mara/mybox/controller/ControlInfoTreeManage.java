@@ -15,6 +15,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -23,7 +24,6 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.db.data.InfoNode.TitleSeparater;
 
 /**
  * @Author Mara
@@ -66,11 +66,21 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     public void itemClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        if (item == null) {
-            return;
-        }
-        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
-        if (clickAction == null) {
+        clicked(UserConfig.getString(baseName + "TreeWhenLeftClickNode", "Edit"), item);
+    }
+
+    @Override
+    public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
+        clicked(UserConfig.getString(baseName + "TreeWhenDoubleClickNode", "View"), item);
+    }
+
+    @Override
+    public void rightClicked(MouseEvent event, TreeItem<InfoNode> item) {
+        clicked(UserConfig.getString(baseName + "TreeWhenRightClickNode", "PopMenu"), item);
+    }
+
+    public void clicked(String clickAction, TreeItem<InfoNode> item) {
+        if (item == null || clickAction == null) {
             return;
         }
         switch (clickAction) {
@@ -101,117 +111,28 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
     }
 
     @Override
-    public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        if (nodeExecutable) {
-            executeNode(item);
-        } else {
-            viewNode(item);
-        }
-    }
-
-    @Override
-    public List<MenuItem> functionItems(TreeItem<InfoNode> treeItem) {
-        boolean isRoot = treeItem == null || isRoot(treeItem.getValue());
-
+    public List<MenuItem> functionMenuItems(TreeItem<InfoNode> treeItem) {
         List<MenuItem> items = new ArrayList<>();
 
-        Menu clickMenu = new Menu(message("WhenClickNode"), StyleTools.getIconImageView("iconSelect.png"));
-        ToggleGroup clickGroup = new ToggleGroup();
-        String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
+        items.add(dataMenu(treeItem));
 
-        RadioMenuItem nothingMenu = new RadioMenuItem(message("DoNothing"));
-        nothingMenu.setSelected(currentClick == null || "DoNothing".equals(currentClick));
-        nothingMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + "TreeWhenClickNode", "DoNothing");
-            }
-        });
-        nothingMenu.setToggleGroup(clickGroup);
-
-        RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
-        clickPopMenu.setSelected("PopMenu".equals(currentClick));
-        clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + "TreeWhenClickNode", "PopMenu");
-            }
-        });
-        clickPopMenu.setToggleGroup(clickGroup);
-
-        RadioMenuItem editNodeMenu = new RadioMenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
-        editNodeMenu.setSelected("Edit".equals(currentClick));
-        editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + "TreeWhenClickNode", "Edit");
-            }
-        });
-        editNodeMenu.setToggleGroup(clickGroup);
-
-        RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
-        pasteNodeMenu.setSelected("Paste".equals(currentClick));
-        pasteNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + "TreeWhenClickNode", "Paste");
-            }
-        });
-        pasteNodeMenu.setToggleGroup(clickGroup);
-
-        RadioMenuItem viewNodeMenu = new RadioMenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
-        viewNodeMenu.setSelected("View".equals(currentClick));
-        viewNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + "TreeWhenClickNode", "View");
-            }
-        });
-        viewNodeMenu.setToggleGroup(clickGroup);
-
-        clickMenu.getItems().addAll(nothingMenu, clickPopMenu, editNodeMenu, pasteNodeMenu);
-
-        if (nodeExecutable) {
-            RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
-            executeNodeMenu.setSelected("Execute".equals(currentClick));
-            executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setString(baseName + "TreeWhenClickNode", "Execute");
-                }
-            });
-            executeNodeMenu.setToggleGroup(clickGroup);
-            clickMenu.getItems().add(executeNodeMenu);
-        }
-
-        RadioMenuItem loadChildrenMenu = new RadioMenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-        loadChildrenMenu.setSelected("LoadChildren".equals(currentClick));
-        loadChildrenMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + "TreeWhenClickNode", "LoadChildren");
-            }
-        });
-        loadChildrenMenu.setToggleGroup(clickGroup);
-
-        RadioMenuItem loadDescendantsMenu = new RadioMenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-        loadDescendantsMenu.setSelected("LoadDescendants".equals(currentClick));
-        loadDescendantsMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + "TreeWhenClickNode", "LoadDescendants");
-            }
-        });
-        loadDescendantsMenu.setToggleGroup(clickGroup);
-
-        clickMenu.getItems().addAll(loadChildrenMenu, loadDescendantsMenu);
-
-        items.add(clickMenu);
+        items.add(ListMenu(treeItem));
 
         items.add(new SeparatorMenuItem());
 
+        items.addAll(nodeMenuItems(treeItem));
+
+        items.add(new SeparatorMenuItem());
+
+        items.add(leftClickMenu(treeItem));
+        items.add(doubleClickMenu(treeItem));
+        items.add(rightClickMenu(treeItem));
+
+        return items;
+    }
+
+    public Menu dataMenu(TreeItem<InfoNode> treeItem) {
         Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
-        items.add(dataMenu);
 
         MenuItem menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -237,19 +158,22 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         });
         dataMenu.getItems().add(menu);
 
-        Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
-        items.add(viewMenu);
+        return dataMenu;
+    }
 
-        viewMenu.getItems().addAll(foldItems(treeItem));
+    public Menu ListMenu(TreeItem<InfoNode> treeItem) {
+        Menu listMenu = new Menu(message("List"), StyleTools.getIconImageView("iconList.png"));
 
-        menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
+        listMenu.getItems().addAll(foldMenuItems(treeItem));
+
+        MenuItem menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 listChildren(treeItem);
             }
         });
-        viewMenu.getItems().add(menu);
+        listMenu.getItems().add(menu);
 
         menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
         menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -258,17 +182,23 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
                 listDescentants(treeItem);
             }
         });
-        viewMenu.getItems().add(menu);
+        listMenu.getItems().add(menu);
 
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             refreshAction();
         });
-        viewMenu.getItems().add(menu);
+        listMenu.getItems().add(menu);
 
-        items.add(new SeparatorMenuItem());
+        return listMenu;
+    }
 
-        menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+    public List<MenuItem> nodeMenuItems(TreeItem<InfoNode> treeItem) {
+        boolean isRoot = treeItem == null || isRoot(treeItem.getValue());
+
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             addChild(treeItem);
         });
@@ -302,8 +232,6 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         menu.setDisable(treeItem == null);
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-
         if (nodeExecutable) {
             menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -329,7 +257,9 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             viewNode(treeItem);
         });
@@ -353,10 +283,122 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         return items;
     }
 
+    public Menu leftClickMenu(TreeItem<InfoNode> treeItem) {
+        Menu clickMenu = new Menu(message("WhenLeftClickNode"), StyleTools.getIconImageView("iconSelect.png"));
+        clickMenu(treeItem, clickMenu, "TreeWhenLeftClickNode", "Edit");
+        return clickMenu;
+    }
+
+    public Menu doubleClickMenu(TreeItem<InfoNode> treeItem) {
+        Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
+        clickMenu(treeItem, clickMenu, "TreeWhenDoubleClickNode", "View");
+        return clickMenu;
+    }
+
+    public Menu rightClickMenu(TreeItem<InfoNode> treeItem) {
+        Menu clickMenu = new Menu(message("WhenRightClickNode"), StyleTools.getIconImageView("iconSelectNone.png"));
+        clickMenu(treeItem, clickMenu, "TreeWhenRightClickNode", "PopMenu");
+        return clickMenu;
+    }
+
+    public Menu clickMenu(TreeItem<InfoNode> treeItem, Menu menu, String key, String defaultAction) {
+        ToggleGroup clickGroup = new ToggleGroup();
+        String currentClick = UserConfig.getString(baseName + key, defaultAction);
+
+        RadioMenuItem editNodeMenu = new RadioMenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
+        editNodeMenu.setSelected("Edit".equals(currentClick));
+        editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + key, "Edit");
+            }
+        });
+        editNodeMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem viewNodeMenu = new RadioMenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
+        viewNodeMenu.setSelected("View".equals(currentClick));
+        viewNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + key, "View");
+            }
+        });
+        viewNodeMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
+        pasteNodeMenu.setSelected("Paste".equals(currentClick));
+        pasteNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + key, "Paste");
+            }
+        });
+        pasteNodeMenu.setToggleGroup(clickGroup);
+
+        menu.getItems().addAll(editNodeMenu, pasteNodeMenu, viewNodeMenu);
+
+        if (nodeExecutable) {
+            RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
+            executeNodeMenu.setSelected("Execute".equals(currentClick));
+            executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString(baseName + key, "Execute");
+                }
+            });
+            executeNodeMenu.setToggleGroup(clickGroup);
+            menu.getItems().add(executeNodeMenu);
+        }
+
+        RadioMenuItem loadChildrenMenu = new RadioMenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
+        loadChildrenMenu.setSelected("LoadChildren".equals(currentClick));
+        loadChildrenMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + key, "LoadChildren");
+            }
+        });
+        loadChildrenMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem loadDescendantsMenu = new RadioMenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
+        loadDescendantsMenu.setSelected("LoadDescendants".equals(currentClick));
+        loadDescendantsMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + key, "LoadDescendants");
+            }
+        });
+        loadDescendantsMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem nothingMenu = new RadioMenuItem(message("DoNothing"));
+        nothingMenu.setSelected(currentClick == null || "DoNothing".equals(currentClick));
+        nothingMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + key, "DoNothing");
+            }
+        });
+        nothingMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
+        clickPopMenu.setSelected("PopMenu".equals(currentClick));
+        clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + key, "PopMenu");
+            }
+        });
+        clickPopMenu.setToggleGroup(clickGroup);
+
+        menu.getItems().addAll(loadChildrenMenu, loadDescendantsMenu, clickPopMenu, nothingMenu);
+
+        return menu;
+    }
+
     @Override
-    public List<MenuItem> operationsItems(TreeItem<InfoNode> item) {
+    public List<MenuItem> operationsMenuItems(TreeItem<InfoNode> item) {
         List<MenuItem> items = new ArrayList<>();
-        items.addAll(viewItems(item));
+        items.addAll(viewMenuItems(item));
 
         items.add(new SeparatorMenuItem());
 

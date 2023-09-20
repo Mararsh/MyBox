@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="latitudeRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Latitude" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="enumRadio" layoutX="58.0" layoutY="28.0" minWidth="-Infinity" mnemonicParsing="false" text="%Enumeration" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="colorRadio" layoutX="205.0" layoutY="28.0" minWidth="-Infinity" mnemonicParsing="false" text="%Color" toggleGroup="$typeGroup" />
-            <RadioButton fx:id="textsRadio" layoutX="260.0" layoutY="32.0" minWidth="-Infinity" mnemonicParsing="false" text="%Texts" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="clobRadio" layoutX="260.0" layoutY="32.0" minWidth="-Infinity" mnemonicParsing="false" text="%Clob" toggleGroup="$typeGroup" />
             </children>
         </FlowPane>
         <VBox fx:id="optionsBox" spacing="10.0">
