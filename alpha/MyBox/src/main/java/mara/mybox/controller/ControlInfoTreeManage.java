@@ -66,17 +66,17 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     public void itemClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        clicked(UserConfig.getString(baseName + "TreeWhenLeftClickNode", "Edit"), item);
+        clicked(UserConfig.getString(baseName + "TreeManageWhenLeftClickNode", "Edit"), item);
     }
 
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        clicked(UserConfig.getString(baseName + "TreeWhenDoubleClickNode", "View"), item);
+        clicked(UserConfig.getString(baseName + "TreeManageWhenDoubleClickNode", "View"), item);
     }
 
     @Override
     public void rightClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        clicked(UserConfig.getString(baseName + "TreeWhenRightClickNode", "PopMenu"), item);
+        clicked(UserConfig.getString(baseName + "TreeManageWhenRightClickNode", "PopMenu"), item);
     }
 
     public void clicked(String clickAction, TreeItem<InfoNode> item) {
@@ -162,7 +162,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
     }
 
     public Menu ListMenu(TreeItem<InfoNode> treeItem) {
-        Menu listMenu = new Menu(message("List"), StyleTools.getIconImageView("iconList.png"));
+        Menu listMenu = new Menu(message("Tree"), StyleTools.getIconImageView("iconTree.png"));
 
         listMenu.getItems().addAll(foldMenuItems(treeItem));
 
@@ -285,19 +285,19 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     public Menu leftClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenLeftClickNode"), StyleTools.getIconImageView("iconSelect.png"));
-        clickMenu(treeItem, clickMenu, "TreeWhenLeftClickNode", "Edit");
+        clickMenu(treeItem, clickMenu, "TreeManageWhenLeftClickNode", "Edit");
         return clickMenu;
     }
 
     public Menu doubleClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
-        clickMenu(treeItem, clickMenu, "TreeWhenDoubleClickNode", "View");
+        clickMenu(treeItem, clickMenu, "TreeManageWhenDoubleClickNode", "View");
         return clickMenu;
     }
 
     public Menu rightClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenRightClickNode"), StyleTools.getIconImageView("iconSelectNone.png"));
-        clickMenu(treeItem, clickMenu, "TreeWhenRightClickNode", "PopMenu");
+        clickMenu(treeItem, clickMenu, "TreeManageWhenRightClickNode", "PopMenu");
         return clickMenu;
     }
 

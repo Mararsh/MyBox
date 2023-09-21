@@ -119,7 +119,7 @@ public class JsonEditorController extends BaseFileController {
             alert.setContentText(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonJson = new ButtonType(message("JsonEditor"));
-            ButtonType buttonSystem = new ButtonType(message("SystemWebBrowser"));
+            ButtonType buttonSystem = new ButtonType(message("SystemMethod"));
             ButtonType buttontext = new ButtonType(message("TextEditor"));
             ButtonType buttonCancel = new ButtonType(message("Cancel"));
             alert.getButtonTypes().setAll(buttonJson, buttonSystem, buttontext, buttonCancel);
@@ -142,7 +142,7 @@ public class JsonEditorController extends BaseFileController {
             }
         }
 
-        sourceFile = file;
+        super.sourceFileChanged(file);
         writePanes(TextFileTools.readTexts(file));
     }
 
@@ -541,7 +541,8 @@ public class JsonEditorController extends BaseFileController {
     }
 
     @FXML
-    public void systemWebBrowser() {
+    @Override
+    public void systemMethod() {
         String json = currentJSON(false);
         if (json == null || json.isBlank()) {
             popError(message("NoData"));

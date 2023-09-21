@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.UserConfig;
@@ -80,40 +81,25 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
             variablesInput.setText(values.get("Variables"));
             moreInput.setText(values.get("FunctionDomain"));
             isSettingValues = false;
-        } else {
-            functionNameInput.setText("f");
         }
         functionController.calculateController.variablesChanged();
     }
 
     @Override
     protected String nodeInfo() {
-        String info;
-        String functionName = functionName();
-        if (functionName != null && !functionName.isBlank()) {
-            info = functionName.trim() + "\n";
-        } else {
-            info = "";
-        }
-        String variableNames = variablesInput.getText();
-        if (variableNames != null && !variableNames.isBlank()) {
-            info += InfoNode.ValueSeparater + "\n" + variableNames.trim() + "\n";
-        } else {
-            info += InfoNode.ValueSeparater + "\n";
-        }
+        String name = functionNameInput.getText();
+        String variables = variablesInput.getText();
         String exp = valueInput.getText();
-        if (exp != null && !exp.isBlank()) {
-            info += InfoNode.ValueSeparater + "\n" + exp.trim() + "\n";
-        } else {
-            info += InfoNode.ValueSeparater + "\n";
-        }
         String domain = moreInput.getText();
-        if (domain != null && !domain.isBlank()) {
-            info += InfoNode.ValueSeparater + "\n" + domain.trim();
-        } else {
-            info += InfoNode.ValueSeparater;
+        if ((name == null || name.isBlank())
+                && (variables == null || variables.isBlank())
+                && (domain == null || domain.isBlank())) {
+            return exp == null || exp.isBlank() ? null : exp.trim();
         }
-        return info;
+        return (name == null ? "" : name.trim()) + ValueSeparater + "\n"
+                + (variables == null ? "" : variables.trim()) + ValueSeparater + "\n"
+                + (exp == null ? "" : exp.trim()) + ValueSeparater + "\n"
+                + (domain == null ? "" : domain.trim());
     }
 
     public List<String> variableNames() {
@@ -130,15 +116,6 @@ public class MathFunctionEditor extends BaseInfoTreeNodeController {
                 }
             }
             return names;
-        }
-    }
-
-    public String functionName() {
-        String name = functionNameInput.getText();
-        if (name == null || name.isBlank()) {
-            return "f";
-        } else {
-            return name;
         }
     }
 

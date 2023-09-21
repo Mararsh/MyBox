@@ -77,7 +77,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
     }
 
     @FXML
-    public void systemWebBrowser() {
+    public void systemMethod() {
         if (currentXML == null || currentXML.isBlank()) {
             popError(message("NoData"));
             return;

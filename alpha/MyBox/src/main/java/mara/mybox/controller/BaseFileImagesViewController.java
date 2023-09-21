@@ -273,6 +273,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
     @Override
     public void setSourceFile(File file) {
         sourceFile = file;
+        checkSystemMethodButton(file);
         if (imageView != null) {
             imageView.setImage(null);
             imageView.setTranslateX(0);

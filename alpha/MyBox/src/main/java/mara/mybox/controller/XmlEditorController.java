@@ -115,7 +115,7 @@ public class XmlEditorController extends BaseFileController {
             alert.setContentText(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonXml = new ButtonType(message("XmlEditor"));
-            ButtonType buttonSystem = new ButtonType(message("SystemWebBrowser"));
+            ButtonType buttonSystem = new ButtonType(message("SystemMethod"));
             ButtonType buttontext = new ButtonType(message("TextEditor"));
             ButtonType buttonCancel = new ButtonType(message("Cancel"));
             alert.getButtonTypes().setAll(buttonXml, buttonSystem, buttontext, buttonCancel);
@@ -137,7 +137,7 @@ public class XmlEditorController extends BaseFileController {
 
             }
         }
-        sourceFile = file;
+        super.sourceFileChanged(file);
         writePanes(TextFileTools.readTexts(file));
     }
 
@@ -568,7 +568,8 @@ public class XmlEditorController extends BaseFileController {
     }
 
     @FXML
-    public void systemWebBrowser() {
+    @Override
+    public void systemMethod() {
         String xml = current();
         if (xml == null || xml.isBlank()) {
             error = message("NoData");

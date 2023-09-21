@@ -12,6 +12,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -138,16 +139,13 @@ public class RowFilterEditor extends BaseInfoTreeNodeController {
 
     @Override
     protected String nodeInfo() {
-        String info = valueInput.getText();
-        if (info == null) {
-            info = "";
-        }
+        String script = valueInput.getText();
         if (trueRadio.isSelected() && maxData <= 0) {
-            return info;
+            return script;
         }
-        info += "\n" + InfoNode.ValueSeparater + "\n" + (trueRadio.isSelected() ? "true" : "false");
-        info += "\n" + InfoNode.ValueSeparater + "\n" + (maxData > 0 ? maxData + "" : "");
-        return info;
+        return (script == null ? "" : script.trim()) + ValueSeparater + "\n"
+                + (trueRadio.isSelected() ? "true" : "false") + ValueSeparater + "\n"
+                + (maxData > 0 ? maxData + "" : "");
     }
 
     @FXML

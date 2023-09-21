@@ -1,12 +1,24 @@
 ##MyBox#
-示例 > 变量
+MyBoxTreeRoot;;;
+JavaScript
+
+##MyBox#
+JavaScript
+示例
+
+##MyBox#
+JavaScript > 示例
+变量
+
+##MyBox#
+JavaScript > 示例 > 变量
 字串
 var 字串a = "hello";
 字串a += " world";
 "包含e："+ (字串a.indexOf("e") >= 0) + "    长度：" + 字串a.length
 
 ##MyBox#
-示例 > 变量
+JavaScript > 示例 > 变量
 时间
 "当前时间：" + new Date() + "\n" + 
 "格式yyyy/mm/dd：" + new Date('2022/11/30 10:35:32') + "\n" + 
@@ -14,263 +26,287 @@ var 字串a = "hello";
 "格式yyyy-mm-dd：" + new Date('2022-11-30 10:35:32'.replace(/-/g,'/'));
 
 ##MyBox#
-示例 > 变量
+JavaScript > 示例 > 变量
 数组
 var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a[2];
 
 ##MyBox#
-示例 > 变量
+JavaScript > 示例 > 变量
 对象
 var 猫猫1 = {颜色:"白", 年龄:"15", 名字:"乖乖"};
 猫猫1.名字
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例
+表达式
+
+##MyBox#
+JavaScript > 示例 > 表达式
+数值计算
+
+##MyBox#
+JavaScript > 示例 > 表达式 > 数值计算
 欧拉数
 Math.E
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 圆周率
 Math.PI
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 绝对值
 Math.abs(-5.611)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 欧拉冥
 Math.exp(2)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 平方根
 Math.sqrt(9)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 三次方根
 Math.pow(27,1/3)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 幂
 Math.pow(2,5)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 余弦
 Math.cos(0)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 正弦
 Math.sin(9)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 正切
 Math.tan(5)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 反正切
 Math.atan(-7.3)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 反余弦
 Math.acos(0.5)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 反正弦
 Math.asin(0.3)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 自然对数（底为e）
 Math.log(6)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 常用对数（底为10）
 // ECMAScript 6支持，而ECMAScript 5.1不支持
 Math.log10(6)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 以2为底的对数
 // ECMAScript 6支持，而ECMAScript 5.1不支持
 Math.log2(6)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 上舍入
 Math.ceil(4.13)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 下舍入
 Math.floor(4.67)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 四舍五入
 Math.round(4.83)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 整数部分
 Math.trunc(4.83)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 随机数
 Math.random()
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 最大值
 Math.max(1,2,-3)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JavaScript > 示例 > 表达式 > 数值计算
 最小值
 Math.min(1,2,-3)
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式
+字符串处理
+
+##MyBox#
+JavaScript > 示例 > 表达式 > 字符串处理
 比较
 'Hello' == 'hello' || 'a' < 'A' || 'a' != 'A'
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 替换首个
 "Hello World! World is yourself.".replace("World", "Feeling");
-   
+
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 替换所有
 "Hello World! World is yourself.".replace(/World/g, "Feeling");
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 开始于
 'Hello'.startsWith('h')
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 结尾于
 'Hello'.endsWith('o')
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 子串
 'Hello'.substring(2, 5)
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 字符
 'hello'.charAt(2)
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 连接
 'hello'.concat(' world')
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 分割
 '1,2,3,4'.split(',')
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 位置
 'hello'.indexOf('e')
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 最后位置
 'hello'.lastIndexOf('l')
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 长度
 'hello'.length
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 查找
 var 字符串a = "abc1233hello";
 var 规则表达式a = /3{2,}/ig;
 字符串a.search(规则表达式a)
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 小写
 'Hello'.toLowerCase()
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JavaScript > 示例 > 表达式 > 字符串处理
 大写
 'Hello'.toUpperCase()
 
 ##MyBox#
-示例 > 表达式 > 数组运算
+JavaScript > 示例 > 表达式
+数组运算
+
+##MyBox#
+JavaScript > 示例 > 表达式 > 数组运算
 长度
 var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a.length
 
 ##MyBox#
-示例 > 表达式 > 数组运算
+JavaScript > 示例 > 表达式 > 数组运算
 添加
 var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a.push(-47);
 
 ##MyBox#
-示例 > 表达式 > 数组运算
+JavaScript > 示例 > 表达式 > 数组运算
 删除
 var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a.pop()
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JavaScript > 示例 > 表达式
+布尔运算
+
+##MyBox#
+JavaScript > 示例 > 表达式 > 布尔运算
 字符串包含
 var 字符串a = "abc1233hello";
 var 规则表达式a = /3{2,}/ig;
 字符串a.search(规则表达式a) >= 0
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JavaScript > 示例 > 表达式 > 布尔运算
 字符串匹配
 var 字符串a = "abc1233hello";
 var 规则表达式a = /\S*3{2,}\S*/ig;
 字符串a.search(规则表达式a) >= 0
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JavaScript > 示例 > 表达式 > 布尔运算
 数组包含
 var 数组a =  ['A', 'B', 'C', 'D'];
 数组a.includes('C');
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JavaScript > 示例 > 表达式 > 布尔运算
 是否为数值
 Math.abs(2a) >= 0
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JavaScript > 示例 > 表达式 > 布尔运算
 与/或/否
 var 数组a =  ['A', 'B', 'C', 'D'];
 var 字符串a = "abc1233hello";
 数组a.includes('C') && (数组a.length >= 8 || 字符串a.length < 5 || !字符串a.endsWith("h"));
 
 ##MyBox#
-示例 > 表达式 > 时间运算
+JavaScript > 示例 > 表达式
+时间运算
+
+##MyBox#
+JavaScript > 示例 > 表达式 > 时间运算
 时间的格式
 "当前时间：" + "\n" + 
 "new Date() = " + new Date()+ "\n" + 
@@ -287,7 +323,7 @@ var 字符串a = "abc1233hello";
 "new Date().toLocaleTimeString() = " + new Date().toLocaleTimeString()
 
 ##MyBox#
-示例 > 表达式 > 时间运算
+JavaScript > 示例 > 表达式 > 时间运算
 时间的解析
 new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
 new Date('11/30/2022 10:35:32').toLocaleString() + "\n" + 
@@ -296,7 +332,7 @@ new Date('2022/11/30') + "\n" +
 new Date('2022-11-30'.replace(/-/g,'/'))
 
 ##MyBox#
-示例 > 表达式 > 时间运算
+JavaScript > 示例 > 表达式 > 时间运算
 时间的分量
 var 时间b = new Date('11/30/2022 10:35:32');
 "年：" + 时间b.getFullYear() + "\n月：" + (时间b.getMonth() + 1) + "\n日：" + 时间b.getDate()
@@ -304,12 +340,16 @@ var 时间b = new Date('11/30/2022 10:35:32');
 + "\n秒：" + 时间b.getSeconds();
 
 ##MyBox#
-示例 > 表达式 > 时间运算
+JavaScript > 示例 > 表达式 > 时间运算
 比较时间
 new Date('2012/05/19').getTime()  > new Date('2016/05/19 09:23:12').getTime()
 
 ##MyBox#
-示例 > 方法
+JavaScript > 示例
+方法
+
+##MyBox#
+JavaScript > 示例 > 方法
 添加风格
 function addStyle(style) {
     var node = document.createElement("style");        
@@ -319,9 +359,9 @@ function addStyle(style) {
     document.getElementsByTagName("HEAD").item(0).appendChild(node);
 };
 addStyle("body { background-color:black; color:#CCFF99; }");
-    
+
 ##MyBox#
-示例 > 方法
+JavaScript > 示例 > 方法
 删除结点
 function removeNode(id) {
     var node = document.getElementById(id);
@@ -329,24 +369,36 @@ function removeNode(id) {
         node.parentNode.removeChild(node);
 };
 removeNode("mystyleid");
-    
+
 ##MyBox#
-示例 > 网页 > 值
+JavaScript > 示例
+网页
+
+##MyBox#
+JavaScript > 示例 > 网页
+值
+
+##MyBox#
+JavaScript > 示例 > 网页 > 值
 读取Cookie
 document.cookie;
-    
+
 ##MyBox#
-示例 > 网页 > 值
+JavaScript > 示例 > 网页 > 值
 页面高度
 document.documentElement.scrollHeight || document.body.scrollHeight;
-    
+
 ##MyBox#
-示例 > 网页 > 值
+JavaScript > 示例 > 网页 > 值
 页面宽度
 document.documentElement.scrollWidth || document.body.scrollWidth;
-   
+
 ##MyBox#
-示例 > 网页 > 选择
+JavaScript > 示例 > 网页
+选择
+
+##MyBox#
+JavaScript > 示例 > 网页 > 选择
 全选
 window.getSelection().removeAllRanges();     
 var selection = window.getSelection();        
@@ -355,12 +407,12 @@ range.selectNode(document.documentElement);
 selection.addRange(range);
 
 ##MyBox#
-示例 > 网页 > 选择
+JavaScript > 示例 > 网页 > 选择
 都不选
 window.getSelection().removeAllRanges();
 
 ##MyBox#
-示例 > 网页 > 选择
+JavaScript > 示例 > 网页 > 选择
 选择结点
 function selectNode(id) {
     window.getSelection().removeAllRanges();     
@@ -372,12 +424,12 @@ function selectNode(id) {
 selectNode("someid");
 
 ##MyBox#
-示例 > 网页 > 选择
+JavaScript > 示例 > 网页 > 选择
 当前选择的字串
 window.getSelection().toString();
 
 ##MyBox#
-示例 > 网页 > 选择
+JavaScript > 示例 > 网页 > 选择
 当前选择的网页代码
 var selectionObj = window.getSelection();        
 var rangeObj = selectionObj.getRangeAt(0);        
@@ -385,33 +437,37 @@ var docFragment = rangeObj.cloneContents();
 var div = document.createElement("div");        
 div.appendChild(docFragment);        
 div.innerHTML;
- 
+
 ##MyBox#
-示例 > 网页 > 操作
+JavaScript > 示例 > 网页
+操作
+
+##MyBox#
+JavaScript > 示例 > 网页 > 操作
 滚动
 window.scrollTo(50,70 );
-   
+
 ##MyBox#
-示例 > 网页 > 操作
+JavaScript > 示例 > 网页 > 操作
 设置网页可编辑
 document.body.contentEditable=true;
-   
+
 ##MyBox#
-示例 > 网页 > 操作
+JavaScript > 示例 > 网页 > 操作
 弹出信息
 alert("人生得意须尽欢！");
 
 ##MyBox#
-示例 > 网页 > 操作
+JavaScript > 示例 > 网页 > 操作
 确认
 confirm("能饮一杯无？");
 
 ##MyBox#
-示例 > 网页 > 操作
+JavaScript > 示例 > 网页 > 操作
 输入
 prompt("君不见");
 
 ##MyBox#
-示例 > 网页 > 操作
+JavaScript > 示例 > 网页 > 操作
 打开网址
 window.open("http://www.nlc.cn");

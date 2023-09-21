@@ -13,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class JexlController extends JShellController {
 
-    protected JexlEditorController jexlEditor;
+    protected JexlEditor jexlEditor;
 
     public JexlController() {
         baseTitle = message("JEXL");
@@ -28,7 +28,7 @@ public class JexlController extends JShellController {
         try {
             super.initControls();
 
-            jexlEditor = (JexlEditorController) editorController;
+            jexlEditor = (JexlEditor) editorController;
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

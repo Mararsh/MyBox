@@ -663,8 +663,8 @@ public class StyleButton {
         if (id.startsWith("options")) {
             return new StyleData(id, message("Options"), "", "iconSetting.png");
         }
-        if (id.startsWith("systemWebBrowser")) {
-            return new StyleData(id, message("SystemWebBrowser"), "", "iconWindow.png");
+        if (id.startsWith("systemMethod")) {
+            return new StyleData(id, message("SystemMethod"), "", "iconWindow.png");
         }
         if (id.startsWith("panesMenu")) {
             return new StyleData(id, message("Panes"), "", "iconPanes.png");

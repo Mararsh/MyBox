@@ -41,19 +41,7 @@ License:    Apache License Version 2.0
                                                 <VBox spacing="2.0">
                                                     <children>
                                                         <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
-                                          <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-                                             <children>
-                                                                <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTextFile">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconTxt.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                             </children>
-                                          </FlowPane>
+                                          <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -202,6 +190,24 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
+                              <Button fx:id="systemMethodButton" mnemonicParsing="false" onAction="#systemMethod">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconWindow.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                              <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTextFile">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconTxt.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
                                         <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

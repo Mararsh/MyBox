@@ -17,22 +17,22 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class WordViewController extends BaseWebViewController {
-    
+
     public WordViewController() {
         baseTitle = Languages.message("WordView");
         TipsLabelKey = "WordViewTips";
     }
-    
+
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
     }
-    
+
     @Override
     public void sourceFileChanged(File file) {
         loadFile(file);
     }
-    
+
     @Override
     public boolean loadFile(File file) {
         if (file == null) {
@@ -43,34 +43,35 @@ public class WordViewController extends BaseWebViewController {
             task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
-            
+
             private File htmlFile;
-            
+
             @Override
             protected boolean handle() {
                 htmlFile = MicrosoftDocumentTools.word2HtmlFile(file, getCharset());
                 return htmlFile != null;
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 sourceFile = file;
+                checkSystemMethodButton(sourceFile);
                 getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                 webViewController.loadFile(htmlFile);
                 fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
                 browseController.setCurrentFile(sourceFile);
             }
-            
+
         };
         start(task);
         return true;
     }
-    
+
     @Override
     public void pageLoaded() {
-        
+
     }
-    
+
     @FXML
     @Override
     public void refreshAction() {
@@ -92,7 +93,7 @@ public class WordViewController extends BaseWebViewController {
             return null;
         }
     }
-    
+
     public static WordViewController openFile(File file) {
         WordViewController controller = open();
         if (controller != null) {
@@ -100,5 +101,5 @@ public class WordViewController extends BaseWebViewController {
         }
         return controller;
     }
-    
+
 }

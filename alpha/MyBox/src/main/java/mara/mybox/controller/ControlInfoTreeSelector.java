@@ -2,15 +2,17 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -23,40 +25,6 @@ import mara.mybox.value.UserConfig;
 public class ControlInfoTreeSelector extends BaseInfoTreeController {
 
     protected BaseInfoTreeController caller;
-
-    @FXML
-    protected CheckBox viewCheck;
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            if (viewCheck != null) {
-                StyleTools.setIconTooltips(viewCheck, "iconView.png", message("InfoTreeDoubleClickComments"));
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-            if (viewCheck != null) {
-                viewCheck.setSelected(UserConfig.getBoolean(interfaceName + "DoubleClickView", true));
-                viewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(interfaceName + "DoubleClickView", viewCheck.isSelected());
-                    }
-                });
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
 
     public void setCaller(BaseInfoTreeController caller) {
         if (caller == null) {
@@ -105,16 +73,77 @@ public class ControlInfoTreeSelector extends BaseInfoTreeController {
         if (item == null) {
             return;
         }
-        if (viewCheck == null || viewCheck.isSelected()) {
-            viewNode(item);
-        } else {
-            okAction();
+        String clickAction = UserConfig.getString(baseName + "TreeSelectorWhenDoubleClickNode", "View");
+        if (clickAction == null) {
+            return;
+        }
+        switch (clickAction) {
+            case "View":
+                viewNode(item);
+                break;
+            case "OK":
+                okAction();
+                break;
+            default:
+                break;
         }
     }
 
     @Override
     public void nodeAdded(InfoNode parent, InfoNode newNode) {
         caller.addNewNode(caller.find(parent), newNode, true);
+    }
+
+    @Override
+    public List<MenuItem> functionMenuItems(TreeItem<InfoNode> treeItem) {
+        List<MenuItem> items = viewMenuItems(treeItem);
+
+        items.add(new SeparatorMenuItem());
+
+        items.add(doubleClickMenu(treeItem));
+
+        return items;
+    }
+
+    public Menu doubleClickMenu(TreeItem<InfoNode> treeItem) {
+        Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
+
+        ToggleGroup clickGroup = new ToggleGroup();
+        String currentClick = UserConfig.getString(baseName + "TreeSelectorWhenDoubleClickNode", "View");
+
+        RadioMenuItem viewNodeMenu = new RadioMenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
+        viewNodeMenu.setSelected("View".equals(currentClick));
+        viewNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "TreeSelectorWhenDoubleClickNode", "View");
+            }
+        });
+        viewNodeMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem okMenu = new RadioMenuItem(message("OK"), StyleTools.getIconImageView("iconOK.png"));
+        okMenu.setSelected("OK".equals(currentClick));
+        okMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "TreeSelectorWhenDoubleClickNode", "OK");
+            }
+        });
+        okMenu.setToggleGroup(clickGroup);
+
+        RadioMenuItem nothingMenu = new RadioMenuItem(message("DoNothing"));
+        nothingMenu.setSelected(currentClick == null || "DoNothing".equals(currentClick));
+        nothingMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "TreeSelectorWhenDoubleClickNode", "DoNothing");
+            }
+        });
+        nothingMenu.setToggleGroup(clickGroup);
+
+        clickMenu.getItems().addAll(viewNodeMenu, okMenu, nothingMenu);
+
+        return clickMenu;
     }
 
     public InfoNode copyNode(Connection conn, InfoNode sourceNode, InfoNode targetNode) {

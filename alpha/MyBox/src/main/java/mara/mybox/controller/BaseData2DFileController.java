@@ -153,6 +153,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         } else {
             sourceFile = null;
         }
+        checkSystemMethodButton(sourceFile);
         browseController.setCurrentFile(sourceFile);
         leftPane.setDisable(sourceFile == null);
         new Timer().schedule(new TimerTask() {

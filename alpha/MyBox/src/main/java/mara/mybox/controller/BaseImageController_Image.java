@@ -248,6 +248,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (openSourceButton != null) {
             openSourceButton.setDisable(file == null || !file.exists());
         }
+        checkSystemMethodButton(file);
     }
 
     public boolean afterImageLoaded() {

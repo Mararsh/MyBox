@@ -562,6 +562,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         if (csv == null) {
             return;
         }
+        checkSystemMethodButton(file);
         loadDefinition(csv);
     }
 

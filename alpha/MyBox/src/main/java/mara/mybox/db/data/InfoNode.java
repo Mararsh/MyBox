@@ -176,12 +176,13 @@ public class InfoNode extends BaseData {
         return parseInfo(node.getCategory(), node.getInfo());
     }
 
-    public static Map<String, String> parseInfo(String category, String info) {
+    public static Map<String, String> parseInfo(String category, String s) {
         Map<String, String> values = new LinkedHashMap<>();
         try {
             if (category == null) {
                 return values;
             }
+            String info = s == null || s.isBlank() ? null : s.trim();
             switch (category) {
                 case InfoNode.WebFavorite:
                     values.put("Address", null);
@@ -363,95 +364,77 @@ public class InfoNode extends BaseData {
     }
 
     public static String encodeInfo(String category, String s) {
+        String info = s == null || s.isBlank() ? null : s.trim();
         try {
-            if (category == null || s == null || s.contains(ValueSeparater)) {
-                return s;
+            if (category == null || info == null) {
+                return info;
             }
-            Map<String, String> values = parseInfo(category, s);
+            Map<String, String> values = parseInfo(category, info);
             if (values == null) {
-                return s;
+                return info;
             }
-            String info;
             switch (category) {
-                case InfoNode.WebFavorite:
-                    info = values.get("Address");
-                    if (info != null && !info.isBlank()) {
-                        info = info.trim() + "\n";
-                    } else {
-                        info = "";
-                    }
+                case InfoNode.WebFavorite: {
+                    String address = values.get("Address");
                     String icon = values.get("Icon");
-                    if (icon != null && !icon.isBlank()) {
-                        info += ValueSeparater + "\n" + icon.trim();
+                    if (icon == null || icon.isBlank()) {
+                        return address == null || address.isBlank() ? null : address.trim();
                     }
-                    return info;
-                case InfoNode.JEXLCode:
-                    info = values.get("Script");
-                    if (info != null && !info.isBlank()) {
-                        info = info.trim() + "\n";
-                    } else {
-                        info = "";
-                    }
+                    return (address == null ? "" : address.trim()) + ValueSeparater + "\n"
+                            + icon.trim();
+                }
+                case InfoNode.JEXLCode: {
+                    String script = values.get("Script");
                     String context = values.get("Context");
-                    if (context != null && !context.isBlank()) {
-                        info += ValueSeparater + "\n" + context.trim();
-                    } else {
-                        info += ValueSeparater;
-                    }
                     String parameters = values.get("Parameters");
-                    if (parameters != null && !parameters.isBlank()) {
-                        info += ValueSeparater + "\n" + parameters.trim();
+                    if ((parameters == null || parameters.isBlank())
+                            && (context == null || context.isBlank())) {
+                        return script == null || script.isBlank() ? null : script.trim();
                     }
-                    return info;
-                case InfoNode.RowFilter:
-                    info = values.get("Script");
-                    if (info != null && !info.isBlank()) {
-                        info = info.trim() + "\n";
-                    } else {
-                        info = "";
-                    }
-                    String isTrue = values.get("Condition");
-                    if (isTrue != null && !isTrue.isBlank()) {
-                        info += ValueSeparater + "\n" + isTrue.trim();
-                    } else {
-                        info += ValueSeparater;
-                    }
+                    return (script == null ? "" : script.trim()) + ValueSeparater + "\n"
+                            + (context == null ? "" : context.trim()) + ValueSeparater + "\n"
+                            + (parameters == null ? "" : parameters.trim());
+                }
+                case InfoNode.RowFilter: {
+                    String script = values.get("Script");
+                    String condition = values.get("Condition");
                     String max = values.get("Maximum");
-                    if (max != null && !max.isBlank()) {
-                        info += ValueSeparater + "\n" + max.trim();
+                    if ((condition == null || condition.isBlank())
+                            && (max == null || max.isBlank())) {
+                        return script == null || script.isBlank() ? null : script.trim();
                     }
-                    return info;
-                case InfoNode.MathFunction:
-                    info = values.get("MathFunctionName");
-                    if (info != null && !info.isBlank()) {
-                        info = info.trim() + "\n";
-                    } else {
-                        info = "";
+                    long maxl = -1;
+                    try {
+                        maxl = Long.parseLong(max);
+                    } catch (Exception e) {
                     }
+                    if ("true".equalsIgnoreCase(condition) && maxl <= 0) {
+                        return script == null || script.isBlank() ? null : script.trim();
+                    }
+                    return (script == null ? "" : script.trim()) + ValueSeparater + "\n"
+                            + (condition == null ? "" : condition.trim()) + ValueSeparater + "\n"
+                            + (max == null ? "" : max.trim());
+                }
+                case InfoNode.MathFunction: {
+                    String name = values.get("MathFunctionName");
                     String variables = values.get("Variables");
-                    if (variables != null && !variables.isBlank()) {
-                        info += ValueSeparater + "\n" + variables.trim();
-                    } else {
-                        info += ValueSeparater;
-                    }
                     String exp = values.get("Expression");
-                    if (exp != null && !exp.isBlank()) {
-                        info += ValueSeparater + "\n" + exp.trim();
-                    } else {
-                        info += ValueSeparater;
-                    }
                     String domain = values.get("FunctionDomain");
-                    if (domain != null && !domain.isBlank()) {
-                        info += ValueSeparater + "\n" + domain.trim();
-                    } else {
-                        info += ValueSeparater;
+                    if ((name == null || name.isBlank())
+                            && (variables == null || variables.isBlank())
+                            && (domain == null || domain.isBlank())) {
+                        return exp == null || exp.isBlank() ? null : exp.trim();
                     }
-                    return info;
+                    return (name == null ? "" : name.trim()) + ValueSeparater + "\n"
+                            + (variables == null ? "" : variables.trim()) + ValueSeparater + "\n"
+                            + (exp == null ? "" : exp.trim()) + ValueSeparater + "\n"
+                            + (domain == null ? "" : domain.trim());
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return s;
+        return info;
     }
 
     public static void view(InfoNode node, String title) {

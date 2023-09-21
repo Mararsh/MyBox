@@ -10,6 +10,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -75,16 +76,12 @@ public class WebFavoriteEditor extends BaseInfoTreeNodeController {
     protected String nodeInfo() {
         String info;
         String address = valueInput.getText();
-        if (address != null && !address.isBlank()) {
-            info = address.trim() + "\n";
-        } else {
-            info = "";
-        }
         String icon = moreInput.getText();
-        if (icon != null && !icon.isBlank()) {
-            info += InfoNode.ValueSeparater + "\n" + icon.trim();
+        if (icon == null || icon.isBlank()) {
+            return address == null || address.isBlank() ? null : address.trim();
         }
-        return info;
+        return (address == null ? "" : address.trim()) + ValueSeparater + "\n"
+                + icon.trim();
     }
 
     protected void updateIcon(String icon) {

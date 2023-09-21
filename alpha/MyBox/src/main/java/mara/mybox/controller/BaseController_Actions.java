@@ -341,6 +341,13 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         openStage(Fxmls.MyboxFxml);
     }
 
+    @FXML
+    public void systemMethod() {
+        if (sourceFile != null && sourceFile.exists()) {
+            browse(sourceFile);
+        }
+    }
+
     public void clearUserSettings() {
         if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;

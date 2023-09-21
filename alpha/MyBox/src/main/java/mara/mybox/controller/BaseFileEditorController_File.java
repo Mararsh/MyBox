@@ -121,6 +121,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             if (backupController != null) {
                 backupController.loadBackups(sourceFile);
             }
+            checkSystemMethodButton(sourceFile);
 
             FileEditInformation existedInfo = sourceInformation;
             sourceInformation = FileEditInformation.create(editType, file);

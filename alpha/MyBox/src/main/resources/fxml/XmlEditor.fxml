@@ -175,7 +175,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="systemWebBrowserButton" layoutX="316.0" layoutY="10.0" mnemonicParsing="false" onAction="#systemWebBrowser">
+                                    <Button fx:id="systemMethodButton" layoutX="316.0" layoutY="10.0" mnemonicParsing="false" onAction="#systemMethod">
                                        <graphic>
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                              <image>

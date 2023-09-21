@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -34,12 +35,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-5-17
  * @License Apache License Version 2.0
  */
-public class JexlEditorController extends JShellEditorController {
+public class JexlEditor extends JShellEditorController {
 
     @FXML
     protected TextField parametersInput;
 
-    public JexlEditorController() {
+    public JexlEditor() {
         defaultExt = "txt";
     }
 
@@ -89,30 +90,16 @@ public class JexlEditorController extends JShellEditorController {
 
     @Override
     protected String nodeInfo() {
-        String info;
         String script = valueInput.getText();
-        if (script != null && !script.isBlank()) {
-            info = script.trim() + "\n";
-        } else {
-            info = "";
-        }
-        String more;
         String context = moreInput.getText();
-        if (context != null && !context.isBlank()) {
-            more = context.trim() + "\n";
-        } else {
-            more = "";
-        }
         String parameters = parametersInput.getText();
-        if (parameters != null && !parameters.isBlank()) {
-            more += InfoNode.ValueSeparater + "\n" + parameters.trim();
-        } else {
-            more += InfoNode.ValueSeparater;
+        if ((parameters == null || parameters.isBlank())
+                && (context == null || context.isBlank())) {
+            return script == null || script.isBlank() ? null : script.trim();
         }
-        if (more != null && !more.isBlank()) {
-            info += InfoNode.ValueSeparater + "\n" + more;
-        }
-        return info;
+        return (script == null ? "" : script.trim()) + ValueSeparater + "\n"
+                + (context == null ? "" : context.trim()) + ValueSeparater + "\n"
+                + (parameters == null ? "" : parameters.trim());
     }
 
     @Override

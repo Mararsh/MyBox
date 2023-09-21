@@ -233,6 +233,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (openSourceButton != null) {
                 openSourceButton.setDisable(true);
             }
+            if (systemMethodButton != null) {
+                systemMethodButton.setDisable(true);
+            }
 
             initLeftPaneControl();
             initRightPaneControl();

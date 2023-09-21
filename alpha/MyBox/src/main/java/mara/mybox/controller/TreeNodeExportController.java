@@ -347,7 +347,7 @@ public class TreeNodeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(treeController.category).append(">\n");
+                            .append("<").append(message(treeController.category)).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -359,7 +359,7 @@ public class TreeNodeExportController extends BaseTaskController {
                     updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
-                    s.append("{\"").append(treeController.category).append("\": [\n");
+                    s.append("{\"").append(message(treeController.category)).append("\": [\n");
                     jsonWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -435,7 +435,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + treeController.category + ">\n");
+                xmlWriter.write("</" + message(treeController.category) + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;
@@ -571,8 +571,9 @@ public class TreeNodeExportController extends BaseTaskController {
                 }
                 textsWriter.write(InfoNode.TagsPrefix + s + "\n");
             }
-            if (node.getInfo() != null) {
-                textsWriter.write(InfoNode.encodeInfo(node) + "\n");
+            String info = InfoNode.encodeInfo(node);
+            if (info != null && !info.isBlank()) {
+                textsWriter.write(info.trim() + "\n");
             }
 
             textsWriter.write("\n");
@@ -617,10 +618,10 @@ public class TreeNodeExportController extends BaseTaskController {
 
     protected void writeXml(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
-            xmlWriter.write(indent + indent + "<" + treeController.category + ">\n");
+            xmlWriter.write(indent + indent + "<" + message("Node") + ">\n");
             if (parentName != null) {
-                xmlWriter.write(indent + indent + indent + "<" + message("Node")
-                        + "><![CDATA[" + parentName + "]]></" + message("Node") + ">\n");
+                xmlWriter.write(indent + indent + indent + "<" + message("ParentNode")
+                        + "><![CDATA[" + parentName + "]]></" + message("ParentNode") + ">\n");
             }
             xmlWriter.write(indent + indent + indent + "<" + treeController.nameMsg
                     + "><![CDATA[" + node.getTitle() + "]]></" + treeController.nameMsg + ">\n");
@@ -657,7 +658,7 @@ public class TreeNodeExportController extends BaseTaskController {
                     }
                 }
             }
-            xmlWriter.write(indent + indent + "</" + treeController.category + ">\n\n");
+            xmlWriter.write(indent + indent + "</" + message("Node") + ">\n\n");
 
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -675,7 +676,7 @@ public class TreeNodeExportController extends BaseTaskController {
             s.append(indent).append("{").append("\n");
             if (parentName != null) {
                 s.append(indent).append(indent)
-                        .append("\"").append(message("Node")).append("\": \"")
+                        .append("\"").append(message("ParentNode")).append("\": \"")
                         .append(parentName).append("\",\n");
             }
             s.append(indent).append(indent)
