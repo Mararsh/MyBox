@@ -1,26 +1,17 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import java.sql.Connection;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.data2d.Data2DExampleTools;
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.Data2DTools;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -59,400 +50,237 @@ public class Data2DDefinitionController extends TreeManageController {
         return true;
     }
 
-    /*
-        examples
-     */
-    @FXML
-    protected void popExamplesMenu(Event event) {
-        if (UserConfig.getBoolean("Data2DColumnsExamplesPopWhenMouseHovering", false)) {
-            showExamplesMenu(event);
+    // this only works for development
+    public void importExamples() {
+        if (task != null) {
+            task.cancel();
         }
-    }
+        task = new SingletonCurrentTask<Void>(this) {
 
-    @FXML
-    protected void showExamplesMenu(Event mevent) {
-        try {
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    conn.createStatement().execute("DELETE FROM Tree_Node WHERE category=\'" + category + "\'");
+                    InfoNode root = tableTreeNode.findAndCreateRoot(conn, category);
+                    String lang = Languages.getLangName();
+                    conn.setAutoCommit(true);
 
-            String lang = Languages.getLangName();
-            List<MenuItem> items = new ArrayList<>();
+                    InfoNode parent = new InfoNode(root, message("MyData"));
+                    parent = tableTreeNode.insertData(conn, parent);
 
-            Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImageView("iconCat.png"));
-            items.add(myMenu);
+                    InfoNode child = new InfoNode(parent, message("Notes"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.Notes(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            MenuItem menu = new MenuItem(message("Notes"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Notes(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("Contacts"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.Contacts(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("Contacts"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Contacts(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("CashFlow"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.CashFlow(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("CashFlow"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CashFlow(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("PrivateProperty"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.PrivateProperty(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("PrivateProperty"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PrivateProperty(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("Eyesight"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.Eyesight(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            myMenu.getItems().add(new SeparatorMenuItem());
+                    child = new InfoNode(parent, message("Weight"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.Weight(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("Eyesight"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Eyesight(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("Height"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.Height(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("Weight"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Weight(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("Menstruation"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.Menstruation(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("Height"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Height(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    parent = new InfoNode(root, message("StatisticDataOfChina"));
+                    tableTreeNode.insertData(conn, parent);
 
-            menu = new MenuItem(message("Menstruation"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Menstruation(lang);
-                editorController.load(data);
-            });
-            myMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaPopulation"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaPopulation(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImageView("iconChina.png"));
-            items.add(chinaMenu);
+                    child = new InfoNode(parent, message("ChinaCensus"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaCensus(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaPopulation"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaPopulation(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaGDP"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaGDP(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaCensus"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCensus(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaCPI"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaCPI(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaGDP"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGDP(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaFoodConsumption"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaFoodConsumption(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaCPI"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCPI(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaGraduates"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaGraduates(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaFoodConsumption"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaFoodConsumption(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaMuseums"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaMuseums(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaGraduates"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGraduates(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaHealthPersonnel"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaHealthPersonnel(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaMuseums"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMuseums(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaMarriage"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaMarriage(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaHealthPersonnel"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaHealthPersonnel(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChinaSportWorldChampions"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChinaSportWorldChampions(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaMarriage"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMarriage(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("CrimesFiledByChinaPolice"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.CrimesFiledByChinaPolice(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaSportWorldChampions"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaSportWorldChampions(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("CrimesFiledByChinaProcuratorate"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.CrimesFiledByChinaProcuratorate(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("CrimesFiledByChinaPolice"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaPolice(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    parent = new InfoNode(root, message("RegressionData"));
+                    tableTreeNode.insertData(conn, parent);
 
-            menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaProcuratorate(lang);
-                editorController.load(data);
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("IncomeHappiness"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.IncomeHappiness(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            chinaMenu.getItems().add(new SeparatorMenuItem());
+                    child = new InfoNode(parent, message("ExperienceSalary"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ExperienceSalary(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                myController.browse("https://data.stats.gov.cn/");
-            });
-            chinaMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("IrisSpecies"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.IrisSpecies(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            Menu regressionMenu = new Menu(message("RegressionData"), StyleTools.getIconImageView("iconLinearPgression.png"));
-            items.add(regressionMenu);
+                    child = new InfoNode(parent, message("DiabetesPrediction"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.DiabetesPrediction(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("IncomeHappiness"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IncomeHappiness(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("DiabetesPredictionStandardized"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.DiabetesPredictionStandardized(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ExperienceSalary"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ExperienceSalary(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("HeartFailure"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.HeartFailure(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("IrisSpecies"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IrisSpecies(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ConcreteCompressiveStrength"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ConcreteCompressiveStrength(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("DiabetesPrediction"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPrediction(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("DogRadiographsDataset"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.DogRadiographsDataset(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("DiabetesPredictionStandardized"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPredictionStandardized(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("BaseballSalaries"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.BaseballSalaries(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("HeartFailure"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.HeartFailure(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("SouthGermanCredit"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.SouthGermanCredit(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ConcreteCompressiveStrength"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ConcreteCompressiveStrength(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("BostonHousingPrices"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.BostonHousingPrices(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("DogRadiographsDataset"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DogRadiographsDataset(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    parent = new InfoNode(root, message("LocationData"));
+                    tableTreeNode.insertData(conn, parent);
 
-            menu = new MenuItem(message("BaseballSalaries"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BaseballSalaries(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ChineseHistoricalCapitals"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ChineseHistoricalCapitals(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("SouthGermanCredit"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SouthGermanCredit(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("AutumnMovementPatternsOfEuropeanGadwalls"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.AutumnMovementPatternsOfEuropeanGadwalls(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("BostonHousingPrices"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BostonHousingPrices(lang);
-                editorController.load(data);
-            });
-            regressionMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("SpermWhalesGulfOfMexico"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.SpermWhalesGulfOfMexico(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            regressionMenu.getItems().add(new SeparatorMenuItem());
+                    child = new InfoNode(parent, message("EpidemicReportsCOVID19"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.EpidemicReportsCOVID19(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("AboutDataAnalysis"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                myController.openHtml(HelpTools.aboutDataAnalysis());
-            });
-            regressionMenu.getItems().add(menu);
+                    parent = new InfoNode(root, message("ProjectManagement"));
+                    tableTreeNode.insertData(conn, parent);
 
-            Menu locationMenu = new Menu(message("LocationData"), StyleTools.getIconImageView("iconLocation.png"));
-            items.add(locationMenu);
+                    child = new InfoNode(parent, message("ProjectRegister"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ProjectRegister(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("ChineseHistoricalCapitals"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChineseHistoricalCapitals(lang);
-                editorController.load(data);
-            });
-            locationMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ProjectStatus"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ProjectStatus(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("AutumnMovementPatternsOfEuropeanGadwalls"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.AutumnMovementPatternsOfEuropeanGadwalls(lang);
-                editorController.load(data);
-            });
-            locationMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("TaskRegister"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.TaskRegister(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("SpermWhalesGulfOfMexico"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SpermWhalesGulfOfMexico(lang);
-                editorController.load(data);
-            });
-            locationMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("TaskStatus"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.TaskStatus(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(message("EpidemicReportsCOVID19"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.EpidemicReportsCOVID19(lang);
-                editorController.load(data);
-            });
-            locationMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("PersonRegister"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.PersonRegister(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            boolean isChinese = "zh".equals(lang);
+                    child = new InfoNode(parent, message("PersonStatus"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.PersonStatus(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            Menu pmMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
-            items.add(pmMenu);
+                    child = new InfoNode(parent, message("ResourceRegister"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ResourceRegister(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(isChinese ? "项目登记" : "Project register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectRegister(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("ResourceStatus"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.ResourceStatus(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(isChinese ? "项目状态" : "Project Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectStatus(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("RiskAnalysis"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.RiskAnalysis(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(isChinese ? "任务登记" : "Task register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskRegister(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("CostRecord"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.CostRecord(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(isChinese ? "任务状态" : "Task Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskStatus(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
+                    child = new InfoNode(parent, message("VerificationRecord"))
+                            .setInfo(Data2DTools.toXML(Data2DExampleTools.VerificationRecord(lang)));
+                    tableTreeNode.insertData(conn, child);
 
-            menu = new MenuItem(isChinese ? "人员登记" : "Person register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonRegister(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "人员状态" : "Person Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonStatus(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "资源登记" : "Resource register");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceRegister(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "资源状态" : "Resource Status");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceStatus(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "风险分析" : "Risk Analysis");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.RiskAnalysis(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "成本记录" : "Cost Record");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CostRecord(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
-
-            menu = new MenuItem(isChinese ? "检验记录" : "Verification Record");
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.VerificationRecord(lang);
-                editorController.load(data);
-            });
-            pmMenu.getItems().add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            pMenu.setSelected(UserConfig.getBoolean("Data2DColumnsExamplesPopWhenMouseHovering", false));
-            pMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("Data2DColumnsExamplesPopWhenMouseHovering", pMenu.isSelected());
+                    conn.commit();
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.error(e);
+                    return false;
                 }
-            });
-            items.add(pMenu);
+                return true;
+            }
 
-            popEventMenu(mevent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+            @Override
+            protected void whenSucceeded() {
+                loadTree();
+            }
+
+        };
+        start(task);
     }
-
 
     /*
         static methods

@@ -285,15 +285,6 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> findAndCreateRoots(String category) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            return findAndCreateRoots(conn, category);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public List<InfoNode> findAndCreateRoots(Connection conn, String category) {
         if (conn == null) {
             return null;

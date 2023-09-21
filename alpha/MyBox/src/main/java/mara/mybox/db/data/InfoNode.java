@@ -7,10 +7,14 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.controller.HtmlTableController;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.JsonTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -456,25 +460,17 @@ public class InfoNode extends BaseData {
         row.addAll(Arrays.asList(message("Title"), node.getTitle()));
         table.add(row);
 
-        Map<String, String> values = parseInfo(node);
-        if (values != null) {
-            for (String key : values.keySet()) {
-                String v = values.get(key);
-                if (v == null || v.isBlank()) {
-                    continue;
-                }
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message(key), v));
-                table.add(row);
-            }
-        }
         row = new ArrayList<>();
         row.addAll(Arrays.asList(message("UpdateTime"), DateTools.datetimeToString(node.getUpdateTime())));
         table.add(row);
-        table.htmlTable();
+
+        String html = table.div() + "<BR>"
+                + infoHtml(node.getCategory(), node.getInfo(), true, false);
+
+        HtmlTableController.open(title, html);
     }
 
-    public static String infoHtml(String category, String s, boolean showIcon) {
+    public static String infoHtml(String category, String s, boolean showIcon, boolean singleNotIn) {
         if (s == null || s.isBlank()) {
             return "";
         }
@@ -501,7 +497,35 @@ public class InfoNode extends BaseData {
                 }
                 break;
             }
-            default:
+            case InfoNode.Data2DDefinition: {
+                DataFileCSV csv = Data2DTools.fromXML(s);
+                if (csv != null) {
+                    StringTable attrTable = new StringTable();
+                    List<String> row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("DataName"), csv.getDataName()));
+                    attrTable.add(row);
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("DecimalScale"), csv.getScale() + ""));
+                    attrTable.add(row);
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("MaxRandom"), csv.getMaxRandom() + ""));
+                    attrTable.add(row);
+                    row = new ArrayList<>();
+                    String comments = csv.getComments();
+                    if (comments != null && !comments.isBlank()) {
+                        row.addAll(Arrays.asList(message("Description"),
+                                "<PRE><CODE>" + comments + "</CODE></PRE>"));
+                    }
+                    attrTable.add(row);
+                    html = attrTable.div();
+                    String columnsHtml = Data2DTools.toHtml(null, csv.getColumns());
+                    if (columnsHtml != null && !columnsHtml.isBlank()) {
+                        html += "<BR>" + columnsHtml;
+                    }
+                }
+                break;
+            }
+            default: {
                 Map<String, String> values = parseInfo(category, s);
                 if (values != null) {
                     StringTable table = new StringTable();
@@ -511,22 +535,146 @@ public class InfoNode extends BaseData {
                         if (v == null || v.isBlank()) {
                             continue;
                         }
-                        pv = v;
+                        pv = "<PRE><CODE>" + v + "</CODE></PRE>";
                         List<String> row = new ArrayList<>();
-                        row.addAll(Arrays.asList(message(key), v));
+                        row.addAll(Arrays.asList(message(key), pv));
                         table.add(row);
                     }
                     if (!table.isEmpty()) {
-                        if (table.size() == 1) {
-                            html = "<PRE><CODE>" + pv + "</CODE></PRE>\n";
+                        if (singleNotIn && table.size() == 1) {
+                            html = pv;
                         } else {
                             html = table.div();
                         }
                     }
                 }
                 break;
+            }
         }
         return html;
+    }
+
+    public static String infoXml(String category, String s, String prefix) {
+        if (s == null || s.isBlank()) {
+            return "";
+        }
+        String xml = "";
+        switch (category) {
+            case InfoNode.Data2DDefinition: {
+                xml = s + "\n";
+                break;
+            }
+            default:
+                Map<String, String> values = parseInfo(category, s);
+                if (values != null) {
+                    for (String key : values.keySet()) {
+                        String v = values.get(key);
+                        if (v == null || v.isBlank()) {
+                            continue;
+                        }
+                        String name = message(key);
+                        xml += prefix + "<" + name + ">\n"
+                                + "<![CDATA[" + v + "]]>\n"
+                                + prefix + "</" + name + ">\n";
+                    }
+                }
+                break;
+        }
+        return xml;
+    }
+
+    public static String infoJson(String category, String s, String prefix) {
+        if (s == null || s.isBlank()) {
+            return "";
+        }
+        String json = "";
+        switch (category) {
+            case InfoNode.Data2DDefinition: {
+                DataFileCSV csv = Data2DTools.fromXML(s);
+                if (csv != null) {
+                    json += ",\n" + prefix + "\"" + message("DataName") + "\": "
+                            + JsonTools.encode(csv.getDataName());
+                    json += ",\n" + prefix + "\"" + message("DecimalScale") + "\": "
+                            + csv.getScale();
+                    json += ",\n" + prefix + "\"" + message("MaxRandom") + "\": "
+                            + csv.getMaxRandom();
+                    String comments = csv.getComments();
+                    if (comments != null && !comments.isBlank()) {
+                        json += ",\n" + prefix + "\"" + message("Description") + "\": "
+                                + JsonTools.encode(comments);
+                    }
+                    List<Data2DColumn> columns = csv.getColumns();
+                    if (columns != null && !columns.isEmpty()) {
+                        json += ",\n" + prefix + "\"" + message("Columns") + "\": [\n";
+                        String pprefix = prefix + "    ";
+                        String comma = "";
+                        for (ColumnDefinition column : columns) {
+                            json += comma + pprefix + "{\n"
+                                    + pprefix + "\"" + message("Column") + "\": "
+                                    + JsonTools.encode(column.getColumnName()) + ",\n";
+                            json += pprefix + "\"" + message("Type") + "\": "
+                                    + JsonTools.encode(column.getType().name()) + ",\n";
+                            json += pprefix + "\"" + message("Length") + "\": "
+                                    + column.getLength() + ",\n";
+                            json += pprefix + "\"" + message("Width") + "\": "
+                                    + column.getWidth() + ",\n";
+                            String v = column.getFormatDisplay();
+                            if (v != null && !v.isBlank()) {
+                                json += pprefix + "\"" + message("Format") + "\": "
+                                        + JsonTools.encode(v) + ",\n";
+                            }
+                            json += pprefix + "\"" + message("NotNull") + "\": "
+                                    + column.isNotNull() + ",\n";
+                            json += pprefix + "\"" + message("Editable") + "\": "
+                                    + column.isEditable() + ",\n";
+                            json += pprefix + "\"" + message("PrimaryKey") + "\": "
+                                    + column.isIsPrimaryKey() + ",\n";
+                            json += pprefix + "\"" + message("AutoGenerated") + "\": "
+                                    + column.isAuto() + ",\n";
+                            v = column.getDefaultValue();
+                            if (v != null && !v.isBlank()) {
+                                json += pprefix + "\"" + message("DefaultValue") + "\": "
+                                        + JsonTools.encode(v) + ",\n";
+                            }
+                            json += pprefix + "\"" + message("Color") + "\": "
+                                    + JsonTools.encode(column.getColor().toString()) + ",\n";
+                            json += pprefix + "\"" + message("ToInvalidValue") + "\": "
+                                    + JsonTools.encode(column.getInvalidAs().name()) + ",\n";
+                            json += pprefix + "\"" + message("DecimalScale") + "\": "
+                                    + column.getScale() + ",\n";
+                            json += pprefix + "\"" + message("Century") + "\": "
+                                    + column.getCentury() + ",\n";
+                            json += pprefix + "\"" + message("FixTwoDigitYears") + "\": "
+                                    + column.isFixTwoDigitYear();
+                            v = column.getDescription();
+                            if (v != null && !v.isBlank()) {
+                                json += ",\n" + pprefix + "\"" + message("Description") + "\": "
+                                        + JsonTools.encode(v) + "\n";
+                            } else {
+                                json += "\n";
+                            }
+                            json += pprefix + "}\n";
+                            comma = pprefix + ",\n";
+                        }
+                        json += prefix + "]\n";
+                    }
+                }
+                break;
+            }
+            default:
+                Map<String, String> values = parseInfo(category, s);
+                if (values != null) {
+                    for (String key : values.keySet()) {
+                        String v = values.get(key);
+                        if (v == null || v.isBlank()) {
+                            continue;
+                        }
+                        json += ",\n" + prefix + "\"" + message(key) + "\": " + JsonTools.encode(v);
+                    }
+                }
+                break;
+        }
+        return json;
     }
 
     /*

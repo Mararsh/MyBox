@@ -538,7 +538,7 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                 s.append(indentTag).append("</SPAN>\n");
             }
             s.append(indentNode).append("</DIV>\n");
-            String infoDisplay = InfoNode.infoHtml(category, node.getInfo(), true);
+            String infoDisplay = InfoNode.infoHtml(category, node.getInfo(), true, true);
             if (infoDisplay != null && !infoDisplay.isBlank()) {
                 s.append(indentNode).append("<DIV class=\"nodeValue\">")
                         .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")

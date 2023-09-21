@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -23,7 +22,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.parseInfo;
 import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTreeNode;
@@ -606,9 +604,9 @@ public class TreeNodeExportController extends BaseTaskController {
                 writer.write("</H4>\n");
             }
             writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
-            String infoDisplay = InfoNode.infoHtml(node.getCategory(), node.getInfo(), iconCheck.isSelected());
-            if (infoDisplay != null && !infoDisplay.isBlank()) {
-                writer.write(indent + indent + indent + infoDisplay + "\n");
+            String infoHtml = InfoNode.infoHtml(node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
+            if (infoHtml != null && !infoHtml.isBlank()) {
+                writer.write(indent + indent + indent + infoHtml + "\n");
             }
             writer.write(indent + indent + "</div><HR>\n\n");
         } catch (Exception e) {
@@ -623,8 +621,8 @@ public class TreeNodeExportController extends BaseTaskController {
                 xmlWriter.write(indent + indent + indent + "<" + message("ParentNode")
                         + "><![CDATA[" + parentName + "]]></" + message("ParentNode") + ">\n");
             }
-            xmlWriter.write(indent + indent + indent + "<" + treeController.nameMsg
-                    + "><![CDATA[" + node.getTitle() + "]]></" + treeController.nameMsg + ">\n");
+            xmlWriter.write(indent + indent + indent + "<" + message("Title")
+                    + "><![CDATA[" + node.getTitle() + "]]></" + message("Title") + ">\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                 xmlWriter.write(indent + indent + indent + "<" + treeController.timeMsg + ">"
                         + DateTools.datetimeToString(node.getUpdateTime())
@@ -643,20 +641,9 @@ public class TreeNodeExportController extends BaseTaskController {
                 xmlWriter.write(indent + indent + indent + "<" + message("Tags")
                         + "><![CDATA[" + s + "]]></" + message("Tags") + ">\n");
             }
-            if (node.getInfo() != null) {
-                Map<String, String> values = parseInfo(node);
-                if (values != null) {
-                    for (String key : values.keySet()) {
-                        String v = values.get(key);
-                        if (v == null || v.isBlank()) {
-                            continue;
-                        }
-                        String name = message(key);
-                        xmlWriter.write(indent + indent + indent + "<" + name + ">\n"
-                                + "<![CDATA[" + values.get(key) + "]]>\n"
-                                + indent + indent + indent + "</" + name + ">\n");
-                    }
-                }
+            String infoXml = InfoNode.infoXml(node.getCategory(), node.getInfo(), indent + indent + indent);
+            if (infoXml != null && !infoXml.isBlank()) {
+                xmlWriter.write(infoXml);
             }
             xmlWriter.write(indent + indent + "</" + message("Node") + ">\n\n");
 
@@ -680,7 +667,7 @@ public class TreeNodeExportController extends BaseTaskController {
                         .append(parentName).append("\",\n");
             }
             s.append(indent).append(indent)
-                    .append("\"").append(treeController.nameMsg).append("\": \"")
+                    .append("\"").append(message("Title")).append("\": \"")
                     .append(node.getTitle()).append("\"");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                 s.append(",\n");
@@ -703,20 +690,9 @@ public class TreeNodeExportController extends BaseTaskController {
                         .append("\"").append(message("Tags")).append("\": ")
                         .append(JsonTools.encode(t));
             }
-            if (node.getInfo() != null) {
-                Map<String, String> values = parseInfo(node);
-                if (values != null) {
-                    for (String key : values.keySet()) {
-                        String v = values.get(key);
-                        if (v == null || v.isBlank()) {
-                            continue;
-                        }
-                        s.append(",\n");
-                        s.append(indent).append(indent)
-                                .append("\"").append(message(key)).append("\": ")
-                                .append(JsonTools.encode(v));
-                    }
-                }
+            String infoJson = InfoNode.infoJson(node.getCategory(), node.getInfo(), indent + indent);
+            if (infoJson != null && !infoJson.isBlank()) {
+                s.append(infoJson);
             }
             s.append("\n");
             s.append(indent).append("}").append("\n");

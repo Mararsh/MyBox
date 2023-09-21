@@ -117,7 +117,9 @@ public class ControlData2DDefAttributes extends ControlInfoTreeAttributes {
             tableData.clear();
             data2D = data;
             if (data2D != null) {
-                nameInput.setText(data2D.getDataName());
+                if (node == null) {
+                    nameInput.setText(data2D.getDataName());
+                }
                 scaleSelector.setValue(data2D.getScale() + "");
                 randomSelector.setValue(data2D.getMaxRandom() + "");
                 descInput.setText(data2D.getComments());

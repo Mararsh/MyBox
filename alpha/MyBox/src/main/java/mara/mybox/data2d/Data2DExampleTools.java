@@ -15,8 +15,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.ControlData2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -452,11 +452,9 @@ public class Data2DExampleTools {
 
     public static Menu projectManagement(String lang, ControlData2D controller) {
         try {
-            boolean isChinese = "zh".equals(lang);
-
             Menu pmMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
 
-            MenuItem menu = new MenuItem(isChinese ? "项目登记" : "Project register");
+            MenuItem menu = new MenuItem(message("ProjectRegister"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ProjectRegister(lang);
                 if (makeExampleFile("PM_ProjectRegister_" + lang, data)) {
@@ -465,7 +463,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "项目状态" : "Project Status");
+            menu = new MenuItem(message("ProjectStatus"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ProjectStatus(lang);
                 if (makeExampleFile("PM_ProjectStatus_" + lang, data)) {
@@ -474,7 +472,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "任务登记" : "Task register");
+            menu = new MenuItem(message("TaskRegister"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.TaskRegister(lang);
                 if (makeExampleFile("PM_TaskRegister_" + lang, data)) {
@@ -483,7 +481,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "任务状态" : "Task Status");
+            menu = new MenuItem(message("TaskStatus"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.TaskStatus(lang);
                 if (makeExampleFile("PM_TaskStatus_" + lang, data)) {
@@ -492,7 +490,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "人员登记" : "Person register");
+            menu = new MenuItem(message("PersonRegister"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.PersonRegister(lang);
                 if (makeExampleFile("PM_PersonRegister_" + lang, data)) {
@@ -501,7 +499,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "人员状态" : "Person Status");
+            menu = new MenuItem(message("PersonStatus"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.PersonStatus(lang);
                 if (makeExampleFile("PM_PersonStatus_" + lang, data)) {
@@ -510,7 +508,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "资源登记" : "Resource register");
+            menu = new MenuItem(message("ResourceRegister"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ResourceRegister(lang);
                 if (makeExampleFile("PM_ResourceRegister_" + lang, data)) {
@@ -519,7 +517,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "资源状态" : "Resource Status");
+            menu = new MenuItem(message("ResourceStatus"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.ResourceStatus(lang);
                 if (makeExampleFile("PM_ResourceStatus_" + lang, data)) {
@@ -528,7 +526,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "风险分析" : "Risk Analysis");
+            menu = new MenuItem(message("RiskAnalysis"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.RiskAnalysis(lang);
                 if (makeExampleFile("PM_RiskAnalysis_" + lang, data)) {
@@ -537,7 +535,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "成本记录" : "Cost Record");
+            menu = new MenuItem(message("CostRecord"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.CostRecord(lang);
                 if (makeExampleFile("PM_CostRecords_" + lang, data)) {
@@ -546,7 +544,7 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "检验记录" : "Verification Record");
+            menu = new MenuItem(message("VerificationRecord"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = Data2DExampleTools.VerificationRecord(lang);
                 if (makeExampleFile("PM_VerifyRecord_" + lang, data)) {
