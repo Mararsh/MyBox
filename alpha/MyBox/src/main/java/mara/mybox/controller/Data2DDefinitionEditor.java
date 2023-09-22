@@ -33,10 +33,6 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeController {
         super.setParameters(manageController);
     }
 
-    public String toXML() {
-        return Data2DTools.toXML(data2D);
-    }
-
     protected void load(Data2D data) {
         data2D = data;
         columnsController.load(data2D);
@@ -47,7 +43,7 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeController {
     @Override
     protected void editNode(InfoNode node) {
         if (node != null) {
-            data2D = Data2DTools.fromXML(node.getInfo());
+            data2D = Data2DTools.definitionFromXML(node.getInfo());
         } else {
             data2D = null;
         }
@@ -71,7 +67,7 @@ public class Data2DDefinitionEditor extends BaseInfoTreeNodeController {
                 .setMaxRandom(defAttributesController.maxRandom)
                 .setComments(defAttributesController.descInput.getText())
                 .setDataName(nodeTitle());
-        String info = Data2DTools.toXML(data2D);
+        String info = Data2DTools.definitionToXML(data2D, true, "");
         return info;
     }
 

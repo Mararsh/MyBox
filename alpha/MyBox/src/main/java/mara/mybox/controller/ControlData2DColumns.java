@@ -295,15 +295,6 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
     /*
         import
      */
-    @Override
-    public void loadDefinition(Data2D def) {
-        List<Data2DColumn> cols = def.getColumns();
-        if (cols == null || cols.isEmpty()) {
-            return;
-        }
-        tableData.addAll(cols);
-    }
-
     @FXML
     public void selectDefinition() {
 

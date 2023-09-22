@@ -24,16 +24,16 @@ public class NumberTools {
             }
             String format = inFormat;
             if (format == null || format.isBlank()
-                    || Languages.match("None", format)) {
+                    || Languages.matchIgnoreCase("None", format)) {
                 return noFormat(data, scale);
 
-            } else if (Languages.match("ScientificNotation", format)) {
+            } else if (Languages.matchIgnoreCase("ScientificNotation", format)) {
                 return scientificNotation(data, scale);
 
-            } else if (Languages.match("GroupInThousands", format)) {
+            } else if (Languages.matchIgnoreCase("GroupInThousands", format)) {
                 return format(data, 3, scale);
 
-            } else if (Languages.match("GroupInTenThousands", format)) {
+            } else if (Languages.matchIgnoreCase("GroupInTenThousands", format)) {
                 return format(data, 4, scale);
 
             } else {

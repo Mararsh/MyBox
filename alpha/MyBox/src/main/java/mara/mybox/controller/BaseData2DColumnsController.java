@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -40,6 +43,9 @@ import mara.mybox.fxml.cell.TableDataColumnCell;
 import mara.mybox.fxml.cell.TableTextAreaEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -558,16 +564,39 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
      */
     @Override
     public void sourceFileChanged(File file) {
-        DataFileCSV csv = Data2DTools.fromXMLFile(file);
-        if (csv == null) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
-        checkSystemMethodButton(file);
-        loadDefinition(csv);
+        task = new SingletonCurrentTask<Void>(this) {
+
+            DataFileCSV csv;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    csv = Data2DTools.definitionFromXML(TextFileTools.readTexts(file));
+                    return csv != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                checkSystemMethodButton(file);
+                loadDefinition(csv);
+            }
+        };
+        start(task);
     }
 
     public void loadDefinition(Data2D def) {
-
+        List<Data2DColumn> cols = def.getColumns();
+        if (cols == null || cols.isEmpty()) {
+            return;
+        }
+        tableData.addAll(cols);
     }
 
     /*
@@ -660,7 +689,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    csv = Data2DTools.toCSVFile(currentData, file);
+                    csv = Data2DTools.definitionToCSVFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;
@@ -697,8 +726,23 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    if (Data2DTools.toXMLFile(currentData, file)
-                            && file != null && file.exists()) {
+                    String xml = Data2DTools.definitionToXML(currentData,
+                            UserConfig.getBoolean("Data2DDefinitionExportAtributes", true),
+                            "");
+                    if (xml == null || xml.isBlank()) {
+                        return false;
+                    }
+                    File tmpFile = FileTmpTools.getTempFile();
+                    try (BufferedWriter xmlWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8")))) {
+                        xmlWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                        xmlWriter.write(xml);
+                        xmlWriter.flush();
+                        xmlWriter.close();
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
+                        return false;
+                    }
+                    if (FileTools.rename(tmpFile, file, true)) {
                         recordFileWritten(file, VisitHistory.FileType.XML);
                         return true;
                     } else {
@@ -734,8 +778,19 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    if (Data2DTools.toJSONFile(currentData, file)
-                            && file != null && file.exists()) {
+                    String json = Data2DTools.definitionToJSON(currentData,
+                            UserConfig.getBoolean("Data2DDefinitionExportAtributes", true),
+                            "");
+                    if (json == null || json.isBlank()) {
+                        return false;
+                    }
+                    File tmpFile = FileTmpTools.getTempFile();
+                    try (BufferedWriter jsonWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8")))) {
+                        jsonWriter.write("{" + json + "}");
+                        jsonWriter.flush();
+                        jsonWriter.close();
+                    }
+                    if (FileTools.rename(tmpFile, file, true)) {
                         recordFileWritten(file, VisitHistory.FileType.JSON);
                         return true;
                     } else {
@@ -774,7 +829,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    excel = Data2DTools.toExcelFile(currentData, file);
+                    excel = Data2DTools.definitionToExcelFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;

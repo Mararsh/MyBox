@@ -168,20 +168,22 @@ public class Languages {
             }
             return message("en", s).equals(ref)
                     || message("zh", s).equals(ref)
-                    || message(s).equals(ref);
+                    || message(s).equals(ref)
+                    || s.equals(ref);
         } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean matchIgnoreCase(String s, String ref) {
+    public static boolean matchIgnoreCase(String matchTo, String s) {
         try {
-            if (s == null || ref == null) {
+            if (matchTo == null || s == null) {
                 return false;
             }
-            return message("en", s).equalsIgnoreCase(ref)
-                    || message("zh", s).equalsIgnoreCase(ref)
-                    || message(s).equalsIgnoreCase(ref);
+            return message("en", matchTo).equalsIgnoreCase(s)
+                    || message("zh", matchTo).equalsIgnoreCase(s)
+                    || message(matchTo).equalsIgnoreCase(s)
+                    || matchTo.equalsIgnoreCase(s);
         } catch (Exception e) {
             return false;
         }
