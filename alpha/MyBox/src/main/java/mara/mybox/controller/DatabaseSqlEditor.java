@@ -67,11 +67,11 @@ public class DatabaseSqlEditor extends BaseInfoTreeNodeController {
         try {
             super.initControls();
 
-            wrapOutputsCheck.setSelected(UserConfig.getBoolean(treeController.category + "OutputsWrap", false));
+            wrapOutputsCheck.setSelected(UserConfig.getBoolean(manager.category + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(treeController.category + "OutputsWrap", newValue);
+                    UserConfig.setBoolean(manager.category + "OutputsWrap", newValue);
                     outputArea.setWrapText(newValue);
                 }
             });

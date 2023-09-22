@@ -39,7 +39,7 @@ import mara.mybox.value.UserConfig;
  */
 public class TreeNodeImportController extends BaseBatchFileController {
 
-    protected BaseInfoTreeController nodesController;
+    protected BaseInfoTreeViewController nodesController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
@@ -81,7 +81,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
         }
     }
 
-    public void setCaller(BaseInfoTreeController nodeController) {
+    public void setCaller(BaseInfoTreeViewController nodeController) {
         this.nodesController = nodeController;
         tableTreeNode = nodeController.tableTreeNode;
         tableTreeNodeTag = nodeController.tableTreeNodeTag;

@@ -22,11 +22,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class ControlInfoTreeSelector extends BaseInfoTreeController {
+public class ControlInfoTreeSelector extends BaseInfoTreeViewController {
 
-    protected BaseInfoTreeController caller;
+    protected ControlInfoNodeSelector selector;
+    protected BaseInfoTreeViewController caller;
 
-    public void setCaller(BaseInfoTreeController caller) {
+    public void setCaller(BaseInfoTreeViewController caller) {
         if (caller == null) {
             return;
         }
@@ -92,6 +93,11 @@ public class ControlInfoTreeSelector extends BaseInfoTreeController {
     @Override
     public void nodeAdded(InfoNode parent, InfoNode newNode) {
         caller.addNewNode(caller.find(parent), newNode, true);
+    }
+
+    @Override
+    protected void viewNode(TreeItem<InfoNode> item) {
+        selector.viewNode(item.getValue());
     }
 
     @Override

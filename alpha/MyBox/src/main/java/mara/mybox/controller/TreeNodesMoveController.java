@@ -18,20 +18,20 @@ import static mara.mybox.value.Languages.message;
  */
 public class TreeNodesMoveController extends ControlInfoTreeSelector {
 
-    protected TreeManageController manageController;
+    protected TreeManageController manager;
 
     public TreeNodesMoveController() {
         baseTitle = message("Move");
     }
 
-    public void setParameters(TreeManageController manageController) {
-        this.manageController = manageController;
-        setCaller(manageController.nodesController);
+    public void setParameters(TreeManageController manager) {
+        this.manager = manager;
+        setCaller(manager.treeController);
     }
 
     @Override
     public boolean isSourceNode(InfoNode node) {
-        List<InfoNode> nodes = manageController.selectedItems();
+        List<InfoNode> nodes = manager.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             return false;
         }
@@ -46,14 +46,14 @@ public class TreeNodesMoveController extends ControlInfoTreeSelector {
     @FXML
     @Override
     public synchronized void okAction() {
-        if (manageController == null || manageController.getMyStage() == null
-                || !manageController.getMyStage().isShowing()) {
+        if (manager == null || manager.getMyStage() == null
+                || !manager.getMyStage().isShowing()) {
             return;
         }
-        List<InfoNode> nodes = manageController.selectedItems();
+        List<InfoNode> nodes = manager.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             alertError(message("NoData"));
-            manageController.getMyStage().requestFocus();
+            manager.getMyStage().requestFocus();
             return;
         }
         TreeItem<InfoNode> targetItem = selected();
@@ -95,8 +95,8 @@ public class TreeNodesMoveController extends ControlInfoTreeSelector {
 
             @Override
             protected void whenSucceeded() {
-                manageController.popInformation(message("Moved") + ": " + count);
-                manageController.nodesMoved(targetNode, nodes);
+                manager.popInformation(message("Moved") + ": " + count);
+                manager.nodesMoved(targetNode, nodes);
                 closeStage();
             }
         };
@@ -106,7 +106,7 @@ public class TreeNodesMoveController extends ControlInfoTreeSelector {
     /*
         static methods
      */
-    public static TreeNodesMoveController oneOpen(TreeManageController treeController) {
+    public static TreeNodesMoveController oneOpen(TreeManageController manager) {
         TreeNodesMoveController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
@@ -122,10 +122,10 @@ public class TreeNodesMoveController extends ControlInfoTreeSelector {
             }
         }
         if (controller == null) {
-            controller = (TreeNodesMoveController) WindowTools.openChildStage(treeController.getMyWindow(), Fxmls.TreeNodesMoveFxml);
+            controller = (TreeNodesMoveController) WindowTools.openChildStage(manager.getMyWindow(), Fxmls.TreeNodesMoveFxml);
         }
         if (controller != null) {
-            controller.setParameters(treeController);
+            controller.setParameters(manager);
             controller.requestMouse();
         }
         return controller;

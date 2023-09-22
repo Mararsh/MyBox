@@ -12,19 +12,22 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-14
  * @License Apache License Version 2.0
  */
-public class TreeNodeParentController extends ControlInfoTreeSelector {
+public class TreeNodeParentController extends BaseController {
 
     protected TreeManageController manageController;
-    protected ControlInfoTreeAttributes nodeController;
+    protected ControlInfoNodeAttributes nodeController;
+
+    @FXML
+    protected ControlInfoNodeSelector selectorController;
 
     public TreeNodeParentController() {
         baseTitle = message("Owner");
     }
 
-    public void setParamters(ControlInfoTreeAttributes nodeController) {
+    public void setParamters(ControlInfoNodeAttributes nodeController) {
         this.nodeController = nodeController;
-        this.manageController = nodeController.treeController;
-        setCaller(manageController.nodesController);
+        this.manageController = nodeController.manager;
+        selectorController.nodesController.setCaller(manageController.nodesController);
     }
 
     @FXML
@@ -34,7 +37,7 @@ public class TreeNodeParentController extends ControlInfoTreeSelector {
             close();
             return;
         }
-        TreeItem<InfoNode> targetItem = selected();
+        TreeItem<InfoNode> targetItem = selectorController.nodesController.selected();
         if (targetItem == null) {
             alertError(message("SelectNodeAsParent"));
             return;
@@ -46,7 +49,7 @@ public class TreeNodeParentController extends ControlInfoTreeSelector {
     /*
         static methods
      */
-    public static TreeNodeParentController open(ControlInfoTreeAttributes nodeController) {
+    public static TreeNodeParentController open(ControlInfoNodeAttributes nodeController) {
         TreeNodeParentController controller = (TreeNodeParentController) WindowTools.openChildStage(
                 nodeController.getMyWindow(), Fxmls.TreeNodeParentFxml, false);
         controller.setParamters(nodeController);

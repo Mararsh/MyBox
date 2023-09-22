@@ -27,14 +27,14 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseInfoTreeNodeController extends BaseController {
 
-    protected TreeManageController treeController;
+    protected TreeManageController manager;
     protected String defaultExt;
     protected boolean nodeChanged;
 
     @FXML
     protected Tab attributesTab, valueTab;
     @FXML
-    protected ControlInfoTreeAttributes attributesController;
+    protected ControlInfoNodeAttributes attributesController;
     @FXML
     protected TextInputControl valueInput, moreInput;
     @FXML
@@ -72,7 +72,7 @@ public class BaseInfoTreeNodeController extends BaseController {
 
     public void setParameters(TreeManageController treeController) {
         try {
-            this.treeController = treeController;
+            this.manager = treeController;
             attributesController.setParameters(treeController);
 
             if (valueLabel != null) {
@@ -106,10 +106,10 @@ public class BaseInfoTreeNodeController extends BaseController {
 
     protected void updateTitle(InfoNode node) {
         if (node != null) {
-            treeController.setTitle(treeController.baseTitle + ": "
+            manager.setTitle(manager.baseTitle + ": "
                     + node.getNodeid() + " - " + node.getTitle());
         } else {
-            treeController.setTitle(treeController.baseTitle);
+            manager.setTitle(manager.baseTitle);
         }
     }
 
@@ -133,7 +133,7 @@ public class BaseInfoTreeNodeController extends BaseController {
         }
         String info = nodeInfo();
         InfoNode node = InfoNode.create()
-                .setCategory(treeController.category)
+                .setCategory(manager.category)
                 .setTitle(title)
                 .setInfo(info);
         return node;
@@ -150,7 +150,7 @@ public class BaseInfoTreeNodeController extends BaseController {
     protected String nodeTitle() {
         String title = attributesController.nameInput.getText();
         if (title == null || title.isBlank()) {
-            popError(message("InvalidParameters") + ": " + treeController.nameMsg);
+            popError(message("InvalidParameters") + ": " + manager.nameMsg);
             if (tabPane != null && attributesTab != null) {
                 tabPane.getSelectionModel().select(attributesTab);
             }
@@ -169,7 +169,7 @@ public class BaseInfoTreeNodeController extends BaseController {
     }
 
     protected void showEditorPane() {
-        treeController.showRightPane();
+        manager.showRightPane();
     }
 
     public void valueChanged(boolean changed) {
@@ -177,7 +177,7 @@ public class BaseInfoTreeNodeController extends BaseController {
             return;
         }
         if (valueTab != null) {
-            valueTab.setText(treeController.valueMsg + (changed ? "*" : ""));
+            valueTab.setText(manager.valueMsg + (changed ? "*" : ""));
         }
         if (changed) {
             nodeChanged(changed);
@@ -191,7 +191,7 @@ public class BaseInfoTreeNodeController extends BaseController {
         this.nodeChanged = changed;
         if (!changed) {
             if (valueTab != null) {
-                valueTab.setText(treeController.valueMsg);
+                valueTab.setText(manager.valueMsg);
             }
             if (attributesTab != null) {
                 attributesTab.setText(message("Attributes"));
@@ -207,7 +207,7 @@ public class BaseInfoTreeNodeController extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(message(treeController.category) + "-" + DateTools.nowFileString() + "." + defaultExt);
+        File file = chooseSaveFile(message(manager.category) + "-" + DateTools.nowFileString() + "." + defaultExt);
         if (file == null) {
             return;
         }

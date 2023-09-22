@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <children>
-                                <fx:include fx:id="attributes" source="ControlInfoTreeAttributes.fxml" />
+                                <fx:include fx:id="attributes" source="ControlInfoNodeAttributes.fxml" />
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

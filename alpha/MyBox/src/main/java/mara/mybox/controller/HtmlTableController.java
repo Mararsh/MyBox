@@ -115,6 +115,7 @@ public class HtmlTableController extends BaseWebViewController {
         table.add(data);
     }
 
+    @Override
     public void clear() {
         displayHtml(null);
     }

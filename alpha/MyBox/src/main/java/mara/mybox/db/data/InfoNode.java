@@ -442,8 +442,15 @@ public class InfoNode extends BaseData {
     }
 
     public static void view(InfoNode node, String title) {
+        String html = InfoNode.nodeHtml(node, title);
+        if (html != null && !html.isBlank()) {
+            HtmlTableController.open(title, html);
+        }
+    }
+
+    public static String nodeHtml(InfoNode node, String title) {
         if (node == null) {
-            return;
+            return null;
         }
         List<String> names = new ArrayList<>();
         names.addAll(Arrays.asList(message("Name"), message("Value")));
@@ -464,10 +471,8 @@ public class InfoNode extends BaseData {
         row.addAll(Arrays.asList(message("UpdateTime"), DateTools.datetimeToString(node.getUpdateTime())));
         table.add(row);
 
-        String html = table.div() + "<BR>"
+        return table.div() + "<BR>"
                 + infoHtml(node.getCategory(), node.getInfo(), true, false);
-
-        HtmlTableController.open(title, html);
     }
 
     public static String infoHtml(String category, String s, boolean showIcon, boolean singleNotIn) {

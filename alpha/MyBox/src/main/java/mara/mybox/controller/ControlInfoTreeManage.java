@@ -30,23 +30,18 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class ControlInfoTreeManage extends BaseInfoTreeController {
+public class ControlInfoTreeManage extends BaseInfoTreeViewController {
 
-    protected TreeManageController manageController;
+    protected TreeManageController manager;
+    protected boolean nodeExecutable;
 
     public void setParameters(TreeManageController parent) {
-        this.parentController = parent;
-        this.baseName = parent.baseName;
-        manageController = parent;
-        tableTreeNode = parent.tableTreeNode;
-        tableTreeNodeTag = parent.tableTreeNodeTag;
-        category = manageController.category;
-        baseTitle = category;
-        nodeExecutable = manageController != null
-                && (manageController.startButton != null || manageController.goButton != null
-                || (manageController.nodeController != null
-                && (manageController.nodeController.startButton != null
-                || manageController.nodeController.goButton != null)));
+        manager = parent;
+        nodeExecutable = manager != null
+                && (manager.startButton != null || manager.goButton != null
+                || (manager.nodeController != null
+                && (manager.nodeController.startButton != null
+                || manager.nodeController.goButton != null)));
     }
 
     public String chainName(Connection conn, InfoNode node) {
@@ -66,17 +61,17 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     public void itemClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        clicked(UserConfig.getString(baseName + "TreeManageWhenLeftClickNode", "Edit"), item);
+        clicked(UserConfig.getString(baseName + "WhenLeftClickNode", "Edit"), item);
     }
 
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        clicked(UserConfig.getString(baseName + "TreeManageWhenDoubleClickNode", "View"), item);
+        clicked(UserConfig.getString(baseName + "WhenDoubleClickNode", "View"), item);
     }
 
     @Override
     public void rightClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        clicked(UserConfig.getString(baseName + "TreeManageWhenRightClickNode", "PopMenu"), item);
+        clicked(UserConfig.getString(baseName + "WhenRightClickNode", "PopMenu"), item);
     }
 
     public void clicked(String clickAction, TreeItem<InfoNode> item) {
@@ -285,19 +280,19 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     public Menu leftClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenLeftClickNode"), StyleTools.getIconImageView("iconSelect.png"));
-        clickMenu(treeItem, clickMenu, "TreeManageWhenLeftClickNode", "Edit");
+        clickMenu(treeItem, clickMenu, "WhenLeftClickNode", "Edit");
         return clickMenu;
     }
 
     public Menu doubleClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
-        clickMenu(treeItem, clickMenu, "TreeManageWhenDoubleClickNode", "View");
+        clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "View");
         return clickMenu;
     }
 
     public Menu rightClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenRightClickNode"), StyleTools.getIconImageView("iconSelectNone.png"));
-        clickMenu(treeItem, clickMenu, "TreeManageWhenRightClickNode", "PopMenu");
+        clickMenu(treeItem, clickMenu, "WhenRightClickNode", "PopMenu");
         return clickMenu;
     }
 
@@ -419,7 +414,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     public void nodeAdded(InfoNode parent, InfoNode newNode) {
-        manageController.nodeAdded(parent, newNode);
+        manager.nodeAdded(parent, newNode);
     }
 
     protected void deleteNode(TreeItem<InfoNode> targetItem) {
@@ -478,7 +473,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
                     }
                 }
                 popSuccessful();
-                manageController.nodeDeleted(node);
+                manager.nodeDeleted(node);
             }
 
         };
@@ -521,7 +516,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
                 treeView.refresh();
-                manageController.nodeRenamed(updatedNode);
+                manager.nodeRenamed(updatedNode);
                 popSuccessful();
             }
         };
@@ -548,34 +543,34 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
     }
 
     protected void nodeMoved(InfoNode parent, InfoNode node) {
-        manageController.nodeMoved(parent, node);
+        manager.nodeMoved(parent, node);
     }
 
     protected void editNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
-        manageController.editNode(item.getValue());
+        manager.editNode(item.getValue());
     }
 
     protected void pasteNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
-        manageController.pasteNode(item.getValue());
+        manager.pasteNode(item.getValue());
     }
 
     protected void executeNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
-        manageController.executeNode(item.getValue());
+        manager.executeNode(item.getValue());
     }
 
     protected void exportNode(TreeItem<InfoNode> item) {
         TreeNodeExportController exportController
                 = (TreeNodeExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeExportFxml);
-        exportController.setParamters(manageController, item);
+        exportController.setParamters(infoController, item);
     }
 
     @FXML
@@ -586,22 +581,22 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     protected void afterImport() {
-        manageController.tagsController.refreshAction();
-        manageController.refreshTimes();
+        infoController.tagsController.refreshAction();
+        infoController.refreshTimes();
     }
 
     protected void listChildren(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
-        manageController.loadChildren(item.getValue());
+        infoController.loadChildren(item.getValue());
     }
 
     protected void listDescentants(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
-        manageController.loadDescendants(item.getValue());
+        infoController.loadDescendants(item.getValue());
     }
 
     @FXML

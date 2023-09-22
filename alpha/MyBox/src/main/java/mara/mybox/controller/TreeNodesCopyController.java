@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class TreeNodesCopyController extends ControlInfoTreeSelector {
 
-    protected TreeManageController manageController;
+    protected TreeManageController manager;
 
     @FXML
     protected RadioButton nodeAndDescendantsRadio, descendantsRadio, nodeRadio;
@@ -30,14 +30,14 @@ public class TreeNodesCopyController extends ControlInfoTreeSelector {
         baseTitle = message("Copy");
     }
 
-    public void setParamters(TreeManageController manageController) {
-        this.manageController = manageController;
-        setCaller(manageController.nodesController);
+    public void setParamters(TreeManageController manager) {
+        this.manager = manager;
+        setCaller(manager.treeController);
     }
 
     @Override
     public boolean isSourceNode(InfoNode node) {
-        List<InfoNode> nodes = manageController.selectedItems();
+        List<InfoNode> nodes = manager.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             return false;
         }
@@ -52,14 +52,14 @@ public class TreeNodesCopyController extends ControlInfoTreeSelector {
     @FXML
     @Override
     public void okAction() {
-        if (manageController == null || manageController.getMyStage() == null
-                || !manageController.getMyStage().isShowing()) {
+        if (manager == null || manager.getMyStage() == null
+                || !manager.getMyStage().isShowing()) {
             return;
         }
-        List<InfoNode> nodes = manageController.selectedItems();
+        List<InfoNode> nodes = manager.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             alertError(message("NoData"));
-            manageController.getMyStage().requestFocus();
+            manager.getMyStage().requestFocus();
             return;
         }
         TreeItem<InfoNode> targetItem = selected();
@@ -103,8 +103,8 @@ public class TreeNodesCopyController extends ControlInfoTreeSelector {
 
             @Override
             protected void whenSucceeded() {
-                manageController.popSuccessful();
-                manageController.nodesCopied(targetNode);
+                manager.popSuccessful();
+                manager.nodesCopied(targetNode);
                 closeStage();
             }
         };
@@ -114,7 +114,7 @@ public class TreeNodesCopyController extends ControlInfoTreeSelector {
     /*
         static methods
      */
-    public static TreeNodesCopyController oneOpen(TreeManageController treeController) {
+    public static TreeNodesCopyController oneOpen(TreeManageController manager) {
         TreeNodesCopyController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
@@ -130,10 +130,10 @@ public class TreeNodesCopyController extends ControlInfoTreeSelector {
             }
         }
         if (controller == null) {
-            controller = (TreeNodesCopyController) WindowTools.openChildStage(treeController.getMyWindow(), Fxmls.TreeNodesCopyFxml);
+            controller = (TreeNodesCopyController) WindowTools.openChildStage(manager.getMyWindow(), Fxmls.TreeNodesCopyFxml);
         }
         if (controller != null) {
-            controller.setParamters(treeController);
+            controller.setParamters(manager);
             controller.requestMouse();
         }
         return controller;

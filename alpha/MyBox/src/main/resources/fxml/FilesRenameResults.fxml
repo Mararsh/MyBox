@@ -79,6 +79,7 @@ License:    Apache License Version 2.0
             </TabPane>
                 <HBox fx:id="barBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
                     <children>
+                  <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%InvalidWillSkipped" HBox.hgrow="ALWAYS" />
                   <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

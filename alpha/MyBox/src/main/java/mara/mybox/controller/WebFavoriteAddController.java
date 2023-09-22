@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-3-29
  * @License Apache License Version 2.0
  */
-public class WebFavoriteAddController extends BaseInfoTreeController {
+public class WebFavoriteAddController extends BaseInfoTreeViewController {
 
     protected String title, address;
 

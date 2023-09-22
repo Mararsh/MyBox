@@ -28,7 +28,7 @@ public class TreeNodeCopyController extends ControlInfoTreeSelector {
         baseTitle = message("CopyNode");
     }
 
-    public void setCaller(BaseInfoTreeController nodesController, InfoNode sourceNode, String name) {
+    public void setCaller(BaseInfoTreeViewController nodesController, InfoNode sourceNode, String name) {
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeCopyed") + ":\n" + name);
         setCaller(nodesController);

@@ -16,7 +16,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-9-16
  * @License Apache License Version 2.0
  */
-public class ControlData2DDefAttributes extends ControlInfoTreeAttributes {
+public class ControlData2DDefAttributes extends ControlInfoNodeAttributes {
 
     protected short scale;
     protected int maxRandom;

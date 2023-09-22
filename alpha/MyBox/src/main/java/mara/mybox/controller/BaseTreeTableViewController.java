@@ -474,7 +474,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     public List<MenuItem> viewMenuItems(TreeItem<NodeP> item) {
         List<MenuItem> items = foldMenuItems(item);
 
-        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
+        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             viewNode(item);
         });

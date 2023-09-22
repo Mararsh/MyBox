@@ -46,7 +46,7 @@ import mara.mybox.value.UserConfig;
  */
 public class TreeNodeExportController extends BaseTaskController {
 
-    protected TreeManageController treeController;
+    protected BaseInfoTreeController manager;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TreeTableView<InfoNode> infoTree;
@@ -170,11 +170,11 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    public void setParamters(TreeManageController treeController, TreeItem<InfoNode> item) {
-        this.treeController = treeController;
-        this.tableTreeNode = treeController.tableTreeNode;
-        this.tableTreeNodeTag = treeController.tableTreeNodeTag;
-        if (treeController instanceof WebFavoritesController) {
+    public void setParamters(BaseInfoTreeController selector, TreeItem<InfoNode> item) {
+        this.manager = selector;
+        this.tableTreeNode = selector.tableTreeNode;
+        this.tableTreeNodeTag = selector.tableTreeNodeTag;
+        if (selector instanceof WebFavoritesController) {
             iconCheck.setVisible(true);
             iconCheck.setSelected(UserConfig.getBoolean(baseName + "Icon", false));
             iconCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -187,7 +187,7 @@ public class TreeNodeExportController extends BaseTaskController {
             iconCheck.setSelected(false);
             iconCheck.setVisible(false);
         }
-        nodesController.setCaller(treeController.nodesController);
+        nodesController.setCaller(manager.treeController);
         if (item == null) {
             infoTree.getSelectionModel().select(infoTree.getRoot());
         } else {
@@ -346,7 +346,7 @@ public class TreeNodeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(xmlTag(treeController.category)).append(">\n");
+                            .append("<").append(xmlTag(manager.category)).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -358,7 +358,7 @@ public class TreeNodeExportController extends BaseTaskController {
                     updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
-                    s.append("{\"").append(message(treeController.category)).append("\": [\n");
+                    s.append("{\"").append(message(manager.category)).append("\": [\n");
                     jsonWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -434,7 +434,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + xmlTag(treeController.category) + ">\n");
+                xmlWriter.write("</" + xmlTag(manager.category) + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;
@@ -625,9 +625,9 @@ public class TreeNodeExportController extends BaseTaskController {
             xmlWriter.write(indent + indent + indent + "<" + xmlTag("Title")
                     + "><![CDATA[" + node.getTitle() + "]]></" + xmlTag("Title") + ">\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
-                xmlWriter.write(indent + indent + indent + "<" + treeController.timeMsg + ">"
+                xmlWriter.write(indent + indent + indent + "<" + manager.timeMsg + ">"
                         + DateTools.datetimeToString(node.getUpdateTime())
-                        + "</" + treeController.timeMsg + ">\n");
+                        + "</" + manager.timeMsg + ">\n");
             }
             if (tags != null && !tags.isEmpty()) {
                 String s = null;
@@ -673,7 +673,7 @@ public class TreeNodeExportController extends BaseTaskController {
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                 s.append(",\n");
                 s.append(indent).append(indent)
-                        .append("\"").append(treeController.timeMsg).append("\": \"")
+                        .append("\"").append(manager.timeMsg).append("\": \"")
                         .append(node.getUpdateTime()).append("\"");
             }
             if (tags != null && !tags.isEmpty()) {

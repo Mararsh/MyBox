@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-10-15
  * @License Apache License Version 2.0
  */
-public class ControlRowFilterRefer extends BaseInfoTreeController {
+public class ControlRowFilterRefer extends BaseInfoTreeViewController {
 
     @FXML
     protected TextArea scriptInput;
