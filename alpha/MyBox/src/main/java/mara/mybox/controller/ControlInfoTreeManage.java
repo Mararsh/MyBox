@@ -20,7 +20,6 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -106,108 +105,6 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
             default:
                 break;
         }
-    }
-
-    @FXML
-    public void popViewMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true)) {
-            showViewMenu(event);
-        }
-    }
-
-    @FXML
-    public void showViewMenu(Event event) {
-        TreeItem<InfoNode> item = selected();
-        if (item == null) {
-            return;
-        }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
-
-        items.addAll(viewMenuItems(item));
-
-        items.add(new SeparatorMenuItem());
-
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "TreeViewPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
-
-        if (event == null) {
-            popNodeMenu(treeView, items);
-        } else {
-            popEventMenu(event, items);
-        }
-    }
-
-    @Override
-    public List<MenuItem> viewMenuItems(TreeItem<InfoNode> item) {
-        if (item == null) {
-            return null;
-        }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            viewNode(item);
-        });
-        menu.setDisable(item == null);
-        items.add(menu);
-
-        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
-        });
-        menu.setDisable(item == null);
-        items.add(menu);
-
-        menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
-        });
-        menu.setDisable(item == null);
-        items.add(menu);
-
-        items.add(new SeparatorMenuItem());
-
-        items.addAll(foldMenuItems(item));
-
-        items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listChildren(item);
-            }
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listDescentants(item);
-            }
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        items.add(menu);
-
-        return items;
     }
 
     @Override
@@ -738,20 +635,6 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
     protected void afterImport() {
         infoController.tagsController.refreshAction();
         infoController.refreshTimes();
-    }
-
-    protected void listChildren(TreeItem<InfoNode> item) {
-        if (item == null) {
-            return;
-        }
-        infoController.loadChildren(item.getValue());
-    }
-
-    protected void listDescentants(TreeItem<InfoNode> item) {
-        if (item == null) {
-            return;
-        }
-        infoController.loadDescendants(item.getValue());
     }
 
     @FXML

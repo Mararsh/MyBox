@@ -14,7 +14,6 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableTag;
@@ -166,25 +165,26 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
         }
     }
 
-    @FXML
-    public void addTag() {
-        addTag(false);
-    }
-
-    public void addTag(boolean forCurrentNode) {
-        if (task != null) {
-            task.cancel();
-        }
+    public String askName() {
         String name = PopTools.askValue(getBaseTitle(),
                 message("Add"), message("Tag"), message("Tag") + new Date().getTime());
         if (name == null || name.isBlank()) {
-            return;
+            return null;
         }
         for (Tag tag : tableData) {
             if (name.equals(tag.getTag())) {
                 popError(message("AlreadyExisted"));
-                return;
+                return null;
             }
+        }
+        return name;
+    }
+
+    @FXML
+    public void addTag() {
+        String name = askName();
+        if (name == null || name.isBlank()) {
+            return;
         }
         SingletonTask tagTask = new SingletonTask<Void>(this) {
             private Tag tag = null;
@@ -193,10 +193,6 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     tag = tableTag.insertData(conn, new Tag(category, name));
-                    if (forCurrentNode && tag != null && currentNode != null) {
-                        tableTreeNodeTag.insertData(conn,
-                                new InfoNodeTag(currentNode.getNodeid(), tag.getTgid()));
-                    }
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -208,14 +204,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             protected void whenSucceeded() {
                 tableData.add(0, tag);
                 popSuccessful();
-                if (selector instanceof TreeManageController) {
-                    TreeManageController manager = (TreeManageController) selector;
-                    manager.nodeController.attributesController.tableData.add(0, tag);
-                    if (forCurrentNode) {
-                        manager.nodeController.attributesController.tableView.getSelectionModel().select(tag);
-                    }
-                    manager.nodeController.attributesController.attributesChanged();
-                }
+                tagsChanged();
             }
 
         };
@@ -235,7 +224,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
 
             @Override
             protected void whenSucceeded() {
-                synchronizedTables();
+                tagsChanged();
             }
 
         };
@@ -294,30 +283,38 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
 
             @Override
             protected void whenSucceeded() {
-                synchronizedTables();
+                tagsChanged();
             }
 
         };
         start(saveTask, false);
     }
 
-    public void synchronizedTables() {
+    @Override
+    public void notifyLoaded() {
+        super.notifyLoaded();
+        tagsChanged();
+    }
+
+    @Override
+    public void tableChanged(boolean changed) {
+        super.tableChanged(changed);
+        checkTags(changed);
+    }
+
+    public void checkTags(boolean changed) {
+        if (!changed || isSettingValues || isSettingTable) {
+            return;
+        }
+        tagsChanged();
+    }
+
+    public void tagsChanged() {
+        if (isSettingValues) {
+            return;
+        }
         if (selector instanceof TreeManageController) {
-            TreeManageController manager = (TreeManageController) selector;
-            if (this.equals(manager.nodeController.attributesController)) {
-                manager.tagsController.isSettingValues = true;
-                manager.tagsController.tableData.setAll(tableData);
-                manager.tagsController.isSettingValues = false;
-            } else {
-                manager.nodeController.isSettingValues = true;
-                manager.nodeController.attributesController.tableData.setAll(tableData);
-                manager.nodeController.isSettingValues = false;
-                manager.nodeController.attributesController.markTags();
-            }
-        } else {
-            selector.tagsController.isSettingValues = true;
-            selector.tagsController.tableData.setAll(tableData);
-            selector.tagsController.isSettingValues = false;
+            ((TreeManageController) selector).nodeController.attributesController.synchronizeTags();
         }
     }
 

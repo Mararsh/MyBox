@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
 
 /**
  * @Author Mara
@@ -22,6 +23,9 @@ public class ControlInfoNodeSelector extends BaseInfoTreeController {
             super.initValues();
             treeController = nodesController;
             nodesController.selector = this;
+            nodesListCheck = nodesController.nodesListCheck;
+
+            viewController.initStyle = HtmlStyles.styleValue("Table") + "\n body { width: 400px; } \n";
 
         } catch (Exception e) {
             MyBoxLog.error(e);

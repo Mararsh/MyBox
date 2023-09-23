@@ -10,9 +10,13 @@ import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
@@ -29,13 +33,16 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -261,16 +268,115 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
 
     @Override
     public List<MenuItem> functionMenuItems(TreeItem<InfoNode> inItem) {
-        List<MenuItem> items = viewMenuItems(inItem);
+        return viewMenuItems(inItem);
+    }
 
-        TreeItem<InfoNode> item = validItem(inItem);
-        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+    @FXML
+    public void popViewMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true)) {
+            showViewMenu(event);
+        }
+    }
+
+    @FXML
+    public void showViewMenu(Event event) {
+        TreeItem<InfoNode> item = selected();
+        if (item == null) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        items.addAll(viewMenuItems(item));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "TreeViewPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        if (event == null) {
+            popNodeMenu(treeView, items);
+        } else {
+            popEventMenu(event, items);
+        }
+    }
+
+    @Override
+    public List<MenuItem> viewMenuItems(TreeItem<InfoNode> item) {
+        if (item == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addChild(item);
+            viewNode(item);
+        });
+        menu.setDisable(item == null);
+        items.add(menu);
+
+        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
+        });
+        menu.setDisable(item == null);
+        items.add(menu);
+
+        menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
+        });
+        menu.setDisable(item == null);
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+
+        items.addAll(foldMenuItems(item));
+
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                listChildren(item);
+            }
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                listDescentants(item);
+            }
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
         });
         items.add(menu);
 
         return items;
+    }
+
+    @FXML
+    @Override
+    public void addAction() {
+        addChild(selected());
     }
 
     public void addChild(TreeItem<InfoNode> targetItem) {
@@ -407,6 +513,20 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
         } catch (Exception e) {
             error = e.toString();
         }
+    }
+
+    protected void listChildren(TreeItem<InfoNode> item) {
+        if (item == null) {
+            return;
+        }
+        infoController.loadChildren(item.getValue());
+    }
+
+    protected void listDescentants(TreeItem<InfoNode> item) {
+        if (item == null) {
+            return;
+        }
+        infoController.loadDescendants(item.getValue());
     }
 
     @FXML

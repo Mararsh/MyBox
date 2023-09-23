@@ -203,7 +203,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
             }
         }
         isSettingValues = false;
-        if (show) {
+        if (show && leftPaneCheck != null) {
             leftPaneCheck.setSelected(true);
         }
     }

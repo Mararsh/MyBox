@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -68,21 +69,14 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
             nameLabel.setText(manager.nameMsg);
             timeLabel.setText(manager.timeMsg);
 
-            manager.tagsController.loadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    isSettingValues = true;
-                    tableData.setAll(manager.tagsController.tableData);
-                    isSettingValues = false;
-                    markTags();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
+    /*
+        attributes
+     */
     public void attributesChanged() {
         if (isSettingValues || editor == null) {
             return;
@@ -91,15 +85,6 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
             editor.attributesTab.setText(message("Attributes") + "*");
         }
         editor.nodeChanged(true);
-    }
-
-    @Override
-    public void notifySelected() {
-        if (isSettingValues) {
-            return;
-        }
-        attributesChanged();
-        selectedNotify.set(!selectedNotify.get());
     }
 
     protected void editNode(InfoNode node) {
@@ -119,52 +104,6 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
         isSettingValues = false;
         refreshParentNode();
         refreshAction();
-    }
-
-    protected void checkParentNode(InfoNode node) {
-        if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
-            return;
-        }
-        refreshParentNode();
-    }
-
-    protected void setParentNode(InfoNode node) {
-        parentNode = node;
-        refreshParentNode();
-    }
-
-    protected void refreshParentNode() {
-        SingletonTask updateTask = new SingletonTask<Void>(this) {
-            private String chainName;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    if (currentNode != null) {
-                        if (currentNode.getParentid() >= 0) {
-                            parentNode = tableTreeNode.find(conn, currentNode.getParentid());
-                        } else {
-                            parentNode = tableTreeNode.readData(conn, parentNode);
-                        }
-                    }
-                    if (parentNode == null) {
-                        chainName = "";
-                    } else {
-                        chainName = manager.nodesController.chainName(conn, parentNode);
-                    }
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                chainLabel.setText(chainName);
-            }
-        };
-        start(updateTask, false);
     }
 
     protected void copyNode() {
@@ -293,14 +232,136 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
         isSettingValues = false;
     }
 
+    /*
+        parent
+     */
     @FXML
-    @Override
-    public void postLoadedTableData() {
-        super.postLoadedTableData();
-        markTags();
+    public void selectParent() {
+        TreeNodeParentController.open(this);
     }
 
-    public void markTags() {
+    protected void checkParentNode(InfoNode node) {
+        if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
+            return;
+        }
+        refreshParentNode();
+    }
+
+    protected void setParentNode(InfoNode node) {
+        parentNode = node;
+        refreshParentNode();
+    }
+
+    protected void refreshParentNode() {
+        SingletonTask updateTask = new SingletonTask<Void>(this) {
+            private String chainName;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    if (currentNode != null) {
+                        if (currentNode.getParentid() >= 0) {
+                            parentNode = tableTreeNode.find(conn, currentNode.getParentid());
+                        } else {
+                            parentNode = tableTreeNode.readData(conn, parentNode);
+                        }
+                    }
+                    if (parentNode == null) {
+                        chainName = "";
+                    } else {
+                        chainName = manager.nodesController.chainName(conn, parentNode);
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                chainLabel.setText(chainName);
+            }
+        };
+        start(updateTask, false);
+    }
+
+
+    /*
+        tags
+     */
+    @Override
+    public void notifySelected() {
+        if (isSettingValues) {
+            return;
+        }
+        attributesChanged();
+        selectedNotify.set(!selectedNotify.get());
+    }
+
+    @FXML
+    @Override
+    public void addTag() {
+        String name = askName();
+        if (name == null || name.isBlank()) {
+            return;
+        }
+        SingletonTask tagTask = new SingletonTask<Void>(this) {
+            private Tag tag = null;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    tag = tableTag.insertData(conn, new Tag(category, name));
+                    if (tag != null && currentNode != null) {
+                        tableTreeNodeTag.insertData(conn,
+                                new InfoNodeTag(currentNode.getNodeid(), tag.getTgid()));
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return tag != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableData.add(0, tag);
+                tableView.getSelectionModel().select(tag);
+                attributesChanged();
+                popSuccessful();
+                tagsChanged();
+            }
+
+        };
+        start(tagTask, thisPane);
+    }
+
+    @Override
+    public void notifyLoaded() {
+        if (loadedNotify != null) {
+            loadedNotify.set(!loadedNotify.get());
+        }
+    }
+
+    @Override
+    public void checkTags(boolean changed) {
+    }
+
+    @Override
+    public void tagsChanged() {
+        manager.tagsController.isSettingValues = true;
+        manager.tagsController.tableData.setAll(tableData);
+        manager.tagsController.isSettingValues = false;
+    }
+
+    public void synchronizeTags() {
+        if (isSettingValues) {
+            return;
+        }
+        isSettingValues = true;
+        tableData.setAll(manager.tagsController.tableData);
+        isSettingValues = false;
         if (tableData.isEmpty() || currentNode == null) {
             return;
         }
@@ -331,17 +392,6 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
 
         };
         start(tagsTask, false);
-    }
-
-    @FXML
-    @Override
-    public void addTag() {
-        manager.tagsController.addTag(true);
-    }
-
-    @FXML
-    public void selectParent() {
-        TreeNodeParentController.open(this);
     }
 
     @Override

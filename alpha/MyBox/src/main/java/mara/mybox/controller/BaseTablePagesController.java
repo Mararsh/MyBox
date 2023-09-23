@@ -80,6 +80,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     /*
         table
      */
+    @Override
     public void updateStatus() {
         super.updateStatus();
         if (dataSizeLabel != null) {
@@ -500,7 +501,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     protected void afterClear() {
-        resetView(false);
+        resetView(true);
     }
 
     @FXML
