@@ -169,6 +169,58 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("m / M", "", message("Mute") + " / " + message("Sound"), "", "iconMute.png"));
             tableData.add(new ShortCut("f / F", "", message("FullScreen"), "", "iconExpand.png"));
 
+            tableData.add(new ShortCut("", "", message("Analyse"), "", "iconAnalyse.png"));
+            tableData.add(new ShortCut("", "", message("Anchor"), "", "iconAnchor.png"));
+            tableData.add(new ShortCut("", "", message("FileBackups"), "", "iconBackup.png"));
+            tableData.add(new ShortCut("", "", message("Calculator"), "", "iconCalculator.png"));
+            tableData.add(new ShortCut("", "", message("Data"), "", "iconData.png"));
+            tableData.add(new ShortCut("", "", message("Default"), "", "iconDefault.png"));
+            tableData.add(new ShortCut("", "", message("Delimiter"), "", "iconDelimiter.png"));
+            tableData.add(new ShortCut("", "", message("Demo"), "", "iconDemo.png"));
+            tableData.add(new ShortCut("", "", message("Edit"), "", "iconEdit.png"));
+            tableData.add(new ShortCut("", "", message("Function"), "", "iconFunction.png"));
+            tableData.add(new ShortCut("", "", message("Examples"), "", "iconExamples.png"));
+            tableData.add(new ShortCut("", "", message("Export"), "", "iconExport.png"));
+            tableData.add(new ShortCut("", "", message("Import"), "", "iconImport.png"));
+            tableData.add(new ShortCut("", "", message("Information"), "", "iconInfo.png"));
+            tableData.add(new ShortCut("", "", message("LoadedSize"), "", "iconLoadSize.png"));
+            tableData.add(new ShortCut("", "", message("Location"), "", "iconLocation.png"));
+            tableData.add(new ShortCut("", "", message("Matrix"), "", "iconMatrix.png"));
+            tableData.add(new ShortCut("", "", message("ContextMenu"), "", "iconMenu.png"));
+            tableData.add(new ShortCut("", "", message("MetaData"), "", "iconMeta.png"));
+            tableData.add(new ShortCut("", "", message("More"), "", "iconMore.png"));
+            tableData.add(new ShortCut("", "", message("Move"), "", "iconMove.png"));
+            tableData.add(new ShortCut("", "", message("Add"), "", "iconNewItem.png"));
+            tableData.add(new ShortCut("", "", message("Transparent"), "", "iconOpacity.png"));
+            tableData.add(new ShortCut("", "", message("Panes"), "", "iconPanes.png"));
+            tableData.add(new ShortCut("", "", message("Pause"), "", "iconPause.png"));
+            tableData.add(new ShortCut("", "", message("Permissions"), "", "iconPermission.png"));
+            tableData.add(new ShortCut("", "", message("Query"), "", "iconQuery.png"));
+            tableData.add(new ShortCut("", "", message("Random"), "", "iconRandom.png"));
+            tableData.add(new ShortCut("", "", message("Repeat"), "", "iconRepeat.png"));
+            tableData.add(new ShortCut("", "", message("Sample"), "", "iconSample.png"));
+            tableData.add(new ShortCut("", "", message("SelectFile"), "", "iconSelectFile.png"));
+            tableData.add(new ShortCut("", "", message("SelectPath"), "", "iconSelectPath.png"));
+            tableData.add(new ShortCut("", "", message("OpenDirectory"), "", "iconOpenPath.png"));
+            tableData.add(new ShortCut("", "", message("Insert"), "", "iconInsert.png"));
+            tableData.add(new ShortCut("", "", message("InsertFiles"), "", "iconInsertFile.png"));
+            tableData.add(new ShortCut("", "", message("InsertDirectory"), "", "iconInsertPath.png"));
+            tableData.add(new ShortCut("", "", message("Options"), "", "iconSetting.png"));
+            tableData.add(new ShortCut("", "", message("Shear"), "", "iconShear.png"));
+            tableData.add(new ShortCut("", "", message("Snapshot"), "", "iconSnapshot.png"));
+            tableData.add(new ShortCut("", "", message("Sort"), "", "iconSort.png"));
+            tableData.add(new ShortCut("", "", message("Statistic"), "", "iconStatistic.png"));
+            tableData.add(new ShortCut("", "", message("Style"), "", "iconStyle.png"));
+            tableData.add(new ShortCut("", "", message("SVG"), "", "iconSVG.png"));
+            tableData.add(new ShortCut("", "", message("Tips"), "", "iconTips.png"));
+            tableData.add(new ShortCut("", "", message("Typesetting"), "", "iconTypesetting.png"));
+            tableData.add(new ShortCut("", "", message("Validate"), "", "iconVerify.png"));
+            tableData.add(new ShortCut("", "", message("View"), "", "iconView.png"));
+            tableData.add(new ShortCut("", "", message("SystemMethod"), "", "iconWindow.png"));
+            tableData.add(new ShortCut("", "", message("Wrap"), "", "iconWrap.png"));
+            tableData.add(new ShortCut("", "", message("Rulers"), "", "iconXRuler.png"));
+            tableData.add(new ShortCut("", "", message("Yes"), "", "iconYes.png"));
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

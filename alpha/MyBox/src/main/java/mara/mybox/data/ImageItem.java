@@ -161,11 +161,15 @@ public class ImageItem {
             preDefined.add(new ImageItem().setName("MyBox.png").setAddress("img/MyBox.png"));
 
             List<String> icons = new ArrayList<>();
-            icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat", "Clear", "Clipboard", "Copy",
-                    "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft", "Edit", "Examples", "Export",
+            icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat",
+                    "Clear", "Clipboard", "Close", "Copy",
+                    "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
+                    "Edit", "Examples", "Export",
                     "Function", "Go", "Import", "Menu", "NewItem", "OK", "OpenPath",
-                    "Panes", "Play", "Permission", "Polylines", "Pop", "Query", "Random", "Recover", "Refresh", "Repeat",
-                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Style", "SVG", "Tips", "Typesetting",
+                    "Panes", "Play", "Permission", "Polylines", "Pop", "Query",
+                    "Random", "Recover", "Refresh", "Repeat",
+                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Style",
+                    "SVG", "Tips", "Tree", "Typesetting",
                     "Undo", "Verify", "View", "Window"));
             for (String name : icons) {
                 item = new ImageItem()

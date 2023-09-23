@@ -542,7 +542,7 @@ public class ControlWebView extends BaseController {
                 writeStyle(initStyle);
             } else {
                 String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
-                setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
+                writeStyle(UserConfig.getString(prefix + "HtmlStyle", null));
             }
 
             try {

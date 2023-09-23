@@ -249,7 +249,8 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             selected = tableData;
         }
         if (selected == null || selected.isEmpty()) {
-            popError(message("NoData"));
+            popError(message("SelectToHandle"));
+            return;
         }
         selector.clearQuery();
         selector.queryConditions = " category='" + category + "' AND "

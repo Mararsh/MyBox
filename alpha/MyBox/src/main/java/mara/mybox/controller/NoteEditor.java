@@ -28,12 +28,13 @@ public class NoteEditor extends ControlHtmlEditor {
             this.notesController = notesController;
             this.baseName = notesController.baseName;
             saveButton = notesController.saveButton;
-            webViewController.defaultStyle = HtmlStyles.styleValue("Default");
 
             infoController.setEditor(this);
             notesController.nodeController = infoController;
 
             webViewController.linkInNewTab = true;
+            webViewController.defaultStyle = HtmlStyles.styleValue("Default");
+            webViewController.initStyle(HtmlStyles.styleValue("Table"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

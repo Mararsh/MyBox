@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.PixelReader;
@@ -402,13 +403,16 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 xyText.setText("");
                 return null;
             }
-            PixelReader pixelReader = imageView.getImage().getPixelReader();
             int x = (int) p.getX();
             int y = (int) p.getY();
-            Color color = pixelReader.getColor(x, y);
             String s = (int) Math.round(x / widthRatio()) + ","
-                    + (int) Math.round(y / heightRatio()) + "\n"
-                    + FxColorTools.colorDisplaySimple(color);
+                    + (int) Math.round(y / heightRatio());
+            if (x >= 0 && x < imageView.getImage().getWidth()
+                    && y >= 0 && y < imageView.getImage().getHeight()) {
+                PixelReader pixelReader = imageView.getImage().getPixelReader();
+                Color color = pixelReader.getColor(x, y);
+                s += "\n" + FxColorTools.colorDisplaySimple(color);
+            }
             if (isPickingColor) {
                 if (this instanceof ImageManufactureScopeController_Base) {
                     s = message("PickingColorsForScope") + "\n" + s;
@@ -421,7 +425,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             xyText.setY(event.getY());
             return p;
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -1104,6 +1108,23 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 });
                 items.add(menu);
             }
+
+            CheckMenuItem anchorMenuItem = new CheckMenuItem(
+                    isMaskPolylinesShown() ? message("PopLineMenu") : message("PopAnchorMenu"),
+                    StyleTools.getIconImageView("iconMenu.png"));
+            anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true));
+            anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    if (popAnchorCheck != null) {
+                        popAnchorCheck.setSelected(anchorMenuItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", anchorMenuItem.isSelected());
+                        popAnchorMenu = anchorMenuItem.isSelected();
+                    }
+                }
+            });
+            items.add(anchorMenuItem);
 
             items.add(new SeparatorMenuItem());
 

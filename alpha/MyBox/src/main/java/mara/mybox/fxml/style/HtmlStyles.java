@@ -10,7 +10,7 @@ import static mara.mybox.value.Languages.message;
 public class HtmlStyles {
 
     public enum HtmlStyle {
-        Table, Default, Console, Blackboard, Ago, Book, Grey
+        Table, Default, Article, Console, Blackboard, Ago, Book, Grey
     }
 
     public static final String TableStyle
@@ -22,15 +22,15 @@ public class HtmlStyles {
             + "              .center { text-align:center;  max-width:95%; } \n"
             + "              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} \n"
             + "              .boldText { font-weight:bold;  } \n";
-    public static final String BaseStyle
+    public static final String ArticleStyle
             = TableStyle
             + " body { width: 900px; } \n"
             + "              img { max-width: 900px; } \n";
     public static final String DefaultStyle
-            = BaseStyle
+            = ArticleStyle
             + "              .valueText { color:#2e598a;  } \n";
     public static final String ConsoleStyle
-            = BaseStyle
+            = ArticleStyle
             + " body { background-color:black; color:#CCFF99; }\n"
             + "              table, th, td { border: #CCFF99; }\n"
             + "              a:link {color: dodgerblue}\n"
@@ -38,7 +38,7 @@ public class HtmlStyles {
             + "              .valueBox { border-color:#CCFF99;}\n"
             + "              .valueText { color:skyblue;  }\n";
     public static final String BlackboardStyle
-            = BaseStyle
+            = ArticleStyle
             + " body { background-color:#336633; color:white; }\n"
             + "              table, th, td { border: white; }\n"
             + "              a:link {color: aqua}\n"
@@ -46,7 +46,7 @@ public class HtmlStyles {
             + "              .valueBox { border-color:white; }\n"
             + "              .valueText { color:wheat;  }\n";
     public static final String AgoStyle
-            = BaseStyle
+            = ArticleStyle
             + " body { background-color:darkblue; color:white;  }\n"
             + "              table, th, td { border: white; }\n"
             + "              a:link {color: springgreen}\n"
@@ -54,13 +54,13 @@ public class HtmlStyles {
             + "              .valueBox {  border-color:white;}\n"
             + "              .valueText { color:yellow;  }\n";
     public static final String BookStyle
-            = BaseStyle
+            = ArticleStyle
             + " body { background-color:#F6F1EB; color:black;  }\n";
     public static final String GreyStyle
-            = BaseStyle
+            = ArticleStyle
             + " body { background-color:#ececec; color:black;  }\n";
     public static final String LinkStyle
-            = BaseStyle
+            = ArticleStyle
             + " body { background-color:transparent;  }\n"
             + "              table { border-collapse:collapse; max-width:95%; }\n"
             + "              table, th, td { border: 0px solid; }\n"
@@ -81,12 +81,12 @@ public class HtmlStyles {
                 return HtmlStyles.TableStyle;
             case Default:
                 return HtmlStyles.DefaultStyle;
+            case Article:
+                return HtmlStyles.ArticleStyle;
             case Console:
                 return HtmlStyles.ConsoleStyle;
             case Blackboard:
                 return HtmlStyles.BlackboardStyle;
-            //            case Link:
-            //                return LinkStyle;
             case Ago:
                 return HtmlStyles.AgoStyle;
             case Book:
