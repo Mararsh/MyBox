@@ -18,7 +18,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-20
  * @License Apache License Version 2.0
  */
-public class JavaScriptEditor extends BaseInfoTreeNodeController {
+public class JavaScriptEditor extends InfoTreeNodeEditor {
 
     protected JavaScriptController jsController;
 

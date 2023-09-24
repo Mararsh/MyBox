@@ -11,7 +11,7 @@ import mara.mybox.db.data.InfoNode;
  * @CreateDate 2022-3-20
  * @License Apache License Version 2.0
  */
-public class Data2DDefinitionEditor extends BaseInfoTreeNodeController {
+public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
 
     protected Data2DDefinitionController manageController;
     protected Data2D data2D;

@@ -36,7 +36,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class JShellEditorController extends BaseInfoTreeNodeController {
+public class JShellEditorController extends InfoTreeNodeEditor {
 
     protected JShellController jShellController;
     protected String outputs = "";

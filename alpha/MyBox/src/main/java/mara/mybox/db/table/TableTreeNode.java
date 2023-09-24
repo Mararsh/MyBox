@@ -12,6 +12,7 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -507,6 +508,32 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             MyBoxLog.debug(e);
         }
         return isEmpty;
+    }
+
+    public boolean equalOrDescendant(SingletonTask<Void> task, Connection conn, InfoNode node1, InfoNode node2) {
+        if (conn == null || node1 == null || node2 == null) {
+            if (task != null) {
+                task.setError(message("InvalidData"));
+            }
+            return false;
+        }
+        long id1 = node1.getNodeid();
+        long id2 = node2.getNodeid();
+        if (id1 == id2) {
+            return true;
+        }
+        InfoNode parent = parent(conn, node1);
+        if (parent == null || id1 == parent.getNodeid()) {
+            return false;
+        }
+        return equalOrDescendant(task, conn, parent(conn, node1), node2);
+    }
+
+    public InfoNode parent(Connection conn, InfoNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        return find(conn, node.getParentid());
     }
 
     public int categorySize(String category) {

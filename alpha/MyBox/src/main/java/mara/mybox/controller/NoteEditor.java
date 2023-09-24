@@ -30,7 +30,7 @@ public class NoteEditor extends ControlHtmlEditor {
             saveButton = notesController.saveButton;
 
             infoController.setEditor(this);
-            notesController.nodeController = infoController;
+            notesController.editor = infoController;
 
             webViewController.linkInNewTab = true;
             webViewController.defaultStyle = HtmlStyles.styleValue("Table");

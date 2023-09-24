@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-20
  * @License Apache License Version 2.0
  */
-public class JavaScriptController extends TreeManageController {
+public class JavaScriptController extends InfoTreeManageController {
 
     protected ControlWebView htmlWebView;
     protected String outputs = "";
@@ -52,7 +52,7 @@ public class JavaScriptController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             super.initControls();
 
             editorController.setParameters(this);

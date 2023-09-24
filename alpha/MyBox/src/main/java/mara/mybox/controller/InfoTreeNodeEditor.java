@@ -25,9 +25,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class BaseInfoTreeNodeController extends BaseController {
+public class InfoTreeNodeEditor extends BaseController {
 
-    protected TreeManageController manager;
+    protected InfoTreeManageController manager;
     protected String defaultExt;
     protected boolean nodeChanged;
 
@@ -42,7 +42,7 @@ public class BaseInfoTreeNodeController extends BaseController {
     @FXML
     protected CheckBox wrapCheck;
 
-    public BaseInfoTreeNodeController() {
+    public InfoTreeNodeEditor() {
         defaultExt = "txt";
     }
 
@@ -70,7 +70,7 @@ public class BaseInfoTreeNodeController extends BaseController {
         }
     }
 
-    public void setParameters(TreeManageController treeController) {
+    public void setParameters(InfoTreeManageController treeController) {
         try {
             this.manager = treeController;
             attributesController.setParameters(treeController);

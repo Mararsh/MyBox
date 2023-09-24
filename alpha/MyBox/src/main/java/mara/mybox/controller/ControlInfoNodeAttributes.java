@@ -24,10 +24,10 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class ControlInfoNodeAttributes extends TreeTagsController {
+public class ControlInfoNodeAttributes extends InfoTreeTagsController {
 
-    protected TreeManageController manager;
-    protected BaseInfoTreeNodeController editor;
+    protected InfoTreeManageController manager;
+    protected InfoTreeNodeEditor editor;
     protected InfoNode parentNode;
     protected SingletonTask tagsTask;
 
@@ -60,11 +60,11 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
         }
     }
 
-    public void setParameters(TreeManageController manager) {
+    public void setParameters(InfoTreeManageController manager) {
         try {
             super.setParameters(manager);
             this.manager = manager;
-            this.editor = manager.nodeController;
+            this.editor = manager.editor;
 
             nameLabel.setText(manager.nameMsg);
             timeLabel.setText(manager.timeMsg);
@@ -237,7 +237,7 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
      */
     @FXML
     public void selectParent() {
-        TreeNodeParentController.open(this);
+        InfoTreeNodeParentController.open(this);
     }
 
     protected void checkParentNode(InfoNode node) {
@@ -269,7 +269,7 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
                     if (parentNode == null) {
                         chainName = "";
                     } else {
-                        chainName = manager.nodesController.chainName(conn, parentNode);
+                        chainName = manager.treeController.chainName(conn, parentNode);
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -338,18 +338,10 @@ public class ControlInfoNodeAttributes extends TreeTagsController {
     }
 
     @Override
-    public void notifyLoaded() {
-        if (loadedNotify != null) {
-            loadedNotify.set(!loadedNotify.get());
-        }
-    }
-
-    @Override
-    public void checkTags(boolean changed) {
-    }
-
-    @Override
     public void tagsChanged() {
+        if (isSettingValues) {
+            return;
+        }
         manager.tagsController.isSettingValues = true;
         manager.tagsController.tableData.setAll(tableData);
         manager.tagsController.isSettingValues = false;

@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-2
  * @License Apache License Version 2.0
  */
-public class MathFunctionController extends TreeManageController {
+public class MathFunctionController extends InfoTreeManageController {
 
     @FXML
     protected MathFunctionEditor editorController;
@@ -30,7 +30,7 @@ public class MathFunctionController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             super.initControls();
 
             editorController.setParameters(this);

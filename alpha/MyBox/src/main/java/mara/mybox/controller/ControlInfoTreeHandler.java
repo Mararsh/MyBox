@@ -10,10 +10,13 @@ import mara.mybox.fxml.style.HtmlStyles;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class ControlInfoNodeSelector extends BaseInfoTreeController {
+public class ControlInfoTreeHandler extends BaseInfoTreeController {
+
+    protected BaseInfoTreeHandleController handler;
+    protected InfoNode selectedNode;
 
     @FXML
-    protected ControlInfoTreeSelector nodesController;
+    protected ControlInfoTreeListSelector nodesController;
     @FXML
     protected ControlWebView viewController;
 
@@ -21,15 +24,24 @@ public class ControlInfoNodeSelector extends BaseInfoTreeController {
     public void initValues() {
         try {
             super.initValues();
-            treeController = nodesController;
-            nodesController.selector = this;
-            nodesListCheck = nodesController.nodesListCheck;
+            infoTree = nodesController;
 
-            viewController.initStyle = HtmlStyles.styleValue("Table") + "\n body { width: 400px; } \n";
+            viewController.initStyle = HtmlStyles.styleValue("Table");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void setParameters(BaseInfoTreeHandleController handler, String title) {
+        if (handler == null) {
+            return;
+        }
+        this.handler = handler;
+        tableTreeNode = handler.manager.tableTreeNode;
+        tableTreeNodeTag = handler.manager.tableTreeNodeTag;
+        category = handler.manager.category;
+        nodesController.setParameters(handler, title);
     }
 
     /*
@@ -52,6 +64,7 @@ public class ControlInfoNodeSelector extends BaseInfoTreeController {
         }
         String html = InfoNode.nodeHtml(node, null);
         viewController.loadContents(html);
+        selectedNode = node;
     }
 
 }

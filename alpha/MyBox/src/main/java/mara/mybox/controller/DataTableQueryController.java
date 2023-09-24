@@ -14,7 +14,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-1
  * @License Apache License Version 2.0
  */
-public class DataTableQueryController extends TreeManageController {
+public class DataTableQueryController extends InfoTreeManageController {
 
     protected ControlData2DLoad tableController;
     protected ChangeListener<Boolean> tableStatusListener;

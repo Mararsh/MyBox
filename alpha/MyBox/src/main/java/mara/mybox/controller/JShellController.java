@@ -15,7 +15,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-4
  * @License Apache License Version 2.0
  */
-public class JShellController extends TreeManageController {
+public class JShellController extends InfoTreeManageController {
 
     @FXML
     protected JShellEditorController editorController;
@@ -37,7 +37,7 @@ public class JShellController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             super.initControls();
 
             webViewController.setParent(this, ControlWebView.ScrollType.Bottom);

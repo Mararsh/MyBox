@@ -37,9 +37,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class TreeNodeImportController extends BaseBatchFileController {
+public class InfoTreeNodeImportController extends BaseBatchFileController {
 
-    protected BaseInfoTreeViewController nodesController;
+    protected InfoTreeManageController manager;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
@@ -53,7 +53,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
     @FXML
     protected Label formatLabel;
 
-    public TreeNodeImportController() {
+    public InfoTreeNodeImportController() {
         baseTitle = message("Import");
     }
 
@@ -81,14 +81,13 @@ public class TreeNodeImportController extends BaseBatchFileController {
         }
     }
 
-    public void setCaller(BaseInfoTreeViewController nodeController) {
-        this.nodesController = nodeController;
-        tableTreeNode = nodeController.tableTreeNode;
-        tableTreeNodeTag = nodeController.tableTreeNodeTag;
+    public void setCaller(InfoTreeManageController manager) {
+        this.manager = manager;
+        tableTreeNode = manager.tableTreeNode;
+        tableTreeNodeTag = manager.tableTreeNodeTag;
         tableTag = new TableTag();
-        category = nodeController.category;
-        iconCheck.setVisible((nodeController instanceof ControlInfoTreeManage)
-                && (category.equals(InfoNode.WebFavorite)
+        category = manager.category;
+        iconCheck.setVisible((category.equals(InfoNode.WebFavorite)
                 || category.equals(message(InfoNode.WebFavorite))));
     }
 
@@ -429,13 +428,15 @@ public class TreeNodeImportController extends BaseBatchFileController {
 
     @Override
     public void afterTask() {
-        if (nodesController != null) {
-            nodesController.loadTree();
+        if (manager != null) {
+            manager.loadTree();
             if (!AppVariables.isTesting) {
-                nodesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+                manager.alertInformation(message("Imported") + ": " + totalItemsHandled);
             }
             closeStage();
-            nodesController.afterImport();
+
+            manager.refreshTagss();
+            manager.refreshTimes();
         } else {
             tableView.refresh();
             if (miaoCheck != null && miaoCheck.isSelected()) {

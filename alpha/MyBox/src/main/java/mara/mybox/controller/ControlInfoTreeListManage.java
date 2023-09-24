@@ -1,5 +1,9 @@
 package mara.mybox.controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +19,20 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
+import mara.mybox.db.data.InfoNodeTag;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -32,18 +43,18 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class ControlInfoTreeManage extends BaseInfoTreeViewController {
+public class ControlInfoTreeListManage extends ControlInfoTreeList {
 
-    protected TreeManageController manager;
+    protected InfoTreeManageController manager;
     protected boolean nodeExecutable;
 
-    public void setParameters(TreeManageController parent) {
+    public void setParameters(InfoTreeManageController parent) {
         manager = parent;
         nodeExecutable = manager != null
                 && (manager.startButton != null || manager.goButton != null
-                || (manager.nodeController != null
-                && (manager.nodeController.startButton != null
-                || manager.nodeController.goButton != null)));
+                || (manager.editor != null
+                && (manager.editor.startButton != null
+                || manager.editor.goButton != null)));
     }
 
     public String chainName(Connection conn, InfoNode node) {
@@ -68,7 +79,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
 
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        clicked(UserConfig.getString(baseName + "WhenDoubleClickNode", "View"), item);
+        clicked(UserConfig.getString(baseName + "WhenDoubleClickNode", "PopNode"), item);
     }
 
     @Override
@@ -90,8 +101,8 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
             case "Paste":
                 pasteNode(item);
                 break;
-            case "View":
-                viewNode(item);
+            case "PopNode":
+                popNode(item);
                 break;
             case "Execute":
                 executeNode(item);
@@ -263,68 +274,6 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
         return items;
     }
 
-    public Menu dataMenu(TreeItem<InfoNode> treeItem) {
-        Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
-
-        MenuItem menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            infoTree();
-        });
-        dataMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importExamples();
-        });
-        dataMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("Export"), StyleTools.getIconImageView("iconExport.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            exportNode(treeItem);
-        });
-        dataMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("Import"), StyleTools.getIconImageView("iconImport.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importAction();
-        });
-        dataMenu.getItems().add(menu);
-
-        return dataMenu;
-    }
-
-    public Menu ListMenu(TreeItem<InfoNode> treeItem) {
-        Menu listMenu = new Menu(message("Tree"), StyleTools.getIconImageView("iconTree.png"));
-
-        listMenu.getItems().addAll(foldMenuItems(treeItem));
-
-        MenuItem menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listChildren(treeItem);
-            }
-        });
-        listMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listDescentants(treeItem);
-            }
-        });
-        listMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        listMenu.getItems().add(menu);
-
-        return listMenu;
-    }
-
     public Menu leftClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenLeftClickNode"), StyleTools.getIconImageView("iconSelect.png"));
         clickMenu(treeItem, clickMenu, "WhenLeftClickNode", "Edit");
@@ -333,7 +282,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
 
     public Menu doubleClickMenu(TreeItem<InfoNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
-        clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "View");
+        clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "PopNode");
         return clickMenu;
     }
 
@@ -357,15 +306,15 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
         });
         editNodeMenu.setToggleGroup(clickGroup);
 
-        RadioMenuItem viewNodeMenu = new RadioMenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
-        viewNodeMenu.setSelected("View".equals(currentClick));
-        viewNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+        RadioMenuItem popNodeMenu = new RadioMenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
+        popNodeMenu.setSelected("PopNode".equals(currentClick));
+        popNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "View");
+                UserConfig.setString(baseName + key, "PopNode");
             }
         });
-        viewNodeMenu.setToggleGroup(clickGroup);
+        popNodeMenu.setToggleGroup(clickGroup);
 
         RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
         pasteNodeMenu.setSelected("Paste".equals(currentClick));
@@ -377,7 +326,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
         });
         pasteNodeMenu.setToggleGroup(clickGroup);
 
-        menu.getItems().addAll(editNodeMenu, pasteNodeMenu, viewNodeMenu);
+        menu.getItems().addAll(editNodeMenu, pasteNodeMenu, popNodeMenu);
 
         if (nodeExecutable) {
             RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
@@ -453,7 +402,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
         dataMenu.getItems().addAll(dataMenuItems(item));
         items.add(dataMenu);
 
-        Menu treeMenu = new Menu(message("View"), StyleTools.getIconImageView("iconTree.png"));
+        Menu treeMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         treeMenu.getItems().addAll(viewMenuItems(item));
         items.add(treeMenu);
 
@@ -467,6 +416,11 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
     @Override
     public void nodeAdded(InfoNode parent, InfoNode newNode) {
         manager.nodeAdded(parent, newNode);
+    }
+
+    @Override
+    protected void viewNode(TreeItem<InfoNode> item) {
+        popNode(item);
     }
 
     protected void deleteNode(TreeItem<InfoNode> targetItem) {
@@ -580,9 +534,9 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
             return;
         }
         String chainName = chainName(item);
-        TreeNodeCopyController controller
-                = (TreeNodeCopyController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeCopyFxml);
-        controller.setCaller(this, item.getValue(), chainName);
+        InfoTreeNodeCopyController controller
+                = (InfoTreeNodeCopyController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeCopyFxml);
+        controller.setParameters(manager, item.getValue(), chainName);
     }
 
     protected void moveNode(TreeItem<InfoNode> item) {
@@ -590,8 +544,8 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
             return;
         }
         String chainName = chainName(item);
-        TreeNodeMoveController controller = (TreeNodeMoveController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeMoveFxml);
-        controller.setCaller(this, item.getValue(), chainName);
+        InfoTreeNodeMoveController controller = (InfoTreeNodeMoveController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeMoveFxml);
+        controller.setParameters(manager, item.getValue(), chainName);
     }
 
     protected void nodeMoved(InfoNode parent, InfoNode node) {
@@ -620,21 +574,161 @@ public class ControlInfoTreeManage extends BaseInfoTreeViewController {
     }
 
     protected void exportNode(TreeItem<InfoNode> item) {
-        TreeNodeExportController exportController
-                = (TreeNodeExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeExportFxml);
+        InfoTreeNodeExportController exportController
+                = (InfoTreeNodeExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeExportFxml);
         exportController.setParamters(infoController, item);
     }
 
     @FXML
     protected void importAction() {
-        TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
-        controller.setCaller(this);
+        InfoTreeNodeImportController controller = (InfoTreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeImportFxml);
+        controller.setCaller(manager);
     }
 
-    @Override
-    protected void afterImport() {
-        infoController.tagsController.refreshAction();
-        infoController.refreshTimes();
+    @FXML
+    protected void importExamples() {
+        InfoTreeNodeImportController controller
+                = (InfoTreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeImportFxml);
+        controller.setCaller(manager);
+        controller.importExamples();
+    }
+
+    @FXML
+    public void infoTree() {
+        infoTree(selected());
+    }
+
+    public void infoTree(TreeItem<InfoNode> node) {
+        if (node == null) {
+            return;
+        }
+        InfoNode nodeValue = node.getValue();
+        if (nodeValue == null) {
+            return;
+        }
+        SingletonTask infoTask = new SingletonTask<Void>(this) {
+            private File file;
+
+            @Override
+            protected boolean handle() {
+                file = FileTmpTools.generateFile(message(category), "htm");
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
+                    writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", null));
+                    // https://www.jb51.net/article/116957.htm
+                    writer.write("<BODY>\n");
+                    writer.write(" <script>\n"
+                            + "    function nodeClicked(id) {\n"
+                            + "      var obj = document.getElementById(id);\n"
+                            + "      var objv = obj.style.display;\n"
+                            + "      if (objv == 'none') {\n"
+                            + "        obj.style.display = 'block';\n"
+                            + "      } else {\n"
+                            + "        obj.style.display = 'none';\n"
+                            + "      }\n"
+                            + "    }\n"
+                            + "    function showClass(className, show) {\n"
+                            + "      var nodes = document.getElementsByClassName(className);  　\n"
+                            + "      if ( show) {\n"
+                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                            + "              nodes[i].style.display = '';\n"
+                            + "           }\n"
+                            + "       } else {\n"
+                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                            + "              nodes[i].style.display = 'none';\n"
+                            + "           }\n"
+                            + "       }\n"
+                            + "    }\n"
+                            + "  </script>\n\n");
+                    writer.write("<DIV>\n<DIV>\n"
+                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">"
+                            + message("Unfold") + "</INPUT>\n"
+                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">"
+                            + message("HierarchyNumber") + "</INPUT>\n"
+                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">"
+                            + message("Tags") + "</INPUT>\n"
+                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">"
+                            + message("Values") + "</INPUT>\n"
+                            + "</DIV>\n<HR>\n");
+                    try (Connection conn = DerbyBase.getConnection()) {
+                        treeView(writer, conn, nodeValue, 4, "");
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    writer.write("\n<HR>\n<TreeNode style=\"font-size:0.8em\">* "
+                            + message("HtmlEditableComments") + "</P>\n");
+                    writer.write("</BODY>\n</HTML>\n");
+                    writer.flush();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                WebBrowserController.openFile(file);
+            }
+        };
+        start(infoTask, false);
+    }
+
+    protected void treeView(BufferedWriter writer, Connection conn, InfoNode node, int indent, String serialNumber) {
+        try {
+            if (conn == null || node == null) {
+                return;
+            }
+            List<InfoNode> children = tableTreeNode.children(conn, node.getNodeid());
+            String indentNode = " ".repeat(indent);
+            String spaceNode = "&nbsp;".repeat(indent);
+            String nodePageid = "item" + node.getNodeid();
+            String nodeName = node.getTitle();
+            String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
+            if (children != null && !children.isEmpty()) {
+                displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
+            }
+            writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode
+                    + displayName + "\n");
+            List<InfoNodeTag> tags = tableTreeNodeTag.nodeTags(conn, node.getNodeid());
+            if (tags != null && !tags.isEmpty()) {
+                String indentTag = " ".repeat(indent + 8);
+                String spaceTag = "&nbsp;".repeat(2);
+                writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
+                for (InfoNodeTag nodeTag : tags) {
+                    Color color = nodeTag.getTag().getColor();
+                    if (color == null) {
+                        color = FxColorTools.randomColor();
+                    }
+                    writer.write(indentTag + spaceTag
+                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
+                            + FxColorTools.color2rgb(color)
+                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
+                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n");
+                }
+                writer.write(indentTag + "</SPAN>\n");
+            }
+            writer.write(indentNode + "</DIV>\n");
+            String infoDisplay = InfoNode.infoHtml(category, node.getInfo(), true, true);
+            if (infoDisplay != null && !infoDisplay.isBlank()) {
+                writer.write(indentNode + "<DIV class=\"nodeValue\">"
+                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
+                        + "<DIV class=\"valueBox\">\n");
+                writer.write(indentNode + infoDisplay + "\n");
+                writer.write(indentNode + "</DIV></DIV></DIV>\n");
+            }
+            if (children != null && !children.isEmpty()) {
+                writer.write(indentNode + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
+                for (int i = 0; i < children.size(); i++) {
+                    InfoNode child = children.get(i);
+                    String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
+                    treeView(writer, conn, child, indent + 4, ps + (i + 1));
+                }
+                writer.write(indentNode + "</DIV>\n");
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML

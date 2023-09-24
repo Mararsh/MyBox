@@ -14,8 +14,7 @@ public class HtmlStyles {
     }
 
     public static final String TableStyle
-            = " body { margin:0 auto; } \n"
-            + "              table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} \n"
+            = "              table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} \n"
             + "              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} \n"
             + "              th { font-weight:bold;  text-align:center;} \n"
             + "              tr { height: 1.2em;  } \n"
@@ -24,7 +23,7 @@ public class HtmlStyles {
             + "              .boldText { font-weight:bold;  } \n";
     public static final String ArticleStyle
             = TableStyle
-            + " body { width: 900px; } \n"
+            + " body { margin:0 auto; width: 900px; } \n"
             + "              img { max-width: 900px; } \n";
     public static final String DefaultStyle
             = ArticleStyle

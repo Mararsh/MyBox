@@ -1,10 +1,11 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -15,28 +16,21 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-27
  * @License Apache License Version 2.0
  */
-public class TreeNodeCopyController extends ControlInfoTreeSelector {
-
-    protected InfoNode sourceNode;
+public class InfoTreeNodeCopyController extends BaseInfoTreeHandleController {
 
     @FXML
     protected Label sourceLabel;
     @FXML
     protected RadioButton nodeAndDescendantsRadio, descendantsRadio, nodeRadio;
 
-    public TreeNodeCopyController() {
+    public InfoTreeNodeCopyController() {
         baseTitle = message("CopyNode");
     }
 
-    public void setCaller(BaseInfoTreeViewController nodesController, InfoNode sourceNode, String name) {
+    public void setParameters(InfoTreeManageController manager, InfoNode sourceNode, String name) {
         this.sourceNode = sourceNode;
-        sourceLabel.setText(message("NodeCopyed") + ":\n" + name);
-        setCaller(nodesController);
-    }
-
-    @Override
-    public boolean isSourceNode(InfoNode node) {
-        return equalNode(node, sourceNode);
+        sourceLabel.setText(message("NodeCopyed") + ": " + name);
+        setParameters(manager, message("SelectNodeCopyInto"));
     }
 
     @FXML
@@ -46,18 +40,11 @@ public class TreeNodeCopyController extends ControlInfoTreeSelector {
             alertError(message("SelectToHandle"));
             return;
         }
-        TreeItem<InfoNode> targetItem = selected();
-        if (targetItem == null) {
-            alertError(message("SelectNodeCopyInto"));
-            return;
-        }
-        InfoNode targetNode = targetItem.getValue();
+        List<InfoNode> sourceNodes = new ArrayList<>();
+        sourceNodes.add(sourceNode);
+        InfoNode targetNode = handlerController.selectedNode;
         if (targetNode == null) {
-            alertError(message("SelectNodeCopyInto"));
-            return;
-        }
-        if (equalOrDescendant(targetItem, find(sourceNode))) {
-            alertError(message("TreeTargetComments"));
+            popError(message("SelectNodeMoveInto"));
             return;
         }
         if (task != null) {
@@ -68,12 +55,15 @@ public class TreeNodeCopyController extends ControlInfoTreeSelector {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
+                    if (!checkOptions(task, conn, sourceNodes, targetNode)) {
+                        return false;
+                    }
                     if (nodeAndDescendantsRadio.isSelected()) {
-                        ok = copyNodeAndDescendants(conn, sourceNode, targetNode);
+                        ok = manager.treeController.copyNodeAndDescendants(conn, sourceNode, targetNode);
                     } else if (descendantsRadio.isSelected()) {
-                        ok = copyDescendants(conn, sourceNode, targetNode);
+                        ok = manager.treeController.copyDescendants(conn, sourceNode, targetNode);
                     } else {
-                        ok = copyNode(conn, sourceNode, targetNode) != null;
+                        ok = manager.treeController.copyNode(conn, sourceNode, targetNode) != null;
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -84,10 +74,10 @@ public class TreeNodeCopyController extends ControlInfoTreeSelector {
 
             @Override
             protected void whenSucceeded() {
-                if (caller != null && caller.getMyStage() != null && caller.getMyStage().isShowing()) {
-                    caller.loadTree(targetNode);
-                    caller.nodeAdded(targetNode, sourceNode);
-                    caller.popSuccessful();
+                if (managerRunning()) {
+                    manager.treeController.loadTree(targetNode);
+                    manager.nodeAdded(targetNode, sourceNode);
+                    manager.popSuccessful();
                 }
                 closeStage();
             }

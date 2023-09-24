@@ -44,7 +44,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class TreeNodeExportController extends BaseTaskController {
+public class InfoTreeNodeExportController extends BaseTaskController {
 
     protected BaseInfoTreeController manager;
     protected TableTreeNode tableTreeNode;
@@ -59,7 +59,7 @@ public class TreeNodeExportController extends BaseTaskController {
     protected boolean firstRow;
 
     @FXML
-    protected ControlInfoTreeSelector nodesController;
+    protected ControlInfoTreeList listController;
     @FXML
     protected CheckBox timeCheck, tagsCheck, iconCheck,
             textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
@@ -68,7 +68,7 @@ public class TreeNodeExportController extends BaseTaskController {
     @FXML
     protected TextArea styleInput;
 
-    public TreeNodeExportController() {
+    public InfoTreeNodeExportController() {
         baseTitle = message("Export");
     }
 
@@ -76,7 +76,7 @@ public class TreeNodeExportController extends BaseTaskController {
     public void initControls() {
         try {
             super.initControls();
-            infoTree = nodesController.treeView;
+            infoTree = listController.treeView;
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -187,7 +187,7 @@ public class TreeNodeExportController extends BaseTaskController {
             iconCheck.setSelected(false);
             iconCheck.setVisible(false);
         }
-        nodesController.setCaller(manager.treeController);
+        listController.setSource(manager.infoTree);
         if (item == null) {
             infoTree.getSelectionModel().select(infoTree.getRoot());
         } else {
@@ -213,7 +213,7 @@ public class TreeNodeExportController extends BaseTaskController {
             popError(message("NothingSave"));
             return false;
         }
-        selectedNode = nodesController.selected();
+        selectedNode = listController.selected();
         if (selectedNode == null || selectedNode.getValue() == null) {
             popError(message("SelectToHandle"));
             return false;
@@ -268,7 +268,7 @@ public class TreeNodeExportController extends BaseTaskController {
         count = level = 0;
         firstRow = true;
         try (Connection conn = DerbyBase.getConnection()) {
-            exportNode(conn, selectedNode.getValue(), nodesController.chainName(selectedNode.getParent()));
+            exportNode(conn, selectedNode.getValue(), listController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -280,7 +280,7 @@ public class TreeNodeExportController extends BaseTaskController {
             return false;
         }
         try {
-            String nodeName = nodesController.chainName(selectedNode);
+            String nodeName = listController.chainName(selectedNode);
             String prefix = nodeName.replaceAll(InfoNode.TitleSeparater, "-") + "_" + DateTools.nowFileString();
 
             if (textsCheck.isSelected()) {

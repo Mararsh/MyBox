@@ -1338,6 +1338,7 @@ public abstract class BaseTable<D> {
     }
 
     public D updateData(D data) {
+        MyBoxLog.console(data != null);
         try (Connection conn = DerbyBase.getConnection()) {
             return updateData(conn, data);
         } catch (Exception e) {

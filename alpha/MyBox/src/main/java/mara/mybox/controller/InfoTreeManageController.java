@@ -30,18 +30,21 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class TreeManageController extends BaseInfoTreeController {
+public class InfoTreeManageController extends BaseInfoTreeController {
+
+    protected InfoTreeNodeEditor editor;
 
     @FXML
-    protected ControlInfoTreeManage nodesController;
+    protected ControlInfoTreeListManage treeController;
     @FXML
-    protected BaseInfoTreeNodeController nodeController;
+    protected InfoTreeNodeEditor editorController;
 
     @Override
     public void initValues() {
         try {
             super.initValues();
-            treeController = nodesController;
+            infoTree = treeController;
+            editor = editorController;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -53,8 +56,8 @@ public class TreeManageController extends BaseInfoTreeController {
         try {
             super.initControls();
 
-            nodesController.setParameters(this);
-            nodeController.setParameters(this);
+            treeController.setParameters(this);
+            editor.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -64,8 +67,8 @@ public class TreeManageController extends BaseInfoTreeController {
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
-            if (nodeController != null) {
-                return nodeController.keyEventsFilter(event); // pass event to editor
+            if (editor != null) {
+                return editor.keyEventsFilter(event); // pass event to editor
             }
             return false;
         } else {
@@ -102,13 +105,13 @@ public class TreeManageController extends BaseInfoTreeController {
                 }
             }
         }
-        if (nodeController.attributesController.parentNode != null
-                && id == nodeController.attributesController.parentNode.getNodeid()) {
-            nodeController.attributesController.setParentNode(node);
+        if (editor.attributesController.parentNode != null
+                && id == editor.attributesController.parentNode.getNodeid()) {
+            editor.attributesController.setParentNode(node);
         }
-        if (nodeController.attributesController.currentNode != null
-                && id == nodeController.attributesController.currentNode.getNodeid()) {
-            nodeController.attributesController.renamed(node.getTitle());
+        if (editor.attributesController.currentNode != null
+                && id == editor.attributesController.currentNode.getNodeid()) {
+            editor.attributesController.renamed(node.getTitle());
         }
     }
 
@@ -130,7 +133,7 @@ public class TreeManageController extends BaseInfoTreeController {
                 }
             }
         }
-        nodeController.editNode(null);
+        editor.editNode(null);
     }
 
     public void nodeMoved(InfoNode parent, InfoNode node) {
@@ -141,13 +144,13 @@ public class TreeManageController extends BaseInfoTreeController {
         if (loadedParent != null) {
             loadNodes(loadedParent);
         }
-        if (nodeController.attributesController.currentNode != null
-                && id == nodeController.attributesController.currentNode.getNodeid()) {
-            nodeController.attributesController.setParentNode(parent);
+        if (editor.attributesController.currentNode != null
+                && id == editor.attributesController.currentNode.getNodeid()) {
+            editor.attributesController.setParentNode(parent);
         }
-        if (nodeController.attributesController.parentNode != null
-                && id == nodeController.attributesController.parentNode.getNodeid()) {
-            nodeController.attributesController.setParentNode(node);
+        if (editor.attributesController.parentNode != null
+                && id == editor.attributesController.parentNode.getNodeid()) {
+            editor.attributesController.setParentNode(node);
         }
     }
 
@@ -156,11 +159,11 @@ public class TreeManageController extends BaseInfoTreeController {
             return;
         }
         loadNodes(loadedParent);
-        nodesController.loadTree();
+        treeController.loadTree();
     }
 
     public void nodesCopied(InfoNode parent) {
-        nodesController.updateNode(parent);
+        treeController.updateNode(parent);
     }
 
     public void nodesDeleted() {
@@ -170,10 +173,10 @@ public class TreeManageController extends BaseInfoTreeController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     loadedParent = tableTreeNode.readData(conn, loadedParent);
-                    nodeController.attributesController.currentNode
-                            = tableTreeNode.readData(conn, nodeController.attributesController.currentNode);
-                    nodeController.attributesController.parentNode
-                            = tableTreeNode.readData(conn, nodeController.attributesController.parentNode);
+                    editor.attributesController.currentNode
+                            = tableTreeNode.readData(conn, editor.attributesController.currentNode);
+                    editor.attributesController.parentNode
+                            = tableTreeNode.readData(conn, editor.attributesController.parentNode);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -183,44 +186,44 @@ public class TreeManageController extends BaseInfoTreeController {
 
             @Override
             protected void whenSucceeded() {
-                nodeController.editNode(nodeController.attributesController.currentNode);
-                nodesController.loadTree(loadedParent);
+                editor.editNode(editor.attributesController.currentNode);
+                treeController.loadTree(loadedParent);
             }
         };
         start(task);
     }
 
     public void nodeSaved() {
-        if (nodeController.attributesController.currentNode == null) {
+        if (editor.attributesController.currentNode == null) {
             return;
         }
-        long id = nodeController.attributesController.currentNode.getNodeid();
+        long id = editor.attributesController.currentNode.getNodeid();
         if (loadedParent != null && id == loadedParent.getNodeid()) {
-            loadedParent = nodeController.attributesController.currentNode;
+            loadedParent = editor.attributesController.currentNode;
             makeConditionPane();
         }
         for (int i = 0; i < tableData.size(); i++) {
             InfoNode tnode = tableData.get(i);
             if (tnode.getNodeid() == id) {
-                tableData.set(i, nodeController.attributesController.currentNode);
+                tableData.set(i, editor.attributesController.currentNode);
                 break;
             }
         }
-        nodesController.updateNode(nodeController.attributesController.currentNode);
-        nodeController.nodeChanged(false);
+        treeController.updateNode(editor.attributesController.currentNode);
+        editor.nodeChanged(false);
     }
 
     public void newNodeSaved() {
-        if (nodeController.attributesController.currentNode == null) {
+        if (editor.attributesController.currentNode == null) {
             return;
         }
-        nodesController.addNewNode(nodesController.find(nodeController.attributesController.parentNode),
-                nodeController.attributesController.currentNode, false);
+        treeController.addNewNode(treeController.find(editor.attributesController.parentNode),
+                editor.attributesController.currentNode, false);
         if (loadedParent != null
-                && nodeController.attributesController.parentNode.getNodeid() == loadedParent.getNodeid()) {
-            loadNodes(nodeController.attributesController.currentNode);
+                && editor.attributesController.parentNode.getNodeid() == loadedParent.getNodeid()) {
+            loadNodes(editor.attributesController.currentNode);
         }
-        nodeController.nodeChanged(false);
+        editor.nodeChanged(false);
     }
 
     public void nodeChanged() {
@@ -228,7 +231,7 @@ public class TreeManageController extends BaseInfoTreeController {
             return;
         }
         String currentTitle = getTitle();
-        if (nodeController.nodeChanged) {
+        if (editor.nodeChanged) {
             if (!currentTitle.endsWith(" *")) {
                 setTitle(currentTitle + " *");
             }
@@ -251,12 +254,12 @@ public class TreeManageController extends BaseInfoTreeController {
                 if (file != null) {
                     if (AppVariables.isTesting
                             || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
-                        nodesController.importExamples();
+                        treeController.importExamples();
                         return;
                     }
                 }
             }
-            nodesController.loadTree();
+            treeController.loadTree();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -361,7 +364,7 @@ public class TreeManageController extends BaseInfoTreeController {
             return;
         }
         if (loadedParent != null) {
-            nodeController.attributesController.parentNode = loadedParent;
+            editor.attributesController.parentNode = loadedParent;
         }
         editNode(null);
     }
@@ -376,18 +379,18 @@ public class TreeManageController extends BaseInfoTreeController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        nodeController.editNode(node);
+        editor.editNode(node);
     }
 
     @FXML
     @Override
     public void copyAction() {
-        TreeNodesCopyController.oneOpen(this);
+        InfoTreeNodesCopyController.oneOpen(this);
     }
 
     @FXML
     protected void moveAction() {
-        TreeNodesMoveController.oneOpen(this);
+        InfoTreeNodesMoveController.oneOpen(this);
     }
 
     @FXML
@@ -404,7 +407,7 @@ public class TreeManageController extends BaseInfoTreeController {
         if (v == null || v.isBlank()) {
             return;
         }
-        nodeController.pasteText(v);
+        editor.pasteText(v);
     }
 
     public void executeNode(InfoNode node) {
@@ -416,10 +419,10 @@ public class TreeManageController extends BaseInfoTreeController {
             return;
         }
         editNode(node);
-        if (nodeController.startButton != null) {
-            nodeController.startAction();
-        } else if (nodeController.goButton != null) {
-            nodeController.goAction();
+        if (editor.startButton != null) {
+            editor.startAction();
+        } else if (editor.goButton != null) {
+            editor.goAction();
         } else if (startButton != null) {
             startAction();
         } else if (goButton != null) {
@@ -441,18 +444,18 @@ public class TreeManageController extends BaseInfoTreeController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        nodeController.attributesController.copyNode();
+        editor.attributesController.copyNode();
     }
 
     @FXML
     protected void recoverNode() {
-        nodeController.editNode(nodeController.attributesController.currentNode);
+        editor.editNode(editor.attributesController.currentNode);
     }
 
     @FXML
     @Override
     public void saveAction() {
-        nodeController.attributesController.saveNode();
+        editor.attributesController.saveNode();
     }
 
     @Override
@@ -460,11 +463,11 @@ public class TreeManageController extends BaseInfoTreeController {
         if (file == null || !file.exists() || !checkBeforeNextAction()) {
             return;
         }
-        nodeController.loadFile(file);
+        editor.loadFile(file);
     }
 
     public boolean isNodeChanged() {
-        return nodeController.nodeChanged;
+        return editor.nodeChanged;
     }
 
     @Override
@@ -492,7 +495,7 @@ public class TreeManageController extends BaseInfoTreeController {
                 saveAction();
                 return false;
             } else if (result.get() == buttonNotSave) {
-                nodeController.nodeChanged = false;
+                editor.nodeChanged = false;
                 return true;
             } else {
                 return false;
@@ -501,15 +504,23 @@ public class TreeManageController extends BaseInfoTreeController {
     }
 
     /*
+        Tags
+     */
+    @Override
+    public void tagsChanged() {
+        editor.attributesController.synchronizeTags();
+    }
+
+    /*
         static methods
      */
-    public static TreeManageController oneOpen() {
-        TreeManageController controller = null;
+    public static InfoTreeManageController oneOpen() {
+        InfoTreeManageController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof TreeManageController) {
+            if (object != null && object instanceof InfoTreeManageController) {
                 try {
                     controller = (WebFavoritesController) object;
                     break;
@@ -518,7 +529,7 @@ public class TreeManageController extends BaseInfoTreeController {
             }
         }
         if (controller == null) {
-            controller = (TreeManageController) WindowTools.openStage(Fxmls.TreeManageFxml);
+            controller = (InfoTreeManageController) WindowTools.openStage(Fxmls.InfoTreeManageFxml);
         }
         controller.requestMouse();
         return controller;

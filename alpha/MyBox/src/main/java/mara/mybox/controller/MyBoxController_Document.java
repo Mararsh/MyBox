@@ -40,7 +40,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         MenuItem InformationInTree = new MenuItem(message("InformationInTree"));
         InformationInTree.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.TreeManageFxml);
+            loadScene(Fxmls.InfoTreeManageFxml);
         });
 
         Menu pdfMenu = new Menu("PDF");

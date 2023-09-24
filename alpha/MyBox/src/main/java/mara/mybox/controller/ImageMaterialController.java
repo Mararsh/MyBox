@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-8-27
  * @License Apache License Version 2.0
  */
-public class ImageMaterialController extends TreeManageController {
+public class ImageMaterialController extends InfoTreeManageController {
 
     @FXML
     protected ControlImageMaterialEditor editorController;

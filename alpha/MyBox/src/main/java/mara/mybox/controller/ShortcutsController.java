@@ -220,6 +220,14 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message("Wrap"), "", "iconWrap.png"));
             tableData.add(new ShortCut("", "", message("Rulers"), "", "iconXRuler.png"));
             tableData.add(new ShortCut("", "", message("Yes"), "", "iconYes.png"));
+            tableData.add(new ShortCut("", "", message("CopyToSystemClipboard"), "", "iconCopySystem.png"));
+            tableData.add(new ShortCut("", "", message("LoadContentInSystemClipboard"), "", "iconImageSystem.png"));
+            tableData.add(new ShortCut("", "", message("PasteContentInSystemClipboard"), "", "iconPasteSystem.png"));
+            tableData.add(new ShortCut("", "", message("CustomizeColors"), "", "iconColorWheel.png"));
+            tableData.add(new ShortCut("", "", message("ColorPalette"), "", "iconColor.png"));
+            tableData.add(new ShortCut("", "", message("Input"), "", "iconInput.png"));
+            tableData.add(new ShortCut("", "", message("Help"), "", "iconClaw.png"));
+            tableData.add(new ShortCut("", "", "MyBox", "", "iconMyBox.png"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

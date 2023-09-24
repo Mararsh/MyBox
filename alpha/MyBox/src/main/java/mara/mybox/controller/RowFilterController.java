@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-10-15
  * @License Apache License Version 2.0
  */
-public class RowFilterController extends TreeManageController {
+public class RowFilterController extends InfoTreeManageController {
 
     protected ControlWebView htmlWebView;
     protected String outputs = "";
@@ -30,7 +30,7 @@ public class RowFilterController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             super.initControls();
 
             editorController.setParameters(this);

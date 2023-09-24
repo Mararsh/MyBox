@@ -16,14 +16,15 @@ public class Fxmls {
         document
      */
     public static final String NotesFxml = "/fxml/Notes.fxml";
-    public static final String TreeManageFxml = "/fxml/TreeManage.fxml";
-    public static final String TreeNodeMoveFxml = "/fxml/TreeNodeMove.fxml";
-    public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
-    public static final String TreeNodeExportFxml = "/fxml/TreeNodeExport.fxml";
-    public static final String TreeNodeImportFxml = "/fxml/TreeNodeImport.fxml";
-    public static final String TreeNodesCopyFxml = "/fxml/TreeNodesCopy.fxml";
-    public static final String TreeNodesMoveFxml = "/fxml/TreeNodesMove.fxml";
-    public static final String TreeNodeParentFxml = "/fxml/TreeNodeParent.fxml";
+
+    public static final String InfoTreeManageFxml = "/fxml/InfoTreeManage.fxml";
+    public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";
+    public static final String InfoTreeNodeCopyFxml = "/fxml/InfoTreeNodeCopy.fxml";
+    public static final String InfoTreeNodeExportFxml = "/fxml/InfoTreeNodeExport.fxml";
+    public static final String InfoTreeNodeImportFxml = "/fxml/InfoTreeNodeImport.fxml";
+    public static final String InfoTreeNodesCopyFxml = "/fxml/InfoTreeNodesCopy.fxml";
+    public static final String InfoTreeNodesMoveFxml = "/fxml/InfoTreeNodesMove.fxml";
+    public static final String InfoTreeNodeParentFxml = "/fxml/InfoTreeNodeParent.fxml";
 
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";

@@ -151,7 +151,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
 
             refreshPalettes();
 
-            infoController.initStyle(HtmlStyles.styleValue("Table") + "\n body { width: 400px; } \n");
+            infoController.initStyle(HtmlStyles.styleValue("Table"));
 
             colorsController.clickNotify.addListener(new ChangeListener<Boolean>() {
                 @Override

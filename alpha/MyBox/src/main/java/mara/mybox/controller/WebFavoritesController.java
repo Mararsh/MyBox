@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-29
  * @License Apache License Version 2.0
  */
-public class WebFavoritesController extends TreeManageController {
+public class WebFavoritesController extends InfoTreeManageController {
 
     @FXML
     protected WebFavoriteEditor editorController;
@@ -36,13 +36,13 @@ public class WebFavoritesController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             super.initControls();
 
             iconColumn.setCellValueFactory(new PropertyValueFactory<>("icon"));
             iconColumn.setCellFactory(new TableImageFileCell(20));
 
-            goButton.disableProperty().bind(Bindings.isEmpty(nodeController.attributesController.nameInput.textProperty()));
+            goButton.disableProperty().bind(Bindings.isEmpty(editor.attributesController.nameInput.textProperty()));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -57,7 +57,7 @@ public class WebFavoritesController extends TreeManageController {
     @FXML
     @Override
     public void goAction() {
-        String address = nodeController.valueInput.getText();
+        String address = editor.valueInput.getText();
         if (address == null || address.isBlank()) {
             popError(message("InvalidData") + ": " + message("Address"));
             return;
@@ -100,7 +100,7 @@ public class WebFavoritesController extends TreeManageController {
     public static WebFavoritesController oneOpen(InfoNode node) {
         WebFavoritesController controller = oneOpen();
         if (controller != null) {
-            controller.nodesController.focusNodeAfterLoaded(node);
+            controller.treeController.focusNodeAfterLoaded(node);
         }
         return controller;
     }

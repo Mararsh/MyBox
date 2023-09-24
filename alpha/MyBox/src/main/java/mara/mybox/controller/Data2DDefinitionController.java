@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-9
  * @License Apache License Version 2.0
  */
-public class Data2DDefinitionController extends TreeManageController {
+public class Data2DDefinitionController extends InfoTreeManageController {
 
     @FXML
     protected Data2DDefinitionEditor editorController;
@@ -34,7 +34,7 @@ public class Data2DDefinitionController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             editorController.setParameters(this);
 
             super.initControls();

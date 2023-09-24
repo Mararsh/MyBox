@@ -18,7 +18,7 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
 
     @FXML
     protected void InformationInTree(ActionEvent event) {
-        loadScene(Fxmls.TreeManageFxml);
+        loadScene(Fxmls.InfoTreeManageFxml);
     }
 
     @FXML

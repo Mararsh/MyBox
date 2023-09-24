@@ -32,9 +32,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-23
  * @License Apache License Version 2.0
  */
-public class TreeTagsController extends BaseSysTableController<Tag> {
+public class InfoTreeTagsController extends BaseSysTableController<Tag> {
 
-    protected BaseInfoTreeController selector;
+    protected BaseInfoTreeController infoController;
     protected TableTreeNode tableTreeNode;
     protected TableTag tableTag;
     protected TableTreeNodeTag tableTreeNodeTag;
@@ -48,7 +48,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     @FXML
     protected Button queryTagsButton, deleteTagsButton;
 
-    public TreeTagsController() {
+    public InfoTreeTagsController() {
         loadInBackground = true;
     }
 
@@ -136,18 +136,18 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
         }
     }
 
-    public void setParameters(BaseInfoTreeController treeController) {
+    public void setParameters(BaseInfoTreeController controller) {
         try {
-            this.selector = treeController;
-            this.parentController = treeController;
-            this.baseName = treeController.baseName;
-            category = treeController.category;
-            tableTreeNode = treeController.tableTreeNode;
-            tableTag = treeController.tableTag;
-            tableTreeNodeTag = treeController.tableTreeNodeTag;
+            this.infoController = controller;
+            this.parentController = infoController;
+            this.baseName = infoController.baseName;
+            category = infoController.category;
+            tableTreeNode = infoController.tableTreeNode;
+            tableTag = infoController.tableTag;
+            tableTreeNodeTag = infoController.tableTreeNodeTag;
             setTableDefinition(tableTag);
 
-            queryConditions = "category='" + treeController.category + "'";
+            queryConditions = "category='" + controller.category + "'";
             currentPage = 0;
             pageSize = Integer.MAX_VALUE;
 
@@ -162,6 +162,9 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
         boolean none = isNoneSelected();
         if (deleteTagsButton != null) {
             deleteTagsButton.setDisable(none);
+        }
+        if (queryTagsButton != null) {
+            queryTagsButton.setDisable(tableData == null || tableData.isEmpty());
         }
     }
 
@@ -241,15 +244,15 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             popError(message("SelectToHandle"));
             return;
         }
-        selector.clearQuery();
-        selector.queryConditions = " category='" + category + "' AND "
+        infoController.clearQuery();
+        infoController.queryConditions = " category='" + category + "' AND "
                 + tableTreeNode.tagsCondition(selected);
-        selector.queryConditionsString = message("Tag") + ": ";
+        infoController.queryConditionsString = message("Tag") + ": ";
         for (Tag tag : selected) {
-            selector.queryConditionsString += " " + tag.getTag();
+            infoController.queryConditionsString += " " + tag.getTag();
         }
-        selector.loadTableData();
-        selector.showNodesList(true);
+        infoController.loadTableData();
+        infoController.showNodesList(true);
     }
 
     @FXML
@@ -299,10 +302,6 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     @Override
     public void tableChanged(boolean changed) {
         super.tableChanged(changed);
-        checkTags(changed);
-    }
-
-    public void checkTags(boolean changed) {
         if (!changed || isSettingValues || isSettingTable) {
             return;
         }
@@ -313,9 +312,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
         if (isSettingValues) {
             return;
         }
-        if (selector instanceof TreeManageController) {
-            ((TreeManageController) selector).nodeController.attributesController.synchronizeTags();
-        }
+        infoController.tagsChanged();
     }
 
 }

@@ -97,6 +97,9 @@ public class InfoNode extends BaseData {
         return values.get("Icon");
     }
 
+    public boolean equal(InfoNode node) {
+        return equal(this, node);
+    }
 
     /*
         Static methods
@@ -596,6 +599,13 @@ public class InfoNode extends BaseData {
                 break;
         }
         return json;
+    }
+
+    public static boolean equal(InfoNode node1, InfoNode node2) {
+        if (node1 == null || node2 == null) {
+            return false;
+        }
+        return node1.getNodeid() == node2.getNodeid();
     }
 
     /*

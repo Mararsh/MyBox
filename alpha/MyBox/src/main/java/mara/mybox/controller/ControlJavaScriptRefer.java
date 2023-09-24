@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-5
  * @License Apache License Version 2.0
  */
-public class ControlJavaScriptRefer extends BaseInfoTreeViewController {
+public class ControlJavaScriptRefer extends ControlInfoTreeList {
 
     @FXML
     protected TextArea scriptInput;

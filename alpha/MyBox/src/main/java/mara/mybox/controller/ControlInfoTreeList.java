@@ -1,46 +1,37 @@
 package mara.mybox.controller;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
-import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.FileTmpTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -49,7 +40,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class BaseInfoTreeViewController extends BaseTreeTableViewController<InfoNode> {
+public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
 
     protected BaseInfoTreeController infoController;
     protected static final int AutoExpandThreshold = 500;
@@ -62,6 +53,8 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
     protected TreeTableColumn<InfoNode, Date> timeColumn;
     @FXML
     protected Label titleLabel;
+    @FXML
+    protected CheckBox nodesListCheck;
 
 
     /*
@@ -102,6 +95,32 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
         tableTreeNodeTag = parent.tableTreeNodeTag;
         category = infoController.category;
         baseTitle = category;
+
+        if (nodesListCheck != null) {
+            nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", false));
+            infoController.showNodesList(nodesListCheck.isSelected());
+            nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "NodesList", nodesListCheck.isSelected());
+                    infoController.showNodesList(nodesListCheck.isSelected());
+                }
+            });
+        }
+    }
+
+    public void setSource(ControlInfoTreeList source) {
+        if (source == null) {
+            return;
+        }
+        baseName = source.baseName + "_" + baseName;
+        tableTreeNode = source.tableTreeNode;
+        tableTreeNodeTag = source.tableTreeNodeTag;
+        category = source.category;
+        cloneTree(source.treeView);
     }
 
     /*
@@ -174,6 +193,98 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
     }
 
     /*
+        data
+     */
+    public void cloneTree(TreeTableView<InfoNode> sourceTreeView) {
+        if (sourceTreeView == null) {
+            return;
+        }
+        TreeItem<InfoNode> sourceRoot = sourceTreeView.getRoot();
+        if (sourceRoot == null) {
+            return;
+        }
+        TreeItem<InfoNode> targetRoot = new TreeItem(sourceRoot.getValue());
+        cloneNode(sourceRoot, targetRoot);
+        setRoot(targetRoot);
+    }
+
+    public void cloneNode(TreeItem<InfoNode> sourceNode, TreeItem<InfoNode> targetNode) {
+        if (sourceNode == null || targetNode == null) {
+            return;
+        }
+        List<TreeItem<InfoNode>> sourceChildren = sourceNode.getChildren();
+        if (sourceChildren == null) {
+            return;
+        }
+        for (TreeItem<InfoNode> sourceChild : sourceChildren) {
+            TreeItem<InfoNode> targetChild = new TreeItem<>(sourceChild.getValue());
+            targetNode.getChildren().add(targetChild);
+            targetChild.setExpanded(sourceChild.isExpanded());
+            cloneNode(sourceChild, targetChild);
+        }
+    }
+
+    public InfoNode copyNode(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
+        if (conn == null || sourceNode == null || targetNode == null) {
+            if (task != null) {
+                task.setError(message("InvalidData"));
+            }
+            return null;
+        }
+        try {
+            InfoNode newNode = sourceNode.copyIn(targetNode);
+            newNode = tableTreeNode.insertData(conn, newNode);
+            if (newNode == null) {
+                return null;
+            }
+            conn.commit();
+            return newNode;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return null;
+        }
+    }
+
+    public boolean copyNodeAndDescendants(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
+        return copyDescendants(conn, sourceNode, copyNode(conn, sourceNode, targetNode));
+    }
+
+    public boolean copyDescendants(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
+        if (conn == null || sourceNode == null || targetNode == null) {
+            if (task != null) {
+                task.setError(message("InvalidData"));
+            }
+            return false;
+        }
+        try {
+            long sourceid = sourceNode.getNodeid();
+            long targetid = targetNode.getNodeid();
+            List<InfoNode> children = tableTreeNode.children(conn, sourceid);
+            if (children != null && !children.isEmpty()) {
+                conn.setAutoCommit(true);
+                for (InfoNode child : children) {
+                    InfoNode newNode = InfoNode.create()
+                            .setParentid(targetid)
+                            .setCategory(category)
+                            .setTitle(child.getTitle())
+                            .setInfo(child.getInfo());
+                    tableTreeNode.insertData(conn, newNode);
+                    copyDescendants(conn, child, newNode);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+
+    /*
         values
      */
     @Override
@@ -201,10 +312,7 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
 
     @Override
     public boolean equalNode(InfoNode node1, InfoNode node2) {
-        if (node1 == null || node2 == null) {
-            return false;
-        }
-        return node1.getNodeid() == node2.getNodeid();
+        return InfoNode.equal(node1, node2);
     }
 
     public InfoNode root(Connection conn) {
@@ -256,21 +364,6 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
     /*
         actions
      */
-    @Override
-    public void itemClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        viewNode(item);
-    }
-
-    @Override
-    public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        okAction();
-    }
-
-    @Override
-    public List<MenuItem> functionMenuItems(TreeItem<InfoNode> inItem) {
-        return viewMenuItems(inItem);
-    }
-
     @FXML
     public void popViewMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true)) {
@@ -319,9 +412,9 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
         }
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
+        MenuItem menu = new MenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            viewNode(item);
+            popNode(item);
         });
         menu.setDisable(item == null);
         items.add(menu);
@@ -346,23 +439,26 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listChildren(item);
-            }
-        });
-        items.add(menu);
+        if (nodesListCheck != null) {
+            menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    listChildren(item);
+                }
+            });
+            items.add(menu);
 
-        menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listDescentants(item);
-            }
-        });
-        items.add(menu);
+            menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    listDescentants(item);
+                }
+            });
+            items.add(menu);
+
+        }
 
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -371,6 +467,11 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
         items.add(menu);
 
         return items;
+    }
+
+    @Override
+    public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
+        popNode(item);
     }
 
     @FXML
@@ -423,8 +524,7 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
         start(task, thisPane);
     }
 
-    @Override
-    protected void viewNode(TreeItem<InfoNode> item) {
+    protected void popNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
@@ -516,31 +616,20 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
     }
 
     protected void listChildren(TreeItem<InfoNode> item) {
-        if (item == null) {
+        if (item == null || infoController == null) {
             return;
         }
         infoController.loadChildren(item.getValue());
     }
 
     protected void listDescentants(TreeItem<InfoNode> item) {
-        if (item == null) {
+        if (item == null || infoController == null) {
             return;
         }
         infoController.loadDescendants(item.getValue());
     }
 
-    @FXML
-    protected void importExamples() {
-        TreeNodeImportController controller
-                = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
-        controller.setCaller(this);
-        controller.importExamples();
-    }
-
-    protected void afterImport() {
-    }
-
-    public TreeManageController openManager() {
+    public InfoTreeManageController openManager() {
         if (category == null) {
             return null;
         }
@@ -556,7 +645,7 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
             case InfoNode.JavaScript:
                 return JavaScriptController.loadScript("");
             case InfoNode.InformationInTree:
-                return TreeManageController.oneOpen();
+                return InfoTreeManageController.oneOpen();
             case InfoNode.JEXLCode:
                 return JexlController.open("", "", "");
             case InfoNode.RowFilter:
@@ -570,144 +659,6 @@ public class BaseInfoTreeViewController extends BaseTreeTableViewController<Info
 
         }
         return null;
-    }
-
-    @FXML
-    public void infoTree() {
-        infoTree(selected());
-    }
-
-    public void infoTree(TreeItem<InfoNode> node) {
-        if (node == null) {
-            return;
-        }
-        InfoNode nodeValue = node.getValue();
-        if (nodeValue == null) {
-            return;
-        }
-        SingletonTask infoTask = new SingletonTask<Void>(this) {
-            private File file;
-
-            @Override
-            protected boolean handle() {
-                file = FileTmpTools.generateFile(message(category), "htm");
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
-                    writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", null));
-                    // https://www.jb51.net/article/116957.htm
-                    writer.write("<BODY>\n");
-                    writer.write(" <script>\n"
-                            + "    function nodeClicked(id) {\n"
-                            + "      var obj = document.getElementById(id);\n"
-                            + "      var objv = obj.style.display;\n"
-                            + "      if (objv == 'none') {\n"
-                            + "        obj.style.display = 'block';\n"
-                            + "      } else {\n"
-                            + "        obj.style.display = 'none';\n"
-                            + "      }\n"
-                            + "    }\n"
-                            + "    function showClass(className, show) {\n"
-                            + "      var nodes = document.getElementsByClassName(className);  　\n"
-                            + "      if ( show) {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = '';\n"
-                            + "           }\n"
-                            + "       } else {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = 'none';\n"
-                            + "           }\n"
-                            + "       }\n"
-                            + "    }\n"
-                            + "  </script>\n\n");
-                    writer.write("<DIV>\n<DIV>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">"
-                            + message("Unfold") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">"
-                            + message("HierarchyNumber") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">"
-                            + message("Tags") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">"
-                            + message("Values") + "</INPUT>\n"
-                            + "</DIV>\n<HR>\n");
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        treeView(writer, conn, nodeValue, 4, "");
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    writer.write("\n<HR>\n<TreeNode style=\"font-size:0.8em\">* "
-                            + message("HtmlEditableComments") + "</P>\n");
-                    writer.write("</BODY>\n</HTML>\n");
-                    writer.flush();
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                WebBrowserController.openFile(file);
-            }
-        };
-        start(infoTask, false);
-    }
-
-    protected void treeView(BufferedWriter writer, Connection conn, InfoNode node, int indent, String serialNumber) {
-        try {
-            if (conn == null || node == null) {
-                return;
-            }
-            List<InfoNode> children = tableTreeNode.children(conn, node.getNodeid());
-            String indentNode = " ".repeat(indent);
-            String spaceNode = "&nbsp;".repeat(indent);
-            String nodePageid = "item" + node.getNodeid();
-            String nodeName = node.getTitle();
-            String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
-            if (children != null && !children.isEmpty()) {
-                displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
-            }
-            writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode
-                    + displayName + "\n");
-            List<InfoNodeTag> tags = tableTreeNodeTag.nodeTags(conn, node.getNodeid());
-            if (tags != null && !tags.isEmpty()) {
-                String indentTag = " ".repeat(indent + 8);
-                String spaceTag = "&nbsp;".repeat(2);
-                writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
-                for (InfoNodeTag nodeTag : tags) {
-                    Color color = nodeTag.getTag().getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor();
-                    }
-                    writer.write(indentTag + spaceTag
-                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
-                            + FxColorTools.color2rgb(color)
-                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
-                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n");
-                }
-                writer.write(indentTag + "</SPAN>\n");
-            }
-            writer.write(indentNode + "</DIV>\n");
-            String infoDisplay = InfoNode.infoHtml(category, node.getInfo(), true, true);
-            if (infoDisplay != null && !infoDisplay.isBlank()) {
-                writer.write(indentNode + "<DIV class=\"nodeValue\">"
-                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
-                        + "<DIV class=\"valueBox\">\n");
-                writer.write(indentNode + infoDisplay + "\n");
-                writer.write(indentNode + "</DIV></DIV></DIV>\n");
-            }
-            if (children != null && !children.isEmpty()) {
-                writer.write(indentNode + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
-                for (int i = 0; i < children.size(); i++) {
-                    InfoNode child = children.get(i);
-                    String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
-                    treeView(writer, conn, child, indent + 4, ps + (i + 1));
-                }
-                writer.write(indentNode + "</DIV>\n");
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @FXML

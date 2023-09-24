@@ -12,7 +12,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -48,6 +47,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseInfoTreeController extends BaseSysTableController<InfoNode> {
 
+    protected ControlInfoTreeList infoTree;
     protected String category;
     protected TableTreeNode tableTreeNode;
     protected TableTag tableTag;
@@ -57,7 +57,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     protected InfoNode loadedParent;
 
     @FXML
-    protected BaseInfoTreeViewController treeController;
+    protected ControlInfoTreeList listController;
     @FXML
     protected TableColumn<InfoNode, Long> nodeidColumn;
     @FXML
@@ -77,13 +77,11 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     @FXML
     protected Button refreshTimesButton, queryTimesButton;
     @FXML
-    protected TreeTagsController tagsController;
+    protected InfoTreeTagsController tagsController;
     @FXML
     protected ControlTimesTree timesController;
     @FXML
     protected TextField findInput;
-    @FXML
-    protected CheckBox nodesListCheck;
     @FXML
     protected SplitPane managePane;
     @FXML
@@ -103,6 +101,16 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            infoTree = listController;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void setTableDefinition() {
         tableTreeNode = new TableTreeNode();
         tableTag = new TableTag();
@@ -115,7 +123,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
         try {
             super.initControls();
 
-            treeController.setParameters(this);
+            infoTree.setParameters(this);
 
             if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
                 descendantsRadio.setSelected(true);
@@ -135,21 +143,6 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
 
             initTimes();
             initFind();
-
-            if (nodesListCheck != null) {
-                nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", false));
-                showNodesList(nodesListCheck.isSelected());
-                nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setBoolean(baseName + "NodesList", nodesListCheck.isSelected());
-                        showNodesList(nodesListCheck.isSelected());
-                    }
-                });
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -188,11 +181,11 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     }
 
     public void showNodesList(boolean show) {
-        if (isSettingValues || nodesListCheck == null) {
+        if (isSettingValues || infoTree.nodesListCheck == null) {
             return;
         }
         isSettingValues = true;
-        nodesListCheck.setSelected(show);
+        infoTree.nodesListCheck.setSelected(show);
         if (show) {
             if (!managePane.getItems().contains(nodesListBox)) {
                 managePane.getItems().add(1, nodesListBox);
@@ -212,7 +205,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
         tree
      */
     public void loadTree() {
-        treeController.loadTree();
+        infoTree.loadTree();
     }
 
     public void clearQuery() {
@@ -388,6 +381,16 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
         queryConditionsString = timesController.getFinalTitle();
         loadTableData();
         showNodesList(true);
+    }
+
+    /*
+        Tags
+     */
+    protected void refreshTagss() {
+        tagsController.refreshAction();
+    }
+
+    public void tagsChanged() {
     }
 
     /*
