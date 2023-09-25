@@ -74,7 +74,6 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
 
     @Override
     protected String nodeInfo() {
-        String info;
         String address = valueInput.getText();
         String icon = moreInput.getText();
         if (icon == null || icon.isBlank()) {

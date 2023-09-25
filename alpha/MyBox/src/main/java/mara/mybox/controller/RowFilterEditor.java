@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
@@ -151,16 +150,12 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
     @FXML
     protected void popScriptExamples(MouseEvent mouseEvent) {
         if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
-            scriptExamples(mouseEvent);
+            showScriptExamples(mouseEvent);
         }
     }
 
     @FXML
-    protected void showScriptExamples(ActionEvent event) {
-        scriptExamples(event);
-    }
-
-    protected void scriptExamples(Event event) {
+    protected void showScriptExamples(Event event) {
         try {
             MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
             PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1", interfaceName + "Examples");

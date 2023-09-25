@@ -98,6 +98,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         }
         isSettingValues = true;
         replaceCheck.setSelected(true);
+        iconCheck.setSelected(false);
         isSettingValues = false;
         startFile(file);
     }
@@ -291,6 +292,15 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                             info += "\n" + line;
                         }
                     }
+                    if (info != null && !info.isBlank() && isWebFavorite) {
+                        try {
+                            File iconFile = IconTools.readIcon(info, downIcon);
+                            if (iconFile != null && iconFile.exists()) {
+                                info += InfoNode.ValueSeparater + "\n" + iconFile.getAbsolutePath();
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
                 }
                 if (time == null) {
                     time = new Date(baseTime - count * 1000); // to keep the order of id
@@ -443,6 +453,15 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 SoundTools.miao3();
             }
         }
+    }
+
+    @FXML
+    public void demo() {
+        File file = InfoNode.exampleFile(category);
+        if (file == null) {
+            file = InfoNode.exampleFile(InfoNode.Notebook);
+        }
+        TextEditorController.open(file);
     }
 
 }

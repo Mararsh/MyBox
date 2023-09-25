@@ -204,18 +204,14 @@ public class JShellEditorController extends InfoTreeNodeEditor {
 
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults
     @FXML
-    protected void popSyntaxMenu(MouseEvent mouseEvent) {
+    protected void popSyntaxMenu(MouseEvent event) {
         if (UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", false)) {
-            syntaxMenu(mouseEvent);
+            showSyntaxMenu(event);
         }
     }
 
     @FXML
-    protected void showSyntaxMenu(ActionEvent event) {
-        syntaxMenu(event);
-    }
-
-    protected void syntaxMenu(Event event) {
+    protected void showSyntaxMenu(Event event) {
         try {
             MenuController controller = MenuController.open(jShellController, valueInput, event);
             controller.setTitleLabel(message("Syntax"));

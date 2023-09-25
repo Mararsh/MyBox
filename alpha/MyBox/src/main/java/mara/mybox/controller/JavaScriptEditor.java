@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -61,16 +60,12 @@ public class JavaScriptEditor extends InfoTreeNodeEditor {
     @FXML
     protected void popExamplesMenu(MouseEvent event) {
         if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
-            examplesMenu(event);
+            showExamplesMenu(event);
         }
     }
 
     @FXML
-    protected void showExamplesMenu(ActionEvent event) {
-        examplesMenu(event);
-    }
-
-    protected void examplesMenu(Event event) {
+    protected void showExamplesMenu(Event event) {
         try {
             String menuName = interfaceName + "Examples";
             MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, menuName);

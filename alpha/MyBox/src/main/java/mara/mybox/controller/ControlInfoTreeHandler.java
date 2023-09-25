@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -19,6 +21,8 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
     protected ControlInfoTreeListSelector nodesController;
     @FXML
     protected ControlWebView viewController;
+    @FXML
+    protected Label selectLabel;
 
     @Override
     public void initValues() {
@@ -41,7 +45,9 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
         tableTreeNode = handler.manager.tableTreeNode;
         tableTreeNodeTag = handler.manager.tableTreeNodeTag;
         category = handler.manager.category;
-        nodesController.setParameters(handler, title);
+        nodesController.setParameters(handler);
+        selectLabel.setText(title);
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     /*

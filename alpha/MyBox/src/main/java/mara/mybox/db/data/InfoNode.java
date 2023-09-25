@@ -444,6 +444,40 @@ public class InfoNode extends BaseData {
         return info;
     }
 
+    public static String majorInfo(InfoNode node) {
+        try {
+            if (node == null || node.getCategory() == null) {
+                return null;
+            }
+            Map<String, String> values = parseInfo(node);
+            if (values == null) {
+                return node.getInfo();
+            }
+            switch (node.getCategory()) {
+                case InfoNode.WebFavorite: {
+                    String address = values.get("Address");
+                    return address == null || address.isBlank() ? null : address.trim();
+                }
+                case InfoNode.JEXLCode: {
+                    String script = values.get("Script");
+                    return script == null || script.isBlank() ? null : script.trim();
+                }
+                case InfoNode.RowFilter: {
+                    String script = values.get("Script");
+                    return script == null || script.isBlank() ? null : script.trim();
+                }
+                case InfoNode.MathFunction: {
+                    String exp = values.get("Expression");
+                    return exp == null || exp.isBlank() ? null : exp.trim();
+                }
+            }
+            return node.getInfo();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static void view(InfoNode node, String title) {
         String html = InfoNode.nodeHtml(node, title);
         if (html != null && !html.isBlank()) {

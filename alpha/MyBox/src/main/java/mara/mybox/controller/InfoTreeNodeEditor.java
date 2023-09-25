@@ -268,11 +268,15 @@ public class InfoTreeNodeEditor extends BaseController {
         start(task);
     }
 
-    public void pasteText(String text) {
-        if (valueInput == null || text == null || text.isEmpty()) {
+    public void pasteNode(InfoNode node) {
+        if (valueInput == null || node == null) {
             return;
         }
-        valueInput.replaceText(valueInput.getSelection(), text);
+        String v = InfoNode.majorInfo(node);
+        if (v == null || v.isBlank()) {
+            return;
+        }
+        valueInput.replaceText(valueInput.getSelection(), v);
         valueInput.requestFocus();
         tabPane.getSelectionModel().select(valueTab);
     }

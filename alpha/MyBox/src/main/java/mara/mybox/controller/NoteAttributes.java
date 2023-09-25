@@ -40,8 +40,11 @@ public class NoteAttributes extends InfoTreeNodeEditor {
     }
 
     @Override
-    public void pasteText(String text) {
-        editorController.pasteText(text);
+    public void pasteNode(InfoNode node) {
+        if (node == null) {
+            return;
+        }
+        editorController.pasteText(node.getInfo());
     }
 
 }

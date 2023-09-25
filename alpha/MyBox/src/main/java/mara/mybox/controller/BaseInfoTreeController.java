@@ -441,7 +441,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
                 } else {
                     queryConditions = " ";
                 }
-                queryConditions += " ( value like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryConditions += " ( info like '%" + DerbyBase.stringValue(v) + "%' ) ";
                 queryConditionsString += " " + v;
             }
         }

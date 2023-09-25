@@ -791,6 +791,14 @@ public class HelpTools {
         return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/SVGPath.html";
     }
 
+    public static String expEnLink() {
+        return "https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215";
+    }
+
+    public static String expZhLink() {
+        return "https://en.wikipedia.org/wiki/Regular_expression";
+    }
+
     public static List<MenuItem> htmlHelps(boolean popMenu) {
         try {
             List<MenuItem> items = new ArrayList<>();

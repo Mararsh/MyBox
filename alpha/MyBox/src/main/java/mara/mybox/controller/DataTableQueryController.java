@@ -20,7 +20,7 @@ public class DataTableQueryController extends InfoTreeManageController {
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
-    protected DataTableQueryEditor nodeController;
+    protected DataTableQueryEditor editorController;
 
     public DataTableQueryController() {
         baseTitle = message("DataQuery");
@@ -29,16 +29,27 @@ public class DataTableQueryController extends InfoTreeManageController {
         valueMsg = "SQL";
     }
 
+    @Override
+    public void initControls() {
+        try {
+            editor = editorController;
+            super.initControls();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void setParameters(ControlData2DLoad tableController) {
         try {
             this.tableController = tableController;
-            nodeController.setParameters(tableController);
+            editorController.setParameters(tableController);
             getMyStage().setTitle(tableController.getTitle());
 
             tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    nodeController.setDataTable(tableController.data2D);
+                    editorController.setDataTable(tableController.data2D);
                 }
             };
             tableController.statusNotify.addListener(tableStatusListener);

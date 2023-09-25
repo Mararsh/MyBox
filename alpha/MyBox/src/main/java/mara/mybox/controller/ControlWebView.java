@@ -1378,14 +1378,14 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
-                Menu codesMenu = new Menu(message("Analyse"), StyleTools.getIconImageView("iconAnalyse.png"));
-                items.add(codesMenu);
-
                 menu = new MenuItem(message("HtmlCodes"), StyleTools.getIconImageView("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlCodesPopController.openWebView(myController, webView);
                 });
-                codesMenu.getItems().add(menu);
+                items.add(menu);
+
+                Menu codesMenu = new Menu(message("Analyse"), StyleTools.getIconImageView("iconAnalyse.png"));
+                items.add(codesMenu);
 
                 menu = new MenuItem(message("WebElements"), StyleTools.getIconImageView("iconQuery.png"));
                 menu.setOnAction((ActionEvent event) -> {

@@ -30,7 +30,6 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
         attributesController = defAttributesController;
         data2D = null;
         columnsController.setParameters(this);
-        super.setParameters(manageController);
     }
 
     protected void load(Data2D data) {
@@ -75,6 +74,18 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
     @Override
     public void clearValue() {
         columnsController.clearAction();
+    }
+
+    @Override
+    public void pasteNode(InfoNode node) {
+        if (node == null) {
+            return;
+        }
+        Data2D data = Data2DTools.definitionFromXML(node.getInfo());
+        if (data != null && data.getColumns() != null) {
+            columnsController.tableData.addAll(data.getColumns());
+        }
+        tabPane.getSelectionModel().select(valueTab);
     }
 
 }

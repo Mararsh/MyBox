@@ -37,14 +37,14 @@ public class InfoTreeManageController extends BaseInfoTreeController {
     @FXML
     protected ControlInfoTreeListManage treeController;
     @FXML
-    protected InfoTreeNodeEditor editorController;
+    protected InfoTreeNodeEditor nodeEditorController;
 
     @Override
     public void initValues() {
         try {
             super.initValues();
             infoTree = treeController;
-            editor = editorController;
+            editor = nodeEditorController;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -400,22 +400,11 @@ public class InfoTreeManageController extends BaseInfoTreeController {
     }
 
     public void pasteNode(InfoNode node) {
-        if (node == null) {
-            return;
-        }
-        String v = node.getInfo();
-        if (v == null || v.isBlank()) {
-            return;
-        }
-        editor.pasteText(v);
+        editor.pasteNode(node);
     }
 
     public void executeNode(InfoNode node) {
         if (node == null) {
-            return;
-        }
-        String v = node.getInfo();
-        if (v == null || v.isBlank()) {
             return;
         }
         editNode(node);

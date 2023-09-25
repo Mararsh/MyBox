@@ -28,14 +28,11 @@ public class ControlInfoTreeListSelector extends ControlInfoTreeList {
     protected BaseInfoTreeHandleController handler;
     protected ControlInfoTreeList sourceList;
 
-    public void setParameters(BaseInfoTreeHandleController handler, String title) {
+    public void setParameters(BaseInfoTreeHandleController handler) {
         if (handler == null) {
             return;
         }
         this.handler = handler;
-        if (title != null && !title.isBlank()) {
-            titleLabel.setText(title);
-        }
         setSource(handler.manager.treeController);
     }
 
