@@ -20,7 +20,6 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
 
     protected BaseController parent;
     protected String comments;
-    protected ChangeListener<Boolean> getListener;
 
     public TableTextAreaEditCell(BaseController parent, String comments) {
         super(new DefaultStringConverter());
@@ -50,15 +49,13 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
     public void editCell() {
         BaseInputController inputController = TextInputController.open(parent, name(), getCellValue());
         inputController.setCommentsLabel(comments);
-        getListener = new ChangeListener<Boolean>() {
+        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                inputController.getNotify().removeListener(getListener);
+            public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                 setCellValue(inputController.getInputString());
-                inputController.closeStage();
+                inputController.close();
             }
-        };
-        inputController.getNotify().addListener(getListener);
+        });
     }
 
     public static <S> Callback<TableColumn<S, String>, TableCell<S, String>>

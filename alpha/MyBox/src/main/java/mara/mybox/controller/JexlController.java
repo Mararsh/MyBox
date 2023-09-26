@@ -1,10 +1,14 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
+import javafx.fxml.FXML;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -42,6 +46,17 @@ public class JexlController extends JShellController {
         jexlEditor.parametersInput.setText(parameters);
     }
 
+    @FXML
+    public void popJexlHelps(Event event) {
+        if (UserConfig.getBoolean("JexlHelpsPopWhenMouseHovering", false)) {
+            showJexlHelps(event);
+        }
+    }
+
+    @FXML
+    public void showJexlHelps(Event event) {
+        popEventMenu(event, HelpTools.jexlHelps());
+    }
 
     /*
         static methods

@@ -45,16 +45,14 @@ public class TableDataColorEditCell extends TableDataEditCell {
             return;
         }
         ColorPalettePopupController inputController = ColorPalettePopupController.open(dataControl, rectangle);
-        getListener = new ChangeListener<Boolean>() {
+        inputController.getSetNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 Color color = (Color) rectangle.getFill();
-                inputController.getSetNotify().removeListener(getListener);
                 setCellValue(color.toString());
                 inputController.closeStage();
             }
-        };
-        inputController.getSetNotify().addListener(getListener);
+        });
     }
 
     @Override

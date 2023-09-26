@@ -30,7 +30,7 @@ public class InfoTreeNodeCopyController extends BaseInfoTreeHandleController {
     public void setParameters(InfoTreeManageController manager, InfoNode sourceNode, String name) {
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeCopyed") + ": " + name);
-        setParameters(manager, message("SelectNodeCopyInto"));
+        setParameters(manager);
     }
 
     @FXML

@@ -25,6 +25,7 @@ public class Fxmls {
     public static final String InfoTreeNodesCopyFxml = "/fxml/InfoTreeNodesCopy.fxml";
     public static final String InfoTreeNodesMoveFxml = "/fxml/InfoTreeNodesMove.fxml";
     public static final String InfoTreeNodeParentFxml = "/fxml/InfoTreeNodeParent.fxml";
+    public static final String InfoTreeNodeSelectFxml = "/fxml/InfoTreeNodeSelect.fxml";
 
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";

@@ -39,7 +39,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected CheckMenuItem shortcutsCanNotOmitCheck, loseFocusCommitDataCheck, clearExpiredDataCheck,
             closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
-            controlPanesCheck, controlTextCheck;
+            controlTextCheck;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
@@ -89,7 +89,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
         loseFocusCommitDataCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
         clearExpiredDataCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
-        controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();
     }
 
@@ -353,11 +352,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected void clearExpiredDataBeforeExit() {
         UserConfig.setBoolean("ClearExpiredDataBeforeExit", clearExpiredDataCheck.isSelected());
-    }
-
-    @FXML
-    protected void controlPanesAction() {
-        UserConfig.setBoolean("MousePassControlPanes", controlPanesCheck.isSelected());
     }
 
     public void setStyle(String style) {

@@ -8,18 +8,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.value.Languages;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -144,28 +139,6 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
                     "Math.log(x)", "Math.sin(x)", "Math.cos(x)", "Math.tan(x)"
             ), 4, menuName);
 
-            Hyperlink mathLink = new Hyperlink("Full list of Math functions");
-            mathLink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink(HelpTools.javaMathLink());
-                }
-            });
-            controller.addNode(mathLink);
-
-            Hyperlink link = new Hyperlink(message("JavaScriptTutorial"));
-            link.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if (Languages.isChinese()) {
-                        openLink(HelpTools.javaScriptZhLink());
-                    } else {
-                        openLink(HelpTools.javaScriptEnLink());
-                    }
-                }
-            });
-            controller.addNode(link);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -209,28 +182,6 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
                     "x > 0", "x >= 0", "x < 0", "x <= 0", "x != 0", "x != 1",
                     "x >= -1 && x <= 1", "( x - Math.PI / 2 ) % Math.PI != 0"
             ), 4, menuName);
-
-            Hyperlink mathLink = new Hyperlink("Full list of Math functions");
-            mathLink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink(HelpTools.javaMathLink());
-                }
-            });
-            controller.addNode(mathLink);
-
-            Hyperlink link = new Hyperlink(message("JavaScriptTutorial"));
-            link.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if (Languages.isChinese()) {
-                        openLink(HelpTools.javaScriptZhLink());
-                    } else {
-                        openLink(HelpTools.javaScriptEnLink());
-                    }
-                }
-            });
-            controller.addNode(link);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

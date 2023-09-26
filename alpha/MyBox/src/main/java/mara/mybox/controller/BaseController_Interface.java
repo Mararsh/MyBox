@@ -251,14 +251,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void initLeftPaneControl() {
         if (splitPane != null && leftPane != null && leftPaneControl != null) {
-            leftPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-                        controlLeftPane();
-                    }
-                }
-            });
             leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -273,14 +265,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void initRightPaneControl() {
         if (splitPane != null && rightPane != null && rightPaneControl != null) {
-            rightPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-                        controlRightPane();
-                    }
-                }
-            });
             rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {

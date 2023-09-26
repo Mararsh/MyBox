@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-9-24
  * @License Apache License Version 2.0
  */
-public abstract class BaseInfoTreeHandleController extends BaseController {
+public abstract class BaseInfoTreeHandleController extends BaseChildController {
 
     protected InfoTreeManageController manager;
     protected InfoNode sourceNode;
@@ -20,9 +20,9 @@ public abstract class BaseInfoTreeHandleController extends BaseController {
     @FXML
     protected ControlInfoTreeHandler handlerController;
 
-    public void setParameters(InfoTreeManageController manager, String title) {
+    public void setParameters(InfoTreeManageController manager) {
         this.manager = manager;
-        handlerController.setParameters(this, title);
+        handlerController.setParameters(this);
     }
 
     public boolean managerRunning() {

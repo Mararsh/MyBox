@@ -356,25 +356,22 @@ public class PopTools {
 
             rmenu = new RadioMenuItem(message("Input") + "...");
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
-                ChangeListener<Boolean> getListener;
 
                 @Override
                 public void handle(ActionEvent event) {
                     HtmlStyleInputController inputController = HtmlStyleInputController.open(controller,
                             message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
-                    getListener = new ChangeListener<Boolean>() {
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                             String value = inputController.getInputString();
                             if (value == null || value.isBlank()) {
                                 value = null;
                             }
-                            inputController.getNotify().removeListener(getListener);
                             controller.setStyle(value);
                             inputController.closeStage();
                         }
-                    };
-                    inputController.getNotify().addListener(getListener);
+                    });
                 }
             });
             rmenu.setSelected(currentStyle != null && !predefinedValue);

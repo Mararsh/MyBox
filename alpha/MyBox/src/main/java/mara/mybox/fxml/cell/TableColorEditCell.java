@@ -32,7 +32,6 @@ public class TableColorEditCell<S> extends TableCell<S, Color> {
     protected TableColor tableColor;
     protected Rectangle rectangle;
     protected String msgPrefix;
-    protected ChangeListener<Boolean> setListener;
 
     public TableColorEditCell(BaseController parent, TableColor tableColor) {
         this.parent = parent;
@@ -77,18 +76,16 @@ public class TableColorEditCell<S> extends TableCell<S, Color> {
             return;
         }
         ColorPalettePopupController controller = ColorPalettePopupController.open(parent, rectangle);
-        setListener = new ChangeListener<Boolean>() {
+        controller.getSetNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 if (controller == null) {
                     return;
                 }
                 colorChanged(getIndex(), (Color) rectangle.getFill());
-                controller.getSetNotify().removeListener(setListener);
                 controller.close();
             }
-        };
-        controller.getSetNotify().addListener(setListener);
+        });
     }
 
     public void colorChanged(int index, Color color) {

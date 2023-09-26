@@ -185,7 +185,7 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
 
     @FXML
     public void showRowExpressionHelps(Event event) {
-        popEventMenu(event, HelpTools.rowExpressionHelps(true));
+        popEventMenu(event, HelpTools.rowExpressionHelps());
     }
 
 }

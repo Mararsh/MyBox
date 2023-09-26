@@ -34,7 +34,6 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
     protected double size;
     protected int number, scale;
     protected SplitType splitType;
-    protected ChangeListener<Boolean> listener;
 
     @FXML
     protected ToggleGroup splitGroup;
@@ -267,18 +266,16 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
             return;
         }
         ValueRangeInputController controller = ValueRangeInputController.open(this, column, null);
-        listener = new ChangeListener<Boolean>() {
+        controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                controller.notify.removeListener(listener);
                 ValueRange range = controller.getRange();
                 if (range != null) {
                     tableData.add(range);
                 }
                 controller.close();
             }
-        };
-        controller.notify.addListener(listener);
+        });
     }
 
     @FXML
@@ -294,18 +291,16 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
         }
         ValueRange selected = tableData.get(index);
         ValueRangeInputController controller = ValueRangeInputController.open(this, column, selected);
-        listener = new ChangeListener<Boolean>() {
+        controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                controller.notify.removeListener(listener);
                 ValueRange range = controller.getRange();
                 if (range != null) {
                     tableData.set(index, range);
                 }
                 controller.close();
             }
-        };
-        controller.notify.addListener(listener);
+        });
     }
 
     @FXML
@@ -321,15 +316,6 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            listener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
 }

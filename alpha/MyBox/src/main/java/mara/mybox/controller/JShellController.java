@@ -4,6 +4,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -18,13 +19,13 @@ import mara.mybox.value.UserConfig;
 public class JShellController extends InfoTreeManageController {
 
     @FXML
-    protected JShellEditorController editorController;
+    protected JShellEditor editorController;
     @FXML
     protected ControlWebView webViewController;
     @FXML
     protected JShellSnippets snippetsController;
     @FXML
-    protected JShellPathsController pathsController;
+    protected JShellPaths pathsController;
 
     public JShellController() {
         baseTitle = message("JShell");
@@ -79,6 +80,18 @@ public class JShellController extends InfoTreeManageController {
     public void edit(String script) {
         editNode(null);
         editorController.valueInput.setText(script);
+    }
+
+    @FXML
+    public void popJavaHelps(Event event) {
+        if (UserConfig.getBoolean("JavaHelpsPopWhenMouseHovering", false)) {
+            showJavaHelps(event);
+        }
+    }
+
+    @FXML
+    public void showJavaHelps(Event event) {
+        popEventMenu(event, HelpTools.javaHelps());
     }
 
     /*

@@ -33,7 +33,13 @@ public class ControlInfoTreeListSelector extends ControlInfoTreeList {
             return;
         }
         this.handler = handler;
-        setSource(handler.manager.treeController);
+        if (handler.manager != null) {
+            setSource(handler.manager.treeController);
+        } else {
+            category = handler.handlerController.category;
+            baseName = baseName + "_" + category;
+            loadTree();
+        }
     }
 
     @Override

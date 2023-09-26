@@ -27,7 +27,7 @@ public class InfoTreeNodeMoveController extends BaseInfoTreeHandleController {
     public void setParameters(InfoTreeManageController manager, InfoNode sourceNode, String name) {
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeMoved") + ": " + name);
-        setParameters(manager, message("SelectNodeMoveInto"));
+        setParameters(manager);
     }
 
     @FXML

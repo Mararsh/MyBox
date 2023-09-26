@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
@@ -74,6 +75,43 @@ public abstract class RecentVisitMenu {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
+            List<VisitHistory> written = recentWrittenFiles();
+            if (written != null && !written.isEmpty()) {
+                List<String> files = new ArrayList<>();
+                for (VisitHistory h : written) {
+                    String fname = h.getResourceValue();
+                    if (!files.contains(fname)) {
+                        files.add(fname);
+                    }
+                }
+                if (!files.isEmpty()) {
+                    Menu wmenu = new Menu(message("RecentWrittenFiles"));
+                    items.add(wmenu);
+                    for (String fname : files) {
+                        menu = new MenuItem(StringTools.menuSuffix(fname));
+                        menu.setOnAction((ActionEvent event1) -> {
+                            handleFile(fname);
+                        });
+                        wmenu.getItems().add(menu);
+                    }
+                }
+            }
+
+            List<String> paths = paths();
+            if (paths != null && !paths.isEmpty()) {
+                Menu pmenu = new Menu(message("RecentAccessedDirectories"));
+                items.add(pmenu);
+                for (String path : paths) {
+                    menu = new MenuItem(StringTools.menuSuffix(path));
+                    menu.setOnAction((ActionEvent event1) -> {
+                        handlePath(path);
+                    });
+                    pmenu.getItems().add(menu);
+                }
+            }
+
             List<VisitHistory> opened = recentFiles();
             if (opened != null && !opened.isEmpty()) {
                 List<String> files = new ArrayList<>();
@@ -97,30 +135,6 @@ public abstract class RecentVisitMenu {
                     }
                 }
 
-                List<VisitHistory> written = recentWrittenFiles();
-                if (written != null && !written.isEmpty()) {
-                    files = new ArrayList<>();
-                    for (VisitHistory h : written) {
-                        String fname = h.getResourceValue();
-                        if (!files.contains(fname)) {
-                            files.add(fname);
-                        }
-                    }
-                    if (!files.isEmpty()) {
-                        items.add(new SeparatorMenuItem());
-                        menu = new MenuItem(message("RecentWrittenFiles"));
-                        menu.setStyle("-fx-text-fill: #2e598a;");
-                        items.add(menu);
-                        for (String fname : files) {
-                            menu = new MenuItem(StringTools.menuSuffix(fname));
-                            menu.setOnAction((ActionEvent event1) -> {
-                                handleFile(fname);
-                            });
-                            items.add(menu);
-                        }
-                    }
-                }
-
             }
 
             if (examples != null && !examples.isEmpty()) {
@@ -132,20 +146,6 @@ public abstract class RecentVisitMenu {
                     menu = new MenuItem(StringTools.menuSuffix(example));
                     menu.setOnAction((ActionEvent event1) -> {
                         handleFile(example);
-                    });
-                    items.add(menu);
-                }
-            }
-            List<String> paths = paths();
-            if (paths != null && !paths.isEmpty()) {
-                items.add(new SeparatorMenuItem());
-                menu = new MenuItem(message("RecentAccessedDirectories"));
-                menu.setStyle("-fx-text-fill: #2e598a;");
-                items.add(menu);
-                for (String path : paths) {
-                    menu = new MenuItem(StringTools.menuSuffix(path));
-                    menu.setOnAction((ActionEvent event1) -> {
-                        handlePath(path);
                     });
                     items.add(menu);
                 }
@@ -211,7 +211,7 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentOpenedFiles() {
-        int fileNumber = AppVariables.fileRecentNumber / 2;
+        int fileNumber = AppVariables.fileRecentNumber;
         if (fileNumber == 0) {
             fileNumber = 1;
         }
@@ -219,23 +219,15 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentWrittenFiles() {
-        int fileNumber = AppVariables.fileRecentNumber / 4;
+        int fileNumber = AppVariables.fileRecentNumber;
         if (fileNumber == 0) {
             fileNumber = 1;
         }
         return VisitHistoryTools.getRecentFileWrite(SourceFileType, fileNumber);
     }
 
-    public List<VisitHistory> recentTargetFiles() {
-        int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-        if (fileNumber == 0) {
-            fileNumber = 1;
-        }
-        return VisitHistoryTools.getRecentFileWrite(TargetFileType, fileNumber);
-    }
-
     public List<VisitHistory> recentAddFiles() {
-        int fileNumber = AppVariables.fileRecentNumber / 2;
+        int fileNumber = AppVariables.fileRecentNumber;
         if (fileNumber == 0) {
             fileNumber = 1;
         }
@@ -243,7 +235,7 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 4;
+        int pathNumber = AppVariables.fileRecentNumber;
         if (pathNumber == 0) {
             pathNumber = 1;
         }
@@ -251,7 +243,7 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentTargetPathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 4;
+        int pathNumber = AppVariables.fileRecentNumber;
         if (pathNumber == 0) {
             pathNumber = 1;
         }

@@ -419,7 +419,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+                int pathNumber = AppVariables.fileRecentNumber;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
@@ -473,7 +473,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+                int pathNumber = AppVariables.fileRecentNumber;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
@@ -528,7 +528,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+                int pathNumber = AppVariables.fileRecentNumber;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
@@ -586,7 +586,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+                int pathNumber = AppVariables.fileRecentNumber;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }

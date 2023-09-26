@@ -7,7 +7,18 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.controller.Data2DDefinitionController;
+import mara.mybox.controller.DatabaseSqlController;
 import mara.mybox.controller.HtmlTableController;
+import mara.mybox.controller.ImageMaterialController;
+import mara.mybox.controller.InfoTreeManageController;
+import mara.mybox.controller.JShellController;
+import mara.mybox.controller.JavaScriptController;
+import mara.mybox.controller.JexlController;
+import mara.mybox.controller.MathFunctionController;
+import mara.mybox.controller.NotesController;
+import mara.mybox.controller.RowFilterController;
+import mara.mybox.controller.WebFavoritesController;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataFileCSV;
@@ -640,6 +651,38 @@ public class InfoNode extends BaseData {
             return false;
         }
         return node1.getNodeid() == node2.getNodeid();
+    }
+
+    public static InfoTreeManageController openManager(String category) {
+        if (category == null) {
+            return null;
+        }
+        switch (category) {
+            case InfoNode.WebFavorite:
+                return WebFavoritesController.oneOpen();
+            case InfoNode.Notebook:
+                return NotesController.oneOpen();
+            case InfoNode.JShellCode:
+                return JShellController.open("");
+            case InfoNode.SQL:
+                return DatabaseSqlController.open(false);
+            case InfoNode.JavaScript:
+                return JavaScriptController.loadScript("");
+            case InfoNode.InformationInTree:
+                return InfoTreeManageController.oneOpen();
+            case InfoNode.JEXLCode:
+                return JexlController.open("", "", "");
+            case InfoNode.RowFilter:
+                return RowFilterController.open();
+            case InfoNode.MathFunction:
+                return MathFunctionController.open();
+            case InfoNode.ImageMaterial:
+                return ImageMaterialController.open();
+            case InfoNode.Data2DDefinition:
+                return Data2DDefinitionController.open();
+
+        }
+        return null;
     }
 
     /*

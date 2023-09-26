@@ -9,20 +9,26 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="900.0" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.InfoTreeNodeMoveController">
     <children>
         <Label fx:id="sourceLabel" minHeight="-Infinity" text="%NodeMoved" wrapText="true" />
+        <Separator prefWidth="200.0" />
+        <Label text="%SelectNodeMoveInto">
+            <font>
+                <Font name="System Bold"/>
+            </font>
+        </Label>
         <fx:include fx:id="handler" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlInfoTreeHandler.fxml" VBox.vgrow="ALWAYS" />      
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%TreeTargetComments" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Label fx:id="selectLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%TreeTargetComments" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

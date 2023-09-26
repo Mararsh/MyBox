@@ -121,6 +121,7 @@ public class TextPopController extends BaseChildController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         if (sourceInput == null) {
             refreshChangeCheck.setVisible(false);

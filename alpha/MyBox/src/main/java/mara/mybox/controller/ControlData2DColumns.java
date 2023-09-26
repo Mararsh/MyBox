@@ -292,12 +292,4 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         }
     }
 
-    /*
-        import
-     */
-    @FXML
-    public void selectDefinition() {
-
-    }
-
 }

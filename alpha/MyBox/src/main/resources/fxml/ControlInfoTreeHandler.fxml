@@ -216,7 +216,6 @@ License:    Apache License Version 2.0
                <content>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                      <children>
-                        <Label fx:id="selectLabel" text="Label" />
                         <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>

@@ -72,7 +72,7 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <Label text="%AnchorColor" />
+                                                        <Label text="%Color" />
                                                         <RadioButton fx:id="redRadio" mnemonicParsing="false">
                                                             <graphic>
                                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#C32136" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
@@ -124,12 +124,6 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <CheckBox fx:id="shortcutsCanNotOmitCheck" layoutX="20.0" layoutY="171.0" mnemonicParsing="false" onAction="#shortcutsCanNotOmit" selected="true" text="%ShortcutsCanNotOmitCtrlAlt" />
                                                 <CheckBox fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" selected="true" text="%RecordWindowsSizeLocation" />
-                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="159.0" spacing="10.0">
-                                                    <children>
-                                                        <CheckBox fx:id="mousePassControlPanesCheck" layoutX="533.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#mousePassControlPanes" selected="true" text="%ShowHidePanesWhenMouseHovering" wrapText="true" />
-                                                        <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
-                                                    </children>
-                                                </HBox>
                                                 <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
                                                 <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText" />
                                                 <CheckBox fx:id="lostFocusCommitCheck" layoutX="20.0" layoutY="251.0" mnemonicParsing="false" text="%CommitModificationWhenDataCellLoseFocus" />

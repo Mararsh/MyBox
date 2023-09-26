@@ -96,16 +96,14 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         category = infoController.category;
         baseTitle = category;
 
+        infoController.showNodesList(false);
         if (nodesListCheck != null) {
-            nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", false));
-            infoController.showNodesList(nodesListCheck.isSelected());
             nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setBoolean(baseName + "NodesList", nodesListCheck.isSelected());
                     infoController.showNodesList(nodesListCheck.isSelected());
                 }
             });
@@ -117,8 +115,6 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
             return;
         }
         baseName = source.baseName + "_" + baseName;
-        tableTreeNode = source.tableTreeNode;
-        tableTreeNodeTag = source.tableTreeNodeTag;
         category = source.category;
         cloneTree(source.treeView);
     }
@@ -627,38 +623,6 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
             return;
         }
         infoController.loadDescendants(item.getValue());
-    }
-
-    public InfoTreeManageController openManager() {
-        if (category == null) {
-            return null;
-        }
-        switch (category) {
-            case InfoNode.WebFavorite:
-                return WebFavoritesController.oneOpen();
-            case InfoNode.Notebook:
-                return NotesController.oneOpen();
-            case InfoNode.JShellCode:
-                return JShellController.open("");
-            case InfoNode.SQL:
-                return DatabaseSqlController.open(false);
-            case InfoNode.JavaScript:
-                return JavaScriptController.loadScript("");
-            case InfoNode.InformationInTree:
-                return InfoTreeManageController.oneOpen();
-            case InfoNode.JEXLCode:
-                return JexlController.open("", "", "");
-            case InfoNode.RowFilter:
-                return RowFilterController.open();
-            case InfoNode.MathFunction:
-                return MathFunctionController.open();
-            case InfoNode.ImageMaterial:
-                return ImageMaterialController.open();
-            case InfoNode.Data2DDefinition:
-                return Data2DDefinitionController.open();
-
-        }
-        return null;
     }
 
     @FXML

@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -20,7 +19,6 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -35,7 +33,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-5-17
  * @License Apache License Version 2.0
  */
-public class JexlEditor extends JShellEditorController {
+public class JexlEditor extends JShellEditor {
 
     @FXML
     protected TextField parametersInput;
@@ -394,24 +392,6 @@ public class JexlEditor extends JShellEditorController {
 
             controller.addFlowPane(buttons);
 
-            Hyperlink elink = new Hyperlink("JEXL Reference");
-            elink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink("https://commons.apache.org/proper/commons-jexl/reference/index.html");
-                }
-            });
-            controller.addNode(elink);
-
-            Hyperlink jlink = new Hyperlink("Java Development Kit (JDK) APIs");
-            jlink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink(HelpTools.javaAPILink());
-                }
-            });
-            controller.addNode(jlink);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -521,24 +501,6 @@ public class JexlEditor extends JShellEditorController {
                     "jexlContext.set(\"x\", 5);\n",
                     "jexlContext.set(\"s\", \"hello\");\n"
             ), menuName);
-
-            Hyperlink elink = new Hyperlink("JEXL Overview");
-            elink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink("https://commons.apache.org/proper/commons-jexl/index.html");
-                }
-            });
-            controller.addNode(elink);
-
-            Hyperlink jlink = new Hyperlink("Java Development Kit (JDK) APIs");
-            jlink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink(HelpTools.javaAPILink());
-                }
-            });
-            controller.addNode(jlink);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

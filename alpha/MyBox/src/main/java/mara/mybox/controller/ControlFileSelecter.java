@@ -247,7 +247,7 @@ public class ControlFileSelecter extends BaseController {
                 if (isDirectory) {
                     return null;
                 } else {
-                    int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+                    int fileNumber = AppVariables.fileRecentNumber;
                     return VisitHistoryTools.getRecentFileRead(getSourceFileType(), fileNumber);
                 }
             }
@@ -258,7 +258,7 @@ public class ControlFileSelecter extends BaseController {
                 if (isDirectory) {
                     pathNumber = AppVariables.fileRecentNumber;
                 } else {
-                    pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+                    pathNumber = AppVariables.fileRecentNumber;
                 }
                 if (isSource) {
                     return VisitHistoryTools.getRecentPathRead(SourcePathType, pathNumber);

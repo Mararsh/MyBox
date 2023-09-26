@@ -8,6 +8,7 @@ import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -149,6 +150,18 @@ public class JavaScriptController extends InfoTreeManageController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void popJavascriptHelps(Event event) {
+        if (UserConfig.getBoolean("JavaScriptHelpsPopWhenMouseHovering", false)) {
+            showJavascriptHelps(event);
+        }
+    }
+
+    @FXML
+    public void showJavascriptHelps(Event event) {
+        popEventMenu(event, HelpTools.javascriptHelps());
     }
 
     /*

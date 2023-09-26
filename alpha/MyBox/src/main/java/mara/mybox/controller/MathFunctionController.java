@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -43,6 +46,18 @@ public class MathFunctionController extends InfoTreeManageController {
 
     @Override
     public void itemClicked() {
+    }
+
+    @FXML
+    public void popMathFunctionHelps(Event event) {
+        if (UserConfig.getBoolean("JavaScriptHelpsPopWhenMouseHovering", false)) {
+            showMathFunctionHelps(event);
+        }
+    }
+
+    @FXML
+    public void showMathFunctionHelps(Event event) {
+        popEventMenu(event, HelpTools.javascriptHelps());
     }
 
     /*

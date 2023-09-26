@@ -22,7 +22,7 @@ public class InfoTreeNodeParentController extends BaseInfoTreeHandleController {
     public void setParameters(ControlInfoNodeAttributes nodeController) {
         attributesController = nodeController;
         manager = nodeController.manager;
-        setParameters(manager, message("SelectNodeAsParent"));
+        setParameters(manager);
     }
 
     @FXML
@@ -46,7 +46,7 @@ public class InfoTreeNodeParentController extends BaseInfoTreeHandleController {
      */
     public static InfoTreeNodeParentController open(ControlInfoNodeAttributes nodeController) {
         InfoTreeNodeParentController controller = (InfoTreeNodeParentController) WindowTools.openChildStage(
-                nodeController.getMyWindow(), Fxmls.InfoTreeNodeParentFxml, false);
+                nodeController.getMyWindow(), Fxmls.InfoTreeNodeParentFxml);
         controller.setParameters(nodeController);
         controller.requestMouse();
         return controller;

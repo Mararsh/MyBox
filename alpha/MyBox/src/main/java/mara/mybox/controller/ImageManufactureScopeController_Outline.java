@@ -113,7 +113,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+                int fileNumber = AppVariables.fileRecentNumber;
                 return VisitHistoryTools.getRecentAlphaImages(fileNumber);
             }
 

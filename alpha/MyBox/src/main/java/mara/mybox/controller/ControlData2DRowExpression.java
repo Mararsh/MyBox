@@ -145,7 +145,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
 
     @FXML
     public void showRowExpressionHelps(Event event) {
-        popEventMenu(event, HelpTools.rowExpressionHelps(true));
+        popEventMenu(event, HelpTools.rowExpressionHelps());
     }
 
 }

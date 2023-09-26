@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -29,6 +30,7 @@ import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableColor;
@@ -59,6 +61,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     protected TableData2DColumn tableData2DColumn;
     protected Status status;
     protected Data2D data2D;
+    protected ChangeListener<Boolean> getListener;
 
     public enum Status {
         Loaded, Modified, Applied
@@ -75,7 +78,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button numberColumnsButton, randomColorsButton;
+    protected Button dataButton, numberColumnsButton, randomColorsButton;
 
     public BaseData2DColumnsController() {
     }
@@ -90,6 +93,9 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(numberColumnsButton, new Tooltip(message("RenameAllColumns")));
+            if (dataButton != null) {
+                NodeStyleTools.setTooltip(dataButton, new Tooltip(message("Data2DDefinition")));
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -564,6 +570,9 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
      */
     @Override
     public void sourceFileChanged(File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -584,19 +593,44 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
 
             @Override
             protected void whenSucceeded() {
-                checkSystemMethodButton(file);
-                loadDefinition(csv);
+                addColumns(csv);
             }
         };
         start(task);
     }
 
-    public void loadDefinition(Data2D def) {
+    public void addColumns(Data2D def) {
+        if (def == null) {
+            return;
+        }
         List<Data2DColumn> cols = def.getColumns();
         if (cols == null || cols.isEmpty()) {
             return;
         }
         tableData.addAll(cols);
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        InfoTreeNodeSelectController controller = InfoTreeNodeSelectController.open(this, InfoNode.Data2DDefinition);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                InfoNode node = controller.selected();
+                if (node == null) {
+                    return;
+                }
+                addColumns(Data2DTools.definitionFromXML(node.getInfo()));
+                controller.close();
+            }
+        });
+    }
+
+    @FXML
+    @Override
+    public void dataAction() {
+        Data2DDefinitionController.open();
     }
 
     /*

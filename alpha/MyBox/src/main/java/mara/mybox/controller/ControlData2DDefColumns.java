@@ -155,7 +155,7 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
         import
      */
     @Override
-    public void loadDefinition(Data2D def) {
+    public void addColumns(Data2D def) {
         editor.load(def);
     }
 

@@ -495,13 +495,13 @@ public class ControlImageFormat extends BaseController {
         new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+                int fileNumber = AppVariables.fileRecentNumber;
                 return VisitHistoryTools.getRecentFileRead(VisitHistory.FileType.Icc, fileNumber);
             }
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber;
                 return VisitHistoryTools.getRecentPathRead(VisitHistory.FileType.Icc, pathNumber);
             }
 

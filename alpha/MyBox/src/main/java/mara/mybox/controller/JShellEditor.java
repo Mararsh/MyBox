@@ -11,14 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
@@ -36,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class JShellEditorController extends InfoTreeNodeEditor {
+public class JShellEditor extends InfoTreeNodeEditor {
 
     protected JShellController jShellController;
     protected String outputs = "";
@@ -46,7 +44,7 @@ public class JShellEditorController extends InfoTreeNodeEditor {
     @FXML
     protected Button clearCodesButton, suggestionsButton;
 
-    public JShellEditorController() {
+    public JShellEditor() {
         defaultExt = "java";
     }
 
@@ -295,33 +293,6 @@ public class JShellEditorController extends InfoTreeNodeEditor {
                     + "    if ( d > 3 ) break;\n"
                     + "}"
             ), menuName);
-
-            Hyperlink alink = new Hyperlink("Learning the Java Language");
-            alink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink(HelpTools.javaLink());
-                }
-            });
-            controller.addNode(alink);
-
-            Hyperlink jlink = new Hyperlink("Java Development Kit (JDK) APIs");
-            jlink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink(HelpTools.javaAPILink());
-                }
-            });
-            controller.addNode(jlink);
-
-            Hyperlink blink = new Hyperlink("Full list of Math functions");
-            blink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink(HelpTools.javaMathLink());
-                }
-            });
-            controller.addNode(blink);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
