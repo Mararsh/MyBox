@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import javafx.fxml.FXML;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.db.DerbyBase;
@@ -289,6 +290,13 @@ public class Data2DDefinitionController extends InfoTreeManageController {
     public static Data2DDefinitionController open() {
         Data2DDefinitionController controller = (Data2DDefinitionController) WindowTools.openStage(Fxmls.Data2DDefinitionFxml);
         controller.requestMouse();
+        return controller;
+    }
+
+    public static Data2DDefinitionController load(Data2D data) {
+        Data2DDefinitionController controller = open();
+        controller.requestMouse();
+        controller.editorController.load(data);
         return controller;
     }
 

@@ -322,7 +322,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        RecentVisitMenu menu = new RecentVisitMenu(this, event) {
+        RecentVisitMenu menu = new RecentVisitMenu(this, event, false) {
             @Override
             public List<VisitHistory> recentFiles() {
                 List<VisitHistory> recent = VisitHistoryTools.getRecentStreamMedia();

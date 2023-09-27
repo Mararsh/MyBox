@@ -386,7 +386,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public RecentVisitMenu makeSourceFileRecentVisitMenu(Event event) {
-        RecentVisitMenu menu = new RecentVisitMenu(this, event) {
+        RecentVisitMenu menu = new RecentVisitMenu(this, event, false) {
 
             @Override
             public void handleSelect() {
@@ -411,7 +411,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
             @Override
             public List<VisitHistory> recentFiles() {
                 return recentAddFiles();
@@ -465,7 +465,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
             @Override
             public List<VisitHistory> recentFiles() {
                 return recentAddFiles();
@@ -520,11 +520,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -538,11 +534,6 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             @Override
             public void handleSelect() {
                 addDirectoryAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override
@@ -578,11 +569,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -596,11 +583,6 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             @Override
             public void handleSelect() {
                 insertDirectoryAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override
@@ -638,11 +620,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -652,11 +630,6 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             @Override
             public void handleSelect() {
                 selectSourcePath();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override
@@ -693,11 +666,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -707,11 +676,6 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             @Override
             public void handleSelect() {
                 saveAsAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override

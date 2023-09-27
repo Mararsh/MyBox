@@ -702,7 +702,7 @@ public class ControlMapOptions extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
 
             @Override
             public void handleSelect() {

@@ -189,7 +189,7 @@ public class ColorPalettePopupController extends BaseChildController {
             parentRect.setFill(colorData.getColor());
             parentRect.setUserData(colorData);
             NodeStyleTools.setTooltip(parentRect,
-                    message("ClickToEdit") + "\n---------\n" + colorData.display());
+                    message("ClickColorToPalette") + "\n---------\n" + colorData.display());
             parentController.closePopup();
             setNotify.set(!setNotify.get());
         } catch (Exception e) {

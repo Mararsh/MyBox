@@ -131,6 +131,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     @FXML
     @Override
     public void okAction() {
+        MyBoxLog.debug(getClass());
         if (okButton.isDisabled() || shapeType == null) {
             return;
         }
@@ -146,6 +147,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
+        MyBoxLog.debug(getClass());
         if (parametersController.keyEventsFilter(event)) {
             return true;
         }

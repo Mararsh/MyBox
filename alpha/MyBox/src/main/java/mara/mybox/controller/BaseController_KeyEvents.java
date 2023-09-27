@@ -324,9 +324,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (playButton != null && !playButton.isDisabled() && playButton.isVisible()) {
             playAction();
             return true;
-        } else if (goButton != null && !goButton.isDisabled() && goButton.isVisible()) {
-            goAction();
-            return true;
         }
         return false;
     }

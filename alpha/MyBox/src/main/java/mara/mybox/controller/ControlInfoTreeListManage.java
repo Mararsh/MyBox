@@ -30,6 +30,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -613,7 +614,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
             protected boolean handle() {
                 file = FileTmpTools.generateFile(message(category), "htm");
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
-                    writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", null));
+                    writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", HtmlStyles.DefaultStyle));
                     // https://www.jb51.net/article/116957.htm
                     writer.write("<BODY>\n");
                     writer.write(" <script>\n"

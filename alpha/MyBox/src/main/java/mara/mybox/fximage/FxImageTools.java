@@ -73,6 +73,19 @@ public class FxImageTools {
         return BufferedImageTools.bytes(SwingFXUtils.fromFXImage(image, null), format);
     }
 
+    public static String base64(File file, String format) {
+        try {
+            BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+            if (bufferedImage == null) {
+                return null;
+            }
+            return BufferedImageTools.base64(bufferedImage, format);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static String base64(Image image, String format) {
         try {
             if (image == null || format == null) {

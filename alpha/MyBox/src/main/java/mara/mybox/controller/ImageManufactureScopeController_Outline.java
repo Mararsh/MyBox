@@ -110,7 +110,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
             @Override
             public List<VisitHistory> recentFiles() {
                 int fileNumber = AppVariables.fileRecentNumber;

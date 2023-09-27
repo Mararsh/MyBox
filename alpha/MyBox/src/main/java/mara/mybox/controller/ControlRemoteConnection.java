@@ -76,8 +76,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             hostColumn.setCellValueFactory(new PropertyValueFactory<>("host"));
             pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
 
-            hostInput.setText("frs.sourceforge.net");
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -124,6 +122,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             editingIndex = -1;
         } else {
             editingIndex = tableData.indexOf(currentConnection);
+        }
+        if (currentConnection.getHost() == null || currentConnection.getHost().isBlank()) {
+            currentConnection.setHost("frs.sourceforge.net");
         }
         titleInput.setText(currentConnection.getTitle());
         hostInput.setText(currentConnection.getHost());

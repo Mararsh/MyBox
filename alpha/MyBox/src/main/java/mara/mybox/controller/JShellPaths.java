@@ -111,7 +111,7 @@ public class JShellPaths extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
 
             @Override
             public void handleSelect() {
@@ -177,11 +177,7 @@ public class JShellPaths extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -191,10 +187,6 @@ public class JShellPaths extends BaseController {
             @Override
             public void handleSelect() {
                 selectPath();
-            }
-
-            @Override
-            public void handleFile(String fname) {
             }
 
             @Override

@@ -201,7 +201,7 @@ public class FilesCompareController extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -252,7 +252,7 @@ public class FilesCompareController extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
 
             @Override
             public List<VisitHistory> recentPaths() {

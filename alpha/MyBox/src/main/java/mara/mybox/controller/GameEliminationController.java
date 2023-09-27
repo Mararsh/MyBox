@@ -873,7 +873,7 @@ public class GameEliminationController extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        RecentVisitMenu menu = new RecentVisitMenu(this, event) {
+        RecentVisitMenu menu = new RecentVisitMenu(this, event, false) {
 
             @Override
             public void handleSelect() {

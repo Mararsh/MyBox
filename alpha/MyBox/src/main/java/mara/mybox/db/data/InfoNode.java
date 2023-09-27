@@ -23,6 +23,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.JsonTools;
@@ -541,7 +542,10 @@ public class InfoNode extends BaseData {
                         String icon = values.get("Icon");
                         if (showIcon && icon != null && !icon.isBlank()) {
                             try {
-                                html += "<IMG src=\"" + new File(icon).toURI().toString() + "\" width=40/>";
+                                String base64 = FxImageTools.base64(new File(icon), "png");
+                                if (base64 != null) {
+                                    html += "<img src=\"data:image/png;base64," + base64 + "\" width=" + 40 + " >";
+                                }
                             } catch (Exception e) {
                             }
                         }

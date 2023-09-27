@@ -43,7 +43,7 @@ public class TableColorEditCell<S> extends TableCell<S, Color> {
         rectangle = new Rectangle(30, 20);
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(1);
-        msgPrefix = message("ClickToEdit");
+        msgPrefix = message("ClickColorToPalette");
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {

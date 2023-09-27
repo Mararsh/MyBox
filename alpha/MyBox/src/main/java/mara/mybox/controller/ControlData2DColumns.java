@@ -3,7 +3,13 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
@@ -11,10 +17,13 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
+import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -290,6 +299,54 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             loadColumns();
             status(Status.Applied);
         }
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        InfoTreeNodeSelectController controller = InfoTreeNodeSelectController.open(this, InfoNode.Data2DDefinition);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                InfoNode node = controller.selected();
+                if (node == null) {
+                    return;
+                }
+                addColumns(Data2DTools.definitionFromXML(node.getInfo()));
+                controller.close();
+            }
+        });
+    }
+
+    @Override
+    protected List<MenuItem> exportMenu(Event mevent, Data2D currentData) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("Save"), StyleTools.getIconImageView("iconSave.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                saveCSV(currentData);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            items.addAll(super.exportMenu(mevent, currentData));
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void saveCSV(Data2D currentData) {
+        if (currentData == null) {
+            popError(message("NoData"));
+            return;
+        }
+        Data2DDefinitionController.load(currentData);
     }
 
 }

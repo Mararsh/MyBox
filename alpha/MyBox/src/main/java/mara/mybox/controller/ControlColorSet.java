@@ -98,7 +98,7 @@ public class ControlColorSet extends BaseController {
 
     public void setColor(Color color) {
         rect.setFill(color);
-        NodeStyleTools.setTooltip(rect, message("ClickToEdit") + "\n---------\n"
+        NodeStyleTools.setTooltip(rect, message("ClickColorToPalette") + "\n---------\n"
                 + FxColorTools.colorNameDisplay(tableColor, color));
     }
 

@@ -23,6 +23,7 @@ import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.controller.ClearExpiredDataController;
+import mara.mybox.controller.WindowsListController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.table.TableUserConf;
@@ -120,7 +121,11 @@ public class WindowTools {
             stage.setScene(scene);
             stage.show();
 
-            controller.afterSceneLoaded();
+            if (controller != null) {
+                controller.afterSceneLoaded();
+            }
+
+            WindowsListController.refresh();
 
             Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
 
@@ -370,6 +375,7 @@ public class WindowTools {
                 window.setUserData(null);
             }
             window.hide();
+            WindowsListController.refresh();
             checkExit();
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());

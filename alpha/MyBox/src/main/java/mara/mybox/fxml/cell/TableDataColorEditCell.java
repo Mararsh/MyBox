@@ -35,7 +35,7 @@ public class TableDataColorEditCell extends TableDataEditCell {
         rectangle = new Rectangle(30, 20);
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(1);
-        msgPrefix = message("ClickToEdit");
+        msgPrefix = message("ClickColorToPalette");
     }
 
     @Override

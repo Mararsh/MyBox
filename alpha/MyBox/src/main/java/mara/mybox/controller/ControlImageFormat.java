@@ -22,7 +22,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -492,18 +491,7 @@ public class ControlImageFormat extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber;
-                return VisitHistoryTools.getRecentFileRead(VisitHistory.FileType.Icc, fileNumber);
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber;
-                return VisitHistoryTools.getRecentPathRead(VisitHistory.FileType.Icc, pathNumber);
-            }
+        new RecentVisitMenu(this, event, false) {
 
             @Override
             public void handleSelect() {
@@ -525,7 +513,7 @@ public class ControlImageFormat extends BaseController {
                 handleSourcePath(fname);
             }
 
-        }.pop();
+        }.setFileType(VisitHistory.FileType.Icc).pop();
     }
 
     @FXML

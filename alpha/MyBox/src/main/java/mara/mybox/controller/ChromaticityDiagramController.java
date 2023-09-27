@@ -639,11 +639,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -653,11 +649,6 @@ public class ChromaticityDiagramController extends ImageViewerController {
             @Override
             public void handleSelect() {
                 saveAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override

@@ -269,11 +269,7 @@ public class NetworkQueryAddressController extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -283,11 +279,6 @@ public class NetworkQueryAddressController extends BaseController {
             @Override
             public void handleSelect() {
                 saveCert();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override

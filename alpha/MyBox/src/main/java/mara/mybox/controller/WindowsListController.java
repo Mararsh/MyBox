@@ -79,29 +79,21 @@ public class WindowsListController extends BaseTableViewController<FxWindow> {
         disableOnTopButton.setDisable(isNoneSelected());
     }
 
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            refreshAction();
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-
-    }
-
     @FXML
     @Override
     public void refreshAction() {
         try {
+            if (isSettingValues) {
+                return;
+            }
+            isSettingValues = true;
             tableData.clear();
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
                 tableData.add(new FxWindow(window));
             }
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -110,16 +102,21 @@ public class WindowsListController extends BaseTableViewController<FxWindow> {
     @FXML
     public void closeItems() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             List<FxWindow> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;
             }
+            isSettingValues = true;
             for (FxWindow w : selected) {
-                if (w.getWindow() != null) {
+                if (w.getWindow() != null && w.isIsShowing()) {
                     w.getWindow().hide();
                 }
             }
+            isSettingValues = false;
             refreshAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -128,37 +125,57 @@ public class WindowsListController extends BaseTableViewController<FxWindow> {
 
     @FXML
     public void onTop() {
+        onTop(true);
+    }
+
+    @FXML
+    public void disableOnTop() {
+        onTop(false);
+    }
+
+    public void onTop(boolean top) {
         try {
+            if (isSettingValues) {
+                return;
+            }
             List<FxWindow> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;
             }
+            isSettingValues = true;
             for (FxWindow w : selected) {
-                if (w.getWindow() != null && w.getWindow() instanceof Stage) {
-                    ((Stage) w.getWindow()).setAlwaysOnTop(true);
+                if (w.getWindow() != null && w.isIsShowing() && w.getWindow() instanceof Stage) {
+                    ((Stage) w.getWindow()).setAlwaysOnTop(top);
                 }
             }
+            isSettingValues = false;
             refreshAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @FXML
-    public void disableOnTop() {
+    /*
+        static methods
+     */
+    public static void refresh() {
         try {
-            List<FxWindow> selected = selectedItems();
-            if (selected == null || selected.isEmpty()) {
-                popError(message("SelectToHandle"));
-                return;
-            }
-            for (FxWindow w : selected) {
-                if (w.getWindow() != null && w.getWindow() instanceof Stage) {
-                    ((Stage) w.getWindow()).setAlwaysOnTop(false);
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (!window.isShowing()) {
+                    continue;
+                }
+                Object object = window.getUserData();
+                if (object != null && object instanceof WindowsListController) {
+                    try {
+                        WindowsListController controller = (WindowsListController) object;
+                        controller.refreshAction();
+                    } catch (Exception e) {
+                    }
                 }
             }
-            refreshAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

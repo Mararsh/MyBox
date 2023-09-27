@@ -91,11 +91,11 @@ public class HtmlWriteTools {
         build html
      */
     public static String htmlPrefix() {
-        return htmlPrefix(null, "utf-8", null);
+        return htmlPrefix(null, "utf-8", HtmlStyles.DefaultStyle);
     }
 
     public static String html(String title, String body) {
-        return html(title, "utf-8", null, body);
+        return html(title, "utf-8", HtmlStyles.DefaultStyle, body);
     }
 
     public static String html(String title, String style, String body) {

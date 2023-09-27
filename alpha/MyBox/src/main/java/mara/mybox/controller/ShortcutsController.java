@@ -28,7 +28,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
@@ -265,8 +264,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     {
                         StringTable table = makeStringTable();
                         String html = HtmlWriteTools.html(message("Shortcuts"), HtmlStyles.DefaultStyle, table.body());
-                        File file = new File(FileTmpTools.generatePath("html")
-                                + "/mybox_shortcuts_" + lang + ".html");
+                        File file = new File(path, "mybox_shortcuts_" + lang + ".html");
                         file = TextFileTools.writeFile(file, html);
                         task.setInfo(file.getAbsolutePath());
                     }
