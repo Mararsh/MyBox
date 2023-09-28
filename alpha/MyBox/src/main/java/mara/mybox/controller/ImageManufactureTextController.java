@@ -13,6 +13,7 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -61,6 +62,16 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
+        translateTo(event, p);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent event) {
+        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
+        translateTo(event, p);
+    }
+
+    public void translateTo(MouseEvent event, DoublePoint p) {
         if (imageView.getImage() == null || p == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;

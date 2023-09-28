@@ -96,6 +96,8 @@ public abstract class RecentVisitMenu {
             if (onlyPath) {
                 List<String> paths = paths();
                 if (paths != null && !paths.isEmpty()) {
+                    menu = new Menu(message("RecentAccessedDirectories"));
+                    items.add(menu);
                     for (String path : paths) {
                         menu = new MenuItem(StringTools.menuSuffix(path));
                         menu.setOnAction((ActionEvent event1) -> {
