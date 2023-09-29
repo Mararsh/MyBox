@@ -1,0 +1,166 @@
+<!DOCTYPE html><HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>About Tree Structure</title>
+        <style type="text/css">
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+            .valueText {
+                color:#2e598a;
+            }
+
+        </style>
+    </HEAD>
+    <body style="width: 900px; margin:0 auto;" contenteditable="false">
+        <h1 align="center">Tree Structure</h1>
+        <h2>1 Usages of Tree Structure</h2>
+        <p>Tree structure is one of basic data structure which presents one type of nonlinear logic.</p>
+        <p>Tree structure can describe relationships in hierarchy and membership accurately.</p>
+        <h2>2 Features of Tree Structure</h2>
+        <p>Information can be organized as a tree:</p>
+        <ol>
+            <li>"Node" stores a piece of information.</li>
+            <li>"Children Nodes": In lower level and belong to the node. Also called "Branches".</li>
+            <li>One node can have multiple children.</li>
+            <li>"Parent Node": In higher level and owns the node.</li>
+            <li>One node can have only one "Parent".</li>
+            <li>"Descendant Nodes": All nodes extended recursively below children.</li>
+            <li>"Ancestral Nodes": All nodes extended recursively above parent.</li>
+            <li>"Root Node": In top level and be ancestry of all other nodes.</li>
+            <li>"Leaf Nodes":  Have not children.</li>
+            <li>"Ordered Tree": The order of children is steady.</li>
+            <li>"Hierarchy Number": The frequence number of the chain from root to the node.</li>
+            <li>In ordered tree, hierarchy number can identify each node uniquely.<br />
+                Notice, hierarchy number of same node may change when nodes are deleted/added/moved.</li>
+        </ol>
+        <h2>3 Define Tree Structure</h2>
+        <ul>
+            <li>Attributes of node: Title, Value, Modify_Time.</li>
+            <li>Value of node is stored as large text of length 2G.</li>
+            <li>Tags of node. One node can have multiple tags while one tag can belong to multiple nodes.</li>
+        </ul>
+        <h2>4 Parse and Encode Value of Node</h2>
+        <p>In MyBox, objects handled by following functions are stored and managed in tree:</p>
+        <table>
+            <thead>
+                <tr><th>     Function </th><th>                    Format of node value                     </th></tr>
+            </thead>
+            <tbody>
+                <tr><td> Notes         </td><td> Piece of html. Should be content of "body" and should not include tags of "html", "head", and "body".  </td></tr>
+                <tr><td> Tree Information   </td><td> Text                                           </td></tr>
+                <tr><td> Favorite Address   </td><td> Two fields: Address, Icon                                    </td></tr>
+                <tr><td> Row Filter        </td><td> Three fields: JavaScript expression, Whether invert, Maximum rows                </td></tr>
+                <tr><td> Define Data  </td><td> Data attributes and columns in XML                                </td></tr>
+                <tr><td> SQL        </td><td> Text: SQL statements                                      </td></tr>
+                <tr><td> Math Function       </td><td> Four fields: Function Name, Variables, Expression, Domain                        </td></tr>
+                <tr><td> JavaScript </td><td> Text: JavaScript codes                              </td></tr>
+                <tr><td> JShell     </td><td> Text: Java codes                                     </td></tr>
+                <tr><td> JEXL       </td><td> Three fields: Script, Context, Parameters                                </td></tr>
+            </tbody>
+        </table>
+        <h2>5 Manage Tree Structure</h2>
+        <h3>5.1 Tree View</h3>
+        <p>Select one node, and display its "Tree View" with this node as root:</p>
+        <ul>
+            <li>Tree information is shown in html page.</li>
+            <li>Click node name to unfold/fold its childrent.</li>
+            <li>Options to display hierarchy number, tags, and node values.</li>
+        </ul>
+        <h3>5.2 Examples</h3>
+        <p>MyBox provides examples for functions in tree.<br />
+            Click menu item "Examples" to import example data of the function.</p>
+        <p>Examples' tree view of  of each function tree can be viewed in MyBox documents list.</p>
+        <h3>5.3 Export</h3>
+        <p>Select one node, and export its tree with this node as root:</p>
+        <ul>
+            <li>Format can be chosen: text, single html, html frameset, xml, or json.</li>
+            <li>Options to export node's modified time, and its tags.</li>
+            <li>Style of exported html can be set.</li>
+        </ul>
+        <h3>5.4 Import</h3>
+        <p>Tree information can be imported in batch:</p>
+        <ul>
+            <li>Select multiple files which hold tree information as source.</li>
+            <li>File format is text encoded with special delimiters. Exported text can be referred.</li>
+            <li>Rulers of text format are displayed in interface, and example is provided.</li>
+        </ul>
+        <h3>5.5 Query and Select Nodes</h3>
+        <p>To select nodes, following ways can be taken:</p>
+        <ul>
+            <li>Click node in the tree.</li>
+            <li>To node in the tree, click menu item "Load Children" or  "Load Descendant", and select one or multiple nodes in the nodes list.</li>
+            <li>Select multiple tags, and select one or multiple nodes in result list of the query.</li>
+            <li>Select multiple time values, and select one or multiple nodes in result list of the query.</li>
+            <li>Input multiple keywords, query against node title or node value, and select one or multiple nodes in result list of the query.</li>
+        </ul>
+        <h3>5.5 Add/Delete/Modify Nodes</h3>
+        <p>Select one or multiple nodes, and:</p>
+        <ul>
+            <li>Add child node.</li>
+            <li>Delete the nodes and their descendant.</li>
+            <li>Rename node.</li>
+            <li>Copy nodes:
+                <ul>
+                    <li>Choices: Only copy node, Copy node's descendant, or Copy node and its descendant</li>
+                    <li>Select the target node to copy into.</li>
+                    <li>Target node should not be source node nor its descendant.</li>
+                </ul>
+            </li>
+            <li>Move nodes:
+                <ul>
+                    <li>Select the target node to move into.</li>
+                    <li>Target node should not be source node nor its descendant.</li>
+                </ul>
+            </li>
+            <li>Edit Node.</li>
+        </ul>
+        <h3>5.6 View Nodes</h3>
+        <p>Select one node:</p>
+        <ul>
+            <li>View node's information in popped window.</li>
+            <li>Copy node's title or value into system clipboard.</li>
+            <li>Fold node, or node and its descendant.</li>
+            <li>Unfold node, or node and its descendant.</li>
+            <li>Load children or decendant.</li>
+        </ul>
+        <h3>5.7 Menu</h3>
+        <ul>
+            <li>Click buttons in interface to view menus.</li>
+            <li>Right click the tree to pop the menu.</li>
+            <li>Actions can be chosen for left click, right click, or double click against the menu.</li>
+        </ul>
+        <br />
+    </body>
+</HTML>

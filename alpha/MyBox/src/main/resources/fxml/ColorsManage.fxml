@@ -360,7 +360,7 @@ License:    Apache License Version 2.0
                      <content>
                         <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
-                              <fx:include fx:id="info" source="HtmlTable.fxml" />
+                              <fx:include fx:id="info" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="HtmlTable.fxml" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </content>

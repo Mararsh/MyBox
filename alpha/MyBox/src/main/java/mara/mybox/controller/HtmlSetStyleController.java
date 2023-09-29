@@ -33,7 +33,7 @@ public class HtmlSetStyleController extends BaseBatchHtmlController {
 
     @Override
     public void initOptionsSection() {
-        cssArea.setText(HtmlStyles.ArticleStyle);
+        cssArea.setText(HtmlStyles.DefaultStyle);
 
         ignoreCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override

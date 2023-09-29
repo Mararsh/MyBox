@@ -116,7 +116,7 @@ public class ControlDataConvert extends BaseController {
             xmlCheck.setSelected(true);
         } else if ("html".equals(format)) {
             htmlCheck.setSelected(true);
-            cssArea.setText(HtmlStyles.ArticleStyle);
+            cssArea.setText(HtmlStyles.DefaultStyle);
         } else if ("pdf".equals(format)) {
             pdfCheck.setSelected(true);
             initPDF();
@@ -234,7 +234,7 @@ public class ControlDataConvert extends BaseController {
     }
 
     private void initHtml() {
-        cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.ArticleStyle));
+        cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.DefaultStyle));
     }
 
     private void initPDF() {

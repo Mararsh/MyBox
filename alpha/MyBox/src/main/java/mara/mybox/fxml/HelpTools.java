@@ -53,7 +53,7 @@ public class HelpTools {
             File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme_" + lang + ".html");
             File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
                     "doc", "README-" + lang + ".md", true);
-            String html = MarkdownTools.md2html(mdFile);
+            String html = MarkdownTools.md2html(MarkdownTools.htmlOptions(), mdFile, HtmlStyles.DefaultStyle);
             if (html == null) {
                 return null;
             }
@@ -220,6 +220,18 @@ public class HelpTools {
             String lang = Languages.getLangName();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_row_expression_" + lang + ".html",
                     "doc", "mybox_about_row_expression_" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static File AboutTreeInformation() {
+        try {
+            String lang = Languages.getLangName();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_tree_" + lang + ".html",
+                    "doc", "mybox_about_tree_" + lang + ".html");
             return file;
         } catch (Exception e) {
             MyBoxLog.error(e);

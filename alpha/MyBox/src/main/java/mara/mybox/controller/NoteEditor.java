@@ -33,8 +33,8 @@ public class NoteEditor extends ControlHtmlEditor {
             notesController.editor = infoController;
 
             webViewController.linkInNewTab = true;
-            webViewController.defaultStyle = HtmlStyles.styleValue("Table");
-            webViewController.initStyle(HtmlStyles.styleValue("Table"));
+            webViewController.defaultStyle = HtmlStyles.TableStyle;
+            webViewController.initStyle(HtmlStyles.TableStyle);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

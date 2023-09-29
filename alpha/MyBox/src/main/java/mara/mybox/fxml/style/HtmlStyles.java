@@ -29,7 +29,7 @@ public class HtmlStyles {
             = ArticleStyle
             + "              .valueText { color:#2e598a;  } \n";
     public static final String ConsoleStyle
-            = ArticleStyle
+            = DefaultStyle
             + " body { background-color:black; color:#CCFF99; }\n"
             + "              table, th, td { border: #CCFF99; }\n"
             + "              a:link {color: dodgerblue}\n"
@@ -37,7 +37,7 @@ public class HtmlStyles {
             + "              .valueBox { border-color:#CCFF99;}\n"
             + "              .valueText { color:skyblue;  }\n";
     public static final String BlackboardStyle
-            = ArticleStyle
+            = DefaultStyle
             + " body { background-color:#336633; color:white; }\n"
             + "              table, th, td { border: white; }\n"
             + "              a:link {color: aqua}\n"
@@ -45,7 +45,7 @@ public class HtmlStyles {
             + "              .valueBox { border-color:white; }\n"
             + "              .valueText { color:wheat;  }\n";
     public static final String AgoStyle
-            = ArticleStyle
+            = DefaultStyle
             + " body { background-color:darkblue; color:white;  }\n"
             + "              table, th, td { border: white; }\n"
             + "              a:link {color: springgreen}\n"
@@ -53,13 +53,13 @@ public class HtmlStyles {
             + "              .valueBox {  border-color:white;}\n"
             + "              .valueText { color:yellow;  }\n";
     public static final String BookStyle
-            = ArticleStyle
+            = DefaultStyle
             + " body { background-color:#F6F1EB; color:black;  }\n";
     public static final String GreyStyle
-            = ArticleStyle
+            = DefaultStyle
             + " body { background-color:#ececec; color:black;  }\n";
     public static final String LinkStyle
-            = ArticleStyle
+            = DefaultStyle
             + " body { background-color:transparent;  }\n"
             + "              table { border-collapse:collapse; max-width:95%; }\n"
             + "              table, th, td { border: 0px solid; }\n"

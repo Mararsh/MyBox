@@ -54,6 +54,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileTools;
@@ -541,7 +542,7 @@ public class ControlWebView extends BaseController {
                 writeStyle(initStyle);
             } else {
                 String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
-                writeStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
+                writeStyle(UserConfig.getString(prefix + "HtmlStyle", HtmlStyles.TableStyle));
             }
 
             try {

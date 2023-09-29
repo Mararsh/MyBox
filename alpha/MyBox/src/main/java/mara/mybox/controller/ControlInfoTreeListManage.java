@@ -26,6 +26,7 @@ import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
@@ -614,7 +615,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
             protected boolean handle() {
                 file = FileTmpTools.generateFile(message(category), "htm");
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
-                    writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", HtmlStyles.DefaultStyle));
+                    writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", HtmlStyles.TableStyle));
                     // https://www.jb51.net/article/116957.htm
                     writer.write("<BODY>\n");
                     writer.write(" <script>\n"
@@ -730,6 +731,11 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void AboutTreeInformation() {
+        openHtml(HelpTools.AboutTreeInformation());
     }
 
     @FXML

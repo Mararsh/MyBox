@@ -501,7 +501,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                         table.add(row);
                     }
 
-                    String html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Table"), table.body());
+                    String html = HtmlWriteTools.html(title, HtmlStyles.TableStyle, table.body());
                     File file = new File(path, "mybox_palette_" + name + ".html");
                     file.delete();
                     TextFileTools.writeFile(file, html);
