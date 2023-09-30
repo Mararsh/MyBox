@@ -106,7 +106,7 @@ public class BaseWebViewController extends BaseFileController {
             popError(message("InvalidAddress"));
             return;
         }
-        sourceFile = file;
+        checkSystemMethodButton(file);
         if (webViewController != null) {
             webViewController.setSourceFile(file);
         }
@@ -120,6 +120,7 @@ public class BaseWebViewController extends BaseFileController {
             popError(message("InvalidData"));
             return false;
         }
+        checkSystemMethodButton(file);
         if (webViewController != null) {
             boolean ret = webViewController.loadFile(file);
             if (ret) {

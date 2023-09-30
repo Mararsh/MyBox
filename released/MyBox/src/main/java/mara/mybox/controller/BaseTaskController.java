@@ -192,6 +192,15 @@ public class BaseTaskController extends BaseLogs {
                 path = targetPathController.file();
             } else if (targetFile != null) {
                 path = targetFile.getParentFile();
+            } else if (targetFiles != null) {
+                for (int type : targetFiles.keySet()) {
+                    List<File> files = targetFiles.get(type);
+                    if (files == null || files.isEmpty()) {
+                        continue;
+                    }
+                    path = files.get(0).getParentFile();
+                    break;
+                }
             }
             if (path == null || !path.exists()) {
                 return;

@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-2-28
  * @License Apache License Version 2.0
  */
-public class NotesController extends TreeManageController {
+public class NotesController extends InfoTreeManageController {
 
     @FXML
     protected NoteEditor editorController;
@@ -64,12 +64,18 @@ public class NotesController extends TreeManageController {
 
     @Override
     public boolean isNodeChanged() {
-        return editorController.fileChanged || nodeController.nodeChanged;
+        return editorController.fileChanged || editor.nodeChanged;
     }
 
     @Override
     public void nodeSaved() {
         super.nodeSaved();
+        editorController.updateFileStatus(false);
+    }
+
+    @Override
+    public void newNodeSaved() {
+        super.newNodeSaved();
         editorController.updateFileStatus(false);
     }
 

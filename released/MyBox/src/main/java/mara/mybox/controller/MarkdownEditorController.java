@@ -348,6 +348,16 @@ public class MarkdownEditorController extends TextEditorController {
         webViewController.showFunctionsMenu(event);
     }
 
+    @FXML
+    protected void editTexts() {
+        String txt = mainArea.getText();
+        if (txt == null || txt.isBlank()) {
+            error = message("NoData");
+            return;
+        }
+        TextEditorController.edit(txt);
+    }
+
     /*
         static
      */

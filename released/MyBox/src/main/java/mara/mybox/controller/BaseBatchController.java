@@ -551,8 +551,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 if (!beforeHandleFiles()) {
                     return false;
                 }
-                updateTaskProgress(currentParameters.currentIndex, sourceFiles.size());
                 int len = sourceFiles.size();
+                updateTaskProgress(currentParameters.currentIndex, len);
                 for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
                     if (task == null || isCancelled()) {
                         break;

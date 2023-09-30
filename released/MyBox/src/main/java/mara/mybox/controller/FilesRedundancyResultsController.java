@@ -73,17 +73,19 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
                     return true;
                 } catch (Exception e) {
-                    error = e.toString();
+                    showLogs(e.toString());
                     return false;
                 }
             }
 
             @Override
             protected void whenSucceeded() {
-                bottomLabel.setText(MessageFormat.format(message("RedundancyCheckValues"),
+                String info = MessageFormat.format(message("RedundancyCheckValues"),
                         filesTotal, FileTools.showFileSize(sizeTotal),
                         filesRundancy, FileTools.showFileSize(sizeRedundant),
-                        filesSelected, FileTools.showFileSize(sizeSelected)));
+                        filesSelected, FileTools.showFileSize(sizeSelected));
+                bottomLabel.setText(info);
+                showLogs(info);
                 deleteButton.setDisable(filesSelected == 0);
             }
         };
@@ -97,6 +99,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             popInformation(message("NoRedundancy"));
             return;
         }
+        showLogs(message("HandleFilesRedundancy"));
         if (task != null) {
             task.cancel();
         }
@@ -225,6 +228,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
     @Override
     public void deleteAction() {
+        showLogs(message("Delete") + "...");
         if (task != null) {
             task.cancel();
         }
@@ -255,6 +259,9 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                                 Desktop.getDesktop().moveToTrash(file);
                             }
                             deleted++;
+                            if (verboseCheck.isSelected()) {
+                                updateLogs(deleted + ": " + file);
+                            }
                         }
                     }
                     return true;
@@ -267,6 +274,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             protected void finalAction() {
                 super.finalAction();
                 bottomLabel.setText(message("TotalDeletedFiles") + ": " + deleted);
+                showLogs(message("TotalDeletedFiles") + ": " + deleted);
                 TreeItem rootItem = filesTreeView.getRoot();
                 List<TreeItem> digests = new ArrayList();
                 digests.addAll(rootItem.getChildren());

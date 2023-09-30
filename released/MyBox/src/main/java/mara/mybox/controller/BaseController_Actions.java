@@ -341,6 +341,13 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         openStage(Fxmls.MyboxFxml);
     }
 
+    @FXML
+    public void systemMethod() {
+        if (sourceFile != null && sourceFile.exists()) {
+            browse(sourceFile);
+        }
+    }
+
     public void clearUserSettings() {
         if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
@@ -590,7 +597,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         items.addAll(menuItems);
 
         MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+//        menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();

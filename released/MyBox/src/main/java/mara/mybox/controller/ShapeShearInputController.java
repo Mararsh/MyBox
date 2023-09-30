@@ -80,6 +80,9 @@ public class ShapeShearInputController extends BaseShapeTransformController {
             return;
         }
         DoublePoint c = DoubleShape.getCenter(shapeData);
+        if (c == null) {
+            return;
+        }
         DoubleShape.translateCenterAbs(pathData, c.getX(), c.getY());
         if (imageController.supportPath) {
             imageController.clearMask();

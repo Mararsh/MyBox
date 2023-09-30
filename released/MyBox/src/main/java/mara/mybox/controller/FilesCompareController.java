@@ -184,7 +184,7 @@ public class FilesCompareController extends BaseController {
     public void dmHelp() {
         try {
             String link;
-            switch (Languages.getLanguage()) {
+            switch (Languages.getLangName()) {
                 case "zh":
                     link = "https://baike.baidu.com/item/%E6%95%B0%E5%AD%97%E6%91%98%E8%A6%81/4069118";
                     break;
@@ -201,7 +201,7 @@ public class FilesCompareController extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -252,7 +252,7 @@ public class FilesCompareController extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
 
             @Override
             public List<VisitHistory> recentPaths() {

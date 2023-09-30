@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
@@ -17,24 +19,30 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-29
  * @License Apache License Version 2.0
  */
-public class WebFavoritesController extends TreeManageController {
+public class WebFavoritesController extends InfoTreeManageController {
+
+    @FXML
+    protected WebFavoriteEditor editorController;
+    @FXML
+    protected TableColumn<InfoNode, String> iconColumn;
 
     public WebFavoritesController() {
         baseTitle = message("WebFavorites");
         category = InfoNode.WebFavorite;
         nameMsg = message("Title");
         valueMsg = message("Address");
-        moreMsg = message("Icon");
     }
 
     @Override
     public void initControls() {
         try {
+            editor = editorController;
             super.initControls();
 
-            moreColumn.setCellFactory(new TableImageFileCell(20));
+            iconColumn.setCellValueFactory(new PropertyValueFactory<>("icon"));
+            iconColumn.setCellFactory(new TableImageFileCell(20));
 
-            goButton.disableProperty().bind(Bindings.isEmpty(nodeController.nameInput.textProperty()));
+            goButton.disableProperty().bind(Bindings.isEmpty(editor.attributesController.nameInput.textProperty()));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -49,7 +57,7 @@ public class WebFavoritesController extends TreeManageController {
     @FXML
     @Override
     public void goAction() {
-        String address = nodeController.valueInput.getText();
+        String address = editor.valueInput.getText();
         if (address == null || address.isBlank()) {
             popError(message("InvalidData") + ": " + message("Address"));
             return;
@@ -92,7 +100,7 @@ public class WebFavoritesController extends TreeManageController {
     public static WebFavoritesController oneOpen(InfoNode node) {
         WebFavoritesController controller = oneOpen();
         if (controller != null) {
-            controller.nodesController.focusNodeAfterLoaded(node);
+            controller.treeController.focusNodeAfterLoaded(node);
         }
         return controller;
     }

@@ -3,8 +3,8 @@ package mara.mybox.tools;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import javafx.scene.control.IndexRange;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -24,20 +24,16 @@ public class NumberTools {
             }
             String format = inFormat;
             if (format == null || format.isBlank()
-                    || message("en", "None").equals(format)
-                    || message("zh", "None").equals(format)) {
+                    || Languages.matchIgnoreCase("None", format)) {
                 return noFormat(data, scale);
 
-            } else if (message("en", "ScientificNotation").equals(format)
-                    || message("zh", "ScientificNotation").equals(format)) {
+            } else if (Languages.matchIgnoreCase("ScientificNotation", format)) {
                 return scientificNotation(data, scale);
 
-            } else if (message("en", "GroupInThousands").equals(format)
-                    || message("zh", "GroupInThousands").equals(format)) {
+            } else if (Languages.matchIgnoreCase("GroupInThousands", format)) {
                 return format(data, 3, scale);
 
-            } else if (message("en", "GroupInTenThousands").equals(format)
-                    || message("zh", "GroupInTenThousands").equals(format)) {
+            } else if (Languages.matchIgnoreCase("GroupInTenThousands", format)) {
                 return format(data, 4, scale);
 
             } else {

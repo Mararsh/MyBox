@@ -172,6 +172,8 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             commentsLabel.setText(Languages.message("DragMarginsComments"));
             editor.maskRectangleData = DoubleRectangle.image(imageView.getImage());
             editor.showMaskRectangle();
+            editor.popAnchorMenu = false;
+            editor.showAnchors = true;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

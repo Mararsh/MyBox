@@ -88,7 +88,7 @@ public abstract class BaseController_Attributes {
             renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
             firstButton, lastButton, previousButton, nextButton,
             pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
-            infoButton, metaButton, openSourceButton,
+            infoButton, metaButton, openSourceButton, systemMethodButton,
             transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
     protected VBox paraBox;

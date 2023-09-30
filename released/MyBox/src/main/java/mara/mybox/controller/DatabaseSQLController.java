@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-14
  * @License Apache License Version 2.0
  */
-public class DatabaseSqlController extends TreeManageController {
+public class DatabaseSqlController extends InfoTreeManageController {
 
     @FXML
     protected DatabaseSqlEditor editorController;
@@ -27,7 +27,7 @@ public class DatabaseSqlController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             super.initControls();
 
         } catch (Exception e) {

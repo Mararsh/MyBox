@@ -3,7 +3,7 @@ package mara.mybox.fxml.chart;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;

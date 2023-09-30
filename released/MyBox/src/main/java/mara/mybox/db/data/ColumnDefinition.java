@@ -1,5 +1,7 @@
 package mara.mybox.db.data;
 
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -11,7 +13,6 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
@@ -54,7 +55,8 @@ public class ColumnDefinition extends BaseData {
         File, Image, // string of the path
         Double, Float, Long, Integer, Short,
         Datetime, Date, Era, // Looks Derby does not support date of BC(before Christ)
-        Clob, Blob,
+        Clob, // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
+        Blob, // BLOB is handled as InputStream internally
         Longitude, Latitude
     }
 
@@ -68,6 +70,10 @@ public class ColumnDefinition extends BaseData {
 
     public static enum DataFormat {
         ScientificNotation, CommaSeparated, None
+    }
+
+    public enum InvalidAs {
+        Zero, Blank, Skip
     }
 
     public final void initColumnDefinition() {
@@ -310,8 +316,8 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.Double || type == ColumnType.Float;
     }
 
-    public boolean isStringType() {
-        return type == ColumnType.String;
+    public boolean supportMultipleLine() {
+        return type == ColumnType.String || type == ColumnType.Clob;
     }
 
     public boolean isDBStringType() {
@@ -405,18 +411,17 @@ public class ColumnDefinition extends BaseData {
             if (o == null) {
                 return null;
             }
-            String s = o + "";
             switch (type) {
                 case String:
                 case Enumeration:
                 case Color:
                 case File:
                 case Image:
-                    return s;
+                    return (String) o;
                 case Era:
                     long lv;
                     try {
-                        lv = Long.parseLong(s);
+                        lv = Long.parseLong((String) o);
                         if (lv >= 10000 || lv <= -10000) {
                             return lv;
                         }
@@ -428,7 +433,7 @@ public class ColumnDefinition extends BaseData {
                 case Latitude:
                     double d;
                     try {
-                        d = Double.parseDouble(s);
+                        d = Double.parseDouble(o + "");
                         if (DoubleTools.invalidDouble(d)) {
                             d = Double.NaN;
                         }
@@ -439,7 +444,7 @@ public class ColumnDefinition extends BaseData {
                 case Float:
                     float f;
                     try {
-                        f = Float.parseFloat(s);
+                        f = Float.parseFloat(o + "");
                         if (FloatTools.invalidFloat(f)) {
                             f = Float.NaN;
                         }
@@ -450,7 +455,7 @@ public class ColumnDefinition extends BaseData {
                 case Long:
                     long l;
                     try {
-                        l = Long.parseLong(s);
+                        l = Long.parseLong(o + "");
                     } catch (Exception e) {
                         l = AppValues.InvalidLong;
                     }
@@ -458,7 +463,7 @@ public class ColumnDefinition extends BaseData {
                 case Integer:
                     int i;
                     try {
-                        i = Integer.parseInt(s);
+                        i = Integer.parseInt(o + "");
                     } catch (Exception e) {
                         i = AppValues.InvalidInteger;
                     }
@@ -466,21 +471,23 @@ public class ColumnDefinition extends BaseData {
                 case Short:
                     short ss;
                     try {
-                        ss = Short.parseShort(s);
+                        ss = Short.parseShort(o + "");
                     } catch (Exception e) {
                         ss = AppValues.InvalidShort;
                     }
                     return ss;
                 case Boolean:
-                    return StringTools.isTrue(s);
+                    return StringTools.isTrue(o + "");
                 case Datetime:
-                    return DateTools.encodeDate(s);
+                    return DateTools.encodeDate(o + "");
                 case Date:
-                    return DateTools.encodeDate(s);
-//                case Blob:
-//                    return results.getBlob(savedName);
-//                case Clob:
-//                    return results.getClob(savedName);
+                    return DateTools.encodeDate(o + "");
+                case Clob:
+                    Clob clob = (Clob) o;
+                    return clob.getSubString(1, (int) clob.length());
+                case Blob:
+                    Blob blob = (Blob) o;
+                    return blob.getBinaryStream();
                 default:
                     MyBoxLog.debug(savedName + " " + type);
             }
@@ -594,6 +601,7 @@ public class ColumnDefinition extends BaseData {
             case File:
             case Image:
             case Color:
+            case Clob:
                 if (v != null) {
                     return "'" + defaultValue + "'";
                 } else {
@@ -643,6 +651,7 @@ public class ColumnDefinition extends BaseData {
             case File:
             case Image:
             case Color:
+            case Clob:
                 if (v != null) {
                     return defaultValue;
                 } else {
@@ -747,6 +756,18 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    public static ColumnType columnType(String name) {
+        if (name == null || name.isBlank()) {
+            return ColumnType.String;
+        }
+        for (ColumnType t : ColumnType.values()) {
+            if (t.name().equalsIgnoreCase(name)) {
+                return t;
+            }
+        }
+        return ColumnType.String;
+    }
+
     public static List<ColumnType> editTypes() {
         List<ColumnType> types = new ArrayList<>();
         types.addAll(Arrays.asList(ColumnType.String, ColumnType.Boolean,
@@ -807,6 +828,18 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    public static InvalidAs invalidAs(String name) {
+        if (name == null || name.isBlank()) {
+            return InvalidAs.Skip;
+        }
+        for (InvalidAs v : InvalidAs.values()) {
+            if (v.name().equalsIgnoreCase(name)) {
+                return v;
+            }
+        }
+        return InvalidAs.Skip;
+    }
+
     public static boolean isNumberType(ColumnType type) {
         return type == ColumnType.Double || type == ColumnType.Float
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
@@ -833,9 +866,9 @@ public class ColumnDefinition extends BaseData {
             }
             switch (sourceType) {
                 case Double:
-                    return Double.parseDouble(string.replaceAll(",", ""));
+                    return Double.valueOf(string.replaceAll(",", ""));
                 case Float:
-                    return Float.parseFloat(string.replaceAll(",", ""));
+                    return Float.valueOf(string.replaceAll(",", ""));
                 case Long:
                     return Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Integer:

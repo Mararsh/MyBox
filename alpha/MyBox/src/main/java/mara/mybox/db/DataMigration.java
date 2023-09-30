@@ -74,7 +74,6 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
-            updateIn677(conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion
@@ -211,7 +210,7 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Tree_Node DROP COLUMN more");
 
         } catch (Exception e) {
-//            MyBoxLog.error(e);
+            MyBoxLog.error(e);
         }
     }
 

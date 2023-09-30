@@ -135,7 +135,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                     }
                     TreeItem<NodeP> item = selected();
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        showItemMenu(item);
+                        rightClicked(event, item);
                     } else if (event.getClickCount() > 1) {
                         doubleClicked(event, item);
                     } else {
@@ -185,6 +185,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     public void doubleClicked(MouseEvent event, TreeItem<NodeP> item) {
+    }
+
+    public void rightClicked(MouseEvent event, TreeItem<NodeP> item) {
+        showItemMenu(item);
     }
 
     public void addNewNode(TreeItem<NodeP> parent, NodeP node, boolean select) {
@@ -427,17 +431,17 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        items.addAll(functionItems(item));
+        items.addAll(functionMenuItems(item));
 
         items.add(new SeparatorMenuItem());
         return items;
     }
 
-    public List<MenuItem> functionItems(TreeItem<NodeP> item) {
-        return viewItems(item);
+    public List<MenuItem> functionMenuItems(TreeItem<NodeP> item) {
+        return viewMenuItems(item);
     }
 
-    public List<MenuItem> foldItems(TreeItem<NodeP> item) {
+    public List<MenuItem> foldMenuItems(TreeItem<NodeP> item) {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
@@ -467,19 +471,28 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return items;
     }
 
-    public List<MenuItem> viewItems(TreeItem<NodeP> item) {
-        List<MenuItem> items = foldItems(item);
+    public List<MenuItem> viewMenuItems(TreeItem<NodeP> item) {
+        List<MenuItem> items = foldMenuItems(item);
 
-        MenuItem menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            viewNode(item);
+        });
+        menu.setDisable(item == null);
+        items.add(menu);
+
+        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
         });
+        menu.setDisable(item == null);
         items.add(menu);
 
         menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
         });
+        menu.setDisable(item == null);
         items.add(menu);
 
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
@@ -493,6 +506,18 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     public void showItemMenu(TreeItem<NodeP> item) {
         popNodeMenu(treeView, makeFunctionsMenu(item));
+    }
+
+    protected void viewNode(TreeItem<NodeP> item) {
+        if (item == null) {
+            return;
+        }
+        String s = label(item);
+        NodeP node = item.getValue();
+        if (node != null) {
+            s += "\n" + value(node);
+        }
+        TextPopController.loadText(this, s);
     }
 
     @FXML
@@ -569,7 +594,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        items.addAll(operationsItems(item));
+        items.addAll(operationsMenuItems(item));
 
         items.add(new SeparatorMenuItem());
 
@@ -590,8 +615,8 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         }
     }
 
-    public List<MenuItem> operationsItems(TreeItem<NodeP> item) {
-        return viewItems(item);
+    public List<MenuItem> operationsMenuItems(TreeItem<NodeP> item) {
+        return viewMenuItems(item);
     }
 
     @FXML

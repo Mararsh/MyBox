@@ -8,6 +8,7 @@ import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -22,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-20
  * @License Apache License Version 2.0
  */
-public class JavaScriptController extends TreeManageController {
+public class JavaScriptController extends InfoTreeManageController {
 
     protected ControlWebView htmlWebView;
     protected String outputs = "";
@@ -52,7 +53,7 @@ public class JavaScriptController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            nodeController = editorController;
+            editor = editorController;
             super.initControls();
 
             editorController.setParameters(this);
@@ -149,6 +150,18 @@ public class JavaScriptController extends TreeManageController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void popJavascriptHelps(Event event) {
+        if (UserConfig.getBoolean("JavaScriptHelpsPopWhenMouseHovering", false)) {
+            showJavascriptHelps(event);
+        }
+    }
+
+    @FXML
+    public void showJavascriptHelps(Event event) {
+        popEventMenu(event, HelpTools.javascriptHelps());
     }
 
     /*

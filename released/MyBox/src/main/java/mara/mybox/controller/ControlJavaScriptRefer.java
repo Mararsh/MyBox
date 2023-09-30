@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-5
  * @License Apache License Version 2.0
  */
-public class ControlJavaScriptRefer extends BaseInfoTreeController {
+public class ControlJavaScriptRefer extends ControlInfoTreeList {
 
     @FXML
     protected TextArea scriptInput;
@@ -78,10 +78,10 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
             return;
         }
         InfoNode node = item.getValue();
-        if (node == null || node.getValue() == null) {
+        if (node == null || node.getInfo() == null) {
             return;
         }
-        scriptInput.replaceText(scriptInput.getSelection(), node.getValue());
+        scriptInput.replaceText(scriptInput.getSelection(), node.getInfo());
     }
 
     @FXML

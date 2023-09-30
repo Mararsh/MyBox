@@ -1,19 +1,31 @@
 ##MyBox#
-示例 > 对象
+MyBoxTreeRoot;;;
+JShell代码
+
+##MyBox#
+JShell代码
+示例
+
+##MyBox#
+JShell代码 > 示例
+对象
+
+##MyBox#
+JShell代码 > 示例 > 对象
 字串
 String exampleString = "hello";
 exampleString += " world";
 "包含e："+ exampleString.contains("e") + "    长度：" + exampleString.length();
 
 ##MyBox#
-示例 > 对象
+JShell代码 > 示例 > 对象
 时间
 import java.util.Date;
 Date exampleDate = new Date();
 "当前时间：" + exampleDate.toString() + "     值：" + exampleDate.getTime();
 
 ##MyBox#
-示例 > 对象
+JShell代码 > 示例 > 对象
 数组
 import java.util.Arrays;
 double[] exampleArray =  new double[5];
@@ -23,7 +35,7 @@ for (int i=0; i<exampleArray.length; i++ ) {
 exampleArray[2];
 
 ##MyBox#
-示例 > 对象
+JShell代码 > 示例 > 对象
 列表
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,207 +45,223 @@ exampleList.addAll(Arrays.asList("a", "b", "c", "d", "e"));
 exampleList.toString();
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例
+表达式
+
+##MyBox#
+JShell代码 > 示例 > 表达式
+数值计算
+
+##MyBox#
+JShell代码 > 示例 > 表达式 > 数值计算
 欧拉数
 Math.E
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 圆周率
 Math.PI
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 绝对值
 Math.abs(-5.611)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 平方根
 Math.sqrt(9)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 三次方根
 Math.cbrt(27)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 幂
 Math.pow(2,5)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 欧拉冥
 Math.exp(2)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 自然对数（底为e）
 Math.log(6)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 常用对数（底为10）
 Math.log10(6)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 余弦
 Math.cos(0)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 正弦
 Math.sin(9)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 正切
 Math.tan(5)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 反正切
 Math.atan(-7.3)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 反余弦
 Math.acos(0.5)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 反正弦
 Math.asin(0.3)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 上舍入
 Math.ceil(4.13)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 下舍入
 Math.floor(4.67)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 四舍五入
 Math.round(4.83)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 随机数
 Math.random()
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 大值
 Math.max(1,-3)
 
 ##MyBox#
-示例 > 表达式 > 数值计算
+JShell代码 > 示例 > 表达式 > 数值计算
 小值
 Math.min(1,-3)
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式
+字符串处理
+
+##MyBox#
+JShell代码 > 示例 > 表达式 > 字符串处理
 忽略大小写的等于
 "Hello".equalsIgnoreCase("hello")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 等于
 "Hello".equals("hello")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 替换首个
 "Hello World! World is yourself.".replace("World", "Feeling");
-   
+
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 替换所有
 "Hello World! World is yourself.".replaceAll("World", "Feeling");
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 开始于
 "Hello".startsWith("h")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 结尾于
 "Hello".endsWith("o")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 子串
 "Hello".substring(2, 5)
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 字符
 "hello".charAt(2)
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 连接
 "hello".concat(" world")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 分割
 "1,2,3,4".split(",")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 位置
 "hello".indexOf("e")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 最后位置
 "hello".lastIndexOf("l")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 长度
 "hello".length()
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 小写
 "Hello".toLowerCase()
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 大写
 "Hello".toUpperCase()
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 包含
 "Hello".contains("el")
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 删除首尾空白字符
 " Hello  ".trim()
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 为空白字符串
 "  ".isBlank()
 
 ##MyBox#
-示例 > 表达式 > 字符串处理
+JShell代码 > 示例 > 表达式 > 字符串处理
 为空
 "".isEmpty()
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JShell代码 > 示例 > 表达式
+布尔运算
+
+##MyBox#
+JShell代码 > 示例 > 表达式 > 布尔运算
 列表包含
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -244,7 +272,7 @@ String exampleStringC = "c";
 exampleListC.contains(exampleStringC);
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JShell代码 > 示例 > 表达式 > 布尔运算
 字符串匹配
 // MyBox类路径应当已添加到JShell环境中
 import mara.mybox.tools.StringTools;
@@ -254,7 +282,7 @@ boolean exampleCaseInsensitiveM = true;
 StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JShell代码 > 示例 > 表达式 > 布尔运算
 字符串包含
 // MyBox类路径应当已添加到JShell环境中
 import mara.mybox.tools.StringTools;
@@ -264,7 +292,7 @@ boolean exampleCaseInsensitiveI = true;
 StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);
 
 ##MyBox#
-示例 > 表达式 > 布尔运算
+JShell代码 > 示例 > 表达式 > 布尔运算
 与/或/否
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -276,16 +304,20 @@ exampleListB.contains(exampleStringB) &&
 (exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));
 
 ##MyBox#
-示例 > 方法
+JShell代码 > 示例
+方法
+
+##MyBox#
+JShell代码 > 示例 > 方法
 圆的面积
 double circleAreaByDiameter(double diameter) {        
     double radius = diameter / 2;        
     return   Math.PI *  radius * radius ;        
 }
-circleAreaByDiameter(120) + circleAreaByDiameter(30)  
+circleAreaByDiameter(120) + circleAreaByDiameter(30)
 
 ##MyBox#
-示例 > 方法
+JShell代码 > 示例 > 方法
 四舍五入
 import java.math.BigDecimal;        
 import java.math.RoundingMode;        
@@ -293,10 +325,10 @@ double scale(double v, int scale) {
     BigDecimal b = new BigDecimal(v);        
     return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
 }    
-scale(Math.PI, 3) 
+scale(Math.PI, 3)
 
 ##MyBox#
-示例 > 方法
+JShell代码 > 示例 > 方法
 格式化数值
 import java.math.BigDecimal;        
 import java.math.RoundingMode;        
@@ -323,10 +355,10 @@ double circleAreaByRadius(double radius) {
     return   Math.PI *  radius * radius ;        
 }        
                                      
-formatDouble(circleAreaByRadius(273.4), 4)    
+formatDouble(circleAreaByRadius(273.4), 4)
 
 ##MyBox#
-示例 > 方法
+JShell代码 > 示例 > 方法
 格式化时间
 import java.util.Date;
 import java.util.TimeZone;
@@ -347,7 +379,7 @@ String datetimeToString(Date theDate, String format, TimeZone theZone) {
 datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());
 
 ##MyBox#
-示例 > 方法
+JShell代码 > 示例 > 方法
 匹配字符串
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -373,7 +405,7 @@ boolean match(String string, String find, boolean isRegex,
 match("Hello1233World", "\\S*3{2,}\\S*", true, true, true, true);
 
 ##MyBox#
-示例 > 方法
+JShell代码 > 示例 > 方法
 包含字符串
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

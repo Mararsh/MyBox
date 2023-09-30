@@ -225,13 +225,13 @@ public class BaseHtmlTreeController extends BaseTreeTableViewController<HtmlNode
         actions
      */
     @Override
-    public List<MenuItem> functionItems(TreeItem<HtmlNode> item) {
+    public List<MenuItem> functionMenuItems(TreeItem<HtmlNode> item) {
         List<MenuItem> items = new ArrayList<>();
 
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
 
-        viewMenu.getItems().addAll(viewItems(item));
+        viewMenu.getItems().addAll(viewMenuItems(item));
 
         items.add(new SeparatorMenuItem());
 

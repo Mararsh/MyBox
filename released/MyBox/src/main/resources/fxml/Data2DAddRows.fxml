@@ -19,14 +19,15 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAddRowsController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAddRowsController">
     <children>
-        <HBox alignment="CENTER" VBox.vgrow="NEVER">
-            <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%AddRows" textAlignment="CENTER" VBox.vgrow="NEVER" />
-            </children>
-        </HBox>
+        <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%AddRows" textAlignment="CENTER" VBox.vgrow="NEVER">
+            <font>
+                <Font name="System Bold"  />
+            </font>
+        </Label> 
         <VBox spacing="10.0">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -73,19 +74,19 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-      <Separator prefWidth="200.0" />
-      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-               <children>
-                  <fx:include fx:id="rowEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowEdit.fxml" VBox.vgrow="ALWAYS" />
-               </children>
-               <padding>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </padding>
-            </VBox>
-         </content>
-      </ScrollPane>
+        <Separator prefWidth="200.0" />
+        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <children>
+                        <fx:include fx:id="rowEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowEdit.fxml" VBox.vgrow="ALWAYS" />
+                    </children>
+                    <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

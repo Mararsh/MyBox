@@ -289,6 +289,12 @@ public class ControlColorsPane extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
+        menu = new MenuItem(message("Select"), StyleTools.getIconImageView("iconSelect.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            rectClicked(rect);
+        });
+        items.add(menu);
+
         menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             delete(colorData);

@@ -176,7 +176,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        new RecentVisitMenu(this, event, false) {
             @Override
             public List<VisitHistory> recentFiles() {
                 List<VisitHistory> recent = recentOpenedFiles();

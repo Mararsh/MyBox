@@ -182,6 +182,15 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
+                              <TitledPane fx:id="backupPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Backup">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <children>
+                                          <fx:include fx:id="backup" source="ControlFileBackup.fxml" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                         <TitledPane fx:id="viewPane" expanded="false" maxWidth="1.7976931348623157E308" text="%View">
                                             <content>
                                                 <VBox spacing="2.0">
@@ -433,6 +442,15 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </CheckBox>
+                                                <Button fx:id="systemMethodButton" mnemonicParsing="false" onAction="#systemMethod">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconWindow.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                                                 <Button fx:id="copyToSystemClipboardButton" mnemonicParsing="false" onAction="#copyToSystemClipboard">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -493,22 +511,22 @@ License:    Apache License Version 2.0
                                                                             </cursor>
                                                                         </Rectangle>
                                                                         <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
-                                                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  stroke="RED" strokeType="INSIDE" width="200.0">
+                                                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE" width="200.0">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                         </Rectangle>
-                                                                        <Circle fx:id="maskCircle" fill="#ffffff00" layoutX="210.0" layoutY="141.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  radius="139.0" stroke="RED" strokeType="INSIDE">
+                                                                        <Circle fx:id="maskCircle" fill="#ffffff00" layoutX="210.0" layoutY="141.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" radius="139.0" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                         </Circle>
-                                                                        <Ellipse fx:id="maskEllipse" fill="#ffffff00" layoutX="130.0" layoutY="181.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  radiusX="100.0" radiusY="80.0" stroke="RED" strokeType="INSIDE">
+                                                                        <Ellipse fx:id="maskEllipse" fill="#ffffff00" layoutX="130.0" layoutY="181.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="80.0" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
                                                                         </Ellipse>
-                                                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  stroke="RED" strokeType="INSIDE">
+                                                                        <Polygon fx:id="maskPolygon" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE">
                                                                             <cursor>
                                                                                 <Cursor fx:constant="MOVE" />
                                                                             </cursor>
@@ -521,7 +539,7 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-60.0" />
                                                                             </points>
                                                                         </Polygon>
-                                                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  stroke="RED" strokeType="INSIDE">
+                                                                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE">
                                                                             <points>
                                                                                 <Double fx:value="-50.0" />
                                                                                 <Double fx:value="-40.0" />
@@ -536,19 +554,19 @@ License:    Apache License Version 2.0
                                                             <Cursor fx:constant="MOVE" />
                                                          </cursor>
                                                                         </Polyline>
-                                                                        <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  startX="-100.0">
+                                                                        <Line fx:id="maskLine" endX="90.66668701171875" endY="55.333343505859375" layoutX="140.0" layoutY="174.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" startX="-100.0">
                                                          <cursor>
                                                             <Cursor fx:constant="MOVE" />
                                                          </cursor></Line>
-                                                                        <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND">
+                                                                        <Arc fx:id="maskArc" fill="#ffffff00" layoutX="246.0" layoutY="122.0" length="270.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND">
                                                          <cursor>
                                                             <Cursor fx:constant="MOVE" />
                                                          </cursor></Arc>
-                                                                        <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  startX="-150.0" stroke="BLACK">
+                                                                        <CubicCurve fx:id="maskCubic" controlX1="-50.0" controlX2="50.0" controlY1="-100.0" controlY2="100.0" endX="150.0" fill="#ffffff00" layoutX="246.0" layoutY="291.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" startX="-150.0" stroke="BLACK">
                                                          <cursor>
                                                             <Cursor fx:constant="MOVE" />
                                                          </cursor></CubicCurve>
-                                                                        <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  startX="-50.0" stroke="BLACK" strokeType="INSIDE">
+                                                                        <QuadCurve fx:id="maskQuadratic" controlX="-50.0" controlY="-100.0" endX="50.0" fill="#ffffff00" layoutX="160.0" layoutY="325.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" startX="-50.0" stroke="BLACK" strokeType="INSIDE">
                                                          <cursor>
                                                             <Cursor fx:constant="MOVE" />
                                                          </cursor></QuadCurve>
@@ -595,15 +613,6 @@ License:    Apache License Version 2.0
                                                     <padding>
                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                     </padding>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="backupTab" text="%Backup">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                    <children>
-                                                        <fx:include fx:id="backup" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBackup.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
                                                 </VBox>
                                             </content>
                                         </Tab>

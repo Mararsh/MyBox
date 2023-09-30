@@ -1,17 +1,22 @@
 <html>
  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>SQL</title>
   <style type="text/css">
-            .center { text-align:center;  max-width:95%; }
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-.valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
-.boldText { font-weight:bold;  }
-.valueText { color:#2e598a;  }
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
 
         </style>
+ </head>
+ <body contenteditable="false">
   <script>
     function nodeClicked(id) {
       var obj = document.getElementById(id);
@@ -35,34 +40,30 @@ tr { height: 1.2em;  }
        }
     }
   </script>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta charset="UTF-8">
-  <meta http-equiv="cache-control" content="no-cache">
- </head>
- <body contenteditable="false">
   <div>
-   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Sequence Number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
+   <div>
+    <input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Hierarchy number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
    </div>
    <hr>
    <div style="padding: 2px;">
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item366')"><span class="SerialNumber">&nbsp;&nbsp;</span>SQL</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4337')"><span class="SerialNumber">&nbsp;&nbsp;</span>SQL</a>
    </div>
-   <div class="TreeNode" id="item366">
+   <div class="TreeNode" id="item4337">
     <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1760')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4552')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
     </div>
-    <div class="TreeNode" id="item1760">
+    <div class="TreeNode" id="item4552">
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1761')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>Query meta of database</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4553')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>Query meta of database</a>
      </div>
-     <div class="TreeNode" id="item1761">
+     <div class="TreeNode" id="item4553">
       <div style="padding: 2px;">
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>Names of user tables
       </div>
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;TABLENAME&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;WHERE&nbsp;TABLETYPE='T'
+         <pre><code>SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'</code></pre>
         </div>
        </div>
       </div>
@@ -72,7 +73,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;*&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;WHERE&nbsp;TABLETYPE='T'
+         <pre><code>SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='T'</code></pre>
         </div>
        </div>
       </div>
@@ -82,7 +83,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;TABLENAME&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;WHERE&nbsp;TABLETYPE='S'
+         <pre><code>SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='S'</code></pre>
         </div>
        </div>
       </div>
@@ -92,7 +93,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;*&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;WHERE&nbsp;TABLETYPE='S'
+         <pre><code>SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='S'</code></pre>
         </div>
        </div>
       </div>
@@ -102,7 +103,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;TABLENAME&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;WHERE&nbsp;TABLETYPE='V'
+         <pre><code>SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'</code></pre>
         </div>
        </div>
       </div>
@@ -112,7 +113,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;*&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;WHERE&nbsp;TABLETYPE='V'
+         <pre><code>SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='V'</code></pre>
         </div>
        </div>
       </div>
@@ -122,7 +123,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;columnname,&nbsp;columndatatype&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;t,&nbsp;SYS.SYSCOLUMNS&nbsp;c&nbsp;where&nbsp;t.TABLEID=c.REFERENCEID&nbsp;AND&nbsp;tablename='TREE'&nbsp;order&nbsp;by&nbsp;columnnumber
+         <pre><code>SELECT columnname, columndatatype FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber</code></pre>
         </div>
        </div>
       </div>
@@ -132,7 +133,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;c.*&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;t,&nbsp;SYS.SYSCOLUMNS&nbsp;c&nbsp;where&nbsp;t.TABLEID=c.REFERENCEID&nbsp;AND&nbsp;tablename='TREE'&nbsp;order&nbsp;by&nbsp;columnnumber
+         <pre><code>SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber</code></pre>
         </div>
        </div>
       </div>
@@ -142,7 +143,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;CONGLOMERATENAME&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;t,&nbsp;SYS.SYSCONGLOMERATES&nbsp;c&nbsp;where&nbsp;t.TABLEID=c.TABLEID&nbsp;AND&nbsp;tablename='TREE'
+         <pre><code>SELECT CONGLOMERATENAME FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE'</code></pre>
         </div>
        </div>
       </div>
@@ -152,22 +153,22 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;c.*&nbsp;FROM&nbsp;SYS.SYSTABLES&nbsp;t,&nbsp;SYS.SYSCONGLOMERATES&nbsp;c&nbsp;where&nbsp;t.TABLEID=c.TABLEID&nbsp;AND&nbsp;tablename='TREE'
+         <pre><code>SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE'</code></pre>
         </div>
        </div>
       </div>
      </div>
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1772')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>Query tables of database</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4564')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>Query tables of database</a>
      </div>
-     <div class="TreeNode" id="item1772">
+     <div class="TreeNode" id="item4564">
       <div style="padding: 2px;">
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>Range of rows
       </div>
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;*&nbsp;FROM&nbsp;visit_history&nbsp;OFFSET&nbsp;2&nbsp;ROWS&nbsp;FETCH&nbsp;NEXT&nbsp;50&nbsp;ROWS&nbsp;ONLY
+         <pre><code>SELECT * FROM visit_history OFFSET 2 ROWS FETCH NEXT 50 ROWS ONLY</code></pre>
         </div>
        </div>
       </div>
@@ -177,7 +178,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;*&nbsp;FROM&nbsp;visit_history&nbsp;FETCH&nbsp;FIRST&nbsp;300&nbsp;ROWS&nbsp;ONLY
+         <pre><code>SELECT * FROM visit_history FETCH FIRST 300 ROWS ONLY</code></pre>
         </div>
        </div>
       </div>
@@ -187,7 +188,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;*&nbsp;FROM&nbsp;visit_history&nbsp;FETCH&nbsp;FIRST&nbsp;ROW&nbsp;ONLY
+         <pre><code>SELECT * FROM visit_history FETCH FIRST ROW ONLY</code></pre>
         </div>
        </div>
       </div>
@@ -197,7 +198,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;*&nbsp;FROM&nbsp;visit_history&nbsp;WHERE&nbsp;file_type&nbsp;&gt;&nbsp;1&nbsp;OR&nbsp;data_more&nbsp;like&nbsp;'%fxml%'
+         <pre><code>SELECT * FROM visit_history WHERE file_type &gt; 1 OR data_more like '%fxml%'</code></pre>
         </div>
        </div>
       </div>
@@ -207,7 +208,7 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;count(file_type)&nbsp;as&nbsp;count&nbsp;FROM&nbsp;visit_history&nbsp;WHERE&nbsp;file_type&nbsp;&gt;&nbsp;0&nbsp;AND&nbsp;last_visit_time&nbsp;BETWEEN&nbsp;'2022-03-11&nbsp;00:00:00.000'&nbsp;AND&nbsp;'2022-03-18&nbsp;13:09:41.000'
+         <pre><code>SELECT count(file_type) as count FROM visit_history WHERE file_type &gt; 0 AND last_visit_time BETWEEN '2022-03-11 00:00:00.000' AND '2022-03-18 13:09:41.000'</code></pre>
         </div>
        </div>
       </div>
@@ -217,15 +218,17 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         SELECT&nbsp;file_type,&nbsp;count(file_type)&nbsp;AS&nbsp;mode&nbsp;FROM&nbsp;visit_history&nbsp;GROUP&nbsp;BY&nbsp;file_type&nbsp;ORDER&nbsp;BY&nbsp;mode&nbsp;DESC&nbsp;FETCH&nbsp;FIRST&nbsp;ROW&nbsp;ONLY
+         <pre><code>SELECT file_type, count(file_type) AS mode FROM visit_history GROUP BY file_type ORDER BY mode DESC FETCH FIRST ROW ONLY</code></pre>
         </div>
        </div>
       </div>
      </div>
     </div>
    </div>
-   <hr>
-   <p style="font-size:0.8em">* Links and controls may be unresponsive when html page is editable.</p>
+   <hr><treenode style="font-size:0.8em">
+    * Links and controls may be unresponsive when html page is editable.
+    <p></p>
+   </treenode>
   </div>
  </body>
 </html>

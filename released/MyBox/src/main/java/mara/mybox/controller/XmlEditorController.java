@@ -115,7 +115,7 @@ public class XmlEditorController extends BaseFileController {
             alert.setContentText(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonXml = new ButtonType(message("XmlEditor"));
-            ButtonType buttonSystem = new ButtonType(message("SystemWebBrowser"));
+            ButtonType buttonSystem = new ButtonType(message("SystemMethod"));
             ButtonType buttontext = new ButtonType(message("TextEditor"));
             ButtonType buttonCancel = new ButtonType(message("Cancel"));
             alert.getButtonTypes().setAll(buttonXml, buttonSystem, buttontext, buttonCancel);
@@ -137,7 +137,7 @@ public class XmlEditorController extends BaseFileController {
 
             }
         }
-        sourceFile = file;
+        super.sourceFileChanged(file);
         writePanes(TextFileTools.readTexts(file));
     }
 
@@ -278,6 +278,16 @@ public class XmlEditorController extends BaseFileController {
         recoverButton.setDisable(sourceFile == null);
     }
 
+    protected String current() {
+        Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+        if (currentTab == domTab) {
+            return xmlByDom();
+        } else if (currentTab == textsTab) {
+            return xmlByText();
+        }
+        return null;
+    }
+
     @FXML
     @Override
     public void saveAsAction() {
@@ -291,13 +301,7 @@ public class XmlEditorController extends BaseFileController {
         task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
-                String xml = null;
-                Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
-                if (currentTab == domTab) {
-                    xml = xmlByDom();
-                } else if (currentTab == textsTab) {
-                    xml = xmlByText();
-                }
+                String xml = current();
                 if (xml == null || xml.isBlank()) {
                     error = message("NoData");
                     return false;
@@ -418,11 +422,6 @@ public class XmlEditorController extends BaseFileController {
         if (changed) {
             fileChanged();
         }
-    }
-
-    @FXML
-    protected void editTexts() {
-        TextEditorController.edit(textsArea.getText());
     }
 
     @FXML
@@ -555,6 +554,33 @@ public class XmlEditorController extends BaseFileController {
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    @FXML
+    protected void editTexts() {
+        String xml = current();
+        if (xml == null || xml.isBlank()) {
+            error = message("NoData");
+            return;
+        }
+        TextEditorController.edit(xml);
+    }
+
+    @FXML
+    @Override
+    public void systemMethod() {
+        String xml = current();
+        if (xml == null || xml.isBlank()) {
+            error = message("NoData");
+            return;
+        }
+        File tmpFile = FileTmpTools.getTempFile(".xml");
+        TextFileTools.writeFile(tmpFile, xml);
+        if (tmpFile != null && tmpFile.exists()) {
+            browse(tmpFile);
+        } else {
+            popError(message("Failed"));
         }
     }
 

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WindowsListController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="TOP_CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <children>
+                <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                    <children>
+                        <Button fx:id="closeItemsButton" mnemonicParsing="false" onAction="#closeItems">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconClose.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="onTopButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onTop">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconDoubleUp.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                  <Button fx:id="disableOnTopButton" layoutX="48.0" layoutY="12.0" mnemonicParsing="false" onAction="#disableOnTop">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconDown.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </FlowPane>
+                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                            <graphic>
+                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="titleColumn" editable="false" prefWidth="200.0" text="%Title" />
+                        <TableColumn fx:id="showColumn" prefWidth="60.0" text="%Showing" />
+                        <TableColumn fx:id="modalityColumn" prefWidth="60.0" text="%Modality" />
+                        <TableColumn fx:id="focusedColumn" prefWidth="60.0" text="%Focused" />
+                        <TableColumn fx:id="topColumn" prefWidth="60.0" text="%AlwayOnTop" />
+                        <TableColumn fx:id="childColumn" prefWidth="60.0" text="%IsChild" />
+                        <TableColumn fx:id="widthColumn" prefWidth="60.0" text="%Width" />
+                        <TableColumn fx:id="heightColumn" prefWidth="60.0" text="%Height" />
+                        <TableColumn prefWidth="60.0" text="X" fx:id="xColumn" />
+                        <TableColumn fx:id="yColumn" prefWidth="60.0" text="Y" />
+                        <TableColumn fx:id="fullScreenColumn" prefWidth="60.0" text="%FullScreen" />
+                        <TableColumn fx:id="iconifiedColumn" prefWidth="60.0" text="%Iconified" />
+                        <TableColumn fx:id="maximizedColumn" prefWidth="60.0" text="%Maximized" />
+                        <TableColumn fx:id="resizableColumn" prefWidth="60.0" text="%Resizable" />
+                        <TableColumn fx:id="typeColumn" prefWidth="600.0" text="%Type" />
+                    </columns>
+                </TableView>
+            </children>
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </padding>
+        </VBox>
+    </center>
+    <bottom>
+    </bottom>
+</BorderPane>

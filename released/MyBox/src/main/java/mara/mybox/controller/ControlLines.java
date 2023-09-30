@@ -65,6 +65,7 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
             tableData.setAll(DoublePoint.scaleLists(list, UserConfig.imageScale()));
         }
         isSettingValues = false;
+        tableChanged();
     }
 
     public List<List<DoublePoint>> getLines() {

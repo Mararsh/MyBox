@@ -1,11 +1,7 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
@@ -16,12 +12,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.data.FileBackup;
-import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -276,59 +268,11 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 hisController.popHistory();
                 return true;
 
-            } else if (tab == backupTab) {
-                popBackup();
-                return true;
-
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
         return false;
-    }
-
-    public void popBackup() {
-        FileBackup selected = backupController.selectedBackup();
-        if (selected == null) {
-            return;
-        }
-        File file = selected.getBackup();
-        if (file == null) {
-            return;
-        }
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
-            private Image backImage;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    if (!file.exists()) {
-                        TableFileBackup.deleteBackup(selected);
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                backupController.tableData.remove(selected);
-                            }
-                        });
-                        return false;
-                    }
-                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
-                    if (bufferedImage != null) {
-                        backImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                    }
-                    return backImage != null;
-                } catch (Exception e) {
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                ImagePopController.openImage(myController, backImage);
-            }
-
-        };
-        start(bgTask, false);
     }
 
     @Override

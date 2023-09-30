@@ -8,7 +8,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class NoteAttributes extends TreeNodeEditor {
+public class NoteAttributes extends InfoTreeNodeEditor {
 
     protected NoteEditor editorController;
 
@@ -17,6 +17,7 @@ public class NoteAttributes extends TreeNodeEditor {
             this.editorController = editorController;
             tabPane = editorController.tabPane;
             attributesTab = editorController.attributesTab;
+            setParameters(editorController.notesController);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -24,27 +25,26 @@ public class NoteAttributes extends TreeNodeEditor {
     }
 
     @Override
-    public void nodeChanged(boolean changed) {
-        if (isSettingValues) {
+    protected void editInfo(InfoNode node) {
+        if (node != null) {
+            editorController.loadContents(node.getInfo());
+        } else {
+            editorController.loadContents(null);
+        }
+        editorController.updateFileStatus(false);
+    }
+
+    @Override
+    protected String nodeInfo() {
+        return editorController.currentHtml(true);
+    }
+
+    @Override
+    public void pasteNode(InfoNode node) {
+        if (node == null) {
             return;
         }
-        super.nodeChanged(changed);
-        editorController.attributesChanged();
-    }
-
-    @Override
-    public InfoNode pickNodeData() {
-        InfoNode node = super.pickNodeData();
-        if (node == null) {
-            return null;
-        }
-        node.setValue(editorController.currentHtml(true));
-        return node;
-    }
-
-    @Override
-    public void pasteText(String text) {
-        editorController.pasteText(text);
+        editorController.pasteText(node.getInfo());
     }
 
 }

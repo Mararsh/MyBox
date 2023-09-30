@@ -2,7 +2,7 @@ package mara.mybox.calculation;
 
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.fxml.SingletonTask;

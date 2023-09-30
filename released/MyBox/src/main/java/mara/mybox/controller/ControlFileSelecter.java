@@ -240,26 +240,11 @@ public class ControlFileSelecter extends BaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-
-            @Override
-            public List<VisitHistory> recentFiles() {
-                if (isDirectory) {
-                    return null;
-                } else {
-                    int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-                    return VisitHistoryTools.getRecentFileRead(getSourceFileType(), fileNumber);
-                }
-            }
+        new RecentVisitMenu(this, event, isDirectory) {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber;
-                if (isDirectory) {
-                    pathNumber = AppVariables.fileRecentNumber;
-                } else {
-                    pathNumber = AppVariables.fileRecentNumber / 4 + 1;
-                }
+                int pathNumber = AppVariables.fileRecentNumber;
                 if (isSource) {
                     return VisitHistoryTools.getRecentPathRead(SourcePathType, pathNumber);
                 } else {

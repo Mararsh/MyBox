@@ -24,16 +24,14 @@ public class TableDataDateEditCell extends TableDataEditCell {
     public void editCell() {
         DateInputController inputController
                 = DateInputController.open(dataControl, name(), getCellValue(), dataColumn.getType());
-        getListener = new ChangeListener<Boolean>() {
+        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 String value = inputController.getInputString();
-                inputController.getNotify().removeListener(getListener);
                 setCellValue(value);
-                inputController.closeStage();
+                inputController.close();
             }
-        };
-        inputController.getNotify().addListener(getListener);
+        });
     }
 
     public static Callback<TableColumn, TableCell> create(ControlData2DLoad dataControl, Data2DColumn dataColumn) {

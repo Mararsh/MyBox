@@ -2,42 +2,61 @@
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="UTF-8">
-  <style>body { margin:0 auto; } table { max-width:95%; margin : 10px; border-style: solid; border-width:2px; border-collapse: collapse;} th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} th { font-weight:bold; text-align:center;} tr { height: 1.2em; } .center { text-align:center; max-width:95%; } .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} .boldText { font-weight:bold; } body { width: 900px; } img { max-width: 900px; } .valueText { color:#2e598a; }</style>
+  <style>table { max-width:95%; margin : 10px; border-style: solid; border-width:2px; border-collapse: collapse;} th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} th { font-weight:bold; text-align:center;} tr { height: 1.2em; } .center { text-align:center; max-width:95%; } .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} .boldText { font-weight:bold; } body { margin:0 auto; width: 900px; } img { max-width: 900px; } .valueText { color:#2e598a; }</style>
  </head>
  <body>
   <h1><a target=_blank href="https://github.com/Mararsh/MyBox/tree/master/en">ReadMe in English</a> <img src="https://mara-mybox.sourceforge.io/iconGo.png" alt="ReadMe"></h1>
   <h1>MyBox：简易工具集</h1>
   <p>这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2023-8-23 版本6.7.6</p>
+  <p>2023-9-30 版本6.7.7</p>
   <ul>
    <li>新增： 
     <ul>
-     <li>批量转换图片为SVG文件，可选算法和参数。</li>
-     <li>更多的形状：线条、弧曲线、二次贝塞尔曲线、三次贝塞尔曲线、SVG路径。</li>
-     <li>编辑形状时，可输入参数、也可拖动锚点和形状，并提供锚点菜单和形状菜单。</li>
+     <li>以树形保存和管理数据的定义。</li>
+     <li>数据列的类型：大文本（2G）。</li>
+     <li>在处理文件的界面上显示按钮“以系统方式打开”。</li>
+     <li>列出当前打开的所有窗口，可选择窗口以关闭或设置/解除“总是在上面”。</li>
     </ul></li>
    <li>改进： 
     <ul>
-     <li>对于弹出的值（示例或历史），可选面板为子窗口或弹出窗口。</li>
-     <li>对已存在的调色板定制颜色列表。</li>
-     <li>右键点击颜色块以弹出颜色菜单。</li>
-     <li>分割图片时可拖动分割线。</li>
-     <li>在图片上可拖动线条来加马赛克。</li>
+     <li>点击色块以弹出调色板。</li>
+     <li>点击按钮来弹出文件的备份，而不是在保存文件时同步刷新列表。</li>
+     <li>形状的示例在用户选择时加载，而不是在添加形状时缺省加载。</li>
+     <li>在处理数据的界面中： 
+      <ul>
+       <li>导入示例时可选只导入数据定义。</li>
+       <li>数据定义可保存在树形信息中。</li>
+       <li>数据定义可导出为csv/xml/json/excel。</li>
+       <li>数据定义可导入xml。</li>
+       <li>数据定义可从已保存的树形信息中选择。</li>
+      </ul></li>
+     <li>树形信息： 
+      <ul>
+       <li>解析和编码模块化，同时原格式仍可用。</li>
+       <li>节点长度扩大到2G。</li>
+       <li>菜单：可选左键点击、右键点击、双击的行为。</li>
+       <li>选择节点时，可点击树节点，也可按标签、时间、关键字来查询。</li>
+      </ul></li>
+     <li>网页的缺省显示风格改为空。</li>
+     <li>快捷键列表同时显示无快捷键的图标列表。</li>
     </ul></li>
    <li>解决问题： 
     <ul>
-     <li>树形的节点在修改保存后未更新树节点。</li>
-     <li>粘贴XML后在树上未完整显示新节点。</li>
-     <li>图片的“加载宽度”未生效。</li>
-     <li>缩放图片时可能输出错误的结果。</li>
-     <li>旋转图片的结果可能被切掉一角。</li>
-     <li>图片的编辑历史未正确记录和使用索引。</li>
-     <li>分割图片后的列表在播放时未被正确加载。</li>
-     <li>一些界面上快捷键F4和F5（开关左右面板）未生效。</li>
+     <li>“重命名文件”：不应覆盖已存在的文件。</li>
+     <li>“检查冗余文件”：文件名显示为空。</li>
+     <li>“解压缩/解档文件”：文件名显示为空。</li>
+     <li>编辑SVG：添加贝塞尔曲线和多折线时出错。</li>
+     <li>编辑形状：当“虚线”设置为空时不应弹出错误。</li>
+     <li>显示形状菜单时若形状为空不应弹出错误。</li>
+     <li>快捷键“F1/Ctrl+e”不应作用于按钮“执行”。</li>
+     <li>生成json文件时应转换所有特殊字符。</li>
+     <li>匹配消息时也应查找用户定制的语言。</li>
+     <li>应阻止新语言名包含内置语言的名字。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.6">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.7">此版本关闭的需求/问题列表</a></p>
+  <p>中国，生日快乐！</p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -46,7 +65,6 @@
    <li>功能失效。</li>
    <li>其它非预期的行为。</li>
   </ul>
-  <p>欢迎<a target=_blank href="https://github.com/Mararsh/MyBox/issues">提交问题和需求</a> 。你的帮助可以使MyBox更好。</p>
   <h1>下载与运行</h1>
   <h2>源码</h2>
   <table>
@@ -199,8 +217,9 @@
   <h2>备份与恢复</h2>
   <p>在MyBox中：<br>
     1. 将目录复制到别处，即为备份。<br>
-    2. 将备份的目录覆盖当前目录，即为恢复。 3. 不必备份数据目录的每个子目录。<br>
-    以下列出数据目录中预定义的子目录，其中只有“被功能引用”的子目录是必须备份的：</p>
+    2. 将备份的目录覆盖当前目录，即为恢复。<br>
+    3. 不必备份数据目录的每个子目录。<br>
+    以下列出数据目录中预定义的子目录：</p>
   <table>
    <thead>
     <tr>
@@ -208,7 +227,7 @@
      <th>作用</th>
      <th>内部引用</th>
      <th>自动读写</th>
-     <th>被功能引用</th>
+     <th>需要备份</th>
      <th>说明</th>
     </tr>
    </thead>
@@ -274,8 +293,8 @@
      <td>生成的文件</td>
      <td></td>
      <td>是</td>
+     <td>用户决定</td>
      <td></td>
-     <td>用户决定是否备份</td>
     </tr>
     <tr>
      <td>ICC</td>
@@ -436,22 +455,22 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.7.6</td>
-     <td>2023-8-23</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>快捷键</td>
-     <td>6.7.5</td>
-     <td>2023-7-23</td>
+     <td>快捷键与图标</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html">html</a></td>
     </tr>
     <tr>
      <td>功能列表</td>
-     <td>6.7.6</td>
-     <td>2023-8-23</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -471,8 +490,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.7.6</td>
-     <td>2023-8-23</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -527,10 +546,17 @@
     </tr>
     <tr>
      <td>界面中的提示信息</td>
-     <td>6.7.6</td>
-     <td>2023-8-23</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>关于-树形信息</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-二维存储结构的数据</td>
@@ -558,201 +584,215 @@
      <td>6.6.1</td>
      <td>2022-11-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data_analysis_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data_analysis.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data_analysis_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-坐标系统</td>
      <td>6.6.1</td>
      <td>2022-11-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_coordinate_system_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_coordinate_system.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_coordinate_system_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-颜色</td>
      <td>6.6.1</td>
      <td>2022-11-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_color_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_color.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_color_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-媒体</td>
      <td>6.6.1</td>
      <td>2022-11-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_media_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_media.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_media_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-Java编程的一句话事项</td>
      <td>6.7.3</td>
      <td>2023-5-22</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_java_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_java.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_java_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-JavaFx编程的一句话事项</td>
      <td>6.7.3</td>
      <td>2023-5-22</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_javafx_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_javafx.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_javafx_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-笔记</td>
-     <td>6.7.2</td>
-     <td>2023-4-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_notes_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_notes.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_notes_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-树形</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_tree_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_tree.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_tree_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-收藏的网址</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_web_favorite_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_web_favorite.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_web_favorite_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-SQL</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_sql_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_sql.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_sql_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-JShell</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jshell_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jshell.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jshell_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-JEXL</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jexl_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jexl.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jexl_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-JavaScript</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_javascript_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_javascript.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_javascript_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-数学函数</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_math_funtion_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_math_funtion.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_math_funtion_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-行过滤</td>
-     <td>6.6.1</td>
-     <td>2022-11-16</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_row_filter_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_row_filter.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_row_filter_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>示例-定义数据</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_define_data_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_define_data_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>调色盘-缺省颜色</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_default_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_default_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_default_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_default_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-常用网页颜色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_web_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-中国传统颜色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_chinese_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-日本传统颜色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_japanese_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-来自colorhexa.com颜色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-美术色相环(RYB)12色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-美术色相环(RYB)24色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-美术色相环(RYB)360色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-光学色相环(RGB)12色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-光学色相环(RGB)24色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-光学色相环(RGB)360色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-美术颜料</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-MyBox的颜色</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>调色盘-灰阶</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html">all</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_all.html">all</a></td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html">all</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_all_zh.html">all</a></td>
     </tr>
     <tr>
      <td>图片的故事</td>
-     <td>6.7.6</td>
-     <td>2023-8-23</td>
+     <td>6.7.7</td>
+     <td>2023-9-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
@@ -1022,9 +1062,9 @@
      <td><a target=_blank href="https://book.douban.com/subject/10465940/">https://book.douban.com/subject/10465940/</a></td>
     </tr>
     <tr>
-     <td>sfds</td>
+     <td>字体</td>
      <td>书法</td>
-     <td><a target=_blank href="http://www.sfds.cn/725B/">http://www.sfds.cn/725B/</a></td>
+     <td><a target=_blank href="https://sfzd.hwcha.com">https://sfzd.hwcha.com</a></td>
     </tr>
     <tr>
      <td>PaginatedPdfTable</td>
@@ -1033,7 +1073,7 @@
     </tr>
     <tr>
      <td>jsoup</td>
-     <td>DOM</td>
+     <td>html</td>
      <td><a target=_blank href="https://jsoup.org/">https://jsoup.org/</a></td>
     </tr>
     <tr>
@@ -1138,7 +1178,7 @@
    <li>记住用户的输入或选择，提供历史记录。</li>
    <li>界面可调整，一些面板可隐藏。</li>
    <li>一些控件的行为可选择。</li>
-   <li>提供文本/图片/网页/数据的右键菜单和功能菜单。</li>
+   <li>提供文本/图片/网页/表格/树形的右键菜单和功能菜单。</li>
    <li>可弹出当前文本/图片/网页/数据。</li>
    <li>可管理的文本/图片/数据粘贴板。</li>
    <li>提供示例和有用的信息。</li>

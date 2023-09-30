@@ -18,6 +18,8 @@ import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import static mara.mybox.data.DoubleShape.ShapeType.Arc;
+import static mara.mybox.data.DoubleShape.ShapeType.Polygon;
 import mara.mybox.data.SVG;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -66,11 +68,13 @@ public class ControlSvgShape extends ControlShapeOptions {
         try {
             super.initControls();
 
-            optionsController.svgShapeControl = this;
             showController.svgShapeControl = this;
 
             initXML();
-            initSvgOptions();
+            if (optionsController != null) {
+                optionsController.svgShapeControl = this;
+                initSvgOptions();
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -98,6 +102,9 @@ public class ControlSvgShape extends ControlShapeOptions {
      */
     public void initSvgOptions() {
         try {
+            if (optionsController == null) {
+                return;
+            }
             optionsController.noBgColor();
 
             optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
@@ -464,6 +471,30 @@ public class ControlSvgShape extends ControlShapeOptions {
                         element = doc.createElement("path");
                     }
                     element.setAttribute("d", imageController.maskPathData.getContent());
+                    return true;
+                case Quadratic:
+                    if (element == null) {
+                        element = doc.createElement("path");
+                    }
+                    element.setAttribute("d", imageController.maskQuadraticData.pathAbs());
+                    return true;
+                case Cubic:
+                    if (element == null) {
+                        element = doc.createElement("path");
+                    }
+                    element.setAttribute("d", imageController.maskCubicData.pathAbs());
+                    return true;
+                case Arc:
+                    if (element == null) {
+                        element = doc.createElement("path");
+                    }
+                    element.setAttribute("d", imageController.maskArcData.pathAbs());
+                    return true;
+                case Polylines:
+                    if (element == null) {
+                        element = doc.createElement("path");
+                    }
+                    element.setAttribute("d", imageController.maskPolylinesData.pathAbs());
                     return true;
             }
             popError(message("InvalidData"));

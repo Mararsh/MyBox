@@ -109,7 +109,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                        <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%DatabaseSQLComments" wrapText="true" />
+                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%DatabaseSQLComments" wrapText="true" />
                                 <TextArea fx:id="valueInput" minHeight="100.0" prefHeight="100.0" />
                                 <TabPane fx:id="sqlPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                     <tabs>
@@ -147,11 +147,11 @@ License:    Apache License Version 2.0
                                         </Tab>
                                         <Tab fx:id="dataTab" text="%Data">
                                             <content>
-                                                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                       <children>
-                                          <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DResults.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                                  </VBox>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                    <children>
+                                                        <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DResults.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
                                             </content>
                                         </Tab>
                                     </tabs>
@@ -164,73 +164,8 @@ License:    Apache License Version 2.0
                 <Tab fx:id="attributesTab" text="%Attributes">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <Label fx:id="chainLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectParent">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconSelect.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <Label fx:id="idLabel" minHeight="-Infinity" text="%ID" wrapText="true" />
-                                        <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <Label fx:id="nameLabel" minHeight="-Infinity" text="%Name" wrapText="true" />
-                                        <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <Label fx:id="timeLabel" minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
-                                        <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                    <children>
-                                        <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="refreshTagsButton" mnemonicParsing="false" onAction="#refreshAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconRefresh.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="addTagButton" mnemonicParsing="false" onAction="#addTag">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconAdd.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
-                                            <graphic>
-                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
-                                            </graphic>
-                                        </TableColumn>
-                                        <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
-                                        <TableColumn fx:id="tagColumn" prefWidth="200.0" text="%Tag" />
-                                    </columns>
-                                </TableView>
+                            <children> 
+                                <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlInfoNodeAttributes.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

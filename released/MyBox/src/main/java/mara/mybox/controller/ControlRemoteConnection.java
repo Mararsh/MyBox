@@ -123,6 +123,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         } else {
             editingIndex = tableData.indexOf(currentConnection);
         }
+        if (currentConnection.getHost() == null || currentConnection.getHost().isBlank()) {
+            currentConnection.setHost("frs.sourceforge.net");
+        }
         titleInput.setText(currentConnection.getTitle());
         hostInput.setText(currentConnection.getHost());
         protocalInput.setText(currentConnection.getType().name().toLowerCase());

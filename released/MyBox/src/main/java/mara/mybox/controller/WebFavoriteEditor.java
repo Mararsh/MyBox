@@ -3,11 +3,14 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -20,7 +23,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class WebFavoriteEditor extends TreeNodeEditor {
+public class WebFavoriteEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected ControlFileSelecter iconController;
@@ -55,6 +58,29 @@ public class WebFavoriteEditor extends TreeNodeEditor {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    protected void editInfo(InfoNode node) {
+        Map<String, String> values = InfoNode.parseInfo(node);
+        if (values != null) {
+            valueInput.setText(values.get("Address"));
+            moreInput.setText(values.get("Icon"));
+        } else {
+            valueInput.setText("");
+            moreInput.setText("");
+        }
+    }
+
+    @Override
+    protected String nodeInfo() {
+        String address = valueInput.getText();
+        String icon = moreInput.getText();
+        if (icon == null || icon.isBlank()) {
+            return address == null || address.isBlank() ? null : address.trim();
+        }
+        return (address == null ? "" : address.trim()) + ValueSeparater + "\n"
+                + icon.trim();
     }
 
     protected void updateIcon(String icon) {

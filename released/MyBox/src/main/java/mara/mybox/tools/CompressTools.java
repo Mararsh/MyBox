@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import mara.mybox.controller.BaseTaskController;
-import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileType;
+import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -167,10 +167,10 @@ public class CompressTools {
         }
         String compressor = null;
         String ext = (extIn != null) ? extIn.toLowerCase() : null;
-        try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
+        try (BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
             CompressorStreamFactory cFactory = new CompressorStreamFactory();
             if (ext != null && cFactory.getInputStreamCompressorNames().contains(ext)) {
-                try ( CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
+                try (CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
                     compressor = ext;
                 } catch (Exception e) {
                     compressor = detectCompressor(taskController, fileIn, ext);
@@ -190,7 +190,7 @@ public class CompressTools {
             compressor = CompressorStreamFactory.detect(fileIn);
         } catch (Exception ex) {
             if ("lz4".equals(extIn)) {
-                try ( CompressorInputStream in = new BlockLZ4CompressorInputStream(fileIn)) {
+                try (CompressorInputStream in = new BlockLZ4CompressorInputStream(fileIn)) {
                     compressor = "lz4-block";
                 } catch (Exception e) {
                     taskController.updateLogs(message("NotCompressFormat"));
@@ -214,10 +214,10 @@ public class CompressTools {
             String compressor = null;
             boolean detect = false;
             String ext = (extIn != null) ? extIn.toLowerCase() : null;
-            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
+            try (BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
                 CompressorStreamFactory cFactory = new CompressorStreamFactory();
                 if (ext != null && cFactory.getInputStreamCompressorNames().contains(ext)) {
-                    try ( CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
+                    try (CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
                         decompressedFile = decompress(taskController, in, targetFile);
                         if (decompressedFile != null) {
                             compressor = ext;
@@ -227,7 +227,7 @@ public class CompressTools {
 //                        taskController.updateLogs(e.toString());
                         try {
                             String defectValue = CompressorStreamFactory.detect(fileIn);
-                            try ( CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
+                            try (CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
                                 decompressedFile = decompress(taskController, in, targetFile);
                                 if (decompressedFile != null) {
                                     compressor = defectValue;
@@ -243,7 +243,7 @@ public class CompressTools {
                 } else {
                     try {
                         String defectValue = CompressorStreamFactory.detect(fileIn);
-                        try ( CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
+                        try (CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
                             decompressedFile = decompress(taskController, in, targetFile);
                             if (decompressedFile != null) {
                                 compressor = defectValue;
@@ -276,7 +276,7 @@ public class CompressTools {
             return null;
         }
         File file = FileTmpTools.getTempFile();
-        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             IOUtils.copy(compressorInputStream, out);
         } catch (Exception e) {
             taskController.updateLogs(e.toString());
@@ -306,10 +306,10 @@ public class CompressTools {
         }
         String archiver = null;
         String ext = (extIn != null) ? extIn.toLowerCase() : null;
-        try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
+        try (BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
             ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
             if (ext != null && aFactory.getInputStreamArchiveNames().contains(ext)) {
-                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(ext, fileIn)) {
+                try (ArchiveInputStream in = aFactory.createArchiveInputStream(ext, fileIn)) {
                     archiver = ext;
                 } catch (Exception e) {
                     try {
@@ -353,7 +353,7 @@ public class CompressTools {
             } else if (ArchiveStreamFactory.ZIP.equals(ext)) {
                 return readEntriesZip(taskController, srcFile, encoding);
             }
-            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile));) {
+            try (BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile));) {
                 if (ext == null) {
                     ext = ArchiveStreamFactory.detect(fileIn);
                 }
@@ -361,8 +361,8 @@ public class CompressTools {
                         && !ArchiveStreamFactory.ZIP.equals(ext)) {
                     ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
                     if (aFactory.getInputStreamArchiveNames().contains(ext)) {
-                        try ( ArchiveInputStream in = aFactory.createArchiveInputStream(ext, fileIn, encoding)) {
-                            List<FileInformation> entires = readEntries(taskController, in);
+                        try (ArchiveInputStream in = aFactory.createArchiveInputStream(ext, fileIn, encoding)) {
+                            List<FileNode> entires = readEntries(taskController, in);
                             if (entires != null && !entires.isEmpty()) {
                                 unarchive.put("archiver", ext);
                                 unarchive.put("entries", entires);
@@ -391,8 +391,8 @@ public class CompressTools {
         return unarchive;
     }
 
-    public static List<FileInformation> readEntries(BaseTaskController taskController, ArchiveInputStream archiveInputStream) {
-        List<FileInformation> entries = new ArrayList();
+    public static List<FileNode> readEntries(BaseTaskController taskController, ArchiveInputStream archiveInputStream) {
+        List<FileNode> entries = new ArrayList();
         try {
             if (archiveInputStream == null) {
                 return null;
@@ -404,7 +404,7 @@ public class CompressTools {
                     continue;
                 }
                 try {
-                    FileInformation file = new FileInformation();
+                    FileNode file = new FileNode();
                     file.setData(entry.getName());
                     file.setModifyTime(entry.getLastModifiedDate().getTime());
                     file.setFileSize(entry.getSize());
@@ -422,12 +422,12 @@ public class CompressTools {
 
     public static Map<String, Object> readEntriesZip(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
-        try ( ZipFile zipFile = new ZipFile(srcFile, encoding)) {
-            List<FileInformation> fileEntries = new ArrayList();
+        try (ZipFile zipFile = new ZipFile(srcFile, encoding)) {
+            List<FileNode> fileEntries = new ArrayList();
             Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
-                FileInformation file = new FileInformation();
+                FileNode file = new FileNode();
                 file.setData(entry.getName());
                 file.setModifyTime(entry.getLastModifiedDate().getTime());
                 file.setFileSize(entry.getSize());
@@ -444,11 +444,11 @@ public class CompressTools {
 
     public static Map<String, Object> readEntries7z(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
-        try ( SevenZFile sevenZFile = new SevenZFile(srcFile)) {
+        try (SevenZFile sevenZFile = new SevenZFile(srcFile)) {
             SevenZArchiveEntry entry;
-            List<FileInformation> entries = new ArrayList();
+            List<FileNode> entries = new ArrayList();
             while ((entry = sevenZFile.getNextEntry()) != null) {
-                FileInformation file = new FileInformation();
+                FileNode file = new FileNode();
                 file.setData(entry.getName());
                 file.setModifyTime(entry.getLastModifiedDate().getTime());
                 file.setFileSize(entry.getSize());

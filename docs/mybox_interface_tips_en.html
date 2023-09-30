@@ -3,15 +3,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <TITLE>Tips in Interfaces</TITLE>
         <style type="text/css">
-             body { margin:0 auto; } 
-              table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
               th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
               th { font-weight:bold;  text-align:center;} 
               tr { height: 1.2em;  } 
               .center { text-align:center;  max-width:95%; } 
               .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
               .boldText { font-weight:bold;  } 
- body { width: 900px; } 
+ body { margin:0 auto; width: 900px; } 
               img { max-width: 900px; } 
               .valueText { color:#2e598a;  } 
 
@@ -919,6 +918,7 @@ This tool helps to run JEXL in GUI:
     <H3>Math Function</H3>
     <PRE>This tool helps to manage and calculate math functions:
 - Define math function:
+      - Give name of the function.
       - List names of variables of the function, separated by English comma.
         The names should satisfy rules of JavaScript:
               - Can include letters, number, underline, and unicodes(like Chinese).
@@ -932,7 +932,6 @@ This tool helps to run JEXL in GUI:
              - The script can include any valid elments which Nashorn can parse(ECMAScript 5.1).
              - It should be a boolean value(true or false) finally.
              - It can refer to the given variables, but should not declare them.
-      - Give the name of calculation result.
 - When the tool calculates a script, 'var <variable_name>=<variable_value>;' are inserted in the head of it before the evaluation.
 - If script of domain is not blank, the given values of variables are inserted in it and check the result.
    If true, continue to calculate the script of function expression. Else this set of values is skipped. 
@@ -1099,7 +1098,7 @@ Rulers:
       - Keep item empty to use English as default.
       - Right click the cell to select "Copy English" or "Copy Chinese".
 - Click button "Save" to save modification. </PRE>
-    <H3>MyBox Shortcuts</H3>
+    <H3>MyBox Shortcuts and Icons</H3>
     <PRE>Controls in interfaces, like buttons, checkboxs, images, may have their shortcuts:
   - When focus is in "Text Input" control, following keys work for this control:
              Delete/Home/End/PageUp/PageDown/Enter/Ctrl-(c/v/z/y/x)

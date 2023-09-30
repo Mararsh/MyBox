@@ -21,6 +21,7 @@ License:    Apache License Version 2.0
                         <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
+                                <MenuItem mnemonicParsing="false" onAction="#WindowsList" text="%WindowsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotPane" text="%SnapshotPane" />
@@ -203,6 +204,8 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />
                                 <Menu mnemonicParsing="false" text="%ColorSpace">
@@ -261,6 +264,7 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
                                 <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
+                                <MenuItem mnemonicParsing="false" onAction="#Data2DDefinition" text="%Data2DDefinition" />
                                 <MenuItem mnemonicParsing="false" onAction="#RowFilter" text="%RowFilter" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
@@ -383,8 +387,6 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="shortcutsCanNotOmitCheck" mnemonicParsing="false" onAction="#shortcutsCanNotOmitCtrlAlt" text="%ShortcutsCanNotOmitCtrlAlt" />
                                 <CheckMenuItem fx:id="loseFocusCommitDataCheck" mnemonicParsing="false" onAction="#loseFocusCommitData" text="%CommitModificationWhenDataCellLoseFocus" />
                                 <CheckMenuItem fx:id="clearExpiredDataCheck" mnemonicParsing="false" onAction="#clearExpiredDataBeforeExit" text="%ClearExpiredDataBeforeExit" />
-                                <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMouseHovering" />
-                                <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMouseHovering" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
                                 <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />
@@ -534,18 +536,10 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxTables" text="%MyBoxTables" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
-                                <Menu mnemonicParsing="false" text="%MakeDocuments">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#makeReadMe" text="%ReadMe" />
-                                        <MenuItem mnemonicParsing="false" onAction="#makeShortcuts" text="%Shortcuts" />
-                                        <MenuItem mnemonicParsing="false" onAction="#makeFunctionsList" text="%FunctionsList" />
-                                        <MenuItem mnemonicParsing="false" onAction="#makeInterfaceTips" text="%InterfaceTips" />
-                                        <MenuItem mnemonicParsing="false" onAction="#makeSomeLinks" text="%SomeLinks" />
-                                    </items>
-                                </Menu> 
+                                <MenuItem mnemonicParsing="false" onAction="#makeDocuments" text="%MakeDocuments" />
                                 <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />
+                                <!--                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />-->
                             </items>
                         </Menu>
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
@@ -555,6 +549,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#FunctionsList" text="%FunctionsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#InterfaceTips" text="%InterfaceTips" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutTreeInformation" text="%AboutTreeInformation" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutData2D" text="%AboutData2D" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutRowExpression" text="%AboutRowExpression" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutGroupingRows" text="%AboutGroupingRows" />

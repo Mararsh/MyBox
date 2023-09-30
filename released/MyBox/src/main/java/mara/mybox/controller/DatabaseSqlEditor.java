@@ -41,7 +41,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-2-14
  * @License Apache License Version 2.0
  */
-public class DatabaseSqlEditor extends TreeNodeEditor {
+public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     protected boolean internal;
 
@@ -67,11 +67,11 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
         try {
             super.initControls();
 
-            wrapOutputsCheck.setSelected(UserConfig.getBoolean(category + "OutputsWrap", false));
+            wrapOutputsCheck.setSelected(UserConfig.getBoolean(manager.category + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(category + "OutputsWrap", newValue);
+                    UserConfig.setBoolean(manager.category + "OutputsWrap", newValue);
                     outputArea.setWrapText(newValue);
                 }
             });

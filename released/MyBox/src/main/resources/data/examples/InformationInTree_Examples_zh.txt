@@ -1,4 +1,8 @@
 ##MyBox#
+MyBoxTreeRoot;;;
+树形信息
+
+##MyBox#
 树形信息
 示例
 

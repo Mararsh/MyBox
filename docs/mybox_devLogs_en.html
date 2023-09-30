@@ -6,6 +6,54 @@
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>Development Logs</h1>
+  <p>2023-9-30 v6.7.7</p>
+  <ul>
+   <li>Added: 
+    <ul>
+     <li>Save and manage Data Definition in tree.</li>
+     <li>New data column type: Large text(2G).</li>
+     <li>Show button “Open by system method” in interfaces of handling file.</li>
+     <li>List all showing windows. Options to close or set/disable “Always in top” against selected windows.</li>
+    </ul></li>
+   <li>Improved: 
+    <ul>
+     <li>Click color block to pop paletter.</li>
+     <li>Click button to pop file backups, rather than always refresh the list when file is saved.</li>
+     <li>Shape example is loaded as user required, rather than set it by default when add shape.</li>
+     <li>In interface of handling data: 
+      <ul>
+       <li>Option to only import data definition when load example.</li>
+       <li>Data definition can be saved in tree.</li>
+       <li>Data definition can be exported as csv/xml/json/excel.</li>
+       <li>Data definition can be imported from xml.</li>
+       <li>Data definition can be selected in saved tree.</li>
+      </ul></li>
+     <li>Tree information: 
+      <ul>
+       <li>Parse and encode tree in consistent way while orignial formats still work.</li>
+       <li>Length of node is enlarged as 2G.</li>
+       <li>Actions of left-click, right-click, and double-click can be selected for menu.</li>
+       <li>To select node, either click tree node or query by tags/times/keywords.</li>
+      </ul></li>
+     <li>Default style is null when display html.</li>
+     <li>Shortcuts list is displayed along with icons list which have not shortcuts.</li>
+    </ul></li>
+   <li>Solved problems: 
+    <ul>
+     <li>“Rename Files” should not override existed files.</li>
+     <li>File names are null in interface of “Check Redundancy Files”.</li>
+     <li>File names are null in interface of “Decompress/Unarchive File”.</li>
+     <li>Fail to add quadratic/cubic/polylines when edit SVG.</li>
+     <li>Error should not be popped when edit shape with empty setting of “dotted”.</li>
+     <li>Error should not be popped when display shape menu with empty shape data.</li>
+     <li>Shortcut “F1/Ctrl+e” should not work for button “Go”.</li>
+     <li>All special characters should be handled when generate json file.</li>
+     <li>Customized languages should be checked when match message.</li>
+     <li>Should prevent new language name which includes name of embedded languages.</li>
+    </ul></li>
+  </ul>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.7">Closed requirements/bugs in this version</a></p>
+  <p>Happy birthday to China!</p>
   <p>2023-8-23 v6.7.6</p>
   <ul>
    <li>Added: 

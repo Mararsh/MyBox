@@ -1,19 +1,31 @@
 ##MyBox#
-Examples > Object
+MyBoxTreeRoot;;;
+JShell codes
+
+##MyBox#
+JShell codes
+Examples
+
+##MyBox#
+JShell codes > Examples
+Object
+
+##MyBox#
+JShell codes > Examples > Object
 string
 String exampleString = "hello";
 exampleString += " world";
 "Contains e:"+ exampleString.contains("e") + "   length:" + exampleString.length();
 
 ##MyBox#
-Examples > Object
+JShell codes > Examples > Object
 time
 import java.util.Date;
 Date exampleDate = new Date();
 "current time:" + exampleDate.toString() + "     value:" + exampleDate.getTime();
 
 ##MyBox#
-Examples > Object
+JShell codes > Examples > Object
 array
 import java.util.Arrays;
 double[] exampleArray =  new double[5];
@@ -23,7 +35,7 @@ for (int i=0; i<exampleArray.length; i++ ) {
 exampleArray[2];
 
 ##MyBox#
-Examples > Object
+JShell codes > Examples > Object
 list
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,207 +45,223 @@ exampleList.addAll(Arrays.asList("a", "b", "c", "d", "e"));
 exampleList.toString();
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples
+Expressions
+
+##MyBox#
+JShell codes > Examples > Expressions
+Numeric operations
+
+##MyBox#
+JShell codes > Examples > Expressions > Numeric operations
 e
 Math.E
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 pi
 Math.PI
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 absoluate
 Math.abs(-5.611)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 square root
 Math.sqrt(9)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 cubic root
 Math.cbrt(27)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 power
 Math.pow(2,5)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 power of e
 Math.exp(2)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 natural logarithm(base e)
 Math.log(6)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 common logarithm(base 10)
 Math.log10(6)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 cosine
 Math.cos(0)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 sine
 Math.sin(9)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 tangent
 Math.tan(5)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 arc tangent
 Math.atan(-7.3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 arc cosine
 Math.acos(0.5)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 arc sine
 Math.asin(0.3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 round up
 Math.ceil(4.13)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 round down
 Math.floor(4.67)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 round
 Math.round(4.83)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 random
 Math.random()
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 maximum
 Math.max(1,-3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JShell codes > Examples > Expressions > Numeric operations
 minimum
 Math.min(1,-3)
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions
+Strings operations
+
+##MyBox#
+JShell codes > Examples > Expressions > Strings operations
 equals while ignore case
 "Hello".equalsIgnoreCase("hello")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 equals
 "Hello".equals("hello")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 replace first
 "Hello World! World is yourself.".replace("World", "Feeling");
-   
+
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 replace all
 "Hello World! World is yourself.".replace(/World/g, "Feeling");
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 starts with
 "Hello".startsWith("h")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 end with
 "Hello".endsWith("o")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 subString
 "Hello".substring(2, 5)
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 char at
 "hello".charAt(2)
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 concat
 "hello".concat(" world")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 split
 "1,2,3,4".split(",")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 indexOf
 "hello".indexOf("e")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 lastIndexOf
 "hello".lastIndexOf("l")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 length
 "hello".length()
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 toLowerCase
 "Hello".toLowerCase()
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 toUpperCase
 "Hello".toUpperCase()
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 contains
 "Hello".contains("el")
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 trim
 " Hello  ".trim()
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 isBlank
 "  ".isBlank()
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JShell codes > Examples > Expressions > Strings operations
 isEmpty
 "".isEmpty()
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JShell codes > Examples > Expressions
+Boolean operations
+
+##MyBox#
+JShell codes > Examples > Expressions > Boolean operations
 list include
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -244,7 +272,7 @@ String exampleStringC = "c";
 exampleListC.contains(exampleStringC);
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JShell codes > Examples > Expressions > Boolean operations
 string match
 // MyBox library paths should have been added in JShell environment
 import mara.mybox.tools.StringTools;
@@ -254,7 +282,7 @@ boolean exampleCaseInsensitiveM = true;
 StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JShell codes > Examples > Expressions > Boolean operations
 string include
 // MyBox library paths should have been added in JShell environment
 import mara.mybox.tools.StringTools;
@@ -264,7 +292,7 @@ boolean exampleCaseInsensitiveI = true;
 StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JShell codes > Examples > Expressions > Boolean operations
 and/or/not
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -276,16 +304,20 @@ exampleListB.contains(exampleStringB) &&
 (exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));
 
 ##MyBox#
-Examples > Methods
+JShell codes > Examples
+Methods
+
+##MyBox#
+JShell codes > Examples > Methods
 Area of circle
 double circleAreaByDiameter(double diameter) {        
     double radius = diameter / 2;        
     return   Math.PI *  radius * radius ;        
 }
-circleAreaByDiameter(120) + circleAreaByDiameter(30)  
+circleAreaByDiameter(120) + circleAreaByDiameter(30)
 
 ##MyBox#
-Examples > Methods
+JShell codes > Examples > Methods
 Round value
 import java.math.BigDecimal;        
 import java.math.RoundingMode;        
@@ -293,10 +325,10 @@ double scale(double v, int scale) {
     BigDecimal b = new BigDecimal(v);        
     return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
 }    
-scale(Math.PI, 3) 
+scale(Math.PI, 3)
 
 ##MyBox#
-Examples > Methods
+JShell codes > Examples > Methods
 Format number
 import java.math.BigDecimal;        
 import java.math.RoundingMode;        
@@ -323,10 +355,10 @@ double circleAreaByRadius(double radius) {
     return   Math.PI *  radius * radius ;        
 }        
                                      
-formatDouble(circleAreaByRadius(273.4), 4)    
+formatDouble(circleAreaByRadius(273.4), 4)
 
 ##MyBox#
-Examples > Methods
+JShell codes > Examples > Methods
 Format date
 import java.util.Date;
 import java.util.TimeZone;
@@ -347,7 +379,7 @@ String datetimeToString(Date theDate, String format, TimeZone theZone) {
 datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());
 
 ##MyBox#
-Examples > Methods
+JShell codes > Examples > Methods
 string match
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -373,7 +405,7 @@ boolean match(String string, String find, boolean isRegex,
 match("Hello1233World", "\\S*3{2,}\\S*", true, true, true, true);
 
 ##MyBox#
-Examples > Methods
+JShell codes > Examples > Methods
 string include
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -15,7 +15,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" minHeight="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShapeShearInputController">
+<VBox fx:id="thisPane" prefHeight="180.0" prefWidth="200.0" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShapeShearInputController">
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%ShearShape" textAlignment="CENTER" />
         <Label fx:id="infoLabel" maxHeight="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />

@@ -58,6 +58,9 @@ public class BaseShapeTransformController extends BaseInputController {
             return;
         }
         DoublePoint center = DoubleShape.getCenter(shapeData);
+        if (center == null) {
+            return;
+        }
         xInput.setText(imageScale(center.getX()) + "");
         yInput.setText(imageScale(center.getY()) + "");
     }
@@ -68,6 +71,9 @@ public class BaseShapeTransformController extends BaseInputController {
             return;
         }
         Rectangle2D bounds = DoubleShape.getBound(shapeData);
+        if (bounds == null) {
+            return;
+        }
         xInput.setText(imageScale(bounds.getMinX()) + "");
         yInput.setText(imageScale(bounds.getMinY()) + "");
     }
@@ -78,6 +84,9 @@ public class BaseShapeTransformController extends BaseInputController {
             return;
         }
         Rectangle2D bounds = DoubleShape.getBound(shapeData);
+        if (bounds == null) {
+            return;
+        }
         xInput.setText(imageScale(bounds.getMaxX()) + "");
         yInput.setText(imageScale(bounds.getMaxY()) + "");
     }
@@ -88,6 +97,9 @@ public class BaseShapeTransformController extends BaseInputController {
             return;
         }
         Rectangle2D bounds = DoubleShape.getBound(shapeData);
+        if (bounds == null) {
+            return;
+        }
         xInput.setText(imageScale(bounds.getMinX()) + "");
         yInput.setText(imageScale(bounds.getMaxY()) + "");
     }
@@ -98,6 +110,9 @@ public class BaseShapeTransformController extends BaseInputController {
             return;
         }
         Rectangle2D bounds = DoubleShape.getBound(shapeData);
+        if (bounds == null) {
+            return;
+        }
         xInput.setText(imageScale(bounds.getMaxX()) + "");
         yInput.setText(imageScale(bounds.getMinY()) + "");
     }

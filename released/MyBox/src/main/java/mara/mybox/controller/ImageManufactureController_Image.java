@@ -38,7 +38,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     protected TitledPane createPane;
     @FXML
-    protected Tab imageTab, scopeTab, hisTab, backupTab;
+    protected Tab imageTab, scopeTab, hisTab;
     @FXML
     protected ImageView maskView;
     @FXML

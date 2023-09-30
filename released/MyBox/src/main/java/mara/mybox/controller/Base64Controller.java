@@ -123,7 +123,7 @@ public class Base64Controller extends BaseController {
 
     @Override
     public void sourceFileChanged(final File file) {
-        sourceFile = file;
+        super.sourceFileChanged(file);
         clear();
     }
 

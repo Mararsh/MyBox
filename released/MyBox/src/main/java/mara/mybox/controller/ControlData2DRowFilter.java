@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -75,34 +76,24 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     @Override
     protected void editNode(TreeItem<InfoNode> item) {
-        if (item == null) {
-            return;
-        }
-        InfoNode node = item.getValue();
-        if (node == null) {
-            return;
-        }
-        scriptInput.setText(node.getValue());
-        if (maxInput != null) {
-            maxInput.setText("");
-        }
-        trueRadio.setSelected(true);
-        String more = node.getMore();
-        if (more != null && more.contains(InfoNode.TagsSeparater)) {
-            try {
-                String[] v = more.strip().split(InfoNode.TagsSeparater);
-                if (StringTools.isFalse(v[0])) {
-                    othersRadio.setSelected(true);
-                } else {
-                    trueRadio.setSelected(true);
-                }
-                long max = Long.parseLong(v[1]);
-                if (max > 0 && maxInput != null) {
-                    maxInput.setText(max + "");
-                }
-            } catch (Exception e) {
+        try {
+            if (item == null) {
+                return;
             }
+            InfoNode node = item.getValue();
+            if (node == null) {
+                return;
+            }
+            Map<String, String> values = InfoNode.parseInfo(node);
+            scriptInput.setText(values.get("Script"));
+            if (maxInput != null) {
+                maxInput.setText(values.get("Maximum"));
+            }
+            trueRadio.setSelected(!StringTools.isFalse(values.get("Condition")));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
+
     }
 
     @Override

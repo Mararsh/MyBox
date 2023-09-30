@@ -13,7 +13,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.data2d.Data2D_Attributes;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -279,7 +279,7 @@ public class ControlChartXYZ extends BaseController {
                 if (xCategory) {
                     push += "'" + s + "'";
                 } else {
-                    d = DoubleTools.scale(s, Data2D_Attributes.InvalidAs.Skip, scale);
+                    d = DoubleTools.scale(s, InvalidAs.Skip, scale);
                     if (DoubleTools.invalidDouble(d)) {
                         continue;
                     }
@@ -289,7 +289,7 @@ public class ControlChartXYZ extends BaseController {
                 if (yCategory) {
                     push += ", '" + s + "'";
                 } else {
-                    d = DoubleTools.scale(s, Data2D_Attributes.InvalidAs.Skip, scale);
+                    d = DoubleTools.scale(s, InvalidAs.Skip, scale);
                     if (DoubleTools.invalidDouble(d)) {
                         continue;
                     }
@@ -300,7 +300,7 @@ public class ControlChartXYZ extends BaseController {
                     if (zCategory) {
                         push += ", '" + s + "'";
                     } else {
-                        d = DoubleTools.scale(s, Data2D_Attributes.InvalidAs.Skip, scale);
+                        d = DoubleTools.scale(s, InvalidAs.Skip, scale);
                         if (DoubleTools.invalidDouble(d)) {
                             push += ", Number.NaN";
                         } else {

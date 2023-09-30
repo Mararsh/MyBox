@@ -1,17 +1,22 @@
 <html>
  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>JavaScript</title>
   <style type="text/css">
-            .center { text-align:center;  max-width:95%; }
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-.valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
-.boldText { font-weight:bold;  }
-.valueText { color:#2e598a;  }
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
 
         </style>
+ </head>
+ <body contenteditable="false">
   <script>
     function nodeClicked(id) {
       var obj = document.getElementById(id);
@@ -35,34 +40,32 @@ tr { height: 1.2em;  }
        }
     }
   </script>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta charset="UTF-8">
-  <meta http-equiv="cache-control" content="no-cache">
- </head>
- <body contenteditable="false">
   <div>
-   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Sequence Number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
+   <div>
+    <input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Hierarchy number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
    </div>
    <hr>
    <div style="padding: 2px;">
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><span class="SerialNumber">&nbsp;&nbsp;</span>JavaScript</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item632')"><span class="SerialNumber">&nbsp;&nbsp;</span>JavaScript</a>
    </div>
-   <div class="TreeNode" id="item2">
+   <div class="TreeNode" id="item632">
     <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item341')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4571')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
     </div>
-    <div class="TreeNode" id="item341">
+    <div class="TreeNode" id="item4571">
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item342')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>Variable</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4572')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>Variable</a>
      </div>
-     <div class="TreeNode" id="item342">
+     <div class="TreeNode" id="item4572">
       <div style="padding: 2px;">
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>string
       </div>
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         var&nbsp;stringA&nbsp;=&nbsp;"hello";<br> stringA&nbsp;+=&nbsp;"&nbsp;world";<br> "Contains&nbsp;e:"&nbsp;+&nbsp;(stringA.indexOf("e")&nbsp;&gt;=&nbsp;0)&nbsp;+&nbsp;"&nbsp;&nbsp;&nbsp;length:"&nbsp;+&nbsp;stringA.length
+         <pre><code>var stringA = "hello";
+stringA += " world";
+"Contains e:" + (stringA.indexOf("e") &gt;= 0) + "   length:" + stringA.length</code></pre>
         </div>
        </div>
       </div>
@@ -72,7 +75,10 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         "current&nbsp;time:&nbsp;"&nbsp;+&nbsp;new&nbsp;Date()&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> "format&nbsp;yyyy/mm/dd:&nbsp;"&nbsp;+&nbsp;new&nbsp;Date('2022/11/30&nbsp;10:35:32')&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> "format&nbsp;mm/dd/yyyy:&nbsp;"&nbsp;+&nbsp;new&nbsp;Date('11/30/2022&nbsp;10:35:32')&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> "format&nbsp;yyyy-mm-dd:&nbsp;"&nbsp;+&nbsp;new&nbsp;Date('2022-11-30&nbsp;10:35:32'.replace(/-/g,'/'));
+         <pre><code>"current time: " + new Date() + "\n" + 
+"format yyyy/mm/dd: " + new Date('2022/11/30 10:35:32') + "\n" + 
+"format mm/dd/yyyy: " + new Date('11/30/2022 10:35:32') + "\n" + 
+"format yyyy-mm-dd: " + new Date('2022-11-30 10:35:32'.replace(/-/g,'/'));</code></pre>
         </div>
        </div>
       </div>
@@ -82,7 +88,8 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         var&nbsp;arrayA&nbsp;=&nbsp;&nbsp;[-1.2,&nbsp;3.2,&nbsp;15,&nbsp;4.912];<br> arrayA[2];
+         <pre><code>var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA[2];</code></pre>
         </div>
        </div>
       </div>
@@ -92,26 +99,27 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         var&nbsp;cat1&nbsp;=&nbsp;{color:"white",&nbsp;age:"15",&nbsp;name:"GuaiGuai"};<br> cat1.name
+         <pre><code>var cat1 = {color:"white", age:"15", name:"GuaiGuai"};
+cat1.name</code></pre>
         </div>
        </div>
       </div>
      </div>
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item347')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>Expressions</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4577')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>Expressions</a>
      </div>
-     <div class="TreeNode" id="item347">
+     <div class="TreeNode" id="item4577">
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item348')"><span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>Numeric operations</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4578')"><span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>Numeric operations</a>
       </div>
-      <div class="TreeNode" id="item348">
+      <div class="TreeNode" id="item4578">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.1&nbsp;&nbsp;</span>Euler number
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.E
+          <pre><code>Math.E</code></pre>
          </div>
         </div>
        </div>
@@ -121,7 +129,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.PI
+          <pre><code>Math.PI</code></pre>
          </div>
         </div>
        </div>
@@ -131,7 +139,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.abs(-5.611)
+          <pre><code>Math.abs(-5.611)</code></pre>
          </div>
         </div>
        </div>
@@ -141,7 +149,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.exp(2)
+          <pre><code>Math.exp(2)</code></pre>
          </div>
         </div>
        </div>
@@ -151,7 +159,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.sqrt(9)
+          <pre><code>Math.sqrt(9)</code></pre>
          </div>
         </div>
        </div>
@@ -161,7 +169,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.pow(27,-3)
+          <pre><code>Math.pow(27,-3)</code></pre>
          </div>
         </div>
        </div>
@@ -171,7 +179,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.pow(2,5)
+          <pre><code>Math.pow(2,5)</code></pre>
          </div>
         </div>
        </div>
@@ -181,7 +189,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.cos(0)
+          <pre><code>Math.cos(0)</code></pre>
          </div>
         </div>
        </div>
@@ -191,7 +199,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.sin(9)
+          <pre><code>Math.sin(9)</code></pre>
          </div>
         </div>
        </div>
@@ -201,7 +209,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.tan(5)
+          <pre><code>Math.tan(5)</code></pre>
          </div>
         </div>
        </div>
@@ -211,7 +219,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.atan(-7.3)
+          <pre><code>Math.atan(-7.3)</code></pre>
          </div>
         </div>
        </div>
@@ -221,7 +229,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.acos(0.5)
+          <pre><code>Math.acos(0.5)</code></pre>
          </div>
         </div>
        </div>
@@ -231,7 +239,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.asin(0.3)
+          <pre><code>Math.asin(0.3)</code></pre>
          </div>
         </div>
        </div>
@@ -241,7 +249,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.log(6)
+          <pre><code>Math.log(6)</code></pre>
          </div>
         </div>
        </div>
@@ -251,7 +259,8 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          //&nbsp;ECMAScript&nbsp;6&nbsp;supports&nbsp;while&nbsp;ECMAScript&nbsp;5.1&nbsp;not&nbsp;support<br> Math.log10(6)
+          <pre><code>// ECMAScript 6 supports while ECMAScript 5.1 not support
+Math.log10(6)</code></pre>
          </div>
         </div>
        </div>
@@ -261,7 +270,8 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          //&nbsp;ECMAScript&nbsp;6&nbsp;supports&nbsp;while&nbsp;ECMAScript&nbsp;5.1&nbsp;not&nbsp;support<br> Math.log2(6)
+          <pre><code>// ECMAScript 6 supports while ECMAScript 5.1 not support
+Math.log2(6)</code></pre>
          </div>
         </div>
        </div>
@@ -271,7 +281,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.ceil(4.13)
+          <pre><code>Math.ceil(4.13)</code></pre>
          </div>
         </div>
        </div>
@@ -281,7 +291,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.floor(4.67)
+          <pre><code>Math.floor(4.67)</code></pre>
          </div>
         </div>
        </div>
@@ -291,7 +301,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.round(4.83)
+          <pre><code>Math.round(4.83)</code></pre>
          </div>
         </div>
        </div>
@@ -301,7 +311,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.trunc(4.83)
+          <pre><code>Math.trunc(4.83)</code></pre>
          </div>
         </div>
        </div>
@@ -311,7 +321,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.random()
+          <pre><code>Math.random()</code></pre>
          </div>
         </div>
        </div>
@@ -321,7 +331,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.max(1,2,-3)
+          <pre><code>Math.max(1,2,-3)</code></pre>
          </div>
         </div>
        </div>
@@ -331,22 +341,22 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.min(1,2,-3)
+          <pre><code>Math.min(1,2,-3)</code></pre>
          </div>
         </div>
        </div>
       </div>
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item372')"><span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>Strings operations</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4602')"><span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>Strings operations</a>
       </div>
-      <div class="TreeNode" id="item372">
+      <div class="TreeNode" id="item4602">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.1&nbsp;&nbsp;</span>compare
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'Hello'&nbsp;==&nbsp;'hello'&nbsp;||&nbsp;'a'&nbsp;&lt;&nbsp;'A'&nbsp;||&nbsp;'a'&nbsp;!=&nbsp;'A'
+          <pre><code>'Hello' == 'hello' || 'a' &lt; 'A' || 'a' != 'A'</code></pre>
          </div>
         </div>
        </div>
@@ -356,7 +366,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          "Hello&nbsp;World!&nbsp;World&nbsp;is&nbsp;yourself.".replace("World",&nbsp;"Feeling");
+          <pre><code>"Hello World! World is yourself.".replace("World", "Feeling");</code></pre>
          </div>
         </div>
        </div>
@@ -366,7 +376,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          "Hello&nbsp;World!&nbsp;World&nbsp;is&nbsp;yourself.".replace(/World/g,&nbsp;"Feeling");
+          <pre><code>"Hello World! World is yourself.".replace(/World/g, "Feeling");</code></pre>
          </div>
         </div>
        </div>
@@ -376,7 +386,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'Hello'.startsWith('h')
+          <pre><code>'Hello'.startsWith('h')</code></pre>
          </div>
         </div>
        </div>
@@ -386,7 +396,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'Hello'.endsWith('o')
+          <pre><code>'Hello'.endsWith('o')</code></pre>
          </div>
         </div>
        </div>
@@ -396,7 +406,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'Hello'.substring(2,&nbsp;5)
+          <pre><code>'Hello'.substring(2, 5)</code></pre>
          </div>
         </div>
        </div>
@@ -406,7 +416,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'hello'.charAt(2)
+          <pre><code>'hello'.charAt(2)</code></pre>
          </div>
         </div>
        </div>
@@ -416,7 +426,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'hello'.concat('&nbsp;world')
+          <pre><code>'hello'.concat(' world')</code></pre>
          </div>
         </div>
        </div>
@@ -426,7 +436,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          '1,2,3,4'.split(',')
+          <pre><code>'1,2,3,4'.split(',')</code></pre>
          </div>
         </div>
        </div>
@@ -436,7 +446,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'hello'.indexOf('e')
+          <pre><code>'hello'.indexOf('e')</code></pre>
          </div>
         </div>
        </div>
@@ -446,7 +456,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'hello'.lastIndexOf('l')
+          <pre><code>'hello'.lastIndexOf('l')</code></pre>
          </div>
         </div>
        </div>
@@ -456,7 +466,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'hello'.length
+          <pre><code>'hello'.length</code></pre>
          </div>
         </div>
        </div>
@@ -466,7 +476,9 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;stringA&nbsp;=&nbsp;"abc1233hello";<br> var&nbsp;regexA&nbsp;=&nbsp;/3{2,}/ig;<br> stringA.search(regexA)
+          <pre><code>var stringA = "abc1233hello";
+var regexA = /3{2,}/ig;
+stringA.search(regexA)</code></pre>
          </div>
         </div>
        </div>
@@ -476,7 +488,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'Hello'.toLowerCase()
+          <pre><code>'Hello'.toLowerCase()</code></pre>
          </div>
         </div>
        </div>
@@ -486,22 +498,23 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          'Hello'.toUpperCase()
+          <pre><code>'Hello'.toUpperCase()</code></pre>
          </div>
         </div>
        </div>
       </div>
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item388')"><span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>Array operations</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4618')"><span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>Array operations</a>
       </div>
-      <div class="TreeNode" id="item388">
+      <div class="TreeNode" id="item4618">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.1&nbsp;&nbsp;</span>length
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;arrayA&nbsp;=&nbsp;&nbsp;[-1.2,&nbsp;3.2,&nbsp;15,&nbsp;4.912];<br> arrayA.length
+          <pre><code>var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA.length</code></pre>
          </div>
         </div>
        </div>
@@ -511,7 +524,8 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;arrayA&nbsp;=&nbsp;&nbsp;[-1.2,&nbsp;3.2,&nbsp;15,&nbsp;4.912];<br> arrayA.push(-47);
+          <pre><code>var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA.push(-47);</code></pre>
          </div>
         </div>
        </div>
@@ -521,22 +535,25 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;arrayA&nbsp;=&nbsp;&nbsp;[-1.2,&nbsp;3.2,&nbsp;15,&nbsp;4.912];<br> arrayA.pop()
+          <pre><code>var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA.pop()</code></pre>
          </div>
         </div>
        </div>
       </div>
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item392')"><span class="SerialNumber">1.2.4&nbsp;&nbsp;</span>Boolean operations</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4622')"><span class="SerialNumber">1.2.4&nbsp;&nbsp;</span>Boolean operations</a>
       </div>
-      <div class="TreeNode" id="item392">
+      <div class="TreeNode" id="item4622">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4.1&nbsp;&nbsp;</span>string include
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;stringA&nbsp;=&nbsp;"abc1233hello";<br> var&nbsp;regexA&nbsp;=&nbsp;/3{2,}/ig;<br> stringA.search(regexA)&nbsp;&gt;=&nbsp;0
+          <pre><code>var stringA = "abc1233hello";
+var regexA = /3{2,}/ig;
+stringA.search(regexA) &gt;= 0</code></pre>
          </div>
         </div>
        </div>
@@ -546,7 +563,9 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;stringA&nbsp;=&nbsp;"abc1233hello";<br> var&nbsp;regexA&nbsp;=&nbsp;/\S*3{2,}\S*/ig;<br> stringA.search(regexA)&nbsp;&gt;=&nbsp;0
+          <pre><code>var stringA = "abc1233hello";
+var regexA = /\S*3{2,}\S*/ig;
+stringA.search(regexA) &gt;= 0</code></pre>
          </div>
         </div>
        </div>
@@ -556,7 +575,8 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;arrayA&nbsp;=&nbsp;&nbsp;['A',&nbsp;'B',&nbsp;'C',&nbsp;'D'];<br> arrayA.includes('C');
+          <pre><code>var arrayA =  ['A', 'B', 'C', 'D'];
+arrayA.includes('C');</code></pre>
          </div>
         </div>
        </div>
@@ -566,7 +586,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          Math.abs(2a)&nbsp;&gt;=&nbsp;0
+          <pre><code>Math.abs(2a) &gt;= 0</code></pre>
          </div>
         </div>
        </div>
@@ -576,22 +596,36 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;arrayA&nbsp;=&nbsp;&nbsp;['A',&nbsp;'B',&nbsp;'C',&nbsp;'D'];<br> var&nbsp;stringA&nbsp;=&nbsp;"abc1233hello";<br> arrayA.includes('C')&nbsp;&amp;&amp;&nbsp;(arrayA.length&nbsp;&gt;=&nbsp;8&nbsp;||&nbsp;stringA.length&nbsp;&lt;&nbsp;5&nbsp;||&nbsp;!stringA.endsWith("h"));
+          <pre><code>var arrayA =  ['A', 'B', 'C', 'D'];
+var stringA = "abc1233hello";
+arrayA.includes('C') &amp;&amp; (arrayA.length &gt;= 8 || stringA.length &lt; 5 || !stringA.endsWith("h"));</code></pre>
          </div>
         </div>
        </div>
       </div>
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item398')"><span class="SerialNumber">1.2.5&nbsp;&nbsp;</span>Date operations</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4628')"><span class="SerialNumber">1.2.5&nbsp;&nbsp;</span>Date operations</a>
       </div>
-      <div class="TreeNode" id="item398">
+      <div class="TreeNode" id="item4628">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5.1&nbsp;&nbsp;</span>date formats
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          "current&nbsp;time:&nbsp;"&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().getTime()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().getTime()&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toLocaleString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toLocaleString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toGMTString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toGMTString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toISOString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toISOString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toUTCString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toUTCString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toJSON()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toJSON()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toDateString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toDateString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toTimeString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toTimeString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toLocaleDateString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toLocaleDateString()+&nbsp;"\n"&nbsp;+&nbsp;<br> "new&nbsp;Date().toLocaleTimeString()&nbsp;=&nbsp;"&nbsp;+&nbsp;new&nbsp;Date().toLocaleTimeString()
+          <pre><code>"current time: " + "\n" + 
+"new Date() = " + new Date()+ "\n" + 
+"new Date().getTime() = " + new Date().getTime() + "\n" + 
+"new Date().toLocaleString() = " + new Date().toLocaleString()+ "\n" + 
+"new Date().toGMTString() = " + new Date().toGMTString()+ "\n" + 
+"new Date().toISOString() = " + new Date().toISOString()+ "\n" + 
+"new Date().toUTCString() = " + new Date().toUTCString()+ "\n" + 
+"new Date().toString() = " + new Date().toString()+ "\n" + 
+"new Date().toJSON() = " + new Date().toJSON()+ "\n" + 
+"new Date().toDateString() = " + new Date().toDateString()+ "\n" + 
+"new Date().toTimeString() = " + new Date().toTimeString()+ "\n" + 
+"new Date().toLocaleDateString() = " + new Date().toLocaleDateString()+ "\n" + 
+"new Date().toLocaleTimeString() = " + new Date().toLocaleTimeString()</code></pre>
          </div>
         </div>
        </div>
@@ -601,7 +635,11 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          new&nbsp;Date('2022/11/30&nbsp;10:35:32').toLocaleString()&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> new&nbsp;Date('11/30/2022&nbsp;10:35:32').toLocaleString()&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> new&nbsp;Date('2022-11-30&nbsp;10:35:32'.replace(/-/g,'/')).toLocaleString()&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> new&nbsp;Date('2022/11/30')&nbsp;+&nbsp;"\n"&nbsp;+&nbsp;<br> new&nbsp;Date('2022-11-30'.replace(/-/g,'/'))
+          <pre><code>new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
+new Date('11/30/2022 10:35:32').toLocaleString() + "\n" + 
+new Date('2022-11-30 10:35:32'.replace(/-/g,'/')).toLocaleString() + "\n" + 
+new Date('2022/11/30') + "\n" + 
+new Date('2022-11-30'.replace(/-/g,'/'))</code></pre>
          </div>
         </div>
        </div>
@@ -611,7 +649,10 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;timeb&nbsp;=&nbsp;new&nbsp;Date('2022/11/30&nbsp;10:35:32');<br> "year:&nbsp;"&nbsp;+&nbsp;timeb.getFullYear()&nbsp;+&nbsp;"\nmonth:&nbsp;"&nbsp;+&nbsp;(timeb.getMonth()&nbsp;+&nbsp;1)&nbsp;+&nbsp;"\nday:&nbsp;"&nbsp;+&nbsp;timeb.getDate()<br> &nbsp;+&nbsp;"\nweek&nbsp;day:&nbsp;"&nbsp;+&nbsp;timeb.getDay()&nbsp;+&nbsp;"\nhours:&nbsp;"&nbsp;+&nbsp;timeb.getHours()+&nbsp;"\nminutes:&nbsp;"&nbsp;+&nbsp;timeb.getMinutes()<br> +&nbsp;"\nseconds:&nbsp;"&nbsp;+&nbsp;timeb.getSeconds();
+          <pre><code>var timeb = new Date('2022/11/30 10:35:32');
+"year: " + timeb.getFullYear() + "\nmonth: " + (timeb.getMonth() + 1) + "\nday: " + timeb.getDate()
+ + "\nweek day: " + timeb.getDay() + "\nhours: " + timeb.getHours()+ "\nminutes: " + timeb.getMinutes()
++ "\nseconds: " + timeb.getSeconds();</code></pre>
          </div>
         </div>
        </div>
@@ -621,23 +662,30 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          new&nbsp;Date('2012/05/19').getTime()&nbsp;&nbsp;&gt;&nbsp;new&nbsp;Date('2016/05/19&nbsp;09:23:12').getTime()
+          <pre><code>new Date('2012/05/19').getTime()  &gt; new Date('2016/05/19 09:23:12').getTime()</code></pre>
          </div>
         </div>
        </div>
       </div>
      </div>
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item403')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>Function</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4633')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>Function</a>
      </div>
-     <div class="TreeNode" id="item403">
+     <div class="TreeNode" id="item4633">
       <div style="padding: 2px;">
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.1&nbsp;&nbsp;</span>Add style
       </div>
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         function&nbsp;addStyle(style)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;node&nbsp;=&nbsp;document.createElement("style");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;node.id&nbsp;=&nbsp;"mystyleid";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;node.type&nbsp;=&nbsp;"text/css";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;node.innerHTML&nbsp;=&nbsp;style.replace(/\n/g,"&nbsp;&nbsp;");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;document.getElementsByTagName("HEAD").item(0).appendChild(node);<br> };<br> addStyle("body&nbsp;{&nbsp;background-color:black;&nbsp;color:#CCFF99;&nbsp;}");
+         <pre><code>function addStyle(style) {
+    var node = document.createElement("style");        
+    node.id = "mystyleid";        
+    node.type = "text/css";        
+    node.innerHTML = style.replace(/\n/g,"  ");        
+    document.getElementsByTagName("HEAD").item(0).appendChild(node);
+};
+addStyle("body { background-color:black; color:#CCFF99; }");</code></pre>
         </div>
        </div>
       </div>
@@ -647,26 +695,35 @@ tr { height: 1.2em;  }
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
         <div class="valueBox">
-         function&nbsp;removeNode(id)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;node&nbsp;=&nbsp;document.getElementById(id);<br> &nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(&nbsp;node&nbsp;!=&nbsp;null&nbsp;)&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node.parentNode.removeChild(node);<br> };<br> removeNode("mystyleid");
+         <pre><code>function removeNode(id) {
+    var node = document.getElementById(id);
+    if ( node != null ) 
+        node.parentNode.removeChild(node);
+};
+removeNode("mystyleid");</code></pre>
         </div>
        </div>
       </div>
      </div>
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item406')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>html</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4636')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>html</a>
      </div>
-     <div class="TreeNode" id="item406">
+     <div class="TreeNode" id="item4636">
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item407')"><span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>Selection</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4637')"><span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>Selection</a>
       </div>
-      <div class="TreeNode" id="item407">
+      <div class="TreeNode" id="item4637">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.1&nbsp;&nbsp;</span>Select all
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          window.getSelection().removeAllRanges();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> var&nbsp;selection&nbsp;=&nbsp;window.getSelection();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> var&nbsp;range&nbsp;=&nbsp;document.createRange();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> range.selectNode(document.documentElement);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> selection.addRange(range);
+          <pre><code>window.getSelection().removeAllRanges();     
+var selection = window.getSelection();        
+var range = document.createRange();        
+range.selectNode(document.documentElement);        
+selection.addRange(range);</code></pre>
          </div>
         </div>
        </div>
@@ -676,7 +733,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          window.getSelection().removeAllRanges();
+          <pre><code>window.getSelection().removeAllRanges();</code></pre>
          </div>
         </div>
        </div>
@@ -686,7 +743,14 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          function&nbsp;selectNode(id)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;window.getSelection().removeAllRanges();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;selection&nbsp;=&nbsp;window.getSelection();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;range&nbsp;=&nbsp;document.createRange();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;range.selectNode(document.getElementById(id));&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;selection.addRange(range);<br> };<br> selectNode("someid");
+          <pre><code>function selectNode(id) {
+    window.getSelection().removeAllRanges();     
+    var selection = window.getSelection();        
+    var range = document.createRange();        
+    range.selectNode(document.getElementById(id));        
+    selection.addRange(range);
+};
+selectNode("someid");</code></pre>
          </div>
         </div>
        </div>
@@ -696,7 +760,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          window.getSelection().toString();
+          <pre><code>window.getSelection().toString();</code></pre>
          </div>
         </div>
        </div>
@@ -706,22 +770,27 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          var&nbsp;selectionObj&nbsp;=&nbsp;window.getSelection();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> var&nbsp;rangeObj&nbsp;=&nbsp;selectionObj.getRangeAt(0);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> var&nbsp;docFragment&nbsp;=&nbsp;rangeObj.cloneContents();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> var&nbsp;div&nbsp;=&nbsp;document.createElement("div");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> div.appendChild(docFragment);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> div.innerHTML;
+          <pre><code>var selectionObj = window.getSelection();        
+var rangeObj = selectionObj.getRangeAt(0);        
+var docFragment = rangeObj.cloneContents();        
+var div = document.createElement("div");        
+div.appendChild(docFragment);        
+div.innerHTML;</code></pre>
          </div>
         </div>
        </div>
       </div>
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item413')"><span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>Value</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4643')"><span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>Value</a>
       </div>
-      <div class="TreeNode" id="item413">
+      <div class="TreeNode" id="item4643">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.1&nbsp;&nbsp;</span>Read Cookie
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          document.cookie;
+          <pre><code>document.cookie;</code></pre>
          </div>
         </div>
        </div>
@@ -731,7 +800,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          document.documentElement.scrollHeight&nbsp;||&nbsp;document.body.scrollHeight;
+          <pre><code>document.documentElement.scrollHeight || document.body.scrollHeight;</code></pre>
          </div>
         </div>
        </div>
@@ -741,22 +810,22 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          document.documentElement.scrollWidth&nbsp;||&nbsp;document.body.scrollWidth;
+          <pre><code>document.documentElement.scrollWidth || document.body.scrollWidth;</code></pre>
          </div>
         </div>
        </div>
       </div>
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item417')"><span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>Operation</a>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4647')"><span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>Operation</a>
       </div>
-      <div class="TreeNode" id="item417">
+      <div class="TreeNode" id="item4647">
        <div style="padding: 2px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.1&nbsp;&nbsp;</span>Scroll page
        </div>
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          window.scrollTo(50,70&nbsp;);
+          <pre><code>window.scrollTo(50,70 );</code></pre>
          </div>
         </div>
        </div>
@@ -766,7 +835,7 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          document.body.contentEditable=true;
+          <pre><code>document.body.contentEditable=true;</code></pre>
          </div>
         </div>
        </div>
@@ -776,7 +845,37 @@ tr { height: 1.2em;  }
        <div class="nodeValue">
         <div style="padding: 0 0 0 144px;">
          <div class="valueBox">
-          alert("Hello");
+          <pre><code>alert("Hello");</code></pre>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.4&nbsp;&nbsp;</span>confirm
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          <pre><code>confirm("Are you fine?");</code></pre>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.5&nbsp;&nbsp;</span>input
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          <pre><code>prompt("Your cat");</code></pre>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.6&nbsp;&nbsp;</span>open address
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          <pre><code>window.open("http://www.nlc.cn");</code></pre>
          </div>
         </div>
        </div>
@@ -784,8 +883,10 @@ tr { height: 1.2em;  }
      </div>
     </div>
    </div>
-   <hr>
-   <p style="font-size:0.8em">* Links and controls may be unresponsive when html page is editable.</p>
+   <hr><treenode style="font-size:0.8em">
+    * Links and controls may be unresponsive when html page is editable.
+    <p></p>
+   </treenode>
   </div>
  </body>
 </html>

@@ -22,6 +22,7 @@ import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -419,7 +420,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 }
                 html += loadMoreInfo();
             }
-            html = HtmlWriteTools.html(null, html);
+            html = HtmlWriteTools.html(null, html, HtmlStyles.DefaultStyle);
             infoViewController.loadContents​(html);
 
         } catch (Exception e) {

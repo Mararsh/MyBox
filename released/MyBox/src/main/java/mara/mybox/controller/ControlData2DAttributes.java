@@ -7,7 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D;
@@ -41,8 +40,6 @@ public class ControlData2DAttributes extends BaseController {
         Loaded, Modified, Applied
     }
 
-    @FXML
-    protected Label nameLabel;
     @FXML
     protected TextArea descInput, infoArea;
     @FXML
@@ -234,8 +231,6 @@ public class ControlData2DAttributes extends BaseController {
             infoArea.setVisible(false);
             infoArea.clear();
         }
-
-        nameLabel.setText(data2D.displayName());
 
         updateNotify.set(updateNotify.get());
     }

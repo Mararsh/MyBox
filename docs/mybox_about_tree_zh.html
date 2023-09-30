@@ -1,0 +1,167 @@
+<!DOCTYPE html><HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>关于树形结构</title>
+        <style type="text/css">
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+            .valueText {
+                color:#2e598a;
+            }
+
+        </style>
+    </HEAD>
+    <body style="width: 900px; margin:0 auto;" contenteditable="false">
+        <h1  align="center">树形结构</h1>
+        <h2>1 树形结构的作用</h2>
+        <p>树形结构是基本的数据结构，用来表示数据之间一种非线性的逻辑关系。</p>
+        <p>树形结构可以精确描述层次关系和从属关系。</p>
+        <h2>2 树形结构的特征</h2>
+        <p>信息可以被组织为树形结构：</p>
+        <ol>
+            <li>“结点”存储一段信息。</li>
+            <li>“子结点”：下一层、并属于此结点。亦称“分支结点”。</li>
+            <li>一个结点可以有多个“子结点”。</li>
+            <li>“亲结点”：上一层、并拥有此结点。</li>
+            <li>一个结点只能有一个“亲结点”。</li>
+            <li>“后代结点”：从子结点向下递归延伸的所有结点。</li>
+            <li>“祖先结点”：从亲结点向上递归延伸的所有结点。</li>
+            <li>“根结点”：第一层，是其它结点的祖先。</li>
+            <li>“叶结点”：没有子结点。</li>
+            <li>“有序树”：子结点的排列次序是稳定的。</li>
+            <li>“层次号”：从根结点到此结点所经路径上的序号。</li>
+            <li>对于有序树，层次号可以唯一标识每个结点。<br />
+                注意，当增删结点时，同一结点的层次号可能会变化。
+            </li>
+        </ol>
+        <h2>3 定义树形结构</h2>
+        <ul>
+            <li>结点的属性：标题、值、修改时间。</li>
+            <li>结点值按大文本保存，长度为2G。</li>
+            <li>结点的标签。一个结点可以有多个标签、一个标签可以属于多个结点。</li>
+        </ul>
+        <h2>4 解析和构造结点值</h2>
+        <p>在MyBox中，以下功能所处理的对象都是以树形结构存储和管理：</p>
+        <table>
+            <thead>
+                <tr><th>     功能     </th><th>                    结点值的格式                     </th></tr>
+            </thead>
+            <tbody>
+                <tr><td> 笔记         </td><td> 网页片段。应是“body”的内容，不要包含标签“html”、“head”、和“body”。 </td></tr>
+                <tr><td> 树形信息       </td><td> 文本                                            </td></tr>
+                <tr><td> 收藏的网址      </td><td> 两个字段：网址、图标                                    </td></tr>
+                <tr><td> 行过滤        </td><td> 三个字段：JavaScript表达式、是否反值、最多取值数                 </td></tr>
+                <tr><td> 定义数据       </td><td> 保存数据属性和列定义的XML                                </td></tr>
+                <tr><td> SQL        </td><td> 文本：SQL语句                                      </td></tr>
+                <tr><td> 数学函数       </td><td> 四个字段：函数名、变量名列表、表达式、定义域                        </td></tr>
+                <tr><td> JavaScript </td><td> 文本 ：JavaScript代码                              </td></tr>
+                <tr><td> JShell     </td><td> 文本：Java代码                                     </td></tr>
+                <tr><td> JEXL       </td><td> 三个字段：脚本、环境、参数                                 </td></tr>
+            </tbody>
+        </table>
+        <h2>5 管理树形结构</h2>
+        <h3>5.1 树图</h3>
+        <p>选择一个结点，以此结点为根显示“树图“：</p>
+        <ul>
+            <li>树信息以html显示</li>
+            <li>点击结点名以展开/折叠子结点。</li>
+            <li>选择是否显示层次号、标签、结点值。</li>
+        </ul>
+        <h3>5.2 示例</h3>
+        <p>MyBox为每一个树形结构的功能都提供了示例。</p>
+        <p>点击菜单项“示例”以导入功能的示例数据。</p>
+        <p>在MyBox的文档列表中可以查看各个示例的树图。</p>
+        <h3>5.3 导出</h3>
+        <p>选择一个结点，以此结点为根导出树形结构：</p>
+        <ul>
+            <li>可选导出格式：文本、单个网页、网页框架、xml、json。</li>
+            <li>可选是否导出结点的修改时间、标签。</li>
+            <li>可为导出的网页设置风格。</li>
+        </ul>
+        <h3>5.4 导入</h3>
+        <p>可以批量导入树形信息：</p>
+        <ul>
+            <li>选择多个包含树形信息的文件。</li>
+            <li>文件的格式是以特殊分隔符编码的文本，可以参考导出的文本文件。</li>
+            <li>界面上显示文本格式的规则，并提供示例。</li>
+        </ul>
+        <h3>5.5 查询和选择结点</h3>
+        <p>选择要处理的结点，可以有以下方式：</p>
+        <ul>
+            <li>在树上点击一个结点。</li>
+            <li>对于树上的结点，点击菜单“加载子结点”、或“加载后代结点”，然后在结点列表中选择一个或多个结点。</li>
+            <li>选择多个标签，在查询结果中选择一个或多个结点。</li>
+            <li>选择多个时间，在查询结果中选择一个或多个结点。</li>
+            <li>输入多个关键字，对结点标题或结点值进行查询，在查询结果中选择一个或多个结点。</li>
+        </ul>
+        <h3>5.5 增删改结点</h3>
+        <p>选择一个或多个结点：</p>
+        <ul>
+            <li>添加子结点。</li>
+            <li>删除结点及其后代节点。</li>
+            <li>重命名结点</li>
+            <li>复制结点：
+                <ul>
+                    <li>选择：只复制结点、复制结点的后代、复制结点及其后代</li>
+                    <li>选择要复制进的结点。</li>
+                    <li>目标结点不能是源结点、也不能是它的后代。</li>
+                </ul>
+            </li>
+            <li>移动结点：
+                <ul>
+                    <li>选择要移进的结点。</li>
+                    <li>目标结点不能是源结点、也不能是它的后代。</li>
+                </ul>
+            </li>
+            <li>编辑结点</li>
+        </ul>
+        <h3>5.6 查看结点</h3>
+        <p>选择一个结点：</p>
+        <ul>
+            <li>在弹出窗口中显示结点信息。</li>
+            <li>复制结点的值或标题到系统粘贴板。</li>
+            <li>展开结点、或结点及其后代。</li>
+            <li>折叠结点、或结点及其后代。</li>
+            <li>加载子结点、或后代结点。</li>
+        </ul>
+        <h3>5.7 菜单</h3>
+        <ul>
+            <li>点击界面上的按钮可以显示菜单。</li>
+            <li>右键点击树形，也可以弹出菜单。</li>
+            <li>可以选择左键点击、右键点击、双击树形的行为。</li>
+        </ul>
+        <br />
+    </body>
+</HTML>

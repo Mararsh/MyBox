@@ -19,7 +19,7 @@ import mara.mybox.value.UserConfig;
 public class ColorConversionController extends ChromaticityBaseController {
 
     @FXML
-    public ColorController sourceController;
+    public ColorAttributesController sourceController;
     @FXML
     protected Button calculateButton, exportButton;
     @FXML

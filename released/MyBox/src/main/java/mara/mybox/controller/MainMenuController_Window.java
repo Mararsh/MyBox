@@ -103,6 +103,11 @@ public abstract class MainMenuController_Window extends MainMenuController_Base 
         }
     }
 
+    @FXML
+    protected void WindowsList(ActionEvent event) {
+        openStage(Fxmls.WindowsListFxml);
+    }
+
     @Override
     public BaseController refreshInterface() {
         parentController.refreshInterface();

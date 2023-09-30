@@ -2,10 +2,9 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -19,6 +18,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -35,8 +35,6 @@ public class ControlColorSet extends BaseController {
 
     @FXML
     protected Rectangle rect;
-    @FXML
-    protected Button colorButton;
 
     public ControlColorSet() {
         baseTitle = "ColorImport";
@@ -71,6 +69,13 @@ public class ControlColorSet extends BaseController {
 
             asSaved();
 
+            rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    showColorPalette();
+                }
+            });
+
             rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
@@ -93,7 +98,8 @@ public class ControlColorSet extends BaseController {
 
     public void setColor(Color color) {
         rect.setFill(color);
-        NodeStyleTools.setTooltip(rect, FxColorTools.colorNameDisplay(tableColor, color));
+        NodeStyleTools.setTooltip(rect, message("ClickColorToPalette") + "\n---------\n"
+                + FxColorTools.colorNameDisplay(tableColor, color));
     }
 
     public void initColor(Color color) {
@@ -132,18 +138,6 @@ public class ControlColorSet extends BaseController {
         isSettingValues = false;
     }
 
-    @FXML
-    public void openColorPalette(ActionEvent event) {
-        showColorPalette();
-    }
-
-    @FXML
-    public void popColorPalette(MouseEvent event) {
-        if (UserConfig.getBoolean("PopColorSetWhenMouseHovering", true)) {
-            showColorPalette();
-        }
-    }
-
     public void showColorPalette() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(
@@ -154,7 +148,7 @@ public class ControlColorSet extends BaseController {
 
             popup = makePopup();
             popup.getContent().add(pane);
-            LocateTools.locateCenter(colorButton, popup);
+            LocateTools.locateCenter(rect, popup);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

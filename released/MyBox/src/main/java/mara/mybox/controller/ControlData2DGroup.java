@@ -31,7 +31,6 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
 
     protected BaseData2DHandleController handleController;
-    protected ChangeListener<Boolean> listener;
     protected String groupName, timeName, expression, filledExpression;
     protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
@@ -487,18 +486,16 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
     @Override
     public void addAction() {
         Data2DRowFilterEdit controller = Data2DRowFilterEdit.open(handleController, null);
-        listener = new ChangeListener<Boolean>() {
+        controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                controller.notify.removeListener(listener);
                 DataFilter filter = controller.getFilter();
                 if (filter != null) {
                     tableData.add(filter);
                 }
                 controller.close();
             }
-        };
-        controller.notify.addListener(listener);
+        });
     }
 
     @FXML
@@ -511,18 +508,16 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
         }
         DataFilter selected = tableData.get(index);
         Data2DRowFilterEdit controller = Data2DRowFilterEdit.open(handleController, selected);
-        listener = new ChangeListener<Boolean>() {
+        controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                controller.notify.removeListener(listener);
                 DataFilter filter = controller.getFilter();
                 if (filter != null) {
                     tableData.set(index, filter);
                 }
                 controller.close();
             }
-        };
-        controller.notify.addListener(listener);
+        });
     }
 
     @FXML
@@ -543,15 +538,6 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
     @FXML
     public void aboutGroupingRows() {
         openHtml(HelpTools.aboutGroupingRows());
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            listener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
 }

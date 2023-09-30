@@ -27,6 +27,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -142,14 +143,11 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             File file = null;
             if (dname != null) {
                 dname = dname.replaceAll("\"", "");
-                if (message("zh", "ChineseHistoricalCapitals").equalsIgnoreCase(dname)
-                        || message("en", "ChineseHistoricalCapitals").equalsIgnoreCase(dname)) {
+                if (Languages.matchIgnoreCase("ChineseHistoricalCapitals", dname)) {
                     file = mapController.mapOptions.chineseHistoricalCapitalsImage();
-                } else if (message("zh", "AutumnMovementPatternsOfEuropeanGadwalls").equalsIgnoreCase(dname)
-                        || message("en", "AutumnMovementPatternsOfEuropeanGadwalls").equalsIgnoreCase(dname)) {
+                } else if (Languages.matchIgnoreCase("AutumnMovementPatternsOfEuropeanGadwalls", dname)) {
                     file = mapController.mapOptions.europeanGadwallsImage();
-                } else if (message("zh", "SpermWhalesGulfOfMexico").equalsIgnoreCase(dname)
-                        || message("en", "SpermWhalesGulfOfMexico").equalsIgnoreCase(dname)) {
+                } else if (Languages.matchIgnoreCase("SpermWhalesGulfOfMexico", dname)) {
                     file = mapController.mapOptions.spermWhalesImage();
                 }
             }

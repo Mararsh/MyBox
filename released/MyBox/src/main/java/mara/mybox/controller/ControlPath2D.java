@@ -136,7 +136,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
             tableData.clear();
         }
         isSettingValues = false;
-        pickTableValue();
+        tableChanged();
     }
 
     public boolean pickValue() {

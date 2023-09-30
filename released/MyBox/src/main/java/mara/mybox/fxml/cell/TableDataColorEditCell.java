@@ -35,7 +35,7 @@ public class TableDataColorEditCell extends TableDataEditCell {
         rectangle = new Rectangle(30, 20);
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(1);
-        msgPrefix = message("ClickToEdit");
+        msgPrefix = message("ClickColorToPalette");
     }
 
     @Override
@@ -45,16 +45,14 @@ public class TableDataColorEditCell extends TableDataEditCell {
             return;
         }
         ColorPalettePopupController inputController = ColorPalettePopupController.open(dataControl, rectangle);
-        getListener = new ChangeListener<Boolean>() {
+        inputController.getSetNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 Color color = (Color) rectangle.getFill();
-                inputController.getSetNotify().removeListener(getListener);
                 setCellValue(color.toString());
                 inputController.closeStage();
             }
-        };
-        inputController.getSetNotify().addListener(getListener);
+        });
     }
 
     @Override

@@ -15,6 +15,7 @@ import javafx.scene.shape.Rectangle;
 import javax.imageio.ImageIO;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -54,10 +55,6 @@ public class ImageItem {
 
     public boolean isFile() {
         return address != null && new File(address).exists();
-    }
-
-    public boolean isPredefined() {
-        return address != null && predefined().contains(this);
     }
 
     public Image readImage() {
@@ -129,6 +126,10 @@ public class ImageItem {
         static
      */
     public static List<ImageItem> predefined() {
+        return predefined(Languages.getLangName());
+    }
+
+    public static List<ImageItem> predefined(String lang) {
         List<ImageItem> preDefined = new ArrayList<>();
         try {
             for (int y = AppValues.AppYear; y >= 2018; y--) {
@@ -137,22 +138,22 @@ public class ImageItem {
                     ImageItem item = new ImageItem()
                             .setName(name + ".png")
                             .setAddress("img/" + name + ".png")
-                            .setComments(y == 2018 ? null : message(name));
+                            .setComments(y == 2018 ? null : message(lang, name));
                     preDefined.add(item);
                 }
             }
 
             ImageItem item = new ImageItem()
                     .setName("jade.png").setAddress("img/jade.png")
-                    .setComments(message("jadeImageTips"));
+                    .setComments(message(lang, "jadeImageTips"));
             preDefined.add(item);
             item = new ImageItem()
                     .setName("exg1.png").setAddress("img/exg1.png")
-                    .setComments(message("exg1ImageTips"));
+                    .setComments(message(lang, "exg1ImageTips"));
             preDefined.add(item);
             item = new ImageItem()
                     .setName("exg2.png").setAddress("img/exg2.png")
-                    .setComments(message("exg2ImageTips"));
+                    .setComments(message(lang, "exg2ImageTips"));
             preDefined.add(item);
 
             preDefined.add(new ImageItem().setName("Gadwalls.png").setAddress("img/Gadwalls.png"));
@@ -160,22 +161,26 @@ public class ImageItem {
             preDefined.add(new ImageItem().setName("MyBox.png").setAddress("img/MyBox.png"));
 
             List<String> icons = new ArrayList<>();
-            icons.addAll(Arrays.asList("Add", "Analyse", "Cancel", "Cat", "Clear", "Clipboard", "Copy",
-                    "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft", "Edit", "Examples", "Export",
+            icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat",
+                    "Clear", "Clipboard", "Close", "Copy",
+                    "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
+                    "Edit", "Examples", "Export",
                     "Function", "Go", "Import", "Menu", "NewItem", "OK", "OpenPath",
-                    "Panes", "Play", "Permission", "Pop", "Query", "Random", "Recover", "Refresh", "Repeat",
-                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Style", "Tips",
-                    "Undo", "Verify", "Window"));
+                    "Panes", "Play", "Permission", "Polylines", "Pop", "Query",
+                    "Random", "Recover", "Refresh", "Repeat",
+                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Style",
+                    "SVG", "Tips", "Tree", "Typesetting",
+                    "Undo", "Verify", "View", "Window"));
             for (String name : icons) {
                 item = new ImageItem()
                         .setName("icon" + name + ".png")
                         .setAddress("buttons/Red/icon" + name + ".png")
-                        .setComments(message("icon" + name));
+                        .setComments(message(lang, "icon" + name));
                 preDefined.add(item);
             }
             item = new ImageItem()
                     .setName("iconClaw.png").setAddress("buttons/iconClaw.png")
-                    .setComments(message("iconClaw"));
+                    .setComments(message(lang, "iconClaw"));
             preDefined.add(item);
 
             preDefined.add(new ImageItem().setAddress("color:#ffccfd"));

@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.PixelReader;
@@ -402,13 +403,16 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 xyText.setText("");
                 return null;
             }
-            PixelReader pixelReader = imageView.getImage().getPixelReader();
             int x = (int) p.getX();
             int y = (int) p.getY();
-            Color color = pixelReader.getColor(x, y);
             String s = (int) Math.round(x / widthRatio()) + ","
-                    + (int) Math.round(y / heightRatio()) + "\n"
-                    + FxColorTools.colorDisplaySimple(color);
+                    + (int) Math.round(y / heightRatio());
+            if (x >= 0 && x < imageView.getImage().getWidth()
+                    && y >= 0 && y < imageView.getImage().getHeight()) {
+                PixelReader pixelReader = imageView.getImage().getPixelReader();
+                Color color = pixelReader.getColor(x, y);
+                s += "\n" + FxColorTools.colorDisplaySimple(color);
+            }
             if (isPickingColor) {
                 if (this instanceof ImageManufactureScopeController_Base) {
                     s = message("PickingColorsForScope") + "\n" + s;
@@ -421,7 +425,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             xyText.setY(event.getY());
             return p;
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -796,7 +800,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     shape.setFill(Color.TRANSPARENT);
                 }
                 shape.setStrokeLineCap(shapeStyle.getLineCap());
-                if (shapeStyle.isIsStrokeDash()) {
+                if (shapeStyle.isIsStrokeDash() && shapeStyle.getStrokeDash() != null) {
                     shape.getStrokeDashArray().addAll(shapeStyle.getStrokeDash());
                 }
             } else {
@@ -1104,6 +1108,23 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                 });
                 items.add(menu);
             }
+
+            CheckMenuItem anchorMenuItem = new CheckMenuItem(
+                    isMaskPolylinesShown() ? message("PopLineMenu") : message("PopAnchorMenu"),
+                    StyleTools.getIconImageView("iconMenu.png"));
+            anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true));
+            anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    if (popAnchorCheck != null) {
+                        popAnchorCheck.setSelected(anchorMenuItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", anchorMenuItem.isSelected());
+                        popAnchorMenu = anchorMenuItem.isSelected();
+                    }
+                }
+            });
+            items.add(anchorMenuItem);
 
             items.add(new SeparatorMenuItem());
 
@@ -1775,6 +1796,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         if (imageView == null || maskPane == null || maskPolyline == null) {
             return;
         }
+        maskPolylineData = new DoublePolyline();
+    }
+
+    public void setMaskPolylineExample() {
+        if (imageView == null || maskPane == null || maskPolyline == null) {
+            return;
+        }
         double w = imageWidth();
         double h = imageHeight();
         maskPolylineData = new DoublePolyline();
@@ -1866,6 +1894,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     }
 
     public void setMaskPolylinesDefaultValues() {
+        if (imageView == null || maskPane == null || maskPolylines == null) {
+            return;
+        }
+        maskPolylinesData = new DoublePolylines();
+    }
+
+    public void setMaskPolylinesExample() {
         if (imageView == null || maskPane == null || maskPolylines == null) {
             return;
         }
@@ -2136,6 +2171,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         if (imageView == null || maskPane == null || maskPolygon == null) {
             return;
         }
+        maskPolygonData = new DoublePolygon();
+    }
+
+    public void setMaskPolygonExample() {
+        if (imageView == null || maskPane == null || maskPolygon == null) {
+            return;
+        }
         double w = imageWidth();
         double h = imageHeight();
         maskPolygonData = new DoublePolygon();
@@ -2396,7 +2438,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
                     new DoublePoint(maskCubicData.getEndX(), maskCubicData.getEndY()),
                     ex, ey);
 
-            setShapeStyle(maskQuadratic);
+            setShapeStyle(maskCubic);
 
             maskShapeChanged();
 
@@ -2595,6 +2637,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
         if (imageView == null || maskPane == null || maskSVGPath == null) {
             return;
         }
+        maskPathData = new DoublePath();
+    }
+
+    public void setMaskPathExample() {
+        if (imageView == null || maskPane == null || maskSVGPath == null) {
+            return;
+        }
         double w = imageWidth();
         double h = imageHeight();
         int r = (int) (Math.min(w, h) / 8);
@@ -2625,26 +2674,29 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
             maskSVGPath.setLayoutY(layoutY);
             setShapeStyle(maskSVGPath);
 
-            DoublePoint p;
-            for (int i = 0; i < maskPathData.getSegments().size(); i++) {
-                DoublePathSegment seg = maskPathData.getSegments().get(i);
-                p = seg.getControlPoint1();
-                String prefix = (i + 1) + seg.getCommand().trim();
-                if (p != null) {
-                    String info = seg.text() + "\n" + message("ControlPoint1");
-                    addMaskAnchor(i, prefix + ".c1", info, p, p.getX() * xRatio, p.getY() * yRatio);
-                }
-                p = seg.getControlPoint2();
-                if (p != null) {
-                    String info = seg.text() + "\n" + message("ControlPoint2");
-                    addMaskAnchor(i, prefix + ".c2", info, p, p.getX() * xRatio, p.getY() * yRatio);
-                }
-                p = seg.getEndPoint();
-                if (p != null) {
-                    String info = seg.text() + "\n" + message("EndPoint");
-                    addMaskAnchor(i, prefix + ".e", info, p, p.getX() * xRatio, p.getY() * yRatio);
-                }
+            List<DoublePathSegment> segments = maskPathData.getSegments();
+            if (segments != null) {
+                DoublePoint p;
+                for (int i = 0; i < segments.size(); i++) {
+                    DoublePathSegment seg = segments.get(i);
+                    p = seg.getControlPoint1();
+                    String prefix = (i + 1) + seg.getCommand().trim();
+                    if (p != null) {
+                        String info = seg.text() + "\n" + message("ControlPoint1");
+                        addMaskAnchor(i, prefix + ".c1", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    }
+                    p = seg.getControlPoint2();
+                    if (p != null) {
+                        String info = seg.text() + "\n" + message("ControlPoint2");
+                        addMaskAnchor(i, prefix + ".c2", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    }
+                    p = seg.getEndPoint();
+                    if (p != null) {
+                        String info = seg.text() + "\n" + message("EndPoint");
+                        addMaskAnchor(i, prefix + ".e", info, p, p.getX() * xRatio, p.getY() * yRatio);
+                    }
 
+                }
             }
 
             maskShapeChanged();

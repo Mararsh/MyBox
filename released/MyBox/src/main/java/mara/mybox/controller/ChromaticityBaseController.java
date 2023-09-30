@@ -129,11 +129,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -143,11 +139,6 @@ public class ChromaticityBaseController extends BaseWebViewController {
             @Override
             public void handleSelect() {
                 exportAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override

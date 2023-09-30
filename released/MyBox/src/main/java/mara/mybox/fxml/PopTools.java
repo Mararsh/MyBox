@@ -356,25 +356,22 @@ public class PopTools {
 
             rmenu = new RadioMenuItem(message("Input") + "...");
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
-                ChangeListener<Boolean> getListener;
 
                 @Override
                 public void handle(ActionEvent event) {
                     HtmlStyleInputController inputController = HtmlStyleInputController.open(controller,
                             message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
-                    getListener = new ChangeListener<Boolean>() {
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                             String value = inputController.getInputString();
                             if (value == null || value.isBlank()) {
                                 value = null;
                             }
-                            inputController.getNotify().removeListener(getListener);
                             controller.setStyle(value);
                             inputController.closeStage();
                         }
-                    };
-                    inputController.getNotify().addListener(getListener);
+                    });
                 }
             });
             rmenu.setSelected(currentStyle != null && !predefinedValue);
@@ -991,9 +988,9 @@ public class PopTools {
                 @Override
                 public void handle(ActionEvent event) {
                     if (Languages.isChinese()) {
-                        parent.openLink("https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215");
+                        parent.openLink(HelpTools.expZhLink());
                     } else {
-                        parent.openLink("https://en.wikipedia.org/wiki/Regular_expression");
+                        parent.openLink(HelpTools.expEnLink());
                     }
                 }
             });
@@ -1188,7 +1185,7 @@ public class PopTools {
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
+                    parent.openLink(HelpTools.derbyLink());
                 }
             });
             controller.addNode(link);

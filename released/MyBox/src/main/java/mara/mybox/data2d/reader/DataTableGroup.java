@@ -16,7 +16,7 @@ import mara.mybox.controller.ControlData2DGroup;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.ValueRange;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;

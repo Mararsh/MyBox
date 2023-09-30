@@ -1,21 +1,24 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2022-9-2
  * @License Apache License Version 2.0
  */
-public class MathFunctionController extends TreeManageController {
+public class MathFunctionController extends InfoTreeManageController {
 
     @FXML
-    protected ControlMathFunctionEditor editorController;
+    protected MathFunctionEditor editorController;
     @FXML
     protected ControlMathFunctionCalculator calculateController;
 
@@ -25,23 +28,12 @@ public class MathFunctionController extends TreeManageController {
         category = InfoNode.MathFunction;
         nameMsg = message("Title");
         valueMsg = message("MathFunction");
-        moreMsg = message("FunctionDomain");
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            nodeController = editorController;
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     @Override
     public void initControls() {
         try {
+            editor = editorController;
             super.initControls();
 
             editorController.setParameters(this);
@@ -54,6 +46,18 @@ public class MathFunctionController extends TreeManageController {
 
     @Override
     public void itemClicked() {
+    }
+
+    @FXML
+    public void popMathFunctionHelps(Event event) {
+        if (UserConfig.getBoolean("JavaScriptHelpsPopWhenMouseHovering", false)) {
+            showMathFunctionHelps(event);
+        }
+    }
+
+    @FXML
+    public void showMathFunctionHelps(Event event) {
+        popEventMenu(event, HelpTools.javascriptHelps());
     }
 
     /*

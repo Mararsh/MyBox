@@ -81,7 +81,7 @@ public abstract class ControlShapeOptions extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            parametersController.optionsOontroller = this;
+            parametersController.optionsController = this;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -97,7 +97,7 @@ public abstract class ControlShapeOptions extends BaseController {
             imageController.initMaskControls();
 
             parametersController.imageController = imageController;
-            parametersController.optionsOontroller = this;
+            parametersController.optionsController = this;
             parametersController.pathController.optionsOontroller = this;
             infoLabel = imageController.infoLabel;
 

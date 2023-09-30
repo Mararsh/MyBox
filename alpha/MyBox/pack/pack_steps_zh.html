@@ -1,0 +1,54 @@
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache">
+   <style type="text/css">
+ 	body {margin:0 auto; width: 900px; } 
+    </style>
+</head>
+ <body >
+  <h1 align="center">MyBox打包步骤</h1>
+  <h2>为Windows打包</h2>
+  <div class="paragraph">
+   <p>在Windows操作系统下：</p>
+   <ul class="inside">
+    <li>确保所需版本的<a href="http://jdk.java.net/" target="_blank">jdk</a>和<a href="https://maven.apache.org/" target="_blank">maven</a>已正确安装。</li>
+    <li>下载Mybox源码。</li>
+    <li>在可写可读目录下解包。</li>
+    <li>修改Mybox源码中的文件“MyBox/pack/win/make-win-exe.bat”, 设置参数JAVA_HOME为你的环境下的jdk目录。</li>
+    <li>双击执行脚本“MyBox/pack/win/make-win-exe.bat”。</li>
+    <li>生成的可执行文件是“MyBox/pack/win/app/MyBox/MyBox.exe”。</li>
+   </ul>
+  </div>
+  <h2>为Linux打包</h2>
+  <div class="paragraph">
+   <p>在Linux操作系统下：</p>
+   <ul class="inside">
+    <li>确保所需版本的<a href="http://jdk.java.net/" target="_blank">jdk</a>和<a href="https://maven.apache.org/" target="_blank">maven</a>已正确安装。</li>
+    <li>下载Mybox源码。</li>
+    <li>在可写可读目录下解包。</li>
+    <li>修改Mybox源码中的文件“MyBox/pack/linux/make-linux-bin.sh”, 设置参数JAVA_HOME为你的环境下的jdk目录。</li>
+    <li>打开一个命令终端，进入源码目录：“cd MyBox/pack/linux/”</li>
+    <li>修改脚本的执行权限： “chmod 755 make-linux-bin.sh”</li>
+    <li>执行脚本“./make-linux-bin.sh”。</li>
+    <li>生成的可执行文件是“MyBox/pack/linux/app/MyBox/bin/MyBox”。</li>
+   </ul>
+  </div>
+  <h2>为Mac打包</h2>
+  <div class="paragraph">
+   <p>在Mac操作系统下：</p>
+   <ul class="inside">
+    <li>确保所需版本的<a href="http://jdk.java.net/" target="_blank">jdk</a>和<a href="https://maven.apache.org/" target="_blank">maven</a>已正确安装。</li>
+    <li>下载Mybox源码。</li>
+    <li>在可写可读目录下解包。</li>
+    <li>修改Mybox源码中的文件“MyBox/pack/mac/make-mac-dmg.sh”, 设置参数JAVA_HOME为你的环境下的jdk目录。</li>
+    <li>打开一个命令终端，进入源码目录：“cd MyBox/pack/mac/”</li>
+    <li>修改脚本的执行权限： “chmod 755 make-mac-dmg.sh”</li>
+    <li>执行脚本“./make-mac-dmg.sh”。</li>
+    <li>生成的安装包是“MyBox/pack/mac/app/MyBox-$version.dmg”。</li>
+    <li>若打包过程出现无法验证“libjansi.jnilib”的提示，则在系统偏好设置-安全与隐私-通用中，解锁，允许maven下载。</li>
+   </ul>
+  </div> <br>
+ </body>
+</html>

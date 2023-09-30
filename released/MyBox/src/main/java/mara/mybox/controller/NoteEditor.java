@@ -7,7 +7,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlReadTools;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,19 +21,20 @@ public class NoteEditor extends ControlHtmlEditor {
     @FXML
     protected Tab attributesTab;
     @FXML
-    protected NoteAttributes attributesController;
+    protected NoteAttributes infoController;
 
     public void setParameters(NotesController notesController) {
         try {
             this.notesController = notesController;
             this.baseName = notesController.baseName;
             saveButton = notesController.saveButton;
-            webViewController.defaultStyle = HtmlStyles.styleValue("Default");
 
-            attributesController.setEditor(this);
-            notesController.nodeController = attributesController;
+            infoController.setEditor(this);
+            notesController.editor = infoController;
 
             webViewController.linkInNewTab = true;
+            webViewController.defaultStyle = HtmlStyles.TableStyle;
+            webViewController.initStyle(HtmlStyles.TableStyle);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -55,18 +55,8 @@ public class NoteEditor extends ControlHtmlEditor {
         }
     }
 
-    public void attributesChanged() {
-        attributesTab.setText(message("Attributes") + (attributesController.nodeChanged ? " *" : ""));
-    }
-
     protected void editNote(InfoNode note) {
-        updateFileStatus(false);
-        attributesController.editNode(note);
-        if (note != null) {
-            loadContents(note.getValue());
-        } else {
-            loadContents("");
-        }
+        infoController.editNode(note);
     }
 
     protected void addNote() {
@@ -74,12 +64,12 @@ public class NoteEditor extends ControlHtmlEditor {
     }
 
     protected void copyNote() {
-        attributesController.copyNode();
+        infoController.attributesController.copyNode();
         updateFileStatus(true);
     }
 
     protected void recoverNote() {
-        editNote(attributesController.currentNode);
+        editNote(infoController.attributesController.currentNode);
     }
 
     @Override

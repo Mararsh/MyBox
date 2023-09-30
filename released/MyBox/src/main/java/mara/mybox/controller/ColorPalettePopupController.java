@@ -7,10 +7,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -33,6 +31,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -59,8 +58,6 @@ public class ColorPalettePopupController extends BaseChildController {
     protected Label label;
     @FXML
     protected Button paletteButton;
-    @FXML
-    protected CheckBox popCheck;
 
     public ColorPalettePopupController() {
         baseTitle = message("ColorPalette");
@@ -97,7 +94,6 @@ public class ColorPalettePopupController extends BaseChildController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(popCheck, message("PopColorSetWhenMouseHovering"));
             NodeStyleTools.setTooltip(cancelButton, message("PopupClose"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -110,14 +106,6 @@ public class ColorPalettePopupController extends BaseChildController {
             super.initControls();
 
             colorsController.setParameter(this);
-
-            popCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("PopColorSetWhenMouseHovering", popCheck.isSelected());
-                }
-            });
 
             colorsController.clickNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -155,7 +143,7 @@ public class ColorPalettePopupController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
+                    ColorPaletteName defaultPalette = PaletteTools.defaultPalette(Languages.getLangName(), conn);
                     if (defaultPalette == null) {
                         return false;
                     }
@@ -200,7 +188,8 @@ public class ColorPalettePopupController extends BaseChildController {
         try {
             parentRect.setFill(colorData.getColor());
             parentRect.setUserData(colorData);
-            NodeStyleTools.setTooltip(parentRect, colorData.display());
+            NodeStyleTools.setTooltip(parentRect,
+                    message("ClickColorToPalette") + "\n---------\n" + colorData.display());
             parentController.closePopup();
             setNotify.set(!setNotify.get());
         } catch (Exception e) {

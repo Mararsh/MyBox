@@ -53,7 +53,7 @@ public class HelpTools {
             File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme_" + lang + ".html");
             File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
                     "doc", "README-" + lang + ".md", true);
-            String html = MarkdownTools.md2html(mdFile);
+            String html = MarkdownTools.md2html(MarkdownTools.htmlOptions(), mdFile, HtmlStyles.DefaultStyle);
             if (html == null) {
                 return null;
             }
@@ -227,33 +227,25 @@ public class HelpTools {
         }
     }
 
+    public static File AboutTreeInformation() {
+        try {
+            String lang = Languages.getLangName();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_tree_" + lang + ".html",
+                    "doc", "mybox_about_tree_" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static void imageStories(BaseController controller) {
         SingletonTask task = new SingletonTask<Void>(controller) {
             private File htmFile;
 
             @Override
             protected boolean handle() {
-                try {
-                    StringTable table = new StringTable(null, message("StoriesOfImages"));
-                    List<ImageItem> predefinedItems = ImageItem.predefined();
-                    for (ImageItem item : predefinedItems) {
-                        String comments = item.getComments();
-                        File file = item.getFile();
-                        if (comments == null || comments.isBlank()
-                                || file == null || !file.exists()) {
-                            continue;
-                        }
-                        setInfo(file.getAbsolutePath());
-                        table.newNameValueRow(
-                                "<Img src='" + file.toURI().toString() + "' width=" + item.getWidth() + ">",
-                                comments);
-                    }
-                    String html = HtmlWriteTools.html(table.getTitle(), "utf-8",
-                            HtmlStyles.styleValue("Table"), table.body());
-                    htmFile = HtmlWriteTools.writeHtml(html);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
+                htmFile = imageStories(this, false, Languages.getLangName());
                 return htmFile != null && htmFile.exists();
             }
 
@@ -264,6 +256,38 @@ public class HelpTools {
 
         };
         controller.start(task);
+    }
+
+    public static File imageStories(SingletonTask task, boolean isRemote, String lang) {
+        try {
+            StringTable table = new StringTable(null, message(lang, "StoriesOfImages"));
+            List<ImageItem> predefinedItems = ImageItem.predefined(lang);
+            for (ImageItem item : predefinedItems) {
+                String comments = item.getComments();
+                File file = item.getFile();
+                if (comments == null || comments.isBlank()
+                        || file == null || !file.exists()) {
+                    continue;
+                }
+                task.setInfo(file.getAbsolutePath());
+                table.newNameValueRow(
+                        "<Img src='" + (isRemote
+                                ? "https://mara-mybox.sourceforge.io/images/" + file.getName()
+                                : file.toURI().toString())
+                        + "' width=" + item.getWidth() + ">",
+                        comments);
+            }
+
+            String html = HtmlWriteTools.html(table.getTitle(), "utf-8",
+                    HtmlStyles.styleValue("Table"), table.body());
+            File file = new File(FileTmpTools.generatePath("html")
+                    + "/MyBox-StoriesOfImages-" + lang + ".html");
+            return TextFileTools.writeFile(file, html);
+
+        } catch (Exception e) {
+            task.setError(e.toString());
+            return null;
+        }
     }
 
     public static File usefulLinks(String lang) {
@@ -779,6 +803,122 @@ public class HelpTools {
         return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/SVGPath.html";
     }
 
+    public static String expEnLink() {
+        return "https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215";
+    }
+
+    public static String expZhLink() {
+        return "https://en.wikipedia.org/wiki/Regular_expression";
+    }
+
+    public static String jexlLink() {
+        return "https://commons.apache.org/proper/commons-jexl/index.html";
+    }
+
+    public static String jexlRefLink() {
+        return "https://commons.apache.org/proper/commons-jexl/reference/index.html";
+    }
+
+    public static List<MenuItem> javaHelps() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem("Learning the Java Language");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("Java Development Kit (JDK) APIs");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaAPILink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("Full list of Math functions");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaMathLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("JavaHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JavaHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<MenuItem> jexlHelps() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem("JEXL Overview");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jexlLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("JEXL Reference");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jexlRefLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("Java Development Kit (JDK) APIs");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaAPILink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("JexlHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JexlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static List<MenuItem> htmlHelps(boolean popMenu) {
         try {
             List<MenuItem> items = new ArrayList<>();
@@ -891,7 +1031,66 @@ public class HelpTools {
         }
     }
 
-    public static List<MenuItem> rowExpressionHelps(boolean popMenu) {
+    public static List<MenuItem> javascriptHelps() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaScriptEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaScriptZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("JavaScript language specification");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaScriptSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("Nashorn User's Guide");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.nashornLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("JavaScriptHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JavaScriptHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<MenuItem> rowExpressionHelps() {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -942,19 +1141,17 @@ public class HelpTools {
             });
             items.add(menuItem);
 
-            if (popMenu) {
-                items.add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
-                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-                hoverMenu.setSelected(UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false));
-                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("RowExpressionsHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                    }
-                });
-                items.add(hoverMenu);
-            }
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("RowExpressionsHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
 
             return items;
         } catch (Exception e) {

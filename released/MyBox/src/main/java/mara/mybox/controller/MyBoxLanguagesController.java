@@ -49,7 +49,6 @@ import mara.mybox.value.UserConfig;
 public class MyBoxLanguagesController extends BaseTableViewController<LanguageItem> {
 
     protected String langName;
-    protected ChangeListener<Boolean> getListener;
     protected boolean changed;
 
     @FXML
@@ -169,17 +168,14 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
             if (value != null && value.contains("\n") || en != null && en.contains("\n")) {
                 MyBoxLanguageInputController inputController
                         = MyBoxLanguageInputController.open((MyBoxLanguagesController) myController, item);
-                getListener = new ChangeListener<Boolean>() {
+                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                         String value = inputController.getInput();
-                        inputController.getNotify().removeListener(getListener);
-                        getListener = null;
                         setCellValue(editingRow, value);
-                        inputController.closeStage();
+                        inputController.close();
                     }
-                };
-                inputController.getNotify().addListener(getListener);
+                });
             } else {
                 super.editCell();
             }
@@ -296,8 +292,14 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
                 return;
             }
         }
-        String name = PopTools.askValue(getTitle(), message("InputLangaugeName"), "", null);
+        String name = PopTools.askValue(getTitle(), message("InputLangaugeComments"),
+                message("InputLangaugeName"), null);
         if (name == null) {
+            return;
+        }
+        if ("en".equalsIgnoreCase(name) || "zh".equalsIgnoreCase(name)
+                || name.startsWith("en_") || name.startsWith("zh_")) {
+            popError(message("InputLangaugeComments"));
             return;
         }
         langName = name.trim();
@@ -315,7 +317,7 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
         if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
             return;
         }
-        String lang = Languages.getLanguage();
+        String lang = Languages.getLangName();
         for (String name : selected) {
             File interfaceFile = Languages.interfaceLanguageFile(name);
             FileDeleteTools.delete(interfaceFile);

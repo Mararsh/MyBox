@@ -183,6 +183,9 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
                     if (!newValue) {
                         if (AppVariables.commitModificationWhenDataCellLoseFocus && isEditingRow()) {
                             commitEdit(getConverter().fromString(editingText));
+                        } else {
+                            clearEditor();
+                            cancelCell();
                         }
                         editingRow = -1;
                     }

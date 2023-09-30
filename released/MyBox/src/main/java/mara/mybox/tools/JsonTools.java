@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,11 +73,12 @@ public class JsonTools {
         }
     }
 
-    public static String replaceSpecialChars(String value) {
-        if (value == null || value.isBlank() || !value.contains("\"")) {
+    public static String encode(String value) {
+        try {
+            return new ObjectMapper().writeValueAsString(value);
+        } catch (Exception e) {
             return value;
         }
-        return value.replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
     }
 
 }

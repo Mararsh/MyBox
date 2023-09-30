@@ -3,7 +3,7 @@ package mara.mybox.fxml.cell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import mara.mybox.controller.ControlData2DColumns;
+import mara.mybox.controller.BaseData2DColumnsController;
 import mara.mybox.controller.Data2DColumnEditController;
 
 /**
@@ -13,9 +13,9 @@ import mara.mybox.controller.Data2DColumnEditController;
  */
 public class TableDataColumnCell<S, T> extends TableAutoCommitCell<S, T> {
 
-    protected ControlData2DColumns columnsControl;
+    protected BaseData2DColumnsController columnsControl;
 
-    public TableDataColumnCell(ControlData2DColumns columnsControl) {
+    public TableDataColumnCell(BaseData2DColumnsController columnsControl) {
         super(null);
         this.columnsControl = columnsControl;
     }
@@ -30,7 +30,7 @@ public class TableDataColumnCell<S, T> extends TableAutoCommitCell<S, T> {
         return true;
     }
 
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(ControlData2DColumns columnsControl) {
+    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(BaseData2DColumnsController columnsControl) {
         return new Callback<TableColumn<S, T>, TableCell<S, T>>() {
             @Override
             public TableCell<S, T> call(TableColumn<S, T> param) {

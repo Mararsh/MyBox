@@ -67,7 +67,7 @@ public class StylePrefix {
             case "hisClearButton":
                 return new StyleData(id, message("Clear"), "", "iconClear.png");
             case "hisAsCurrentButton":
-                return new StyleData(id, message("SetAsCurrentImage"), "", "iconWithdraw.png");
+                return new StyleData(id, message("SetAsCurrentImage"), "", "iconUndo.png");
             default:
                 return StyleTools.getStyleData(node, id);
         }

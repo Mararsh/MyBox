@@ -1,12 +1,24 @@
 ##MyBox#
-Examples > Variable
+MyBoxTreeRoot;;;
+JavaScript
+
+##MyBox#
+JavaScript
+Examples
+
+##MyBox#
+JavaScript > Examples
+Variable
+
+##MyBox#
+JavaScript > Examples > Variable
 string
 var stringA = "hello";
 stringA += " world";
 "Contains e:" + (stringA.indexOf("e") >= 0) + "   length:" + stringA.length
 
 ##MyBox#
-Examples > Variable
+JavaScript > Examples > Variable
 date
 "current time: " + new Date() + "\n" + 
 "format yyyy/mm/dd: " + new Date('2022/11/30 10:35:32') + "\n" + 
@@ -14,264 +26,287 @@ date
 "format yyyy-mm-dd: " + new Date('2022-11-30 10:35:32'.replace(/-/g,'/'));
 
 ##MyBox#
-Examples > Variable
+JavaScript > Examples > Variable
 array
 var arrayA =  [-1.2, 3.2, 15, 4.912];
 arrayA[2];
 
 ##MyBox#
-Examples > Variable
+JavaScript > Examples > Variable
 object
 var cat1 = {color:"white", age:"15", name:"GuaiGuai"};
 cat1.name
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples
+Expressions
+
+##MyBox#
+JavaScript > Examples > Expressions
+Numeric operations
+
+##MyBox#
+JavaScript > Examples > Expressions > Numeric operations
 Euler number
 Math.E
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 pi
 Math.PI
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 absoluate
 Math.abs(-5.611)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 power of e
 Math.exp(2)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 square root
 Math.sqrt(9)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 cubic root
 Math.pow(27,-3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 power
 Math.pow(2,5)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 cosine
 Math.cos(0)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 sine
 Math.sin(9)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 tangent
 Math.tan(5)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 arc tangent
 Math.atan(-7.3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 arc cosine
 Math.acos(0.5)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 arc sine
 Math.asin(0.3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 natural logarithm(base-e)
 Math.log(6)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 common logarithm(base-10)
 // ECMAScript 6 supports while ECMAScript 5.1 not support
 Math.log10(6)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 base-2 logarithm
 // ECMAScript 6 supports while ECMAScript 5.1 not support
 Math.log2(6)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 round up
 Math.ceil(4.13)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 round down
 Math.floor(4.67)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 round
 Math.round(4.83)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 trunc
 Math.trunc(4.83)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 random
 Math.random()
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 maximum
 Math.max(1,2,-3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
+JavaScript > Examples > Expressions > Numeric operations
 minimum
 Math.min(1,2,-3)
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions
+Strings operations
+
+##MyBox#
+JavaScript > Examples > Expressions > Strings operations
 compare
 'Hello' == 'hello' || 'a' < 'A' || 'a' != 'A'
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 replace first
 "Hello World! World is yourself.".replace("World", "Feeling");
-   
+
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 replace all
 "Hello World! World is yourself.".replace(/World/g, "Feeling");
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 starts with
 'Hello'.startsWith('h')
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 end with
 'Hello'.endsWith('o')
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 subString
 'Hello'.substring(2, 5)
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 char at
 'hello'.charAt(2)
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 concat
 'hello'.concat(' world')
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 split
 '1,2,3,4'.split(',')
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 indexOf
 'hello'.indexOf('e')
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 lastIndexOf
 'hello'.lastIndexOf('l')
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 length
 'hello'.length
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 search
 var stringA = "abc1233hello";
 var regexA = /3{2,}/ig;
 stringA.search(regexA)
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 toLowerCase
 'Hello'.toLowerCase()
 
 ##MyBox#
-Examples > Expressions > Strings operations
+JavaScript > Examples > Expressions > Strings operations
 toUpperCase
 'Hello'.toUpperCase()
 
 ##MyBox#
-Examples > Expressions > Array operations
+JavaScript > Examples > Expressions
+Array operations
+
+##MyBox#
+JavaScript > Examples > Expressions > Array operations
 length
 var arrayA =  [-1.2, 3.2, 15, 4.912];
 arrayA.length
 
 ##MyBox#
-Examples > Expressions > Array operations
+JavaScript > Examples > Expressions > Array operations
 append
 var arrayA =  [-1.2, 3.2, 15, 4.912];
 arrayA.push(-47);
 
 ##MyBox#
-Examples > Expressions > Array operations
+JavaScript > Examples > Expressions > Array operations
 remove
 var arrayA =  [-1.2, 3.2, 15, 4.912];
 arrayA.pop()
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JavaScript > Examples > Expressions
+Boolean operations
+
+##MyBox#
+JavaScript > Examples > Expressions > Boolean operations
 string include
 var stringA = "abc1233hello";
 var regexA = /3{2,}/ig;
 stringA.search(regexA) >= 0
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JavaScript > Examples > Expressions > Boolean operations
 string match
 var stringA = "abc1233hello";
 var regexA = /\S*3{2,}\S*/ig;
 stringA.search(regexA) >= 0
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JavaScript > Examples > Expressions > Boolean operations
 array include
 var arrayA =  ['A', 'B', 'C', 'D'];
 arrayA.includes('C');
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JavaScript > Examples > Expressions > Boolean operations
 is number
 Math.abs(2a) >= 0
 
 ##MyBox#
-Examples > Expressions > Boolean operations
+JavaScript > Examples > Expressions > Boolean operations
 and/or/not
 var arrayA =  ['A', 'B', 'C', 'D'];
 var stringA = "abc1233hello";
 arrayA.includes('C') && (arrayA.length >= 8 || stringA.length < 5 || !stringA.endsWith("h"));
 
+##MyBox#
+JavaScript > Examples > Expressions
+Date operations
 
 ##MyBox#
-Examples > Expressions > Date operations
+JavaScript > Examples > Expressions > Date operations
 date formats
 "current time: " + "\n" + 
 "new Date() = " + new Date()+ "\n" + 
@@ -288,7 +323,7 @@ date formats
 "new Date().toLocaleTimeString() = " + new Date().toLocaleTimeString()
 
 ##MyBox#
-Examples > Expressions > Date operations
+JavaScript > Examples > Expressions > Date operations
 parse date
 new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
 new Date('11/30/2022 10:35:32').toLocaleString() + "\n" + 
@@ -297,7 +332,7 @@ new Date('2022/11/30') + "\n" +
 new Date('2022-11-30'.replace(/-/g,'/'))
 
 ##MyBox#
-Examples > Expressions > Date operations
+JavaScript > Examples > Expressions > Date operations
 components of date
 var timeb = new Date('2022/11/30 10:35:32');
 "year: " + timeb.getFullYear() + "\nmonth: " + (timeb.getMonth() + 1) + "\nday: " + timeb.getDate()
@@ -305,12 +340,16 @@ var timeb = new Date('2022/11/30 10:35:32');
 + "\nseconds: " + timeb.getSeconds();
 
 ##MyBox#
-Examples > Expressions > Date operations
+JavaScript > Examples > Expressions > Date operations
 compare dates
 new Date('2012/05/19').getTime()  > new Date('2016/05/19 09:23:12').getTime()
 
 ##MyBox#
-Examples > Function
+JavaScript > Examples
+Function
+
+##MyBox#
+JavaScript > Examples > Function
 Add style
 function addStyle(style) {
     var node = document.createElement("style");        
@@ -320,9 +359,9 @@ function addStyle(style) {
     document.getElementsByTagName("HEAD").item(0).appendChild(node);
 };
 addStyle("body { background-color:black; color:#CCFF99; }");
-    
+
 ##MyBox#
-Examples > Function
+JavaScript > Examples > Function
 Remove node
 function removeNode(id) {
     var node = document.getElementById(id);
@@ -330,9 +369,17 @@ function removeNode(id) {
         node.parentNode.removeChild(node);
 };
 removeNode("mystyleid");
-    
+
 ##MyBox#
-Examples > html > Selection
+JavaScript > Examples
+html
+
+##MyBox#
+JavaScript > Examples > html
+Selection
+
+##MyBox#
+JavaScript > Examples > html > Selection
 Select all
 window.getSelection().removeAllRanges();     
 var selection = window.getSelection();        
@@ -341,12 +388,12 @@ range.selectNode(document.documentElement);
 selection.addRange(range);
 
 ##MyBox#
-Examples > html > Selection
+JavaScript > Examples > html > Selection
 Select none
 window.getSelection().removeAllRanges();
 
 ##MyBox#
-Examples > html > Selection
+JavaScript > Examples > html > Selection
 Select node
 function selectNode(id) {
     window.getSelection().removeAllRanges();     
@@ -358,12 +405,12 @@ function selectNode(id) {
 selectNode("someid");
 
 ##MyBox#
-Examples > html > Selection
+JavaScript > Examples > html > Selection
 Current selected string
 window.getSelection().toString();
 
 ##MyBox#
-Examples > html > Selection
+JavaScript > Examples > html > Selection
 Current selected html codes
 var selectionObj = window.getSelection();        
 var rangeObj = selectionObj.getRangeAt(0);        
@@ -373,46 +420,54 @@ div.appendChild(docFragment);
 div.innerHTML;
 
 ##MyBox#
-Examples > html > Value
+JavaScript > Examples > html
+Value
+
+##MyBox#
+JavaScript > Examples > html > Value
 Read Cookie
 document.cookie;
-    
+
 ##MyBox#
-Examples > html > Value
+JavaScript > Examples > html > Value
 Page height
 document.documentElement.scrollHeight || document.body.scrollHeight;
-    
+
 ##MyBox#
-Examples > html > Value
+JavaScript > Examples > html > Value
 Page width
 document.documentElement.scrollWidth || document.body.scrollWidth;
-   
+
 ##MyBox#
-Examples > html > Operation
+JavaScript > Examples > html
+Operation
+
+##MyBox#
+JavaScript > Examples > html > Operation
 Scroll page
 window.scrollTo(50,70 );
-   
+
 ##MyBox#
-Examples > html > Operation
+JavaScript > Examples > html > Operation
 Set page as editable
 document.body.contentEditable=true;
-   
+
 ##MyBox#
-Examples > html > Operation
+JavaScript > Examples > html > Operation
 Pop information
 alert("Hello");
 
 ##MyBox#
-Examples > html > Operation
+JavaScript > Examples > html > Operation
 confirm
 confirm("Are you fine?");
 
 ##MyBox#
-Examples > html > Operation
+JavaScript > Examples > html > Operation
 input
 prompt("Your cat");
-   
+
 ##MyBox#
-Examples > html > Operation
+JavaScript > Examples > html > Operation
 open address
 window.open("http://www.nlc.cn");

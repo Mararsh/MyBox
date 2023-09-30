@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
@@ -21,18 +22,17 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
@@ -44,7 +44,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DColumnEdit extends BaseChildController {
 
-    protected ControlData2DColumns columnsController;
+    protected BaseData2DColumnsController columnsController;
     protected int columnIndex;
 
     @FXML
@@ -53,7 +53,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio,
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio, clobRadio,
             invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsSkipRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
@@ -67,6 +67,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected HBox formatBox;
     @FXML
     protected FlowPane typesPane, fixPane, centuryPane, invalidPane;
+    @FXML
+    protected Label lengthLabel;
 
     @Override
     public void setControlsStyle() {
@@ -80,7 +82,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void init(ControlData2DColumns columnsController) {
+    protected void init(BaseData2DColumnsController columnsController) {
         try {
             this.columnsController = columnsController;
             columnIndex = -1;
@@ -97,19 +99,19 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
             centuryPane.disableProperty().bind(fixYearCheck.selectedProperty().not());
 
-            rightTipsView.setVisible(columnsController.data2D.isTable());
+            rightTipsView.setVisible(columnsController.data2D != null && columnsController.data2D.isTable());
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
 
-    protected void setParameters(ControlData2DColumns columnsController) {
+    protected void setParameters(BaseData2DColumnsController columnsController) {
         init(columnsController);
         loadColumn(-1);
     }
 
-    public void setParameters(ControlData2DColumns columnsController, int index) {
+    public void setParameters(BaseData2DColumnsController columnsController, int index) {
         init(columnsController);
         loadColumn(index);
     }
@@ -146,6 +148,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 formatInput.setText(message("GroupInThousands"));
                 invalidAsZeroRadio.setSelected(true);
 
+            }
+
+            if (clobRadio.isSelected()) {
+                lengthInput.setText("2G");
+                lengthInput.setDisable(true);
+                lengthLabel.setText("(<= 2G)");
+            } else {
+                lengthInput.setText("32672");
+                lengthInput.setDisable(false);
+                lengthLabel.setText("(<= 32672)");
             }
 
         } catch (Exception e) {
@@ -217,6 +229,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 case Color:
                     colorRadio.setSelected(true);
                     break;
+                case Clob:
+                    clobRadio.setSelected(true);
+                    break;
                 default:
                     stringRadio.setSelected(true);
             }
@@ -262,10 +277,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 invalidAsSkipRadio.setSelected(true);
             }
 
-            boolean canChange = columnsController.data2D.isTable() && columnIndex >= 0;
-            nameInput.setDisable(canChange);
+            boolean canNotChange = columnsController.data2D != null
+                    && columnsController.data2D.isTable() && columnIndex >= 0;
+            nameInput.setDisable(canNotChange);
             for (int i = 1; i < typesPane.getChildren().size(); i++) {
-                typesPane.getChildren().get(i).setDisable(canChange);
+                typesPane.getChildren().get(i).setDisable(canNotChange);
             }
 
         } catch (Exception e) {
@@ -276,7 +292,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     public Data2DColumn pickValues() {
         try {
             String name = nameInput.getText();
-            if (columnsController.data2D.isTable()) {
+            if (columnsController.data2D != null && columnsController.data2D.isTable()) {
                 name = DerbyBase.fixedIdentifier(name);
             }
             if (name == null || name.isBlank()) {
@@ -291,14 +307,18 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 }
             }
             int length;
-            try {
-                length = Integer.parseInt(lengthInput.getText());
-                if (length < 0 || length > BaseTable.StringMaxLength) {
-                    length = BaseTable.StringMaxLength;
+            if (clobRadio.isSelected()) {
+                length = Integer.MAX_VALUE;
+            } else {
+                try {
+                    length = Integer.parseInt(lengthInput.getText());
+                    if (length < 0 || length > BaseTable.StringMaxLength) {
+                        length = BaseTable.StringMaxLength;
+                    }
+                } catch (Exception ee) {
+                    popError(message("InvalidParameter") + ": " + message("Length"));
+                    return null;
                 }
-            } catch (Exception ee) {
-                popError(message("InvalidParameter") + ": " + message("Length"));
-                return null;
             }
             int width;
             try {
@@ -386,6 +406,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Latitude).setFormat(null);
             } else if (colorRadio.isSelected()) {
                 column.setType(ColumnType.Color).setFormat(null);
+            } else if (clobRadio.isSelected()) {
+                column.setType(ColumnType.Clob).setFormat(null);
             }
 
             String dv = defaultInput.getText();
@@ -528,22 +550,6 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    /*
-        static
-     */
-    public static ControlData2DColumnEdit open(ControlData2DColumns columnsController) {
-        try {
-            ControlData2DColumnEdit controller = (ControlData2DColumnEdit) WindowTools.openChildStage(
-                    columnsController.getMyWindow(), Fxmls.Data2DColumnCreateFxml, false);
-            controller.setParameters(columnsController);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
         }
     }
 

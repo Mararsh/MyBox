@@ -51,6 +51,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
             tableData.setAll(DoublePoint.scaleImageCoordinates(list));
         }
         isSettingValues = false;
+        tableChanged();
     }
 
     public void loadIntList(List<IntPoint> list) {
@@ -65,6 +66,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         isSettingValues = true;
         tableData.setAll(dlist);
         isSettingValues = false;
+        tableChanged();
     }
 
     public void addPoint(DoublePoint point) {

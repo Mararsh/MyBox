@@ -36,6 +36,7 @@ import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTools;
@@ -509,11 +510,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (getMyStage() == null) {
             return;
         }
-        String title = title();
+        String t = title();
         if (fileChanged) {
-            title += " *";
+            t += " *";
         }
-        myStage.setTitle(title);
+        myStage.setTitle(t);
     }
 
     protected void updateFileStatus(boolean changed) {
@@ -747,7 +748,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     public String htmlByText() {
         String body = HtmlWriteTools.stringToHtml(textsArea.getText());
-        return HtmlWriteTools.html(title, body);
+        return HtmlWriteTools.html(title, body, HtmlStyles.DefaultStyle);
     }
 
     protected void textsChanged(boolean changed) {

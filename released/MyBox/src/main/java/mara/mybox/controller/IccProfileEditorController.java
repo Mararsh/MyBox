@@ -1789,27 +1789,17 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-                return VisitHistoryTools.getRecentFileRead(VisitHistory.FileType.XML, fileNumber);
-            }
+        new RecentVisitMenu(this, event, true) {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+                int pathNumber = AppVariables.fileRecentNumber;
                 return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.XML, pathNumber);
             }
 
             @Override
             public void handleSelect() {
                 exportXmlAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
             }
 
             @Override

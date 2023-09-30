@@ -16,8 +16,6 @@ import mara.mybox.db.data.Data2DColumn;
  */
 public class TableDataEditCell extends TableDataCell {
 
-    protected ChangeListener<Boolean> getListener;
-
     public TableDataEditCell(ControlData2DLoad dataControl, Data2DColumn dataColumn) {
         super(dataControl, dataColumn);
     }
@@ -27,16 +25,14 @@ public class TableDataEditCell extends TableDataCell {
         String s = getItem();
         if (supportMultipleLine && s != null && s.contains("\n")) {
             TextInputController inputController = TextInputController.open(dataControl, name(), s);
-            getListener = new ChangeListener<Boolean>() {
+            inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     String value = inputController.getInputString();
-                    inputController.getNotify().removeListener(getListener);
                     setCellValue(value);
-                    inputController.closeStage();
+                    inputController.close();
                 }
-            };
-            inputController.getNotify().addListener(getListener);
+            });
 
         } else {
             super.editCell();

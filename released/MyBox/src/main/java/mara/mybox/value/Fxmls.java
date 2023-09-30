@@ -16,14 +16,16 @@ public class Fxmls {
         document
      */
     public static final String NotesFxml = "/fxml/Notes.fxml";
-    public static final String TreeManageFxml = "/fxml/TreeManage.fxml";
-    public static final String TreeNodeMoveFxml = "/fxml/TreeNodeMove.fxml";
-    public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
-    public static final String TreeNodeExportFxml = "/fxml/TreeNodeExport.fxml";
-    public static final String TreeNodeImportFxml = "/fxml/TreeNodeImport.fxml";
-    public static final String TreeNodesCopyFxml = "/fxml/TreeNodesCopy.fxml";
-    public static final String TreeNodesMoveFxml = "/fxml/TreeNodesMove.fxml";
-    public static final String TreeNodeParentFxml = "/fxml/TreeNodeParent.fxml";
+
+    public static final String InfoTreeManageFxml = "/fxml/InfoTreeManage.fxml";
+    public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";
+    public static final String InfoTreeNodeCopyFxml = "/fxml/InfoTreeNodeCopy.fxml";
+    public static final String InfoTreeNodeExportFxml = "/fxml/InfoTreeNodeExport.fxml";
+    public static final String InfoTreeNodeImportFxml = "/fxml/InfoTreeNodeImport.fxml";
+    public static final String InfoTreeNodesCopyFxml = "/fxml/InfoTreeNodesCopy.fxml";
+    public static final String InfoTreeNodesMoveFxml = "/fxml/InfoTreeNodesMove.fxml";
+    public static final String InfoTreeNodeParentFxml = "/fxml/InfoTreeNodeParent.fxml";
+    public static final String InfoTreeNodeSelectFxml = "/fxml/InfoTreeNodeSelect.fxml";
 
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
@@ -177,6 +179,8 @@ public class Fxmls {
     public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
     public static final String ImageRepeatFxml = "/fxml/ImageRepeat.fxml";
 
+    public static final String ImageMaterialFxml = "/fxml/ImageMaterial.fxml";
+
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
@@ -212,6 +216,7 @@ public class Fxmls {
         data
      */
     public static final String Data2DManageFxml = "/fxml/Data2DManage.fxml";
+    public static final String Data2DDefinitionFxml = "/fxml/Data2DDefinition.fxml";
     public static final String Data2DManageQueryFxml = "/fxml/Data2DManageQuery.fxml";
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
@@ -321,6 +326,7 @@ public class Fxmls {
         file
      */
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
+    public static final String FilesRenameResultsFxml = "/fxml/FilesRenameResults.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
     public static final String FilesDeleteEmptyDirFxml = "/fxml/FilesDeleteEmptyDir.fxml";
@@ -430,6 +436,7 @@ public class Fxmls {
     public static final String DateInputFxml = "/fxml/DateInput.fxml";
     public static final String SettingCustomColorsFxml = "/fxml/SettingCustomColors.fxml";
     public static final String HtmlStyleInputFxml = "/fxml/HtmlStyleInput.fxml";
+    public static final String FileBackupFxml = "/fxml/FileBackup.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";
@@ -450,5 +457,7 @@ public class Fxmls {
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";
+
+    public static final String WindowsListFxml = "/fxml/WindowsList.fxml";
 
 }

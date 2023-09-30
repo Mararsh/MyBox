@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.Link;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.tools.HtmlWriteTools.setCharset;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -173,7 +172,7 @@ public class MarkdownTools {
         return htmlOptions("PEGDOWN", 4, false, true, true);
     }
 
-    public static String md2html(MutableDataHolder htmlOptions, File mdFile) {
+    public static String md2html(MutableDataHolder htmlOptions, File mdFile, String style) {
         try {
             if (mdFile == null || !mdFile.exists()) {
                 return null;
@@ -187,16 +186,12 @@ public class MarkdownTools {
                 return null;
             }
             setCharset(doc, Charset.forName("UTF-8"));
-            doc.head().appendChild(new Element("style").text(HtmlStyles.DefaultStyle));
+            doc.head().appendChild(new Element("style").text(style));
             return doc.outerHtml();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    public static String md2html(File mdFile) {
-        return md2html(htmlOptions(), mdFile);
     }
 
 }

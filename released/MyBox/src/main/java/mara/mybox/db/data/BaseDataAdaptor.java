@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Era;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableBlobValue;
@@ -451,6 +452,7 @@ public class BaseDataAdaptor {
                 case File:
                 case Image:
                 case Era:
+                case Clob:
                     String rvalue = (String) value;
                     return rvalue;
                 case Double:
@@ -507,6 +509,8 @@ public class BaseDataAdaptor {
                     return DateTools.datetimeToString((Date) value);
                 case Date:
                     return DateTools.dateToString((Date) value);
+                case Blob:
+                    return null;
             }
         } catch (Exception e) {
             MyBoxLog.error(e, column.getColumnName());

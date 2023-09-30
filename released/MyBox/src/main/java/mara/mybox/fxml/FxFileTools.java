@@ -48,6 +48,9 @@ public class FxFileTools {
             if (tmpFile == null) {
                 return null;
             }
+            if (file.exists()) {
+                file.delete();
+            }
             mara.mybox.tools.FileTools.rename(tmpFile, file);
             return file;
         } catch (Exception e) {

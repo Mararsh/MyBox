@@ -4,14 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -37,8 +38,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("category", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("value", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("more", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("info", ColumnType.Clob));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long)
                 .setReferName("Tree_Node_parent_fk").setReferTable("Tree_Node").setReferColumn("nodeid")
@@ -85,9 +85,6 @@ public class TableTreeNode extends BaseTable<InfoNode> {
 
     public static final String DeleteChildren
             = "DELETE FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
-
-    public static final String Times
-            = "SELECT DISTINCT update_time FROM Tree_Node WHERE category=? ORDER BY update_time DESC";
 
     public InfoNode find(long id) {
         if (id < 0) {
@@ -289,15 +286,6 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> findAndCreateRoots(String category) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            return findAndCreateRoots(conn, category);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public List<InfoNode> findAndCreateRoots(Connection conn, String category) {
         if (conn == null) {
             return null;
@@ -337,12 +325,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try {
             long parentid = categoryRoot.getNodeid();
             String chain = ownerChain;
-            if (chain.startsWith(categoryRoot.getTitle() + InfoNode.NodeSeparater)) {
-                chain = chain.substring((categoryRoot.getTitle() + InfoNode.NodeSeparater).length());
-            } else if (chain.startsWith(message(categoryRoot.getTitle()) + InfoNode.NodeSeparater)) {
-                chain = chain.substring((message(categoryRoot.getTitle()) + InfoNode.NodeSeparater).length());
+            if (chain.startsWith(categoryRoot.getTitle() + TitleSeparater)) {
+                chain = chain.substring((categoryRoot.getTitle() + TitleSeparater).length());
+            } else if (chain.startsWith(message(categoryRoot.getTitle()) + TitleSeparater)) {
+                chain = chain.substring((message(categoryRoot.getTitle()) + TitleSeparater).length());
             }
-            String[] nodes = chain.split(InfoNode.NodeSeparater);
+            String[] nodes = chain.split(TitleSeparater);
             InfoNode owner = null;
             for (String node : nodes) {
                 owner = findAndCreate(conn, parentid, node);
@@ -522,6 +510,32 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return isEmpty;
     }
 
+    public boolean equalOrDescendant(SingletonTask<Void> task, Connection conn, InfoNode node1, InfoNode node2) {
+        if (conn == null || node1 == null || node2 == null) {
+            if (task != null) {
+                task.setError(message("InvalidData"));
+            }
+            return false;
+        }
+        long id1 = node1.getNodeid();
+        long id2 = node2.getNodeid();
+        if (id1 == id2) {
+            return true;
+        }
+        InfoNode parent = parent(conn, node1);
+        if (parent == null || id1 == parent.getNodeid()) {
+            return false;
+        }
+        return equalOrDescendant(task, conn, parent(conn, node1), node2);
+    }
+
+    public InfoNode parent(Connection conn, InfoNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        return find(conn, node.getParentid());
+    }
+
     public int categorySize(String category) {
         try (Connection conn = DerbyBase.getConnection()) {
             return categorySize(conn, category);
@@ -552,10 +566,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return size;
     }
 
-    public boolean categoryEmpty(String category) {
+    public boolean categoryEmpty(Connection conn, String category) {
+        if (conn == null) {
+            return true;
+        }
         boolean isEmpty = true;
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
+        try (PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
             statement.setString(1, category);
             conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {
@@ -598,38 +614,6 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
         condition += " ) ) ";
         return condition;
-    }
-
-    public List<Date> times(String category) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            conn.setReadOnly(true);
-            return times(conn, category);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public List<Date> times(Connection conn, String category) {
-        List<Date> times = new ArrayList();
-        if (conn == null) {
-            return times;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(Times)) {
-            statement.setString(1, category);
-            conn.setAutoCommit(true);
-            try (ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    Date time = results.getTimestamp("update_time");
-                    if (time != null) {
-                        times.add(time);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return times;
     }
 
 }

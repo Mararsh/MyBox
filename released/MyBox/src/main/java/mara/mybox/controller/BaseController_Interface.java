@@ -233,6 +233,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (openSourceButton != null) {
                 openSourceButton.setDisable(true);
             }
+            if (systemMethodButton != null) {
+                systemMethodButton.setDisable(true);
+            }
 
             initLeftPaneControl();
             initRightPaneControl();
@@ -248,14 +251,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void initLeftPaneControl() {
         if (splitPane != null && leftPane != null && leftPaneControl != null) {
-            leftPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-                        controlLeftPane();
-                    }
-                }
-            });
             leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -270,14 +265,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void initRightPaneControl() {
         if (splitPane != null && rightPane != null && rightPaneControl != null) {
-            rightPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-                        controlRightPane();
-                    }
-                }
-            });
             rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -619,10 +606,21 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setControlsStyle() {
         try {
             if (leftPaneControl != null) {
-                NodeStyleTools.setTooltip(leftPaneControl, new Tooltip("F4"));
+
+                NodeStyleTools.setTooltip(leftPaneControl, new Tooltip(message("ControlLeftPane")
+                        + (myFxml.startsWith("Control") ? "" : "\nF4")));
+            }
+            if (leftPaneCheck != null) {
+                NodeStyleTools.setTooltip(leftPaneCheck, new Tooltip(message("ControlLeftPane")
+                        + (myFxml.startsWith("Control") ? "" : "\nF4")));
             }
             if (rightPaneControl != null) {
-                NodeStyleTools.setTooltip(rightPaneControl, new Tooltip("F5"));
+                NodeStyleTools.setTooltip(rightPaneControl, new Tooltip(message("ControlRightPane")
+                        + (myFxml.startsWith("Control") ? "" : "\nF5")));
+            }
+            if (rightPaneCheck != null) {
+                NodeStyleTools.setTooltip(rightPaneCheck, new Tooltip(message("ControlRightPane")
+                        + (myFxml.startsWith("Control") ? "" : "\nF5")));
             }
             if (tipsLabel != null && TipsLabelKey != null) {
                 NodeStyleTools.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));

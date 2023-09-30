@@ -39,7 +39,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected CheckMenuItem shortcutsCanNotOmitCheck, loseFocusCommitDataCheck, clearExpiredDataCheck,
             closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
-            popColorSetCheck, controlPanesCheck, controlTextCheck;
+            controlTextCheck;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
@@ -86,11 +86,9 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
-        popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
         shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
         loseFocusCommitDataCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
         clearExpiredDataCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
-        controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();
     }
 
@@ -99,7 +97,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         List<MenuItem> items = new ArrayList();
         List<String> languages = Languages.userLanguages();
         if (languages != null && !languages.isEmpty()) {
-            String lang = Languages.getLanguage();
+            String lang = Languages.getLangName();
             for (int i = 0; i < languages.size(); ++i) {
                 final String name = languages.get(i);
                 RadioMenuItem langItem = new RadioMenuItem(name);
@@ -341,11 +339,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     }
 
     @FXML
-    protected void popColorSetAction() {
-        UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
-    }
-
-    @FXML
     protected void shortcutsCanNotOmitCtrlAlt() {
         AppVariables.ShortcutsCanNotOmitCtrlAlt = shortcutsCanNotOmitCheck.isSelected();
         UserConfig.setBoolean("ShortcutsCanNotOmitCtrlAlt", AppVariables.ShortcutsCanNotOmitCtrlAlt);
@@ -359,11 +352,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected void clearExpiredDataBeforeExit() {
         UserConfig.setBoolean("ClearExpiredDataBeforeExit", clearExpiredDataCheck.isSelected());
-    }
-
-    @FXML
-    protected void controlPanesAction() {
-        UserConfig.setBoolean("MousePassControlPanes", controlPanesCheck.isSelected());
     }
 
     public void setStyle(String style) {

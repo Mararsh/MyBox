@@ -305,6 +305,23 @@ public class MyBoxLoadingController implements Initializable {
                 }
             };
 
+            String prefix = AppPaths.getGeneratedPath() + File.separator;
+            new File(prefix + "png").mkdirs();
+            new File(prefix + "jpg").mkdirs();
+            new File(prefix + "pdf").mkdirs();
+            new File(prefix + "htm").mkdirs();
+            new File(prefix + "xml").mkdirs();
+            new File(prefix + "json").mkdirs();
+            new File(prefix + "txt").mkdirs();
+            new File(prefix + "csv").mkdirs();
+            new File(prefix + "md").mkdirs();
+            new File(prefix + "xlsx").mkdirs();
+            new File(prefix + "docx").mkdirs();
+            new File(prefix + "pptx").mkdirs();
+            new File(prefix + "svg").mkdirs();
+            new File(prefix + "js").mkdirs();
+            new File(prefix + "mp4").mkdirs();
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

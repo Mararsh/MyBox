@@ -72,6 +72,9 @@ public interface DoubleShape {
 
     public static boolean translateCenterAbs(DoubleShape shapeData, double x, double y) {
         DoublePoint center = getCenter(shapeData);
+        if (center == null) {
+            return false;
+        }
         double offsetX = x - center.getX();
         double offsetY = y - center.getY();
         if (DoubleShape.changed(offsetX, offsetY)) {
@@ -147,7 +150,11 @@ public interface DoubleShape {
 
     // notice bound may truncate values
     public static Rectangle2D getBound(DoubleShape shapeData) {
-        return shapeData.getShape().getBounds2D();
+        try {
+            return shapeData.getShape().getBounds2D();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static boolean contains(DoubleShape shapeData, double x, double y) {
@@ -155,17 +162,25 @@ public interface DoubleShape {
     }
 
     public static DoublePoint getCenter(DoubleShape shapeData) {
-        Rectangle2D bound = getBound(shapeData);
-        return new DoublePoint(bound.getCenterX(), bound.getCenterY());
+        try {
+            Rectangle2D bound = getBound(shapeData);
+            return new DoublePoint(bound.getCenterX(), bound.getCenterY());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String values(DoubleShape shapeData) {
-        Rectangle2D bounds = getBound(shapeData);
-        return shapeData.name() + "\n"
-                + message("LeftTop") + ": " + imageScale(bounds.getMinX()) + ", " + imageScale(bounds.getMinY()) + "\n"
-                + message("RightBottom") + ": " + imageScale(bounds.getMaxX()) + ", " + imageScale(bounds.getMaxY()) + "\n"
-                + message("Center") + ": " + imageScale(bounds.getCenterX()) + ", " + imageScale(bounds.getCenterY()) + "\n"
-                + message("Width") + ": " + imageScale(bounds.getWidth()) + "  " + message("Height") + ": " + imageScale(bounds.getHeight());
+        try {
+            Rectangle2D bounds = getBound(shapeData);
+            return shapeData.name() + "\n"
+                    + message("LeftTop") + ": " + imageScale(bounds.getMinX()) + ", " + imageScale(bounds.getMinY()) + "\n"
+                    + message("RightBottom") + ": " + imageScale(bounds.getMaxX()) + ", " + imageScale(bounds.getMaxY()) + "\n"
+                    + message("Center") + ": " + imageScale(bounds.getCenterX()) + ", " + imageScale(bounds.getCenterY()) + "\n"
+                    + message("Width") + ": " + imageScale(bounds.getWidth()) + "  " + message("Height") + ": " + imageScale(bounds.getHeight());
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public static DoubleShape toShape(BaseController controller, Element node) {

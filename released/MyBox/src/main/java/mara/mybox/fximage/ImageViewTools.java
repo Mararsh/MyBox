@@ -112,11 +112,18 @@ public class ImageViewTools {
     }
 
     public static Color imagePixel(DoublePoint p, ImageView view) {
-        if (p == null || view == null) {
+        if (p == null || view == null || view.getImage() == null) {
             return null;
         }
-        PixelReader pixelReader = view.getImage().getPixelReader();
-        return pixelReader.getColor((int) p.getX(), (int) p.getY());
+        int x = (int) p.getX();
+        int y = (int) p.getY();
+        if (x >= 0 && x < view.getImage().getWidth()
+                && y >= 0 && y < view.getImage().getHeight()) {
+            PixelReader pixelReader = view.getImage().getPixelReader();
+            return pixelReader.getColor(x, y);
+        } else {
+            return null;
+        }
     }
 
 }

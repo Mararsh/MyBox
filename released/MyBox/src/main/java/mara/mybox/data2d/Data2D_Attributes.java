@@ -34,10 +34,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public SingletonTask task, backgroundTask;
     public String error;
 
-    public enum InvalidAs {
-        Zero, Blank, Skip
-    }
-
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();

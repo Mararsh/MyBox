@@ -1,5 +1,8 @@
 package mara.mybox.db.table;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -19,6 +22,7 @@ import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Clob;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
@@ -146,8 +150,10 @@ public abstract class BaseTable<D> {
                     } else {
                         if (!(value instanceof Double)) {
                             MyBoxLog.console(value + "  " + value.getClass());
+                            d = Double.NaN;
+                        } else {
+                            d = (double) value;
                         }
-                        d = (double) value;
                     }
                     if (DoubleTools.invalidDouble(d)) {
                         if (notNull) {
@@ -245,7 +251,6 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 case Boolean:
-                    boolean b;
                     if (value == null) {
                         if (notNull) {
                             statement.setBoolean(index, false);
@@ -257,24 +262,24 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 case Short:
-                    short s;
+                    short r;
                     if (value == null) {
-                        s = AppValues.InvalidShort;
+                        r = AppValues.InvalidShort;
                     } else {
                         if (value instanceof Integer) { // sometime value becomes Integer...
-                            s = (short) ((int) value);
+                            r = (short) ((int) value);
                         } else {
-                            s = (short) value;
+                            r = (short) value;
                         }
                     }
-                    if (s == AppValues.InvalidShort) {
+                    if (r == AppValues.InvalidShort) {
                         if (notNull) {
                             statement.setShort(index, AppValues.InvalidShort);
                         } else {
                             statement.setNull(index, Types.SMALLINT);
                         }
                     } else {
-                        statement.setShort(index, s);
+                        statement.setShort(index, r);
                     }
                     break;
                 case Datetime:
@@ -301,20 +306,23 @@ public abstract class BaseTable<D> {
                         statement.setDate(index, new java.sql.Date(date.getTime()));
                     }
                     break;
-//                case Clob:
-//                    if (value == null) {
-//                        statement.setNull(index, Types.CLOB);
-//                    } else {
-//                        statement.setClob(index, (Clob) value);
-//                    }
-//                    break;
-//                case Blob:
-//                    if (value == null) {
-//                        statement.setNull(index, Types.BLOB);
-//                    } else {
-//                        statement.setBlob(index, (Blob) value);
-//                    }
-//                    break;
+                case Clob:
+                    if (value == null) {
+                        statement.setNull(index, Types.CLOB);
+                    } else {
+                        // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
+                        String s = (String) value;
+                        statement.setCharacterStream(index, new BufferedReader(new StringReader(s)), s.length());
+                    }
+                    break;
+                case Blob:
+                    if (value == null) {
+                        statement.setNull(index, Types.BLOB);
+                    } else {
+                        // BLOB is handled as InputStream internally
+                        statement.setBinaryStream(index, (InputStream) value);
+                    }
+                    break;
                 default:
                     MyBoxLog.debug(column.getColumnName() + " " + column.getType() + " " + value.toString());
                     return false;
@@ -542,11 +550,11 @@ public abstract class BaseTable<D> {
             case Era:
                 def += "BIGINT";
                 break;
-            case Blob:
-                def += "BLOB";
-                break;
             case Clob:
                 def += "CLOB";
+                break;
+            case Blob:
+                def += "BLOB";
                 break;
             default:
                 MyBoxLog.debug(colName + " " + type);

@@ -3,15 +3,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <TITLE>界面中的提示信息</TITLE>
         <style type="text/css">
-             body { margin:0 auto; } 
-              table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
               th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
               th { font-weight:bold;  text-align:center;} 
               tr { height: 1.2em;  } 
               .center { text-align:center;  max-width:95%; } 
               .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
               .boldText { font-weight:bold;  } 
- body { width: 900px; } 
+ body { margin:0 auto; width: 900px; } 
               img { max-width: 900px; } 
               .valueText { color:#2e598a;  } 
 
@@ -94,7 +93,7 @@ Ctrl-w                      替换全部
   - 基于JACKSON解析和处理JSON数据。
   - 加载JSON所有数据，因此不适用于处理数据量很大的JSON文件。
   - 用户可以用两种模式编辑JSON：
-          - “树形”。可以添加、修改、和删除Json节点。
+          - “树形”。可以添加、修改、和删除Json结点。
           - “文本”。可以用字符串来修改和解析Json数据。
   - 当前页签下的编辑模式为“当前编辑模式”。
   - 以下按钮对当前编辑模式生效：
@@ -118,7 +117,7 @@ JSON的构成：
   - 基于JDK的DOM模型来解析和处理XML数据。
   - 加载XML所有数据，因此不适用于处理数据量很大的XML文件。
   - 用户可以用两种模式编辑XML：
-          - “树形”。可以添加、修改、和删除XML节点。
+          - “树形”。可以添加、修改、和删除XML结点。
           - “XML”。可以用文本来修改和解析XML数据。
   - 当前页签下的编辑模式为“当前编辑模式”。
   - 以下按钮对当前编辑模式生效：
@@ -259,7 +258,7 @@ Ctrl-w                      替换全部
   - 基于Apache Batik来解析和处理SVG数据。
   - 加载SVG所有数据，因此不适用于处理数据量很大的SVG文件。
   - 用户可以用两种模式编辑SVG：
-          - “树形”。可以添加、修改、和删除SVG节点。
+          - “树形”。可以添加、修改、和删除SVG结点。
           - “XML”。可以用文本来修改和解析SVG数据。
   - 当前页签下的编辑模式为“当前编辑模式”。
   - 以下按钮对当前编辑模式生效：
@@ -856,7 +855,7 @@ B =  b11   b12
    脚本可以包含WebEngine可以解析的任何合法元素(ECMAScript 6)。
 -  运行脚本。
    它的结果显示在右边的面板中。并且它也会影响右边面板中的网页。
--  保存脚本为左边面板中代码树的一个节点。</PRE>
+-  保存脚本为左边面板中代码树的一个结点。</PRE>
     <H3>JShell（Java交互编程工具）</H3>
     <PRE>JShell是JDK包含的工具之一：
    - JShell提供交互执行"snippets"的能力，即"读取-执行-输出"循环 (REPL)。 
@@ -903,6 +902,7 @@ B =  b11   b12
     <H3>数学函数</H3>
     <PRE>此工具帮助管理和计算数学函数：
 - 定义函数：
+      - 给出函数的名字。
       - 列出函数的变量名，以英文逗号分割。变量名应符合JavaScript要求:
              - 可以包含字母、数字、下划线、和unicode（如中文）
              - 不能以数字开头。
@@ -915,7 +915,6 @@ B =  b11   b12
              - 此脚本可以包含Nashorn可以解析的任何合法元素(ECMAScript 5.1)。
              - 它应当最终是一个布尔值（真或假）。
              - 它可以引用给出的变量，但是不要申明它们。
-      - 给出计算结果的名字。
 - 在工具计算脚本时，'var 变量名=<变量值>;' 被插入到脚本的前面，然后开始计算。
 - 若定义域脚本不为空，则插入给定的变量值并且检查结果。
    若为真，则继续计算函数表达式的脚本。否则跳过此组变量值。
@@ -1080,7 +1079,7 @@ BD-09坐标和MapBar 坐标基于GCJ-02加密，与真实位置有偏差。</PRE
      - 保持空白以缺省用英语。
      - 右键点击单元以选择“复制英语”或“复制中文”。
 -  点击按钮“保存”以保存修改。</PRE>
-    <H3>MyBox快捷键</H3>
+    <H3>MyBox快捷键与图标</H3>
     <PRE>界面上的控件，如按钮、复选框、图片，可能有快捷键：
    - 若焦点在“文本输入”控件中，则以下按键作用于此控件：
          Delete/Home/End/PageUp/PageDown/Enter/Ctrl-(c/v/z/y/x)

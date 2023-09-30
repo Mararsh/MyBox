@@ -18,8 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.Data2D_Attributes;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -50,7 +49,7 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class ControlMathFunctionCalculator extends BaseController {
 
-    protected ControlMathFunctionEditor editorController;
+    protected MathFunctionEditor editorController;
     protected String expression, domain, outputs = "";
     protected ExpressionCalculator calculator;
     protected int calculateScale, dataScale, variablesSize;
@@ -125,7 +124,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         }
     }
 
-    public void setParameters(ControlMathFunctionEditor editorController) {
+    public void setParameters(MathFunctionEditor editorController) {
         try {
             this.editorController = editorController;
             calculateButton.disableProperty().bind(editorController.valueInput.textProperty().isEmpty());
@@ -191,13 +190,13 @@ public class ControlMathFunctionCalculator extends BaseController {
         return StringTools.replaceLineBreak(d);
     }
 
-    public String resultName() {
-        String name = editorController.resultNameInput.getText();
+    public String functionName() {
+        String name = editorController.functionNameInput.getText();
         return name == null || name.isBlank() ? "f" : name;
     }
 
-    public String functionName() {
-        String name = editorController.nameInput.getText();
+    public String titleName() {
+        String name = editorController.attributesController.nameInput.getText();
         return name == null || name.isBlank() ? message("MathFunction") : name;
     }
 
@@ -329,7 +328,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                     + HtmlWriteTools.stringToHtml(finalScript)
                     + "</div>";
             outputs += "<div class=\"valueBox\">"
-                    + HtmlWriteTools.stringToHtml(resultName() + "=" + ret)
+                    + HtmlWriteTools.stringToHtml(functionName() + "=" + ret)
                     + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             outputController.loadContents(html);
@@ -352,7 +351,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             for (int i = 0; i < nodes.size(); i += 2) {
                 Label label = (Label) nodes.get(i);
                 TextField input = (TextField) nodes.get(i + 1);
-                double d = DoubleTools.toDouble(input.getText(), Data2D_Attributes.InvalidAs.Blank);
+                double d = DoubleTools.toDouble(input.getText(), InvalidAs.Blank);
                 vars += "var " + label.getText() + "=" + d + ";\n";
             }
             return vars + script;
@@ -395,11 +394,11 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             variablesSize = variables.size();
             count = 0;
-            File csvFile = generateFile(functionName(), "csv");
+            File csvFile = generateFile(titleName(), "csv");
             List<Data2DColumn> db2Columns = new ArrayList<>();
             try (CSVPrinter printer = CsvTools.csvPrinter(csvFile)) {
                 csvPrinter = printer;
-                String resultName = resultName();
+                String resultName = functionName();
                 row = new ArrayList<>();
                 row.addAll(variables);
                 row.add(resultName);
@@ -593,7 +592,7 @@ public class ControlMathFunctionCalculator extends BaseController {
     }
 
     public String title() {
-        String title = editorController.nameInput.getText();
+        String title = editorController.attributesController.nameInput.getText();
         if (title == null || title.isBlank()) {
             int pos = expression.indexOf("\n");
             title = pos < 0 ? expression : expression.substring(0, pos);
@@ -649,7 +648,7 @@ public class ControlMathFunctionCalculator extends BaseController {
     /*
         static
      */
-    public static ControlMathFunctionCalculator open(ControlMathFunctionEditor editorController) {
+    public static ControlMathFunctionCalculator open(MathFunctionEditor editorController) {
         try {
             ControlMathFunctionCalculator controller = (ControlMathFunctionCalculator) WindowTools.openChildStage(
                     editorController.getMyWindow(), Fxmls.MathFunctionCalculatorFxml, false);

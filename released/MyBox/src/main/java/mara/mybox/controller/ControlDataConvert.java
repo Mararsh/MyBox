@@ -20,6 +20,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -115,7 +116,7 @@ public class ControlDataConvert extends BaseController {
             xmlCheck.setSelected(true);
         } else if ("html".equals(format)) {
             htmlCheck.setSelected(true);
-            cssArea.setText(HtmlStyles.BaseStyle);
+            cssArea.setText(HtmlStyles.DefaultStyle);
         } else if ("pdf".equals(format)) {
             pdfCheck.setSelected(true);
             initPDF();
@@ -233,7 +234,7 @@ public class ControlDataConvert extends BaseController {
     }
 
     private void initHtml() {
-        cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.BaseStyle));
+        cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.DefaultStyle));
     }
 
     private void initPDF() {
@@ -403,7 +404,7 @@ public class ControlDataConvert extends BaseController {
             names.add(0, message("RowNumber"));
         }
         if (columns == null || columns.isEmpty()) {
-            columns = Data2DColumn.toColumns(names);
+            columns = Data2DTools.toColumns(names);
         }
         return openWriters();
     }
@@ -614,7 +615,7 @@ public class ControlDataConvert extends BaseController {
                     }
                     s.append(indent).append(indent)
                             .append("<Col name=\"").append(names.get(i)).append("\" >")
-                            .append(value)
+                            .append("<![CDATA[").append(value).append("]]>")
                             .append("</Col>").append("\n");
                 }
                 s.append(indent).append("</Row>").append("\n");
@@ -622,16 +623,16 @@ public class ControlDataConvert extends BaseController {
             }
             if (jsonWriter != null) {
                 StringBuilder s = new StringBuilder();
-                if (!firstRow) {
-                    s.append(",\n");
-                } else {
+                if (firstRow) {
                     firstRow = false;
+                } else {
+                    s.append(",\n");
                 }
                 s.append(indent).append("{").append("\n");
                 boolean firstData = true;
                 for (int i = 0; i < names.size(); i++) {
                     String value = row.get(i);
-                    if (value == null || value.isBlank()) {
+                    if (value == null) {
                         continue;
                     }
                     if (!firstData) {
@@ -640,8 +641,8 @@ public class ControlDataConvert extends BaseController {
                         firstData = false;
                     }
                     s.append(indent).append(indent)
-                            .append("\"").append(names.get(i)).append("\": \"")
-                            .append(JsonTools.replaceSpecialChars(value)).append("\"");
+                            .append("\"").append(names.get(i)).append("\": ")
+                            .append(JsonTools.encode(value));
                 }
                 s.append(indent).append("\n").append(indent).append("}");
                 jsonWriter.write(s.toString());

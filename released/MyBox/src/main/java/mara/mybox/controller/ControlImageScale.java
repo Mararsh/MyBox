@@ -87,6 +87,8 @@ public class ControlImageScale extends ControlImageSize {
             height = image.getHeight();
             editor.maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
             editor.showMaskRectangle();
+            editor.popAnchorMenu = false;
+            editor.showAnchors = true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

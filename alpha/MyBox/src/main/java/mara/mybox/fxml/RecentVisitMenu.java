@@ -97,6 +97,7 @@ public abstract class RecentVisitMenu {
                 List<String> paths = paths();
                 if (paths != null && !paths.isEmpty()) {
                     menu = new MenuItem(message("RecentAccessedDirectories"));
+                    menu.setStyle("-fx-text-fill: #2e598a;");
                     items.add(menu);
                     for (String path : paths) {
                         menu = new MenuItem(StringTools.menuSuffix(path));
