@@ -24,7 +24,7 @@ This is desktop application based on JavaFx to provide simple and easy functions
      - Tree information:                                                      
           - Parse and encode tree in consistent way while orignial formats still work.                                                      
           - Length of node is enlarged as 2G.                                                      
-          - Actions of left-click, right-click, and double-click can be selected for menu.                                                      
+          - Actions of left-click, right-click, and double-click can be selected.                                                      
           - To select node, either click tree node or query by tags/times/keywords.                                                       
      - Default style is null when display html.                                                      
      - Shortcuts list is displayed along with icons list which have not shortcuts.                                                      
