@@ -672,15 +672,15 @@ public class HelpTools {
     }
 
     public static String charsetLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/nio/charset/Charset.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html";
     }
 
     public static String uriLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URI.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html";
     }
 
     public static String urlLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URL.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URL.html";
     }
 
     public static String javaFxCssLink() {
@@ -700,23 +700,23 @@ public class HelpTools {
     }
 
     public static String javaAPILink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/index.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/index.html";
     }
 
     public static String javaMathLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/lang/Math.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Math.html";
     }
 
     public static String decimalFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/text/DecimalFormat.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/DecimalFormat.html";
     }
 
     public static String simpleDateFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/text/SimpleDateFormat.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/SimpleDateFormat.html";
     }
 
     public static String renderingHintsLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/RenderingHints.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/RenderingHints.html";
     }
 
     public static String cssSpecificationLink() {
@@ -792,15 +792,15 @@ public class HelpTools {
     }
 
     public static String javaShape2DLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/Shape.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Shape.html";
     }
 
     public static String javafxShape2DLink() {
-        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/Shape.html";
+        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/Shape.html";
     }
 
     public static String javafxSVGPathLink() {
-        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/SVGPath.html";
+        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/SVGPath.html";
     }
 
     public static String expEnLink() {
@@ -1358,7 +1358,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/paint/Color.html", true);
+                    WebBrowserController.openAddress("https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/paint/Color.html", true);
                 }
             });
             items.add(menuItem);
@@ -1367,7 +1367,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
                 }
             });
             items.add(menuItem);
@@ -1376,7 +1376,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
                 }
             });
             items.add(menuItem);

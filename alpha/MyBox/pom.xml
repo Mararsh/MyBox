@@ -1,64 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.7.7</version>
+    <version>6.7.8</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>20</maven.compiler.source>
-        <maven.compiler.target>20</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <organization>
         <name>Mara</name>
     </organization>  
-
+      
+    <repositories>
+        <repository>
+            <id>aliyun</id>
+            <name>aliyun public</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
+    </repositories>
+  
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>20</version>
+            <version>21</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>20</version>
+            <version>21</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>20</version>
+            <version>21</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>20</version>
+            <version>21</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>20</version>
+            <version>21</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>20</version>
+            <version>21</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>20</version>
+            <version>21</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -317,7 +326,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javaVersion>20</javaVersion>
+                <javaVersion>21</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -327,7 +336,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javaVersion>20</javaVersion>
+                <javaVersion>21</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -337,7 +346,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javaVersion>20</javaVersion>
+                <javaVersion>21</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
