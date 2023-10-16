@@ -664,7 +664,7 @@ public class StyleButton {
             return new StyleData(id, message("Options"), "", "iconSetting.png");
         }
         if (id.startsWith("systemMethod")) {
-            return new StyleData(id, message("SystemMethod"), "", "iconWindow.png");
+            return new StyleData(id, message("SystemMethod"), "", "iconSystemOpen.png");
         }
         if (id.startsWith("panesMenu")) {
             return new StyleData(id, message("Panes"), "", "iconPanes.png");

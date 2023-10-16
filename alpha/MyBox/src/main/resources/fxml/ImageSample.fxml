@@ -186,13 +186,13 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="browsePane" text="%Browse">
+                                        <TitledPane fx:id="browsePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                <VBox spacing="2.0"  maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" >
                                                     <children>
-                                                        <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
+                                                        <fx:include fx:id="browse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBrowse.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
-                                                </VBox>
+                                                </VBox>                                            
                                             </content>
                                         </TitledPane>
                                     </children>
@@ -265,15 +265,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </CheckBox>
-                                    <Button fx:id="systemMethodButton" mnemonicParsing="false" onAction="#systemMethod">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconWindow.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <Button fx:id="systemMethodButton" mnemonicParsing="false" onAction="#systemMethod">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSystemOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

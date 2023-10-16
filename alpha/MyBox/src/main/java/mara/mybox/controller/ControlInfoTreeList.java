@@ -351,12 +351,13 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         List<TreeItem<InfoNode>> ancestor = ancestor(item);
         if (ancestor != null) {
             for (TreeItem<InfoNode> a : ancestor) {
-                chainName += a.getValue().getTitle() + TitleSeparater;
+                chainName += title(a.getValue()) + TitleSeparater;
             }
         }
-        chainName += item.getValue().getTitle();
+        chainName += title(item.getValue());
         return chainName;
     }
+
 
     /*
         actions

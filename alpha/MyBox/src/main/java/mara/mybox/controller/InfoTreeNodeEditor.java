@@ -160,11 +160,6 @@ public class InfoTreeNodeEditor extends BaseController {
             popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
             return null;
         }
-
-        if (title.contains(TitleSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
-            return null;
-        }
         return title;
     }
 

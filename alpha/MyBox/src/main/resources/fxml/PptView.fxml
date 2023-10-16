@@ -48,15 +48,15 @@ License:    Apache License Version 2.0
                                                 <VBox spacing="2.0">
                                                     <children>
                                                         <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" />
-                                          <Button fx:id="systemMethodButton" mnemonicParsing="false" onAction="#systemMethod">
-                                             <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconWindow.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
+                                                        <Button fx:id="systemMethodButton" mnemonicParsing="false" onAction="#systemMethod">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconSystemOpen.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -185,13 +185,13 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="browsePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse">
+                                        <TitledPane fx:id="browsePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                <VBox spacing="2.0"  maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" >
                                                     <children>
                                                         <fx:include fx:id="browse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBrowse.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
-                                                </VBox>
+                                                </VBox>                                            
                                             </content>
                                         </TitledPane>
                                     </children>

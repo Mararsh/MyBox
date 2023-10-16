@@ -63,11 +63,23 @@
             <li>"Ordered Tree": The order of children is steady.</li>
             <li>"Hierarchy Number": The sequence number of the chain from root to the node.</li>
             <li>In ordered tree, hierarchy number can identify each node uniquely.<br />
-                Notice, hierarchy number of same node may change when nodes are deleted/added/moved.</li>
+                Notice, hierarchy number of same node may change when tree structure is changed(like nodes deleted/added/moved).<br />
+                So hierarchy number can be used to locate a node only for static tree. 
+            </li>
+            <li>"Node Name": String to identify the node.</li>
+            <li>"Chain Name": The chain of names from root to the node.</li>
+            <li>Chain name is not changed when tree structure is changed.<br />
+                With condition "Names of children are not null nor duplicated", chain name can identify each node uniquely, 
+                and chain name can be used to locate a node for dynamic tree. 
+            </li>        
         </ol>
         <h2>3 Define Tree Structure</h2>
+        <p>In MyBox:</p>
         <ul>
-            <li>Attributes of node: Title, Value, Modify_Time.</li>
+            <li>Attributes of node: ID, Title(Node Name), Value, Modify_Time.</li>
+            <li>ID of node is generated automactically and used to identify and locate each node uniquely.</li>
+            <li>Title of node is not null and should not include " > "(Blank before and after greater-than sign).</li>
+            <li>Titles of children can be duplicated. So chain name can not locate node.</li>
             <li>Value of node is stored as large text of length 2G.</li>
             <li>Tags of node. One node can have multiple tags while one tag can belong to multiple nodes.</li>
         </ul>
@@ -75,7 +87,7 @@
         <p>In MyBox, objects handled by following functions are stored and managed in tree:</p>
         <table>
             <thead>
-                <tr><th>     Function </th><th>                    Format of node value                     </th></tr>
+                <tr><th>    MyBox Function </th><th>                    Format of node value                     </th></tr>
             </thead>
             <tbody>
                 <tr><td> Notes         </td><td> Piece of html. Should be content of "body" and should not include tags of "html", "head", and "body".  </td></tr>

@@ -215,7 +215,6 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message("Typesetting"), "", "iconTypesetting.png"));
             tableData.add(new ShortCut("", "", message("Validate"), "", "iconVerify.png"));
             tableData.add(new ShortCut("", "", message("View"), "", "iconView.png"));
-            tableData.add(new ShortCut("", "", message("SystemMethod"), "", "iconWindow.png"));
             tableData.add(new ShortCut("", "", message("Wrap"), "", "iconWrap.png"));
             tableData.add(new ShortCut("", "", message("Rulers"), "", "iconXRuler.png"));
             tableData.add(new ShortCut("", "", message("Input"), "", "iconInput.png"));
@@ -223,6 +222,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message("CopyToSystemClipboard"), "", "iconCopySystem.png"));
             tableData.add(new ShortCut("", "", message("LoadContentInSystemClipboard"), "", "iconImageSystem.png"));
             tableData.add(new ShortCut("", "", message("PasteContentInSystemClipboard"), "", "iconPasteSystem.png"));
+            tableData.add(new ShortCut("", "", message("SystemMethod"), "", "iconSystemOpen.png"));
             tableData.add(new ShortCut("", "", message("CustomizeColors"), "", "iconColorWheel.png"));
             tableData.add(new ShortCut("", "", message("ColorPalette"), "", "iconColor.png"));
             tableData.add(new ShortCut("", "", message("Help"), "", "iconClaw.png"));

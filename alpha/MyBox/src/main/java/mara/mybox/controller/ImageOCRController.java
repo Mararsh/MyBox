@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -104,6 +105,9 @@ public class ImageOCRController extends ImageViewerController {
                     UserConfig.setBoolean(baseName + "Start", startCheck.isSelected());
                 }
             });
+
+            startButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            tabPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

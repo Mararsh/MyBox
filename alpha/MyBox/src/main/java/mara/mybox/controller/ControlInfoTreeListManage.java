@@ -503,7 +503,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
             return;
         }
         if (name.contains(TitleSeparater)) {
-            popError(message("NodeNameNotInclude") + " \"" + TitleSeparater + "\"");
+            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
             return;
         }
         if (task != null) {
