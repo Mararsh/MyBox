@@ -39,6 +39,7 @@ public class InfoNode extends BaseData {
 
     public static final String RootIdentify = "MyBoxTreeRoot;;;";
     public static final String TitleSeparater = " > ";
+    public static final String IDPrefix = "ID:";
     public static final String TimePrefix = "Time:";
     public static final String TagsPrefix = "Tags:";
     public static final String TagSeparater = ";;;";
@@ -112,6 +113,7 @@ public class InfoNode extends BaseData {
     public boolean equal(InfoNode node) {
         return equal(this, node);
     }
+
 
     /*
         Static methods
@@ -655,6 +657,10 @@ public class InfoNode extends BaseData {
             return false;
         }
         return node1.getNodeid() == node2.getNodeid();
+    }
+
+    public static boolean isWebFavorite(String category) {
+        return Languages.matchIgnoreCase(category, InfoNode.WebFavorite);
     }
 
     public static InfoTreeManageController openManager(String category) {

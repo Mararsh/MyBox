@@ -171,10 +171,8 @@ public class ControlWebView extends BaseController {
                     if (nt == null) {
                         return;
                     }
+                    setWebViewLabel(nt.getMessage());
                     Platform.runLater(() -> {
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(nt.getMessage());
-                        }
                         alertError(nt.getMessage());
                     });
                 }
@@ -241,22 +239,16 @@ public class ControlWebView extends BaseController {
                         if (timer != null) {
                             timer.cancel();
                         }
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(message("Canceled"));
-                        }
+                        setWebViewLabel(message("Canceled"));
                         break;
                     case FAILED:
                         if (timer != null) {
                             timer.cancel();
                         }
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(message("Failed"));
-                        }
+                        setWebViewLabel(message("Failed"));
                         break;
                     default:
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(state.name());
-                        }
+                        setWebViewLabel(state.name());
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -285,16 +277,14 @@ public class ControlWebView extends BaseController {
             if (webViewLabel != null) {
                 String label;
                 if ("mouseover".equals(domEventType)) {
-                    label = href != null ? URLDecoder.decode(href, charset) : tag;
+                    label = href != null ? href : tag;
                 } else if ("mouseout".equals(domEventType)) {
                     label = "";
                 } else {
                     label = null;
                 }
                 if (label != null) {
-                    Platform.runLater(() -> {
-                        webViewLabel.setText(label);
-                    });
+                    setWebViewLabel(label);
                 }
             }
             if (element == null) {
@@ -358,11 +348,7 @@ public class ControlWebView extends BaseController {
     public void statusChanged(WebEvent<String> ev) {
         try {
 //            MyBoxLog.console(ev.toString());
-            if (webViewLabel != null) {
-                Platform.runLater(() -> {
-                    webViewLabel.setText(ev.getData());
-                });
-            }
+            setWebViewLabel(ev.getData());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -372,7 +358,7 @@ public class ControlWebView extends BaseController {
         try {
             if (webViewLabel != null && nv != null) {
                 Platform.runLater(() -> {
-                    webViewLabel.setText(URLDecoder.decode(nv, charset));
+                    setWebViewLabel(URLDecoder.decode(nv, charset));
                 });
             }
         } catch (Exception e) {
@@ -779,7 +765,13 @@ public class ControlWebView extends BaseController {
      */
     public void setWebViewLabel(String string) {
         if (webViewLabel != null) {
-            webViewLabel.setText(string);
+            Platform.runLater(() -> {
+                if (string == null || string.isBlank()) {
+                    webViewLabel.setText("");
+                } else {
+                    webViewLabel.setText(URLDecoder.decode(string, charset));
+                }
+            });
         }
     }
 

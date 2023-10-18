@@ -9,20 +9,23 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.InfoTreeNodeImportController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.InfoTreeNodeImportController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -42,14 +45,22 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
+                                          <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#AboutTreeInformation" text="%AboutTreeInformation" wrapText="true" />
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <CheckBox fx:id="replaceCheck" mnemonicParsing="false" text="%ReplaceExistedData" />
-                                                                <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%DownloadIcons" />
+                                                <Label text="%ExistedNode" />
+                                                <RadioButton fx:id="updateRadio" mnemonicParsing="false" selected="true" text="%ChangeAttributes">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="existedGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="skipRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" text="%NotChangeAttributes" toggleGroup="$existedGroup" />
+                                                <RadioButton fx:id="createRadio" layoutX="101.0" layoutY="10.0" mnemonicParsing="false" text="%CreateDuplicatedNode" toggleGroup="$existedGroup" />
                                                             </children>
                                                         </HBox>
+                                                          <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%DownloadIcons" />
                                                         <Separator prefWidth="200.0" />
                                                         <Label fx:id="formatLabel" minHeight="-Infinity" text="%TreeImportComments" wrapText="true" />
                                           <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">

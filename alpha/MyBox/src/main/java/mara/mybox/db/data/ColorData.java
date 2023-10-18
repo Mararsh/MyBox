@@ -306,7 +306,8 @@ public class ColorData extends BaseData {
                     + "LCH(ab): " + lchab + "\n"
                     + "CIE-L*uv: " + cieLuv + "\n"
                     + "LCH(uv): " + lchuv
-                    + (orderNumner == Float.MAX_VALUE ? "" : "\nOrderNumber: " + orderNumner);
+                    + (orderNumner == Float.MAX_VALUE ? ""
+                            : ("\n" + message("OrderSequence") + ": " + orderNumner));
         }
         return colorDisplay;
     }

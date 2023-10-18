@@ -587,14 +587,6 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
     }
 
     @FXML
-    protected void importExamples() {
-        InfoTreeNodeImportController controller
-                = (InfoTreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeImportFxml);
-        controller.setCaller(manager);
-        controller.importExamples();
-    }
-
-    @FXML
     public void infoTree() {
         infoTree(selected());
     }

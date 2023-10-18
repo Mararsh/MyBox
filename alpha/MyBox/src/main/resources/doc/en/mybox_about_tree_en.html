@@ -128,6 +128,23 @@
             <li>File format is text encoded with special delimiters. Exported text can be referred.</li>
             <li>Rulers of text format are displayed in interface, and example is provided.</li>
         </ul>
+        <p>Notice:</p>
+        <ul>
+            <li>Can not locate node by ID when import nodes, because ID is an attribute which couples application environment tightly:
+                <ul>
+                    <li>After node is exported, it can not keep pace with the application environment.</li>
+                    <li>When node is imported, its ID may be missed or conflicted in the imported environment.</li>
+                    <li>The hierarchy of imported nodes can not be defined by their IDs because the IDs may be incompatible with the imported environment.</li>
+                </ul>
+            </li>
+            <li>Although MyBox permits duplicated names of children nodes, it locates nodes by chain name when import nodes:
+                <ul>
+                    <li>Chain name is a stable attribute, which can identify and locate node uniquely in environment of "No duplicated names of children".</li>
+                    <li>To existed node, options: "Change attributes", "Not change attributes", and "Create node of duplicated name". </li>
+                    <li>Algorithm locates parent node in nearest way, that always queries recently written node at first. So the exported tree can be restored when imported.</li>
+                </ul>
+            </li>
+        </ul>
         <h3>5.5 Query and Select Nodes</h3>
         <p>To select nodes, following ways can be taken:</p>
         <ul>

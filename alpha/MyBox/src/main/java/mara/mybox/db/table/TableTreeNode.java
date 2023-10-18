@@ -62,8 +62,8 @@ public class TableTreeNode extends BaseTable<InfoNode> {
     public static final String QueryChildren
             = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
 
-    public static final String QueryTitle
-            = "SELECT * FROM Tree_Node WHERE parentid=? AND title=?";
+    public static final String QueryChild
+            = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid AND title=? ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
 
     public static final String DeleteID
             = "DELETE FROM Tree_Node WHERE nodeid=?";
@@ -207,7 +207,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryTitle)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryChild)) {
             statement.setLong(1, parent);
             statement.setString(2, title);
             return query(conn, statement);

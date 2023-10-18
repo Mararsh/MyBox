@@ -161,15 +161,15 @@ public class Languages {
         return isChinese() ? Languages.LocaleZhCN : Languages.LocaleEn;
     }
 
-    public static boolean match(String s, String ref) {
+    public static boolean match(String matchTo, String ref) {
         try {
-            if (s == null || ref == null) {
+            if (matchTo == null || ref == null) {
                 return false;
             }
-            return message("en", s).equals(ref)
-                    || message("zh", s).equals(ref)
-                    || message(s).equals(ref)
-                    || s.equals(ref);
+            return message("en", matchTo).equals(ref)
+                    || message("zh", matchTo).equals(ref)
+                    || message(matchTo).equals(ref)
+                    || matchTo.equals(ref);
         } catch (Exception e) {
             return false;
         }

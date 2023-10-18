@@ -255,7 +255,6 @@ public class MediaPlayerController extends BaseController {
         myStage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue observable, Boolean oldValue, Boolean newValue) {
-                MyBoxLog.console(myStage.isFullScreen());
                 if (myStage.isFullScreen()) {
                     enterFullScreen();
                 } else {
@@ -289,6 +288,18 @@ public class MediaPlayerController extends BaseController {
             }
         }
         return super.keyFilter(event);
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        zoomIn();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        zoomOut();
+        return true;
     }
 
     protected void initPlayer() {

@@ -7,6 +7,7 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
@@ -15,11 +16,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlInfoTreeList">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlInfoTreeList">
     <children>
         <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
-                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Select" wrapText="true" HBox.hgrow="ALWAYS" />
+            <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#AboutTreeInformation" text="%AboutTreeInformation" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -35,6 +36,7 @@ License:    Apache License Version 2.0
             <columns>
                 <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
                 <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
+            <TreeTableColumn fx:id="idColumn" text="%ID" />
                 <TreeTableColumn fx:id="valueColumn" prefWidth="120.0" text="%Value" />
                 <TreeTableColumn fx:id="timeColumn" prefWidth="180.0" text="%ModifiedTime" />
             </columns>

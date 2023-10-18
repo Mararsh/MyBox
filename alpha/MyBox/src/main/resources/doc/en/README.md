@@ -71,7 +71,7 @@ A file path can follow the command as argument to be opened directly by MyBox. E
 ## Versions       
 Contents of this document may be expired, but its links refer to the latest versions.     
 
-The latest versions and all archived versions can be downloaded in following addresses:             
+The latest versions and archived versions can be downloaded in following addresses:             
 
 | address | dowloads | readme | 
 | --- | --- | --- | 

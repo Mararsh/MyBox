@@ -61,7 +61,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     @FXML
     protected ControlInfoTreeList listController;
     @FXML
-    protected CheckBox timeCheck, tagsCheck, iconCheck,
+    protected CheckBox idCheck, timeCheck, tagsCheck, iconCheck,
             textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
     @FXML
     protected ComboBox<String> charsetSelector;
@@ -77,6 +77,14 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         try {
             super.initControls();
             infoTree = listController.treeView;
+
+            idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
+            idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "ID", idCheck.isSelected());
+                }
+            });
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -548,7 +556,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
 
     protected void writeTexts(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
-            textsWriter.write(AppValues.MyBoxSeparator + "\n");
+            textsWriter.write(AppValues.MyBoxSeparator + (idCheck.isSelected() ? node.getNodeid() : "") + "\n");
             textsWriter.write((parentName == null ? InfoNode.RootIdentify : parentName) + "\n");
             textsWriter.write(node.getTitle() + "\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
@@ -584,6 +592,9 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     protected void writeHtml(Connection conn, String parentName, InfoNode node, FileWriter writer, List<InfoNodeTag> tags) {
         try {
             writer.write(indent + indent + "<div id=\"" + node.getNodeid() + "\">\n");
+            if (idCheck.isSelected()) {
+                writer.write(indent + indent + indent + "<H3>" + message("ID") + ": " + node.getNodeid() + "</H3>\n");
+            }
             if (parentName != null) {
                 writer.write(indent + indent + indent + "<H3><PRE><CODE>" + parentName + "</CODE></PRE></H3>\n");
             }
@@ -618,6 +629,9 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     protected void writeXml(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             xmlWriter.write(indent + indent + "<" + message("Node") + ">\n");
+            if (idCheck.isSelected()) {
+                xmlWriter.write(indent + indent + indent + "<id>" + node.getNodeid() + "></id>\n");
+            }
             if (parentName != null) {
                 xmlWriter.write(indent + indent + indent + "<" + xmlTag("ParentNode")
                         + "><![CDATA[" + parentName + "]]></" + xmlTag("ParentNode") + ">\n");
@@ -662,6 +676,11 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 firstRow = false;
             }
             s.append(indent).append("{").append("\n");
+            if (idCheck.isSelected()) {
+                s.append(indent).append(indent)
+                        .append("\"").append(message("ID")).append("\": ")
+                        .append(node.getNodeid()).append(",\n");
+            }
             if (parentName != null) {
                 s.append(indent).append(indent)
                         .append("\"").append(message("ParentNode")).append("\": \"")

@@ -30,9 +30,11 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -50,6 +52,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     protected TableTreeNodeTag tableTreeNodeTag;
     protected String category;
 
+    @FXML
+    protected TreeTableColumn<InfoNode, Long> idColumn;
     @FXML
     protected TreeTableColumn<InfoNode, Date> timeColumn;
     @FXML
@@ -78,6 +82,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     public void initTree() {
         try {
             super.initTree();
+
+            idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
 
             timeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("updateTime"));
             timeColumn.setCellFactory(new TreeTableDateCell());
@@ -625,6 +631,14 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
             return;
         }
         infoController.loadDescendants(item.getValue());
+    }
+
+    @FXML
+    protected void importExamples() {
+        InfoTreeNodeImportController controller
+                = (InfoTreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeImportFxml);
+        controller.setCaller(infoController);
+        controller.importExamples();
     }
 
     @FXML
