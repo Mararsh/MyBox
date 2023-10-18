@@ -48,6 +48,9 @@ public class StyleButton {
                     return new StyleData(id, message("SaveAs"), "", "iconSaveAs.png");
             }
         }
+        if (id.startsWith("saved")) {
+            return new StyleData(id, "", message("SavedItems"), "", "iconBackup.png");
+        }
         if (id.startsWith("save")) {
             switch (id) {
                 case "saveButton":
@@ -693,9 +696,6 @@ public class StyleButton {
             return new StyleData(id, "", message("FileBackups"), "", "iconBackup.png");
         }
 
-        if (id.startsWith("saved")) {
-            return new StyleData(id, "", message("FileBackups"), "", "iconBackup.png");
-        }
         if (id.startsWith("onTop")) {
             return new StyleData(id, "", message("AlwayOnTop"), "", "iconDoubleUp.png");
         }

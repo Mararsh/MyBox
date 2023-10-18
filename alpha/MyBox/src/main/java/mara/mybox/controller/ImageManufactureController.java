@@ -89,6 +89,8 @@ public class ImageManufactureController extends ImageManufactureController_Actio
     @Override
     public boolean afterImageLoaded() {
         try {
+            scopeController.reset();
+
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
@@ -107,7 +109,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             finalRefineView();
 
             scopeController.setParameters(this);
-            scopeSavedController.setParameters(this);
+
             operationsController.resetOperationPanes();
 
             updateLabelString(message("Loaded"));

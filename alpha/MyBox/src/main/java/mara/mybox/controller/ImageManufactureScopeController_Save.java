@@ -58,7 +58,6 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
 
             @Override
             protected void whenSucceeded() {
-                scopesSavedController.loadTableData();
                 popSaved();
             }
         };
@@ -71,7 +70,6 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         }
         clearScope();
         this.scope = scope;
-        setScopeControls();
         isSettingValues = true;
         showScopeType(scope);
         showAreaData(scope);
@@ -80,6 +78,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         showDistanceValue(scope);
         eightNeighborCheck.setSelected(scope.isEightNeighbor());
         isSettingValues = false;
+        setScopeControls();
         if (scope.getScopeType() != ImageScope.ScopeType.Outline) {
             indicateScope();
         } else {
@@ -126,9 +125,9 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             return false;
         }
         try {
-            isSettingValues = true;
-            pointsController.clearAction();
-            isSettingValues = false;
+            pointsController.isSettingValues = true;
+            pointsController.tableData.clear();
+            pointsController.isSettingValues = false;
             areaExcludedCheck.setSelected(scope.isAreaExcluded());
             switch (scope.getScopeType()) {
                 case Matting:

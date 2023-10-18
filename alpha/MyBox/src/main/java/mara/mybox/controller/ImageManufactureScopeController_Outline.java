@@ -216,10 +216,16 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         makeOutline();
     }
 
+    public boolean validOutline() {
+        return image != null
+                && scope != null
+                && scope.getScopeType() == ImageScope.ScopeType.Outline
+                && scope.getOutlineSource() != null
+                && maskRectangleData != null;
+    }
+
     public void makeOutline() {
-        if (isSettingValues || image == null
-                || scope == null || scope.getScopeType() != ImageScope.ScopeType.Outline
-                || scope.getOutlineSource() == null || maskRectangleData == null) {
+        if (isSettingValues || !validOutline()) {
             return;
         }
         if (task != null) {
@@ -236,7 +242,8 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     outline = AlphaTools.outline(scope.getOutlineSource(),
                             maskRectangleData, (int) bgImage.getWidth(), (int) bgImage.getHeight(),
                             scopeOutlineKeepRatioCheck.isSelected());
-                    if (outline == null || task == null || isCancelled()) {
+                    if (outline == null || task == null || isCancelled()
+                            || !validOutline()) {
                         return false;
                     }
                     maskRectangleData = DoubleRectangle.xywh(

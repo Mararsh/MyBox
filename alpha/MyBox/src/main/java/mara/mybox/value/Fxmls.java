@@ -123,6 +123,7 @@ public class Fxmls {
     public static final String ImageManufactureCopyFxml = "/fxml/ImageManufactureCopy.fxml";
     public static final String ImageManufactureClipboardFxml = "/fxml/ImageManufactureClipboard.fxml";
     public static final String ImageManufacturePaletteFxml = "/fxml/ImageManufacturePalette.fxml";
+    public static final String ImageManufactureScopeSavedFxml = "/fxml/ImageManufactureScopeSaved.fxml";
     public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
     public static final String ImageManufactureScaleFxml = "/fxml/ImageManufactureScale.fxml";
     public static final String ImageManufactureCropFxml = "/fxml/ImageManufactureCrop.fxml";

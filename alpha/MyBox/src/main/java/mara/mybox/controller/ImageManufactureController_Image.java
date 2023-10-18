@@ -48,8 +48,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     protected ImageManufactureScopeController scopeController;
     @FXML
-    protected ImageManufactureScopesSavedController scopeSavedController;
-    @FXML
     protected ImageManufactureHistory hisController;
     @FXML
     protected ControlColorSet colorSetController;

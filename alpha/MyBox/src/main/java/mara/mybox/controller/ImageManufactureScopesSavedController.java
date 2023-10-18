@@ -16,9 +16,12 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -138,7 +141,6 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
         baseTitle = imageController.baseTitle;
         sourceFile = imageController.sourceFile;
         initScopesBox();
-        refreshStyle();
     }
 
     public void initScopesBox() {
@@ -196,10 +198,27 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
     public void useScope() {
         ImageScope selected = selectedItem();
         if (selected == null) {
+            popError(message("SelectToHandle"));
             return;
         }
         scopeController.showScope(selected);
         imageController.tabPane.getSelectionModel().select(imageController.scopeTab);
+        close();
     }
 
+    /*
+        static
+     */
+    public static ImageManufactureScopesSavedController load(ImageManufactureController parent) {
+        try {
+            ImageManufactureScopesSavedController controller = (ImageManufactureScopesSavedController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageManufactureScopeSavedFxml, false);
+            controller.setParameters(parent);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 }

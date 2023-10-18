@@ -181,12 +181,19 @@ public abstract class PixelsOperation {
             boolean[][] visited = new boolean[imageHeight][imageWidth];
             Queue<IntPoint> queue = new LinkedList<>();
             boolean eightNeighbor = scope.isEightNeighbor();
+            int x, y;
             for (IntPoint point : points) {
-                Color startColor = new Color(image.getRGB(point.getX(), point.getY()), true);
+                x = point.getX();
+                y = point.getY();
+                if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight) {
+                    continue;
+                }
+                Color startColor = new Color(image.getRGB(x, y), true);
                 queue.add(point);
                 while (!queue.isEmpty()) {
                     IntPoint p = queue.remove();
-                    int x = p.getX(), y = p.getY();
+                    x = p.getX();
+                    y = p.getY();
                     if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight
                             || visited[y][x]) {
                         continue;
@@ -227,12 +234,16 @@ public abstract class PixelsOperation {
     }
 
     protected Color operatePixel(BufferedImage target, int x, int y) {
-        int pixel = image.getRGB(x, y);
-        Color color = new Color(pixel, true);
-        if (pixel == 0 && skipTransparent) {
-            return color;
-        } else {
-            return operatePixel(target, color, x, y);
+        try {
+            int pixel = image.getRGB(x, y);
+            Color color = new Color(pixel, true);
+            if (pixel == 0 && skipTransparent) {
+                return color;
+            } else {
+                return operatePixel(target, color, x, y);
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 

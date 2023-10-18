@@ -33,7 +33,6 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
     protected TableColor tableColor;
     protected ImageManufactureController editor;
-    protected ImageManufactureScopesSavedController scopesSavedController;
     protected float opacity;
 
     @FXML

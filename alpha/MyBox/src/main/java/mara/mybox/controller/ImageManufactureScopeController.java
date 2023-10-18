@@ -243,20 +243,28 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         }
     }
 
+    public void reset() {
+        try {
+            sourceFile = null;
+            imageInformation = null;
+
+            isSettingValues = true;
+            scopeAllRadio.setSelected(true);
+            scope = null;
+            isSettingValues = false;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
     public void setParameters(ImageManufactureController parent) {
         try {
             this.parentController = parent;
             editor = parent;
-            scopesSavedController = editor.scopeSavedController;
             sourceFile = editor.sourceFile;
             imageInformation = editor.imageInformation;
 
-            loadImage(sourceFile, imageInformation, editor.image, parent.imageChanged);
-
-            isSettingValues = true;
-            scopeAllRadio.setSelected(true);
-            isSettingValues = false;
-
+            loadImage(sourceFile, imageInformation, editor.image, false);
             checkScopeType();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -387,6 +395,11 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void showSaved() {
+        ImageManufactureScopesSavedController.load(editor);
     }
 
 }

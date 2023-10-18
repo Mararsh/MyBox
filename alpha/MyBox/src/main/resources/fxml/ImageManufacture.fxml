@@ -230,7 +230,7 @@ License:    Apache License Version 2.0
                                         </TitledPane>
                                         <TitledPane fx:id="browsePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <VBox spacing="2.0"  maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" >
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
                                                         <fx:include fx:id="browse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBrowse.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
@@ -598,15 +598,6 @@ License:    Apache License Version 2.0
                                                         </children>
                                                     </VBox>
                                                 </ScrollPane>
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="scopeSavedTab" text="%SavedScopes">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                    <children>
-                                                        <fx:include fx:id="scopeSaved" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageManufactureScopeSaved.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                </VBox>
                                             </content>
                                         </Tab>
                                         <Tab fx:id="hisTab" text="%EditHistories">
