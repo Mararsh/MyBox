@@ -627,6 +627,13 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
+            if (!indexes.contains("Tree_Node_title_index".toLowerCase())) {
+                try (Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTreeNode.Create_Title_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
             if (!indexes.contains("Tree_Node_Tag_unique_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTreeNodeTag.Create_Unique_Index);
