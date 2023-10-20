@@ -47,31 +47,31 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                          <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#AboutTreeInformation" text="%AboutTreeInformation" wrapText="true" />
+                                                        <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#AboutTreeInformation" text="%AboutTreeInformation" wrapText="true" />
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                <Label text="%ExistedNode" />
-                                                <RadioButton fx:id="updateRadio" mnemonicParsing="false" selected="true" text="%ChangeAttributes">
-                                                   <toggleGroup>
-                                                      <ToggleGroup fx:id="existedGroup" />
-                                                   </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="skipRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" text="%NotChangeAttributes" toggleGroup="$existedGroup" />
-                                                <RadioButton fx:id="createRadio" layoutX="101.0" layoutY="10.0" mnemonicParsing="false" text="%CreateDuplicatedNode" toggleGroup="$existedGroup" />
+                                                                <Label text="%ExistedNode" />
+                                                                <RadioButton fx:id="updateRadio" mnemonicParsing="false" selected="true" text="%ChangeAttributes">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="existedGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="skipRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" text="%NotChangeAttributes" toggleGroup="$existedGroup" />
+                                                                <RadioButton fx:id="createRadio" layoutX="101.0" layoutY="10.0" mnemonicParsing="false" text="%CreateDuplicatedChild" toggleGroup="$existedGroup" />
                                                             </children>
                                                         </HBox>
-                                                          <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%DownloadIcons" />
+                                                        <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%DownloadIcons" />
                                                         <Separator prefWidth="200.0" />
                                                         <Label fx:id="formatLabel" minHeight="-Infinity" text="%TreeImportComments" wrapText="true" />
-                                          <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconDemo.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
+                                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconDemo.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
