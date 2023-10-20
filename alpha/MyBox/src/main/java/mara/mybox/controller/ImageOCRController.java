@@ -23,6 +23,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -204,6 +205,35 @@ public class ImageOCRController extends ImageViewerController {
             MyBoxLog.debug(e);
             return false;
         }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == processTab) {
+            if (preprocessController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (tab == resultsTab) {
+
+            if (htmlTab.isSelected()) {
+                if (htmlController.keyEventsFilter(event)) {
+                    return true;
+                }
+
+            } else if (regionsTab.isSelected()) {
+                if (regionsTableController.keyEventsFilter(event)) {
+                    return true;
+                }
+
+            } else if (wordsTab.isSelected()) {
+                if (wordsTableController.keyEventsFilter(event)) {
+                    return true;
+                }
+            }
+
+        }
+        return super.keyEventsFilter(event);
     }
 
     /*

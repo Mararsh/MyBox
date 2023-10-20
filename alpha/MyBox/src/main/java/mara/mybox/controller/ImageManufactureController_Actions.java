@@ -103,7 +103,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         if (undoButton.isDisabled()) {
             return;
         }
-        hisController.loadImageHistory(hisController.historyIndex + 1);
+        loadImageHistory(historyIndex + 1);
     }
 
     @FXML
@@ -112,7 +112,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         if (redoButton.isDisabled()) {
             return;
         }
-        hisController.loadImageHistory(hisController.historyIndex - 1);
+        loadImageHistory(historyIndex - 1);
     }
 
     @FXML
@@ -261,11 +261,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 return true;
 
             } else if (tab == scopeTab) {
-                ImageScopePopController.open(scopeController);
-                return true;
-
-            } else if (tab == hisTab) {
-                hisController.popHistory();
+                scopeController.popAction();
                 return true;
 
             }

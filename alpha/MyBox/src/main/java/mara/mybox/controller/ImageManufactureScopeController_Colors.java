@@ -54,7 +54,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             saveColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
 
             colorSetController.init(this, baseName + "Color", Color.THISTLE);
-            colorSetController.hideRect();
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {

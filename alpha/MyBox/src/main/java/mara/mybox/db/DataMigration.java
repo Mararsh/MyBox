@@ -171,6 +171,9 @@ public class DataMigration {
                 if (lastVersion < 6007007) {
                     updateIn677(conn);
                 }
+                if (lastVersion < 6007008) {
+                    updateIn678(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -179,6 +182,19 @@ public class DataMigration {
             MyBoxLog.debug(e);
         }
         return true;
+    }
+
+    private static void updateIn678(Connection conn) {
+        try (Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.7.8...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("DROP INDEX Tree_Node_title_index");
+            statement.executeUpdate(TableTreeNode.Create_Title_Index);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn677(Connection conn) {

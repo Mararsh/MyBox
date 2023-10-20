@@ -493,11 +493,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     protected long clearData() {
-        int size = tableData.size();
-        isSettingValues = true;
-        tableData.clear();
-        isSettingValues = false;
-        return size;
+        return tableData.size();
     }
 
     protected void afterClear() {

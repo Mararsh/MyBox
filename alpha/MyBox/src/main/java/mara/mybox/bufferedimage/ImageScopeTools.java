@@ -80,7 +80,7 @@ public class ImageScopeTools {
             targetScope.setColorExcluded(sourceScope.isColorExcluded());
             targetScope.setDistanceSquareRoot(sourceScope.isDistanceSquareRoot());
             targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
-            targetScope.setOpacity(sourceScope.getOpacity());
+            targetScope.setMaskOpacity(sourceScope.getMaskOpacity());
             targetScope.setCreateTime(sourceScope.getCreateTime());
             targetScope.setOutline(sourceScope.getOutline());
             targetScope.setEightNeighbor(sourceScope.isEightNeighbor());

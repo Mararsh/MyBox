@@ -51,7 +51,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             = "CREATE INDEX Tree_Node_parent_index on Tree_Node ( parentid )";
 
     public static final String Create_Title_Index
-            = "CREATE INDEX Tree_Node_title_index on Tree_Node ( title )";
+            = "CREATE INDEX Tree_Node_title_index on Tree_Node ( parentid, title )";
 
     public static final String QueryID
             = "SELECT * FROM Tree_Node WHERE nodeid=?";
@@ -63,7 +63,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
 
     public static final String QueryChild
-            = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid AND title=? ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
+            = "SELECT * FROM Tree_Node WHERE parentid=? AND title=? AND nodeid<>parentid ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
 
     public static final String DeleteID
             = "DELETE FROM Tree_Node WHERE nodeid=?";

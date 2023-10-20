@@ -20,6 +20,7 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.Colors;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -43,7 +44,8 @@ public class ImageScope extends BaseData {
     protected float hsbDistance;
     protected boolean areaExcluded, colorExcluded, eightNeighbor, distanceSquareRoot;
     protected Image image, clip;
-    protected double opacity;
+    protected Color maskColor;
+    protected float maskOpacity;
     protected Date createTime, modifyTime;
     protected BufferedImage outlineSource, outline;
 
@@ -79,7 +81,8 @@ public class ImageScope extends BaseData {
         colorDistance = 50;
         colorDistanceSquare = colorDistance * colorDistance;
         hsbDistance = 0.5f;
-        opacity = 0.5f;
+        maskColor = Colors.TRANSPARENT;
+        maskOpacity = 0.5f;
         areaExcluded = colorExcluded = distanceSquareRoot = false;
         eightNeighbor = true;
         if (image != null) {
@@ -655,12 +658,20 @@ public class ImageScope extends BaseData {
         return colorDistance;
     }
 
-    public double getOpacity() {
-        return opacity;
+    public float getMaskOpacity() {
+        return maskOpacity;
     }
 
-    public void setOpacity(double opacity) {
-        this.opacity = opacity;
+    public void setMaskOpacity(float maskOpacity) {
+        this.maskOpacity = maskOpacity;
+    }
+
+    public Color getMaskColor() {
+        return maskColor;
+    }
+
+    public void setMaskColor(Color maskColor) {
+        this.maskColor = maskColor;
     }
 
     public ScopeType getScopeType() {

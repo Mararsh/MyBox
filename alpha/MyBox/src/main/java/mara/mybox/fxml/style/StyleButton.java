@@ -40,18 +40,15 @@ public class StyleButton {
                     return new StyleData(id, message("Start"), "", "iconStart.png");
             }
         }
-        if (id.startsWith("saveAs")) {
-            switch (id) {
-                case "saveAsButton":
-                    return new StyleData(id, message("SaveAs"), "F11", "iconSaveAs.png");
-                default:
-                    return new StyleData(id, message("SaveAs"), "", "iconSaveAs.png");
-            }
-        }
-        if (id.startsWith("saved")) {
-            return new StyleData(id, "", message("SavedItems"), "", "iconBackup.png");
-        }
         if (id.startsWith("save")) {
+            if (id.startsWith("saveAs")) {
+                switch (id) {
+                    case "saveAsButton":
+                        return new StyleData(id, message("SaveAs"), "F11", "iconSaveAs.png");
+                    default:
+                        return new StyleData(id, message("SaveAs"), "", "iconSaveAs.png");
+                }
+            }
             switch (id) {
                 case "saveButton":
                     return new StyleData(id, message("Save"), "F2 / CTRL+s / ALT+s", "iconSave.png");
@@ -61,6 +58,8 @@ public class StyleButton {
                     return new StyleData(id, message("SaveAsTiff"), "", "iconTIF.png");
                 case "savePdfButton":
                     return new StyleData(id, message("SaveAsPDF"), "", "iconPDF.png");
+                case "savedScopesButton":
+                    return new StyleData(id, message("SavedScopes"), "", "iconBackup.png");
                 default:
                     return new StyleData(id, message("Save"), "", "iconSave.png");
             }

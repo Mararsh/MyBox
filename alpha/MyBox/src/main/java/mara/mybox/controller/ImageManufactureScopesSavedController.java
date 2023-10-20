@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -44,9 +45,11 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
     @FXML
     protected TableColumn<ImageScope, Date> modifyColumn, createColumn;
     @FXML
-    protected Button useScopeButton;
+    protected Button useButton;
     @FXML
     protected CheckBox shareCheck;
+    @FXML
+    protected Label fileLabel;
 
     @Override
     protected void initColumns() {
@@ -134,13 +137,27 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
     }
 
     public void setParameters(ImageManufactureController parent) {
-        this.parentController = parent;
-        imageController = parent;
-        scopeController = imageController.scopeController;
-        baseName = imageController.baseName;
-        baseTitle = imageController.baseTitle;
-        sourceFile = imageController.sourceFile;
-        initScopesBox();
+        try {
+            if (parent == null) {
+                close();
+                return;
+            }
+            this.parentController = parent;
+            imageController = parent;
+            scopeController = imageController.scopeController;
+            baseName = imageController.baseName;
+            baseTitle = imageController.baseTitle;
+            sourceFile = imageController.sourceFile;
+
+            if (sourceFile != null) {
+                fileLabel.setText(sourceFile.getAbsolutePath());
+                setTitle(baseTitle + " - " + sourceFile.getAbsolutePath());
+            }
+
+            initScopesBox();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void initScopesBox() {
@@ -178,6 +195,12 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
         }
     }
 
+    protected boolean validSource() {
+        return scopeController != null
+                && imageController != null
+                && imageController.isShowing();
+    }
+
     @Override
     protected void checkButtons() {
         if (isSettingValues) {
@@ -186,7 +209,7 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
         super.checkButtons();
 
         boolean none = isNoneSelected();
-        useScopeButton.setDisable(none);
+        useButton.setDisable(none || !validSource());
     }
 
     @Override
@@ -196,6 +219,10 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
 
     @FXML
     public void useScope() {
+        if (!validSource()) {
+            popError(message("InvalidData"));
+            return;
+        }
         ImageScope selected = selectedItem();
         if (selected == null) {
             popError(message("SelectToHandle"));

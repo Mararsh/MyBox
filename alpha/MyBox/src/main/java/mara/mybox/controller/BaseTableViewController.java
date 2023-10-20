@@ -264,14 +264,18 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     protected List<P> selectedItems() {
         try {
-            List<P> items = tableView.getSelectionModel().getSelectedItems();
-            if (items != null) {
+            List<P> selectedItems = tableView.getSelectionModel().getSelectedItems();
+            if (selectedItems != null && !selectedItems.isEmpty()) {
+                List<P> items = new ArrayList<>();
+                for (P item : selectedItems) {
+                    items.add(item);
+                }
                 return items;
             }
-            List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-            if (selected != null && !selected.isEmpty()) {
-                items = new ArrayList<>();
-                for (int index : selected) {
+            List<Integer> selectedIndices = tableView.getSelectionModel().getSelectedIndices();
+            if (selectedIndices != null && !selectedIndices.isEmpty()) {
+                List<P> items = new ArrayList<>();
+                for (int index : selectedIndices) {
                     items.add(tableData.get(index));
                 }
                 return items;
@@ -393,7 +397,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         try {
             List<P> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
-                popError(message("SelectToHandle"));
+                clearAction();
                 return;
             }
             tableData.removeAll(selected);

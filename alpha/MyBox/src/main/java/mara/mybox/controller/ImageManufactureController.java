@@ -4,7 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -48,7 +51,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             super.initControls();
 
             initCreatePane();
-            initHisTab();
             initBackupsTab();
             initEditBar();
 
@@ -78,14 +80,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         }
     }
 
-    protected void initHisTab() {
-        try {
-            hisController.setParameters(this);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     public boolean afterImageLoaded() {
         try {
@@ -102,8 +96,8 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             imageChanged = false;
             resetImagePane();
 
-            hisTab.setDisable(sourceFile == null);
-            hisController.loadHistories();
+            historyButton.setDisable(sourceFile == null);
+
             backupController.loadBackups(sourceFile);
 
             finalRefineView();
@@ -113,6 +107,8 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             operationsController.resetOperationPanes();
 
             updateLabelString(message("Loaded"));
+
+            recordImageHistory(ImageOperation.Load, null, null, image);
 
             return true;
         } catch (Exception e) {
@@ -154,6 +150,23 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         super.setImageChanged(imageChanged);
         recoverButton.setDisable(!imageChanged);
     }
+
+    @FXML
+    public void showHistories() {
+        ImageManufactureHistoriesController.open(this);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == scopeTab) {
+            if (scopeController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
+    }
+
 
     /*
         static methods

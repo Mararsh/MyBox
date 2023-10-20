@@ -25,25 +25,25 @@ public class FileCopyTools {
 
     public static boolean copyFile(File sourceFile, File targetFile, boolean isCanReplace, boolean isCopyAttrinutes) {
         try {
-            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
+            if (sourceFile == null || !sourceFile.isFile() || !sourceFile.exists()) {
                 return false;
             }
-            if (!targetFile.exists()) {
+            if (isCanReplace) {
+                if (isCopyAttrinutes) {
+                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                } else {
+                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+                }
+            } else {
                 if (isCopyAttrinutes) {
                     Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()), StandardCopyOption.COPY_ATTRIBUTES);
                 } else {
                     Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()));
                 }
-            } else if (!isCanReplace || targetFile.isDirectory()) {
-                return false;
-            } else if (isCopyAttrinutes) {
-                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-            } else {
-                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e + "\n" + "Source:" + sourceFile + "\n" + "Target:" + targetFile);
             return false;
         }
     }

@@ -123,6 +123,7 @@ public class Fxmls {
     public static final String ImageManufactureCopyFxml = "/fxml/ImageManufactureCopy.fxml";
     public static final String ImageManufactureClipboardFxml = "/fxml/ImageManufactureClipboard.fxml";
     public static final String ImageManufacturePaletteFxml = "/fxml/ImageManufacturePalette.fxml";
+    public static final String ImageManufactureHistoriesFxml = "/fxml/ImageManufactureHistories.fxml";
     public static final String ImageManufactureScopeSavedFxml = "/fxml/ImageManufactureScopeSaved.fxml";
     public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
     public static final String ImageManufactureScaleFxml = "/fxml/ImageManufactureScale.fxml";
@@ -208,7 +209,6 @@ public class Fxmls {
     public static final String ImageBase64Fxml = "/fxml/ImageBase64.fxml";
 
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
-    public static final String ImageScopePopFxml = "/fxml/ImageScopePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";

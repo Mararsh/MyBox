@@ -11,6 +11,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
@@ -106,11 +107,22 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                 }
             });
 
-            opacity = UserConfig.getFloat(baseName + "ScopeOpacity", 0.5f);
+            maskColorController.init(this, baseName + "MaskColor", Color.TRANSPARENT);
+            maskColor = maskColorController.awtColor();
+            maskColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    maskColor = maskColorController.awtColor();
+                    scope.setMaskColor(maskColor);
+                    redrawMaskShape();
+                }
+            });
+
+            maskOpacity = UserConfig.getFloat(baseName + "ScopeOpacity", 0.5f);
             opacitySelector.getItems().addAll(
                     Arrays.asList("0.5", "0.2", "1", "0", "0.8", "0.3", "0.6", "0.7", "0.9", "0.4")
             );
-            opacitySelector.setValue(opacity + "");
+            opacitySelector.setValue(maskOpacity + "");
             opacitySelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
@@ -120,10 +132,10 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                         }
                         float f = Float.parseFloat(newVal);
                         if (f >= 0 && f <= 1.0) {
-                            opacity = f;
+                            maskOpacity = f;
                             ValidationTools.setEditorNormal(opacitySelector);
                             UserConfig.setFloat(baseName + "ScopeOpacity", f);
-                            scope.setOpacity(opacity);
+                            scope.setMaskOpacity(maskOpacity);
                             redrawMaskShape();
                         } else {
                             ValidationTools.setEditorBadStyle(opacitySelector);

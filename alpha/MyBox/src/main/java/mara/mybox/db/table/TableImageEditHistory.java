@@ -72,12 +72,23 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     public static final String QueryFile
             = "SELECT * FROM Image_Edit_History  WHERE history_location=? OR thumbnail_file=?";
 
-    public File path(Connection conn, File srcFile) {
-        if (conn == null || srcFile == null || !srcFile.exists()) {
+    public File path(File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return path(conn, file);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public File path(Connection conn, File file) {
+        if (conn == null || file == null || !file.exists()) {
             return null;
         }
         try (PreparedStatement query = conn.prepareStatement(QueryPath)) {
-            query.setString(1, srcFile.getAbsolutePath());
+            query.setString(1, file.getAbsolutePath());
             ImageEditHistory his = query(conn, query);
             if (his != null) {
                 File hisFile = his.getHistoryFile();
@@ -136,19 +147,25 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         return records;
     }
 
-    public List<ImageEditHistory> addHistory(Connection conn, ImageEditHistory his) {
-        if (conn == null || !ImageEditHistory.valid(his)) {
+    public ImageEditHistory index(Connection conn, File srcFile, int index) {
+        List<ImageEditHistory> records = read(conn, srcFile);
+        if (records == null || srcFile == null || !srcFile.exists()) {
             return null;
         }
-        try {
-            his = super.insertData(conn, his);
-            if (his == null) {
-                return null;
-            }
-            return read(conn, his.getImageFile());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        int size = records.size();
+        if (index >= 0 && index < size) {
+            return records.get(index);
+        } else {
             return null;
+        }
+    }
+
+    public int count(Connection conn, File file) {
+        List<ImageEditHistory> records = read(conn, file);
+        if (records == null) {
+            return -1;
+        } else {
+            return records.size();
         }
     }
 
@@ -178,36 +195,39 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         return count;
     }
 
-    public void clearHistories(SingletonTask task, File srcFile) {
+    public long clearHistories(SingletonTask task, File srcFile) {
+        long count = 0;
         if (srcFile == null) {
-            return;
+            return count;
         }
         try (Connection conn = DerbyBase.getConnection()) {
             List<String> files = new ArrayList<>();
             files.add(srcFile.getAbsolutePath());
-            clearHistories(task, conn, files);
+            return clearHistories(task, conn, files);
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return count;
         }
     }
 
-    public void clearHistories(SingletonTask task, Connection conn, List<String> files) {
+    public long clearHistories(SingletonTask task, Connection conn, List<String> files) {
+        long count = 0;
         if (conn == null || files == null || files.isEmpty()) {
-            return;
+            return count;
         }
         taskInfo(task, QueryHistories);
         try (PreparedStatement statement = conn.prepareStatement(QueryHistories)) {
             conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
-                    return;
+                    return count;
                 }
                 taskInfo(task, message("Check") + ": " + file);
                 statement.setString(1, file);
                 try (ResultSet results = statement.executeQuery()) {
                     while (results.next()) {
                         if (task != null && task.isCancelled()) {
-                            return;
+                            return count;
                         }
                         ImageEditHistory data = readData(results);
                         File hisFile = data.getHistoryFile();
@@ -230,13 +250,13 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         }
         taskInfo(task, DeleteHistories);
         if (task != null && task.isCancelled()) {
-            return;
+            return count;
         }
         try (PreparedStatement statement = conn.prepareStatement(DeleteHistories)) {
             conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
-                    return;
+                    return count;
                 }
                 taskInfo(task, message("Clear") + ": " + file);
                 statement.setString(1, file);
@@ -245,6 +265,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         } catch (Exception e) {
             taskError(task, e.toString() + "\n" + tableName);
         }
+        return count;
     }
 
     public int clearAll() {

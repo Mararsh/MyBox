@@ -1,9 +1,17 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.sql.Connection;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -13,10 +21,22 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ImageEditHistory;
+import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileNameTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -29,6 +49,11 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     protected int newWidth, newHeight;
     protected ImageOperation operation;
 
+    protected TableImageEditHistory tableImageEditHistory;
+    protected String imageHistoriesRootPath;
+    protected File imageHistoriesPath;
+    protected int historyIndex, hisSize;
+
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
         Text, RichText, Convolution,
@@ -38,7 +63,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     protected TitledPane createPane;
     @FXML
-    protected Tab imageTab, scopeTab, hisTab;
+    protected Tab imageTab, scopeTab;
     @FXML
     protected ImageView maskView;
     @FXML
@@ -48,11 +73,21 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     protected ImageManufactureScopeController scopeController;
     @FXML
-    protected ImageManufactureHistory hisController;
-    @FXML
     protected ControlColorSet colorSetController;
     @FXML
-    protected Button viewImageButton;
+    protected Button historyButton, viewImageButton;
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            tableImageEditHistory = new TableImageEditHistory();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     @Override
     public void refinePane() {
@@ -250,7 +285,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     public void updateImage(ImageManufactureController_Image.ImageOperation operation, String objectType, String opType, Image newImage, long cost) {
         try {
-            hisController.recordImageHistory(operation, objectType, opType, newImage);
+            recordImageHistory(operation, objectType, opType, newImage);
             String info = operation == null ? "" : message(operation.name());
             if (objectType != null) {
                 info += "  " + message(objectType);
@@ -285,7 +320,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         try {
             updateImage(newImage);
             scopeController.updateImage(newImage);
-            hisController.recordImageHistory(operation, null, null, newImage);
+            recordImageHistory(operation, null, null, newImage);
             updateLabelsTitle();
             updateLabel(operation);
         } catch (Exception e) {
@@ -299,6 +334,196 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     public void updateLabelString(String info) {
         infoLabel.setText(info);
+    }
+
+    protected void setHistoryIndex(int index) {
+        historyIndex = index;
+        undoButton.setDisable(historyIndex < 0 || historyIndex >= hisSize - 1);
+        redoButton.setDisable(historyIndex <= 0);
+    }
+
+    protected void recordImageHistory(ImageOperation operation,
+            String objectType, String opType, Image hisImage) {
+        if (sourceFile == null || !UserConfig.getBoolean("ImageHistoriesRecord", true)) {
+            hisSize = 0;
+            setHistoryIndex(-1);
+            return;
+        }
+        if (operation == null || hisImage == null) {
+            return;
+        }
+        if (operation == ImageOperation.Load
+                && !UserConfig.getBoolean("ImageHistoriesRecordLoading", true)) {
+            return;
+        }
+        SingletonTask recordTask = new SingletonTask<Void>(this) {
+            private File currentFile;
+            private ImageEditHistory his;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    currentFile = sourceFile;
+                    if (imageHistoriesPath == null) {
+                        imageHistoriesPath = tableImageEditHistory.path(conn, currentFile);
+                        if (imageHistoriesPath == null) {
+                            String fname = currentFile.getName();
+                            String subPath = FileNameTools.prefix(fname) + FileNameTools.suffix(fname);
+                            imageHistoriesPath = new File(imageHistoriesRootPath + File.separator
+                                    + subPath + (new Date()).getTime());
+                        }
+                    }
+                    writeRecord(conn);
+                    hisSize = tableImageEditHistory.count(conn, currentFile);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            private boolean writeRecord(Connection conn) {
+                try {
+                    BufferedImage bufferedImage = FxImageTools.toBufferedImage(hisImage);
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    String hisname = makeHisName();
+                    while (new File(hisname).exists()) {
+                        hisname = makeHisName();
+                    }
+                    File hisFile = new File(hisname + ".png");
+                    if (!ImageFileWriters.writeImageFile(bufferedImage, "png", hisFile.getAbsolutePath())) {
+                        return false;
+                    }
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    File thumbFile = new File(hisname + "_thumbnail.png");
+                    BufferedImage thumb = ScaleTools.scaleImageWidthKeep(bufferedImage, AppVariables.thumbnailWidth);
+                    if (!ImageFileWriters.writeImageFile(thumb, "png", thumbFile.getAbsolutePath())) {
+                        return false;
+                    }
+                    his = ImageEditHistory.create()
+                            .setImageFile(currentFile)
+                            .setHistoryFile(hisFile)
+                            .setThumbnailFile(thumbFile)
+                            .setThumbnail(SwingFXUtils.toFXImage(thumb, null))
+                            .setUpdateType(operation.name())
+                            .setObjectType(objectType)
+                            .setOpType(opType)
+                            .setOperationTime(new Date());
+                    ImageScope scope = scopeController.scope;
+                    if (scope != null) {
+                        if (scope.getScopeType() != null) {
+                            his.setScopeType(scope.getScopeType().name());
+                        }
+                        if (scope.getName() != null) {
+                            his.setScopeName(scope.getName());
+                        }
+                    }
+                    his = tableImageEditHistory.insertData(conn, his);
+                    return his != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            private String makeHisName() {
+                String prefix = FileNameTools.prefix(currentFile.getName());
+                if (framesNumber > 1) {
+                    prefix += "-frame" + frameIndex;
+                }
+                String name = imageHistoriesPath.getAbsolutePath() + File.separator
+                        + prefix + "_" + (new Date().getTime()) + "_" + operation;
+                if (objectType != null && !objectType.trim().isEmpty()) {
+                    name += "_" + objectType
+                            + "_" + new Random().nextInt(1000);
+                }
+                if (opType != null && !opType.trim().isEmpty()) {
+                    name += "_" + opType
+                            + "_" + new Random().nextInt(1000);
+                }
+                name += "_" + new Random().nextInt(1000);
+                return name;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (his != null) {
+                    if (currentFile.equals(sourceFile)) {
+                        setHistoryIndex(0);
+                    }
+                    ImageManufactureHistoriesController.updateList(currentFile);
+                }
+            }
+
+            @Override
+            protected void whenFailed() {
+                MyBoxLog.console(error);
+            }
+
+        };
+        start(recordTask, false);
+    }
+
+    protected void loadImageHistory(int index) {
+        if (sourceFile == null) {
+            popError(message("InvalidData"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            private Image hisImage;
+            private ImageEditHistory his;
+
+            @Override
+
+            protected boolean handle() {
+                hisSize = 0;
+                his = null;
+                hisImage = null;
+                try (Connection conn = DerbyBase.getConnection()) {
+                    List<ImageEditHistory> records = tableImageEditHistory.read(conn, sourceFile);
+                    if (records != null) {
+                        hisSize = records.size();
+                        if (hisSize > 0) {
+                            int vindex = index;
+                            if (vindex < 0) {
+                                vindex = 0;
+                            }
+                            if (vindex >= hisSize) {
+                                vindex = hisSize - 1;
+                            }
+                            his = records.get(vindex);
+                            hisImage = his.historyImage();
+                        }
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (hisImage == null) {
+                    setHistoryIndex(-1);
+                } else {
+                    String info = MessageFormat.format(message("CurrentImageSetAs"),
+                            DateTools.datetimeToString(his.getOperationTime()) + " " + his.getDesc());
+                    popInformation(info);
+                    updateImage(hisImage, message("History"));
+                    setHistoryIndex(index);
+                }
+            }
+
+        };
+        start(task, message("loadImageHistory"));
     }
 
 }

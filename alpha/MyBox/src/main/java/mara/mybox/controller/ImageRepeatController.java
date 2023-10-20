@@ -285,7 +285,12 @@ public class ImageRepeatController extends ImageViewerController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (tabPane.getSelectionModel().getSelectedItem() == repeatTab) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == scaleTab) {
+            if (scaleController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (tab == repeatTab) {
             if (repeatController.keyEventsFilter(event)) {
                 return true;
             }

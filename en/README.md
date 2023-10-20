@@ -12,7 +12,7 @@ This is desktop application based on JavaFx to provide simple and easy functions
      - Show button "Open by system method" in interfaces of handling file.                                                      
      - List all showing windows. Options to close or set/disable "Always in top" against selected windows.                                                        
 * Improved:                                                                                            
-     - Click color block to pop paletter.                                                      
+     - Click color block to pop palette.                                                      
      - Click button to pop file backups, rather than always refresh the list when file is saved.                                                     
      - Shape example is loaded as user required, rather than set it by default when add shape.                                                      
      - In interface of handling data:                                                      

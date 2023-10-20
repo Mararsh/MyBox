@@ -104,6 +104,7 @@ public class ImagePopController extends BaseImageController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         if (sourceImageView != null) {
             loadImage(sourceImageView.getImage());

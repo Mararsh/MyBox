@@ -33,7 +33,8 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
     protected TableColor tableColor;
     protected ImageManufactureController editor;
-    protected float opacity;
+    protected java.awt.Color maskColor;
+    protected float maskOpacity;
 
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
@@ -46,7 +47,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
-    protected ControlColorSet colorSetController;
+    protected ControlColorSet colorSetController, maskColorController;
     @FXML
     protected ListView<Color> colorsList;
     @FXML
@@ -176,13 +177,6 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             MyBoxLog.debug(e);
             return false;
         }
-    }
-
-    @FXML
-    @Override
-    public boolean popAction() {
-        ImageScopePopController.open((ImageManufactureScopeController) this);
-        return true;
     }
 
     public boolean isValidScope() {

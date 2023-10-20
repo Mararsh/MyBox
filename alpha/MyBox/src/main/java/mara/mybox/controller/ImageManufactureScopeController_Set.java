@@ -74,7 +74,8 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             if (image == null || scope == null) {
                 return;
             }
-            scope.setOpacity(opacity);
+            scope.setMaskOpacity(maskOpacity);
+            scope.setMaskColor(maskColor);
             pickColors();
             isSettingValues = true;
             switch (scope.getScopeType()) {
@@ -146,7 +147,8 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             } else {
                 scope = new ImageScope();
             }
-            scope.setOpacity(opacity);
+            scope.setMaskOpacity(maskOpacity);
+            scope.setMaskColor(maskColor);
             resetShapeOptions();
 
             opPane.getChildren().clear();

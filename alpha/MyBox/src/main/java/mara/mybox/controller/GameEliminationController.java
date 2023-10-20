@@ -166,7 +166,6 @@ public class GameEliminationController extends BaseController {
             minimumAdjacent = 3;
 
             colorSetController.init(this, baseName + "Color", Color.RED);
-            colorSetController.hideRect();
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,

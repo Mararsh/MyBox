@@ -20,7 +20,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureScopesSavedController">
    <top>
       <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
@@ -31,6 +30,12 @@ License:    Apache License Version 2.0
             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
          </padding>
          <children>
+            <HBox alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <Label fx:id="fileLabel1" text="%File" />
+                  <Label fx:id="fileLabel" minHeight="-Infinity" wrapText="true" />
+               </children>
+            </HBox>
               <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                   <children>
                       <Button fx:id="refreshButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
@@ -60,7 +65,7 @@ License:    Apache License Version 2.0
                               </ImageView>
                           </graphic>
                       </Button>
-                      <Button fx:id="useScopeButton" mnemonicParsing="false" onAction="#useScope">
+                      <Button fx:id="useButton" mnemonicParsing="false" onAction="#useScope">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                   <image>
@@ -79,7 +84,7 @@ License:    Apache License Version 2.0
                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                      </graphic>
                   </TableColumn>
-                  <TableColumn fx:id="nameColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="-1.0" text="%Name" />
+                  <TableColumn fx:id="nameColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="300.0" prefWidth="-1.0" text="%Name" />
                   <TableColumn fx:id="scopeTypeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="%ScopeType" />
                   <TableColumn fx:id="colorTypeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="%ColorType" />
                   <TableColumn fx:id="areaExcludeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="%AreaExclude" />

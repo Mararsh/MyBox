@@ -235,7 +235,6 @@ public class MediaPlayerController extends BaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(stopButton, new Tooltip(message("Stop") + "\nq / Q"));
             NodeStyleTools.setTooltip(fullScreenButton, new Tooltip(message("FullScreen") + "\nf / F"));
-            NodeStyleTools.setTooltip(paneSizeButton, new Tooltip(message("PaneSize") + "\np / P"));
             NodeStyleTools.setTooltip(soundButton, new Tooltip(message("Mute") + "\nm / M"));
             NodeStyleTools.setTooltip(dataButton, new Tooltip(message("ManageMediaLists")));
             NodeStyleTools.setTooltip(supportTipsView, new Tooltip(message("MediaPlayerSupports")));
@@ -282,12 +281,15 @@ public class MediaPlayerController extends BaseController {
                 case F:
                     fullScreenButton.fire();
                     return true;
-                case P:
-                    paneSizeButton.fire();
-                    return true;
             }
         }
         return super.keyFilter(event);
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        paneSize();
+        return true;
     }
 
     @Override
