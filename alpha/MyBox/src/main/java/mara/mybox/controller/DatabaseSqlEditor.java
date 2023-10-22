@@ -127,7 +127,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                         Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
                         try {
-                            TableStringValues.add(conn, hisName(), sql);
+                            TableStringValues.add(conn, editorName(), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -183,20 +183,9 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
         PopTools.popSqlExamples(this, valueInput, null, false, event);
     }
 
-    protected String hisName() {
+    @Override
+    protected String editorName() {
         return "SQLHistories" + (internal ? "Internal" : "");
-    }
-
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean(hisName() + "PopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, hisName(), false, true);
     }
 
     @FXML

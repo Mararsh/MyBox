@@ -59,6 +59,8 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             treeController.setParameters(this);
             editor.setParameters(this);
 
+            setParameters(this);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -449,10 +451,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
 
     @Override
     public void sourceFileChanged(File file) {
-        if (file == null || !file.exists() || !checkBeforeNextAction()) {
-            return;
-        }
-        editor.loadFile(file);
+        editor.sourceFileChanged(file);
     }
 
     public boolean isNodeChanged() {

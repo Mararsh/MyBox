@@ -22,7 +22,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
 
     public void setParameters(InfoTreeManageController manager) {
         this.manager = manager;
-        handlerController.setParameters(this);
+        handlerController.setParameters(this, manager.category);
     }
 
     public boolean managerRunning() {

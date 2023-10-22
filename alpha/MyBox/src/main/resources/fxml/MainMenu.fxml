@@ -205,6 +205,7 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />
+                                <MenuItem mnemonicParsing="false" onAction="#ImageScope" text="%ImageScope" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />
@@ -549,7 +550,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#FunctionsList" text="%FunctionsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#InterfaceTips" text="%InterfaceTips" />
-                                <MenuItem mnemonicParsing="false" onAction="#AboutTreeInformation" text="%AboutTreeInformation" />
+                                <MenuItem mnemonicParsing="false" onAction="#aboutTreeInformation" text="%AboutTreeInformation" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutData2D" text="%AboutData2D" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutRowExpression" text="%AboutRowExpression" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutGroupingRows" text="%AboutGroupingRows" />

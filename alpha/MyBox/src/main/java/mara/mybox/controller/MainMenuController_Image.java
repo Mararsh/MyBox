@@ -112,6 +112,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void ImageScope(ActionEvent event) {
+        loadScene(Fxmls.ImageScopeFxml);
+    }
+
+    @FXML
     protected void ImagesSplice(ActionEvent event) {
         loadScene(Fxmls.ImagesSpliceFxml);
     }

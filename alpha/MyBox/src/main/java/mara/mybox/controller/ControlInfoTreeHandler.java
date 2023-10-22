@@ -35,22 +35,14 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
         }
     }
 
-    public void setParameters(BaseInfoTreeHandleController handler) {
-        if (handler == null) {
-            return;
-        }
-        this.handler = handler;
-        category = handler.manager.category;
-        nodesController.setParameters(handler);
-    }
-
     public void setParameters(BaseInfoTreeHandleController handler, String categroy) {
         if (handler == null) {
             return;
         }
         this.handler = handler;
         this.category = categroy;
-        nodesController.setParameters(handler);
+        nodesController.handler = handler;
+        setParameters(this);
     }
 
     /*

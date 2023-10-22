@@ -90,18 +90,6 @@ public class JavaScriptEditor extends InfoTreeNodeEditor {
         }
     }
 
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "JavaScriptHistories", false, true);
-    }
-
     @Override
     public void cleanPane() {
         try {

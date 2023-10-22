@@ -10,14 +10,15 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
@@ -32,6 +33,7 @@ import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
@@ -60,6 +62,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     protected Label titleLabel;
     @FXML
     protected CheckBox nodesListCheck;
+    @FXML
+    protected Button helpButton;
 
 
     /*
@@ -75,6 +79,19 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            if (helpButton != null) {
+                NodeStyleTools.setTooltip(helpButton, new Tooltip(message("AboutTreeInformation")));
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
@@ -95,12 +112,12 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     public void setParameters(BaseInfoTreeController parent) {
-        this.parentController = parent;
-        this.baseName = parent.baseName + "_" + baseName;
         infoController = parent;
         tableTreeNode = parent.tableTreeNode;
         tableTreeNodeTag = parent.tableTreeNodeTag;
         category = infoController.category;
+        parentController = parent;
+        baseName = parent.baseName + "_" + category;
         baseTitle = category;
 
         infoController.showNodesList(false);
@@ -115,15 +132,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
                 }
             });
         }
-    }
 
-    public void setSource(ControlInfoTreeList source) {
-        if (source == null) {
-            return;
-        }
-        baseName = source.baseName + "_" + baseName;
-        category = source.category;
-        cloneTree(source.treeView);
+        loadTree();
     }
 
     /*
@@ -198,35 +208,6 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     /*
         data
      */
-    public void cloneTree(TreeTableView<InfoNode> sourceTreeView) {
-        if (sourceTreeView == null) {
-            return;
-        }
-        TreeItem<InfoNode> sourceRoot = sourceTreeView.getRoot();
-        if (sourceRoot == null) {
-            return;
-        }
-        TreeItem<InfoNode> targetRoot = new TreeItem(sourceRoot.getValue());
-        cloneNode(sourceRoot, targetRoot);
-        setRoot(targetRoot);
-    }
-
-    public void cloneNode(TreeItem<InfoNode> sourceNode, TreeItem<InfoNode> targetNode) {
-        if (sourceNode == null || targetNode == null) {
-            return;
-        }
-        List<TreeItem<InfoNode>> sourceChildren = sourceNode.getChildren();
-        if (sourceChildren == null) {
-            return;
-        }
-        for (TreeItem<InfoNode> sourceChild : sourceChildren) {
-            TreeItem<InfoNode> targetChild = new TreeItem<>(sourceChild.getValue());
-            targetNode.getChildren().add(targetChild);
-            targetChild.setExpanded(sourceChild.isExpanded());
-            cloneNode(sourceChild, targetChild);
-        }
-    }
-
     public InfoNode copyNode(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             if (task != null) {
@@ -648,8 +629,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     @FXML
-    public void AboutTreeInformation() {
-        openHtml(HelpTools.AboutTreeInformation());
+    public void aboutTreeInformation() {
+        openHtml(HelpTools.aboutTreeInformation());
     }
 
     @FXML

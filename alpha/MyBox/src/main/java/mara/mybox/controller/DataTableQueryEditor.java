@@ -154,16 +154,9 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
                 true, event);
     }
 
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "DataTableQueryHistories", false, true);
+    @Override
+    protected String editorName() {
+        return "DataTableQuery";
     }
 
     @FXML

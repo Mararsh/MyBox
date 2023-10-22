@@ -195,7 +195,8 @@ public class InfoTreeNodeExportController extends BaseTaskController {
             iconCheck.setSelected(false);
             iconCheck.setVisible(false);
         }
-        listController.setSource(manager.infoTree);
+        listController.setParameters(manager);
+        listController.loadTree();
         if (item == null) {
             infoTree.getSelectionModel().select(infoTree.getRoot());
         } else {

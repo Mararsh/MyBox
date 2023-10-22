@@ -57,6 +57,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImagesPlayFxml);
         });
 
+        MenuItem imageScope = new MenuItem(message("ImageScope"));
+        imageScope.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageScopeFxml);
+        });
+
         MenuItem ManageColors = new MenuItem(message("ManageColors"));
         ManageColors.setOnAction((ActionEvent event1) -> {
             ColorsManageController.oneOpen();
@@ -80,7 +85,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(imageViewer, EditImage,
                 imageManufactureMenu(), manufactureBatchMenu(),
-                ImageAnalyse, ImagesPlay, imagesBrowser, svgMenu(), new SeparatorMenuItem(),
+                imageScope, ImageAnalyse, ImagesPlay, imagesBrowser, svgMenu(), new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
 

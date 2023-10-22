@@ -52,8 +52,8 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     }
 
     @FXML
-    protected void AboutTreeInformation(ActionEvent event) {
-        openHtml(HelpTools.AboutTreeInformation());
+    protected void aboutTreeInformation(ActionEvent event) {
+        openHtml(HelpTools.aboutTreeInformation());
     }
 
     @FXML

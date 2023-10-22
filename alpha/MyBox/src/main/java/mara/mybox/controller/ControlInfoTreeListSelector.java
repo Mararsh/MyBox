@@ -28,20 +28,6 @@ public class ControlInfoTreeListSelector extends ControlInfoTreeList {
     protected BaseInfoTreeHandleController handler;
     protected ControlInfoTreeList sourceList;
 
-    public void setParameters(BaseInfoTreeHandleController handler) {
-        if (handler == null) {
-            return;
-        }
-        this.handler = handler;
-        if (handler.manager != null) {
-            setSource(handler.manager.treeController);
-        } else {
-            category = handler.handlerController.category;
-            baseName = baseName + "_" + category;
-            loadTree();
-        }
-    }
-
     @Override
     public boolean isSourceNode(InfoNode node) {
         return handler.isSourceNode(node);

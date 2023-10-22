@@ -300,18 +300,6 @@ public class JShellEditor extends InfoTreeNodeEditor {
     }
 
     @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("JShellHistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "JShellHistories", false, true);
-    }
-
-    @FXML
     public void popSuggesions() {
         PopTools.popJShellSuggesions(this, jShell, valueInput);
     }

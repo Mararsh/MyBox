@@ -227,7 +227,7 @@ public class HelpTools {
         }
     }
 
-    public static File AboutTreeInformation() {
+    public static File aboutTreeInformation() {
         try {
             String lang = Languages.getLangName();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_tree_" + lang + ".html",

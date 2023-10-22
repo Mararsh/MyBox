@@ -492,8 +492,8 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
     }
 
     @FXML
-    public void AboutTreeInformation() {
-        openHtml(HelpTools.AboutTreeInformation());
+    public void aboutTreeInformation() {
+        openHtml(HelpTools.aboutTreeInformation());
     }
 
 }

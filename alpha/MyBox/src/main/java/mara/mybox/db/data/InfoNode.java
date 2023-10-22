@@ -11,6 +11,7 @@ import mara.mybox.controller.Data2DDefinitionController;
 import mara.mybox.controller.DatabaseSqlController;
 import mara.mybox.controller.HtmlTableController;
 import mara.mybox.controller.ImageMaterialController;
+import mara.mybox.controller.ImageScopeController;
 import mara.mybox.controller.InfoTreeManageController;
 import mara.mybox.controller.JShellController;
 import mara.mybox.controller.JavaScriptController;
@@ -55,6 +56,7 @@ public class InfoNode extends BaseData {
     public static final String JavaScript = "JavaScript";
     public static final String MathFunction = "MathFunction";
     public static final String RowFilter = "RowFilter";
+    public static final String ImageScope = "ImageScope";
     public static final String ImageMaterial = "ImageMaterial";
     public static final String Data2DDefinition = "Data2DDefinition";
 
@@ -690,6 +692,8 @@ public class InfoNode extends BaseData {
                 return ImageMaterialController.open();
             case InfoNode.Data2DDefinition:
                 return Data2DDefinitionController.open();
+            case InfoNode.ImageScope:
+                return ImageScopeController.open();
 
         }
         return null;

@@ -119,37 +119,6 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            infoTree.setParameters(this);
-
-            if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
-                descendantsRadio.setSelected(true);
-            }
-            nodesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldTab, Toggle newTab) {
-                    UserConfig.setBoolean(baseName + "AllDescendants", descendantsRadio.isSelected());
-                    if (loadedParent != null) {
-                        loadTableData();
-                    }
-                }
-            });
-
-            tagsController.setParameters(this);
-            tagsController.loadTableData();
-
-            initTimes();
-            initFind();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
     protected void initColumns() {
         try {
             super.initColumns();
@@ -169,14 +138,30 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
         }
     }
 
-    @Override
-    public void afterSceneLoaded() {
+    public void setParameters(BaseInfoTreeController infoController) {
         try {
-            super.afterSceneLoaded();
+            infoTree.setParameters(infoController);
 
-            loadTree();
+            if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
+                descendantsRadio.setSelected(true);
+            }
+            nodesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldTab, Toggle newTab) {
+                    UserConfig.setBoolean(baseName + "AllDescendants", descendantsRadio.isSelected());
+                    if (loadedParent != null) {
+                        loadTableData();
+                    }
+                }
+            });
+
+            tagsController.setParameters(this);
+            tagsController.loadTableData();
+            initTimes();
+            initFind();
+
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -184,8 +169,11 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
         if (isSettingValues || infoTree.nodesListCheck == null) {
             return;
         }
-        isSettingValues = true;
+        infoTree.isSettingValues = true;
         infoTree.nodesListCheck.setSelected(show);
+        infoTree.isSettingValues = false;
+
+        isSettingValues = true;
         if (show) {
             if (!managePane.getItems().contains(nodesListBox)) {
                 managePane.getItems().add(1, nodesListBox);
@@ -196,10 +184,12 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
             }
         }
         isSettingValues = false;
+
         if (show && leftPaneCheck != null) {
             leftPaneCheck.setSelected(true);
         }
     }
+
 
     /*
         tree
