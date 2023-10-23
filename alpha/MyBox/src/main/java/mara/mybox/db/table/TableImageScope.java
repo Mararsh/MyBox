@@ -152,7 +152,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             return false;
         }
         try {
-            return ImageScope.decodeAreaData(type, results.getString("area_data"), scope);
+            return ImageScopeTools.decodeAreaData(type, results.getString("area_data"), scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -164,7 +164,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             return false;
         }
         try {
-            return ImageScope.decodeColorData(type, results.getString("color_data"), scope);
+            return ImageScopeTools.decodeColorData(type, results.getString("color_data"), scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -179,7 +179,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             return true;
         }
         try {
-            return ImageScope.decodeOutline(type, results.getString("outline"), scope);
+            return ImageScopeTools.decodeOutline(type, results.getString("outline"), scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
 //            MyBoxLog.debug(e);
@@ -197,9 +197,9 @@ public class TableImageScope extends BaseTable<ImageScope> {
         int count = 0;
         try (Connection conn = DerbyBase.getConnection();
                 Statement statement = conn.createStatement()) {
-            String areaData = ImageScope.encodeAreaData(scope);
-            String colorData = ImageScope.encodeColorData(scope);
-            String outline = ImageScope.encodeOutline(scope);
+            String areaData = ImageScopeTools.encodeAreaData(scope);
+            String colorData = ImageScopeTools.encodeColorData(scope);
+            String outline = ImageScopeTools.encodeOutline(scope);
             String sql = " SELECT * FROM image_scope WHERE image_location='" + scope.getFile()
                     + "' AND name='" + DerbyBase.stringValue(scope.getName()) + "'";
             boolean exist = false;

@@ -2,11 +2,9 @@ package mara.mybox.bufferedimage;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import javafx.scene.image.Image;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
@@ -14,11 +12,7 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.BaseData;
-import static mara.mybox.db.table.TableImageScope.DataSeparator;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Colors;
 import mara.mybox.value.Languages;
@@ -49,12 +43,12 @@ public class ImageScope extends BaseData {
     protected Date createTime, modifyTime;
     protected BufferedImage outlineSource, outline;
 
-    public enum ScopeType {
+    public static enum ScopeType {
         Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon, Color,
         Outline, Operate
     }
 
-    public enum ColorScopeType {
+    public static enum ColorScopeType {
         Invalid, AllColor, Color, Red, Green, Blue, Brightness, Saturation, Hue
     }
 
@@ -351,251 +345,6 @@ public class ImageScope extends BaseData {
         return data != null && data.getScopeType() != null;
     }
 
-    public static String encodeAreaData(ImageScope scope) {
-        if (scope == null || scope.getScopeType() == null) {
-            return "";
-        }
-        String s = "";
-        try {
-            switch (scope.getScopeType()) {
-                case Matting: {
-                    List<IntPoint> points = scope.getPoints();
-                    if (points != null) {
-                        for (IntPoint p : points) {
-                            s += p.getX() + DataSeparator + p.getY() + DataSeparator;
-                        }
-                        if (s.endsWith(DataSeparator)) {
-                            s = s.substring(0, s.length() - DataSeparator.length());
-                        }
-                    }
-                }
-                break;
-                case Rectangle:
-                case Outline:
-                    DoubleRectangle rect = scope.getRectangle();
-                    if (rect != null) {
-                        s = (int) rect.getX() + DataSeparator + (int) rect.getY() + DataSeparator
-                                + (int) rect.getMaxX() + DataSeparator + (int) rect.getMaxY();
-                    }
-                    break;
-                case Circle:
-                    DoubleCircle circle = scope.getCircle();
-                    if (circle != null) {
-                        s = (int) circle.getCenterX() + DataSeparator + (int) circle.getCenterY()
-                                + DataSeparator + (int) circle.getRadius();
-                    }
-
-                    break;
-                case Ellipse:
-                    DoubleEllipse ellipse = scope.getEllipse();
-                    if (ellipse != null) {
-                        s = (int) ellipse.getX() + DataSeparator + (int) ellipse.getY() + DataSeparator
-                                + (int) ellipse.getMaxX() + DataSeparator + (int) ellipse.getMaxY();
-                    }
-                    break;
-                case Polygon:
-                    DoublePolygon polygon = scope.getPolygon();
-                    if (polygon != null) {
-                        for (Double d : polygon.getData()) {
-                            s += Math.round(d) + DataSeparator;
-                        }
-                        if (s.endsWith(DataSeparator)) {
-                            s = s.substring(0, s.length() - DataSeparator.length());
-                        }
-                    }
-                    break;
-            }
-            scope.setAreaData(s);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            s = "";
-        }
-        return s;
-    }
-
-    public static String encodeColorData(ImageScope scope) {
-        if (scope == null || scope.getScopeType() == null) {
-            return "";
-        }
-        String s = "";
-        try {
-            switch (scope.getScopeType()) {
-                case Color:
-                case Rectangle:
-                case Circle:
-                case Ellipse:
-                case Polygon:
-                    List<Color> colors = scope.getColors();
-                    if (colors != null) {
-                        for (Color color : colors) {
-                            s += color.getRGB() + DataSeparator;
-                        }
-                        if (s.endsWith(DataSeparator)) {
-                            s = s.substring(0, s.length() - DataSeparator.length());
-                        }
-                    }
-
-            }
-            scope.setColorData(s);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            s = "";
-        }
-        return s;
-    }
-
-    public static String encodeOutline(ImageScope scope) {
-        if (scope == null || scope.getScopeType() != ScopeType.Outline || scope.getOutline() == null) {
-            return "";
-        }
-        String s = "";
-        try {
-            String prefix = AppPaths.getImageScopePath() + File.separator
-                    + scope.getScopeType() + "_";
-            String filename = prefix + (new Date().getTime())
-                    + "_" + new Random().nextInt(1000) + ".png";
-            while (new File(filename).exists()) {
-                filename = prefix + (new Date().getTime())
-                        + "_" + new Random().nextInt(1000) + ".png";
-            }
-            if (ImageFileWriters.writeImageFile(scope.getOutlineSource(), "png", filename)) {
-                s = filename;
-            }
-            scope.setOutlineName(filename);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            s = "";
-        }
-        return s;
-    }
-
-    public static boolean decodeAreaData(ScopeType type, String areaData, ImageScope scope) {
-        if (type == null || areaData == null || scope == null) {
-            return false;
-        }
-        try {
-            switch (type) {
-                case Matting: {
-                    String[] items = areaData.split(DataSeparator);
-                    for (int i = 0; i < items.length / 2; ++i) {
-                        int x = (int) Double.parseDouble(items[i * 2]);
-                        int y = (int) Double.parseDouble(items[i * 2 + 1]);
-                        scope.addPoint(x, y);
-                    }
-                }
-                break;
-                case Rectangle:
-                case Outline: {
-                    String[] items = areaData.split(DataSeparator);
-                    if (items.length == 4) {
-                        DoubleRectangle rect = DoubleRectangle.xy12(
-                                Double.parseDouble(items[0]), Double.parseDouble(items[1]),
-                                Double.parseDouble(items[2]), Double.parseDouble(items[3])
-                        );
-                        scope.setRectangle(rect);
-                    } else {
-                        return false;
-                    }
-                }
-                break;
-                case Circle: {
-                    String[] items = areaData.split(DataSeparator);
-                    if (items.length == 3) {
-                        DoubleCircle circle = new DoubleCircle(
-                                Double.parseDouble(items[0]), Double.parseDouble(items[1]),
-                                Double.parseDouble(items[2])
-                        );
-                        scope.setCircle(circle);
-                    } else {
-                        return false;
-                    }
-                }
-                break;
-                case Ellipse: {
-                    String[] items = areaData.split(DataSeparator);
-                    if (items.length == 4) {
-                        DoubleEllipse ellipse = DoubleEllipse.xy12(
-                                Double.parseDouble(items[0]), Double.parseDouble(items[1]),
-                                Double.parseDouble(items[2]), Double.parseDouble(items[3])
-                        );
-                        scope.setEllipse(ellipse);
-                    } else {
-                        return false;
-                    }
-                }
-                break;
-                case Polygon: {
-                    String[] items = areaData.split(DataSeparator);
-                    DoublePolygon polygon = new DoublePolygon();
-                    for (int i = 0; i < items.length / 2; ++i) {
-                        int x = (int) Double.parseDouble(items[i * 2]);
-                        int y = (int) Double.parseDouble(items[i * 2 + 1]);
-                        polygon.add(x, y);
-                    }
-                    scope.setPolygon(polygon);
-                }
-                break;
-
-            }
-            scope.setAreaData(areaData);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean decodeColorData(ScopeType type, String colorData, ImageScope scope) {
-        if (type == null || colorData == null || scope == null) {
-            return false;
-        }
-        try {
-            switch (type) {
-                case Color:
-                case Rectangle:
-                case Circle:
-                case Ellipse:
-                case Polygon: {
-                    List<Color> colors = new ArrayList<>();
-                    if (colorData != null && !colorData.isBlank()) {
-                        String[] items = colorData.split(DataSeparator);
-                        for (String item : items) {
-                            try {
-                                colors.add(new Color(Integer.parseInt(item), true));
-                            } catch (Exception e) {
-                                MyBoxLog.error(e);
-                            }
-                        }
-                    }
-                    scope.setColors(colors);
-                    scope.setColorData(colorData);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean decodeOutline(ScopeType type, String outline, ImageScope scope) {
-        if (type == null || outline == null || scope == null) {
-            return false;
-        }
-        if (type != ScopeType.Outline) {
-            return true;
-        }
-        try {
-            scope.setOutlineName(outline);
-            BufferedImage image = ImageFileReaders.readImage(new File(outline));
-            scope.setOutlineSource(image);
-            return image != null;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-//            MyBoxLog.debug(e);
-            return false;
-        }
-    }
 
     /*
         customized get/set

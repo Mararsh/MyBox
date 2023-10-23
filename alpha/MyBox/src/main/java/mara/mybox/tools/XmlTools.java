@@ -25,6 +25,7 @@ import static mara.mybox.data.XmlTreeNode.NodeType.Text;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -54,6 +55,45 @@ public class XmlTools {
     public static boolean ignoreComment;
     public static boolean ignoreBlankCDATA;
 
+    /*
+        encode
+     */
+    public static String xmlTag(String tag) {
+        return message(tag).replaceAll(" ", "_");
+    }
+
+    public static boolean matchXmlTag(String matchTo, String s) {
+        try {
+            if (matchTo == null || s == null) {
+                return false;
+            }
+            return message("en", matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
+                    || message("zh", matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
+                    || message(matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
+                    || matchTo.replaceAll(" ", "_").equalsIgnoreCase(s);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String cdata(Node node) {
+        if (node == null) {
+            return null;
+        }
+        try {
+            NodeList fNodes = node.getChildNodes();
+            if (fNodes != null) {
+                for (int f = 0; f < fNodes.getLength(); f++) {
+                    Node c = fNodes.item(f);
+                    if (c.getNodeType() == Node.CDATA_SECTION_NODE) {
+                        return c.getNodeValue();
+                    }
+                }
+            }
+        } catch (Exception ex) {
+        }
+        return node.getTextContent();
+    }
 
     /*
         parse

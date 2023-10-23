@@ -64,8 +64,9 @@
             <li>"Hierarchy Number": The chain of sequence numbers from root to the node.</li>
             <li>"Node Name": String to describe the node.</li>
             <li>"Chain Name": The chain of node names from root to the node.</li>
-            <li>"Static Tree": Tree structure is not changed, that is no node is deleted, added, or moved during the tree is being watched or handled.</li>
-            <li>"Dynamic Tree": Tree structure is changed, that is some nodes are deleted, added, or moved during the tree is being watched or handled.</li>
+            <li>"Steady Node Name": During the tree is being watched or handled, node name is not changed.</li>
+            <li>"Static Tree": During the tree is being watched or handled, tree structure is not changed, that is no node is deleted, added, or moved.</li>
+            <li>"Dynamic Tree": During the tree is being watched or handled, tree structure is changed, that is some nodes are deleted, added, or moved.</li>
         </ol>
         <h3>2.2 Identify and Locate Nodes</h3>
         <p>To locate specific node in the tree correctly:</p>
@@ -90,8 +91,8 @@
             <li>When nodes' names are steady, chain names do not change in dynamic tree.</li>
         </ul>
         <p>So chain names can be used to locate nodes for dynamic or static tree when it is "unique chain names".</p>
-        <h2>3 Define Tree Structure</h2>
-        <p>In MyBox, attributes of tree node include: ID, Title(Node Name), Value, Modify_Time.</p>
+        <h2>3 Implement Tree Structure</h2>
+        <p>In MyBox, attributes of tree node include: ID, Title(Node Name), Value, Modify_Time, ID of parent node.</p>
         <h3>3.1 ID of Node</h3>
         <p>ID of node is generated and increased automactically, and used to identify and locate each node uniquely. It is absolutely steady attribute:</p>
         <ul>
@@ -100,8 +101,7 @@
             <li>Does not change when tree structure is changed.</li>
             <li>Does not change when other attributes of node are changed.</li>
         </ul>         
-        <p>So chain names are unique and steady when treat IDs of nodes as names of nodes.</p>
-        <p>But IDs of nodes have following disadvantages:</p>
+        <p>IDs of nodes have following disadvantages:</p>
         <ul>
             <li>Unfit for person to remember and recognize nodes, and unfit for operations of interfaces.</li>
             <li>Tightly coupled with application environment, and may cause conflicts and incompatibilities when import data.</li>

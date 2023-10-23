@@ -19,6 +19,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
+import static mara.mybox.tools.XmlTools.cdata;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -119,7 +120,7 @@ public class Data2DTools {
     }
 
     /*
-        from
+       make data2d from
      */
     public static List<Data2DColumn> toColumns(List<String> names) {
         try {
@@ -171,7 +172,7 @@ public class Data2DTools {
                 return null;
             }
             String tag = e.getTagName();
-            if (!matchXmlTag("DataDefinition", tag)) {
+            if (!XmlTools.matchXmlTag("DataDefinition", tag)) {
                 return null;
             }
             NodeList children = e.getChildNodes();
@@ -186,7 +187,7 @@ public class Data2DTools {
                 }
                 Element dElement = (Element) child;
                 tag = child.getNodeName();
-                if (matchXmlTag("Attributes", tag)) {
+                if (XmlTools.matchXmlTag("Attributes", tag)) {
                     NodeList attrNodes = dElement.getChildNodes();
                     if (attrNodes == null) {
                         continue;
@@ -197,33 +198,37 @@ public class Data2DTools {
                             continue;
                         }
                         String attrName = attrNode.getNodeName();
-                        String attrValue = attrNode.getTextContent();
-                        if (attrName == null || attrName.isBlank()
-                                || attrValue == null || attrValue.isBlank()) {
+                        if (attrName == null || attrName.isBlank()) {
                             continue;
                         }
-                        if (matchXmlTag("DataName", attrName)) {
-                            csv.setDataName(attrValue);
+                        if (XmlTools.matchXmlTag("Description", attrName)) {
+                            csv.setComments(cdata(attrNode));
 
-                        } else if (matchXmlTag("DecimalScale", attrName)) {
-                            try {
-                                csv.setScale(Short.parseShort(attrValue));
-                            } catch (Exception ex) {
+                        } else if (XmlTools.matchXmlTag("DataName", attrName)) {
+                            csv.setDataName(cdata(attrNode));
+
+                        } else {
+                            String attrValue = attrNode.getTextContent();
+                            if (attrValue == null || attrValue.isBlank()) {
+                                continue;
                             }
+                            if (XmlTools.matchXmlTag("DecimalScale", attrName)) {
+                                try {
+                                    csv.setScale(Short.parseShort(attrValue));
+                                } catch (Exception ex) {
+                                }
 
-                        } else if (matchXmlTag("MaxRandom", attrName)) {
-                            try {
-                                csv.setMaxRandom(Integer.parseInt(attrValue));
-                            } catch (Exception ex) {
+                            } else if (XmlTools.matchXmlTag("MaxRandom", attrName)) {
+                                try {
+                                    csv.setMaxRandom(Integer.parseInt(attrValue));
+                                } catch (Exception ex) {
+                                }
+
                             }
-
-                        } else if (matchXmlTag("Description", attrName)) {
-                            csv.setComments(attrValue);
-
                         }
                     }
 
-                } else if (matchXmlTag("ColumnsDefinition", tag)) {
+                } else if (XmlTools.matchXmlTag("ColumnsDefinition", tag)) {
                     NodeList columnNodes = dElement.getChildNodes();
                     if (columnNodes == null) {
                         continue;
@@ -232,7 +237,7 @@ public class Data2DTools {
                     for (int cIndex = 0; cIndex < columnNodes.getLength(); cIndex++) {
                         Node columnNode = columnNodes.item(cIndex);
                         if (!(columnNode instanceof Element)
-                                || !matchXmlTag("Column", columnNode.getNodeName())) {
+                                || !XmlTools.matchXmlTag("Column", columnNode.getNodeName())) {
                             continue;
                         }
                         NodeList columnAttributes = columnNode.getChildNodes();
@@ -246,88 +251,79 @@ public class Data2DTools {
                                 continue;
                             }
                             String attrName = attrNode.getNodeName();
-                            String attrValue = attrNode.getTextContent();
-                            if (attrName == null || attrName.isBlank()
-                                    || attrValue == null || attrValue.isBlank()) {
+
+                            if (attrName == null || attrName.isBlank()) {
                                 continue;
                             }
-                            if (matchXmlTag("ColumnName", attrName)) {
-                                column.setColumnName(attrValue);
+                            if (XmlTools.matchXmlTag("ColumnName", attrName)) {
+                                column.setColumnName(cdata(attrNode));
 
-                            } else if (matchXmlTag("Type", attrName)) {
-                                column.setType(Data2DColumn.columnType(attrValue));
+                            } else if (XmlTools.matchXmlTag("DisplayFormat", attrName)) {
+                                column.setFormat(cdata(attrNode));
 
-                            } else if (matchXmlTag("Length", attrName)) {
-                                try {
-                                    column.setLength(Integer.parseInt(attrValue));
-                                } catch (Exception ex) {
+                            } else if (XmlTools.matchXmlTag("DefaultValue", attrName)) {
+                                column.setDefaultValue(cdata(attrNode));
+
+                            } else if (XmlTools.matchXmlTag("Description", attrName)) {
+                                column.setDescription(cdata(attrNode));
+
+                            } else {
+                                String attrValue = attrNode.getTextContent();
+                                if (attrValue == null || attrValue.isBlank()) {
+                                    continue;
                                 }
+                                if (XmlTools.matchXmlTag("Type", attrName)) {
+                                    column.setType(Data2DColumn.columnType(attrValue));
 
-                            } else if (matchXmlTag("Width", attrName)) {
-                                try {
-                                    column.setWidth(Integer.parseInt(attrValue));
-                                } catch (Exception ex) {
-                                }
-
-                            } else if (matchXmlTag("DisplayFormat", attrName)) {
-                                String format = attrValue;
-                                try {
-                                    NodeList fNodes = attrNode.getChildNodes();
-                                    if (fNodes != null) {
-                                        for (int f = 0; f < fNodes.getLength(); f++) {
-                                            Node c = fNodes.item(f);
-                                            if (c.getNodeType() == Node.CDATA_SECTION_NODE) {
-                                                format = c.getNodeValue();
-                                                break;
-                                            }
-                                        }
+                                } else if (XmlTools.matchXmlTag("Length", attrName)) {
+                                    try {
+                                        column.setLength(Integer.parseInt(attrValue));
+                                    } catch (Exception ex) {
                                     }
-                                } catch (Exception ex) {
+
+                                } else if (XmlTools.matchXmlTag("Width", attrName)) {
+                                    try {
+                                        column.setWidth(Integer.parseInt(attrValue));
+                                    } catch (Exception ex) {
+                                    }
+
+                                } else if (XmlTools.matchXmlTag("NotNull", attrName)) {
+                                    column.setNotNull(StringTools.isTrue(attrValue));
+
+                                } else if (XmlTools.matchXmlTag("Editable", attrName)) {
+                                    column.setEditable(StringTools.isTrue(attrValue));
+
+                                } else if (XmlTools.matchXmlTag("PrimaryKey", attrName)) {
+                                    column.setIsPrimaryKey(StringTools.isTrue(attrValue));
+
+                                } else if (XmlTools.matchXmlTag("AutoGenerated", attrName)) {
+                                    column.setAuto(StringTools.isTrue(attrValue));
+
+                                } else if (XmlTools.matchXmlTag("Color", attrName)) {
+                                    try {
+                                        column.setColor(Color.web(attrValue));
+                                    } catch (Exception ex) {
+                                    }
+
+                                } else if (XmlTools.matchXmlTag("ToInvalidValue", attrName)) {
+                                    column.setInvalidAs(ColumnDefinition.invalidAs(attrValue));
+
+                                } else if (XmlTools.matchXmlTag("DecimalScale", attrName)) {
+                                    try {
+                                        column.setScale(Integer.parseInt(attrValue));
+                                    } catch (Exception ex) {
+                                    }
+
+                                } else if (XmlTools.matchXmlTag("Century", attrName)) {
+                                    try {
+                                        column.setCentury(Integer.parseInt(attrValue));
+                                    } catch (Exception ex) {
+                                    }
+
+                                } else if (XmlTools.matchXmlTag("FixTwoDigitYears", attrName)) {
+                                    column.setFixTwoDigitYear(StringTools.isTrue(attrValue));
+
                                 }
-                                column.setFormat(format);
-
-                            } else if (matchXmlTag("NotNull", attrName)) {
-                                column.setNotNull(StringTools.isTrue(attrValue));
-
-                            } else if (matchXmlTag("Editable", attrName)) {
-                                column.setEditable(StringTools.isTrue(attrValue));
-
-                            } else if (matchXmlTag("PrimaryKey", attrName)) {
-                                column.setIsPrimaryKey(StringTools.isTrue(attrValue));
-
-                            } else if (matchXmlTag("AutoGenerated", attrName)) {
-                                column.setAuto(StringTools.isTrue(attrValue));
-
-                            } else if (matchXmlTag("DefaultValue", attrName)) {
-                                column.setDefaultValue(attrValue);
-
-                            } else if (matchXmlTag("Color", attrName)) {
-                                try {
-                                    column.setColor(Color.web(attrValue));
-                                } catch (Exception ex) {
-                                }
-
-                            } else if (matchXmlTag("ToInvalidValue", attrName)) {
-                                column.setInvalidAs(ColumnDefinition.invalidAs(attrValue));
-
-                            } else if (matchXmlTag("DecimalScale", attrName)) {
-                                try {
-                                    column.setScale(Integer.parseInt(attrValue));
-                                } catch (Exception ex) {
-                                }
-
-                            } else if (matchXmlTag("Century", attrName)) {
-                                try {
-                                    column.setCentury(Integer.parseInt(attrValue));
-                                } catch (Exception ex) {
-                                }
-
-                            } else if (matchXmlTag("FixTwoDigitYears", attrName)) {
-                                column.setFixTwoDigitYear(StringTools.isTrue(attrValue));
-
-                            } else if (matchXmlTag("Description", attrName)) {
-                                column.setDescription(attrValue);
-
                             }
                         }
                         columns.add(column);
@@ -343,7 +339,7 @@ public class Data2DTools {
     }
 
     /*
-        to
+       convert data2d to
      */
     public static List<String> toNames(List<Data2DColumn> cols) {
         try {
@@ -440,24 +436,6 @@ public class Data2DTools {
         }
     }
 
-    public static String xmlTag(String tag) {
-        return message(tag).replaceAll(" ", "_");
-    }
-
-    public static boolean matchXmlTag(String matchTo, String s) {
-        try {
-            if (matchTo == null || s == null) {
-                return false;
-            }
-            return message("en", matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
-                    || message("zh", matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
-                    || message(matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
-                    || matchTo.replaceAll(" ", "_").equalsIgnoreCase(s);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public static String definitionToXML(Data2D data2d, boolean withAttributes, String prefix) {
         try {
             if (data2d == null) {
@@ -465,35 +443,35 @@ public class Data2DTools {
             }
             String indent = AppValues.Indent;
             StringBuilder s = new StringBuilder();
-            s.append(prefix).append("<").append(xmlTag("DataDefinition")).append(">\n");
+            s.append(prefix).append("<").append(XmlTools.xmlTag("DataDefinition")).append(">\n");
             if (withAttributes) {
-                s.append(prefix).append(indent).append("<").append(xmlTag("Attributes")).append(">\n");
+                s.append(prefix).append(indent).append("<").append(XmlTools.xmlTag("Attributes")).append(">\n");
                 String v = data2d.getDataName();
                 if (v != null && !v.isBlank()) {
                     s.append(prefix).append(indent).append(indent)
-                            .append("<").append(xmlTag("DataName")).append(">")
+                            .append("<").append(XmlTools.xmlTag("DataName")).append(">")
                             .append("<![CDATA[").append(v).append("]]>")
-                            .append("</").append(xmlTag("DataName")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("DataName")).append(">\n");
                 }
                 s.append(prefix).append(indent).append(indent)
-                        .append("<").append(xmlTag("DecimalScale")).append(">")
+                        .append("<").append(XmlTools.xmlTag("DecimalScale")).append(">")
                         .append(data2d.getScale())
-                        .append("</").append(xmlTag("DecimalScale")).append(">\n");
+                        .append("</").append(XmlTools.xmlTag("DecimalScale")).append(">\n");
                 s.append(prefix).append(indent).append(indent)
-                        .append("<").append(xmlTag("MaxRandom")).append(">")
+                        .append("<").append(XmlTools.xmlTag("MaxRandom")).append(">")
                         .append(data2d.getMaxRandom())
-                        .append("</").append(xmlTag("MaxRandom")).append(">\n");
+                        .append("</").append(XmlTools.xmlTag("MaxRandom")).append(">\n");
                 v = data2d.getComments();
                 if (v != null && !v.isBlank()) {
                     s.append(prefix).append(indent).append(indent)
-                            .append("<").append(xmlTag("Description")).append(">")
+                            .append("<").append(XmlTools.xmlTag("Description")).append(">")
                             .append("<![CDATA[").append(v).append("]]>")
-                            .append("</").append(xmlTag("Description")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("Description")).append(">\n");
                 }
                 s.append(prefix).append(indent)
-                        .append("</").append(xmlTag("Attributes")).append(">\n");
+                        .append("</").append(XmlTools.xmlTag("Attributes")).append(">\n");
             }
-            s.append(prefix).append(indent).append("<").append(xmlTag("ColumnsDefinition")).append(">\n");
+            s.append(prefix).append(indent).append("<").append(XmlTools.xmlTag("ColumnsDefinition")).append(">\n");
             List<Data2DColumn> columns = data2d.getColumns();
             if (columns != null) {
                 for (Data2DColumn col : columns) {
@@ -501,30 +479,30 @@ public class Data2DTools {
                         continue;
                     }
                     s.append(prefix).append(indent).append(indent)
-                            .append("<").append(xmlTag("Column")).append(">\n");
+                            .append("<").append(XmlTools.xmlTag("Column")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("ColumnName")).append(">")
+                            .append("<").append(XmlTools.xmlTag("ColumnName")).append(">")
                             .append("<![CDATA[").append(col.getColumnName()).append("]]>")
-                            .append("</").append(xmlTag("ColumnName")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("ColumnName")).append(">\n");
                     if (col.getType() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent)
-                                .append("<").append(xmlTag("Type")).append(">")
+                                .append("<").append(XmlTools.xmlTag("Type")).append(">")
                                 .append(col.getType().name())
-                                .append("</").append(xmlTag("Type")).append(">\n");
+                                .append("</").append(XmlTools.xmlTag("Type")).append(">\n");
                     }
                     if (ColumnType.String == col.getType()) {
                         s.append(prefix).append(indent).append(indent).append(indent)
-                                .append("<").append(xmlTag("Length")).append(">")
+                                .append("<").append(XmlTools.xmlTag("Length")).append(">")
                                 .append(col.getLength())
-                                .append("</").append(xmlTag("Length")).append(">\n");
+                                .append("</").append(XmlTools.xmlTag("Length")).append(">\n");
                     }
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("Width")).append(">")
+                            .append("<").append(XmlTools.xmlTag("Width")).append(">")
                             .append(col.getWidth())
-                            .append("</").append(xmlTag("Width")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("Width")).append(">\n");
                     if (col.getFormat() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent)
-                                .append("<").append(xmlTag("DisplayFormat")).append(">");
+                                .append("<").append(XmlTools.xmlTag("DisplayFormat")).append(">");
                         if (ColumnType.Enumeration == col.getType()) {
                             s.append("\n").append(prefix).append(indent).append(indent).append(indent)
                                     .append("<![CDATA[").append(col.getFormat()).append("]]>\n")
@@ -532,66 +510,66 @@ public class Data2DTools {
                         } else {
                             s.append(col.getFormat());
                         }
-                        s.append("</").append(xmlTag("DisplayFormat")).append(">\n");
+                        s.append("</").append(XmlTools.xmlTag("DisplayFormat")).append(">\n");
                     }
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("NotNull")).append(">")
+                            .append("<").append(XmlTools.xmlTag("NotNull")).append(">")
                             .append(col.isNotNull() ? "true" : "false")
-                            .append("</").append(xmlTag("NotNull")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("NotNull")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("Editable")).append(">")
+                            .append("<").append(XmlTools.xmlTag("Editable")).append(">")
                             .append(col.isEditable() ? "true" : "false")
-                            .append("</").append(xmlTag("Editable")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("Editable")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("PrimaryKey")).append(">")
+                            .append("<").append(XmlTools.xmlTag("PrimaryKey")).append(">")
                             .append(col.isIsPrimaryKey() ? "true" : "false")
-                            .append("</").append(xmlTag("PrimaryKey")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("PrimaryKey")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("AutoGenerated")).append(">")
+                            .append("<").append(XmlTools.xmlTag("AutoGenerated")).append(">")
                             .append(col.isAuto() ? "true" : "false")
-                            .append("</").append(xmlTag("AutoGenerated")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("AutoGenerated")).append(">\n");
                     if (col.getDefaultValue() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent)
-                                .append("<").append(xmlTag("DefaultValue")).append(">")
+                                .append("<").append(XmlTools.xmlTag("DefaultValue")).append(">")
                                 .append("<![CDATA[").append(col.getDefaultValue()).append("]]>")
-                                .append("</").append(xmlTag("DefaultValue")).append(">\n");
+                                .append("</").append(XmlTools.xmlTag("DefaultValue")).append(">\n");
                     }
                     if (col.getColor() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent)
-                                .append("<").append(xmlTag("Color")).append(">")
+                                .append("<").append(XmlTools.xmlTag("Color")).append(">")
                                 .append(col.getColor())
-                                .append("</").append(xmlTag("Color")).append(">\n");
+                                .append("</").append(XmlTools.xmlTag("Color")).append(">\n");
                     }
                     if (col.getInvalidAs() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent)
-                                .append("<").append(xmlTag("ToInvalidValue")).append(">")
+                                .append("<").append(XmlTools.xmlTag("ToInvalidValue")).append(">")
                                 .append(col.getInvalidAs().name())
-                                .append("</").append(xmlTag("ToInvalidValue")).append(">\n");
+                                .append("</").append(XmlTools.xmlTag("ToInvalidValue")).append(">\n");
                     }
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("DecimalScale")).append(">")
+                            .append("<").append(XmlTools.xmlTag("DecimalScale")).append(">")
                             .append(col.getScale())
-                            .append("</").append(xmlTag("DecimalScale")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("DecimalScale")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("Century")).append(">")
+                            .append("<").append(XmlTools.xmlTag("Century")).append(">")
                             .append(col.getCentury())
-                            .append("</").append(xmlTag("Century")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("Century")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent)
-                            .append("<").append(xmlTag("FixTwoDigitYears")).append(">")
+                            .append("<").append(XmlTools.xmlTag("FixTwoDigitYears")).append(">")
                             .append(col.isFixTwoDigitYear() ? "true" : "false")
-                            .append("</").append(xmlTag("FixTwoDigitYears")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("FixTwoDigitYears")).append(">\n");
                     if (col.getDescription() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent)
-                                .append("<").append(xmlTag("Description")).append(">")
+                                .append("<").append(XmlTools.xmlTag("Description")).append(">")
                                 .append("<![CDATA[").append(col.getDescription()).append("]]>")
-                                .append("</").append(xmlTag("Description")).append(">\n");
+                                .append("</").append(XmlTools.xmlTag("Description")).append(">\n");
                     }
                     s.append(prefix).append(indent).append(indent)
-                            .append("</").append(xmlTag("Column")).append(">\n");
+                            .append("</").append(XmlTools.xmlTag("Column")).append(">\n");
                 }
             }
-            s.append(prefix).append(indent).append("</").append(xmlTag("ColumnsDefinition")).append(">\n");
-            s.append(prefix).append("</").append(xmlTag("DataDefinition")).append(">\n");
+            s.append(prefix).append(indent).append("</").append(XmlTools.xmlTag("ColumnsDefinition")).append(">\n");
+            s.append(prefix).append("</").append(XmlTools.xmlTag("DataDefinition")).append(">\n");
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e);

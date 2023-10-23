@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.Data2DDefinitionController;
 import mara.mybox.controller.DatabaseSqlController;
 import mara.mybox.controller.HtmlTableController;
@@ -366,6 +368,7 @@ public class InfoNode extends BaseData {
                     values.put("Value", info);
                     break;
                 case InfoNode.Data2DDefinition:
+                case InfoNode.ImageScope:
                     values.put("XML", info);
                     break;
                 default:
@@ -600,7 +603,8 @@ public class InfoNode extends BaseData {
         }
         String xml = "";
         switch (category) {
-            case InfoNode.Data2DDefinition: {
+            case InfoNode.Data2DDefinition:
+            case InfoNode.ImageScope: {
                 xml = s + "\n";
                 break;
             }
@@ -635,6 +639,14 @@ public class InfoNode extends BaseData {
                     json = prefix + ",\n"
                             + Data2DTools.definitionToJSON(csv, true, prefix);
                 }
+                break;
+            }
+            case InfoNode.ImageScope: {
+                ImageScope scope = ImageScopeTools.fromXML(s);
+//                if (csv != null) {
+//                    json = prefix + ",\n"
+//                            + Data2DTools.definitionToJSON(csv, true, prefix);
+//                }
                 break;
             }
             default:

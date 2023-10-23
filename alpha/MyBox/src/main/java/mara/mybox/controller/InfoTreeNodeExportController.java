@@ -20,7 +20,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import static mara.mybox.data2d.Data2DTools.xmlTag;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.InfoNodeTag;
@@ -34,6 +33,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppValues.Indent;
 import static mara.mybox.value.Languages.message;
@@ -355,7 +355,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(xmlTag(manager.category)).append(">\n");
+                            .append("<").append(XmlTools.xmlTag(manager.category)).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -443,7 +443,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + xmlTag(manager.category) + ">\n");
+                xmlWriter.write("</" + XmlTools.xmlTag(manager.category) + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;
@@ -634,11 +634,11 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 xmlWriter.write(indent + indent + indent + "<id>" + node.getNodeid() + "></id>\n");
             }
             if (parentName != null) {
-                xmlWriter.write(indent + indent + indent + "<" + xmlTag("ParentNode")
-                        + "><![CDATA[" + parentName + "]]></" + xmlTag("ParentNode") + ">\n");
+                xmlWriter.write(indent + indent + indent + "<" + XmlTools.xmlTag("ParentNode")
+                        + "><![CDATA[" + parentName + "]]></" + XmlTools.xmlTag("ParentNode") + ">\n");
             }
-            xmlWriter.write(indent + indent + indent + "<" + xmlTag("Title")
-                    + "><![CDATA[" + node.getTitle() + "]]></" + xmlTag("Title") + ">\n");
+            xmlWriter.write(indent + indent + indent + "<" + XmlTools.xmlTag("Title")
+                    + "><![CDATA[" + node.getTitle() + "]]></" + XmlTools.xmlTag("Title") + ">\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                 xmlWriter.write(indent + indent + indent + "<" + manager.timeMsg + ">"
                         + DateTools.datetimeToString(node.getUpdateTime())
@@ -654,14 +654,14 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                         s += InfoNode.TagSeparater + v;
                     }
                 }
-                xmlWriter.write(indent + indent + indent + "<" + xmlTag("Tags")
-                        + "><![CDATA[" + s + "]]></" + xmlTag("Tags") + ">\n");
+                xmlWriter.write(indent + indent + indent + "<" + XmlTools.xmlTag("Tags")
+                        + "><![CDATA[" + s + "]]></" + XmlTools.xmlTag("Tags") + ">\n");
             }
             String infoXml = InfoNode.infoXml(node.getCategory(), node.getInfo(), indent + indent + indent);
             if (infoXml != null && !infoXml.isBlank()) {
                 xmlWriter.write(infoXml);
             }
-            xmlWriter.write(indent + indent + "</" + xmlTag("Node") + ">\n\n");
+            xmlWriter.write(indent + indent + "</" + XmlTools.xmlTag("Node") + ">\n\n");
 
         } catch (Exception e) {
             updateLogs(e.toString());

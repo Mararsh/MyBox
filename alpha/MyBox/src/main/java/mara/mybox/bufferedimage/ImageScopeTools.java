@@ -7,15 +7,33 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import mara.mybox.bufferedimage.ImageScope.ColorScopeType;
+import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
+import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.tools.XmlTools;
+import static mara.mybox.tools.XmlTools.cdata;
+import mara.mybox.value.AppPaths;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @Author Mara
@@ -404,6 +422,401 @@ public class ImageScopeTools {
             MyBoxLog.error(e);
             return source;
         }
+    }
+
+    /*
+       make scope from
+     */
+    public static ImageScope fromXML(String s) {
+        try {
+            if (s == null || s.isBlank()) {
+                return null;
+            }
+            Element e = XmlTools.toElement(null, s);
+            if (e == null) {
+                return null;
+            }
+            String tag = e.getTagName();
+            if (!XmlTools.matchXmlTag("ImageScope", tag)) {
+                return null;
+            }
+            NodeList children = e.getChildNodes();
+            if (children == null) {
+                return null;
+            }
+            ImageScope scope = new ImageScope();
+            for (int dIndex = 0; dIndex < children.getLength(); dIndex++) {
+                Node child = children.item(dIndex);
+                if (!(child instanceof Element)) {
+                    continue;
+                }
+                tag = child.getNodeName();
+
+                if (tag == null || tag.isBlank()) {
+                    continue;
+                }
+                if (XmlTools.matchXmlTag("Background", tag)) {
+                    scope.setFile(cdata(child));
+
+                } else if (XmlTools.matchXmlTag("Name", tag)) {
+                    scope.setName(cdata(child));
+
+                } else if (XmlTools.matchXmlTag("Outline", tag)) {
+                    scope.setOutlineName(cdata(child));
+
+                } else {
+                    String value = child.getTextContent();
+                    if (value == null || value.isBlank()) {
+                        continue;
+                    }
+                    if (XmlTools.matchXmlTag("ScopeType", tag)) {
+                        scope.setScopeType(ImageScopeTools.scopeType(value));
+
+                    } else if (XmlTools.matchXmlTag("ScopeColorType", tag)) {
+                        scope.setColorScopeType(ImageScope.ColorScopeType.valueOf(value));
+
+                    } else if (XmlTools.matchXmlTag("Area", tag)) {
+                        scope.setAreaData(value);
+
+                    } else if (XmlTools.matchXmlTag("Colors", tag)) {
+                        scope.setColorData(value);
+
+                    } else if (XmlTools.matchXmlTag("ColorDistance", tag)) {
+                        try {
+                            scope.setColorDistance(Integer.parseInt(value));
+                        } catch (Exception ex) {
+                        }
+
+                    } else if (XmlTools.matchXmlTag("AreaExcluded", tag)) {
+                        scope.setAreaExcluded(StringTools.isTrue(value));
+
+                    } else if (XmlTools.matchXmlTag("ColorExcluded", tag)) {
+                        scope.setColorExcluded(StringTools.isTrue(value));
+
+                    } else if (XmlTools.matchXmlTag("CreateTime", tag)) {
+                        scope.setCreateTime(DateTools.encodeDate(value));
+
+                    } else if (XmlTools.matchXmlTag("ModifyTime", tag)) {
+                        scope.setModifyTime(DateTools.encodeDate(value));
+
+                    }
+                }
+            }
+            return scope;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    /*
+       convert scope to
+     */
+    public static String toXML(ImageScope scope, String inPrefix) {
+        try {
+            if (scope == null) {
+                return null;
+            }
+            ScopeType type = scope.getScopeType();
+            if (type == null) {
+                return null;
+            }
+            String prefix = inPrefix + AppValues.Indent;
+            StringBuilder s = new StringBuilder();
+            s.append(prefix).append("<").append(XmlTools.xmlTag("ImageScope")).append(">\n");
+            s.append(prefix).append("<").append(XmlTools.xmlTag("ScopeType")).append(">")
+                    .append(type)
+                    .append("</").append(XmlTools.xmlTag("ScopeType")).append(">\n");
+            String v = scope.getFile();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("<").append(XmlTools.xmlTag("Background")).append(">")
+                        .append("<![CDATA[").append(v).append("]]>")
+                        .append("</").append(XmlTools.xmlTag("Background")).append(">\n");
+            }
+            v = scope.getName();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("<").append(XmlTools.xmlTag("Name")).append(">")
+                        .append("<![CDATA[").append(v).append("]]>")
+                        .append("</").append(XmlTools.xmlTag("Name")).append(">\n");
+            }
+            v = scope.getOutlineName();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("<").append(XmlTools.xmlTag("Outline")).append(">")
+                        .append("<![CDATA[").append(v).append("]]>")
+                        .append("</").append(XmlTools.xmlTag("Outline")).append(">\n");
+            }
+            ColorScopeType ctype = scope.getColorScopeType();
+            if (ctype != null) {
+                s.append(prefix).append("<").append(XmlTools.xmlTag("ScopeColorType")).append(">")
+                        .append(type)
+                        .append("</").append(XmlTools.xmlTag("ScopeColorType")).append(">\n");
+            }
+            v = scope.getAreaData();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("<").append(XmlTools.xmlTag("Area")).append(">")
+                        .append("<![CDATA[").append(v).append("]]>")
+                        .append("</").append(XmlTools.xmlTag("Area")).append(">\n");
+            }
+            v = scope.getColorData();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("<").append(XmlTools.xmlTag("Colors")).append(">")
+                        .append("<![CDATA[").append(v).append("]]>")
+                        .append("</").append(XmlTools.xmlTag("Colors")).append(">\n");
+            }
+            if (scope.getColorDistance() > 0) {
+                s.append(prefix).append("<").append(XmlTools.xmlTag("ColorDistance")).append(">")
+                        .append(scope.getColorDistance())
+                        .append("</").append(XmlTools.xmlTag("ColorDistance")).append(">\n");
+            }
+            s.append(prefix).append("<").append(XmlTools.xmlTag("AreaExcluded")).append(">")
+                    .append(scope.isAreaExcluded() ? "true" : "false")
+                    .append("</").append(XmlTools.xmlTag("AreaExcluded")).append(">\n");
+            s.append(prefix).append("<").append(XmlTools.xmlTag("ColorExcluded")).append(">")
+                    .append(scope.isColorExcluded() ? "true" : "false")
+                    .append("</").append(XmlTools.xmlTag("ColorExcluded")).append(">\n");
+            s.append(prefix).append("<").append(XmlTools.xmlTag("CreateTime")).append(">")
+                    .append(DateTools.dateToString(scope.getCreateTime()))
+                    .append("</").append(XmlTools.xmlTag("CreateTime")).append(">\n");
+            s.append(prefix).append("<").append(XmlTools.xmlTag("ModifyTime")).append(">")
+                    .append(DateTools.dateToString(scope.getModifyTime()))
+                    .append("</").append(XmlTools.xmlTag("ModifyTime")).append(">\n");
+            s.append(prefix).append("</").append(XmlTools.xmlTag("ImageScope")).append(">\n");
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    /*
+       extract value from scope
+     */
+    public static boolean decodeColorData(ImageScope.ScopeType type, String colorData, ImageScope scope) {
+        if (type == null || colorData == null || scope == null) {
+            return false;
+        }
+        try {
+            switch (type) {
+                case Color:
+                case Rectangle:
+                case Circle:
+                case Ellipse:
+                case Polygon: {
+                    List<Color> colors = new ArrayList<>();
+                    if (colorData != null && !colorData.isBlank()) {
+                        String[] items = colorData.split(TableImageScope.DataSeparator);
+                        for (String item : items) {
+                            try {
+                                colors.add(new Color(Integer.parseInt(item), true));
+                            } catch (Exception e) {
+                                MyBoxLog.error(e);
+                            }
+                        }
+                    }
+                    scope.setColors(colors);
+                    scope.setColorData(colorData);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean decodeOutline(ImageScope.ScopeType type, String outline, ImageScope scope) {
+        if (type == null || outline == null || scope == null) {
+            return false;
+        }
+        if (type != ImageScope.ScopeType.Outline) {
+            return true;
+        }
+        try {
+            scope.setOutlineName(outline);
+            BufferedImage image = ImageFileReaders.readImage(new File(outline));
+            scope.setOutlineSource(image);
+            return image != null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            //            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    public static String encodeColorData(ImageScope scope) {
+        if (scope == null || scope.getScopeType() == null) {
+            return "";
+        }
+        String s = "";
+        try {
+            switch (scope.getScopeType()) {
+                case Color:
+                case Rectangle:
+                case Circle:
+                case Ellipse:
+                case Polygon:
+                    List<Color> colors = scope.getColors();
+                    if (colors != null) {
+                        for (Color color : colors) {
+                            s += color.getRGB() + TableImageScope.DataSeparator;
+                        }
+                        if (s.endsWith(TableImageScope.DataSeparator)) {
+                            s = s.substring(0, s.length() - TableImageScope.DataSeparator.length());
+                        }
+                    }
+            }
+            scope.setColorData(s);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            s = "";
+        }
+        return s;
+    }
+
+    public static String encodeAreaData(ImageScope scope) {
+        if (scope == null || scope.getScopeType() == null) {
+            return "";
+        }
+        String s = "";
+        try {
+            switch (scope.getScopeType()) {
+                case Matting: {
+                    List<IntPoint> points = scope.getPoints();
+                    if (points != null) {
+                        for (IntPoint p : points) {
+                            s += p.getX() + TableImageScope.DataSeparator + p.getY() + TableImageScope.DataSeparator;
+                        }
+                        if (s.endsWith(TableImageScope.DataSeparator)) {
+                            s = s.substring(0, s.length() - TableImageScope.DataSeparator.length());
+                        }
+                    }
+                }
+                break;
+                case Rectangle:
+                case Outline:
+                    DoubleRectangle rect = scope.getRectangle();
+                    if (rect != null) {
+                        s = (int) rect.getX() + TableImageScope.DataSeparator + (int) rect.getY() + TableImageScope.DataSeparator + (int) rect.getMaxX() + TableImageScope.DataSeparator + (int) rect.getMaxY();
+                    }
+                    break;
+                case Circle:
+                    DoubleCircle circle = scope.getCircle();
+                    if (circle != null) {
+                        s = (int) circle.getCenterX() + TableImageScope.DataSeparator + (int) circle.getCenterY() + TableImageScope.DataSeparator + (int) circle.getRadius();
+                    }
+                    break;
+                case Ellipse:
+                    DoubleEllipse ellipse = scope.getEllipse();
+                    if (ellipse != null) {
+                        s = (int) ellipse.getX() + TableImageScope.DataSeparator + (int) ellipse.getY() + TableImageScope.DataSeparator + (int) ellipse.getMaxX() + TableImageScope.DataSeparator + (int) ellipse.getMaxY();
+                    }
+                    break;
+                case Polygon:
+                    DoublePolygon polygon = scope.getPolygon();
+                    if (polygon != null) {
+                        for (Double d : polygon.getData()) {
+                            s += Math.round(d) + TableImageScope.DataSeparator;
+                        }
+                        if (s.endsWith(TableImageScope.DataSeparator)) {
+                            s = s.substring(0, s.length() - TableImageScope.DataSeparator.length());
+                        }
+                    }
+                    break;
+            }
+            scope.setAreaData(s);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            s = "";
+        }
+        return s;
+    }
+
+    public static boolean decodeAreaData(ImageScope.ScopeType type, String areaData, ImageScope scope) {
+        if (type == null || areaData == null || scope == null) {
+            return false;
+        }
+        try {
+            switch (type) {
+                case Matting: {
+                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    for (int i = 0; i < items.length / 2; ++i) {
+                        int x = (int) Double.parseDouble(items[i * 2]);
+                        int y = (int) Double.parseDouble(items[i * 2 + 1]);
+                        scope.addPoint(x, y);
+                    }
+                }
+                break;
+                case Rectangle:
+                case Outline: {
+                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    if (items.length == 4) {
+                        DoubleRectangle rect = DoubleRectangle.xy12(Double.parseDouble(items[0]), Double.parseDouble(items[1]), Double.parseDouble(items[2]), Double.parseDouble(items[3]));
+                        scope.setRectangle(rect);
+                    } else {
+                        return false;
+                    }
+                }
+                break;
+                case Circle: {
+                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    if (items.length == 3) {
+                        DoubleCircle circle = new DoubleCircle(Double.parseDouble(items[0]), Double.parseDouble(items[1]), Double.parseDouble(items[2]));
+                        scope.setCircle(circle);
+                    } else {
+                        return false;
+                    }
+                }
+                break;
+                case Ellipse: {
+                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    if (items.length == 4) {
+                        DoubleEllipse ellipse = DoubleEllipse.xy12(Double.parseDouble(items[0]), Double.parseDouble(items[1]), Double.parseDouble(items[2]), Double.parseDouble(items[3]));
+                        scope.setEllipse(ellipse);
+                    } else {
+                        return false;
+                    }
+                }
+                break;
+                case Polygon: {
+                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    DoublePolygon polygon = new DoublePolygon();
+                    for (int i = 0; i < items.length / 2; ++i) {
+                        int x = (int) Double.parseDouble(items[i * 2]);
+                        int y = (int) Double.parseDouble(items[i * 2 + 1]);
+                        polygon.add(x, y);
+                    }
+                    scope.setPolygon(polygon);
+                }
+                break;
+            }
+            scope.setAreaData(areaData);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static String encodeOutline(ImageScope scope) {
+        if (scope == null || scope.getScopeType() != ImageScope.ScopeType.Outline || scope.getOutline() == null) {
+            return "";
+        }
+        String s = "";
+        try {
+            String prefix = AppPaths.getImageScopePath() + File.separator + scope.getScopeType() + "_";
+            String filename = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
+            while (new File(filename).exists()) {
+                filename = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
+            }
+            if (ImageFileWriters.writeImageFile(scope.getOutlineSource(), "png", filename)) {
+                s = filename;
+            }
+            scope.setOutlineName(filename);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            s = "";
+        }
+        return s;
     }
 
 }
