@@ -615,7 +615,7 @@ public class StyleButton {
             return new StyleData(id, message("FormattedHexadecimal"), "", "iconHex.png");
         }
         if (id.startsWith("operation")) {
-            return new StyleData(id, message("Operations"), "", "iconAsterisk.png");
+            return new StyleData(id, message("Operations"), "", "iconOperation.png");
         }
         if (id.startsWith("location")) {
             return new StyleData(id, message("Location"), "", "iconLocation.png");

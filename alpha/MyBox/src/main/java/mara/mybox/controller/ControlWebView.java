@@ -1237,7 +1237,7 @@ public class ControlWebView extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            Menu operationsMenu = new Menu(message("Operations"), StyleTools.getIconImageView("iconAsterisk.png"));
+            Menu operationsMenu = new Menu(message("Operations"), StyleTools.getIconImageView("iconOperation.png"));
             operationsMenu.getItems().setAll(operationsMenu());
             items.add(operationsMenu);
 

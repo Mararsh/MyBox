@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -20,17 +21,20 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.tools.XmlTools.cdata;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -548,7 +552,7 @@ public class ImageScopeTools {
             ColorScopeType ctype = scope.getColorScopeType();
             if (ctype != null) {
                 s.append(prefix).append("<").append(XmlTools.xmlTag("ScopeColorType")).append(">")
-                        .append(type)
+                        .append(ctype)
                         .append("</").append(XmlTools.xmlTag("ScopeColorType")).append(">\n");
             }
             v = scope.getAreaData();
@@ -582,6 +586,143 @@ public class ImageScopeTools {
                     .append("</").append(XmlTools.xmlTag("ModifyTime")).append(">\n");
             s.append(prefix).append("</").append(XmlTools.xmlTag("ImageScope")).append(">\n");
             return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static String toJSON(ImageScope scope, String inPrefix) {
+        try {
+            if (scope == null) {
+                return null;
+            }
+            ScopeType type = scope.getScopeType();
+            if (type == null) {
+                return null;
+            }
+            String prefix = inPrefix + AppValues.Indent;
+            StringBuilder s = new StringBuilder();
+            s.append(inPrefix).append("\"").append(message("ImageScope")).append("\": {\n");
+            s.append(prefix).append("\"").append(message("ScopeType")).append("\": ")
+                    .append(JsonTools.encode(type.name())).append(",\n");
+            String v = scope.getFile();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("\"").append(message("Background")).append("\": ")
+                        .append(JsonTools.encode(v)).append(",\n");
+            }
+            v = scope.getName();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("\"").append(message("Name")).append("\": ")
+                        .append(JsonTools.encode(v)).append(",\n");
+            }
+            v = scope.getOutlineName();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("\"").append(message("Outline")).append("\": ")
+                        .append(JsonTools.encode(v)).append(",\n");
+            }
+            ColorScopeType ctype = scope.getColorScopeType();
+            if (ctype != null) {
+                s.append(prefix).append("\"").append(message("ScopeColorType")).append("\": ")
+                        .append(JsonTools.encode(ctype.name())).append(",\n");
+            }
+            v = scope.getAreaData();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("\"").append(message("Area")).append("\": ")
+                        .append(JsonTools.encode(v)).append(",\n");
+            }
+            v = scope.getColorData();
+            if (v != null && !v.isBlank()) {
+                s.append(prefix).append("\"").append(message("Colors")).append("\": ")
+                        .append(JsonTools.encode(v)).append(",\n");
+            }
+            if (scope.getColorDistance() > 0) {
+                s.append(prefix).append("\"").append(message("ColorDistance")).append("\": ")
+                        .append(scope.getColorDistance()).append(",\n");
+            }
+            s.append(prefix).append("\"").append(message("AreaExcluded")).append("\": ")
+                    .append(scope.isAreaExcluded() ? "true" : "false").append(",\n");
+            s.append(prefix).append("\"").append(message("ColorExcluded")).append("\": ")
+                    .append(scope.isColorExcluded() ? "true" : "false").append(",\n");
+            s.append(prefix).append("\"").append(message("CreateTime")).append("\": ")
+                    .append(JsonTools.encode(DateTools.dateToString(scope.getCreateTime()))).append(",\n");
+            s.append(prefix).append("\"").append(message("ModifyTime")).append("\": ")
+                    .append(JsonTools.encode(DateTools.dateToString(scope.getModifyTime()))).append("\n");
+            s.append(inPrefix).append("}\n");
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static String toHtml(ImageScope scope) {
+        try {
+            if (scope == null) {
+                return null;
+            }
+            ScopeType type = scope.getScopeType();
+            if (type == null) {
+                return null;
+            }
+            StringTable htmlTable = new StringTable();
+            List<String> row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("ScopeType"), type.name()));
+            htmlTable.add(row);
+            String v = scope.getFile();
+            if (v != null && !v.isBlank()) {
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("Background"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                htmlTable.add(row);
+            }
+            v = scope.getName();
+            if (v != null && !v.isBlank()) {
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                htmlTable.add(row);
+            }
+            v = scope.getOutlineName();
+            if (v != null && !v.isBlank()) {
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                htmlTable.add(row);
+            }
+            ColorScopeType ctype = scope.getColorScopeType();
+            if (ctype != null) {
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ScopeColorType"), ctype.name()));
+                htmlTable.add(row);
+            }
+            v = scope.getAreaData();
+            if (v != null && !v.isBlank()) {
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("Area"), v));
+                htmlTable.add(row);
+            }
+            v = scope.getColorData();
+            if (v != null && !v.isBlank()) {
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("Colors"), v));
+                htmlTable.add(row);
+            }
+            if (scope.getColorDistance() > 0) {
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ColorDistance"), scope.getColorDistance() + ""));
+                htmlTable.add(row);
+            }
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("AreaExcluded"), scope.isAreaExcluded() ? message("Yes") : ""));
+            htmlTable.add(row);
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("ColorExcluded"), scope.isColorExcluded() ? message("Yes") : ""));
+            htmlTable.add(row);
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("CreateTime"), DateTools.dateToString(scope.getCreateTime())));
+            htmlTable.add(row);
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("ModifyTime"), DateTools.dateToString(scope.getModifyTime())));
+            htmlTable.add(row);
+            return htmlTable.div();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

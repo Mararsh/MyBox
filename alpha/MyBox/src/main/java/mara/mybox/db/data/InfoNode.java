@@ -568,6 +568,13 @@ public class InfoNode extends BaseData {
                 }
                 break;
             }
+            case InfoNode.ImageScope: {
+                ImageScope scope = ImageScopeTools.fromXML(s);
+                if (scope != null) {
+                    html = ImageScopeTools.toHtml(scope);
+                }
+                break;
+            }
             default: {
                 Map<String, String> values = parseInfo(category, s);
                 if (values != null) {
@@ -643,10 +650,10 @@ public class InfoNode extends BaseData {
             }
             case InfoNode.ImageScope: {
                 ImageScope scope = ImageScopeTools.fromXML(s);
-//                if (csv != null) {
-//                    json = prefix + ",\n"
-//                            + Data2DTools.definitionToJSON(csv, true, prefix);
-//                }
+                if (scope != null) {
+                    json = prefix + ",\n"
+                            + ImageScopeTools.toJSON(scope, prefix);
+                }
                 break;
             }
             default:

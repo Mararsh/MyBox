@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -38,7 +39,7 @@ import mara.mybox.value.UserConfig;
  * ImageManufactureScopeController_Points < ImageManufactureScopeController_Area
  * ImageManufactureScopeController_Base < ImageViewerController
  */
-public class ControlImageScopeInput extends ImageManufactureScopeController_Save {
+public class ControlImageScopeInput extends ControlImageScopeInput_Save {
 
     @Override
     public void initControls() {
@@ -50,7 +51,6 @@ public class ControlImageScopeInput extends ImageManufactureScopeController_Save
             initSetBox();
             initColorsTab();
             initMatchTab();
-            initSaveTab();
 
             tableColor = new TableColor();
             popShapeMenu = true;
@@ -99,6 +99,7 @@ public class ControlImageScopeInput extends ImageManufactureScopeController_Save
     protected void initScopeView() {
         try {
             imageView.toBack();
+            showNotify = new SimpleBooleanProperty(false);
 
             scopeTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -261,7 +262,6 @@ public class ControlImageScopeInput extends ImageManufactureScopeController_Save
             imageInformation = null;
 
             isSettingValues = true;
-            scopeAllRadio.setSelected(true);
             scope = null;
             isSettingValues = false;
         } catch (Exception e) {
@@ -269,20 +269,19 @@ public class ControlImageScopeInput extends ImageManufactureScopeController_Save
         }
     }
 
-    public void setParameters(ImageManufactureController parent) {
-        try {
-            this.parentController = parent;
-            editor = parent;
-            sourceFile = editor.sourceFile;
-            imageInformation = editor.imageInformation;
-
-            loadImage(sourceFile, imageInformation, editor.image, false);
-            checkScopeType();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
+//    public void setParameters(ImageManufactureController parent) {
+//        try {
+//            this.parentController = parent;
+//            editor = parent;
+//            sourceFile = editor.sourceFile;
+//            imageInformation = editor.imageInformation;
+//
+//            loadImage(sourceFile, imageInformation, editor.image, false);
+//            checkScopeType();
+//        } catch (Exception e) {
+//            MyBoxLog.debug(e);
+//        }
+//    }
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
         if (p == null || imageView.getImage() == null) {
@@ -407,11 +406,6 @@ public class ControlImageScopeInput extends ImageManufactureScopeController_Save
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    public void showSaved() {
-        ImageManufactureScopesSavedController.load(editor);
     }
 
 }
