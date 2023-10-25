@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Optional;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -9,13 +10,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -35,66 +33,24 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         }
     }
 
-    protected void initCreatePane() {
-        try {
-            createPane.setExpanded(UserConfig.getBoolean("ImageManufactureNewPane", true));
-            createPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean("ImageManufactureNewPane", createPane.isExpanded());
-            });
-
-            newWidthInput.textProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                newWidth = v;
-                                newWidthInput.setStyle(null);
-                            } else {
-                                newWidthInput.setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            newWidthInput.setStyle(UserConfig.badStyle());
-                        }
-                    });
-            newHeightInput.textProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                newHeight = v;
-                                newHeightInput.setStyle(null);
-                            } else {
-                                newHeightInput.setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            newHeightInput.setStyle(UserConfig.badStyle());
-                        }
-                    });
-            colorSetController.init(this, baseName + "NewBackgroundColor");
-
-            newWidthInput.setText("500");
-            newHeightInput.setText("500");
-
-            createButton.disableProperty().bind(
-                    newWidthInput.styleProperty().isEqualTo(UserConfig.badStyle())
-                            .or(newHeightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @FXML
     @Override
     public void createAction() {
         if (!checkBeforeNextAction()) {
             return;
         }
-        Image newImage = FxImageTools.createImage(newWidth, newHeight, (Color) colorSetController.rect.getFill());
-        loadImage(newImage);
-
-        operationsController.marginsPane.setExpanded(true);
+        ImageCanvasInputController controller = ImageCanvasInputController.open(this, baseTitle);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                Image canvas = controller.getCanvas();
+                if (canvas != null) {
+                    loadImage(canvas);
+                    operationsController.marginsPane.setExpanded(true);
+                }
+                controller.close();
+            }
+        });
     }
 
     @FXML

@@ -694,7 +694,12 @@ public class StyleButton {
         if (id.startsWith("backup")) {
             return new StyleData(id, "", message("FileBackups"), "", "iconBackup.png");
         }
-
+        if (id.startsWith("file")) {
+            return new StyleData(id, "", message("File"), "", "iconFile.png");
+        }
+        if (id.startsWith("canvas")) {
+            return new StyleData(id, "", message("Canvas"), "", "iconRectangle.png");
+        }
         if (id.startsWith("onTop")) {
             return new StyleData(id, "", message("AlwayOnTop"), "", "iconDoubleUp.png");
         }

@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -62,7 +64,7 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button goScopeButton, functionsButton, withdrawPointButton,
+    protected Button goScopeButton, operationsButton, withdrawPointButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
@@ -79,6 +81,35 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
             loadImage(srcImage);
         }
         return srcImage;
+    }
+
+    @Override
+    public boolean afterImageLoaded() {
+        if (super.afterImageLoaded()) {
+            srcImage = image;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @FXML
+    @Override
+    public void createAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        ImageCanvasInputController controller = ImageCanvasInputController.open(this, baseTitle);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                Image canvas = controller.getCanvas();
+                if (canvas != null) {
+                    loadImage(canvas);
+                }
+                controller.close();
+            }
+        });
     }
 
     public boolean finalScope() {

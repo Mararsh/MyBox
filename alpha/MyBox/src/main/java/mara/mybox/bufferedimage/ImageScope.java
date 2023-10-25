@@ -99,6 +99,30 @@ public class ImageScope extends BaseData {
         return ImageScopeTools.cloneAll(this);
     }
 
+    public void decode() {
+        if (scopeType == ScopeType.All) {
+            return;
+        }
+        if (colorData != null) {
+            ImageScopeTools.decodeColorData(this);
+        }
+        if (areaData != null) {
+            ImageScopeTools.decodeAreaData(this);
+        }
+        if (outlineName != null) {
+            ImageScopeTools.decodeOutline(this);
+        }
+    }
+
+    public void encode() {
+        if (scopeType == ScopeType.All) {
+            return;
+        }
+        ImageScopeTools.encodeColorData(this);
+        ImageScopeTools.encodeAreaData(this);
+        ImageScopeTools.encodeOutline(this);
+    }
+
     public void addPoint(IntPoint point) {
         if (point == null) {
             return;

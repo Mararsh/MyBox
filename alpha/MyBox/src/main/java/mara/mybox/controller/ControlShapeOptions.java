@@ -69,7 +69,7 @@ public abstract class ControlShapeOptions extends BaseController {
     @FXML
     protected FlowPane opPane;
     @FXML
-    protected Button functionsButton;
+    protected Button operationsButton;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
@@ -492,7 +492,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
             switch (shapeType) {
                 case Polylines:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorCheck);
+                    opPane.getChildren().addAll(operationsButton, withdrawButton, anchorCheck, popAnchorCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastLine") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapePolylinesTips"));
@@ -500,14 +500,14 @@ public abstract class ControlShapeOptions extends BaseController {
                     break;
                 case Polyline:
                 case Polygon:
-                    opPane.getChildren().addAll(functionsButton, withdrawButton, anchorCheck, popAnchorCheck, addPointCheck);
+                    opPane.getChildren().addAll(operationsButton, withdrawButton, anchorCheck, popAnchorCheck, addPointCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }
                     break;
                 default:
-                    opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorCheck);
+                    opPane.getChildren().addAll(operationsButton, anchorCheck, popAnchorCheck);
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveComments"));
                     }

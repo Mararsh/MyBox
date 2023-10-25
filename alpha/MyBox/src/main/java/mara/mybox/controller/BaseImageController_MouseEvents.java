@@ -85,7 +85,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     protected List<MenuItem> maskShapeMenu(Event event, DoubleShape shapeData, DoublePoint p) {
         try {
-            if (event == null) {
+            if (event == null || image == null) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -255,6 +255,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
     protected List<MenuItem> shapeDataMenu(Event event, DoublePoint p) {
         try {
+            if (event == null || image == null) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
@@ -432,9 +435,10 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     protected List<MenuItem> shapeOperationMenu(Event event, DoubleShape shapeData, DoublePoint p) {
-        if (shapeData == null) {
+        if (event == null || image == null || shapeData == null) {
             return null;
         }
+
         Rectangle2D bound = getBound(shapeData);
         if (bound == null) {
             return null;

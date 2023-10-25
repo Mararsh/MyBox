@@ -153,6 +153,7 @@ public class Fxmls {
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
 
     public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
+    public static final String ImageCanvasInputFxml = "/fxml/ImageCanvasInput.fxml";
 
     public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
     public static final String SvgAddShapeFxml = "/fxml/SvgAddShape.fxml";

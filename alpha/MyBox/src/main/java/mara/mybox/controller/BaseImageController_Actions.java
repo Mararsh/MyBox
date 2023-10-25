@@ -395,50 +395,58 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 items.add(new SeparatorMenuItem());
             }
 
-            Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
-            items.add(viewMenu);
+            if (imageFile() != null) {
+                Menu fileMenu = new Menu(message("File"), StyleTools.getIconImageView("iconFile.png"));
+                items.add(fileMenu);
+
+                if (imageInformation != null) {
+                    menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        infoAction();
+                    });
+                    fileMenu.getItems().add(menu);
+
+                    menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        metaAction();
+                    });
+                    fileMenu.getItems().add(menu);
+
+                }
+
+                menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    openSourcePath();
+                });
+                fileMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("Browse"), StyleTools.getIconImageView("iconBrowse.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    browseAction();
+                });
+                fileMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    systemMethod();
+                });
+                fileMenu.getItems().add(menu);
+
+                items.add(new SeparatorMenuItem());
+
+            }
 
             menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {
                 popAction();
             });
-            viewMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("View"), StyleTools.getIconImageView("iconView.png"));
             menu.setOnAction((ActionEvent event) -> {
                 viewAction();
             });
-            viewMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                systemMethod();
-            });
-            menu.setDisable(sourceFile == null || !sourceFile.exists());
-            viewMenu.getItems().add(menu);
-
-            if (imageInformation != null) {
-                menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                viewMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    metaAction();
-                });
-                viewMenu.getItems().add(menu);
-
-            }
-
-            if (imageFile() != null) {
-                menu = new MenuItem(message("Browse"), StyleTools.getIconImageView("iconBrowse.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    browseAction();
-                });
-                viewMenu.getItems().add(menu);
-            }
+            items.add(menu);
 
             menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -446,53 +454,50 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             items.add(menu);
 
-            Menu handleMenu = new Menu(message("Operation"), StyleTools.getIconImageView("iconAnalyse.png"));
-            items.add(handleMenu);
-
             menu = new MenuItem(message("Statistic"), StyleTools.getIconImageView("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 statisticAction();
 
             });
-            handleMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("OCR"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ocrAction();
             });
-            handleMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Split"), StyleTools.getIconImageView("iconSplit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 splitAction();
             });
-            handleMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Sample"), StyleTools.getIconImageView("iconSample.png"));
             menu.setOnAction((ActionEvent event) -> {
                 sampleAction();
 
             });
-            handleMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Repeat"), StyleTools.getIconImageView("iconRepeat.png"));
             menu.setOnAction((ActionEvent event) -> {
                 repeatAction();
             });
-            handleMenu.getItems().add(menu);
+            items.add(menu);
 
             if (imageFile() != null) {
                 menu = new MenuItem(message("Convert"), StyleTools.getIconImageView("iconDelimiter.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     convertAction();
                 });
-                handleMenu.getItems().add(menu);
+                items.add(menu);
 
                 menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     svgAction();
                 });
-                handleMenu.getItems().add(menu);
+                items.add(menu);
             }
 
             Menu copyMenu = new Menu(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));

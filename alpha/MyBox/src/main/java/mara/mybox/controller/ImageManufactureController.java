@@ -50,7 +50,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         try {
             super.initControls();
 
-            initCreatePane();
             initBackupsTab();
             initEditBar();
 

@@ -15,8 +15,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -46,7 +44,6 @@ import mara.mybox.value.UserConfig;
 public abstract class ImageManufactureController_Image extends ImageViewerController {
 
     protected SimpleBooleanProperty imageLoaded;
-    protected int newWidth, newHeight;
     protected ImageOperation operation;
 
     protected TableImageEditHistory tableImageEditHistory;
@@ -61,19 +58,13 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     }
 
     @FXML
-    protected TitledPane createPane;
-    @FXML
     protected Tab imageTab, scopeTab;
     @FXML
     protected ImageView maskView;
     @FXML
-    protected TextField newWidthInput, newHeightInput;
-    @FXML
     protected ImageManufactureOperationsController operationsController;
     @FXML
     protected ImageManufactureScopeController scopeController;
-    @FXML
-    protected ControlColorSet colorSetController;
     @FXML
     protected Button historyButton, viewImageButton;
 

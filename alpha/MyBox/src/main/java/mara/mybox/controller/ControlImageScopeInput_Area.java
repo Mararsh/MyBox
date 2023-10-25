@@ -213,6 +213,9 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
 
     @Override
     protected List<MenuItem> shapeDataMenu(Event event, DoublePoint p) {
+        if (event == null || image == null) {
+            return null;
+        }
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
@@ -267,12 +270,18 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
 
     @Override
     public boolean canDeleteAnchor() {
+        if (scope == null || image == null) {
+            return false;
+        }
         ScopeType type = scope.getScopeType();
         return type == ScopeType.Polygon || type == ScopeType.Matting;
     }
 
     @Override
     public void moveMaskAnchor(int index, String name, DoublePoint p) {
+        if (scope == null || image == null) {
+            return;
+        }
         ScopeType type = scope.getScopeType();
         if (type == ScopeType.Polygon || type == ScopeType.Matting) {
             pointsController.setPoint(index, p.getX(), p.getY());
@@ -283,6 +292,9 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
 
     @Override
     public void deleteMaskAnchor(int index, String name) {
+        if (scope == null || image == null) {
+            return;
+        }
         ScopeType type = scope.getScopeType();
         if (type == ScopeType.Polygon || type == ScopeType.Matting) {
             pointsController.deletePoint(index);

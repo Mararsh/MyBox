@@ -732,6 +732,13 @@ public class ImageScopeTools {
     /*
        extract value from scope
      */
+    public static boolean decodeColorData(ImageScope scope) {
+        if (scope == null) {
+            return false;
+        }
+        return decodeColorData(scope.getScopeType(), scope.getColorData(), scope);
+    }
+
     public static boolean decodeColorData(ImageScope.ScopeType type, String colorData, ImageScope scope) {
         if (type == null || colorData == null || scope == null) {
             return false;
@@ -744,7 +751,7 @@ public class ImageScopeTools {
                 case Ellipse:
                 case Polygon: {
                     List<Color> colors = new ArrayList<>();
-                    if (colorData != null && !colorData.isBlank()) {
+                    if (!colorData.isBlank()) {
                         String[] items = colorData.split(TableImageScope.DataSeparator);
                         for (String item : items) {
                             try {
@@ -763,6 +770,13 @@ public class ImageScopeTools {
             MyBoxLog.error(e);
             return false;
         }
+    }
+
+    public static boolean decodeOutline(ImageScope scope) {
+        if (scope == null) {
+            return false;
+        }
+        return decodeOutline(scope.getScopeType(), scope.getOutlineName(), scope);
     }
 
     public static boolean decodeOutline(ImageScope.ScopeType type, String outline, ImageScope scope) {
@@ -872,6 +886,13 @@ public class ImageScopeTools {
         return s;
     }
 
+    public static boolean decodeAreaData(ImageScope scope) {
+        if (scope == null) {
+            return false;
+        }
+        return decodeAreaData(scope.getScopeType(), scope.getAreaData(), scope);
+    }
+
     public static boolean decodeAreaData(ImageScope.ScopeType type, String areaData, ImageScope scope) {
         if (type == null || areaData == null || scope == null) {
             return false;
@@ -891,7 +912,10 @@ public class ImageScopeTools {
                 case Outline: {
                     String[] items = areaData.split(TableImageScope.DataSeparator);
                     if (items.length == 4) {
-                        DoubleRectangle rect = DoubleRectangle.xy12(Double.parseDouble(items[0]), Double.parseDouble(items[1]), Double.parseDouble(items[2]), Double.parseDouble(items[3]));
+                        DoubleRectangle rect = DoubleRectangle.xy12(Double.parseDouble(items[0]),
+                                Double.parseDouble(items[1]),
+                                Double.parseDouble(items[2]),
+                                Double.parseDouble(items[3]));
                         scope.setRectangle(rect);
                     } else {
                         return false;
@@ -901,7 +925,9 @@ public class ImageScopeTools {
                 case Circle: {
                     String[] items = areaData.split(TableImageScope.DataSeparator);
                     if (items.length == 3) {
-                        DoubleCircle circle = new DoubleCircle(Double.parseDouble(items[0]), Double.parseDouble(items[1]), Double.parseDouble(items[2]));
+                        DoubleCircle circle = new DoubleCircle(Double.parseDouble(items[0]),
+                                Double.parseDouble(items[1]),
+                                Double.parseDouble(items[2]));
                         scope.setCircle(circle);
                     } else {
                         return false;
@@ -911,7 +937,10 @@ public class ImageScopeTools {
                 case Ellipse: {
                     String[] items = areaData.split(TableImageScope.DataSeparator);
                     if (items.length == 4) {
-                        DoubleEllipse ellipse = DoubleEllipse.xy12(Double.parseDouble(items[0]), Double.parseDouble(items[1]), Double.parseDouble(items[2]), Double.parseDouble(items[3]));
+                        DoubleEllipse ellipse = DoubleEllipse.xy12(Double.parseDouble(items[0]),
+                                Double.parseDouble(items[1]),
+                                Double.parseDouble(items[2]),
+                                Double.parseDouble(items[3]));
                         scope.setEllipse(ellipse);
                     } else {
                         return false;
