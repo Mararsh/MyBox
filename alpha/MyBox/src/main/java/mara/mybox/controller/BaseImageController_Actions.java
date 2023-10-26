@@ -27,6 +27,8 @@ import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileNameTools;
+import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -395,45 +397,16 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 items.add(new SeparatorMenuItem());
             }
 
-            if (imageFile() != null) {
-                Menu fileMenu = new Menu(message("File"), StyleTools.getIconImageView("iconFile.png"));
+            Menu fileMenu = fileMenu(fevent);
+            if (fileMenu != null) {
                 items.add(fileMenu);
-
-                if (imageInformation != null) {
-                    menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        infoAction();
-                    });
-                    fileMenu.getItems().add(menu);
-
-                    menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        metaAction();
-                    });
-                    fileMenu.getItems().add(menu);
-
-                }
-
-                menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    openSourcePath();
-                });
-                fileMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("Browse"), StyleTools.getIconImageView("iconBrowse.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    browseAction();
-                });
-                fileMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    systemMethod();
-                });
-                fileMenu.getItems().add(menu);
-
                 items.add(new SeparatorMenuItem());
+            }
 
+            Menu framesMenu = framesMenu(fevent);
+            if (framesMenu != null) {
+                items.add(framesMenu);
+                items.add(new SeparatorMenuItem());
             }
 
             menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
@@ -551,6 +524,130 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public Menu fileMenu(Event fevent) {
+        try {
+            if (sourceFile == null) {
+                return null;
+            }
+            Menu fileMenu = new Menu(message("File"), StyleTools.getIconImageView("iconFile.png"));
+
+            MenuItem menu;
+            if (imageInformation != null) {
+                menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                fileMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    metaAction();
+                });
+                fileMenu.getItems().add(menu);
+
+            }
+
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                openSourcePath();
+            });
+            fileMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImagesBrowser"), StyleTools.getIconImageView("iconBrowse.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                browseAction();
+            });
+            fileMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                FileBrowseController.open(this);
+            });
+            fileMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            fileMenu.getItems().add(menu);
+
+            return fileMenu;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public Menu framesMenu(Event fevent) {
+        try {
+            if (sourceFile == null) {
+                return null;
+            }
+            String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
+            if (!FileExtensions.MultiFramesImages.contains(fileFormat)) {
+                return null;
+            }
+            Menu framesMenu = new Menu(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
+
+            MenuItem menu;
+
+            if (framesNumber >= 2) {
+
+                if (frameIndex < framesNumber - 1) {
+                    menu = new MenuItem(message("Next"), StyleTools.getIconImageView("iconNext.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        nextFrame();
+                    });
+                    framesMenu.getItems().add(menu);
+                }
+
+                if (frameIndex > 0) {
+                    menu = new MenuItem(message("Previous"), StyleTools.getIconImageView("iconPrevious.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        previousFrame();
+                    });
+                    framesMenu.getItems().add(menu);
+                }
+
+                menu = new MenuItem(message("Play"), StyleTools.getIconImageView("iconPlay.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    playAction();
+                });
+                framesMenu.getItems().add(menu);
+
+            }
+
+            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconThumbsList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                editFrames();
+            });
+            framesMenu.getItems().add(menu);
+
+            return framesMenu;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @FXML
+    public void editFrames() {
+        ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
+        controller.open(sourceFile);
+    }
+
+    @FXML
+    public void nextFrame() {
+        loadFrame(frameIndex + 1);
+    }
+
+    @FXML
+    public void previousFrame() {
+        loadFrame(frameIndex - 1);
     }
 
     @FXML

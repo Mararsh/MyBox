@@ -32,6 +32,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -74,6 +75,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             super.initValues();
 
             tableImageEditHistory = new TableImageEditHistory();
+            imageHistoriesRootPath = AppPaths.getImageHisPath();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

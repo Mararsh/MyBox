@@ -353,22 +353,6 @@ public class ImageViewerController extends BaseImageController {
     }
 
     @FXML
-    public void editFrames() {
-        ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
-        controller.open(sourceFile);
-    }
-
-    @FXML
-    public void nextFrame() {
-        loadFrame(frameIndex + 1);
-    }
-
-    @FXML
-    public void previousFrame() {
-        loadFrame(frameIndex - 1);
-    }
-
-    @FXML
     public void saveAllFramesSelected() {
         File file = imageFile();
         if (file != null && file.exists() && framesNumber > 1) {
