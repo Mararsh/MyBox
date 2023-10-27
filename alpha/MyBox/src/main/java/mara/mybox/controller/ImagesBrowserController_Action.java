@@ -400,7 +400,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             File file = info.getImageFileInformation().getFile();
-            changeFile(info, newFile);
+            info.setFile(file);
             tableData.set(index, info);
             imageFileList.set(index, newFile);
             if (displayMode == DisplayMode.ImagesGrid) {

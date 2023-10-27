@@ -162,7 +162,7 @@ public class ImageItem {
 
             List<String> icons = new ArrayList<>();
             icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat",
-                    "Clear", "Clipboard", "Close", "Copy",
+                    "Clear", "Clipboard", "Close", "Copy", "Convert",
                     "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
                     "Edit", "Examples", "Export", "File", "Frame",
                     "Function", "Go", "Import", "Menu", "NewItem", "OK", "OpenPath", "Operation",

@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +25,6 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
-import static mara.mybox.controller.ImageViewerController.openFile;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -160,17 +158,6 @@ public class ImageOCRProcessController extends ImageViewerController {
     @Override
     public void recoverAction() {
         loadImage(OCRController.sourceFile, OCRController.imageInformation, OCRController.imageView.getImage(), false);
-    }
-
-    @Override
-    public void afterSaveAs(File file) {
-        if (loadCheck.isSelected()) {
-            OCRController.sourceFileChanged(file);
-
-        } else {
-            openFile(file);
-
-        }
     }
 
     @FXML

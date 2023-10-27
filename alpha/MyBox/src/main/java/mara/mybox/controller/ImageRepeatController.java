@@ -64,8 +64,6 @@ public class ImageRepeatController extends ImageViewerController {
         try {
             super.initControls();
 
-            repeatController.formatController = formatController;
-
             sizeController.setParameters(scaleController);
 
             saveTab.disableProperty().bind(repeatController.imageView.imageProperty().isNull());

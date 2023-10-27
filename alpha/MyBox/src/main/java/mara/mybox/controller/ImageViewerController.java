@@ -11,36 +11,37 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.FileExtensions;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -55,23 +56,11 @@ public class ImageViewerController extends BaseImageController {
     protected ImageScope scope;
 
     @FXML
-    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, browsePane;
+    protected TitledPane viewPane, browsePane;
     @FXML
-    protected VBox panesBox, contentBox, fileBox, saveAsBox;
+    protected VBox panesBox, contentBox;
     @FXML
-    protected FlowPane saveFramesPane, buttonsPane;
-    @FXML
-    protected ToggleGroup framesSaveGroup;
-    @FXML
-    protected ComboBox<String> frameSelector;
-    @FXML
-    protected Label framesLabel;
-    @FXML
-    protected Button nextFrameButton, previousFrameButton, playFramesButton;
-    @FXML
-    protected RadioButton saveAllFramesRadio;
-    @FXML
-    protected ControlImageFormat formatController;
+    protected FlowPane buttonsPane;
     @FXML
     protected ControlFileBackup backupController;
 
@@ -85,9 +74,7 @@ public class ImageViewerController extends BaseImageController {
         try {
             super.initControls();
             initFilePane();
-            initFramePane();
             initViewPane();
-            initSaveAsPane();
             initEditPane();
             initBrowsePane();
 
@@ -102,9 +89,6 @@ public class ImageViewerController extends BaseImageController {
 
     protected void initFilePane() {
         try {
-            if (fileBox != null && imageView != null) {
-                fileBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
             if (saveButton != null && imageView != null) {
                 saveButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
@@ -146,41 +130,6 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
-    protected void initFramePane() {
-        try {
-            if (framePane == null) {
-                return;
-            }
-            if (imageView != null) {
-                framePane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
-            if (frameSelector != null) {
-                frameSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        try {
-                            if (isSettingValues) {
-                                return;
-                            }
-                            int v = Integer.parseInt(frameSelector.getValue());
-                            if (v < 1 || v > framesNumber) {
-                                frameSelector.getEditor().setStyle(UserConfig.badStyle());
-                            } else {
-                                frameSelector.getEditor().setStyle(null);
-                                loadFrame(v - 1);
-                            }
-                        } catch (Exception e) {
-                            frameSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    }
-                });
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     protected void initViewPane() {
         try {
             if (viewPane != null) {
@@ -191,27 +140,6 @@ public class ImageViewerController extends BaseImageController {
                 viewPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     UserConfig.setBoolean(baseName + "ViewPane", viewPane.isExpanded());
                 });
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initSaveAsPane() {
-        try {
-            if (saveAsPane != null) {
-                if (imageView != null) {
-                    saveAsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                }
-                saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", false));
-                saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
-                });
-            }
-
-            if (formatController != null) {
-                formatController.setParameters(this, false);
             }
 
         } catch (Exception e) {
@@ -241,13 +169,6 @@ public class ImageViewerController extends BaseImageController {
             if (imageView == null) {
                 return;
             }
-            if (editPane != null) {
-                editPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                editPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "EditPane", editPane.isExpanded());
-                });
-                editPane.setExpanded(UserConfig.getBoolean(baseName + "EditPane", false));
-            }
 
             if (buttonsPane != null) {
                 buttonsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
@@ -270,41 +191,10 @@ public class ImageViewerController extends BaseImageController {
             if (!super.afterImageLoaded() || imageView == null) {
                 return false;
             }
-            if (saveAsBox != null && saveFramesPane != null) {
-                if (framesNumber <= 1) {
-                    if (saveAsBox.getChildren().contains(saveFramesPane)) {
-                        saveAsBox.getChildren().remove(saveFramesPane);
-                    }
 
-                } else {
-                    if (!saveAsBox.getChildren().contains(saveFramesPane)) {
-                        saveAsBox.getChildren().add(0, saveFramesPane);
-                    }
-                }
+            if (fileButton != null) {
+                fileButton.setDisable(sourceFile == null);
             }
-            if (saveAllFramesRadio != null) {
-                saveAllFramesRadio.setSelected(true);
-                saveAllFramesSelected();
-            }
-
-            if (framesLabel != null) {
-                framesLabel.setText("/" + framesNumber);
-            }
-            if (frameSelector != null) {
-                List<String> frames = new ArrayList<>();
-                for (int i = 1; i <= framesNumber; i++) {
-                    frames.add(i + "");
-                }
-                isSettingValues = true;
-                frameSelector.getItems().setAll(frames);
-                frameSelector.setValue((frameIndex + 1) + "");
-                nextFrameButton.setDisable(framesNumber < 2);
-                previousFrameButton.setDisable(framesNumber < 2);
-                playFramesButton.setDisable(framesNumber < 2);
-                isSettingValues = false;
-            }
-
-            setFramePane();
 
             setFilesBrowse();
 
@@ -319,63 +209,10 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
-    public void setFramePane() {
-        try {
-            if (framePane == null || panesBox == null) {
-                return;
-            }
-            if (sourceFile == null) {
-                if (panesBox.getChildren().contains(framePane)) {
-                    panesBox.getChildren().remove(framePane);
-                }
-                return;
-            }
-            String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
-            if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
-                if (!panesBox.getChildren().contains(framePane)) {
-                    panesBox.getChildren().add(1, framePane);
-                }
-                framePane.setExpanded(true);
-            } else {
-                if (panesBox.getChildren().contains(framePane)) {
-                    panesBox.getChildren().remove(framePane);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void setFilesBrowse() {
         if (browseController != null) {
             browseController.setCurrentFile(imageFile());
         }
-    }
-
-    @FXML
-    public void saveAllFramesSelected() {
-        File file = imageFile();
-        if (file != null && file.exists() && framesNumber > 1) {
-            formatController.formatPane.getChildren().setAll(formatController.tifRadio, formatController.gifRadio);
-            if ("gif".equalsIgnoreCase(FileNameTools.suffix(file.getName()))) {
-                formatController.gifRadio.setSelected(true);
-            } else {
-                formatController.tifRadio.setSelected(true);
-            }
-        } else {
-            formatController.formatPane.getChildren().setAll(formatController.pngRadio, formatController.jpgRadio,
-                    formatController.tifRadio, formatController.gifRadio,
-                    formatController.pcxRadio, formatController.pnmRadio,
-                    formatController.bmpRadio, formatController.wbmpRadio, formatController.icoRadio);
-        }
-    }
-
-    @FXML
-    public void saveCurrentFramesSelected() {
-        formatController.formatPane.getChildren().setAll(formatController.pngRadio, formatController.jpgRadio,
-                formatController.tifRadio, formatController.gifRadio,
-                formatController.pcxRadio, formatController.pnmRadio,
-                formatController.bmpRadio, formatController.wbmpRadio, formatController.icoRadio);
     }
 
     @FXML
@@ -518,143 +355,276 @@ public class ImageViewerController extends BaseImageController {
         start(task);
     }
 
-    @FXML
     @Override
-    public void saveAsAction() {
-        if (imageView == null || imageView.getImage() == null
-                || (saveAsButton != null && saveAsButton.isDisabled())) {
+    protected void popImageMenu(double x, double y) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        File srcFile = imageFile();
-        String fname;
-        if (srcFile != null) {
-            fname = FileNameTools.filter(FileNameTools.prefix(srcFile.getName()))
-                    + (framesNumber > 1 && (saveAllFramesRadio == null || !saveAllFramesRadio.isSelected())
-                    ? "-" + message("Frame") + (frameIndex + 1) : "")
-                    + "_" + DateTools.nowFileString();
-        } else {
-            fname = DateTools.nowFileString();
-        }
-        String targetFormat = ".png";
-        if (formatController != null) {
-            targetFormat = formatController.attributes.getImageFormat();
-        } else if (fileTypeGroup != null) {
-            targetFormat = ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
-        }
-        fname += "." + targetFormat;
-        targetFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                fname, FileFilters.imageFilter(targetFormat));
-        if (targetFile == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                Object imageToSave = imageToSaveAs();
-                if (imageToSave == null) {
-                    return false;
-                }
-                BufferedImage bufferedImage;
-                if (imageToSave instanceof Image) {
-                    bufferedImage = SwingFXUtils.fromFXImage((Image) imageToSave, null);
-                } else if (imageToSave instanceof BufferedImage) {
-                    bufferedImage = (BufferedImage) imageToSave;
-                } else {
-                    return false;
-                }
-                if (bufferedImage == null || task == null || isCancelled()) {
-                    return false;
-                }
-                boolean multipleFrames = srcFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
-                if (formatController != null) {
-                    if (multipleFrames) {
-                        error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, formatController.attributes);
-                        return error == null;
-                    } else {
-                        BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
-                        return ImageFileWriters.writeImageFile(converted, formatController.attributes, targetFile.getAbsolutePath());
-                    }
-                } else {
-                    if (multipleFrames) {
-                        error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, null);
-                        return error == null;
-                    } else {
-                        return ImageFileWriters.writeImageFile(bufferedImage, targetFile);
-                    }
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popInformation(message("Saved"));
-                recordFileWritten(targetFile);
-
-                afterSaveAs(targetFile);
-
-            }
-        };
-        start(task);
-    }
-
-    public void afterSaveAs(File file) {
-        if (saveAsType == SaveAsType.Load) {
-            sourceFileChanged(file);
-
-        } else if (saveAsType == SaveAsType.Open) {
-            openFile(file);
-
-        } else if (saveAsType == SaveAsType.Edit) {
-            ImageManufactureController.openFile(file);
-
-        }
+        MenuImageViewController.imageViewMenu(this, x, y);
     }
 
     @FXML
     @Override
-    public void deleteAction() {
-        File focusFile = null;
-        if (browseController != null) {
-            focusFile = browseController.nextFile(sourceFile);
-            if (focusFile == null) {
-                focusFile = browseController.previousFile(sourceFile);
+    public boolean menuAction() {
+        Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
+        MenuImageViewController.imageViewMenu(this, localToScreen.getX(), localToScreen.getY());
+        return true;
+    }
+
+    public boolean scopeWhole() {
+        return scope == null || scope.getScopeType() == ImageScope.ScopeType.All;
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Save"), StyleTools.getIconImageView("iconSave.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    saveAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    recoverAction();
+                });
+                items.add(menu);
+
             }
-        }
-        if (deleteFile(sourceFile)) {
-            sourceFile = null;
-            image = null;
-            imageView.setImage(null);
-            if (focusFile != null) {
-                sourceFileChanged(focusFile);
+
+            menu = new MenuItem(message("SaveAs"), StyleTools.getIconImageView("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageConverterController.open(this);
+            });
+            items.add(menu);
+
+            if (sourceFile != null) {
+                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", false));
+                backItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                    }
+                });
+                items.add(backItem);
+
+                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    FileBackupController.load(this);
+                });
+                items.add(menu);
+            } else {
+                return items;
             }
+            items.add(new SeparatorMenuItem());
+
+            String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
+            if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
+                Menu framesMenu = new Menu(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
+
+                menu = new MenuItem(message("Current") + ": " + (frameIndex + 1) + "/" + framesNumber);
+                menu.setStyle("-fx-text-fill: #2e598a;");
+                framesMenu.getItems().add(menu);
+                framesMenu.getItems().add(new SeparatorMenuItem());
+
+                if (framesNumber >= 2) {
+                    if (frameIndex < framesNumber - 1) {
+                        menu = new MenuItem(message("Next"), StyleTools.getIconImageView("iconNext.png"));
+                        menu.setOnAction((ActionEvent event) -> {
+                            nextFrame();
+                        });
+                        framesMenu.getItems().add(menu);
+                    }
+
+                    if (frameIndex > 0) {
+                        menu = new MenuItem(message("Previous"), StyleTools.getIconImageView("iconPrevious.png"));
+                        menu.setOnAction((ActionEvent event) -> {
+                            previousFrame();
+                        });
+                        framesMenu.getItems().add(menu);
+                    }
+
+                    menu = new MenuItem(message("Select"), StyleTools.getIconImageView("iconSelect.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        selectFrame();
+                    });
+                    framesMenu.getItems().add(menu);
+
+                    menu = new MenuItem(message("Play"), StyleTools.getIconImageView("iconPlay.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        playAction();
+                    });
+                    framesMenu.getItems().add(menu);
+                }
+
+                menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconThumbsList.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    editFrames();
+                });
+                framesMenu.getItems().add(menu);
+
+                items.add(framesMenu);
+                items.add(new SeparatorMenuItem());
+            }
+
+            if (imageInformation != null) {
+                menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    metaAction();
+                });
+                items.add(menu);
+
+            }
+
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                openSourcePath();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ImagesBrowser"), StyleTools.getIconImageView("iconBrowse.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                browseAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                FileBrowseController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                renameAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                deleteAction();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 
-    public boolean deleteFile(File sfile) {
-        if (sfile == null) {
-            return false;
-        }
-        if (FileDeleteTools.delete(sfile)) {
-            popSuccessful();
-            return true;
-        } else {
-            popFailed();
-            return false;
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateRight();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateRight();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateLeft();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                turnOver();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 
-    public void changeFile(ImageInformation info, File file) {
-        if (info == null || file == null) {
+    @Override
+    public List<MenuItem> viewMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateRight();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateRight();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateLeft();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                turnOver();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void selectFrame() {
+        String value = PopTools.askValue(baseTitle, message("Select"), message("Frame"), "1");
+        if (value == null || value.isBlank()) {
             return;
         }
-        ImageFileInformation finfo = info.getImageFileInformation();
-        if (finfo != null) {
-            finfo.setFile(file);
+        try {
+            int v = Integer.parseInt(value);
+            if (v < 1 || v > framesNumber) {
+                popError(message("InvalidValue"));
+            } else {
+                loadFrame(v - 1);
+            }
+        } catch (Exception e) {
+            popError(message("InvalidValue"));
         }
-        info.setFile(file);
     }
 
     @FXML
@@ -688,7 +658,9 @@ public class ImageViewerController extends BaseImageController {
             popSuccessful();
             sourceFile = newFile;
             recordFileOpened(sourceFile);
-            changeFile(imageInformation, newFile);
+            if (imageInformation != null) {
+                imageInformation.setFile(sourceFile);
+            }
             updateLabelsTitle();
             if (browseController != null) {
                 browseController.setCurrentFile(sourceFile);
@@ -700,26 +672,31 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
-    @Override
-    protected void popImageMenu(double x, double y) {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        MenuImageViewController.imageViewMenu(this, x, y);
-    }
-
     @FXML
     @Override
-    public boolean menuAction() {
-        Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-        MenuImageViewController.imageViewMenu(this, localToScreen.getX(), localToScreen.getY());
-        return true;
+    public void deleteAction() {
+        if (sourceFile == null) {
+            return;
+        }
+        if (!PopTools.askSure(getTitle(), message("Delete"), sourceFile.getAbsolutePath())) {
+            return;
+        }
+        File focusFile = nextFile();
+        if (focusFile == null) {
+            focusFile = previousFile();
+        }
+        if (FileDeleteTools.delete(sourceFile)) {
+            popSuccessful();
+            sourceFile = null;
+            image = null;
+            imageView.setImage(null);
+            if (focusFile != null) {
+                sourceFileChanged(focusFile);
+            }
+        } else {
+            popFailed();
+        }
     }
-
-    public boolean scopeWhole() {
-        return scope == null || scope.getScopeType() == ImageScope.ScopeType.All;
-    }
-
 
     /*
         static methods

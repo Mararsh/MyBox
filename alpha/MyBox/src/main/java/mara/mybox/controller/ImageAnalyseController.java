@@ -115,7 +115,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 }
             });
 
-            showRightPane();
+            tabPane.disableProperty().bind(imageView.imageProperty().isNull());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

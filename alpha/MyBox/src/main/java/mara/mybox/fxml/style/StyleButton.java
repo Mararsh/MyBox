@@ -695,7 +695,15 @@ public class StyleButton {
             return new StyleData(id, "", message("FileBackups"), "", "iconBackup.png");
         }
         if (id.startsWith("file")) {
-            return new StyleData(id, "", message("File"), "", "iconFile.png");
+            switch (id) {
+                case "filesListButton":
+                    return new StyleData("filesListButton", message("FilesList"), "", "iconList.png");
+                default:
+                    return new StyleData(id, "", message("File"), "", "iconFile.png");
+            }
+        }
+        if (id.startsWith("frame")) {
+            return new StyleData(id, "", message("Frames"), "", "iconFrame.png");
         }
         if (id.startsWith("canvas")) {
             return new StyleData(id, "", message("Canvas"), "", "iconRectangle.png");
@@ -760,8 +768,6 @@ public class StyleButton {
                 return new StyleData("inactiveButton", message("Inactive"), "", "iconInactive.png");
             case "thumbsListButton":
                 return new StyleData("thumbsListButton", message("ThumbnailsList"), "", "iconThumbsList.png");
-            case "filesListButton":
-                return new StyleData("filesListButton", message("FilesList"), "", "iconList.png");
             case "gridButton":
                 return new StyleData(id, message("Grid"), "", "iconBrowse.png");
             case "snapshotButton":

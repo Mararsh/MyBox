@@ -25,6 +25,10 @@ public abstract class BaseImageController extends BaseImageController_Actions {
 
             clearMask();
 
+            if (imageBox != null && imageView != null) {
+                imageBox.disableProperty().bind(imageView.imageProperty().isNull());
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

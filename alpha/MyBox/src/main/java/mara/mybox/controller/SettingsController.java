@@ -34,7 +34,6 @@ import mara.mybox.MyBox;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
-import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -68,7 +67,7 @@ public class SettingsController extends BaseController {
     protected int recentFileNumber, newJVM;
 
     @FXML
-    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, mapTab;
+    protected Tab interfaceTab, baseTab, pdfTab, dataTab, mapTab;
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
@@ -77,7 +76,7 @@ public class SettingsController extends BaseController {
             lostFocusCommitCheck, copyCurrentDataPathCheck, clearCurrentRootCheck,
             stopAlarmCheck;
     @FXML
-    protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
+    protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput,
             tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput,
             webConnectTimeoutInput, webReadTimeoutInput;
     @FXML
@@ -97,15 +96,12 @@ public class SettingsController extends BaseController {
     @FXML
     protected Rectangle colorCustomizeRect;
     @FXML
-    protected ControlColorSet alphaColorSetController, popBgColorController,
+    protected ControlColorSet popBgColorController,
             popInfoColorController, popErrorColorController, popWarnColorController;
     @FXML
     protected ListView languageList;
     @FXML
-    protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
-            derbyStatus;
-    @FXML
-    protected ControlImageRender renderController;
+    protected Label currentJvmLabel, currentDataPathLabel, currentTempPathLabel, derbyStatus;
 
     public SettingsController() {
         baseTitle = message("Settings");
@@ -120,7 +116,6 @@ public class SettingsController extends BaseController {
             initBaseTab();
             initDataTab();
             initPdfTab();
-            initImageTab();
             initMapTab();
 
         } catch (Exception e) {
@@ -157,8 +152,6 @@ public class SettingsController extends BaseController {
             clearExpiredCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
-
-            thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
 
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
@@ -763,6 +756,23 @@ public class SettingsController extends BaseController {
         popSuccessful();
     }
 
+    private void checkRecentFile() {
+        try {
+            int v = Integer.parseInt(fileRecentInput.getText());
+            if (v >= 0) {
+                recentFileNumber = v;
+                fileRecentInput.setStyle(null);
+                settingsRecentOKButton.setDisable(false);
+            } else {
+                fileRecentInput.setStyle(UserConfig.badStyle());
+                settingsRecentOKButton.setDisable(true);
+            }
+        } catch (Exception e) {
+            fileRecentInput.setStyle(UserConfig.badStyle());
+            settingsRecentOKButton.setDisable(true);
+        }
+    }
+
     public void setDerbyMode() {
         isSettingValues = true;
         if (DerbyStatus.Nerwork == DerbyBase.status) {
@@ -854,78 +864,6 @@ public class SettingsController extends BaseController {
     @FXML
     protected void pdfMemUnlimit(ActionEvent event) {
         UserConfig.setPdfMem("Unlimit");
-    }
-
-    /*
-        Image settings
-     */
-    public void initImageTab() {
-        try {
-            alphaColorSetController.init(this, "AlphaAsColor", Color.WHITE);
-            alphaColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
-                    if (!Color.WHITE.equals((Color) newValue)) {
-                        alphaLabel.setText(message("AlphaReplaceComments"));
-                        alphaLabel.setStyle(NodeStyleTools.darkRedTextStyle());
-                    } else {
-                        alphaLabel.setText("");
-                        popSuccessful();
-                    }
-                }
-            });
-
-            thumbnailWidthInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(thumbnailWidthInput.getText());
-                        if (v > 0) {
-                            UserConfig.setInt("ThumbnailWidth", v);
-                            AppVariables.thumbnailWidth = v;
-                            thumbnailWidthInput.setStyle(null);
-                            popSuccessful();
-                        } else {
-                            thumbnailWidthInput.setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        thumbnailWidthInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            renderController.setParentController(this);
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    private void checkRecentFile() {
-        try {
-            int v = Integer.parseInt(fileRecentInput.getText());
-            if (v >= 0) {
-                recentFileNumber = v;
-                fileRecentInput.setStyle(null);
-                settingsRecentOKButton.setDisable(false);
-            } else {
-                fileRecentInput.setStyle(UserConfig.badStyle());
-                settingsRecentOKButton.setDisable(true);
-            }
-        } catch (Exception e) {
-            fileRecentInput.setStyle(UserConfig.badStyle());
-            settingsRecentOKButton.setDisable(true);
-        }
-    }
-
-    @FXML
-    protected void clearImageHistories(ActionEvent event) {
-        if (!PopTools.askSure(getTitle(), message("SureClear"))) {
-            return;
-        }
-        new TableImageEditHistory().clearAll();
-        popSuccessful();
     }
 
     /*

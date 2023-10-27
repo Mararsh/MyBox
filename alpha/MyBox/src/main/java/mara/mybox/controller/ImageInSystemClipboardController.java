@@ -48,6 +48,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     protected Label recordLabel, numberLabel, filesLabel;
     @FXML
     protected ComboBox<String> intervalSelector, widthSelector;
+    @FXML
+    protected ControlImageFormat formatController;
 
     public ImageInSystemClipboardController() {
         baseTitle = message("ImagesInSystemClipboard");
@@ -140,6 +142,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                     checkTargetPath();
                 }
             });
+
+            formatController.setParameters(this, false);
 
             formatController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override

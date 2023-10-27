@@ -819,7 +819,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     @FXML
     public void settings() {
         SettingsController controller = SettingsController.oneOpen(this);
-        controller.tabPane.getSelectionModel().select(controller.imageTab);
     }
 
 }

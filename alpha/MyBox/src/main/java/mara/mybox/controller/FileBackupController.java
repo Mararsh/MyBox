@@ -51,7 +51,6 @@ import mara.mybox.value.UserConfig;
 public class FileBackupController extends BaseTableViewController<FileBackup> {
 
     protected TableFileBackup tableFileBackup;
-    protected ControlFileBackup controlFileBackup;
     protected int maxBackups;
 
     @FXML
@@ -126,18 +125,16 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         }
     }
 
-    public void setParameters(ControlFileBackup controller) {
+    public void setParameters(BaseController parent) {
         try {
-            if (controller == null || controller.parentController == null
-                    || controller.sourceFile == null) {
+            if (parent == null || parent.sourceFile == null) {
                 close();
                 return;
             }
-            controlFileBackup = controller;
-            this.parentController = controlFileBackup.parentController;
-            this.baseName = controlFileBackup.baseName;
-            this.sourceFile = controlFileBackup.sourceFile;
-            tableFileBackup = controlFileBackup.tableFileBackup;
+            parentController = parent;
+            baseName = parent.baseName + "_" + baseName;
+            sourceFile = parentController.sourceFile;
+            tableFileBackup = new TableFileBackup();
 
             fileLabel.setText(sourceFile.getAbsolutePath());
             setTitle(baseTitle + " - " + sourceFile.getAbsolutePath());
@@ -178,8 +175,8 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
 
     protected boolean validFile() {
         return sourceFile != null
-                && controlFileBackup != null
-                && sourceFile.equals(controlFileBackup.sourceFile)
+                && parentController != null
+                && sourceFile.equals(parentController.sourceFile)
                 && parentController != null
                 && parentController.isShowing();
     }
@@ -199,10 +196,6 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         boolean validFile = validFile();
         viewButton.setDisable(none);
         useButton.setDisable(none || !validFile);
-        if (validFile) {
-            controlFileBackup.totalLabel.setText(message("Total") + ": " + tableData.size());
-
-        }
     }
 
     @FXML
@@ -424,7 +417,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
     /*
         static
      */
-    public static FileBackupController load(ControlFileBackup parent) {
+    public static FileBackupController load(BaseController parent) {
         try {
             FileBackupController controller = (FileBackupController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.FileBackupFxml, false);

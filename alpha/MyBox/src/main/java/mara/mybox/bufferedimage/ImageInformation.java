@@ -191,6 +191,14 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return msg;
     }
 
+    @Override
+    public void setFile(File file) {
+        if (imageFileInformation != null) {
+            imageFileInformation.setFile(file);
+        }
+        super.setFile(file);
+    }
+
     /*
         static methods
      */

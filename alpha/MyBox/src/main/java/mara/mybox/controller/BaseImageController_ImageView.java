@@ -17,6 +17,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -58,6 +59,8 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     protected Label imageLabelOriginal;
 
     @FXML
+    protected VBox imageBox;
+    @FXML
     protected ScrollPane scrollPane;
     @FXML
     protected AnchorPane maskPane;
@@ -77,8 +80,6 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             selectAreaCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
-    @FXML
-    protected ControlImageRender renderController;
 
     public BaseImageController_ImageView() {
         baseTitle = message("Image");
