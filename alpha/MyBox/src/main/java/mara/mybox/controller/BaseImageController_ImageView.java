@@ -76,8 +76,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck,
-            selectAreaCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
 
@@ -133,9 +132,6 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             super.setControlsStyle();
             if (zoomStepSelector != null) {
                 NodeStyleTools.setTooltip(zoomStepSelector, new Tooltip(message("ZoomStep")));
-            }
-            if (selectAreaCheck != null) {
-                NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip(message("SelectArea") + "\nCTRL+t"));
             }
             if (pickColorCheck != null) {
                 NodeStyleTools.setTooltip(pickColorCheck, new Tooltip(message("PickColor") + "\nCTRL+k"));

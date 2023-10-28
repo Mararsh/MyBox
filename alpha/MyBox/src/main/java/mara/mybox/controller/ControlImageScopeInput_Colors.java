@@ -53,8 +53,8 @@ public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInp
             deleteColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
             saveColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
 
-            colorSetController.init(this, baseName + "Color", Color.THISTLE);
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            colorController.init(this, baseName + "Color", Color.THISTLE);
+            colorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
                     addColor((Color) newValue);

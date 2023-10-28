@@ -19,7 +19,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TitledPane;
@@ -185,36 +184,6 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
-    @Override
-    public boolean afterImageLoaded() {
-        try {
-            if (!super.afterImageLoaded() || imageView == null) {
-                return false;
-            }
-
-            if (fileButton != null) {
-                fileButton.setDisable(sourceFile == null);
-            }
-
-            setFilesBrowse();
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (imageView != null) {
-                imageView.setImage(null);
-            }
-            alertInformation(message("NotSupported"));
-            return false;
-        }
-    }
-
-    public void setFilesBrowse() {
-        if (browseController != null) {
-            browseController.setCurrentFile(imageFile());
-        }
-    }
-
     @FXML
     @Override
     public void cropAction() {
@@ -372,7 +341,7 @@ public class ImageViewerController extends BaseImageController {
     }
 
     public boolean scopeWhole() {
-        return scope == null || scope.getScopeType() == ImageScope.ScopeType.All;
+        return scope == null || scope.getScopeType() == null;
     }
 
     @Override
@@ -421,56 +390,16 @@ public class ImageViewerController extends BaseImageController {
             } else {
                 return items;
             }
-            items.add(new SeparatorMenuItem());
 
             String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
             if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
-                Menu framesMenu = new Menu(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
-
-                menu = new MenuItem(message("Current") + ": " + (frameIndex + 1) + "/" + framesNumber);
-                menu.setStyle("-fx-text-fill: #2e598a;");
-                framesMenu.getItems().add(menu);
-                framesMenu.getItems().add(new SeparatorMenuItem());
-
-                if (framesNumber >= 2) {
-                    if (frameIndex < framesNumber - 1) {
-                        menu = new MenuItem(message("Next"), StyleTools.getIconImageView("iconNext.png"));
-                        menu.setOnAction((ActionEvent event) -> {
-                            nextFrame();
-                        });
-                        framesMenu.getItems().add(menu);
-                    }
-
-                    if (frameIndex > 0) {
-                        menu = new MenuItem(message("Previous"), StyleTools.getIconImageView("iconPrevious.png"));
-                        menu.setOnAction((ActionEvent event) -> {
-                            previousFrame();
-                        });
-                        framesMenu.getItems().add(menu);
-                    }
-
-                    menu = new MenuItem(message("Select"), StyleTools.getIconImageView("iconSelect.png"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        selectFrame();
-                    });
-                    framesMenu.getItems().add(menu);
-
-                    menu = new MenuItem(message("Play"), StyleTools.getIconImageView("iconPlay.png"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        playAction();
-                    });
-                    framesMenu.getItems().add(menu);
-                }
-
-                menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconThumbsList.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    editFrames();
+                menu = new MenuItem(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    ImageFramesController.open(this);
                 });
-                framesMenu.getItems().add(menu);
-
-                items.add(framesMenu);
-                items.add(new SeparatorMenuItem());
+                items.add(menu);
             }
+            items.add(new SeparatorMenuItem());
 
             if (imageInformation != null) {
                 menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
@@ -538,9 +467,9 @@ public class ImageViewerController extends BaseImageController {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu = new MenuItem(message("SelectScope"), StyleTools.getIconImageView("iconTarget.png"));
             menu.setOnAction((ActionEvent event) -> {
-                rotateRight();
+                ImageSelectScopeController.open(this);
             });
             items.add(menu);
 
@@ -607,23 +536,6 @@ public class ImageViewerController extends BaseImageController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
-        }
-    }
-
-    public void selectFrame() {
-        String value = PopTools.askValue(baseTitle, message("Select"), message("Frame"), "1");
-        if (value == null || value.isBlank()) {
-            return;
-        }
-        try {
-            int v = Integer.parseInt(value);
-            if (v < 1 || v > framesNumber) {
-                popError(message("InvalidValue"));
-            } else {
-                loadFrame(v - 1);
-            }
-        } catch (Exception e) {
-            popError(message("InvalidValue"));
         }
     }
 

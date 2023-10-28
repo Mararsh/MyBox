@@ -274,7 +274,7 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
             }
 
         };
-        start(task, thisPane);
+        start(task, viewBox);
     }
 
 }

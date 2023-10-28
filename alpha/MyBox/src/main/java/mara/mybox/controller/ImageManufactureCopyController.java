@@ -9,7 +9,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
@@ -101,8 +100,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                         newImage = imageView.getImage();
 
                     } else if (includeRadio.isSelected()) {
-                        if (scopeController.scopeWhole()
-                                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
+                        if (scopeController.scopeWhole()) {
                             newImage = imageView.getImage();
                         } else {
                             newImage = ScopeTools.scopeImage(imageView.getImage(),
@@ -110,9 +108,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                         }
 
                     } else if (excludeRadio.isSelected()) {
-                        if (scopeController.scope == null
-                                || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
-                                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
+                        if (scopeController.scopeWhole()) {
                             return false;
                         } else {
                             newImage = ScopeTools.scopeExcludeImage(imageView.getImage(),

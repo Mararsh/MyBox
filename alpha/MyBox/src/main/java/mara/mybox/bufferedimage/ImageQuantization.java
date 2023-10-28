@@ -111,7 +111,7 @@ public class ImageQuantization extends PixelsOperation {
             if (name != null) {
                 title += "_" + name;
             }
-            StringTable table = new StringTable(names, title, 3);
+            StringTable table = new StringTable(names, title);
             int id = 1;
             for (ColorCount count : sortedCounts) {
                 List<String> row = new ArrayList<>();
@@ -121,7 +121,9 @@ public class ImageQuantization extends PixelsOperation {
                 int blue = (int) Math.round(color.getBlue() * 255);
                 row.addAll(Arrays.asList((id++) + "", StringTools.format(count.count),
                         FloatTools.percentage(count.count, totalCount) + "%",
-                        FxColorTools.color2rgba(color), red + " ", green + " ", blue + " ",
+                        "<DIV style=\"width: 50px;  background-color:"
+                        + FxColorTools.color2rgb(color) + "; \">&nbsp;&nbsp;&nbsp;</DIV>",
+                        red + " ", green + " ", blue + " ",
                         (int) Math.round(color.getOpacity() * 100) + "%",
                         Math.round(color.getHue()) + " ",
                         Math.round(color.getSaturation() * 100) + "%",

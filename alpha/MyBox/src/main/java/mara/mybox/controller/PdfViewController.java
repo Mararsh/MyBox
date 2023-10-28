@@ -531,10 +531,6 @@ public class PdfViewController extends PdfViewController_Html {
         ImagesPlayController.playPDF(sourceFile, password);
     }
 
-    @Override
-    public void setFilesBrowse() {
-    }
-
     @FXML
     public void permissionAction() {
         PdfAttributesController.open(sourceFile, password);

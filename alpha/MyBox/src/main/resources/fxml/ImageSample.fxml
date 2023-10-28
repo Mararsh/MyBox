@@ -97,7 +97,7 @@ License:    Apache License Version 2.0
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../buttons/Red/iconSetting.png" />
+                                                <Image url="@../buttons/Red/iconOptions.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>
@@ -179,7 +179,7 @@ License:    Apache License Version 2.0
                                         </FlowPane>
                                     </children>
                                 </HBox>
-                                <Label layoutX="12.0" layoutY="666.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ShapeDragMoveComments" wrapText="true" />
+                                <Label layoutX="12.0" layoutY="666.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ShapeDragMoveTips" wrapText="true" />
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
                                         <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">

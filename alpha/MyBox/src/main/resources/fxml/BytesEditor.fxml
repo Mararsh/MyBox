@@ -404,7 +404,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/Red/iconSetting.png" />
+                                                                <Image url="@../buttons/Red/iconOptions.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

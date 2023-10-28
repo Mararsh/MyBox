@@ -48,10 +48,7 @@ public class ImageScopeTools {
 
     public static ImageScope.ScopeType scopeType(String type) {
         if (type == null) {
-            return ImageScope.ScopeType.Invalid;
-        }
-        if ("All".equalsIgnoreCase(type)) {
-            return ImageScope.ScopeType.All;
+            return null;
         }
         if ("Matting".equalsIgnoreCase(type)) {
             return ImageScope.ScopeType.Matting;
@@ -74,10 +71,7 @@ public class ImageScopeTools {
         if ("Outline".equalsIgnoreCase(type)) {
             return ImageScope.ScopeType.Outline;
         }
-        if ("Operate".equalsIgnoreCase(type)) {
-            return ImageScope.ScopeType.Operate;
-        }
-        return ImageScope.ScopeType.Invalid;
+        return null;
     }
 
     public static void cloneValues(ImageScope targetScope, ImageScope sourceScope) {
@@ -518,7 +512,7 @@ public class ImageScopeTools {
      */
     public static String toXML(ImageScope scope, String inPrefix) {
         try {
-            if (scope == null) {
+            if (scope == null || scope.getScopeType() == null) {
                 return null;
             }
             ScopeType type = scope.getScopeType();
@@ -594,7 +588,7 @@ public class ImageScopeTools {
 
     public static String toJSON(ImageScope scope, String inPrefix) {
         try {
-            if (scope == null) {
+            if (scope == null || scope.getScopeType() == null) {
                 return null;
             }
             ScopeType type = scope.getScopeType();
@@ -658,7 +652,7 @@ public class ImageScopeTools {
 
     public static String toHtml(ImageScope scope) {
         try {
-            if (scope == null) {
+            if (scope == null || scope.getScopeType() == null) {
                 return null;
             }
             ScopeType type = scope.getScopeType();
@@ -733,7 +727,7 @@ public class ImageScopeTools {
        extract value from scope
      */
     public static boolean decodeColorData(ImageScope scope) {
-        if (scope == null) {
+        if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         return decodeColorData(scope.getScopeType(), scope.getColorData(), scope);
@@ -773,7 +767,7 @@ public class ImageScopeTools {
     }
 
     public static boolean decodeOutline(ImageScope scope) {
-        if (scope == null) {
+        if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         return decodeOutline(scope.getScopeType(), scope.getOutlineName(), scope);
@@ -887,7 +881,7 @@ public class ImageScopeTools {
     }
 
     public static boolean decodeAreaData(ImageScope scope) {
-        if (scope == null) {
+        if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         return decodeAreaData(scope.getScopeType(), scope.getAreaData(), scope);
@@ -968,7 +962,9 @@ public class ImageScopeTools {
     }
 
     public static String encodeOutline(ImageScope scope) {
-        if (scope == null || scope.getScopeType() != ImageScope.ScopeType.Outline || scope.getOutline() == null) {
+        if (scope == null || scope.getScopeType() == null
+                || scope.getScopeType() != ImageScope.ScopeType.Outline
+                || scope.getOutline() == null) {
             return "";
         }
         String s = "";

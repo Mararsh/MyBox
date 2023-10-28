@@ -31,12 +31,9 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
         try {
             clearScope();
             if (scopeTypeGroup.getSelectedToggle() == null) {
-                scope.setScopeType(ImageScope.ScopeType.All);
+                scope.setScopeType(null);
             } else {
-                if (scopeAllRadio.isSelected()) {
-                    scope.setScopeType(ImageScope.ScopeType.All);
-
-                } else if (scopeMattingRadio.isSelected()) {
+                if (scopeMattingRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
 
                 } else if (scopeRectangleRadio.isSelected()) {
@@ -286,15 +283,12 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             opPane.getChildren().clear();
             areaBox.getChildren().clear();
             scopeTips.setText("");
-            if (image == null || scope == null) {
+            if (image == null || scope == null || scope.getScopeType() == null) {
                 return;
             }
             isSettingValues = true;
             String tips = "";
             switch (scope.getScopeType()) {
-                case All:
-                    tips = message("WholeImage");
-                    break;
                 case Matting:
                     tips = message("ScopeMattingTips");
                     tabPane.getTabs().addAll(areaTab, matchTab, optionsTab, saveTab);
@@ -306,7 +300,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Rectangle:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorCheck);
@@ -319,7 +313,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Circle:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     opPane.getChildren().addAll(functionsButton, anchorCheck, popAnchorCheck);
@@ -330,7 +324,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Ellipse:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
@@ -343,7 +337,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Polygon:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     opPane.getChildren().addAll(functionsButton, withdrawPointButton, anchorCheck, popAnchorCheck, addPointCheck);

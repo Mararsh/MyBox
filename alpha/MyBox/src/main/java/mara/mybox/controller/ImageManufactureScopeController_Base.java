@@ -12,10 +12,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.data.DoublePoint;
@@ -63,12 +63,14 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
-    protected RadioButton scopeAllRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
+    protected RadioButton scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
             scopeEllipseRadio, scopePolygonRadio, scopeColorRadio, scopeOutlineRadio,
             colorRGBRadio, colorGreenRadio, colorRedRadio, colorBlueRadio,
             colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
     @FXML
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
+    @FXML
+    protected FlowPane opPane;
 
     public boolean finalScope() {
         try {
@@ -181,8 +183,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
     public boolean isValidScope() {
         return scope != null
-                && scope.getScopeType() != null
-                && scope.getScopeType() != ScopeType.All;
+                && scope.getScopeType() != null;
     }
 
 }

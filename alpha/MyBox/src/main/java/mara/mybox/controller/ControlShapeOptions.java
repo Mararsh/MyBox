@@ -503,13 +503,13 @@ public abstract class ControlShapeOptions extends BaseController {
                     opPane.getChildren().addAll(operationsButton, withdrawButton, anchorCheck, popAnchorCheck, addPointCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
-                        infoLabel.setText(message("ShapeDragMoveComments"));
+                        infoLabel.setText(message("ShapeDragMoveTips"));
                     }
                     break;
                 default:
                     opPane.getChildren().addAll(operationsButton, anchorCheck, popAnchorCheck);
                     if (infoLabel != null) {
-                        infoLabel.setText(message("ShapeDragMoveComments"));
+                        infoLabel.setText(message("ShapeDragMoveTips"));
                     }
                     break;
             }

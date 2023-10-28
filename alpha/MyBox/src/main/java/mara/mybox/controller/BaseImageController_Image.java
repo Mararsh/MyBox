@@ -365,18 +365,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         clearMask();
         if (canSelect()) {
-            boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
-            if (cropButton != null) {
-                cropButton.setDisable(!selected);
-            }
-            if (selectAllButton != null) {
-                selectAllButton.setDisable(!selected);
-            }
-            if (selected) {
-                showMaskRectangle();
-            } else {
-                maskShapeChanged();
-            }
+            maskShapeChanged();
         }
         refinePane();
     }

@@ -128,8 +128,6 @@ public class StylePrefix {
             return null;
         }
         switch (id) {
-            case "settingsButton":
-                return new StyleData(id, message("Settings"), "", "iconSetting.png");
             case "settingsClearButton":
                 return new StyleData(id, message("ClearPersonalSettings"), "", "iconClear.png");
             case "settingsOpenButton":

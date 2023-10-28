@@ -345,7 +345,7 @@ public class ControlImageEnhancementOptions extends BaseController {
                     };
                     stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
 
-                    manageView = StyleTools.getIconImageView("iconSetting.png");
+                    manageView = StyleTools.getIconImageView("iconData.png");
                     button.setGraphic(manageView);
                     button.setText("");
                     NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("ManageDot")));

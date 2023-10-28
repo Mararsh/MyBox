@@ -211,7 +211,9 @@ public class Fxmls {
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ImageBase64Fxml = "/fxml/ImageBase64.fxml";
 
+    public static final String ImageFramesFxml = "/fxml/ImageFrames.fxml";
     public static final String ImageOptionsFxml = "/fxml/ImageOptions.fxml";
+    public static final String ImageSelectScopeFxml = "/fxml/ImageSelectScope.fxml";
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";

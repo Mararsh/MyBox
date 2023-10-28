@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
 public class MenuImageBaseController extends MenuController {
 
     protected BaseImageController imageController;
-    protected ChangeListener<Boolean> colorListener, areaListener, coordinateListener,
+    protected ChangeListener<Boolean> colorListener, coordinateListener,
             rulersListener, gridListener, loadListener;
     protected ChangeListener<String> widthListener, zoomListener;
 
@@ -36,7 +36,7 @@ public class MenuImageBaseController extends MenuController {
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton, infoAction;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, selectAreaCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
 
@@ -45,9 +45,6 @@ public class MenuImageBaseController extends MenuController {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(zoomStepSelector, new Tooltip(message("ZoomStep")));
-            if (selectAreaCheck != null) {
-                NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip(message("SelectArea") + "\nCTRL+t"));
-            }
             NodeStyleTools.setTooltip(pickColorCheck, new Tooltip(message("PickColor") + "\nCTRL+k"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -101,46 +98,6 @@ public class MenuImageBaseController extends MenuController {
                         imageController.checkPickingColor();
                     }
                 });
-            }
-
-            if (selectAreaCheck != null) {
-                if (!imageController.canSelect()) {
-                    selectAreaCheck.setDisable(true);
-                } else if (imageController.selectAreaCheck != null) {
-                    selectAreaCheck.setSelected(imageController.selectAreaCheck.isSelected());
-                    selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            if (isSettingValues) {
-                                return;
-                            }
-                            isSettingValues = true;
-                            imageController.selectAreaCheck.setSelected(newValue);
-                            isSettingValues = false;
-                        }
-                    });
-                    areaListener = new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            if (isSettingValues) {
-                                return;
-                            }
-                            isSettingValues = true;
-                            selectAreaCheck.setSelected(newValue);
-                            isSettingValues = false;
-                        }
-                    };
-                    imageController.selectAreaCheck.selectedProperty().addListener(areaListener);
-                } else {
-                    selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
-                    selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            UserConfig.setBoolean(baseName + "SelectArea", newValue);
-                            imageController.finalRefineView();
-                        }
-                    });
-                }
             }
 
             if (imageController.coordinateCheck != null) {
@@ -495,7 +452,6 @@ public class MenuImageBaseController extends MenuController {
                 imageController.gridCheck.selectedProperty().removeListener(gridListener);
                 imageController.rulerXCheck.selectedProperty().removeListener(rulersListener);
                 imageController.coordinateCheck.selectedProperty().removeListener(coordinateListener);
-                imageController.selectAreaCheck.selectedProperty().removeListener(areaListener);
                 imageController.pickColorCheck.selectedProperty().removeListener(colorListener);
             }
             loadListener = null;
@@ -504,7 +460,6 @@ public class MenuImageBaseController extends MenuController {
             gridListener = null;
             rulersListener = null;
             coordinateListener = null;
-            areaListener = null;
             colorListener = null;
             imageController = null;
         } catch (Exception e) {

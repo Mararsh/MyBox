@@ -143,7 +143,6 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "p", message("Pop"), "ALT+p", "iconPop.png"));
             tableData.add(new ShortCut("CTRL", "q", message("Query"), "ALT+q", "iconQuery.png"));
             tableData.add(new ShortCut("CTRL", "k", message("PickColor"), "ALT+k", "iconPickColor.png"));
-            tableData.add(new ShortCut("CTRL", "t", message("SelectArea") + " / " + message("CopyText"), "ALT+t", "iconTarget.png"));
             tableData.add(new ShortCut("CTRL", "m", message("MyBoxClipboard"), "ALT+m", "iconClipboard.png"));
             tableData.add(new ShortCut("CTRL", "j", message("SystemClipboard"), "ALT+j", "iconSystemClipboard.png"));
             tableData.add(new ShortCut("CTRL", "1", message("OriginalSize") + " / " + message("Previous"), "ALT+1", "iconOriginalSize.png"));
@@ -172,21 +171,21 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message("Function"), "", "iconFunction.png"));
             tableData.add(new ShortCut("", "", message("Edit"), "", "iconEdit.png"));
             tableData.add(new ShortCut("", "", message("View"), "", "iconView.png"));
+            tableData.add(new ShortCut("", "", message("Operations"), "", "iconOperation.png"));
+            tableData.add(new ShortCut("", "", message("File"), "", "iconFile.png"));
             tableData.add(new ShortCut("", "", message("Data"), "", "iconData.png"));
             tableData.add(new ShortCut("", "", message("Examples"), "", "iconExamples.png"));
             tableData.add(new ShortCut("", "", message("Histories"), "", "iconHistory.png"));
             tableData.add(new ShortCut("", "", message("Export"), "", "iconExport.png"));
             tableData.add(new ShortCut("", "", message("Import"), "", "iconImport.png"));
             tableData.add(new ShortCut("", "", message("ContextMenu"), "", "iconMenu.png"));
-            tableData.add(new ShortCut("", "", message("Operations"), "", "iconOperation.png"));
-            tableData.add(new ShortCut("", "", message("File"), "", "iconFile.png"));
             tableData.add(new ShortCut("", "", message("SelectFile"), "", "iconSelectFile.png"));
             tableData.add(new ShortCut("", "", message("SelectPath"), "", "iconSelectPath.png"));
             tableData.add(new ShortCut("", "", message("OpenDirectory"), "", "iconOpenPath.png"));
             tableData.add(new ShortCut("", "", message("Insert"), "", "iconInsert.png"));
             tableData.add(new ShortCut("", "", message("InsertFiles"), "", "iconInsertFile.png"));
             tableData.add(new ShortCut("", "", message("InsertDirectory"), "", "iconInsertPath.png"));
-            tableData.add(new ShortCut("", "", message("Options"), "", "iconSetting.png"));
+            tableData.add(new ShortCut("", "", message("Options"), "", "iconOptions.png"));
             tableData.add(new ShortCut("", "", message("Analyse"), "", "iconAnalyse.png"));
             tableData.add(new ShortCut("", "", message("Anchor"), "", "iconAnchor.png"));
             tableData.add(new ShortCut("", "", message("FileBackups"), "", "iconBackup.png"));
@@ -431,7 +430,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             protected void makeDoc(String lang, List<ColorData> colors, List<String> columns, String title, String name) {
                 try {
                     colors.addAll(PaletteTools.speicalColors(lang));
-                    StringTable table = new StringTable(columns, title, 1);
+                    StringTable table = new StringTable(columns, title);
                     for (ColorData c : colors) {
                         if (c.needConvert()) {
                             c.convert();
@@ -441,7 +440,8 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                             if (message(lang, "Name").equals(column)) {
                                 row.add(c.getColorName());
                             } else if (message(lang, "Color").equals(column)) {
-                                row.add(c.getRgba());
+                                row.add("<DIV style=\"width: 50px;  background-color:"
+                                        + c.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
                             } else if ("RGBA".equals(column)) {
                                 row.add(c.getRgba());
                             } else if ("RGB".equals(column)) {

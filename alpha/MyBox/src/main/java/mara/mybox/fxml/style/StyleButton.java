@@ -663,7 +663,7 @@ public class StyleButton {
             return new StyleData(id, message("JarFile"), "", "iconJar.png");
         }
         if (id.startsWith("options")) {
-            return new StyleData(id, message("Options"), "", "iconSetting.png");
+            return new StyleData(id, message("Options"), "", "iconOptions.png");
         }
         if (id.startsWith("systemMethod")) {
             return new StyleData(id, message("SystemMethod"), "", "iconSystemOpen.png");

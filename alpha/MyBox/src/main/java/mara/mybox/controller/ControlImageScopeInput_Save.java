@@ -74,9 +74,6 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
             return false;
         }
         switch (scope.getScopeType()) {
-            case All:
-                scopeTypeGroup.selectToggle(null);
-                break;
             case Matting:
                 scopeMattingRadio.setSelected(true);
                 break;

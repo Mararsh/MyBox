@@ -80,7 +80,7 @@ public class ImageConvolution extends PixelsOperation {
         if (image == null || operationType == null) {
             return image;
         }
-        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
+        if (scope == null || scope.getScopeType() == null) {
             return applyConvolution(image, kernel);
 
         }

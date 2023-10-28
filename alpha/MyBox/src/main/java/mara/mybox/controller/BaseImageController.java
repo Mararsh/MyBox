@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -42,20 +41,6 @@ public abstract class BaseImageController extends BaseImageController_Actions {
         } else if (imageView != null && imageView.getImage() != null) {
             isPickingColor = !isPickingColor;
             checkPickingColor();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean controlAltT() {
-        if (selectAreaCheck != null) {
-            selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
-            return true;
-        } else if (canSelect()) {
-            UserConfig.setBoolean(baseName + "SelectArea", !UserConfig.getBoolean(baseName + "SelectArea", false));
-            finalRefineView();
             return true;
         } else {
             return false;

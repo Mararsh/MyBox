@@ -259,11 +259,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         try {
             sourceFile = null;
             imageInformation = null;
-
-            isSettingValues = true;
-            scopeAllRadio.setSelected(true);
             scope = null;
-            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

@@ -188,7 +188,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
     }
 
     public static int write(ImageScope scope) {
-        if (scope == null || scope.getFile() == null || scope.getName() == null) {
+        if (scope == null || scope.getScopeType() == null || scope.getFile() == null || scope.getName() == null) {
             return -1;
         }
         if (scope.getFile() == null || scope.getFile().trim().isEmpty()) {

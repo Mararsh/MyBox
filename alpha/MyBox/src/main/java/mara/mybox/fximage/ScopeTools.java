@@ -34,7 +34,7 @@ public class ScopeTools {
 
     public static Image scopeImage(Image srcImage, ImageScope scope, Color bgColor, boolean cutMargins) {
         try {
-            if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All || scope.getScopeType() == ImageScope.ScopeType.Operate) {
+            if (scope == null || scope.getScopeType() == null) {
                 return srcImage;
             } else {
                 PixelsOperation pixelsOperation = PixelsOperationFactory.create(srcImage, scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
@@ -55,7 +55,7 @@ public class ScopeTools {
 
     public static Image scopeExcludeImage(Image srcImage, ImageScope scope, Color bgColor, boolean cutMargins) {
         try {
-            if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All || scope.getScopeType() == ImageScope.ScopeType.Operate) {
+            if (scope == null || scope.getScopeType() == null) {
                 return null;
             } else {
                 PixelsOperation pixelsOperation = PixelsOperationFactory.create(srcImage, scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);

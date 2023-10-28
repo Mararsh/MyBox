@@ -568,12 +568,11 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             }
             List<String> names = new ArrayList<>();
             for (TableColumn column : tableView.getColumns()) {
-                if (!column.equals(rowsSelectionColumn) && !column.equals(orderColumn)
-                        && !column.equals(rgbaColumn) && !column.equals(rgbColumn)) {
+                if (!column.equals(rowsSelectionColumn) && !column.equals(orderColumn)) {
                     names.add(column.getText());
                 }
             }
-            StringTable table = new StringTable(names, title, 1);
+            StringTable table = new StringTable(names, title);
             for (ColorData data : rows) {
                 if (data.needConvert()) {
                     data.convert();
@@ -583,9 +582,14 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     if (column.equals(colorValueColumn)) {
                         row.add(data.getColorValue() + "");
                     } else if (column.equals(colorColumn)) {
-                        row.add(data.getRgba());
+                        row.add("<DIV style=\"width: 50px;  background-color:"
+                                + data.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
                     } else if (column.equals(colorNameColumn)) {
                         row.add(data.getColorName());
+                    } else if (column.equals(rgbaColumn)) {
+                        row.add(data.getRgba());
+                    } else if (column.equals(rgbColumn)) {
+                        row.add(data.getRgb());
                     } else if (column.equals(sRGBColumn)) {
                         row.add(data.getSrgb());
                     } else if (column.equals(HSBColumn)) {

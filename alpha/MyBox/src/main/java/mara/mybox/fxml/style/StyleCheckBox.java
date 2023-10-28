@@ -115,8 +115,6 @@ public class StyleCheckBox {
                 return new StyleData("pdfMemBox", "", message("PdfMemComments"), "", "");
             case "openCheck":
                 return new StyleData("openCheck", "", message("OpenWhenComplete"), "", "iconOpenPath.png");
-            case "selectAreaCheck":
-                return new StyleData("selectAreaCheck", "", message("SelectArea"), "CTRL+t / ALT+t", "iconTarget.png");
             case "bookmarksCheck":
                 return new StyleData("bookmarksCheck", "", message("Bookmarks"), "", "iconTree.png");
             case "thumbCheck":

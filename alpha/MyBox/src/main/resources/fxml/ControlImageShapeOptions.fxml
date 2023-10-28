@@ -41,17 +41,17 @@
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <RadioButton fx:id="lineRadio" layoutX="56.0" layoutY="10.0" mnemonicParsing="false" selected="true">
+                        <RadioButton fx:id="polylinesRadio" mnemonicParsing="false" selected="true">
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconLine.png" />
+                                        <Image url="@../buttons/Red/iconPolylines.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
-                            <toggleGroup>
+                     <toggleGroup>
                                 <ToggleGroup fx:id="typeGroup" />
-                            </toggleGroup>
+                     </toggleGroup>
                         </RadioButton>
                         <RadioButton fx:id="polylineRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                             <graphic>
@@ -136,17 +136,17 @@
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="106.0" spacing="5.0">
-                    <children>
-                        <RadioButton fx:id="polylinesRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+               <children>
+                        <RadioButton fx:id="lineRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconPolylines.png" />
+                                        <Image url="@../buttons/Red/iconLine.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </RadioButton>
-                        <RadioButton fx:id="svgRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$typeGroup">
+                        <RadioButton fx:id="svgRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -155,7 +155,7 @@
                                 </ImageView>
                             </graphic>
                         </RadioButton>
-                    </children>
+               </children>
                 </HBox>
             </children>
         </VBox>

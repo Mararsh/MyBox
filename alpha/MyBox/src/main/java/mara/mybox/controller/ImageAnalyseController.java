@@ -204,14 +204,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
     public BufferedImage bufferedImageToHandle() {
         try {
-            Image aImage = null;
-            if (selectAreaCheck.isSelected()) {
-                aImage = imageToHandle();
-            }
-            if (aImage == null) {
-                aImage = image;
-            }
-            return SwingFXUtils.fromFXImage(aImage, null);
+            return SwingFXUtils.fromFXImage(image, null);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -562,7 +555,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     message("Red"), message("Green"), message("Blue"), message("Opacity"),
                     message("Hue"), message("Brightness"), message("Saturation")
             ));
-            StringTable table = new StringTable(names, message(component.name()), 3);
+            StringTable table = new StringTable(names, message(component.name()));
             int[] histogram = data.histogram(component);
 
             List<List<Integer>> sort = new ArrayList<>();
@@ -598,7 +591,9 @@ public class ImageAnalyseController extends ImageViewerController {
                 Color fColor = ColorConvertTools.converColor(aColor);
                 row.addAll(Arrays.asList(value + "", StringTools.format(count),
                         FloatTools.percentage(count, nonTransparent) + "%",
-                        FxColorTools.color2rgba(fColor), red + " ", green + " ", blue + " ",
+                        "<DIV style=\"width: 50px;  background-color:"
+                        + FxColorTools.color2rgb(fColor) + "; \">&nbsp;&nbsp;&nbsp;</DIV>",
+                        red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",
                         Math.round(fColor.getHue()) + " ",
                         Math.round(fColor.getSaturation() * 100) + "%",

@@ -270,7 +270,7 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
 
     @Override
     public boolean canDeleteAnchor() {
-        if (scope == null || image == null) {
+        if (scope == null || scope.getScopeType() == null || image == null) {
             return false;
         }
         ScopeType type = scope.getScopeType();
@@ -279,7 +279,7 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
 
     @Override
     public void moveMaskAnchor(int index, String name, DoublePoint p) {
-        if (scope == null || image == null) {
+        if (scope == null || scope.getScopeType() == null || image == null) {
             return;
         }
         ScopeType type = scope.getScopeType();
@@ -292,7 +292,7 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
 
     @Override
     public void deleteMaskAnchor(int index, String name) {
-        if (scope == null || image == null) {
+        if (scope == null || scope.getScopeType() == null || image == null) {
             return;
         }
         ScopeType type = scope.getScopeType();

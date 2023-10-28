@@ -92,7 +92,7 @@ public class ImageBinary extends PixelsOperation {
             return image;
         }
         grayed = false;
-        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
+        if (scope == null || scope.getScopeType() == null) {
             if (!isDithering && !calculate && intPara1 < 0) {
                 return byteBinary(image);
             }

@@ -17,7 +17,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
@@ -114,8 +113,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Ima
     protected SVGPath maskSVGPath;
     @FXML
     protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorCheck, addPointCheck;
-    @FXML
-    protected FlowPane opPane;
 
     public void initMaskPane() {
         try {

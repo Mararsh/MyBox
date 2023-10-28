@@ -9,13 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoubleRectangle;
@@ -43,18 +40,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     protected void initCheckboxs() {
         try {
-            if (selectAreaCheck != null) {
-                selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
-                selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "SelectArea", selectAreaCheck.isSelected());
-                        finalRefineView();
-                    }
-                });
-                finalRefineView();
-            }
-
             if (pickColorCheck != null) {
                 pickColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
@@ -362,19 +347,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
-
-            if (selectAreaCheck != null) {
-                CheckMenuItem handleSelectCheck = new CheckMenuItem(message("ImageHandleSelectedArea"), StyleTools.getIconImageView("iconRectangle.png"));
-                handleSelectCheck.setSelected(UserConfig.getBoolean(baseName + "HandleSelectArea", true));
-                handleSelectCheck.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean(baseName + "HandleSelectArea", handleSelectCheck.isSelected());
-                    }
-                });
-                items.add(handleSelectCheck);
-                items.add(new SeparatorMenuItem());
-            }
 
             menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {

@@ -30,9 +30,10 @@ public class ImageScopeFactory {
     public static ImageScope create(Image image,
             ImageScope.ScopeType scopeType,
             ImageScope.ColorScopeType colorScopeType) {
+        if (scopeType == null) {
+            return new All(image);
+        }
         switch (scopeType) {
-            case All:
-                return new All(image);
             case Color:
                 switch (colorScopeType) {
                     case AllColor:
@@ -170,7 +171,7 @@ public class ImageScopeFactory {
 
         public All(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.All;
+            this.scopeType = null;
         }
 
         @Override

@@ -7,6 +7,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
@@ -29,7 +30,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
         try {
             clearScope();
             if (scopeTypeGroup.getSelectedToggle() == null) {
-                scope.setScopeType(ImageScope.ScopeType.All);
+                scope.setScopeType(ImageScope.ScopeType.Rectangle);
             } else {
                 if (scopeMattingRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
@@ -273,25 +274,25 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
             }
             isSettingValues = true;
             String tips = "";
+            if (scope.getScopeType() == null) {
+                scope.setScopeType(ScopeType.Rectangle);
+            }
             switch (scope.getScopeType()) {
-                case All:
-                    tips = message("WholeImage");
-                    break;
                 case Matting:
                     tips = message("ScopeMattingTips");
                     tabPane.getTabs().addAll(areaTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(operationsButton, withdrawPointButton, anchorCheck, popAnchorCheck, addPointCheck);
+                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck, withdrawPointButton, operationsButton);
                     areaBox.getChildren().add(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     break;
 
                 case Rectangle:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(operationsButton, anchorCheck, popAnchorCheck);
+                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
@@ -301,10 +302,10 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     break;
 
                 case Circle:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(operationsButton, anchorCheck, popAnchorCheck);
+                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton);
                     areaBox.getChildren().addAll(circleBox, goScopeButton);
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
@@ -312,11 +313,11 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     break;
 
                 case Ellipse:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    opPane.getChildren().addAll(operationsButton, anchorCheck, popAnchorCheck);
+                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton);
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
@@ -325,10 +326,10 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     break;
 
                 case Polygon:
-                    tips = message("ScopeShapeTips");
+                    tips = message("ScopePolygonTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(operationsButton, withdrawPointButton, anchorCheck, popAnchorCheck, addPointCheck);
+                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck, withdrawPointButton, operationsButton);
                     areaBox.getChildren().addAll(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);

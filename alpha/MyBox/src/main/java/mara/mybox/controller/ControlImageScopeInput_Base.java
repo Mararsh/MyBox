@@ -14,16 +14,17 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.AppValues;
 
@@ -34,6 +35,7 @@ import mara.mybox.value.AppValues;
  */
 public abstract class ControlImageScopeInput_Base extends BaseImageController {
 
+    protected BaseImageController imageController;
     protected Image srcImage;
     protected ImageScope scope;
     protected TableColor tableColor;
@@ -46,13 +48,13 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
     @FXML
     protected Tab areaTab, colorsTab, matchTab, pixTab, optionsTab;
     @FXML
-    protected VBox setBox, areaBox, rectangleBox, circleBox, pointsBox;
+    protected VBox viewBox, setBox, areaBox, rectangleBox, circleBox, pointsBox;
     @FXML
     protected ComboBox<String> scopeDistanceSelector, opacitySelector;
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
-    protected ControlColorSet colorSetController, maskColorController;
+    protected ControlColorSet colorController, maskColorController;
     @FXML
     protected ListView<Color> colorsList;
     @FXML
@@ -64,7 +66,7 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button goScopeButton, operationsButton, withdrawPointButton,
+    protected Button goScopeButton, withdrawPointButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
@@ -74,6 +76,8 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
             colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
     @FXML
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
+    @FXML
+    protected FlowPane opPane;
 
     public Image srcImage() {
         if (srcImage == null) {
@@ -81,16 +85,6 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
             loadImage(srcImage);
         }
         return srcImage;
-    }
-
-    @Override
-    public boolean afterImageLoaded() {
-        if (super.afterImageLoaded()) {
-            srcImage = image;
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @FXML
@@ -149,6 +143,9 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             srcImage(), scope, PixelsOperation.OperationType.ShowScope);
                     pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
                     scopedImage = pixelsOperation.operateFxImage();
                     if (task == null || isCancelled()) {
                         return false;
@@ -180,7 +177,7 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
             }
 
         };
-        start(task);
+        start(task, viewBox);
     }
 
     public void drawMattingPoints() {
@@ -202,8 +199,21 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
     public boolean isValidScope() {
         return srcImage() != null
                 && scope != null
-                && scope.getScopeType() != null
-                && scope.getScopeType() != ScopeType.All;
+                && scope.getScopeType() != null;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        ImagePopController.openView(this, imageView);
+        return true;
+    }
+
+    public Image scopedImage(Color bgColor) {
+        if (!isValidScope() || !finalScope()) {
+            return null;
+        }
+        return ScopeTools.scopeImage(srcImage(), scope, bgColor, true);
     }
 
 }

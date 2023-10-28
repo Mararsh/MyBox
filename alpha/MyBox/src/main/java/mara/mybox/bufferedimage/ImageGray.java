@@ -50,7 +50,7 @@ public class ImageGray extends PixelsOperation {
             return image;
         }
 
-        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
+        if (scope == null || scope.getScopeType() == null) {
             return byteGray(image);
         }
         return operateImage();

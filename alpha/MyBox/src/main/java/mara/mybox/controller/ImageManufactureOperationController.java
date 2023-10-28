@@ -8,7 +8,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
@@ -101,9 +100,7 @@ public class ImageManufactureOperationController extends BaseController {
         }
         editor.scopeTab();
         isTabbing = false;
-        if (noWhole
-                && (scopeController.scopeWhole()
-                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate)) {
+        if (noWhole && (scopeController.scopeWhole())) {
             scopeController.scopeRectangleRadio.setSelected(true);
         }
     }

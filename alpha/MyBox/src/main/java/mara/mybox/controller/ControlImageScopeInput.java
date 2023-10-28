@@ -256,32 +256,31 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         }
     }
 
-    public void reset() {
+    public void setParameters(BaseImageController parent) {
         try {
-            sourceFile = null;
-            imageInformation = null;
+            this.parentController = parent;
+            imageController = parent;
 
-            isSettingValues = true;
-            scope = null;
-            isSettingValues = false;
+            loadImage(imageController.sourceFile,
+                    imageController.imageInformation,
+                    imageController.image,
+                    false);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-//    public void setParameters(ImageManufactureController parent) {
-//        try {
-//            this.parentController = parent;
-//            editor = parent;
-//            sourceFile = editor.sourceFile;
-//            imageInformation = editor.imageInformation;
-//
-//            loadImage(sourceFile, imageInformation, editor.image, false);
-//            checkScopeType();
-//        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-//        }
-//    }
+    @Override
+    public boolean afterImageLoaded() {
+        if (super.afterImageLoaded()) {
+            srcImage = image;
+            checkScopeType();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
         if (p == null || imageView.getImage() == null) {
@@ -344,9 +343,6 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
     @Override
     public void refreshAction() {
         isSettingValues = false;
-        if (task != null) {
-            task.cancel();
-        }
         redrawMaskShape();
     }
 

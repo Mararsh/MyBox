@@ -44,12 +44,11 @@ public class ImageScope extends BaseData {
     protected BufferedImage outlineSource, outline;
 
     public static enum ScopeType {
-        Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon, Color,
-        Outline, Operate
+        Matting, Rectangle, Circle, Ellipse, Polygon, Color, Outline
     }
 
     public static enum ColorScopeType {
-        Invalid, AllColor, Color, Red, Green, Blue, Brightness, Saturation, Hue
+        AllColor, Color, Red, Green, Blue, Brightness, Saturation, Hue
     }
 
     public ImageScope() {
@@ -68,7 +67,7 @@ public class ImageScope extends BaseData {
     }
 
     private void init() {
-        scopeType = ScopeType.All;
+        scopeType = ScopeType.Rectangle;
         colorScopeType = ColorScopeType.AllColor;
         colors = new ArrayList<>();
         points = new ArrayList<>();
@@ -100,9 +99,6 @@ public class ImageScope extends BaseData {
     }
 
     public void decode() {
-        if (scopeType == ScopeType.All) {
-            return;
-        }
         if (colorData != null) {
             ImageScopeTools.decodeColorData(this);
         }
@@ -115,9 +111,6 @@ public class ImageScope extends BaseData {
     }
 
     public void encode() {
-        if (scopeType == ScopeType.All) {
-            return;
-        }
         ImageScopeTools.encodeColorData(this);
         ImageScopeTools.encodeAreaData(this);
         ImageScopeTools.encodeOutline(this);
@@ -185,9 +178,6 @@ public class ImageScope extends BaseData {
         String s = "";
         if (null != scopeType) {
             switch (scopeType) {
-                case All:
-                    s = Languages.message("WholeImage");
-                    break;
                 case Matting:
                     String pointsString = "";
                     if (points.isEmpty()) {
@@ -254,11 +244,6 @@ public class ImageScope extends BaseData {
         }
         return s;
     }
-
-    public boolean isWhole() {
-        return scopeType == ScopeType.All;
-    }
-
 
     /*
         SubClass should implement this

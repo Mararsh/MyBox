@@ -19,7 +19,6 @@ public class StringTable {
     protected String title, style = HtmlStyles.DefaultStyle, comments;
     protected List<List<String>> data;
     protected List<String> names;
-    protected List<Integer> colorIndices;    // Color column should be RGBA
     protected static String indent = "    ";
 
     public StringTable() {
@@ -37,15 +36,7 @@ public class StringTable {
     public StringTable(List<String> names, String title) {
         this.names = names;
         this.title = title;
-        colorIndices = new ArrayList<>();
         data = new ArrayList<>();
-    }
-
-    public StringTable(List<String> names, String title, int colorIndex) {
-        this.names = names;
-        this.title = title;
-        colorIndices = new ArrayList<>();
-        colorIndices.add(colorIndex);
     }
 
     public static StringTable create() {
@@ -138,17 +129,12 @@ public class StringTable {
             s.append(indent).append(indent).append("<DIV align=\"center\">\n");
             s.append(indent).append(indent).append(indent).append("<TABLE>\n");
             List<String> names = table.getNames();
-            List<Integer> colorIndices = table.getColorIndices();
             if (names != null) {
                 s.append(indent).append(indent).append(indent).append(indent).
                         append("<TR  style=\"font-weight:bold; \">");
                 for (int i = 0; i < names.size(); ++i) {
                     String name = names.get(i);
                     s.append("<TH>").append(name).append("</TH>");
-                    if (colorIndices != null && colorIndices.contains(i)) {
-                        s.append("<TH>").append(name).append(" - RGBA</TH>");
-                        s.append("<TH>").append(name).append(" - RGB</TH>");
-                    }
                 }
                 s.append("</TR>\n");
             }
@@ -159,7 +145,7 @@ public class StringTable {
         }
     }
 
-    public static String tableRow(List<Integer> colorIndices, List<String> row) {
+    public static String tableRow(List<String> row) {
         try {
             if (row == null) {
                 return "";
@@ -168,16 +154,7 @@ public class StringTable {
             s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
             for (int i = 0; i < row.size(); ++i) {
                 String value = row.get(i);
-                value = value == null ? "" : value;
-                if (colorIndices != null && colorIndices.contains(i)) {
-                    String rgb = "#" + value.substring(2, 8);                  // Color column should be RGBA
-                    s.append("<TD align=\"center\"><DIV style=\"width: 50px;  background-color:").
-                            append(rgb).append("; \">&nbsp;&nbsp;&nbsp;</DIV></TD>");
-                    s.append("<TD>").append(value).append(" </TD>");
-                    s.append("<TD>").append(rgb).append(" </TD>");
-                } else {
-                    s.append("<TD>").append(value).append("</TD>");
-                }
+                s.append("<TD>").append(value == null ? "" : value).append("</TD>");
             }
             s.append("</TR>\n");
             return s.toString();
@@ -187,10 +164,6 @@ public class StringTable {
         }
     }
 
-    public static String tableRow(List<String> row) {
-        return tableRow(null, row);
-    }
-
     public static String tableSuffix(StringTable table) {
         try {
             if (table == null) {
@@ -198,7 +171,6 @@ public class StringTable {
             }
             StringBuilder s = new StringBuilder();
             List<String> names = table.getNames();
-            List<Integer> colorIndices = table.getColorIndices();
             if (names != null
                     && (table.getData() != null && table.getData().size() > 15)) {
                 s.append(indent).append(indent).append(indent).append(indent).
@@ -206,10 +178,6 @@ public class StringTable {
                 for (int i = 0; i < names.size(); ++i) {
                     String name = names.get(i);
                     s.append("<TH>").append(name).append("</TH>");
-                    if (colorIndices != null && colorIndices.contains(i)) {
-                        s.append("<TH>").append(name).append(" - RGBA</TH>");
-                        s.append("<TH>").append(name).append(" - RGB</TH>");
-                    }
                 }
                 s.append("</TR>\n");
             }
@@ -231,7 +199,7 @@ public class StringTable {
             s.append(tablePrefix(table));
             if (table.getData() != null) {
                 for (List<String> row : table.getData()) {
-                    s.append(tableRow(table.getColorIndices(), row));
+                    s.append(tableRow(row));
                 }
             }
             s.append(tableSuffix(table));
@@ -294,15 +262,6 @@ public class StringTable {
 
     public StringTable setStyle(String style) {
         this.style = style;
-        return this;
-    }
-
-    public List<Integer> getColorIndices() {
-        return colorIndices;
-    }
-
-    public StringTable setColorIndices(List<Integer> colorIndices) {
-        this.colorIndices = colorIndices;
         return this;
     }
 
