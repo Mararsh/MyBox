@@ -32,7 +32,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlShapeParameters extends BaseController {
 
     protected ControlShapeOptions optionsController;
-    protected BaseImageController imageController;
+    protected BaseShapeController imageController;
 
     @FXML
     protected VBox shapeBox, pointsBox, linesBox, rectangleBox, circleBox, ellipseBox,

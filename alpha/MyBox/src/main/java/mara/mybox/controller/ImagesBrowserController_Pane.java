@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -33,6 +34,7 @@ import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -40,6 +42,23 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public abstract class ImagesBrowserController_Pane extends ImagesBrowserController_Menu {
+
+    protected void initViewPane() {
+        try {
+            if (imageView != null) {
+                viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+            viewPane.setExpanded(UserConfig.getBoolean(baseName + "ViewPane", false));
+            viewPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                UserConfig.setBoolean(baseName + "ViewPane", viewPane.isExpanded());
+            });
+
+            viewPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     @Override
     protected void makeImagesNevigator(boolean makeCurrentList) {

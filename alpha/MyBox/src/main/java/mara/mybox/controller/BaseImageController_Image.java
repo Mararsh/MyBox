@@ -346,14 +346,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 && !(this instanceof ImageSampleController);
     }
 
-    protected boolean canSelect() {
-        return imageView != null && imageView.getImage() != null
-                && maskRectangle != null && maskCircle == null
-                && !(this instanceof ImageSplitController)
-                && !(this instanceof ImageSampleController)
-                && !(this instanceof ImageManufactureController);
-    }
-
     protected void finalRefineView() {
         if (isSettingValues) {
             return;
@@ -362,10 +354,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             paneSize();
         } else {
             fitSize();
-        }
-        clearMask();
-        if (canSelect()) {
-            maskShapeChanged();
         }
         refinePane();
     }

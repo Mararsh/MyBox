@@ -43,7 +43,7 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlShapeOptions extends BaseController {
 
-    protected BaseImageController imageController;
+    protected BaseShapeController imageController;
     protected DoubleShape currentShape;
     protected ShapeStyle style;
     protected ChangeListener<Boolean> shapeDataChangeListener;
@@ -88,7 +88,7 @@ public abstract class ControlShapeOptions extends BaseController {
         }
     }
 
-    public void setParameters(BaseImageController imageController) {
+    public void setParameters(BaseShapeController imageController) {
         try {
             this.imageController = imageController;
             imageController.anchorCheck = anchorCheck;
@@ -99,7 +99,7 @@ public abstract class ControlShapeOptions extends BaseController {
             parametersController.imageController = imageController;
             parametersController.optionsController = this;
             parametersController.pathController.optionsOontroller = this;
-            infoLabel = imageController.infoLabel;
+            infoLabel = imageController.imageLabel;
 
             shapeDataChangeListener = new ChangeListener<Boolean>() {
                 @Override

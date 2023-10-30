@@ -156,6 +156,7 @@ License:    Apache License Version 2.0
                         <Menu fx:id="imageMenu" mnemonicParsing="false" text="%Image">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageEditor" text="%EditImage" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%EditImage" />
                                 <Menu mnemonicParsing="false" text="%ImageManufacture">
                                     <items>                                       

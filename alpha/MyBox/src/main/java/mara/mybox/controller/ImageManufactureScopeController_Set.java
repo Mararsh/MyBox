@@ -278,7 +278,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
     protected void setScopeControls() {
         try {
-            setBox.setVisible(!scopeWhole());
+//            setBox.setVisible(!scopeWhole());
             tabPane.getTabs().clear();
             opPane.getChildren().clear();
             areaBox.getChildren().clear();

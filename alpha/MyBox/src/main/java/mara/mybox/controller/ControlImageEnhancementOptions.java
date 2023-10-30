@@ -161,9 +161,9 @@ public class ControlImageEnhancementOptions extends BaseController {
                 }
                 if (editor != null) {
                     commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
-                    if (!editor.scopeController.scopeWhole()) {
-                        editor.scopeTab();
-                    }
+//                    if (!editor.scopeController.scopeWhole()) {
+//                        editor.scopeTab();
+//                    }
                 }
 
                 if (smoothRadio.equals(selected)) {

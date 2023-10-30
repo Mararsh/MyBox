@@ -99,20 +99,13 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                     if (wholeRadio.isSelected()) {
                         newImage = imageView.getImage();
 
-                    } else if (includeRadio.isSelected()) {
+                    } else {
                         if (scopeController.scopeWhole()) {
                             newImage = imageView.getImage();
                         } else {
                             newImage = ScopeTools.scopeImage(imageView.getImage(),
-                                    scopeController.scope, bgColor, marginsCheck.isSelected());
-                        }
-
-                    } else if (excludeRadio.isSelected()) {
-                        if (scopeController.scopeWhole()) {
-                            return false;
-                        } else {
-                            newImage = ScopeTools.scopeExcludeImage(imageView.getImage(),
-                                    scopeController.scope, bgColor, marginsCheck.isSelected());
+                                    scopeController.scope, bgColor,
+                                    marginsCheck.isSelected(), excludeRadio.isSelected());
                         }
                     }
 

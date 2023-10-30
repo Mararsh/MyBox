@@ -26,7 +26,7 @@ public class ShapeShearInputController extends BaseShapeTransformController {
     @FXML
     protected ComboBox<String> xSelector, ySelector;
 
-    public void setParameters(BaseImageController parent, DoubleShape shapeData) {
+    public void setParameters(BaseShapeController parent, DoubleShape shapeData) {
         try {
             super.setParameters(parent, shapeData, null);
 
@@ -95,7 +95,7 @@ public class ShapeShearInputController extends BaseShapeTransformController {
         close();
     }
 
-    public static ShapeShearInputController open(BaseImageController parent, DoubleShape shapeData) {
+    public static ShapeShearInputController open(BaseShapeController parent, DoubleShape shapeData) {
         try {
             ShapeShearInputController controller = (ShapeShearInputController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.ShapeShearInputFxml, true);

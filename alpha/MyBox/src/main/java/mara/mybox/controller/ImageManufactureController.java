@@ -50,7 +50,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         try {
             super.initControls();
 
-            initBackupsTab();
             initEditBar();
 
             operationsController.setParameters(this);
@@ -67,15 +66,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             NodeStyleTools.setTooltip(viewImageButton, message("PopManufacturedImage"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
-        }
-    }
-
-    protected void initBackupsTab() {
-        try {
-            backupController.setParameters(this, baseName);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
         }
     }
 
@@ -96,8 +86,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             resetImagePane();
 
             historyButton.setDisable(sourceFile == null);
-
-            backupController.loadBackups(sourceFile);
 
             finalRefineView();
 

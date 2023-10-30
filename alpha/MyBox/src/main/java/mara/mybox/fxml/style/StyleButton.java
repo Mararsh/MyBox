@@ -137,31 +137,36 @@ public class StyleButton {
         if (id.startsWith("complete")) {
             return new StyleData(id, message("Complete"), "", "iconYes.png");
         }
-        if (id.startsWith("selectFile")) {
-            return new StyleData(id, message("SelectFile"), "", "iconSelectFile.png");
-        }
-        if (id.startsWith("selectPath")) {
-            return new StyleData(id, message("SelectPath"), "", "iconSelectPath.png");
-        }
-        if (id.startsWith("selectAll")) {
-            switch (id) {
-                case "selectAllButton":
-                    return new StyleData(id, message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
-                default:
-                    return new StyleData(id, message("SelectAll"), "", "iconSelectAll.png");
-            }
-        }
-        if (id.startsWith("selectNone")) {
-            switch (id) {
-                case "selectNoneButton":
-                    return new StyleData(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
-                default:
-                    return new StyleData(id, message("UnselectAll"), "", "iconSelectNone.png");
-            }
-        }
         if (id.startsWith("select")) {
+            if (id.startsWith("selectFile")) {
+                return new StyleData(id, message("SelectFile"), "", "iconSelectFile.png");
+            }
+            if (id.startsWith("selectPath")) {
+                return new StyleData(id, message("SelectPath"), "", "iconSelectPath.png");
+            }
+            if (id.startsWith("selectAll")) {
+                switch (id) {
+                    case "selectAllButton":
+                        return new StyleData(id, message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
+                    default:
+                        return new StyleData(id, message("SelectAll"), "", "iconSelectAll.png");
+                }
+            }
+            if (id.startsWith("selectNone")) {
+                switch (id) {
+                    case "selectNoneButton":
+                        return new StyleData(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
+                    default:
+                        return new StyleData(id, message("UnselectAll"), "", "iconSelectNone.png");
+                }
+            }
+            if (id.startsWith("selectScope")) {
+                return new StyleData(id, message("SelectScope"), "CTRL+t / ALT+t", "iconSelect.png");
+            }
+
             return new StyleData(id, message("Select"), "", "iconSelect.png");
         }
+
         if (id.startsWith("mybox")) {
             return new StyleData(id, "MyBox", "", "iconMyBox.png");
         }
@@ -354,10 +359,10 @@ public class StyleButton {
         if (id.startsWith("help")) {
             return new StyleData(id, message("HelpMe"), "", "iconClaw.png");
         }
-        if (id.startsWith("editFrames")) {
-            return new StyleData(id, message("ImagesEditor"), "", "iconEdit.png");
-        }
         if (id.startsWith("edit")) {
+            if (id.startsWith("editFrames")) {
+                return new StyleData(id, message("ImagesEditor"), "", "iconThumbsList.png");
+            }
             return new StyleData(id, message("Edit"), "", "iconEdit.png");
         }
         if (id.startsWith("size")) {
@@ -575,6 +580,8 @@ public class StyleButton {
             switch (id) {
                 case "popButton":
                     return new StyleData(id, message("Pop"), "CTRL+p", "iconPop.png");
+                case "popScopeButton":
+                    return new StyleData(id, message("PopScope"), "", "iconTarget.png");
                 default:
                     return new StyleData(id, message("Pop"), "", "iconPop.png");
             }
@@ -707,6 +714,9 @@ public class StyleButton {
         }
         if (id.startsWith("canvas")) {
             return new StyleData(id, "", message("Canvas"), "", "iconRectangle.png");
+        }
+        if (id.startsWith("scope")) {
+            return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
         }
         if (id.startsWith("onTop")) {
             return new StyleData(id, "", message("AlwayOnTop"), "", "iconDoubleUp.png");

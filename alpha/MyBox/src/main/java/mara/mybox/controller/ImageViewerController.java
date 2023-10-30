@@ -21,16 +21,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -50,18 +48,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public class ImageViewerController extends BaseImageController {
+public class ImageViewerController extends BaseShapeController {
 
-    protected ImageScope scope;
-
-    @FXML
-    protected TitledPane viewPane, browsePane;
-    @FXML
-    protected VBox panesBox, contentBox;
     @FXML
     protected FlowPane buttonsPane;
-    @FXML
-    protected ControlFileBackup backupController;
 
     public ImageViewerController() {
         baseTitle = message("ImageViewer");
@@ -72,25 +62,6 @@ public class ImageViewerController extends BaseImageController {
     public void initControls() {
         try {
             super.initControls();
-            initFilePane();
-            initViewPane();
-            initEditPane();
-            initBrowsePane();
-
-            if (imageView != null && rightPane != null) {
-                rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initFilePane() {
-        try {
-            if (saveButton != null && imageView != null) {
-                saveButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
 
             loadWidth = defaultLoadWidth;
             if (loadWidthSelector != null) {
@@ -124,51 +95,12 @@ public class ImageViewerController extends BaseImageController {
                 });
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initViewPane() {
-        try {
-            if (viewPane != null) {
-                if (imageView != null) {
-                    viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                }
-                viewPane.setExpanded(UserConfig.getBoolean(baseName + "ViewPane", false));
-                viewPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "ViewPane", viewPane.isExpanded());
-                });
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initBrowsePane() {
-        try {
-            if (browsePane != null) {
-                if (imageView != null) {
-                    browsePane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                }
-                browsePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "BrowsePane", browsePane.isExpanded());
-                });
-                browsePane.setExpanded(UserConfig.getBoolean(baseName + "BrowsePane", false));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initEditPane() {
-        try {
             if (imageView == null) {
                 return;
             }
-
+            if (rightPane != null) {
+                rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
             if (buttonsPane != null) {
                 buttonsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
@@ -179,6 +111,10 @@ public class ImageViewerController extends BaseImageController {
                 scrollPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
 
+            if (saveButton != null) {
+                saveButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -187,30 +123,7 @@ public class ImageViewerController extends BaseImageController {
     @FXML
     @Override
     public void cropAction() {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
 
-            private Image areaImage;
-
-            @Override
-            protected boolean handle() {
-                areaImage = imageToHandle();
-                return areaImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                imageView.setImage(areaImage);
-                setImageChanged(true);
-            }
-
-        };
-        start(task);
     }
 
     @FXML
@@ -219,12 +132,7 @@ public class ImageViewerController extends BaseImageController {
         if (imageView == null) {
             return;
         }
-        boolean sizeChanged = imageWidth() != image.getWidth()
-                || imageHeight() != image.getHeight();
         imageView.setImage(image);
-        if (sizeChanged) {
-            redrawMaskShape();
-        }
         setImageChanged(false);
         popInformation(message("Recovered"));
     }
@@ -273,16 +181,19 @@ public class ImageViewerController extends BaseImageController {
         task = new SingletonCurrentTask<Void>(this) {
 
             private Image savedImage;
+            private boolean needBackup = false;
+            private FileBackup backup;
 
             @Override
             protected boolean handle() {
-                savedImage = imageToHandle();
+                savedImage = imageView.getImage();
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(savedImage, null);
                 if (bufferedImage == null || task == null || isCancelled()) {
                     return false;
                 }
-                if (backupController != null && backupController.needBackup() && srcFile != null) {
-                    backupController.addBackup(task, srcFile);
+                needBackup = srcFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", false);
+                if (needBackup) {
+                    backup = addBackup(task, srcFile);
                 }
                 String format = FileNameTools.suffix(targetFile.getName());
                 if (framesNumber > 1) {
@@ -315,8 +226,17 @@ public class ImageViewerController extends BaseImageController {
                 } else {
                     image = savedImage;
                     imageView.setImage(image);
-                    popInformation(sourceFile + "   " + message("Saved"));
                     setImageChanged(false);
+                    if (needBackup) {
+                        if (backup != null && backup.getBackup() != null) {
+                            popInformation(message("SavedAndBacked"));
+                            FileBackupController.updateList(sourceFile);
+                        } else {
+                            popError(message("FailBackup"));
+                        }
+                    } else {
+                        popInformation(sourceFile + "   " + message("Saved"));
+                    }
                 }
             }
 
@@ -338,10 +258,6 @@ public class ImageViewerController extends BaseImageController {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
         MenuImageViewController.imageViewMenu(this, localToScreen.getX(), localToScreen.getY());
         return true;
-    }
-
-    public boolean scopeWhole() {
-        return scope == null || scope.getScopeType() == null;
     }
 
     @Override
@@ -469,7 +385,7 @@ public class ImageViewerController extends BaseImageController {
 
             menu = new MenuItem(message("SelectScope"), StyleTools.getIconImageView("iconTarget.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageSelectScopeController.open(this);
+                selectScope();
             });
             items.add(menu);
 
@@ -537,6 +453,11 @@ public class ImageViewerController extends BaseImageController {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    @FXML
+    public void selectScope() {
+        ImageSelectScopeController.open(this);
     }
 
     @FXML

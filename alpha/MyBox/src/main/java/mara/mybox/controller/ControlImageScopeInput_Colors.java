@@ -1,21 +1,12 @@
 package mara.mybox.controller;
 
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.util.Callback;
 import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -26,63 +17,27 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInput_Area {
 
-    public void initColorsTab() {
-        try {
-            colorsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            colorsList.setCellFactory(new Callback<ListView<Color>, ListCell<Color>>() {
-                @Override
-                public ListCell<Color> call(ListView<Color> p) {
-                    return new ListColorCell();
-                }
-            });
-            colorsList.getItems().addListener(new ListChangeListener<Color>() {
-                @Override
-                public void onChanged(ListChangeListener.Change<? extends Color> c) {
-                    int size = colorsList.getItems().size();
-                    colorsSizeLabel.setText(message("Count") + ": " + size);
-                    if (size > 100) {
-                        colorsSizeLabel.setStyle(NodeStyleTools.redTextStyle());
-                    } else {
-                        colorsSizeLabel.setStyle(NodeStyleTools.blueTextStyle());
-                    }
-                    clearColorsButton.setDisable(size == 0);
-                }
-            });
-
-            clearColorsButton.setDisable(true);
-            deleteColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
-            saveColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
-
-            colorController.init(this, baseName + "Color", Color.THISTLE);
-            colorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    addColor((Color) newValue);
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     protected void startPickingColor() {
-        if (!tabPane.getTabs().contains(colorsTab)) {
-            isPickingColor = false;
-            stopPickingColor();
-            return;
-        }
+        imageView.setCursor(Cursor.HAND);
+        setShapesCursor(Cursor.HAND);;
         imageLabelOriginal = new Label(scopeTips.getText());
         imageLabelOriginal.setStyle(scopeTips.getStyle());
-        String tips = message("PickingColorsForScope");
+        String tips = pickingColorTips();
         scopeTips.setText(tips);
         scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
         popInformation(tips);
     }
 
     @Override
+    public String pickingColorTips() {
+        return message("PickingColorsForScope");
+    }
+
+    @Override
     protected void stopPickingColor() {
+        imageView.setCursor(Cursor.DEFAULT);
+        setShapesCursor(Cursor.MOVE);
         if (imageLabelOriginal != null) {
             String tips = imageLabelOriginal.getText();
             scopeTips.setText(tips);

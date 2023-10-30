@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -56,6 +57,8 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
         ImagesGrid, FilesList, ThumbnailsList, None
     }
 
+    @FXML
+    protected TitledPane viewPane, browsePane;
     @FXML
     protected VBox imagesPane, viewBox, gridOptionsBox;
     @FXML

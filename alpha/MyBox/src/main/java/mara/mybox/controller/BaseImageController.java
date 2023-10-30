@@ -22,8 +22,6 @@ public abstract class BaseImageController extends BaseImageController_Actions {
             initMaskPane();
             initCheckboxs();
 
-            clearMask();
-
             if (imageBox != null && imageView != null) {
                 imageBox.disableProperty().bind(imageView.imageProperty().isNull());
             }
@@ -35,6 +33,9 @@ public abstract class BaseImageController extends BaseImageController_Actions {
 
     @Override
     public boolean controlAltK() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         if (pickColorCheck != null) {
             pickColorCheck.setSelected(!pickColorCheck.isSelected());
             return true;
@@ -45,6 +46,15 @@ public abstract class BaseImageController extends BaseImageController_Actions {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean controlAltT() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
+        ImageSelectScopeController.open(this);
+        return true;
     }
 
     @Override
@@ -94,8 +104,6 @@ public abstract class BaseImageController extends BaseImageController_Actions {
                 paletteController.closeStage();
                 paletteController = null;
             }
-            maskShapeChanged = null;
-            maskShapeDataChanged = null;
         } catch (Exception e) {
         }
         super.cleanPane();

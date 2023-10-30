@@ -96,7 +96,7 @@ public class ImageRepeatController extends ImageViewerController {
     }
 
     public Image sourceImage() {
-        return scaleController.scopeImage();
+        return scaleController.imageView.getImage();
     }
 
     public void checkRepeatType() {
@@ -124,7 +124,7 @@ public class ImageRepeatController extends ImageViewerController {
         if (isSettingValues || imageView.getImage() == null) {
             return;
         }
-        scaleController.loadImage(scopeImage());
+        scaleController.loadImage(imageView.getImage());
     }
 
     @FXML

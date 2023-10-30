@@ -108,9 +108,9 @@ public class ControlImageEffectOptions extends BaseController {
         try {
             if (editor != null) {
                 editor.resetImagePane();
-                if (!editor.scopeController.scopeWhole()) {
-                    editor.scopeTab();
-                }
+//                if (!editor.scopeController.scopeWhole()) {
+//                    editor.scopeTab();
+//                }
             }
 
             clearValues();

@@ -69,6 +69,10 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         }
     }
 
+    public boolean scopeWhole() {
+        return true;
+    }
+
     @Override
     public void setControlsStyle() {
         try {

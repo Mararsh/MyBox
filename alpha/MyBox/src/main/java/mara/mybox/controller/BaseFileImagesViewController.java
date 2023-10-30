@@ -20,7 +20,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -303,7 +302,6 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         }
         finalRefineView();
         setImageChanged(false);
-        redrawMaskShape();
         updateLabelsTitle();
         imageView.requestFocus();
     }
@@ -498,19 +496,6 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         setCurrentPage(framesNumber - 1);
         loadPage();
 
-    }
-
-    @Override
-    public void setMaskRectangleDefaultValues() {
-        if (imageView == null || maskPane == null || maskRectangle == null) {
-            return;
-        }
-        if (maskRectangleData == null
-                || maskRectangleData.getWidth() > imageView.getImage().getWidth()
-                || maskRectangleData.getHeight() > imageView.getImage().getHeight()) {
-            maskRectangleData = DoubleRectangle.xywh(0, 0,
-                    imageView.getImage().getWidth(), imageView.getImage().getHeight());
-        }
     }
 
     @Override

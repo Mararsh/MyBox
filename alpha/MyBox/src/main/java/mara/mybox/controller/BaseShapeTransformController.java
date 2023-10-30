@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class BaseShapeTransformController extends BaseInputController {
 
-    protected BaseImageController imageController;
+    protected BaseShapeController imageController;
     protected float x, y;
     protected DoubleShape shapeData;
     protected DoublePoint point;
@@ -30,7 +30,7 @@ public class BaseShapeTransformController extends BaseInputController {
     @FXML
     protected Label infoLabel;
 
-    public void setParameters(BaseImageController parent, DoubleShape shapeData, DoublePoint point) {
+    public void setParameters(BaseShapeController parent, DoubleShape shapeData, DoublePoint point) {
         try {
             super.setParameters(parent, null);
 

@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
@@ -43,10 +44,11 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-10
  * @License Apache License Version 2.0
  */
-public abstract class BaseImageController_ImageView extends BaseFileController {
+public abstract class BaseImageController_Base extends BaseFileController {
 
     protected ImageInformation imageInformation;
     protected Image image;
+    protected ImageScope scope;
     protected ImageAttributes attributes;
     protected final SimpleBooleanProperty loadNotify;
     protected boolean imageChanged, isPickingColor;
@@ -71,16 +73,16 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     @FXML
     protected Text sizeText, xyText;
     @FXML
-    protected Label imageLabel, imageInfoLabel, infoLabel;
+    protected Label imageLabel, imageInfoLabel;
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
-            rotateLeftButton, rotateRightButton, turnOverButton;
+            rotateLeftButton, rotateRightButton, turnOverButton, selectScopeButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
 
-    public BaseImageController_ImageView() {
+    public BaseImageController_Base() {
         baseTitle = message("Image");
         loadNotify = new SimpleBooleanProperty(false);
     }
@@ -226,6 +228,8 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         status
      */
     protected void zoomStepChanged() {
+        xZoomStep = zoomStep;
+        yZoomStep = zoomStep;
     }
 
     protected void setZoomStep(Image image) {

@@ -166,7 +166,6 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         updateStatus();
-        refreshAction();
     }
 
     @Override
@@ -265,6 +264,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             }
             checkTargetPath();
             updateNumbers();
+            refreshAction();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -282,6 +282,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         if (!clipboard.hasImage()) {
@@ -331,6 +332,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             controller = (ImageInSystemClipboardController) WindowTools.openStage(Fxmls.ImageInSystemClipboardFxml);
         }
         controller.requestMouse();
+        controller.updateStatus();
         return controller;
     }
 

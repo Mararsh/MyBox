@@ -25,7 +25,7 @@ public class ShapeScaleInputController extends BaseShapeTransformController {
     @FXML
     protected ComboBox<String> xSelector, ySelector;
 
-    public void setParameters(BaseImageController parent, DoubleShape shapeData) {
+    public void setParameters(BaseShapeController parent, DoubleShape shapeData) {
         try {
             super.setParameters(parent, shapeData, null);
 
@@ -80,7 +80,7 @@ public class ShapeScaleInputController extends BaseShapeTransformController {
         close();
     }
 
-    public static ShapeScaleInputController open(BaseImageController parent, DoubleShape shapeData) {
+    public static ShapeScaleInputController open(BaseShapeController parent, DoubleShape shapeData) {
         try {
             ShapeScaleInputController controller = (ShapeScaleInputController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.ShapeScaleInputFxml, true);

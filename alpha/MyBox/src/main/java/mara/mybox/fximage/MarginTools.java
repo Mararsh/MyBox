@@ -185,62 +185,75 @@ public class MarginTools {
 
     public static Image addMarginsFx(Image image, Color color, int MarginWidth,
             boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
+        if (image == null || MarginWidth <= 0) {
+            return image;
+        }
+
+        return addMarginsFx(image, color,
+                addTop ? MarginWidth : -1,
+                addBottom ? MarginWidth : -1,
+                addLeft ? MarginWidth : -1,
+                addRight ? MarginWidth : -1);
+    }
+
+    public static Image addMarginsFx(Image image, Color color,
+            int top, int bottom, int left, int right) {
         try {
-            if (image == null || MarginWidth <= 0) {
+            if (image == null) {
                 return image;
             }
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
+            MyBoxLog.debug(width + "  " + height);
             int totalWidth = width;
             int totalHegiht = height;
             int x1 = 0;
             int y1 = 0;
 
-            if (addLeft) {
-                totalWidth += MarginWidth;
-                x1 = MarginWidth;
+            if (left > 0) {
+                totalWidth += left;
+                x1 = left;
             }
-            if (addRight) {
-                totalWidth += MarginWidth;
+            if (right > 0) {
+                totalWidth += right;
             }
-            if (addTop) {
-                totalHegiht += MarginWidth;
-                y1 = MarginWidth;
+            if (top > 0) {
+                totalHegiht += top;
+                y1 = top;
 
             }
-            if (addBottom) {
-                totalHegiht += MarginWidth;
+            if (bottom > 0) {
+                totalHegiht += bottom;
             }
-            //            MyBoxLog.debug(width + "  " + totalWidth);
+            MyBoxLog.debug(totalWidth + "  " + totalHegiht);
             PixelReader pixelReader = image.getPixelReader();
             WritableImage newImage = new WritableImage(totalWidth, totalHegiht);
             PixelWriter pixelWriter = newImage.getPixelWriter();
             pixelWriter.setPixels(x1, y1, width, height, pixelReader, 0, 0);
-            //            MyBoxLog.debug(x1 + "  " + y1);
-            //            MyBoxLog.debug(totalWidth + "  " + totalHegiht);
-            if (addLeft) {
-                for (int x = 0; x < MarginWidth; x++) {
+            MyBoxLog.debug(x1 + "  " + y1);
+            if (left > 0) {
+                for (int x = 0; x < left; x++) {
                     for (int y = 0; y < totalHegiht; y++) {
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
-            if (addRight) {
-                for (int x = totalWidth - 1; x > totalWidth - MarginWidth - 1; x--) {
+            if (right > 0) {
+                for (int x = totalWidth - 1; x > totalWidth - right - 1; x--) {
                     for (int y = 0; y < totalHegiht; y++) {
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
-            if (addTop) {
-                for (int y = 0; y < MarginWidth; y++) {
+            if (top > 0) {
+                for (int y = 0; y < top; y++) {
                     for (int x = 0; x < totalWidth; x++) {
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
-            if (addBottom) {
-                for (int y = totalHegiht - 1; y > totalHegiht - MarginWidth - 1; y--) {
+            if (bottom > 0) {
+                for (int y = totalHegiht - 1; y > totalHegiht - bottom - 1; y--) {
                     for (int x = 0; x < totalWidth; x++) {
                         pixelWriter.setColor(x, y, color);
                     }

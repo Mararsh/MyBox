@@ -78,10 +78,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
             @Override
             public void run() {
                 try {
-                    Image selected = imageToHandle();
-                    if (selected == null) {
-                        selected = imageView.getImage();
-                    }
+                    Image selected = imageView.getImage();
                     File imageFile = FileTmpTools.getTempFile(".png");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
                     bufferedImage = AlphaTools.removeAlpha(bufferedImage);
@@ -166,10 +163,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
             @Override
             protected boolean handle() {
                 try {
-                    Image selected = imageToHandle();
-                    if (selected == null) {
-                        selected = imageView.getImage();
-                    }
+                    Image selected = imageView.getImage();
                     return ocrOptionsController.imageOCR(this, selected, false);
                 } catch (Exception e) {
                     error = e.toString();

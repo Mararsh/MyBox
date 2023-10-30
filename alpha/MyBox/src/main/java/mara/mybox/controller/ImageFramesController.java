@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -18,7 +19,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-7-19
  * @License Apache License Version 2.0
  */
-public class ImageFramesController extends BaseController {
+public class ImageFramesController extends BaseChildController {
 
     protected BaseImageController imageController;
 
@@ -28,6 +29,10 @@ public class ImageFramesController extends BaseController {
     protected Label framesLabel;
     @FXML
     protected Button nextFrameButton, previousFrameButton, playFramesButton;
+
+    public ImageFramesController() {
+        baseTitle = message("Frames");
+    }
 
     public void setParameters(BaseImageController parent) {
         try {
@@ -89,6 +94,27 @@ public class ImageFramesController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void editFrames() {
+        imageController.editFrames();
+    }
+
+    @FXML
+    @Override
+    public void playAction() {
+        imageController.playAction();
+    }
+
+    @FXML
+    public void nextFrame() {
+        imageController.loadFrame(imageController.frameIndex + 1);
+    }
+
+    @FXML
+    public void previousFrame() {
+        imageController.loadFrame(imageController.frameIndex - 1);
     }
 
     /*

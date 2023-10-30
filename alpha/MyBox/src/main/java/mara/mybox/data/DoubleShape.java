@@ -10,7 +10,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BaseImageController;
+import mara.mybox.controller.BaseShapeController;
 import mara.mybox.controller.ControlSvgNodeEdit;
 import mara.mybox.controller.TextEditorController;
 import mara.mybox.controller.TextPopController;
@@ -389,8 +389,8 @@ public interface DoubleShape {
                 @Override
                 public void handle(ActionEvent mevent) {
                     if (pathData.toAbs(controller)) {
-                        if (controller instanceof BaseImageController) {
-                            ((BaseImageController) controller).maskShapeDataChanged();
+                        if (controller instanceof BaseShapeController) {
+                            ((BaseShapeController) controller).maskShapeDataChanged();
                         } else if (controller instanceof ControlSvgNodeEdit) {
                             ((ControlSvgNodeEdit) controller).loadPath(pathData.getContent());
                         }
@@ -404,8 +404,8 @@ public interface DoubleShape {
                 @Override
                 public void handle(ActionEvent mevent) {
                     if (pathData.toRel(controller)) {
-                        if (controller instanceof BaseImageController) {
-                            ((BaseImageController) controller).maskShapeDataChanged();
+                        if (controller instanceof BaseShapeController) {
+                            ((BaseShapeController) controller).maskShapeDataChanged();
                         } else if (controller instanceof ControlSvgNodeEdit) {
                             ((ControlSvgNodeEdit) controller).loadPath(pathData.getContent());
                         }

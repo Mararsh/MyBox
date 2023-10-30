@@ -243,8 +243,6 @@ public class MenuImageBaseController extends MenuController {
                                 imageController.zoomStepSelector.setValue(newVal);
                             } else {
                                 imageController.zoomStep = v;
-                                imageController.xZoomStep = v;
-                                imageController.yZoomStep = v;
                                 imageController.zoomStepChanged();
                             }
                             isSettingValues = false;
@@ -438,8 +436,8 @@ public class MenuImageBaseController extends MenuController {
     }
 
     @FXML
-    public void settings() {
-        imageController.settings();
+    public void options() {
+        imageController.options();
     }
 
     @Override

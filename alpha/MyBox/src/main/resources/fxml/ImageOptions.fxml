@@ -229,37 +229,6 @@ License:    Apache License Version 2.0
                   </ScrollPane>
                </content>
             </Tab>
-            <Tab text="%Shape">
-               <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                           <children>
-                              <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
-                                 <children>
-                                    <Label text="%StrokeColor" />
-                                    <fx:include fx:id="strokeColor" source="ControlColorSet.fxml" />
-                                    <Label text="%Width" />
-                                    <ComboBox fx:id="strokeWidthSelector" editable="true" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
-                                 <children>
-                                    <Label text="%AnchorColor" />
-                                    <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
-                                    <Label text="%Width" />
-                                    <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
          </tabs>
       </TabPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">

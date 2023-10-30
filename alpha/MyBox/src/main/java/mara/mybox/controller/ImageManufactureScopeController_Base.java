@@ -35,6 +35,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected ImageManufactureController editor;
     protected java.awt.Color maskColor;
     protected float maskOpacity;
+    protected ImageScope scope;
 
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;

@@ -22,6 +22,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void openImageEditor(ActionEvent event) {
+        loadScene(Fxmls.ImageEditorFxml);
+    }
+
+    @FXML
     protected void openImagesBrowser(ActionEvent event) {
         loadScene(Fxmls.ImagesBrowserFxml);
     }
@@ -174,6 +179,16 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     @FXML
     protected void ImageToSvg(ActionEvent event) {
         loadScene(Fxmls.SvgFromImageBatchFxml);
+    }
+
+    @FXML
+    protected void ImagesInMyBoxClipboard(ActionEvent event) {
+        ImageInMyBoxClipboardController.oneOpen();
+    }
+
+    @FXML
+    protected void ImagesInSystemClipboard(ActionEvent event) {
+        ImageInSystemClipboardController.oneOpen();
     }
 
     @FXML

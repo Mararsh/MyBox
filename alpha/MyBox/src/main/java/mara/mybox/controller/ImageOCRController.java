@@ -270,7 +270,7 @@ public class ImageOCRController extends ImageViewerController {
             @Override
             public void run() {
                 try {
-                    Image selected = preprocessController.imageToHandle();
+                    Image selected = preprocessController.imageView.getImage();
                     if (selected == null) {
                         selected = preprocessController.imageView.getImage();
                     }
@@ -369,7 +369,7 @@ public class ImageOCRController extends ImageViewerController {
             @Override
             protected boolean handle() {
                 try {
-                    Image selected = preprocessController.imageToHandle();
+                    Image selected = preprocessController.imageView.getImage();
                     if (selected == null) {
                         selected = preprocessController.imageView.getImage();
                     }

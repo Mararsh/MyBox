@@ -18,7 +18,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.ValidationTools;
@@ -41,11 +40,10 @@ public class ImageOptionsController extends BaseController {
     protected BaseImageController imageController;
 
     @FXML
-    protected ControlColorSet strokeColorController, anchorColorController, alphaColorSetController,
-            rulerColorController, gridColorController;
+    protected ControlColorSet alphaColorSetController, rulerColorController, gridColorController;
     @FXML
     protected ComboBox<String> zoomStepSelector,
-            strokeWidthSelector, anchorSizeSelector, decimalSelector,
+            decimalSelector,
             gridWidthSelector, gridIntervalSelector, gridOpacitySelector;
     @FXML
     protected ToggleGroup renderGroup, colorRenderGroup, pixelsInterGroup, alphaInterGroup, shapeAntiGroup,
@@ -117,8 +115,6 @@ public class ImageOptionsController extends BaseController {
                             imageController.zoomStep = v;
                             UserConfig.setInt(baseName + "ZoomStep", imageController.zoomStep);
                             zoomStepSelector.getEditor().setStyle(null);
-                            imageController.xZoomStep = imageController.zoomStep;
-                            imageController.yZoomStep = imageController.zoomStep;
                             imageController.zoomStepChanged();
                         } else {
                             zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -126,72 +122,6 @@ public class ImageOptionsController extends BaseController {
                     } catch (Exception e) {
                         zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
-                }
-            });
-
-            strokeWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
-            strokeWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (isSettingValues || newValue == null || newValue.isEmpty()) {
-                        return;
-                    }
-                    try {
-                        float v = Float.parseFloat(newValue);
-                        if (v > 0) {
-                            UserConfig.setFloat("StrokeWidth", v);
-                            ValidationTools.setEditorNormal(strokeWidthSelector);
-                            BaseImageController.updateMaskStrokes();
-                        } else {
-                            ValidationTools.setEditorBadStyle(strokeWidthSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(strokeWidthSelector);
-                    }
-                }
-            });
-
-            strokeColorController.init(this, "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
-            strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    BaseImageController.updateMaskStrokes();
-                }
-            });
-
-            anchorSizeSelector.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-            anchorSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (isSettingValues || newValue == null || newValue.isEmpty()) {
-                        return;
-                    }
-                    try {
-                        float v = Float.parseFloat(newValue);
-                        if (v > 0) {
-                            UserConfig.setFloat("AnchorSize", v);
-                            ValidationTools.setEditorNormal(anchorSizeSelector);
-                            BaseImageController.updateMaskAnchors();
-                        } else {
-                            ValidationTools.setEditorBadStyle(anchorSizeSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(anchorSizeSelector);
-                    }
-                }
-            });
-
-            anchorColorController.init(this, "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
-            anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    BaseImageController.updateMaskAnchors();
                 }
             });
 
@@ -430,16 +360,12 @@ public class ImageOptionsController extends BaseController {
         try {
             isSettingValues = true;
 
-            strokeWidthSelector.setValue(UserConfig.getFloat("StrokeWidth", 2) + "");
-            anchorSizeSelector.setValue(UserConfig.getFloat("AnchorSize", 10) + "");
             gridWidthSelector.setValue(UserConfig.getInt("GridLinesWidth", 1) + "");
             int gi = UserConfig.getInt("GridLinesInterval", -1);
             gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
             gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
             decimalSelector.setValue(UserConfig.imageScale() + "");
 
-            strokeColorController.asSaved();
-            anchorColorController.asSaved();
             gridColorController.asSaved();
 
             thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");

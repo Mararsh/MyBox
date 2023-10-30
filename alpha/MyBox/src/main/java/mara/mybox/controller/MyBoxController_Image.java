@@ -39,7 +39,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem EditImage = new MenuItem(message("EditImage"));
         EditImage.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageManufactureFxml);
+            loadScene(Fxmls.ImageEditorFxml);
         });
 
         MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));

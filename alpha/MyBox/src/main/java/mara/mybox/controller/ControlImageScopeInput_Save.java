@@ -47,12 +47,12 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
 //        start(task);
     }
 
-    public void showScope(ImageScope scope) {
-        if (scope == null || scope.getScopeType() == null) {
+    public void loadScope(ImageScope inScope) {
+        clearScope();
+        if (inScope == null || inScope.getScopeType() == null) {
             return;
         }
-        clearScope();
-        this.scope = scope;
+        scope = inScope;
         isSettingValues = true;
         showScopeType(scope);
         showAreaData(scope);

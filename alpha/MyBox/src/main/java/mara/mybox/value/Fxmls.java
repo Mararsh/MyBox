@@ -118,6 +118,13 @@ public class Fxmls {
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
 
+    public static final String ImageEditorFxml = "/fxml/ImageEditor.fxml";
+    public static final String ImageSelectScopeFxml = "/fxml/ImageSelectScope.fxml";
+    public static final String ImageCopyFxml = "/fxml/ImageCopy.fxml";
+    public static final String ImageCropFxml = "/fxml/ImageCrop.fxml";
+    public static final String ImagePasteFxml = "/fxml/ImagePaste.fxml";
+    public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
+    public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
     public static final String ImageManufactureCopyFxml = "/fxml/ImageManufactureCopy.fxml";
@@ -213,7 +220,6 @@ public class Fxmls {
 
     public static final String ImageFramesFxml = "/fxml/ImageFrames.fxml";
     public static final String ImageOptionsFxml = "/fxml/ImageOptions.fxml";
-    public static final String ImageSelectScopeFxml = "/fxml/ImageSelectScope.fxml";
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";

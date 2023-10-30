@@ -1,0 +1,174 @@
+package mara.mybox.controller;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import mara.mybox.controller.ImageEditorController.ImageOperation;
+import mara.mybox.db.data.ImageClipboard;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ScopeTools;
+import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
+
+/**
+ * @Author Mara
+ * @CreateDate 2022-10-28
+ * @License Apache License Version 2.0
+ */
+public class ImageCropController extends ImageSelectScopeController {
+
+    @FXML
+    protected ToggleGroup selectGroup, targetGroup;
+    @FXML
+    protected RadioButton includeRadio, excludeRadio;
+    @FXML
+    protected CheckBox clipMarginsCheck, imageMarginsCheck, copyClipboardCheck, openClipboardCheck;
+
+    public ImageCropController() {
+        baseTitle = message("Crop");
+    }
+
+    @Override
+    protected void setControls() {
+        try {
+            super.setControls();
+            if (editor == null) {
+                close();
+                return;
+            }
+
+            String select = UserConfig.getString(baseName + "SelectType", "Include");
+            if ("Exclude".equals(select)) {
+                excludeRadio.setSelected(true);
+            } else {
+                includeRadio.setSelected(true);
+            }
+            selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (excludeRadio.isSelected()) {
+                        UserConfig.setString(baseName + "SelectType", "Exclude");
+                    } else {
+                        UserConfig.setString(baseName + "SelectType", "Include");
+                    }
+                }
+            });
+
+            clipMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "ClipCutMargins", true));
+            clipMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "ClipCutMargins", clipMarginsCheck.isSelected());
+                }
+            });
+
+            imageMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "ImageCutMargins", true));
+            imageMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "ImageCutMargins", imageMarginsCheck.isSelected());
+                }
+            });
+
+            copyClipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CopyClipboard", false));
+            copyClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "CopyClipboard", copyClipboardCheck.isSelected());
+                }
+            });
+
+            openClipboardCheck.setSelected(UserConfig.getBoolean(baseName + "OpenClipboard", true));
+            openClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "OpenClipboard", openClipboardCheck.isSelected());
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void okAction() {
+        if (editor == null) {
+            close();
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            private Image newImage, cuttedClip;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    newImage = ScopeTools.scopeImage(scopeController.srcImage,
+                            scopeController.scope, bgColorController.color(),
+                            imageMarginsCheck.isSelected(), includeRadio.isSelected());
+                    if (newImage == null || task == null || isCancelled()) {
+                        return false;
+                    }
+                    if (copyClipboardCheck.isSelected()) {
+                        cuttedClip = ScopeTools.scopeImage(scopeController.srcImage,
+                                scopeController.scope, bgColorController.color(),
+                                clipMarginsCheck.isSelected(), excludeRadio.isSelected());
+                        return ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop) != null;
+                    } else {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.debug(e);
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                editor.updateImage(ImageOperation.Crop, scopeController.scope, newImage, cost);
+                if (openClipboardCheck.isSelected() && cuttedClip != null) {
+                    ImageInMyBoxClipboardController.oneOpen();
+                }
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                }
+
+            }
+        };
+        start(task);
+    }
+
+    /*
+        static methods
+     */
+    public static ImageCropController open(ImageEditorController parent) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            ImageCropController controller = (ImageCropController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageCropFxml, false);
+            controller.setParameters(parent);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+}

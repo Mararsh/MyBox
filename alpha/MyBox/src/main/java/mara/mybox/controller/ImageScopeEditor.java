@@ -51,7 +51,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
         if (scope == null) {
             scope = new ImageScope();
         }
-        valuesController.showScope(scope);
+        valuesController.loadScope(scope);
         nodeChanged(false);
         updateTitle(node);
     }
@@ -95,7 +95,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
         }
         ImageScope srcScope = ImageScopeTools.fromXML(node.getInfo());
         if (srcScope == null) {
-            valuesController.showScope(scope);
+            valuesController.loadScope(scope);
             nodeChanged(true);
         }
         tabPane.getSelectionModel().select(valueTab);

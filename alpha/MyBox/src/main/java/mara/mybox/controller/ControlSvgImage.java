@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
  * @CreateDate 2023-7-5
  * @License Apache License Version 2.0
  */
-public class ControlSvgImage extends BaseImageController {
+public class ControlSvgImage extends BaseShapeController {
 
     protected ControlSvgShape svgShapeControl;
 

@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
@@ -33,7 +34,7 @@ import mara.mybox.value.AppValues;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Base extends BaseImageController {
+public abstract class ControlImageScopeInput_Base extends BaseShapeController {
 
     protected BaseImageController imageController;
     protected Image srcImage;
@@ -50,11 +51,13 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
     @FXML
     protected VBox viewBox, setBox, areaBox, rectangleBox, circleBox, pointsBox;
     @FXML
-    protected ComboBox<String> scopeDistanceSelector, opacitySelector;
+    protected ComboBox<String> scopeDistanceSelector, opacitySelector,
+            strokeWidthSelector, anchorSizeSelector;
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
-    protected ControlColorSet colorController, maskColorController;
+    protected ControlColorSet colorController, maskColorController,
+            strokeColorController, anchorColorController;
     @FXML
     protected ListView<Color> colorsList;
     @FXML
@@ -66,7 +69,7 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button goScopeButton, withdrawPointButton,
+    protected Button goScopeButton, withdrawPointButton, popScopeButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
@@ -213,7 +216,35 @@ public abstract class ControlImageScopeInput_Base extends BaseImageController {
         if (!isValidScope() || !finalScope()) {
             return null;
         }
-        return ScopeTools.scopeImage(srcImage(), scope, bgColor, true);
+        return ScopeTools.scopeImage(srcImage(), scope, bgColor, true, false);
+    }
+
+    @FXML
+    public void popScope() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            private Image scopedImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    scopedImage = scopedImage(ColorConvertTools.converColor(scope.getMaskColor()));
+                    return scopedImage != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImagePopController.openImage(myController, scopedImage);
+            }
+
+        };
+        start(task);
     }
 
 }

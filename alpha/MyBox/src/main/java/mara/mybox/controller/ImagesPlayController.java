@@ -14,6 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -67,6 +68,8 @@ public class ImagesPlayController extends BaseImagesListController {
     protected Thread frameThread;
 
     @FXML
+    protected TitledPane viewPane;
+    @FXML
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton imagesRadio, pdfRadio, pptRadio;
@@ -75,7 +78,7 @@ public class ImagesPlayController extends BaseImagesListController {
     @FXML
     protected Button goFramesButton;
     @FXML
-    protected VBox fileVBox, imageBox, pdfBox;
+    protected VBox fileVBox, pdfBox;
     @FXML
     protected TextField fromInput, toInput;
     @FXML

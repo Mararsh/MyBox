@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -12,7 +13,11 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.FileBackup;
+import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
@@ -28,6 +33,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseFileController extends BaseController {
 
     protected FileSortTools.FileSortMode sortMode;
+    protected TableFileBackup tableFileBackup;
 
     @FXML
     protected ControlFileBrowse browseController;
@@ -49,6 +55,38 @@ public abstract class BaseFileController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public FileBackup addBackup(SingletonTask inTask, File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        FileBackup backup = null;
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (tableFileBackup == null) {
+                tableFileBackup = new TableFileBackup();
+            }
+            backup = tableFileBackup.addBackup(conn, file);
+
+        } catch (Exception e) {
+            if (inTask != null) {
+                inTask.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+        }
+//        File bfile = backup != null ? backup.getBackup() : null;
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (bfile != null) {
+//                    popInformation(message("Saved") + ": " + bfile);
+//                    FileBackupController.updateList(file);
+//                } else {
+//                    popError(message("FailBackup") + ": " + file);
+//                }
+//            }
+//        });
+        return backup;
     }
 
     @FXML

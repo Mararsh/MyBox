@@ -46,6 +46,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     protected SimpleBooleanProperty imageLoaded;
     protected ImageOperation operation;
+    protected ImageScope scope;
 
     protected TableImageEditHistory tableImageEditHistory;
     protected String imageHistoriesRootPath;
@@ -94,7 +95,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     public void resetImagePane() {
         operation = null;
         scope = null;
-        infoLabel.setText("");
+        imageLabel.setText("");
 
         imageView.setRotate(0);
         imageView.setVisible(true);
@@ -326,7 +327,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     }
 
     public void updateLabelString(String info) {
-        infoLabel.setText(info);
+        imageLabel.setText(info);
     }
 
     protected void setHistoryIndex(int index) {

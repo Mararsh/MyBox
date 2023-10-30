@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -95,20 +94,15 @@ public class ImageClipboardTools {
         if (controller == null || image == null) {
             return;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ClipboardContent cc = new ClipboardContent();
-                cc.putImage(image);
-                Clipboard.getSystemClipboard().setContent(cc);
-                if (isMonitoringCopy()) {
-                    controller.popInformation(message("CopiedInClipBoards"));
-                    ControlImagesClipboard.updateClipboards();
-                } else {
-                    controller.popInformation(message("CopiedInSystemClipBoard"));
-                }
-            }
-        });
+        ClipboardContent cc = new ClipboardContent();
+        cc.putImage(image);
+        Clipboard.getSystemClipboard().setContent(cc);
+        if (isMonitoringCopy()) {
+            controller.popInformation(message("CopiedInClipBoards"));
+            ControlImagesClipboard.updateClipboards();
+        } else {
+            controller.popInformation(message("CopiedInSystemClipBoard"));
+        }
     }
 
     public static Image fetchImageInClipboard(boolean clear) {
@@ -130,16 +124,11 @@ public class ImageClipboardTools {
         if (controller == null || image == null) {
             return;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (ImageClipboard.add(image, source) != null) {
-                    controller.popInformation(message("CopiedInMyBoxClipBoard"));
-                } else {
-                    controller.popFailed();
-                }
-            }
-        });
+        if (ImageClipboard.add(image, source) != null) {
+            controller.popInformation(message("CopiedInMyBoxClipBoard"));
+        } else {
+            controller.popFailed();
+        }
     }
 
 }

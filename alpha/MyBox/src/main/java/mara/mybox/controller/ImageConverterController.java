@@ -135,7 +135,7 @@ public class ImageConverterController extends BaseChildController {
 
             @Override
             protected boolean handle() {
-                Object imageToSave = imageController.imageToSaveAs();
+                Object imageToSave = imageController.imageView.getImage();
                 if (imageToSave == null) {
                     return false;
                 }

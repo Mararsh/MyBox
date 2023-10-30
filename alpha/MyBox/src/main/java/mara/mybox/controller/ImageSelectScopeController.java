@@ -17,6 +17,7 @@ import static mara.mybox.value.Languages.message;
 public class ImageSelectScopeController extends BaseChildController {
 
     protected BaseImageController imageController;
+    protected ImageEditorController editor;
 
     @FXML
     protected ControlImageScopeInput scopeController;
@@ -30,8 +31,21 @@ public class ImageSelectScopeController extends BaseChildController {
 
     protected void setParameters(BaseImageController parent) {
         try {
+            if (parent == null) {
+                close();
+            }
             this.imageController = parent;
+            if (imageController instanceof ImageEditorController) {
+                editor = (ImageEditorController) imageController;
+            }
+            setControls();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
+    protected void setControls() {
+        try {
             scopeController.setParameters(imageController);
             bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
 

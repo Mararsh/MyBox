@@ -56,7 +56,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         editor.showRightPane();
         editor.resetImagePane();
         editor.imageTab();
-        editor.infoLabel.setText(message("ImageTextComments"));
+        editor.imageLabel.setText(message("ImageTextComments"));
     }
 
     @FXML

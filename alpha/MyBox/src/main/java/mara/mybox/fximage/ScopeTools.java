@@ -32,39 +32,21 @@ import static mara.mybox.fximage.FxColorTools.toAwtColor;
  */
 public class ScopeTools {
 
-    public static Image scopeImage(Image srcImage, ImageScope scope, Color bgColor, boolean cutMargins) {
+    public static Image scopeImage(Image srcImage, ImageScope scope, Color bgColor,
+            boolean cutMargins, boolean exclude) {
         try {
             if (scope == null || scope.getScopeType() == null) {
                 return srcImage;
             } else {
-                PixelsOperation pixelsOperation = PixelsOperationFactory.create(srcImage, scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
+                PixelsOperation pixelsOperation = PixelsOperationFactory.create(srcImage, scope,
+                        PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
                 pixelsOperation.setColorPara1(ColorConvertTools.converColor(bgColor));
-                pixelsOperation.setExcludeScope(true);
+                pixelsOperation.setExcludeScope(!exclude);
                 Image scopeImage = pixelsOperation.operateFxImage();
                 if (cutMargins) {
                     return MarginTools.cutMarginsByColor(scopeImage, bgColor, 0, true, true, true, true);
                 } else {
                     return scopeImage;
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public static Image scopeExcludeImage(Image srcImage, ImageScope scope, Color bgColor, boolean cutMargins) {
-        try {
-            if (scope == null || scope.getScopeType() == null) {
-                return null;
-            } else {
-                PixelsOperation pixelsOperation = PixelsOperationFactory.create(srcImage, scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
-                pixelsOperation.setColorPara1(ColorConvertTools.converColor(bgColor));
-                Image excludedImage = pixelsOperation.operateFxImage();
-                if (cutMargins) {
-                    return MarginTools.cutMarginsByColor(excludedImage, bgColor, 0, true, true, true, true);
-                } else {
-                    return excludedImage;
                 }
             }
         } catch (Exception e) {

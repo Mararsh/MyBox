@@ -136,7 +136,7 @@ public class ControlImageSize extends BaseController {
         if (imageController == null) {
             return null;
         } else {
-            return imageController.scopeImage();
+            return imageController.imageView.getImage();
         }
     }
 

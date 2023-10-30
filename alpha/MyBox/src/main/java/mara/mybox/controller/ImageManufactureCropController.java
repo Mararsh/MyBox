@@ -96,29 +96,16 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
             @Override
             protected boolean handle() {
                 Color bgColor = colorSetController.color();
-
-                if (includeRadio.isSelected()) {
-                    newImage = ScopeTools.scopeExcludeImage(imageView.getImage(),
-                            scopeController.scope, bgColor, imageMarginsCheck.isSelected());
-
-                } else if (excludeRadio.isSelected()) {
-                    newImage = ScopeTools.scopeImage(imageView.getImage(),
-                            scopeController.scope, bgColor, imageMarginsCheck.isSelected());
-                } else {
-                    return false;
-                }
+                newImage = ScopeTools.scopeImage(imageView.getImage(),
+                        scopeController.scope, bgColor,
+                        imageMarginsCheck.isSelected(), includeRadio.isSelected());
                 if (task == null || isCancelled()) {
                     return false;
                 }
                 if (UserConfig.getBoolean(baseName + "CropPutClipboard", false)) {
-                    if (includeRadio.isSelected()) {
-                        cuttedClip = ScopeTools.scopeImage(imageView.getImage(),
-                                scopeController.scope, bgColor, clipMarginsCheck.isSelected());
-
-                    } else if (excludeRadio.isSelected()) {
-                        cuttedClip = ScopeTools.scopeExcludeImage(imageView.getImage(),
-                                scopeController.scope, bgColor, clipMarginsCheck.isSelected());
-                    }
+                    cuttedClip = ScopeTools.scopeImage(imageView.getImage(),
+                            scopeController.scope, bgColor,
+                            clipMarginsCheck.isSelected(), excludeRadio.isSelected());
                     ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);
                 }
                 return newImage != null;

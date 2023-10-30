@@ -282,7 +282,8 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     tips = message("ScopeMattingTips");
                     tabPane.getTabs().addAll(areaTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck, withdrawPointButton, operationsButton);
+                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck,
+                            operationsButton, popScopeButton, withdrawPointButton);
                     areaBox.getChildren().add(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
@@ -292,7 +293,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton);
+                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton, popScopeButton);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
@@ -305,7 +306,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     tips = message("ScopeDragMoveTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton);
+                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton, popScopeButton);
                     areaBox.getChildren().addAll(circleBox, goScopeButton);
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
@@ -317,7 +318,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton);
+                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, operationsButton, popScopeButton);
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
@@ -329,7 +330,8 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     tips = message("ScopePolygonTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck, withdrawPointButton, operationsButton);
+                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck,
+                            operationsButton, popScopeButton, withdrawPointButton);
                     areaBox.getChildren().addAll(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
@@ -339,6 +341,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     tips = message("ScopeColorTips");
                     tabPane.getTabs().addAll(colorsTab, matchTab, optionsTab);
                     tabPane.getSelectionModel().select(colorsTab);
+                    opPane.getChildren().addAll(popScopeButton);
                     break;
 
                 case Outline:
@@ -348,7 +351,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     if (outlinesList.getItems().isEmpty()) {
                         initPixTab();
                     }
-                    opPane.getChildren().addAll(operationsButton, anchorCheck);
+                    opPane.getChildren().addAll(anchorCheck, operationsButton, popScopeButton);
                     break;
 
             }

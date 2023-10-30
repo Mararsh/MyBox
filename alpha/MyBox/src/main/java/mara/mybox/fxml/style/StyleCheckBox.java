@@ -97,7 +97,7 @@ public class StyleCheckBox {
         if (id.startsWith("pop")) {
             switch (id) {
                 case "popAnchorCheck":
-                    return new StyleData(id, message("PopAnchorMenu"), "", "iconPop.png");
+                    return new StyleData(id, message("PopAnchorMenu"), "", "iconMenu.png");
                 default:
                     return new StyleData(id, message("Pop"), "", "iconPop.png");
             }
