@@ -1,10 +1,9 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -18,8 +17,8 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.controller.ImageEditorController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
@@ -44,8 +43,6 @@ public class ImagePasteController extends BaseShapeController {
     protected DoubleRectangle rectangle;
     protected int keepRatioType;
 
-    @FXML
-    protected ControlImagesClipboard clipsController;
     @FXML
     protected Tab imagesPane, setPane;
     @FXML
@@ -80,24 +77,7 @@ public class ImagePasteController extends BaseShapeController {
                     editor.image,
                     false);
 
-            clipsController.useClipButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    selectClip();
-                }
-            });
-
-            clipsController.tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        selectClip();
-                    }
-                }
-            });
-
             rotateAngle = currentAngle = 0;
-            clipsController.setParameters(this, true);
 
             enlargeCheck.setSelected(UserConfig.getBoolean(baseName + "EnlargerImageAsClip", true));
             enlargeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -180,39 +160,6 @@ public class ImagePasteController extends BaseShapeController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void selectClip() {
-        if (clipsController.tableData.isEmpty()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-
-            private Image clipImage;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    ImageClipboard clip = clipsController.selectedItem();
-                    if (clip == null) {
-                        clip = clipsController.tableData.get(0);
-                    }
-                    clipImage = ImageClipboard.loadImage(clip);
-                    return clipImage != null;
-                } catch (Exception e) {
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                setSourceClip(clipImage);
-            }
-        };
-        start(task);
     }
 
     public void setSourceClip(Image image) {
@@ -322,6 +269,33 @@ public class ImagePasteController extends BaseShapeController {
         }
     }
 
+    @Override
+    public void sourceFileChanged(File file) {
+        if (file == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            private Image clip;
+
+            @Override
+            protected boolean handle() {
+                clip = FxImageTools.readImage(file);
+                return clip != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setSourceClip(clip);
+            }
+
+        };
+        start(task);
+    }
+
     @FXML
     @Override
     public void pasteContentInSystemClipboard() {
@@ -331,6 +305,12 @@ public class ImagePasteController extends BaseShapeController {
             return;
         }
         setSourceClip(clip);
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        ImageClipSelectController.open(this);
     }
 
     @FXML

@@ -1,6 +1,11 @@
 package mara.mybox.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
@@ -8,6 +13,7 @@ import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -23,6 +29,10 @@ public class ImageSelectScopeController extends BaseChildController {
     protected ControlImageScopeInput scopeController;
     @FXML
     protected ControlColorSet bgColorController;
+    @FXML
+    protected ToggleGroup selectGroup;
+    @FXML
+    protected RadioButton includeRadio, excludeRadio, wholeRadio;
 
     public ImageSelectScopeController() {
         baseTitle = message("SelectScope");
@@ -49,6 +59,54 @@ public class ImageSelectScopeController extends BaseChildController {
             scopeController.setParameters(imageController);
             bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
 
+            setSelectControls();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void setSelectControls() {
+        try {
+            if (wholeRadio != null) {
+                String select = UserConfig.getString(baseName + "SelectType", "Whole");
+                if ("Include".equals(select)) {
+                    includeRadio.setSelected(true);
+                } else if ("Exclude".equals(select)) {
+                    excludeRadio.setSelected(true);
+                } else {
+                    wholeRadio.setSelected(true);
+                }
+                selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        if (includeRadio.isSelected()) {
+                            UserConfig.setString(baseName + "SelectType", "Include");
+                        } else if (excludeRadio.isSelected()) {
+                            UserConfig.setString(baseName + "SelectType", "Exclude");
+                        } else {
+                            UserConfig.setString(baseName + "SelectType", "Whole");
+                        }
+                    }
+                });
+            } else {
+                String select = UserConfig.getString(baseName + "SelectType", "Include");
+                if ("Exclude".equals(select)) {
+                    excludeRadio.setSelected(true);
+                } else {
+                    includeRadio.setSelected(true);
+                }
+                selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        if (excludeRadio.isSelected()) {
+                            UserConfig.setString(baseName + "SelectType", "Exclude");
+                        } else {
+                            UserConfig.setString(baseName + "SelectType", "Include");
+                        }
+                    }
+                });
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -66,7 +124,10 @@ public class ImageSelectScopeController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
-                    scopedImage = scopeController.scopedImage(bgColorController.color());
+                    scopedImage = scopeController.scopedImage(
+                            bgColorController.color(),
+                            true,
+                            excludeRadio.isSelected());
                     return scopedImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);

@@ -90,7 +90,7 @@ public class ControlJavaScriptRefer extends ControlInfoTreeList {
     }
 
     @FXML
-    public void dataAction() {
+    public void manageAction() {
         JavaScriptController.loadScript("");
     }
 

@@ -167,15 +167,8 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         start(task);
     }
 
-    @FXML
     @Override
-    public void selectSourceFileDo(File file) {
-        recordFileOpened(file);
-        selectSourceFile(file);
-    }
-
-    @Override
-    public void selectSourceFile(File file) {
+    public void sourceFileChanged(File file) {
         if (file == null) {
             return;
         }
@@ -190,6 +183,11 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             protected boolean handle() {
                 clip = ImageClipboard.add(file);
                 return clip != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFile = file;
             }
 
         };

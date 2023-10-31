@@ -4,14 +4,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import mara.mybox.controller.ImageEditorController.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -26,11 +23,10 @@ import mara.mybox.value.UserConfig;
 public class ImageCropController extends ImageSelectScopeController {
 
     @FXML
-    protected ToggleGroup selectGroup, targetGroup;
+    protected ToggleGroup targetGroup;
     @FXML
-    protected RadioButton includeRadio, excludeRadio;
-    @FXML
-    protected CheckBox clipMarginsCheck, imageMarginsCheck, copyClipboardCheck, openClipboardCheck;
+    protected CheckBox clipMarginsCheck, imageMarginsCheck,
+            copyClipboardCheck, openClipboardCheck;
 
     public ImageCropController() {
         baseTitle = message("Crop");
@@ -44,23 +40,6 @@ public class ImageCropController extends ImageSelectScopeController {
                 close();
                 return;
             }
-
-            String select = UserConfig.getString(baseName + "SelectType", "Include");
-            if ("Exclude".equals(select)) {
-                excludeRadio.setSelected(true);
-            } else {
-                includeRadio.setSelected(true);
-            }
-            selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (excludeRadio.isSelected()) {
-                        UserConfig.setString(baseName + "SelectType", "Exclude");
-                    } else {
-                        UserConfig.setString(baseName + "SelectType", "Include");
-                    }
-                }
-            });
 
             clipMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "ClipCutMargins", true));
             clipMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -116,17 +95,20 @@ public class ImageCropController extends ImageSelectScopeController {
             @Override
             protected boolean handle() {
                 try {
-                    newImage = ScopeTools.scopeImage(scopeController.srcImage,
-                            scopeController.scope, bgColorController.color(),
-                            imageMarginsCheck.isSelected(), includeRadio.isSelected());
+                    newImage = scopeController.scopedImage(
+                            bgColorController.color(),
+                            imageMarginsCheck.isSelected(),
+                            includeRadio.isSelected());
                     if (newImage == null || task == null || isCancelled()) {
                         return false;
                     }
                     if (copyClipboardCheck.isSelected()) {
-                        cuttedClip = ScopeTools.scopeImage(scopeController.srcImage,
-                                scopeController.scope, bgColorController.color(),
-                                clipMarginsCheck.isSelected(), excludeRadio.isSelected());
-                        return ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop) != null;
+                        cuttedClip = scopeController.scopedImage(
+                                bgColorController.color(),
+                                clipMarginsCheck.isSelected(),
+                                excludeRadio.isSelected());
+                        return ImageClipboard.add(cuttedClip,
+                                ImageClipboard.ImageSource.Crop) != null;
                     } else {
                         return true;
                     }

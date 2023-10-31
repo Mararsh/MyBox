@@ -48,10 +48,10 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
     }
 
     public void loadScope(ImageScope inScope) {
-        clearScope();
         if (inScope == null || inScope.getScopeType() == null) {
             return;
         }
+        clearScope();
         scope = inScope;
         isSettingValues = true;
         showScopeType(scope);

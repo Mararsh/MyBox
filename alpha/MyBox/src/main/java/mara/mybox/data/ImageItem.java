@@ -165,11 +165,11 @@ public class ImageItem {
                     "Clear", "Clipboard", "Close", "Copy",
                     "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
                     "Edit", "Examples", "Export", "File", "Frame",
-                    "Function", "Go", "Import", "Menu", "NewItem",
+                    "Function", "Go", "Import", "Manage", "Menu", "NewItem",
                     "OK", "OpenPath", "Operation", "Options",
                     "Panes", "Play", "Permission", "Polylines", "Pop", "Query",
                     "Random", "Recover", "Refresh", "Repeat",
-                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Style",
+                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Shape", "Style",
                     "SVG", "Tips", "Tree", "Typesetting",
                     "Undo", "Verify", "View", "Window"));
             for (String name : icons) {

@@ -87,7 +87,7 @@ public class ControlRowFilterRefer extends ControlInfoTreeList {
     }
 
     @FXML
-    public void dataAction() {
+    public void manageAction() {
         JavaScriptController.loadScript("");
     }
 

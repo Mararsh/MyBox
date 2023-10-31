@@ -322,7 +322,7 @@ public class StyleButton {
         }
         if (id.startsWith("data")) {
             if (id.startsWith("database")) {
-                return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
+                return new StyleData(id, message("DatabaseTable"), "", "iconDatabase.png");
             } else if (id.startsWith("dataImport")) {
                 return new StyleData(id, message("Import"), "", "iconImport.png");
             } else if (id.startsWith("dataExport")) {
@@ -438,7 +438,7 @@ public class StyleButton {
             return new StyleData(id, message("Count"), "", "iconCalculator.png");
         }
         if (id.startsWith("delimiter")) {
-            return new StyleData(id, "", message("Delimiter"), "iconDelimiter.png");
+            return new StyleData(id, message("Delimiter"), "", "iconDelimiter.png");
         }
         if (id.startsWith("comma")) {
             return new StyleData(id, message("Comma"), "", "iconDelimiter.png");
@@ -454,7 +454,7 @@ public class StyleButton {
             }
         }
         if (id.startsWith("tableDefinition")) {
-            return new StyleData(id, "", message("TableDefinition"), "", "iconInfo.png");
+            return new StyleData(id, message("TableDefinition"), "", "iconInfo.png");
         }
         if (id.startsWith("width")) {
             return new StyleData(id, message("Width"), "", "iconXRuler.png");
@@ -682,13 +682,13 @@ public class StyleButton {
             return new StyleData(id, message("Draw"), "", "iconDraw.png");
         }
         if (id.startsWith("typesetting")) {
-            return new StyleData(id, "", message("Typesetting"), "", "iconTypesetting.png");
+            return new StyleData(id, message("Typesetting"), "", "iconTypesetting.png");
         }
         if (id.startsWith("translate")) {
-            return new StyleData(id, "", message("TranslateShape"), "", "iconMove.png");
+            return new StyleData(id, message("TranslateShape"), "", "iconMove.png");
         }
         if (id.startsWith("anchor")) {
-            return new StyleData(id, "", message("Anchor"), "", "iconAnchor.png");
+            return new StyleData(id, message("Anchor"), "", "iconAnchor.png");
         }
         if (id.startsWith("withdraw")) {
             switch (id) {
@@ -699,27 +699,33 @@ public class StyleButton {
             }
         }
         if (id.startsWith("backup")) {
-            return new StyleData(id, "", message("FileBackups"), "", "iconBackup.png");
+            return new StyleData(id, message("FileBackups"), "", "iconBackup.png");
         }
         if (id.startsWith("file")) {
             switch (id) {
                 case "filesListButton":
                     return new StyleData("filesListButton", message("FilesList"), "", "iconList.png");
                 default:
-                    return new StyleData(id, "", message("File"), "", "iconFile.png");
+                    return new StyleData(id, message("File"), "", "iconFile.png");
             }
         }
         if (id.startsWith("frame")) {
-            return new StyleData(id, "", message("Frames"), "", "iconFrame.png");
+            return new StyleData(id, message("Frames"), "", "iconFrame.png");
         }
         if (id.startsWith("canvas")) {
-            return new StyleData(id, "", message("Canvas"), "", "iconRectangle.png");
+            return new StyleData(id, message("Canvas"), "", "iconRectangle.png");
         }
         if (id.startsWith("scope")) {
-            return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
+            return new StyleData(id, message("Scope"), "", "iconTarget.png");
+        }
+        if (id.startsWith("shape")) {
+            return new StyleData(id, message("Shape"), "", "iconShape.png");
+        }
+        if (id.startsWith("manage")) {
+            return new StyleData(id, message("Manage"), "", "iconManage.png");
         }
         if (id.startsWith("onTop")) {
-            return new StyleData(id, "", message("AlwayOnTop"), "", "iconDoubleUp.png");
+            return new StyleData(id, message("AlwayOnTop"), "", "iconDoubleUp.png");
         }
         if (id.startsWith("disableOnTop")) {
             return new StyleData(id, message("DisableAlwayOnTop"), "", "iconDown.png");

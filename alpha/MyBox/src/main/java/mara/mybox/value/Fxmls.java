@@ -125,6 +125,8 @@ public class Fxmls {
     public static final String ImagePasteFxml = "/fxml/ImagePaste.fxml";
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
+    public static final String ImageClipSelectFxml = "/fxml/ImageClipSelect.fxml";
+
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
     public static final String ImageManufactureCopyFxml = "/fxml/ImageManufactureCopy.fxml";

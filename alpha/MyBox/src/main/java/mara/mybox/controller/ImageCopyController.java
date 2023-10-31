@@ -10,7 +10,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -26,9 +25,9 @@ import mara.mybox.value.UserConfig;
 public class ImageCopyController extends ImageSelectScopeController {
 
     @FXML
-    protected ToggleGroup selectGroup, targetGroup;
+    protected ToggleGroup targetGroup;
     @FXML
-    protected RadioButton includeRadio, excludeRadio, wholeRadio, systemRadio, myboxRadio;
+    protected RadioButton systemRadio, myboxRadio;
     @FXML
     protected CheckBox openClipboardCheck, marginsCheck;
 
@@ -40,27 +39,6 @@ public class ImageCopyController extends ImageSelectScopeController {
     protected void setControls() {
         try {
             super.setControls();
-
-            String select = UserConfig.getString(baseName + "SelectType", "Whole");
-            if ("Include".equals(select)) {
-                includeRadio.setSelected(true);
-            } else if ("Exclude".equals(select)) {
-                excludeRadio.setSelected(true);
-            } else {
-                wholeRadio.setSelected(true);
-            }
-            selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (includeRadio.isSelected()) {
-                        UserConfig.setString(baseName + "SelectType", "Include");
-                    } else if (excludeRadio.isSelected()) {
-                        UserConfig.setString(baseName + "SelectType", "Exclude");
-                    } else {
-                        UserConfig.setString(baseName + "SelectType", "Whole");
-                    }
-                }
-            });
 
             String target = UserConfig.getString(baseName + "TargetType", "System");
             if ("MyBox".equals(target)) {
@@ -113,17 +91,19 @@ public class ImageCopyController extends ImageSelectScopeController {
             @Override
             protected boolean handle() {
                 try {
-                    scopedImage = scopeController.srcImage;
+                    scopedImage = scopeController.srcImage();
                     if (!wholeRadio.isSelected()) {
-                        scopedImage = ScopeTools.scopeImage(scopedImage,
-                                scopeController.scope, bgColorController.color(),
-                                marginsCheck.isSelected(), excludeRadio.isSelected());
+                        scopedImage = scopeController.scopedImage(
+                                bgColorController.color(),
+                                marginsCheck.isSelected(),
+                                excludeRadio.isSelected());
                     }
                     if (scopedImage == null || task == null || isCancelled()) {
                         return false;
                     }
                     if (myboxRadio.isSelected()) {
-                        return ImageClipboard.add(scopedImage, ImageClipboard.ImageSource.Copy) != null;
+                        return ImageClipboard.add(scopedImage,
+                                ImageClipboard.ImageSource.Copy) != null;
                     } else {
                         return true;
                     }

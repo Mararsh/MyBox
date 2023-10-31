@@ -28,6 +28,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -111,7 +112,8 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
 
     public boolean finalScope() {
         try {
-            if (scope == null) {
+            if (!isValidScope()) {
+                popError(message("InvalidParameters"));
                 return false;
             }
             if (sourceFile != null) {
@@ -131,7 +133,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
     }
 
     protected synchronized void indicateScope() {
-        if (!isValidScope() || !finalScope()) {
+        if (!finalScope()) {
             return;
         }
         if (task != null) {
@@ -212,15 +214,15 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
         return true;
     }
 
-    public Image scopedImage(Color bgColor) {
-        if (!isValidScope() || !finalScope()) {
-            return null;
-        }
-        return ScopeTools.scopeImage(srcImage(), scope, bgColor, true, false);
+    public Image scopedImage(Color bgColor, boolean cutMargins, boolean exclude) {
+        return ScopeTools.scopeImage(srcImage(), scope, bgColor, cutMargins, exclude);
     }
 
     @FXML
     public void popScope() {
+        if (!finalScope()) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -230,7 +232,9 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
             @Override
             protected boolean handle() {
                 try {
-                    scopedImage = scopedImage(ColorConvertTools.converColor(scope.getMaskColor()));
+                    scopedImage = scopedImage(
+                            ColorConvertTools.converColor(scope.getMaskColor()),
+                            true, false);
                     return scopedImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);

@@ -204,7 +204,7 @@ public class MarginTools {
             }
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
-            MyBoxLog.debug(width + "  " + height);
+//            MyBoxLog.debug(width + "  " + height);
             int totalWidth = width;
             int totalHegiht = height;
             int x1 = 0;
@@ -225,12 +225,12 @@ public class MarginTools {
             if (bottom > 0) {
                 totalHegiht += bottom;
             }
-            MyBoxLog.debug(totalWidth + "  " + totalHegiht);
+//            MyBoxLog.debug(totalWidth + "  " + totalHegiht);
             PixelReader pixelReader = image.getPixelReader();
             WritableImage newImage = new WritableImage(totalWidth, totalHegiht);
             PixelWriter pixelWriter = newImage.getPixelWriter();
             pixelWriter.setPixels(x1, y1, width, height, pixelReader, 0, 0);
-            MyBoxLog.debug(x1 + "  " + y1);
+//            MyBoxLog.debug(x1 + "  " + y1);
             if (left > 0) {
                 for (int x = 0; x < left; x++) {
                     for (int y = 0; y < totalHegiht; y++) {
