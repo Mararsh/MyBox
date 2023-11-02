@@ -70,7 +70,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button goScopeButton, withdrawPointButton, popScopeButton,
+    protected Button shapeButton, goScopeButton, withdrawPointButton, popScopeButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML

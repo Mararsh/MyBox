@@ -143,12 +143,12 @@ License:    Apache License Version 2.0
             </VBox>
             <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                  <VBox spacing="5.0">
                      <children>
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Paste" VBox.vgrow="ALWAYS" />
                         <VBox layoutX="10.0" layoutY="30.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
-                              <Label text="%ImageToPaste" />
+                              <Label minHeight="-Infinity" text="%ImageToPaste" wrapText="true" />
                               <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                  <children>
                                     <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
@@ -196,7 +196,7 @@ License:    Apache License Version 2.0
                         </VBox>
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
-                              <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                              <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                  <children>
                                     <Label text="%Rotate" />
                                     <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
@@ -222,7 +222,7 @@ License:    Apache License Version 2.0
                               </FlowPane>
                            </children>
                         </VBox>
-                        <Label minHeight="-Infinity" prefWidth="240.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PasteComments" wrapText="true" VBox.vgrow="NEVER">
+                        <Label minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PasteComments" wrapText="true" VBox.vgrow="NEVER">
                            <VBox.margin>
                               <Insets bottom="20.0" />
                            </VBox.margin>
@@ -259,6 +259,9 @@ License:    Apache License Version 2.0
                            </children>
                         </FlowPane>
                      </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
                   </VBox>
                </content>
             </ScrollPane>

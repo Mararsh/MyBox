@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageSize extends BaseController {
 
-    protected ImageViewerController imageController;
+    protected BaseShapeController imageController;
     protected ScaleType scaleType;
     protected double width, height;
     protected float scale = 1.0f;
@@ -113,7 +113,7 @@ public class ControlImageSize extends BaseController {
 
     }
 
-    public void setParameters(ImageViewerController imageController) {
+    public void setParameters(BaseShapeController imageController) {
         this.imageController = imageController;
 
         imageController.loadNotify.addListener(new ChangeListener<Boolean>() {

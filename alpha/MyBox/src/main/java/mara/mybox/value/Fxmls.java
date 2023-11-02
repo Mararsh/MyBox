@@ -123,6 +123,8 @@ public class Fxmls {
     public static final String ImageCopyFxml = "/fxml/ImageCopy.fxml";
     public static final String ImageCropFxml = "/fxml/ImageCrop.fxml";
     public static final String ImagePasteFxml = "/fxml/ImagePaste.fxml";
+    public static final String ImageMarginsFxml = "/fxml/ImageMargins.fxml";
+
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
     public static final String ImageClipSelectFxml = "/fxml/ImageClipSelect.fxml";

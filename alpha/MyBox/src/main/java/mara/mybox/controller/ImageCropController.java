@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import mara.mybox.controller.ImageEditorController.ImageOperation;
@@ -78,6 +79,30 @@ public class ImageCropController extends ImageSelectScopeController {
         }
     }
 
+    @Override
+    protected void setSelectControls() {
+        try {
+            String select = UserConfig.getString(baseName + "SelectType", "Include");
+            if ("Exclude".equals(select)) {
+                excludeRadio.setSelected(true);
+            } else {
+                includeRadio.setSelected(true);
+            }
+            selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (excludeRadio.isSelected()) {
+                        UserConfig.setString(baseName + "SelectType", "Exclude");
+                    } else {
+                        UserConfig.setString(baseName + "SelectType", "Include");
+                    }
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -129,7 +154,6 @@ public class ImageCropController extends ImageSelectScopeController {
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }
-
             }
         };
         start(task);

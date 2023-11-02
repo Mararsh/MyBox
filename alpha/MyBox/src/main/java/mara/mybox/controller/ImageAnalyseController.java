@@ -53,7 +53,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-6
  * @License Apache License Version 2.0
  */
-public class ImageAnalyseController extends ImageViewerController {
+public class ImageAnalyseController extends BaseImageController {
 
     protected ImageStatistic data;
     protected long nonTransparent;
@@ -98,13 +98,6 @@ public class ImageAnalyseController extends ImageViewerController {
             initComponentsTab();
 
             dominantController.analyseController = this;
-
-            maskShapeChanged.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadData();
-                }
-            });
 
             sortCheck.setSelected(UserConfig.getBoolean(baseName + "Sort", true));
             sortCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

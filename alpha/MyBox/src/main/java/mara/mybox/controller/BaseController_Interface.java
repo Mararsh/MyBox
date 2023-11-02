@@ -606,21 +606,20 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setControlsStyle() {
         try {
             if (leftPaneControl != null) {
-
                 NodeStyleTools.setTooltip(leftPaneControl, new Tooltip(message("ControlLeftPane")
-                        + (myFxml.startsWith("Control") ? "" : "\nF4")));
+                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF4")));
             }
             if (leftPaneCheck != null) {
                 NodeStyleTools.setTooltip(leftPaneCheck, new Tooltip(message("ControlLeftPane")
-                        + (myFxml.startsWith("Control") ? "" : "\nF4")));
+                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF4")));
             }
             if (rightPaneControl != null) {
                 NodeStyleTools.setTooltip(rightPaneControl, new Tooltip(message("ControlRightPane")
-                        + (myFxml.startsWith("Control") ? "" : "\nF5")));
+                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF5")));
             }
             if (rightPaneCheck != null) {
                 NodeStyleTools.setTooltip(rightPaneCheck, new Tooltip(message("ControlRightPane")
-                        + (myFxml.startsWith("Control") ? "" : "\nF5")));
+                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF5")));
             }
             if (tipsLabel != null && TipsLabelKey != null) {
                 NodeStyleTools.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));

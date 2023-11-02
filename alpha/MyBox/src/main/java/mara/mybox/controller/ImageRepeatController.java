@@ -29,7 +29,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-24
  * @License Apache License Version 2.0
  */
-public class ImageRepeatController extends ImageViewerController {
+public class ImageRepeatController extends BaseShapeController {
 
     protected int canvasWidth, canvasHeight, repeatH, repeatV, interval, margin;
 
@@ -64,8 +64,7 @@ public class ImageRepeatController extends ImageViewerController {
         try {
             super.initControls();
 
-            sizeController.setParameters(scaleController);
-
+//            sizeController.setParameters(scaleController);  /// ####
             saveTab.disableProperty().bind(repeatController.imageView.imageProperty().isNull());
             repeatTab.disableProperty().bind(scaleController.imageView.imageProperty().isNull());
 

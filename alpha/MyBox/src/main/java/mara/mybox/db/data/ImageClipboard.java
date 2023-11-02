@@ -10,7 +10,7 @@ import java.util.Random;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.controller.ControlImagesClipboard;
+import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -251,7 +251,7 @@ public class ImageClipboard extends BaseData {
                 return null;
             }
             new TableImageClipboard().insertData(clip);
-            ControlImagesClipboard.updateClipboards();
+            ImageInMyBoxClipboardController.updateClipboards();
             return clip;
         } catch (Exception e) {
             MyBoxLog.debug(e);

@@ -372,7 +372,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
                 }
                 if (controller instanceof ImageInMyBoxClipboardController) {
                     try {
-                        ((ImageInMyBoxClipboardController) controller).clipsController.refreshAction();
+//                        ((ImageInMyBoxClipboardController) controller).clipsController.refreshAction();
                     } catch (Exception e) {
                     }
                 } else if (controller instanceof ImageManufactureController) {
@@ -403,7 +403,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
                 }
                 if (controller instanceof ImageInMyBoxClipboardController) {
                     try {
-                        ((ImageInMyBoxClipboardController) controller).clipsController.updateStatus();
+//                        ((ImageInMyBoxClipboardController) controller).clipsController.updateStatus();
                     } catch (Exception e) {
                     }
                 } else if (controller instanceof ImageManufactureController) {

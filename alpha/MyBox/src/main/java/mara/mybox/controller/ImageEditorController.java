@@ -58,7 +58,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public class ImageEditorController extends ImageViewerController {
+public class ImageEditorController extends BaseShapeController {
 
     protected SimpleBooleanProperty imageLoaded;
     protected ImageOperation operation;
@@ -219,6 +219,7 @@ public class ImageEditorController extends ImageViewerController {
             resetImagePane();
             popInformation(info);
             updateLabelString(info);
+            notifyLoad();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -572,6 +573,12 @@ public class ImageEditorController extends ImageViewerController {
             menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
             menu.setOnAction((ActionEvent event) -> {
                 pasteAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Margins"), StyleTools.getIconImageView("iconRectangle.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageMarginsController.open(this);
             });
             items.add(menu);
 

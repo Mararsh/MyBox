@@ -115,20 +115,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
     }
 
     @Override
-    public void updateStatus() {
-        super.updateStatus();
-        if (bottomLabel == null) {
-            return;
-        }
-        if (ImageClipboardTools.isMonitoring()) {
-            bottomLabel.setText(message("MonitoringImageInSystemClipboard"));
-        } else {
-            bottomLabel.setText(message("NotMonitoringImageInSystemClipboard"));
-        }
-    }
-
-    @Override
-    public void selectSourceFile(File file) {
+    public void sourceFileChanged(File file) {
         if (file == null) {
             return;
         }
@@ -147,7 +134,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
 
             @Override
             protected void whenSucceeded() {
-                recordFileOpened(file);
+                refreshAction();
             }
 
         };
@@ -183,6 +170,11 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
 //                    }
                 clipData = ImageClipboard.add(lastSystemClip, ImageClipboard.ImageSource.SystemClipBoard);
                 return clipData != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                refreshAction();
             }
 
             @Override
@@ -225,10 +217,6 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
             }
 
             @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
             protected void finalAction() {
                 super.finalAction();
                 refreshAction();
@@ -241,18 +229,6 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
     public void clipsPath() {
         File path = new File(AppPaths.getImageClipboardPath());
         browseURI(path.toURI());
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        loadTableData();
-        updateStatus();
-    }
-
-    @FXML
-    public void manageAction() {
-        ImageInMyBoxClipboardController.oneOpen();
     }
 
 }

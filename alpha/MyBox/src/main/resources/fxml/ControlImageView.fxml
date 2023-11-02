@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageViewerController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BaseImageController">
     <children>
         <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0">
             <children>
@@ -114,32 +114,23 @@ License:    Apache License Version 2.0
                     </graphic>
                 </Button>
             </children>
-        </FlowPane>
-        <VBox fx:id="originalImageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
-            <children> 
-                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                    <content>
-                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
-                            <children>
-                                <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0"  stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
-                                    <cursor>
-                                        <Cursor fx:constant="NONE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
-                                <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true" />
-                                <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="144.0" layoutY="150.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape"  stroke="RED" strokeType="INSIDE" width="334.0">
-                                    <cursor>
-                                        <Cursor fx:constant="MOVE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </ScrollPane>
-            </children>
-        </VBox>
+        </FlowPane> 
+          <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+              <content>
+                  <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                      <children>
+                          <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
+                              <cursor>
+                                  <Cursor fx:constant="NONE" />
+                              </cursor>
+                          </Rectangle>
+                          <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
+                          <ImageView fx:id="imageView" cache="true" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true" />
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
+                      </children>
+                  </AnchorPane>
+              </content>
+          </ScrollPane>
         <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
     </children>
 </VBox>

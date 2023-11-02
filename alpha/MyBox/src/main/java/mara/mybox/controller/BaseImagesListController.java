@@ -14,7 +14,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-9-23
  * @License Apache License Version 2.0
  */
-public class BaseImagesListController extends ImageViewerController {
+public class BaseImagesListController extends BaseShapeController {
 
     protected ObservableList<ImageInformation> imageInfos = FXCollections.observableArrayList();
 

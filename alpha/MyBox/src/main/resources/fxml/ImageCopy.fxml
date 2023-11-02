@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
             </ScrollPane>
             <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                  <VBox spacing="5.0">
                      <children>
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Copy" VBox.vgrow="ALWAYS" />
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -103,6 +103,9 @@ License:    Apache License Version 2.0
                            </children>
                         </FlowPane>
                      </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
                   </VBox>
                </content>
             </ScrollPane>

@@ -42,7 +42,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-12
  * @License Apache License Version 2.0
  */
-public abstract class ImageManufactureController_Image extends ImageViewerController {
+public abstract class ImageManufactureController_Image extends BaseShapeController {
 
     protected SimpleBooleanProperty imageLoaded;
     protected ImageOperation operation;

@@ -5,7 +5,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.image.Image;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -68,10 +67,7 @@ public class ImageClipSelectController extends BaseImageClipController {
             @Override
             protected boolean handle() {
                 try {
-                    clip = selected.getImage();
-                    if (clip == null) {
-                        clip = FxImageTools.readImage(selected.getImageFile());
-                    }
+                    clip = ImageClipboard.loadImage(selected);
                     return clip != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -87,6 +83,11 @@ public class ImageClipSelectController extends BaseImageClipController {
         };
         start(task);
 
+    }
+
+    @FXML
+    public void manageAction() {
+        ImageInMyBoxClipboardController.oneOpen();
     }
 
     @FXML

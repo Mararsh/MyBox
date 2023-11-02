@@ -29,7 +29,7 @@ import mara.mybox.fxml.SingletonCurrentTask;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ImageManufactureScopeController_Base extends ImageViewerController {
+public abstract class ImageManufactureScopeController_Base extends BaseShapeController {
 
     protected TableColor tableColor;
     protected ImageManufactureController editor;

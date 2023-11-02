@@ -5,7 +5,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.ControlImagesClipboard;
+import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.data.ImageClipboard;
 import static mara.mybox.fxml.ImageClipboardMonitor.DefaultInterval;
 import static mara.mybox.value.AppVariables.imageClipboardMonitor;
@@ -99,7 +99,7 @@ public class ImageClipboardTools {
         Clipboard.getSystemClipboard().setContent(cc);
         if (isMonitoringCopy()) {
             controller.popInformation(message("CopiedInClipBoards"));
-            ControlImagesClipboard.updateClipboards();
+            ImageInMyBoxClipboardController.updateClipboards();
         } else {
             controller.popInformation(message("CopiedInSystemClipBoard"));
         }

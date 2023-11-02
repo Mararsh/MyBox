@@ -12,7 +12,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  *
  */
-public abstract class BaseShapeController extends BaseShapeController_MouseEvents {
+public class BaseShapeController extends BaseShapeController_MouseEvents {
 
     @Override
     public void initControls() {

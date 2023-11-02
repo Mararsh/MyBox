@@ -17,7 +17,6 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
-import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -27,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageSampleController extends ImageViewerController {
+public class ImageSampleController extends BaseShapeController {
 
     private int widthScale, heightScale;
     private double x1, y1, x2, y2;

@@ -381,16 +381,26 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             this.parentController = parent;
             imageController = parent;
 
-            loadImage(imageController.sourceFile,
-                    imageController.imageInformation,
-                    imageController.image,
-                    false);
-
+            loadImage();
             loadScope(imageController.scope);
+
+            imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    loadImage();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    protected void loadImage() {
+        if (imageController == null || !imageController.isShowing()) {
+            return;
+        }
+        loadImage(imageController.imageView.getImage());
     }
 
     @Override

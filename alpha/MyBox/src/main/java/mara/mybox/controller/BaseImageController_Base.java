@@ -1,10 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.Arrays;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -13,31 +10,26 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVariables.sceneFontSize;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -83,145 +75,11 @@ public abstract class BaseImageController_Base extends BaseFileController {
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
 
     public BaseImageController_Base() {
-        baseTitle = message("Image");
         loadNotify = new SimpleBooleanProperty(false);
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            isPickingColor = imageChanged = false;
-            loadWidth = defaultLoadWidth = -1;
-            frameIndex = framesNumber = 0;
-            sizeChangeAware = 1;
-            zoomStep = xZoomStep = yZoomStep = 40;
-            if (maskPane != null) {
-                if (borderLine == null) {
-                    borderLine = new Rectangle();
-                    borderLine.setFill(Color.web("#ffffff00"));
-                    borderLine.setStroke(Color.web("#cccccc"));
-                    borderLine.setArcWidth(5);
-                    borderLine.setArcHeight(5);
-                    maskPane.getChildren().add(borderLine);
-                }
-                if (sizeText == null) {
-                    sizeText = new Text();
-                    sizeText.setFill(Color.web("#cccccc"));
-                    sizeText.setStrokeWidth(0);
-                    maskPane.getChildren().add(sizeText);
-                }
-                if (xyText == null) {
-                    xyText = new Text();
-                    maskPane.getChildren().add(xyText);
-                }
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Image);
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            if (zoomStepSelector != null) {
-                NodeStyleTools.setTooltip(zoomStepSelector, new Tooltip(message("ZoomStep")));
-            }
-            if (pickColorCheck != null) {
-                NodeStyleTools.setTooltip(pickColorCheck, new Tooltip(message("PickColor") + "\nCTRL+k"));
-            }
-            if (loadWidthSelector != null) {
-                NodeStyleTools.setTooltip(loadWidthSelector, new Tooltip(message("ImageLoadWidthCommnets")));
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     public void notifyLoad() {
         loadNotify.set(!loadNotify.get());
-    }
-
-    protected void initImageView() {
-        if (imageView == null) {
-            return;
-        }
-        try {
-            imageView.setPreserveRatio(true);
-
-            imageView.fitWidthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    viewSizeChanged(Math.abs(new_val.doubleValue() - old_val.doubleValue()));
-                }
-            });
-
-            imageView.fitHeightProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    viewSizeChanged(Math.abs(new_val.doubleValue() - old_val.doubleValue()));
-
-                }
-            });
-
-            if (scrollPane != null) {
-                scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                        paneSizeChanged(Math.abs(new_val.doubleValue() - old_val.doubleValue()));
-                    }
-                });
-                scrollPane.heightProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                        paneSizeChanged(Math.abs(new_val.doubleValue() - old_val.doubleValue()));
-                    }
-                });
-
-            }
-
-            zoomStep = UserConfig.getInt(baseName + "ZoomStep", 40);
-            zoomStep = zoomStep <= 0 ? 40 : zoomStep;
-            xZoomStep = zoomStep;
-            yZoomStep = zoomStep;
-            if (zoomStepSelector != null) {
-                zoomStepSelector.getItems().addAll(
-                        Arrays.asList("40", "20", "5", "1", "3", "15", "30", "50", "80", "100", "150", "200", "300", "500")
-                );
-                zoomStepSelector.setValue(zoomStep + "");
-                zoomStepSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                        try {
-                            int v = Integer.parseInt(newVal);
-                            if (v > 0) {
-                                zoomStep = v;
-                                UserConfig.setInt(baseName + "ZoomStep", zoomStep);
-                                zoomStepSelector.getEditor().setStyle(null);
-                                xZoomStep = zoomStep;
-                                yZoomStep = zoomStep;
-                                zoomStepChanged();
-                            } else {
-                                zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    }
-                });
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     /*

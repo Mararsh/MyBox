@@ -7,6 +7,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
@@ -68,47 +69,40 @@ public class ImageSelectScopeController extends BaseChildController {
 
     protected void setSelectControls() {
         try {
-            if (wholeRadio != null) {
-                String select = UserConfig.getString(baseName + "SelectType", "Whole");
-                if ("Include".equals(select)) {
-                    includeRadio.setSelected(true);
-                } else if ("Exclude".equals(select)) {
-                    excludeRadio.setSelected(true);
-                } else {
-                    wholeRadio.setSelected(true);
-                }
-                selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (includeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Include");
-                        } else if (excludeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Exclude");
-                        } else {
-                            UserConfig.setString(baseName + "SelectType", "Whole");
-                        }
-                    }
-                });
-            } else {
-                String select = UserConfig.getString(baseName + "SelectType", "Include");
-                if ("Exclude".equals(select)) {
-                    excludeRadio.setSelected(true);
-                } else {
-                    includeRadio.setSelected(true);
-                }
-                selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (excludeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Exclude");
-                        } else {
-                            UserConfig.setString(baseName + "SelectType", "Include");
-                        }
-                    }
-                });
+            if (includeRadio == null) {
+                return;
             }
+            String select = UserConfig.getString(baseName + "SelectType", "Whole");
+            if ("Include".equals(select)) {
+                includeRadio.setSelected(true);
+            } else if ("Exclude".equals(select)) {
+                excludeRadio.setSelected(true);
+            } else {
+                wholeRadio.setSelected(true);
+            }
+            selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (includeRadio.isSelected()) {
+                        UserConfig.setString(baseName + "SelectType", "Include");
+                    } else if (excludeRadio.isSelected()) {
+                        UserConfig.setString(baseName + "SelectType", "Exclude");
+                    } else {
+                        UserConfig.setString(baseName + "SelectType", "Whole");
+                    }
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return scopeController.keyEventsFilter(event);
+        } else {
+            return true;
         }
     }
 
@@ -146,7 +140,6 @@ public class ImageSelectScopeController extends BaseChildController {
         };
         start(task);
     }
-
 
     /*
         static methods
