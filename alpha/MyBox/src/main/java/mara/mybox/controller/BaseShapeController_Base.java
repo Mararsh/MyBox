@@ -179,19 +179,10 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
     // Any mask operations when pane size is changed
     public boolean redrawMaskShape() {
-        try {
-            drawMaskRulers();
-            checkCoordinate();
-            return drawMaskShape();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
+        return drawMaskShape();
     }
 
     public void setMaskShapesStyle() {
-        drawMaskRulers();
-        checkCoordinate();
         if (isMaskRectangleShown()) {
             setShapeStyle(maskRectangle);
         } else if (isMaskCircleShown()) {

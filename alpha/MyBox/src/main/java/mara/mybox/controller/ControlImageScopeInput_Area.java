@@ -70,6 +70,19 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
         }
     }
 
+    @FXML
+    public void selectAllRect() {
+        if (!isValidScope() || isSettingValues
+                || scope.getScopeType() != ScopeType.Rectangle) {
+            return;
+        }
+        rectLeftTopXInput.setText("0");
+        rectLeftTopYInput.setText("0");
+        rightBottomXInput.setText(image.getWidth() + "");
+        rightBottomYInput.setText(image.getHeight() + "");
+        goScope();
+    }
+
     public void pickEllipse() {
         try {
             if (!isValidScope() || scope.getScopeType() != ScopeType.Ellipse) {

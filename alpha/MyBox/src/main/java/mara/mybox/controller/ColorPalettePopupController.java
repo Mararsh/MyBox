@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -30,6 +31,7 @@ import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -236,11 +238,16 @@ public class ColorPalettePopupController extends BaseChildController {
     }
 
     @FXML
-    public void popDataMenu(MouseEvent mouseEvent) {
+    public void popFunctionsMenu(Event event) {
+        showFunctionsMenu(event);
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("ManageColors"));
+            MenuItem menu = new MenuItem(message("ManageColors"), StyleTools.getIconImageView("iconManage.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 ColorsManageController.oneOpen();
             });
@@ -251,7 +258,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            popEventMenu(mouseEvent, items);
+            popEventMenu(fevent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

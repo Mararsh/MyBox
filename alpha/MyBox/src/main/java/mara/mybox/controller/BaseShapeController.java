@@ -129,18 +129,20 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
     }
 
     @Override
-    protected void finalRefineView() {
-        if (isSettingValues) {
-            return;
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded() || image == null) {
+                return false;
+            }
+
+            clearMask();
+            maskShapeChanged();
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
         }
-        if (isPop) {
-            paneSize();
-        } else {
-            fitSize();
-        }
-        clearMask();
-        maskShapeChanged();
-        refinePane();
     }
 
     @Override

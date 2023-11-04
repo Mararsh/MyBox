@@ -25,6 +25,9 @@ public class ImageSelectScopeController extends BaseChildController {
 
     protected BaseImageController imageController;
     protected ImageEditorController editor;
+    protected long cost;
+    protected String operation, opInfo;
+    protected Image handledImage;
 
     @FXML
     protected ControlImageScopeInput scopeController;
@@ -49,49 +52,62 @@ public class ImageSelectScopeController extends BaseChildController {
             if (imageController instanceof ImageEditorController) {
                 editor = (ImageEditorController) imageController;
             }
-            setControls();
+            initMore();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    protected void setControls() {
+    protected void initMore() {
         try {
             scopeController.setParameters(imageController);
-            bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
-
-            setSelectControls();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void setSelectControls() {
-        try {
-            if (includeRadio == null) {
-                return;
+            if (bgColorController != null) {
+                bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
             }
-            String select = UserConfig.getString(baseName + "SelectType", "Whole");
-            if ("Include".equals(select)) {
-                includeRadio.setSelected(true);
-            } else if ("Exclude".equals(select)) {
-                excludeRadio.setSelected(true);
-            } else {
-                wholeRadio.setSelected(true);
-            }
-            selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (includeRadio.isSelected()) {
-                        UserConfig.setString(baseName + "SelectType", "Include");
-                    } else if (excludeRadio.isSelected()) {
-                        UserConfig.setString(baseName + "SelectType", "Exclude");
+
+            if (includeRadio != null) {
+                if (wholeRadio != null) {
+                    String select = UserConfig.getString(baseName + "SelectType", "Whole");
+                    if ("Include".equals(select)) {
+                        includeRadio.setSelected(true);
+                    } else if ("Exclude".equals(select)) {
+                        excludeRadio.setSelected(true);
                     } else {
-                        UserConfig.setString(baseName + "SelectType", "Whole");
+                        wholeRadio.setSelected(true);
                     }
+                    selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                        @Override
+                        public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                            if (includeRadio.isSelected()) {
+                                UserConfig.setString(baseName + "SelectType", "Include");
+                            } else if (excludeRadio.isSelected()) {
+                                UserConfig.setString(baseName + "SelectType", "Exclude");
+                            } else {
+                                UserConfig.setString(baseName + "SelectType", "Whole");
+                            }
+                        }
+                    });
+
+                } else {
+                    String select = UserConfig.getString(baseName + "SelectType", "Include");
+                    if ("Exclude".equals(select)) {
+                        excludeRadio.setSelected(true);
+                    } else {
+                        includeRadio.setSelected(true);
+                    }
+                    selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                        @Override
+                        public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                            if (includeRadio.isSelected()) {
+                                UserConfig.setString(baseName + "SelectType", "Include");
+                            } else if (excludeRadio.isSelected()) {
+                                UserConfig.setString(baseName + "SelectType", "Exclude");
+                            }
+                        }
+                    });
                 }
-            });
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -106,23 +122,33 @@ public class ImageSelectScopeController extends BaseChildController {
         }
     }
 
+    protected boolean checkOptions() {
+        if (editor == null || !editor.isShowing()) {
+            close();
+            return false;
+        }
+        return true;
+    }
+
     @FXML
     @Override
     public void okAction() {
+        if (!checkOptions()) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
-            private Image scopedImage;
 
             @Override
             protected boolean handle() {
                 try {
-                    scopedImage = scopeController.scopedImage(
+                    handledImage = scopeController.scopedImage(
                             bgColorController.color(),
                             true,
                             excludeRadio.isSelected());
-                    return scopedImage != null;
+                    return handledImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -131,7 +157,7 @@ public class ImageSelectScopeController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                ImageViewerController.openImage(scopedImage);
+                ImageViewerController.openImage(handledImage);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }

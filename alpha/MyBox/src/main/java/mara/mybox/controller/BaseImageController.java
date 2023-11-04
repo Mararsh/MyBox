@@ -702,7 +702,7 @@ public class BaseImageController extends BaseImageController_Actions {
         if (imageView == null || imageView.getImage() == null) {
             return false;
         }
-        ImageSelectScopeController.open(this);
+        selectScope();
         return true;
     }
 

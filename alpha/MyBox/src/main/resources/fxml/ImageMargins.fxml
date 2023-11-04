@@ -211,6 +211,15 @@ License:    Apache License Version 2.0
                                     <CheckBox fx:id="marginsRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
                                  </children>
                               </FlowPane>
+                              <Button fx:id="selectAllRectButton" mnemonicParsing="false" onAction="#selectAllRect">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectAll.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
                         </VBox>
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" layoutX="10.0" layoutY="174.0" prefWrapLength="100.0" vgap="2.0">

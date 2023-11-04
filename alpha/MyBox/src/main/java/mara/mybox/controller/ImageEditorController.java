@@ -9,10 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -24,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
@@ -38,6 +35,7 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -50,6 +48,7 @@ import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -58,20 +57,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public class ImageEditorController extends BaseShapeController {
+public class ImageEditorController extends BaseImageController {
 
-    protected SimpleBooleanProperty imageLoaded;
-    protected ImageOperation operation;
     protected TableImageEditHistory tableImageEditHistory;
     protected String imageHistoriesRootPath;
     protected File imageHistoriesPath;
     protected int historyIndex, hisSize;
-
-    public static enum ImageOperation {
-        Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
-        Text, RichText, Convolution,
-        Effects, Enhancement, Shadow, ScaleImage, Picture, Transform, Shape, Eliminate, Margins
-    }
 
     @FXML
     protected Button historyButton, viewImageButton;
@@ -86,7 +77,6 @@ public class ImageEditorController extends BaseShapeController {
         try {
             super.initValues();
 
-            imageLoaded = new SimpleBooleanProperty(false);
             tableImageEditHistory = new TableImageEditHistory();
             imageHistoriesRootPath = AppPaths.getImageHisPath();
 
@@ -120,17 +110,11 @@ public class ImageEditorController extends BaseShapeController {
                 saveAsTmp();
                 return true;
             }
-            imageLoaded.set(true);
             imageChanged = false;
-            resetImagePane();
-
             historyButton.setDisable(sourceFile == null);
+            updateLabel(message("Loaded"));
 
-            finalRefineView();
-
-            updateLabelString(message("Loaded"));
-
-            recordImageHistory(ImageOperation.Load, null, image);
+            recordImageHistory("Load", null, image);
 
             return true;
         } catch (Exception e) {
@@ -167,81 +151,30 @@ public class ImageEditorController extends BaseShapeController {
         return true;
     }
 
-    public void resetImagePane() {
-        operation = null;
-        scope = null;
-        imageLabel.setText("");
-
-        imageView.setRotate(0);
-        imageView.setVisible(true);
-
-        resetShapeOptions();
-
-        clearMask();
+    public void updateImage(String operation, Image newImage, long cost) {
+        updateImage(operation, null, null, newImage, cost);
     }
 
-    public void adjustRightPane() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    rightPane.setHvalue(0);
-                    rightPane.setVvalue(0);
-                });
-            }
-        }, 500);
-    }
-
-    public void updateImage(ImageOperation operation, Image newImage) {
-        updateImage(operation, null, newImage, -1);
-    }
-
-    public void updateImage(ImageOperation operation, Image newImage, long cost) {
-        updateImage(operation, null, newImage, cost);
-    }
-
-    public void updateImage(ImageOperation operation, ImageScope scope, Image newImage, long cost) {
+    public void updateImage(String operation, String value, ImageScope scope, Image newImage, long cost) {
         try {
             recordImageHistory(operation, scope, newImage);
-            String info = operation == null ? "" : message(operation.name());
+            String info = operation == null ? "" : message(operation);
+            if (value != null && !value.isBlank()) {
+                info += ": " + value;
+            }
             if (cost > 0) {
                 info += "  " + message("Cost") + ": " + DateTools.datetimeMsDuration(cost);
             }
-            updateImage(newImage, info);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void updateImage(Image newImage, String info) {
-        try {
             updateImage(newImage);
-            resetImagePane();
             popInformation(info);
-            updateLabelString(info);
+            updateLabel(info);
             notifyLoad();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    // Only update image and not reset image pane
-    public void setImage(ImageOperation operation, Image newImage) {
-        try {
-            updateImage(newImage);
-            recordImageHistory(operation, null, newImage);
-            updateLabelsTitle();
-            updateLabel(operation);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void updateLabel(ImageOperation operation) {
-        updateLabelString(operation != null ? message(operation.name()) : null);
-    }
-
-    public void updateLabelString(String info) {
+    public void updateLabel(String info) {
         imageLabel.setText(info);
     }
 
@@ -251,16 +184,16 @@ public class ImageEditorController extends BaseShapeController {
         redoButton.setDisable(historyIndex <= 0);
     }
 
-    protected void recordImageHistory(ImageOperation operation, ImageScope scope, Image hisImage) {
+    protected void recordImageHistory(String op, ImageScope scope, Image hisImage) {
         if (sourceFile == null || !UserConfig.getBoolean("ImageHistoriesRecord", true)) {
             hisSize = 0;
             setHistoryIndex(-1);
             return;
         }
-        if (operation == null || hisImage == null) {
+        if (hisImage == null || op == null) {
             return;
         }
-        if (operation == ImageOperation.Load
+        if (Languages.matchIgnoreCase("Load", op)
                 && !UserConfig.getBoolean("ImageHistoriesRecordLoading", true)) {
             return;
         }
@@ -317,7 +250,7 @@ public class ImageEditorController extends BaseShapeController {
                             .setHistoryFile(hisFile)
                             .setThumbnailFile(thumbFile)
                             .setThumbnail(SwingFXUtils.toFXImage(thumb, null))
-                            .setUpdateType(operation.name())
+                            .setUpdateType(op)
                             .setOperationTime(new Date());
                     if (scope != null) {
                         if (scope.getScopeType() != null) {
@@ -341,7 +274,7 @@ public class ImageEditorController extends BaseShapeController {
                     prefix += "-frame" + frameIndex;
                 }
                 String name = imageHistoriesPath.getAbsolutePath() + File.separator
-                        + prefix + "_" + (new Date().getTime()) + "_" + operation;
+                        + prefix + "_" + (new Date().getTime()) + "_" + op;
                 name += "_" + new Random().nextInt(1000);
                 return name;
             }
@@ -414,7 +347,7 @@ public class ImageEditorController extends BaseShapeController {
                     String info = MessageFormat.format(message("CurrentImageSetAs"),
                             DateTools.datetimeToString(his.getOperationTime()) + " " + his.getDesc());
                     popInformation(info);
-                    updateImage(hisImage, message("History"));
+                    updateImage("History", hisImage, cost);
                     setHistoryIndex(index);
                 }
             }
@@ -582,21 +515,76 @@ public class ImageEditorController extends BaseShapeController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Scale"), StyleTools.getIconImageView("iconExpand.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageScaleController.open(this);
+            });
+            items.add(menu);
+
+            Menu colorNenu = new Menu(message("Color"), StyleTools.getIconImageView("iconColor.png"));
+            items.add(colorNenu);
+
+            menu = new MenuItem(message("ReplaceColor"), StyleTools.getIconImageView("iconReplace.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageReplaceColorController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BlendColor"), StyleTools.getIconImageView("iconCross.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlendColorController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            Menu tranformNenu = new Menu(message("Transform"), StyleTools.getIconImageView("iconRotateRight.png"));
+            items.add(tranformNenu);
+
             menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 rotateRight();
             });
-            items.add(menu);
+            tranformNenu.getItems().add(menu);
 
             menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
             menu.setOnAction((ActionEvent event) -> {
                 rotateLeft();
             });
-            items.add(menu);
+            tranformNenu.getItems().add(menu);
 
             menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
             menu.setOnAction((ActionEvent event) -> {
                 turnOver();
+            });
+            tranformNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Rotate"), StyleTools.getIconImageView("iconReplace.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageRotateController.open(this);
+            });
+            tranformNenu.getItems().add(menu);
+            tranformNenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageShearController.open(this);
+            });
+            tranformNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("MirrorHorizontal"), StyleTools.getIconImageView("iconHorizontal.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                horizontalAction();
+            });
+            tranformNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("MirrorVertical"), StyleTools.getIconImageView("iconVertical.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                verticalAction();
+            });
+            tranformNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageEraseController.open(this);
             });
             items.add(menu);
 
@@ -691,7 +679,7 @@ public class ImageEditorController extends BaseShapeController {
         if (imageView == null) {
             return;
         }
-        updateImage(ImageOperation.Recover, image);
+        updateImage("Recover", image, -1);
         setImageChanged(false);
         popInformation(message("Recovered"));
     }
@@ -713,6 +701,62 @@ public class ImageEditorController extends BaseShapeController {
         ImagePasteController.open(this);
     }
 
+    @FXML
+    public void horizontalAction() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.horizontalImage(imageView.getImage());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                updateImage("MirrorHorizontal", newImage, cost);
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    public void verticalAction() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.verticalImage(imageView.getImage());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                updateImage("MirrorVertical", newImage, cost);
+            }
+
+        };
+        start(task);
+    }
+
     public void applyKernel(ConvolutionKernel kernel) {
         // #####
     }
@@ -727,7 +771,7 @@ public class ImageEditorController extends BaseShapeController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (!imageLoaded.get() || !imageChanged) {
+        if (imageView.getImage() == null || !imageChanged) {
             return true;
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

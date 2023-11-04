@@ -14,7 +14,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="600.0" prefWidth="500.0" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorPalettePopupController">
+<VBox fx:id="thisPane" maxHeight="600.0" prefWidth="500.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorPalettePopupController">
     <children>
       <fx:include fx:id="colors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlColorsPane.fxml" VBox.vgrow="ALWAYS" />
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
@@ -38,7 +38,7 @@ License:    Apache License Version 2.0
                </graphic>
             </Button>
             <Label fx:id="label" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-            <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popDataMenu">
+            <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>

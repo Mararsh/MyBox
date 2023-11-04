@@ -243,12 +243,7 @@ License:    Apache License Version 2.0
                                                 <Cursor fx:constant="NONE" />
                                             </cursor>
                                         </Rectangle>
-                                        <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
-                                        <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE" width="200.0">
-                                            <cursor>
-                                                <Cursor fx:constant="MOVE" />
-                                            </cursor>
-                                        </Rectangle>                                                                     
+                                        <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />                                                               
                                         <Text layoutX="10.0" layoutY="-7.0" strokeType="OUTSIDE" strokeWidth="0.0" x="20.0" y="120.0" fx:id="xyText" />
                                     </children>
                                 </AnchorPane>

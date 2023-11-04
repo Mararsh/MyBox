@@ -67,8 +67,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
     @FXML
     protected Label imageLabel, imageInfoLabel;
     @FXML
-    protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
-            rotateLeftButton, rotateRightButton, turnOverButton, selectScopeButton;
+    protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, selectScopeButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML

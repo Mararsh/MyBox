@@ -36,7 +36,8 @@ public class ImageScope extends BaseData {
     protected DoublePolygon polygon;
     protected int colorDistance, colorDistanceSquare;
     protected float hsbDistance;
-    protected boolean areaExcluded, colorExcluded, eightNeighbor, distanceSquareRoot;
+    protected boolean areaExcluded, colorExcluded, skipTransparent,
+            eightNeighbor, distanceSquareRoot;
     protected Image image, clip;
     protected Color maskColor;
     protected float maskOpacity;
@@ -78,6 +79,7 @@ public class ImageScope extends BaseData {
         maskOpacity = 0.5f;
         areaExcluded = colorExcluded = distanceSquareRoot = false;
         eightNeighbor = true;
+        skipTransparent = true;
         if (image != null) {
             rectangle = DoubleRectangle.xywh(image.getWidth() / 4, image.getHeight() / 4,
                     image.getWidth() / 2, image.getHeight() / 2);
@@ -573,6 +575,14 @@ public class ImageScope extends BaseData {
 
     public void setDistanceSquareRoot(boolean distanceSquareRoot) {
         this.distanceSquareRoot = distanceSquareRoot;
+    }
+
+    public boolean isSkipTransparent() {
+        return skipTransparent;
+    }
+
+    public void setSkipTransparent(boolean skipTransparent) {
+        this.skipTransparent = skipTransparent;
     }
 
     public String getAreaData() {

@@ -176,7 +176,7 @@ License:    Apache License Version 2.0
                      <children>
                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
                            <children>
-                              <Label text="%ScaleImage" />
+                              <Label text="Scale" />
                               <TextField fx:id="scaleInput" prefWidth="100.0" />
                            </children>
                         </FlowPane>

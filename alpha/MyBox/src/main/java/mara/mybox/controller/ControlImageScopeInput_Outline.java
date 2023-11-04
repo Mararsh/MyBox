@@ -254,7 +254,6 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
                     finalScope();
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             bgImage, scope, PixelsOperation.OperationType.ShowScope);
-                    pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
                     outlineImage = pixelsOperation.operateFxImage();
                     if (task == null || isCancelled()) {
                         return false;

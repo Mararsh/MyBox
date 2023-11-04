@@ -257,7 +257,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     controlLeftPane();
                 }
             });
-            leftPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
+            leftPaneControl.setPickOnBounds(true);
             leftPane.setHvalue(0);
             leftPane.setVvalue(0);
         }
@@ -271,7 +271,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     controlRightPane();
                 }
             });
-            rightPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
+            rightPaneControl.setPickOnBounds(true);
             rightPane.setHvalue(0);
             rightPane.setVvalue(0);
         }
@@ -606,29 +606,31 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setControlsStyle() {
         try {
             if (leftPaneControl != null) {
-                NodeStyleTools.setTooltip(leftPaneControl, new Tooltip(message("ControlLeftPane")
-                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF4")));
+                NodeStyleTools.setTooltip(leftPaneControl, new Tooltip(message("ControlLeftPane") + "\nF4"));
             }
             if (leftPaneCheck != null) {
-                NodeStyleTools.setTooltip(leftPaneCheck, new Tooltip(message("ControlLeftPane")
-                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF4")));
+                NodeStyleTools.setTooltip(leftPaneCheck, new Tooltip(message("ControlLeftPane") + "\nF4"));
             }
             if (rightPaneControl != null) {
-                NodeStyleTools.setTooltip(rightPaneControl, new Tooltip(message("ControlRightPane")
-                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF5")));
+                NodeStyleTools.setTooltip(rightPaneControl, new Tooltip(message("ControlRightPane") + "\nF5"));
             }
             if (rightPaneCheck != null) {
-                NodeStyleTools.setTooltip(rightPaneCheck, new Tooltip(message("ControlRightPane")
-                        + (myFxml != null && myFxml.startsWith("Control") ? "" : "\nF5")));
+                NodeStyleTools.setTooltip(rightPaneCheck, new Tooltip(message("ControlRightPane") + "\nF5"));
             }
             if (tipsLabel != null && TipsLabelKey != null) {
                 NodeStyleTools.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));
             }
-            if (tipsView != null && TipsLabelKey != null) {
-                NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
+            if (tipsView != null) {
+                tipsView.setPickOnBounds(true);
+                if (TipsLabelKey != null) {
+                    NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
+                }
             }
-            if (rightTipsView != null && TipsLabelKey != null) {
-                NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
+            if (rightTipsView != null) {
+                rightTipsView.setPickOnBounds(true);
+                if (TipsLabelKey != null) {
+                    NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
+                }
             }
 
             if (copyButton == null) {

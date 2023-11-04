@@ -138,7 +138,7 @@ public class ControlColorPaletteSelector extends BaseController {
                         doubleClickedNotify.set(!doubleClickedNotify.get());
                     } else if (event.getButton() == MouseButton.SECONDARY) {
                         if (isManager) {
-                            popNodeMenu(palettesList, makeFunctionsMenu());
+                            popNodeMenu(palettesList, makeManageMenu());
                         }
                     }
                 }
@@ -282,7 +282,7 @@ public class ControlColorPaletteSelector extends BaseController {
         return currentPalette == null ? -1 : currentPalette.getCpnid();
     }
 
-    public List<MenuItem> makeFunctionsMenu() {
+    public List<MenuItem> makeManageMenu() {
         ColorPaletteName palette = selected();
         boolean isAll = palette.getName().equals(allColors.getName());
         List<MenuItem> items = new ArrayList<>();
@@ -344,22 +344,22 @@ public class ControlColorPaletteSelector extends BaseController {
     }
 
     @FXML
-    public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("ColorsFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
+    public void popManageMenu(Event event) {
+        if (UserConfig.getBoolean("ColorsManagePopWhenMouseHovering", true)) {
+            showManageMenu(event);
         }
     }
 
     @FXML
-    public void showFunctionsMenu(Event event) {
-        List<MenuItem> items = makeFunctionsMenu();
+    public void showManageMenu(Event event) {
+        List<MenuItem> items = makeManageMenu();
 
         CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean("ColorsFunctionsPopWhenMouseHovering", true));
+        popItem.setSelected(UserConfig.getBoolean("ColorsManagePopWhenMouseHovering", true));
         popItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setBoolean("ColorsFunctionsPopWhenMouseHovering", popItem.isSelected());
+                UserConfig.setBoolean("ColorsManagePopWhenMouseHovering", popItem.isSelected());
             }
         });
         items.add(popItem);

@@ -15,7 +15,7 @@ import mara.mybox.value.UserConfig;
 public class ImageManufactureScaleController extends ImageManufactureOperationController {
 
     @FXML
-    protected ControlImageScale sizeController;
+    protected ControlImageScale2 sizeController;
     @FXML
     protected Label commentsLabel;
 

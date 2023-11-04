@@ -287,20 +287,19 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         frameIndex = page;
     }
 
-    public void setImage(Image image, int percent) {
+    public void setImage(Image inImage, int percent) {
         if (imageView == null) {
             return;
         }
         imageView.setPreserveRatio(true);
-        imageView.setImage(image);
-        this.image = image;
+        imageView.setImage(inImage);
+        image = inImage;
         getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath() + " - " + message("Page") + " " + frameIndex);
         if (percent == 0) {
             paneSize();
         } else {
             setPercent(percent);
         }
-        finalRefineView();
         setImageChanged(false);
         updateLabelsTitle();
         imageView.requestFocus();
@@ -314,6 +313,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         imageView.setFitWidth(w * percent / 100);
         double h = imageView.getImage().getHeight();
         imageView.setFitHeight(h * percent / 100);
+        refinePane();
     }
 
     public void initPage(File file, int page) {

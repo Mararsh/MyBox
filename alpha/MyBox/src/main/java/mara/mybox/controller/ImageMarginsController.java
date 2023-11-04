@@ -4,6 +4,7 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -11,7 +12,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -20,40 +20,27 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.MarginTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2022-10-28
+ * @CreateDate 2019-9-4
  * @License Apache License Version 2.0
  */
-public class ImageMarginsController extends BaseShapeController {
+public class ImageMarginsController extends BaseImageEditController {
 
-    protected ImageEditorController editor;
     protected int addedWidth, distance;
-    private OperationType opType;
-
-    public enum OperationType {
-        SetMarginsByDragging,
-        CutMarginsByColor,
-        CutMarginsByWidth,
-        AddMargins,
-        BlurMargins
-    }
 
     @FXML
     protected ToggleGroup opGroup;
     @FXML
     protected ComboBox<String> widthSelector;
     @FXML
-    protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
-            closeAfterCheck;
+    protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck;
     @FXML
     protected FlowPane colorPane, distancePane, marginsPane, widthPane;
     @FXML
@@ -65,6 +52,8 @@ public class ImageMarginsController extends BaseShapeController {
     @FXML
     protected ControlColorSet colorSetController;
     @FXML
+    protected Button selectAllRectButton;
+    @FXML
     protected Label commentsLabel;
 
     public ImageMarginsController() {
@@ -72,25 +61,8 @@ public class ImageMarginsController extends BaseShapeController {
     }
 
     @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
-    protected void setParameters(ImageEditorController parent) {
+    protected void initMore() {
         try {
-            if (parent == null) {
-                close();
-            }
-            editor = parent;
-            loadImage();
-
-            editor.loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    loadImage();
-                }
-            });
-
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -126,14 +98,6 @@ public class ImageMarginsController extends BaseShapeController {
             distanceInput.setText("20");
             distanceInput.setText(UserConfig.getInt("ImageMarginsColorDistance", 20) + "");
 
-            closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
-                }
-            });
-            closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
-
             okButton.disableProperty().bind(widthSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
                     .or(distanceInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
@@ -159,28 +123,23 @@ public class ImageMarginsController extends BaseShapeController {
             }
 
             if (dragRadio.isSelected()) {
-                opType = OperationType.SetMarginsByDragging;
-                setBox.getChildren().addAll(colorPane);
+                setBox.getChildren().addAll(colorPane, selectAllRectButton);
                 initDragging();
 
             } else if (addRadio.isSelected()) {
-                opType = OperationType.AddMargins;
                 setBox.getChildren().addAll(colorPane, widthPane, marginsPane);
                 checkMarginWidth();
 
             } else if (cutWidthRadio.isSelected()) {
-                opType = OperationType.CutMarginsByWidth;
                 setBox.getChildren().addAll(widthPane, marginsPane);
                 checkMarginWidth();
 
             } else if (cutColorRadio.isSelected()) {
-                opType = OperationType.CutMarginsByColor;
                 setBox.getChildren().addAll(colorPane, distancePane, marginsPane);
                 widthSelector.getEditor().setStyle(null);
                 checkColorDistance();
 
             } else if (blurRadio.isSelected()) {
-                opType = OperationType.BlurMargins;
                 setBox.getChildren().addAll(widthPane, marginsPane);
                 checkMarginWidth();
 
@@ -237,7 +196,7 @@ public class ImageMarginsController extends BaseShapeController {
 
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
-        if (opType != OperationType.SetMarginsByDragging
+        if (!dragRadio.isSelected()
                 || maskRectangleData == null || image == null) {
             return;
         }
@@ -248,13 +207,14 @@ public class ImageMarginsController extends BaseShapeController {
         commentsLabel.setText(info);
     }
 
+    @Override
     protected void loadImage() {
         if (editor == null || !editor.isShowing()) {
             close();
             return;
         }
         loadImage(editor.imageView.getImage());
-        if (opType == OperationType.SetMarginsByDragging) {
+        if (dragRadio.isSelected()) {
             initDragging();
         }
     }
@@ -276,91 +236,64 @@ public class ImageMarginsController extends BaseShapeController {
     }
 
     @FXML
+    public void selectAllRect() {
+        if (!dragRadio.isSelected() || imageView.getImage() == null) {
+            return;
+        }
+        maskRectangleData = DoubleRectangle.xywh(0, 0,
+                imageView.getImage().getWidth(), imageView.getImage().getHeight());
+        drawMaskRectangle();
+    }
+
     @Override
-    public void okAction() {
-        if (opType != OperationType.SetMarginsByDragging) {
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        if (!dragRadio.isSelected()) {
             if (!marginsTopCheck.isSelected()
                     && !marginsBottomCheck.isSelected()
                     && !marginsLeftCheck.isSelected()
                     && !marginsRightCheck.isSelected()) {
                 popError(message("NothingHandled"));
-                return;
+                return false;
             }
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-
-            private Image newImage;
-            private String value = null;
-
-            @Override
-            protected boolean handle() {
-                switch (opType) {
-                    case SetMarginsByDragging:
-                        newImage = MarginTools.dragMarginsFx(imageView.getImage(),
-                                (Color) colorSetController.rect.getFill(), maskRectangleData);
-                        break;
-                    case CutMarginsByWidth:
-                        newImage = MarginTools.cutMarginsByWidth(imageView.getImage(), addedWidth,
-                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                        value = addedWidth + "";
-                        break;
-                    case CutMarginsByColor:
-                        newImage = MarginTools.cutMarginsByColor(imageView.getImage(),
-                                (Color) colorSetController.rect.getFill(), distance,
-                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                        value = distance + "";
-                        break;
-                    case AddMargins:
-                        newImage = MarginTools.addMarginsFx(imageView.getImage(),
-                                (Color) colorSetController.rect.getFill(), addedWidth,
-                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                        value = addedWidth + "";
-                        break;
-                    case BlurMargins:
-                        newImage = MarginTools.blurMarginsAlpha(imageView.getImage(), addedWidth,
-                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                        value = addedWidth + "";
-                        break;
-                    default:
-                        return false;
-                }
-                if (task == null || isCancelled()) {
-                    return false;
-                }
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage(newImage,
-                        opType.name() + " " + value + "  " + message("Cost") + ": "
-                        + DateTools.datetimeMsDuration(cost));
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
+        return true;
     }
 
     @Override
-    public boolean keyESC() {
-        close();
-        return false;
+    protected void handleImage() {
+        if (dragRadio.isSelected()) {
+            handledImage = MarginTools.dragMarginsFx(imageView.getImage(),
+                    (Color) colorSetController.rect.getFill(), maskRectangleData);
+
+        } else if (addRadio.isSelected()) {
+            handledImage = MarginTools.addMarginsFx(imageView.getImage(),
+                    (Color) colorSetController.rect.getFill(), addedWidth,
+                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+            opInfo = addedWidth + "";
+
+        } else if (blurRadio.isSelected()) {
+            handledImage = MarginTools.blurMarginsAlpha(imageView.getImage(), addedWidth,
+                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+            opInfo = addedWidth + "";
+
+        } else if (cutColorRadio.isSelected()) {
+            handledImage = MarginTools.cutMarginsByColor(imageView.getImage(),
+                    (Color) colorSetController.rect.getFill(), distance,
+                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+            opInfo = distance + "";
+
+        } else if (cutWidthRadio.isSelected()) {
+            handledImage = MarginTools.cutMarginsByWidth(imageView.getImage(), addedWidth,
+                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+            opInfo = addedWidth + "";
+        }
     }
 
     /*

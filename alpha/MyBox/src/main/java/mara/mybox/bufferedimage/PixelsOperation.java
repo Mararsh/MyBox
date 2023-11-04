@@ -20,7 +20,7 @@ import mara.mybox.dev.MyBoxLog;
 public abstract class PixelsOperation {
 
     protected BufferedImage image;
-    protected boolean isDithering, boolPara1, boolPara2, boolPara3, skipTransparent = true, excludeScope;
+    protected boolean isDithering, boolPara1, boolPara2, boolPara3, excludeScope, skipTransparent;
     protected int intPara1, intPara2, intPara3, scopeColor = 0;
     protected float floatPara1, floatPara2;
     protected Color colorPara1, colorPara2;
@@ -47,6 +47,7 @@ public abstract class PixelsOperation {
 
     public PixelsOperation() {
         excludeScope = false;
+        skipTransparent = true;
     }
 
     public PixelsOperation(BufferedImage image, ImageScope scope, OperationType operationType) {
@@ -70,6 +71,9 @@ public abstract class PixelsOperation {
             isDithering = false;
         }
         scope = ImageScopeFactory.create(scope);
+        if (scope != null) {
+            skipTransparent = scope.isSkipTransparent();
+        }
         if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
             isDithering = false;
             return operateMatting();

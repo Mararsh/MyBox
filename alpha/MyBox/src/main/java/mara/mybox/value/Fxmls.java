@@ -124,6 +124,12 @@ public class Fxmls {
     public static final String ImageCropFxml = "/fxml/ImageCrop.fxml";
     public static final String ImagePasteFxml = "/fxml/ImagePaste.fxml";
     public static final String ImageMarginsFxml = "/fxml/ImageMargins.fxml";
+    public static final String ImageScaleFxml = "/fxml/ImageScale.fxml";
+    public static final String ImageReplaceColorFxml = "/fxml/ImageReplaceColor.fxml";
+    public static final String ImageBlendColorFxml = "/fxml/ImageBlendColor.fxml";
+    public static final String ImageRotateFxml = "/fxml/ImageRotate.fxml";
+    public static final String ImageShearFxml = "/fxml/ImageShear.fxml";
+    public static final String ImageEraseFxml = "/fxml/ImageErase.fxml";
 
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";

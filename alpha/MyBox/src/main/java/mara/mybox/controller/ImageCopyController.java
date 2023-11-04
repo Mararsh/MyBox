@@ -36,9 +36,9 @@ public class ImageCopyController extends ImageSelectScopeController {
     }
 
     @Override
-    protected void setControls() {
+    protected void initMore() {
         try {
-            super.setControls();
+            super.initMore();
 
             String target = UserConfig.getString(baseName + "TargetType", "System");
             if ("MyBox".equals(target)) {

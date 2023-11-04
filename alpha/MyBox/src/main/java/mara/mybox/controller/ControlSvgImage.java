@@ -47,9 +47,4 @@ public class ControlSvgImage extends BaseShapeController {
         }
     }
 
-    @Override
-    protected void finalRefineView() {
-        paneSize();
-    }
-
 }

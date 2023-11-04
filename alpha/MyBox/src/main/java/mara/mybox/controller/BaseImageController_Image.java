@@ -280,7 +280,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 return true;
             }
 
-            refinePane();
+            fitSize();
 
             if (imageInformation == null) {
                 setImageChanged(true);
@@ -288,9 +288,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 setImageChanged(imageInformation.isIsScaled());
             }
 
+            drawMaskRulers();
+            checkCoordinate();
+
             isPickingColor = false;
             checkPickingColor();
-            finalRefineView();
 
             notifyLoad();
             return true;
@@ -344,18 +346,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         return imageView != null && imageView.getImage() != null
                 && !(this instanceof ImageSplitController)
                 && !(this instanceof ImageSampleController);
-    }
-
-    protected void finalRefineView() {
-        if (isSettingValues) {
-            return;
-        }
-        if (isPop) {
-            paneSize();
-        } else {
-            fitSize();
-        }
-        refinePane();
     }
 
 }

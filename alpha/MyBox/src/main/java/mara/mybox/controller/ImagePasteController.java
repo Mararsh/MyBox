@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -14,7 +15,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.controller.ImageEditorController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
@@ -46,7 +46,9 @@ public class ImagePasteController extends BaseShapeController {
     @FXML
     protected Tab imagesPane, setPane;
     @FXML
-    protected ComboBox<String> angleBox, ratioBox;
+    protected ComboBox<String> angleSelector, ratioSelector;
+    @FXML
+    protected Button rotateLeftButton, rotateRightButton;
     @FXML
     protected CheckBox keepRatioCheck, enlargeCheck;
     @FXML
@@ -108,9 +110,9 @@ public class ImagePasteController extends BaseShapeController {
             });
 
             keepRatioType = BufferedImageTools.KeepRatioType.BaseOnWidth;
-            ratioBox.getItems().addAll(Arrays.asList(Languages.message("BaseOnWidth"), Languages.message("BaseOnHeight"),
+            ratioSelector.getItems().addAll(Arrays.asList(Languages.message("BaseOnWidth"), Languages.message("BaseOnHeight"),
                     Languages.message("BaseOnLarger"), Languages.message("BaseOnSmaller")));
-            ratioBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            ratioSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
@@ -128,23 +130,23 @@ public class ImagePasteController extends BaseShapeController {
                     }
                 }
             });
-            ratioBox.getSelectionModel().select(0);
+            ratioSelector.getSelectionModel().select(0);
 
-            angleBox.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
-            angleBox.setVisibleRowCount(10);
-            angleBox.setValue("0");
-            angleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            angleSelector.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
+            angleSelector.setVisibleRowCount(10);
+            angleSelector.setValue("0");
+            angleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         rotateAngle = Integer.parseInt(newValue);
                         rotateLeftButton.setDisable(false);
                         rotateRightButton.setDisable(false);
-                        ValidationTools.setEditorNormal(angleBox);
+                        ValidationTools.setEditorNormal(angleSelector);
                     } catch (Exception e) {
                         rotateLeftButton.setDisable(true);
                         rotateRightButton.setDisable(true);
-                        ValidationTools.setEditorBadStyle(angleBox);
+                        ValidationTools.setEditorBadStyle(angleSelector);
                     }
                 }
             });
@@ -317,7 +319,7 @@ public class ImagePasteController extends BaseShapeController {
     @Override
     public void okAction() {
         popSuccessful();
-        editor.updateImage(ImageOperation.Paste, scope, imageView.getImage(), -1);
+        editor.updateImage("Paste", null, scope, imageView.getImage(), -1);
     }
 
     @FXML

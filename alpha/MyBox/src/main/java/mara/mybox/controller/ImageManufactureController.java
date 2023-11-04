@@ -87,8 +87,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 
             historyButton.setDisable(sourceFile == null);
 
-            finalRefineView();
-
+//            finalRefineView();
             scopeController.setParameters(this);
 
             operationsController.resetOperationPanes();

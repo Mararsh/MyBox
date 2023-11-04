@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -15,16 +16,14 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlImageScale extends ControlImageSize {
 
-    protected ImageManufactureScaleController scaleController;
-    protected ImageManufactureController editor;
+    protected ImageScaleController scaleController;
 
     @FXML
     protected RadioButton dragRadio;
 
-    public void setParameters(ImageManufactureScaleController scaleController) {
+    public void setParameters(ImageScaleController scaleController) {
         this.scaleController = scaleController;
-        editor = scaleController.editor;
-        imageController = editor;
+        imageController = scaleController;
         infoLabel = scaleController.commentsLabel;
         checkScaleType();
     }
@@ -32,25 +31,12 @@ public class ControlImageScale extends ControlImageSize {
     @Override
     protected void resetControls() {
         try {
-            if (editor != null) {
-                editor.resetImagePane();
-                editor.imageTab();
-            }
             if (infoLabel != null) {
                 infoLabel.setText("");
             }
             super.resetControls();
         } catch (Exception e) {
             MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    protected Image getImage() {
-        if (editor == null) {
-            return null;
-        } else {
-            return editor.imageView.getImage();
         }
     }
 
@@ -85,10 +71,10 @@ public class ControlImageScale extends ControlImageSize {
             }
             width = image.getWidth();
             height = image.getHeight();
-            editor.maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
-            editor.showMaskRectangle();
-            editor.popAnchorMenu = false;
-            editor.showAnchors = true;
+            scaleController.maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
+            scaleController.showMaskRectangle();
+            scaleController.popAnchorMenu = false;
+            scaleController.showAnchors = true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -97,19 +83,20 @@ public class ControlImageScale extends ControlImageSize {
     @Override
     protected void adjustRadio() {
         super.adjustRadio();
-        if (editor == null || !dragRadio.isSelected()
-                || editor.maskRectangleData == null) {
+        if (scaleController == null || !dragRadio.isSelected()
+                || scaleController.maskRectangleData == null) {
             return;
         }
-        editor.drawMaskRectangle();
+        scaleController.drawMaskRectangle();
     }
 
     public void paneClicked() {
-        if (editor == null || !dragRadio.isSelected() || editor.maskRectangleData == null) {
+        if (!dragRadio.isSelected()
+                || scaleController == null || scaleController.maskRectangleData == null) {
             return;
         }
-        width = editor.maskRectangleData.getWidth();
-        height = editor.maskRectangleData.getHeight();
+        width = scaleController.maskRectangleData.getWidth();
+        height = scaleController.maskRectangleData.getHeight();
         if (keepRatioType != BufferedImageTools.KeepRatioType.None) {
             adjustRadio();
 
@@ -120,23 +107,14 @@ public class ControlImageScale extends ControlImageSize {
 
     @Override
     public void afterScaled(Image newImage, long cost) {
-        editor.popSuccessful();
-        String newSize = (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight());
+        String info = message("Scale") + ": ";
         if (scaleType == ScaleType.Scale) {
-            editor.updateImage(ImageManufactureController_Image.ImageOperation.ScaleImage, scale + "", newSize, newImage, cost);
+            info += message("Times");
         } else if (scaleType == ScaleType.Dragging || scaleType == ScaleType.Pixels) {
-            editor.updateImage(ImageManufactureController_Image.ImageOperation.ScaleImage, "Pixels", newSize, newImage, cost);
+            info += (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight());
         }
-
-        String info = message("OriginalSize") + ": " + (int) Math.round(editor.image.getWidth())
-                + "x" + (int) Math.round(editor.image.getHeight()) + "\n"
-                + message("CurrentSize") + ": " + Math.round(newImage.getWidth())
-                + "x" + Math.round(newImage.getHeight());
-        infoLabel.setText(info);
-
-        if (scaleType == ScaleType.Dragging) {
-            initDrag();
-        }
+        info += "  " + message("Cost") + ": " + DateTools.datetimeMsDuration(cost);
+//        scaleController.apply(newImage, info);
     }
 
 }

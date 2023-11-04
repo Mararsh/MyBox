@@ -300,12 +300,12 @@ public class ControlSvgFromImage extends BaseController {
             try {
                 float v = Float.parseFloat(scaleInput.getText());
                 if (v < 0) {
-                    popError(message("InvalidParameter") + ": " + message("ScaleImage"));
+                    popError(message("InvalidParameter") + ": " + message("Scale"));
                     return false;
                 }
                 options.put("scale", v);
             } catch (Exception e) {
-                popError(message("InvalidParameter") + ": " + message("ScaleImage"));
+                popError(message("InvalidParameter") + ": " + message("Scale"));
                 return false;
             }
 

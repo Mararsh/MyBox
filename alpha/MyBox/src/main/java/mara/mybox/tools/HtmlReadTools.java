@@ -43,6 +43,12 @@ public class HtmlReadTools {
         read html
      */
     public static File download(String urlAddress) {
+        return download(urlAddress,
+                UserConfig.getInt("WebConnectTimeout", 10000),
+                UserConfig.getInt("WebReadTimeout", 10000));
+    }
+
+    public static File download(String urlAddress, int connectTimeout, int readTimeout) {
         try {
             if (urlAddress == null) {
                 return null;
@@ -57,8 +63,12 @@ public class HtmlReadTools {
                 FileCopyTools.copyFile(new File(url.getFile()), tmpFile);
             } else if ("https".equalsIgnoreCase(protocal)) {
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
-                connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
+                if (connectTimeout > 0) {
+                    connection.setConnectTimeout(connectTimeout);
+                }
+                if (readTimeout > 0) {
+                    connection.setReadTimeout(readTimeout);
+                }
 //                connection.setRequestProperty("User-Agent", httpUserAgent);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
@@ -117,7 +127,7 @@ public class HtmlReadTools {
             }
             return tmpFile;
         } catch (Exception e) {
-            MyBoxLog.console(e.toString() + " " + urlAddress);
+//            MyBoxLog.console(e.toString() + " " + urlAddress);
             return null;
         }
     }
