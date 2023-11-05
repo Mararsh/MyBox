@@ -138,7 +138,7 @@ public class ImagePopController extends BaseShapeController {
             if (parent == null || image == null) {
                 return null;
             }
-            ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
+            ImagePopController controller = (ImagePopController) WindowTools.openStage(Fxmls.ImagePopFxml);
             controller.setImage(parent, image);
             return controller;
         } catch (Exception e) {
@@ -152,7 +152,7 @@ public class ImagePopController extends BaseShapeController {
             if (parent == null || imageView == null) {
                 return null;
             }
-            ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
+            ImagePopController controller = (ImagePopController) WindowTools.openStage(Fxmls.ImagePopFxml);
             controller.setSourceImageView(parent, imageView);
             return controller;
         } catch (Exception e) {

@@ -9,6 +9,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -130,6 +131,14 @@ public class ImageSelectScopeController extends BaseChildController {
         return true;
     }
 
+    public ImageScope scope() {
+        if (wholeRadio != null && wholeRadio.isSelected()) {
+            return scopeController.whole();
+        } else {
+            return scopeController.finalScope();
+        }
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -165,6 +174,18 @@ public class ImageSelectScopeController extends BaseChildController {
 
         };
         start(task);
+    }
+
+    @FXML
+    @Override
+    public void undoAction() {
+        editor.undoAction();
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        editor.recoverAction();
     }
 
     /*

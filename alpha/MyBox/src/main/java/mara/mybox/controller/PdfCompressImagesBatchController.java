@@ -169,8 +169,10 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
         try {
             PDImageXObject newObject = null;
             if (pdfFormat == PdfImageFormat.Tiff) {
-                ImageBinary imageBinary = new ImageBinary(sourceImage, threshold);
-                imageBinary.setIsDithering(ditherCheck.isSelected());
+                ImageBinary imageBinary = new ImageBinary();
+                imageBinary.setImage(sourceImage)
+                        .setIntPara1(threshold)
+                        .setIsDithering(ditherCheck.isSelected());
                 BufferedImage newImage = imageBinary.operate();
                 newImage = ImageBinary.byteBinary(newImage);
                 newObject = CCITTFactory.createFromImage(doc, newImage);

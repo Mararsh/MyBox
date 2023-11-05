@@ -51,8 +51,7 @@ public class ControlImageBinary extends BaseController {
         notify.set(!notify.get());
     }
 
-    public void setParameters(BaseController parent, ImageView imageView) {
-        parentController = parent;
+    public void setParameters(ImageView imageView) {
         this.imageView = imageView;
         try {
             calculateButton.setVisible(imageView != null);
@@ -120,14 +119,11 @@ public class ControlImageBinary extends BaseController {
     @FXML
     public void calculateAction() {
         try {
-            if (!(parentController instanceof BaseImageController)) {
-                return;
-            }
             if (imageView == null || imageView.getImage() == null) {
                 popError(message("NoData"));
                 return;
             }
-            int v = ImageBinary.calculateThreshold(((BaseImageController) parentController).imageView.getImage());
+            int v = ImageBinary.calculateThreshold(imageView.getImage());
             thresholdInput.setText(v + "");
         } catch (Exception e) {
             MyBoxLog.error(e);

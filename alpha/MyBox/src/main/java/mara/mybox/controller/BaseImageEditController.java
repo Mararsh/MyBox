@@ -118,6 +118,18 @@ public class BaseImageEditController extends BaseShapeController {
 
     @FXML
     @Override
+    public void undoAction() {
+        editor.undoAction();
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        editor.recoverAction();
+    }
+
+    @FXML
+    @Override
     public void cancelAction() {
         close();
     }

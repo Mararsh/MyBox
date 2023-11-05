@@ -36,15 +36,14 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public abstract class ControlImageScopeInput_Base extends BaseShapeController {
-    
+
     protected BaseImageController imageController;
     protected Image srcImage;
-    protected ImageScope scope;
     protected TableColor tableColor;
     protected java.awt.Color maskColor;
     protected float maskOpacity;
     protected SimpleBooleanProperty showNotify;
-    
+
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
@@ -82,7 +81,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
     @FXML
     protected FlowPane opPane;
-    
+
     public Image srcImage() {
         if (srcImage == null) {
             srcImage = new Image("img/" + "cover" + AppValues.AppYear + "g9.png");
@@ -90,7 +89,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
         }
         return srcImage;
     }
-    
+
     @FXML
     @Override
     public void createAction() {
@@ -109,32 +108,48 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
             }
         });
     }
-    
-    public boolean finalScope() {
+
+    public ImageScope whole() {
+        try {
+            ImageScope whole = new ImageScope()
+                    .setImage(srcImage())
+                    .setScopeType(null)
+                    .setAreaExcluded(areaExcludedCheck.isSelected())
+                    .setColorExcluded(colorExcludedCheck.isSelected())
+                    .setEightNeighbor(eightNeighborCheck.isSelected())
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            return whole;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public ImageScope finalScope() {
         try {
             if (!isValidScope()) {
                 popError(message("InvalidParameters"));
-                return false;
+                return null;
             }
             if (sourceFile != null) {
                 scope.setFile(sourceFile.getAbsolutePath());
             } else {
                 scope.setFile("Unknown");
             }
-            scope.setImage(srcImage());
-            scope.setAreaExcluded(areaExcludedCheck.isSelected());
-            scope.setColorExcluded(colorExcludedCheck.isSelected());
-            scope.setEightNeighbor(eightNeighborCheck.isSelected());
-            scope.setSkipTransparent(ignoreTransparentCheck.isSelected());
-            return true;
+            scope.setImage(srcImage())
+                    .setAreaExcluded(areaExcludedCheck.isSelected())
+                    .setColorExcluded(colorExcludedCheck.isSelected())
+                    .setEightNeighbor(eightNeighborCheck.isSelected())
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            return scope;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
         }
     }
-    
+
     protected synchronized void indicateScope() {
-        if (!finalScope()) {
+        if (finalScope() == null) {
             return;
         }
         if (task != null) {
@@ -142,7 +157,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
         }
         task = new SingletonCurrentTask<Void>(this) {
             private Image scopedImage;
-            
+
             @Override
             protected boolean handle() {
                 try {
@@ -162,7 +177,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
                     return false;
                 }
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 image = scopedImage;
@@ -173,19 +188,19 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
                     drawMaskShape();
                 }
             }
-            
+
             @Override
             protected void whenCanceled() {
             }
-            
+
             @Override
             protected void whenFailed() {
             }
-            
+
         };
         start(task, viewBox);
     }
-    
+
     public void drawMattingPoints() {
         try {
             clearMaskAnchors();
@@ -201,27 +216,30 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
             MyBoxLog.error(e);
         }
     }
-    
+
     public boolean isValidScope() {
         return srcImage() != null
                 && scope != null
                 && scope.getScopeType() != null;
     }
-    
+
     @FXML
     @Override
     public boolean popAction() {
         ImagePopController.openView(this, imageView);
         return true;
     }
-    
+
     public Image scopedImage(Color bgColor, boolean cutMargins, boolean exclude) {
+        if (finalScope() == null) {
+            return srcImage();
+        }
         return ScopeTools.scopeImage(srcImage(), scope, bgColor, cutMargins, exclude);
     }
-    
+
     @FXML
     public void popScope() {
-        if (!finalScope()) {
+        if (finalScope() == null) {
             return;
         }
         if (task != null) {
@@ -229,7 +247,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
         }
         task = new SingletonCurrentTask<Void>(this) {
             private Image scopedImage;
-            
+
             @Override
             protected boolean handle() {
                 try {
@@ -242,14 +260,14 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
                     return false;
                 }
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 ImagePopController.openImage(myController, scopedImage);
             }
-            
+
         };
         start(task);
     }
-    
+
 }

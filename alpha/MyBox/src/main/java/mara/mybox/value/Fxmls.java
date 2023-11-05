@@ -127,6 +127,8 @@ public class Fxmls {
     public static final String ImageScaleFxml = "/fxml/ImageScale.fxml";
     public static final String ImageReplaceColorFxml = "/fxml/ImageReplaceColor.fxml";
     public static final String ImageBlendColorFxml = "/fxml/ImageBlendColor.fxml";
+    public static final String ImageAdjustColorFxml = "/fxml/ImageAdjustColor.fxml";
+    public static final String ImageBlackWhiteFxml = "/fxml/ImageBlackWhite.fxml";
     public static final String ImageRotateFxml = "/fxml/ImageRotate.fxml";
     public static final String ImageShearFxml = "/fxml/ImageShear.fxml";
     public static final String ImageEraseFxml = "/fxml/ImageErase.fxml";

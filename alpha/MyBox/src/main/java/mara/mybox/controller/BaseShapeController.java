@@ -87,8 +87,10 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
                 addPointCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
                         addPointWhenClick = addPointCheck.isSelected();
+                        if (!isSettingValues) {
+                            UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
+                        }
                     }
                 });
 

@@ -85,13 +85,15 @@ public class ImageReplaceColorController extends ImageSelectScopeController {
             task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
+            private ImageScope scope;
 
             @Override
             protected boolean handle() {
                 try {
+                    scope = scope();
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                            scopeController.srcImage(),
-                            scopeController.scope,
+                            editor.imageView.getImage(),
+                            scope,
                             PixelsOperation.OperationType.Color,
                             PixelsOperation.ColorActionType.Set)
                             .setColorPara1(colorController.awtColor())
@@ -111,7 +113,7 @@ public class ImageReplaceColorController extends ImageSelectScopeController {
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
-                editor.updateImage("ReplaceColor", null, scopeController.scope, handledImage, cost);
+                editor.updateImage("ReplaceColor", null, scope, handledImage, cost);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }

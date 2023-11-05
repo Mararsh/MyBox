@@ -141,9 +141,9 @@ public class ControlImageFormat extends BaseController {
             });
 
             if (parent instanceof BaseImageController) {
-                binaryController.setParameters(parent, ((BaseImageController) parent).imageView);
+                binaryController.setParameters(((BaseImageController) parent).imageView);
             } else {
-                binaryController.setParameters(parent, null);
+                binaryController.setParameters(null);
             }
             binaryController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override

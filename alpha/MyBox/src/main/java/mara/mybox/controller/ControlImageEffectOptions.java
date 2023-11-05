@@ -98,9 +98,9 @@ public class ControlImageEffectOptions extends BaseController {
             okButton = pController.okButton;
             paletteAddButton = pController.paletteAddButton;
             htmlButton = pController.htmlButton;
-            binaryController.setParameters(parentController, pController.imageView);
+            binaryController.setParameters(pController.imageView);
         } else {
-            binaryController.setParameters(parentController, null);
+            binaryController.setParameters(null);
         }
     }
 

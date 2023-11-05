@@ -826,12 +826,6 @@ public class StyleButton {
                 return new StyleData("valueOkButton", message("OK"), "", "iconOK.png");
             case "multiplyButton":
                 return new StyleData("multiplyButton", message("Multiply"), "", "iconMultiply.png");
-            case "blackwhiteButton":
-                return new StyleData("blackwhiteButton", message("BlackOrWhite"), "", "iconBlackWhite.png");
-            case "greyButton":
-                return new StyleData("greyButton", message("Greyscale"), "", "iconGreyscale.png");
-            case "deskewButton":
-                return new StyleData("deskewButton", "", message("Deskew"), "", "iconShear.png");
             case "moveTopButton":
                 return new StyleData("moveTopButton", message("MoveTop"), "", "iconDoubleUp.png");
             case "pagePreviousButton":

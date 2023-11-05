@@ -170,8 +170,10 @@ public class PdfTools {
             PDImageXObject imageObject;
             switch (targetFormat) {
                 case Tiff:
-                    ImageBinary imageBinary = new ImageBinary(bufferedImage, threshold);
-                    imageBinary.setIsDithering(dithering);
+                    ImageBinary imageBinary = new ImageBinary();
+                    imageBinary.setImage(bufferedImage)
+                            .setIntPara1(threshold)
+                            .setIsDithering(dithering);
                     bufferedImage = imageBinary.operate();
                     bufferedImage = ImageBinary.byteBinary(bufferedImage);
                     imageObject = CCITTFactory.createFromImage(document, bufferedImage);

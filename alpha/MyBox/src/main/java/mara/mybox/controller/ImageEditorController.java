@@ -155,9 +155,10 @@ public class ImageEditorController extends BaseImageController {
         updateImage(operation, null, null, newImage, cost);
     }
 
-    public void updateImage(String operation, String value, ImageScope scope, Image newImage, long cost) {
+    public void updateImage(String operation, String value, ImageScope opScope, Image newImage, long cost) {
         try {
-            recordImageHistory(operation, scope, newImage);
+            scope = opScope;
+            recordImageHistory(operation, opScope, newImage);
             String info = operation == null ? "" : message(operation);
             if (value != null && !value.isBlank()) {
                 info += ": " + value;
@@ -485,18 +486,6 @@ public class ImageEditorController extends BaseImageController {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("SelectScope"), StyleTools.getIconImageView("iconTarget.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                selectScope();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyAction();
-            });
-            items.add(menu);
-
             menu = new MenuItem(message("Crop"), StyleTools.getIconImageView("iconCrop.png"));
             menu.setOnAction((ActionEvent event) -> {
                 cropAction();
@@ -535,6 +524,87 @@ public class ImageEditorController extends BaseImageController {
                 ImageBlendColorController.open(this);
             });
             colorNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("AdjustColor"), StyleTools.getIconImageView("iconColorWheel.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageAdjustColorController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BlackOrWhite"), StyleTools.getIconImageView("iconBlackWhite.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Grey"), StyleTools.getIconImageView("iconGrey.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Sepia"), StyleTools.getIconImageView("iconSepia.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Posterizing"), StyleTools.getIconImageView("iconPosterizing.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            Menu effectNenu = new Menu(message("Effect"), StyleTools.getIconImageView("iconMatrix.png"));
+            items.add(effectNenu);
+
+            menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("FrostedGlass"), StyleTools.getIconImageView("iconFrosted.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Smooth"), StyleTools.getIconImageView("iconSmooth.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Sharpen"), StyleTools.getIconImageView("iconSharpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Contrast"), StyleTools.getIconImageView("iconGrey.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("EdgeDetection"), StyleTools.getIconImageView("iconEdgeDetection.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Emboss"), StyleTools.getIconImageView("iconEmboss.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Convolution"), StyleTools.getIconImageView("iconInput.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageBlackWhiteController.open(this);
+            });
+            effectNenu.getItems().add(menu);
 
             Menu tranformNenu = new Menu(message("Transform"), StyleTools.getIconImageView("iconRotateRight.png"));
             items.add(tranformNenu);
@@ -603,27 +673,28 @@ public class ImageEditorController extends BaseImageController {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {
-                rotateRight();
+                popAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu = new MenuItem(message("SelectScope"), StyleTools.getIconImageView("iconTarget.png"));
             menu.setOnAction((ActionEvent event) -> {
-                rotateRight();
+                selectScope();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
+            menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
-                rotateLeft();
+                copyAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
+            items.add(new SeparatorMenuItem());
+            menu = new MenuItem(message("Options"), StyleTools.getIconImageView("iconOptions.png"));
             menu.setOnAction((ActionEvent event) -> {
-                turnOver();
+                options();
             });
             items.add(menu);
 

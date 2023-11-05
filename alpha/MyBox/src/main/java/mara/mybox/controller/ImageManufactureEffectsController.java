@@ -164,8 +164,10 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         case BlackOrWhite:
                             int threshold = optionsController.binaryController.threshold();
                             value = threshold + "";
-                            ImageBinary imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, threshold);
-                            imageBinary.setIsDithering(optionsController.binaryController.dither());
+                            ImageBinary imageBinary = new ImageBinary(imageView.getImage());
+                            imageBinary.setScope(scopeController.scope)
+                                    .setIntPara1(threshold)
+                                    .setIsDithering(optionsController.binaryController.dither());
                             newImage = imageBinary.operateFxImage();
                             break;
                         case Gray:
@@ -330,8 +332,10 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         task.setInfo(tmpFile);
                     }
 
-                    ImageBinary imageBinary = new ImageBinary(imageView.getImage(), scope, -1);
-                    imageBinary.setIsDithering(true);
+                    ImageBinary imageBinary = new ImageBinary(imageView.getImage());
+                    imageBinary.setScope(scope)
+                            .setIntPara1(-1)
+                            .setIsDithering(true);
                     bufferedImage = imageBinary.operate();
                     tmpFile = FileTmpTools.generateFile(message("BlackOrWhite"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {

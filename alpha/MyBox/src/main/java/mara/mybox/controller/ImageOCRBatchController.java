@@ -265,8 +265,10 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             }
 //            lastImage = ImageManufacture.removeAlpha(lastImage);
             if (threshold > 0) {
-                ImageBinary bin = new ImageBinary(lastImage, threshold);
-                lastImage = bin.operateImage();
+                ImageBinary imageBinary = new ImageBinary();
+                imageBinary.setImage(lastImage)
+                        .setIntPara1(threshold);
+                lastImage = imageBinary.operateImage();
             }
 
             if (rotate != 0) {

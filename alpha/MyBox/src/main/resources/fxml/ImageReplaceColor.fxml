@@ -40,11 +40,12 @@ License:    Apache License Version 2.0
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
                               <Label text="%Select" />
-                              <RadioButton fx:id="includeRadio" contentDisplay="TOP" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ScopeIncluded" wrapText="true">
+                              <RadioButton fx:id="wholeRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%WholeImage" wrapText="true">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="selectGroup" />
                                  </toggleGroup>
                               </RadioButton>
+                              <RadioButton fx:id="includeRadio" contentDisplay="TOP" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ScopeIncluded" toggleGroup="$selectGroup" wrapText="true" />
                               <RadioButton fx:id="excludeRadio" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ScopeExcluded" toggleGroup="$selectGroup" wrapText="true" />
                            </children>
                         </VBox>
@@ -63,16 +64,38 @@ License:    Apache License Version 2.0
                               <Label text="%NoSelectionMeansAll" />
                            </children>
                         </VBox>
-                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconDemo.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" layoutX="10.0" layoutY="174.0" prefWrapLength="100.0" vgap="2.0">
+                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                           <children>
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconRecover.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconUndo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </FlowPane>
+                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
                               <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
                                  <graphic>

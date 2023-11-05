@@ -14,7 +14,6 @@ public class ImageScopeFactory {
 
     public static ImageScope create(ImageScope sourceScope) {
         try {
-
             ImageScope newScope = ImageScopeFactory.create(
                     sourceScope.getImage(),
                     sourceScope.getScopeType(),

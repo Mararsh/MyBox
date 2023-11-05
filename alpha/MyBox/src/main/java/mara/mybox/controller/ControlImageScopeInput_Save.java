@@ -19,7 +19,7 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
 
     @FXML
     public void saveScope() {
-        if (!isValidScope() || !finalScope()) {
+        if (finalScope() == null) {
             return;
         }
 //        String name = scopeNameInput.getText().trim();

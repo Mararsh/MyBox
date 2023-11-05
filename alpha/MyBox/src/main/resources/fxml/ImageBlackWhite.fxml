@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageCropController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageBlackWhiteController">
     <children>
       <SplitPane fx:id="splitPane" dividerPositions="0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
          <items>
@@ -34,34 +34,29 @@ License:    Apache License Version 2.0
             </ScrollPane>
             <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                <content>
-                  <VBox spacing="5.0">
+                  <VBox fx:id="setBox" spacing="5.0">
                      <children>
-                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Crop" VBox.vgrow="ALWAYS" />
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%BlackOrWhite" VBox.vgrow="ALWAYS" />
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
                               <Label text="%Select" />
-                              <RadioButton fx:id="includeRadio" contentDisplay="TOP" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ScopeIncluded" wrapText="true">
+                              <RadioButton fx:id="wholeRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%WholeImage" wrapText="true">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="selectGroup" />
                                  </toggleGroup>
                               </RadioButton>
+                              <RadioButton fx:id="includeRadio" contentDisplay="TOP" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ScopeIncluded" toggleGroup="$selectGroup" wrapText="true" />
                               <RadioButton fx:id="excludeRadio" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ScopeExcluded" toggleGroup="$selectGroup" wrapText="true" />
                            </children>
                         </VBox>
-                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                        <VBox fx:id="binrayBox" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
-                              <CheckBox fx:id="imageMarginsCheck" mnemonicParsing="false" selected="true" text="%CutImageMargins" />
-                              <CheckBox fx:id="clipMarginsCheck" mnemonicParsing="false" selected="true" text="%CutClipMargions" />
-                              <CheckBox fx:id="copyClipboardCheck" mnemonicParsing="false" text="%PutClipInClipboard" />
-                              <CheckBox fx:id="openClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OpenClipboardAfterCopy" wrapText="true" />
+                              <fx:include fx:id="binary" source="ControlImageBinary.fxml" />
                            </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                         </VBox>
-                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
-                              <fx:include fx:id="bgColor" source="ControlColorSet.fxml" />
-                           </children>
-                        </FlowPane>
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
                               <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">

@@ -101,12 +101,20 @@ public class ImageConvertTools {
             ImageBinary imageBinary;
             if (attributes.getBinaryConversion() == BinaryAlgorithm.Threshold
                     && attributes.getThreshold() >= 0) {
-                imageBinary = new ImageBinary(srcImage, attributes.getThreshold());
+                imageBinary = new ImageBinary();
+                imageBinary.setImage(srcImage)
+                        .setIntPara1(attributes.getThreshold());
+
             } else if (attributes.getBinaryConversion() == BinaryAlgorithm.OTSU) {
-                imageBinary = new ImageBinary(srcImage, -1);
-                imageBinary.setCalculate(true);
+                imageBinary = new ImageBinary();
+                imageBinary.setCalculate(true)
+                        .setImage(srcImage)
+                        .setIntPara1(-1);
+
             } else if (color != BufferedImage.TYPE_BYTE_BINARY || attributes.isIsDithering()) {
-                imageBinary = new ImageBinary(srcImage, -1);
+                imageBinary = new ImageBinary();
+                imageBinary.setImage(srcImage)
+                        .setIntPara1(-1);
             } else {
                 return srcImage;
             }

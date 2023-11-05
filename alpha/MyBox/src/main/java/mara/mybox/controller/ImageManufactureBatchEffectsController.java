@@ -91,8 +91,10 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
                         break;
                     case BlackOrWhite:
                         int threshold = optionsController.binaryController.threshold(source);
-                        ImageBinary imageBinary = new ImageBinary(source, threshold);
-                        imageBinary.setIsDithering(optionsController.binaryController.dither());
+                        ImageBinary imageBinary = new ImageBinary();
+                        imageBinary.setImage(source)
+                                .setIntPara1(threshold)
+                                .setIsDithering(optionsController.binaryController.dither());
                         target = imageBinary.operate();
                         break;
                     case Sepia:

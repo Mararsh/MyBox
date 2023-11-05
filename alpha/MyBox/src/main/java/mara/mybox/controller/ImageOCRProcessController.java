@@ -220,8 +220,10 @@ public class ImageOCRProcessController extends ImageViewerController {
             protected boolean handle() {
                 try {
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                    ImageBinary bin = new ImageBinary(bufferedImage, threshold);
-                    bufferedImage = bin.operateImage();
+                    ImageBinary imageBinary = new ImageBinary();
+                    imageBinary.setImage(bufferedImage)
+                            .setIntPara1(threshold);
+                    bufferedImage = imageBinary.operateImage();
                     ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
                     return ocrImage != null;
                 } catch (Exception e) {

@@ -455,16 +455,18 @@ public class ImageScope extends BaseData {
         return areaExcluded;
     }
 
-    public void setAreaExcluded(boolean areaExcluded) {
+    public ImageScope setAreaExcluded(boolean areaExcluded) {
         this.areaExcluded = areaExcluded;
+        return this;
     }
 
     public boolean isColorExcluded() {
         return colorExcluded;
     }
 
-    public void setColorExcluded(boolean colorExcluded) {
+    public ImageScope setColorExcluded(boolean colorExcluded) {
         this.colorExcluded = colorExcluded;
+        return this;
     }
 
     public List<IntPoint> getPoints() {
@@ -565,8 +567,9 @@ public class ImageScope extends BaseData {
         return eightNeighbor;
     }
 
-    public void setEightNeighbor(boolean eightNeighbor) {
+    public ImageScope setEightNeighbor(boolean eightNeighbor) {
         this.eightNeighbor = eightNeighbor;
+        return this;
     }
 
     public boolean isDistanceSquareRoot() {
@@ -581,8 +584,9 @@ public class ImageScope extends BaseData {
         return skipTransparent;
     }
 
-    public void setSkipTransparent(boolean skipTransparent) {
+    public ImageScope setSkipTransparent(boolean skipTransparent) {
         this.skipTransparent = skipTransparent;
+        return this;
     }
 
     public String getAreaData() {

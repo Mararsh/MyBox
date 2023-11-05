@@ -24,65 +24,18 @@ public class ImageBinary extends PixelsOperation {
     }
 
     public ImageBinary() {
+        init();
+    }
+
+    final public void init() {
         intPara1 = -1;
-    }
-
-    public ImageBinary(BufferedImage image, OperationType operationType) {
-        this.image = image;
-        this.operationType = operationType;
-        intPara1 = -1;
-    }
-
-    public ImageBinary(BufferedImage image, ImageScope scope, OperationType operationType) {
-        this.image = image;
-        this.scope = scope;
-        this.operationType = operationType;
-        intPara1 = -1;
-    }
-
-    public ImageBinary(BufferedImage image, int threshold) {
-        this.image = image;
-        this.scope = null;
-        this.operationType = OperationType.BlackOrWhite;
-        intPara1 = threshold;
-    }
-
-    public ImageBinary(BufferedImage image, ImageScope scope, int threshold) {
-        this.image = image;
-        this.scope = scope;
-        this.operationType = OperationType.BlackOrWhite;
-        intPara1 = threshold;
+        grayed = calculate == false;
+        operationType = OperationType.BlackOrWhite;
     }
 
     public ImageBinary(Image image) {
+        init();
         this.image = SwingFXUtils.fromFXImage(image, null);
-        this.operationType = OperationType.BlackOrWhite;
-        intPara1 = -1;
-        grayed = false;
-    }
-
-    public ImageBinary(Image image, ImageScope scope) {
-        this.image = SwingFXUtils.fromFXImage(image, null);
-        this.scope = scope;
-        this.operationType = OperationType.BlackOrWhite;
-        intPara1 = -1;
-        grayed = false;
-    }
-
-    public ImageBinary(Image image, int threshold) {
-        this.image = SwingFXUtils.fromFXImage(image, null);
-        this.scope = null;
-        this.operationType = OperationType.BlackOrWhite;
-        intPara1 = threshold;
-        grayed = false;
-    }
-
-    public ImageBinary(Image image, ImageScope scope, int threshold) {
-        this.image = SwingFXUtils.fromFXImage(image, null);
-        this.operationType = OperationType.BlackOrWhite;
-        this.scope = scope;
-        intPara1 = threshold;
-        grayed = false;
     }
 
     @Override
@@ -285,8 +238,9 @@ public class ImageBinary extends PixelsOperation {
         return calculate;
     }
 
-    public void setCalculate(boolean calculate) {
+    public ImageBinary setCalculate(boolean calculate) {
         this.calculate = calculate;
+        return this;
     }
 
 }

@@ -1,10 +1,8 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.PixelsOperation;
-import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -13,18 +11,18 @@ import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2019-9-1
+ * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageBlendColorController extends ImageSelectScopeController {
+public class ImageBlackWhiteController extends ImageSelectScopeController {
+
+    protected int threshold;
 
     @FXML
-    protected ControlColorSet colorController;
-    @FXML
-    protected ControlImagesBlend blendController;
+    protected ControlImageBinary binaryController;
 
-    public ImageBlendColorController() {
-        baseTitle = message("BlendColor");
+    public ImageBlackWhiteController() {
+        baseTitle = message("BlackOrWhite");
     }
 
     @Override
@@ -32,9 +30,8 @@ public class ImageBlendColorController extends ImageSelectScopeController {
         try {
             super.initMore();
 
-            colorController.init(this, baseName + "NewColor", Color.PINK);
+            binaryController.setParameters(editor.imageView);
 
-            blendController.setParameters(this, editor.imageView);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -56,16 +53,14 @@ public class ImageBlendColorController extends ImageSelectScopeController {
             @Override
             protected boolean handle() {
                 try {
+                    threshold = binaryController.threshold();
                     scope = scope();
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                            editor.imageView.getImage(),
-                            scope,
-                            PixelsOperation.OperationType.Blend,
-                            PixelsOperation.ColorActionType.Set)
-                            .setColorPara1(colorController.awtColor())
+                    ImageBinary imageBinary = new ImageBinary(editor.imageView.getImage());
+                    imageBinary.setScope(scope)
+                            .setIntPara1(threshold)
+                            .setIsDithering(binaryController.dither())
                             .setExcludeScope(excludeRadio.isSelected());
-                    ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blendController.blender());
-                    handledImage = pixelsOperation.operateFxImage();
+                    handledImage = imageBinary.operateFxImage();
                     return handledImage != null;
                 } catch (Exception e) {
                     MyBoxLog.debug(e);
@@ -77,7 +72,7 @@ public class ImageBlendColorController extends ImageSelectScopeController {
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
-                editor.updateImage("BlendColor", null, scope, handledImage, cost);
+                editor.updateImage("BlackOrWhite", null, scope, handledImage, cost);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }
@@ -86,16 +81,17 @@ public class ImageBlendColorController extends ImageSelectScopeController {
         start(task);
     }
 
+
     /*
         static methods
      */
-    public static ImageBlendColorController open(BaseImageController parent) {
+    public static ImageBlackWhiteController open(BaseImageController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageBlendColorController controller = (ImageBlendColorController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageBlendColorFxml, false);
+            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageBlackWhiteFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {
