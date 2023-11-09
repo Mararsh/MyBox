@@ -19,6 +19,7 @@ public class MenuImageViewController extends MenuImageBaseController {
     protected ImageView imageView;
     protected BaseImageController viewerController;
 
+    @Override
     public void setParameters(BaseImageController controller, double x, double y) {
         try {
             viewerController = controller;
@@ -27,12 +28,6 @@ public class MenuImageViewController extends MenuImageBaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    @Override
-    public void selectAllAction() {
-        viewerController.selectAllAction();
     }
 
     @FXML
@@ -71,6 +66,22 @@ public class MenuImageViewController extends MenuImageBaseController {
     @FXML
     public void renameAction() {
         viewerController.renameAction();
+    }
+
+    @FXML
+    @Override
+    public void systemMethod() {
+        viewerController.systemMethod();
+    }
+
+    @FXML
+    public void filesListAction() {
+        FileBrowseController.open(viewerController);
+    }
+
+    @FXML
+    public void selectScope() {
+        viewerController.selectScope();
     }
 
     @FXML

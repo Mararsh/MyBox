@@ -26,10 +26,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             pickColor(p, imageView);
             return;
         }
-
         if (event.getClickCount() == 1) {
             imageSingleClicked(event, p);
-
         }
     }
 
@@ -38,7 +36,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return;
         }
         if (event.getButton() == MouseButton.SECONDARY) {
-            popImageMenu(event.getScreenX(), event.getScreenY());
+            popContextMenu(event.getScreenX(), event.getScreenY());
         }
     }
 

@@ -256,7 +256,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             vbox.setOnMouseClicked((MouseEvent event) -> {
                 File clickedFile = imageFileList.get(index);
                 if (event.getButton() == MouseButton.SECONDARY) {
-                    popImageMenu(index, iView, event);
+                    popContextMenu(index, iView, event);
                     return;
                 } else if (event.getClickCount() > 1) {
                     ImageViewerController.openFile(clickedFile);

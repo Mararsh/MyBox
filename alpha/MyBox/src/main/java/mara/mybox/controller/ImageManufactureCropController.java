@@ -98,14 +98,14 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                 Color bgColor = colorSetController.color();
                 newImage = ScopeTools.scopeImage(imageView.getImage(),
                         scopeController.scope, bgColor,
-                        imageMarginsCheck.isSelected(), includeRadio.isSelected());
+                        imageMarginsCheck.isSelected(), includeRadio.isSelected(), true);
                 if (task == null || isCancelled()) {
                     return false;
                 }
                 if (UserConfig.getBoolean(baseName + "CropPutClipboard", false)) {
                     cuttedClip = ScopeTools.scopeImage(imageView.getImage(),
                             scopeController.scope, bgColor,
-                            clipMarginsCheck.isSelected(), excludeRadio.isSelected());
+                            clipMarginsCheck.isSelected(), excludeRadio.isSelected(), true);
                     ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);
                 }
                 return newImage != null;

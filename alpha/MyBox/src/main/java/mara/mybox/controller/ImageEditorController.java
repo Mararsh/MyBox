@@ -14,12 +14,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -46,7 +44,6 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -277,7 +274,7 @@ public class ImageEditorController extends BaseImageController {
                 String name = imageHistoriesPath.getAbsolutePath() + File.separator
                         + prefix + "_" + (new Date().getTime()) + "_" + op;
                 name += "_" + new Random().nextInt(1000);
-                return name;
+                return FileNameTools.filter(name);
             }
 
             @Override
@@ -364,127 +361,46 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @Override
-    public List<MenuItem> fileMenuItems(Event fevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            menu = new MenuItem(message("Save"), StyleTools.getIconImageView("iconSave.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                saveAction();
-            });
-            items.add(menu);
-
-            if (sourceFile != null) {
-                menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    recoverAction();
-                });
-                items.add(menu);
-
-            }
-
-            menu = new MenuItem(message("SaveAs"), StyleTools.getIconImageView("iconSaveAs.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageConverterController.open(this);
-            });
-            items.add(menu);
-
-            if (sourceFile != null) {
-                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", false));
-                backItem.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
-                    }
-                });
-                items.add(backItem);
-
-                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    FileBackupController.load(this);
-                });
-                items.add(menu);
-            } else {
-                return items;
-            }
-
-            String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
-            if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
-                menu = new MenuItem(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    ImageFramesController.open(this);
-                });
-                items.add(menu);
-            }
-            items.add(new SeparatorMenuItem());
-
-            if (imageInformation != null) {
-                menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                items.add(menu);
-
-                menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    metaAction();
-                });
-                items.add(menu);
-
-            }
-
-            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                openSourcePath();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("ImagesBrowser"), StyleTools.getIconImageView("iconBrowse.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                browseAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                FileBrowseController.open(this);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                systemMethod();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                renameAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                deleteAction();
-            });
-            items.add(menu);
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
+
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
+                        StyleTools.getIconImageView("iconUndo.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    undoAction();
+                });
+                menu.setDisable(undoButton.isDisabled());
+                items.add(menu);
+
+                menu = new MenuItem(message("Redo") + "    Ctrl+Y " + message("Or") + " Alt+Y",
+                        StyleTools.getIconImageView("iconRedo.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    redoAction();
+                });
+                menu.setDisable(redoButton.isDisabled());
+                items.add(menu);
+
+                menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    showHistories();
+                });
+                menu.setDisable(recoverButton.isDisabled());
+                items.add(menu);
+
+                items.add(new SeparatorMenuItem());
+            }
+
+            menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
+                    StyleTools.getIconImageView("iconTarget.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                selectScope();
+            });
+            items.add(menu);
+
+            items.add(copyMenu(fevent));
 
             menu = new MenuItem(message("Crop"), StyleTools.getIconImageView("iconCrop.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -510,10 +426,30 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            Menu colorNenu = new Menu(message("Color"), StyleTools.getIconImageView("iconColor.png"));
-            items.add(colorNenu);
+            items.add(colorMenu(fevent));
 
-            menu = new MenuItem(message("ReplaceColor"), StyleTools.getIconImageView("iconReplace.png"));
+            items.add(effectMenu(fevent));
+
+            items.add(tranformMenu(fevent));
+
+            menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageEraseController.open(this);
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public Menu colorMenu(Event fevent) {
+        try {
+            Menu colorNenu = new Menu(message("Color"), StyleTools.getIconImageView("iconColor.png"));
+
+            MenuItem menu = new MenuItem(message("ReplaceColor"), StyleTools.getIconImageView("iconReplace.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageReplaceColorController.open(this);
             });
@@ -539,34 +475,48 @@ public class ImageEditorController extends BaseImageController {
 
             menu = new MenuItem(message("Grey"), StyleTools.getIconImageView("iconGrey.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageGreyController.open(this);
             });
             colorNenu.getItems().add(menu);
 
             menu = new MenuItem(message("Sepia"), StyleTools.getIconImageView("iconSepia.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageSepiaController.open(this);
             });
             colorNenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Posterizing"), StyleTools.getIconImageView("iconPosterizing.png"));
+            menu = new MenuItem(message("ReduceColors"), StyleTools.getIconImageView("iconReduceColors.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageReduceColorsController.open(this);
             });
             colorNenu.getItems().add(menu);
 
+            menu = new MenuItem(message("Thresholding"), StyleTools.getIconImageView("iconThresholding.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageThresholdingController.open(this);
+            });
+            colorNenu.getItems().add(menu);
+
+            return colorNenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public Menu effectMenu(Event fevent) {
+        try {
             Menu effectNenu = new Menu(message("Effect"), StyleTools.getIconImageView("iconMatrix.png"));
-            items.add(effectNenu);
 
-            menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
+            MenuItem menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageMosaicController.open(this);
             });
             effectNenu.getItems().add(menu);
 
             menu = new MenuItem(message("FrostedGlass"), StyleTools.getIconImageView("iconFrosted.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageGlassController.open(this);
             });
             effectNenu.getItems().add(menu);
 
@@ -590,13 +540,13 @@ public class ImageEditorController extends BaseImageController {
 
             menu = new MenuItem(message("EdgeDetection"), StyleTools.getIconImageView("iconEdgeDetection.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageEdgeController.open(this);
             });
             effectNenu.getItems().add(menu);
 
             menu = new MenuItem(message("Emboss"), StyleTools.getIconImageView("iconEmboss.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageEmbossController.open(this);
             });
             effectNenu.getItems().add(menu);
 
@@ -606,10 +556,18 @@ public class ImageEditorController extends BaseImageController {
             });
             effectNenu.getItems().add(menu);
 
-            Menu tranformNenu = new Menu(message("Transform"), StyleTools.getIconImageView("iconRotateRight.png"));
-            items.add(tranformNenu);
+            return effectNenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 
-            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+    public Menu tranformMenu(Event fevent) {
+        try {
+            Menu tranformNenu = new Menu(message("Transform"), StyleTools.getIconImageView("iconRotateRight.png"));
+
+            MenuItem menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 rotateRight();
             });
@@ -652,55 +610,7 @@ public class ImageEditorController extends BaseImageController {
             });
             tranformNenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageEraseController.open(this);
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    @Override
-    public List<MenuItem> viewMenuItems(Event fevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                popAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SelectScope"), StyleTools.getIconImageView("iconTarget.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                selectScope();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyAction();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-            menu = new MenuItem(message("Options"), StyleTools.getIconImageView("iconOptions.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                options();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            return items;
+            return tranformNenu;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -769,7 +679,11 @@ public class ImageEditorController extends BaseImageController {
     @FXML
     @Override
     public void pasteAction() {
-        ImagePasteController.open(this);
+        if (imageView.getImage() == null) {
+            loadContentInSystemClipboard();
+        } else {
+            ImagePasteController.open(this);
+        }
     }
 
     @FXML
@@ -833,11 +747,11 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @Override
-    protected void popImageMenu(double x, double y) {
+    protected void popContextMenu(double x, double y) {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-//        MenuImageManufactureController.manufactureMenu((ImageManufactureController) this, x, y);
+        MenuImageEditController.editMenu(this, x, y);
     }
 
     @Override

@@ -45,7 +45,7 @@ import org.w3c.dom.NodeList;
  * @License Apache License Version 2.0
  */
 public class ImageScopeTools {
-    
+
     public static ImageScope.ScopeType scopeType(String type) {
         if (type == null) {
             return null;
@@ -73,7 +73,7 @@ public class ImageScopeTools {
         }
         return null;
     }
-    
+
     public static void cloneValues(ImageScope targetScope, ImageScope sourceScope) {
         try {
             List<IntPoint> npoints = new ArrayList<>();
@@ -100,18 +100,17 @@ public class ImageScopeTools {
             targetScope.setCreateTime(sourceScope.getCreateTime());
             targetScope.setOutline(sourceScope.getOutline());
             targetScope.setEightNeighbor(sourceScope.isEightNeighbor());
-            targetScope.setSkipTransparent(sourceScope.isSkipTransparent());
         } catch (Exception e) {
             //            MyBoxLog.debug(e);
         }
     }
-    
+
     public static ImageScope cloneAll(ImageScope sourceScope) {
         ImageScope targetScope = new ImageScope();
         ImageScopeTools.cloneAll(targetScope, sourceScope);
         return targetScope;
     }
-    
+
     public static void cloneAll(ImageScope targetScope, ImageScope sourceScope) {
         try {
             targetScope.setImage(sourceScope.getImage());
@@ -121,7 +120,7 @@ public class ImageScopeTools {
         } catch (Exception e) {
         }
     }
-    
+
     public static boolean inShape(DoubleShape shape, boolean areaExcluded, int x, int y) {
         if (areaExcluded) {
             return !DoubleShape.contains(shape, x, y);
@@ -129,7 +128,7 @@ public class ImageScopeTools {
             return DoubleShape.contains(shape, x, y);
         }
     }
-    
+
     public static boolean isColorMatchSquare(List<Color> colors, boolean colorExcluded, int colorDistanceSqure, Color color) {
         if (colors == null || colors.isEmpty()) {
             return true;
@@ -150,7 +149,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static boolean isRedMatch(List<Color> colors, boolean colorExcluded, int colorDistance, Color color) {
         if (colors == null || colors.isEmpty()) {
             return true;
@@ -171,7 +170,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static boolean isGreenMatch(List<Color> colors, boolean colorExcluded, int colorDistance, Color color) {
         if (colors == null || colors.isEmpty()) {
             return true;
@@ -192,7 +191,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static boolean isBlueMatch(List<Color> colors, boolean colorExcluded, int colorDistance, Color color) {
         if (colors == null || colors.isEmpty()) {
             return true;
@@ -213,7 +212,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static boolean isHueMatch(List<Color> colors, boolean colorExcluded, float hsbDistance, Color color) {
         if (colors == null || colors.isEmpty()) {
             return true;
@@ -234,7 +233,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static boolean isSaturationMatch(List<Color> colors, boolean colorExcluded, float hsbDistance, Color color) {
         if (colors == null || colors.isEmpty()) {
             return true;
@@ -255,7 +254,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static boolean isBrightnessMatch(List<Color> colors, boolean colorExcluded, float hsbDistance, Color color) {
         if (colors == null || colors.isEmpty()) {
             return true;
@@ -268,7 +267,7 @@ public class ImageScopeTools {
             }
             return true;
         } else {
-            
+
             for (Color oColor : colors) {
                 if (ColorMatchTools.isBrightnessMatch(color, oColor, hsbDistance)) {
                     return true;
@@ -277,7 +276,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static BufferedImage indicateEllipse(BufferedImage source, Color color, int lineWidth, DoubleEllipse ellipse) {
         try {
             if (!ellipse.isValid()) {
@@ -307,7 +306,7 @@ public class ImageScopeTools {
             return source;
         }
     }
-    
+
     public static BufferedImage indicateRectangle(BufferedImage source, Color color, int lineWidth, DoubleRectangle rect) {
         try {
             int width = source.getWidth();
@@ -333,7 +332,7 @@ public class ImageScopeTools {
             return source;
         }
     }
-    
+
     public static BufferedImage indicateCircle(BufferedImage source, Color color, int lineWidth, DoubleCircle circle) {
         try {
             if (!circle.isValid()) {
@@ -362,7 +361,7 @@ public class ImageScopeTools {
             return source;
         }
     }
-    
+
     public static BufferedImage indicateSplit(BufferedImage source,
             List<Integer> rows, List<Integer> cols, Color lineColor, int lineWidth, boolean showSize, double scale) {
         try {
@@ -450,19 +449,19 @@ public class ImageScopeTools {
                     continue;
                 }
                 tag = child.getNodeName();
-                
+
                 if (tag == null || tag.isBlank()) {
                     continue;
                 }
                 if (XmlTools.matchXmlTag("Background", tag)) {
                     scope.setFile(cdata(child));
-                    
+
                 } else if (XmlTools.matchXmlTag("Name", tag)) {
                     scope.setName(cdata(child));
-                    
+
                 } else if (XmlTools.matchXmlTag("Outline", tag)) {
                     scope.setOutlineName(cdata(child));
-                    
+
                 } else {
                     String value = child.getTextContent();
                     if (value == null || value.isBlank()) {
@@ -470,34 +469,34 @@ public class ImageScopeTools {
                     }
                     if (XmlTools.matchXmlTag("ScopeType", tag)) {
                         scope.setScopeType(ImageScopeTools.scopeType(value));
-                        
+
                     } else if (XmlTools.matchXmlTag("ScopeColorType", tag)) {
                         scope.setColorScopeType(ImageScope.ColorScopeType.valueOf(value));
-                        
+
                     } else if (XmlTools.matchXmlTag("Area", tag)) {
                         scope.setAreaData(value);
-                        
+
                     } else if (XmlTools.matchXmlTag("Colors", tag)) {
                         scope.setColorData(value);
-                        
+
                     } else if (XmlTools.matchXmlTag("ColorDistance", tag)) {
                         try {
                             scope.setColorDistance(Integer.parseInt(value));
                         } catch (Exception ex) {
                         }
-                        
+
                     } else if (XmlTools.matchXmlTag("AreaExcluded", tag)) {
                         scope.setAreaExcluded(StringTools.isTrue(value));
-                        
+
                     } else if (XmlTools.matchXmlTag("ColorExcluded", tag)) {
                         scope.setColorExcluded(StringTools.isTrue(value));
-                        
+
                     } else if (XmlTools.matchXmlTag("CreateTime", tag)) {
                         scope.setCreateTime(DateTools.encodeDate(value));
-                        
+
                     } else if (XmlTools.matchXmlTag("ModifyTime", tag)) {
                         scope.setModifyTime(DateTools.encodeDate(value));
-                        
+
                     }
                 }
             }
@@ -586,7 +585,7 @@ public class ImageScopeTools {
             return null;
         }
     }
-    
+
     public static String toJSON(ImageScope scope, String inPrefix) {
         try {
             if (scope == null || scope.getScopeType() == null) {
@@ -650,7 +649,7 @@ public class ImageScopeTools {
             return null;
         }
     }
-    
+
     public static String toHtml(ImageScope scope) {
         try {
             if (scope == null || scope.getScopeType() == null) {
@@ -733,7 +732,7 @@ public class ImageScopeTools {
         }
         return decodeColorData(scope.getScopeType(), scope.getColorData(), scope);
     }
-    
+
     public static boolean decodeColorData(ImageScope.ScopeType type, String colorData, ImageScope scope) {
         if (type == null || colorData == null || scope == null) {
             return false;
@@ -766,14 +765,14 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static boolean decodeOutline(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         return decodeOutline(scope.getScopeType(), scope.getOutlineName(), scope);
     }
-    
+
     public static boolean decodeOutline(ImageScope.ScopeType type, String outline, ImageScope scope) {
         if (type == null || outline == null || scope == null) {
             return false;
@@ -792,7 +791,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static String encodeColorData(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return "";
@@ -822,7 +821,7 @@ public class ImageScopeTools {
         }
         return s;
     }
-    
+
     public static String encodeAreaData(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return "";
@@ -880,14 +879,14 @@ public class ImageScopeTools {
         }
         return s;
     }
-    
+
     public static boolean decodeAreaData(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         return decodeAreaData(scope.getScopeType(), scope.getAreaData(), scope);
     }
-    
+
     public static boolean decodeAreaData(ImageScope.ScopeType type, String areaData, ImageScope scope) {
         if (type == null || areaData == null || scope == null) {
             return false;
@@ -961,7 +960,7 @@ public class ImageScopeTools {
             return false;
         }
     }
-    
+
     public static String encodeOutline(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null
                 || scope.getScopeType() != ImageScope.ScopeType.Outline
@@ -985,5 +984,5 @@ public class ImageScopeTools {
         }
         return s;
     }
-    
+
 }

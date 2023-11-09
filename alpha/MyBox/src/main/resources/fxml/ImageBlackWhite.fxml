@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%BlackOrWhite" VBox.vgrow="ALWAYS" />
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
-                              <Label text="%Select" />
+                              <Label text="%Object" />
                               <RadioButton fx:id="wholeRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%WholeImage" wrapText="true">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="selectGroup" />
@@ -47,6 +47,7 @@ License:    Apache License Version 2.0
                               </RadioButton>
                               <RadioButton fx:id="includeRadio" contentDisplay="TOP" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ScopeIncluded" toggleGroup="$selectGroup" wrapText="true" />
                               <RadioButton fx:id="excludeRadio" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ScopeExcluded" toggleGroup="$selectGroup" wrapText="true" />
+                              <CheckBox fx:id="ignoreTransparentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" wrapText="true" />
                            </children>
                         </VBox>
                         <VBox fx:id="binrayBox" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -59,6 +60,15 @@ License:    Apache License Version 2.0
                         </VBox>
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                               <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

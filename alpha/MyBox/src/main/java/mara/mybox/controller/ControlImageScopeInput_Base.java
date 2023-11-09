@@ -14,7 +14,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
@@ -37,6 +36,7 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlImageScopeInput_Base extends BaseShapeController {
 
+    protected ImageSelectScopeController selector;
     protected BaseImageController imageController;
     protected Image srcImage;
     protected TableColor tableColor;
@@ -47,29 +47,27 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
-    protected Tab areaTab, colorsTab, matchTab, pixTab, optionsTab;
+    protected Tab areaTab, colorsTab, matchTab, pixTab;
     @FXML
     protected VBox viewBox, setBox, areaBox, rectangleBox, circleBox, pointsBox;
     @FXML
-    protected ComboBox<String> scopeDistanceSelector, opacitySelector,
-            strokeWidthSelector, anchorSizeSelector;
+    protected ComboBox<String> scopeDistanceSelector, opacitySelector;
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
-    protected ControlColorSet colorController, maskColorController,
-            strokeColorController, anchorColorController;
+    protected ControlColorSet colorController, maskColorController;
     @FXML
     protected ListView<Color> colorsList;
     @FXML
     protected ControlPoints pointsController;
     @FXML
-    protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
-            ignoreTransparentCheck, squareRootCheck;
+    protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck,
+            eightNeighborCheck, squareRootCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button shapeButton, goScopeButton, withdrawPointButton, popScopeButton,
+    protected Button shapeButton, goScopeButton, popScopeButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
@@ -79,8 +77,6 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
             colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
     @FXML
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
-    @FXML
-    protected FlowPane opPane;
 
     public Image srcImage() {
         if (srcImage == null) {
@@ -109,22 +105,6 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
         });
     }
 
-    public ImageScope whole() {
-        try {
-            ImageScope whole = new ImageScope()
-                    .setImage(srcImage())
-                    .setScopeType(null)
-                    .setAreaExcluded(areaExcludedCheck.isSelected())
-                    .setColorExcluded(colorExcludedCheck.isSelected())
-                    .setEightNeighbor(eightNeighborCheck.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
-            return whole;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public ImageScope finalScope() {
         try {
             if (!isValidScope()) {
@@ -139,8 +119,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
             scope.setImage(srcImage())
                     .setAreaExcluded(areaExcludedCheck.isSelected())
                     .setColorExcluded(colorExcludedCheck.isSelected())
-                    .setEightNeighbor(eightNeighborCheck.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setEightNeighbor(eightNeighborCheck.isSelected());
             return scope;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -163,7 +142,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
                 try {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             srcImage(), scope, PixelsOperation.OperationType.ShowScope);
-                    pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    pixelsOperation.setSkipTransparent(selector.ignoreTransparentCheck.isSelected());
                     if (task == null || isCancelled()) {
                         return false;
                     }
@@ -230,11 +209,13 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
         return true;
     }
 
-    public Image scopedImage(Color bgColor, boolean cutMargins, boolean exclude) {
+    public Image scopedImage(Color bgColor, boolean cutMargins,
+            boolean exclude, boolean ignoreTransparent) {
         if (finalScope() == null) {
             return srcImage();
         }
-        return ScopeTools.scopeImage(srcImage(), scope, bgColor, cutMargins, exclude);
+        return ScopeTools.scopeImage(srcImage(), scope, bgColor,
+                cutMargins, exclude, ignoreTransparent);
     }
 
     @FXML
@@ -253,7 +234,8 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
                 try {
                     scopedImage = scopedImage(
                             ColorConvertTools.converColor(scope.getMaskColor()),
-                            true, false);
+                            true, false,
+                            selector.ignoreTransparentCheck.isSelected());
                     return scopedImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);

@@ -39,20 +39,21 @@ License:    Apache License Version 2.0
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Crop" VBox.vgrow="ALWAYS" />
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
-                              <Label text="%Select" />
+                              <Label text="%Object" />
                               <RadioButton fx:id="includeRadio" contentDisplay="TOP" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ScopeIncluded" wrapText="true">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="selectGroup" />
                                  </toggleGroup>
                               </RadioButton>
                               <RadioButton fx:id="excludeRadio" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ScopeExcluded" toggleGroup="$selectGroup" wrapText="true" />
+                              <CheckBox fx:id="ignoreTransparentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" wrapText="true" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
                               <CheckBox fx:id="imageMarginsCheck" mnemonicParsing="false" selected="true" text="%CutImageMargins" />
-                              <CheckBox fx:id="clipMarginsCheck" mnemonicParsing="false" selected="true" text="%CutClipMargions" />
                               <CheckBox fx:id="copyClipboardCheck" mnemonicParsing="false" text="%PutClipInClipboard" />
+                              <CheckBox fx:id="clipMarginsCheck" mnemonicParsing="false" selected="true" text="%CutClipMargions" />
                               <CheckBox fx:id="openClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OpenClipboardAfterCopy" wrapText="true" />
                            </children>
                         </VBox>

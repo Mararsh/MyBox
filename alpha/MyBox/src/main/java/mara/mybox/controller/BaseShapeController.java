@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -145,6 +146,12 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
             MyBoxLog.debug(e);
             return false;
         }
+    }
+
+    @FXML
+    @Override
+    public void options() {
+        ImageShapeOptionsController.open(this);
     }
 
     @Override

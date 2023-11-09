@@ -40,7 +40,7 @@ License:    Apache License Version 2.0
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%BlendColor" VBox.vgrow="ALWAYS" />
                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                            <children>
-                              <Label text="%Select" />
+                              <Label text="%Object" />
                               <RadioButton fx:id="wholeRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%WholeImage" wrapText="true">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="selectGroup" />

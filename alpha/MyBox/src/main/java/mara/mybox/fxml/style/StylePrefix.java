@@ -43,15 +43,15 @@ public class StylePrefix {
         } else if (id.startsWith("colorOpacity")) {
             return new StyleData(id, "", message("Opacity"), "", "iconOpacity.png");
         } else if (id.startsWith("colorSet")) {
-            return new StyleData(id, message("Set"), "CTRL+1", "iconEqual.png");
+            return new StyleData(id, message("Set"), "CTRL+S / ALT+S", "iconEqual.png");
         } else if (id.startsWith("colorIncrease")) {
-            return new StyleData(id, message("Increase"), "CTRL+2", "iconPlus.png");
+            return new StyleData(id, message("Increase"), "CTRL+I / ALT+I", "iconPlus.png");
         } else if (id.startsWith("colorDecrease")) {
-            return new StyleData(id, message("Decrease"), "CTRL+3", "iconMinus.png");
+            return new StyleData(id, message("Decrease"), "CTRL+D / ALT+D", "iconMinus.png");
         } else if (id.startsWith("colorFilter")) {
-            return new StyleData(id, message("Filter"), "CTRL+4", "iconFilter.png");
+            return new StyleData(id, message("Filter"), "CTRL+F / ALT+F", "iconFilter.png");
         } else if (id.startsWith("colorInvert")) {
-            return new StyleData(id, message("Invert"), "CTRL+5", "iconInvert.png");
+            return new StyleData(id, message("Invert"), "CTRL+X / ALT+X", "iconInvert.png");
         } else {
             return StyleTools.getStyleData(node, id);
         }

@@ -334,6 +334,9 @@ public class MenuImageBaseController extends MenuController {
         if (openSourceButton != null) {
             openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         }
+        if (systemMethodButton != null) {
+            systemMethodButton.setDisable(sourceFile == null || !sourceFile.exists());
+        }
         if (getMyStage() != null) {
             myStage.setTitle(imageController.getTitle());
         }
@@ -414,8 +417,8 @@ public class MenuImageBaseController extends MenuController {
     }
 
     @FXML
-    public void manufactureAction() {
-        imageController.manufactureAction();
+    public void editAction() {
+        imageController.editAction();
     }
 
     @FXML

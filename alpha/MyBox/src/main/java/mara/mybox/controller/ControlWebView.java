@@ -1018,7 +1018,7 @@ public class ControlWebView extends BaseController {
                         ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
                         break;
                     case "edit":
-                        ImageManufactureController.openImage(image);
+                        ImageEditorController.openImage(image);
                         break;
                     default:
                         ImageViewerController.openImage(image);
@@ -1160,7 +1160,7 @@ public class ControlWebView extends BaseController {
             ToggleGroup clickGroup = new ToggleGroup();
             String currentClick = UserConfig.getString("WebViewWhenLeftClickImageOrLink", "PopMenu");
 
-            RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
+            RadioMenuItem clickPopMenu = new RadioMenuItem(message("ContextMenu"), StyleTools.getIconImageView("iconMenu.png"));
             clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
             clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

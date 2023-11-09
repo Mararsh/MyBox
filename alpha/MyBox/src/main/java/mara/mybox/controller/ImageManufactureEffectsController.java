@@ -295,7 +295,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     ImageQuantization quantization = ImageQuantizationFactory.create(image, scope,
                             QuantizationAlgorithm.PopularityQuantization, 16, 256, 2, 4, 3, false, true, true);
                     bufferedImage = quantization.operateImage();
-                    tmpFile = FileTmpTools.generateFile(message("Posterizing"), "png").getAbsolutePath();
+                    tmpFile = FileTmpTools.generateFile(message("ReduceColors"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);

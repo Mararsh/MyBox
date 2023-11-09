@@ -96,7 +96,8 @@ public class ImageCropController extends ImageSelectScopeController {
                     handledImage = scopeController.scopedImage(
                             bgColorController.color(),
                             imageMarginsCheck.isSelected(),
-                            includeRadio.isSelected());
+                            includeRadio.isSelected(),
+                            ignoreTransparentCheck.isSelected());
                     if (handledImage == null || task == null || isCancelled()) {
                         return false;
                     }
@@ -104,7 +105,8 @@ public class ImageCropController extends ImageSelectScopeController {
                         cuttedClip = scopeController.scopedImage(
                                 bgColorController.color(),
                                 clipMarginsCheck.isSelected(),
-                                excludeRadio.isSelected());
+                                excludeRadio.isSelected(),
+                                ignoreTransparentCheck.isSelected());
                         return ImageClipboard.add(cuttedClip,
                                 ImageClipboard.ImageSource.Crop) != null;
                     } else {

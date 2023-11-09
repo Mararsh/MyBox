@@ -151,7 +151,7 @@ public class ControlInfoTreeListSelector extends ControlInfoTreeList {
         });
         nothingMenu.setToggleGroup(clickGroup);
 
-        RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
+        RadioMenuItem clickPopMenu = new RadioMenuItem(message("ContextMenu"), StyleTools.getIconImageView("iconMenu.png"));
         clickPopMenu.setSelected("PopMenu".equals(currentClick));
         clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override

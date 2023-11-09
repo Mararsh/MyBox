@@ -105,7 +105,9 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                         } else {
                             newImage = ScopeTools.scopeImage(imageView.getImage(),
                                     scopeController.scope, bgColor,
-                                    marginsCheck.isSelected(), excludeRadio.isSelected());
+                                    marginsCheck.isSelected(),
+                                    excludeRadio.isSelected(),
+                                    true);
                         }
                     }
 

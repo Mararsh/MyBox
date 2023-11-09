@@ -1,6 +1,5 @@
 package mara.mybox.fxml.style;
 
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -19,13 +18,11 @@ public class StyleToggleButton {
         }
         switch (id) {
             case "pickColorButton":
-                return new StyleData("pickColorButton", Languages.message("PickColor"), Languages.message("ColorPickerComments"), "", "iconPickColor.png");
-            case "pickFillColorButton":
-                return new StyleData("pickFillColorButton", Languages.message("PickColor"), Languages.message("ColorPickerComments"), "", "iconPickColor.png");
+                return new StyleData("pickColorButton", message("PickColor"), "", "iconPickColor.png");
             case "fullScreenButton":
-                return new StyleData(id, Languages.message("FullScreen"), "", "iconExpand.png");
+                return new StyleData(id, message("FullScreen"), "", "iconExpand.png");
             case "soundButton":
-                return new StyleData(id, Languages.message("Mute"), "", "iconMute.png");
+                return new StyleData(id, message("Mute"), "", "iconMute.png");
             default:
                 return null;
         }

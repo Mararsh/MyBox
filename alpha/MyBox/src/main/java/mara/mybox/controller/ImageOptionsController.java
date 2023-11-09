@@ -236,7 +236,6 @@ public class ImageOptionsController extends BaseController {
                         alphaLabel.setStyle(NodeStyleTools.darkRedTextStyle());
                     } else {
                         alphaLabel.setText("");
-                        popSuccessful();
                     }
                 }
             });
@@ -250,7 +249,6 @@ public class ImageOptionsController extends BaseController {
                             UserConfig.setInt("ThumbnailWidth", v);
                             AppVariables.thumbnailWidth = v;
                             thumbnailWidthInput.setStyle(null);
-                            popSuccessful();
                         } else {
                             thumbnailWidthInput.setStyle(UserConfig.badStyle());
                         }
@@ -260,7 +258,19 @@ public class ImageOptionsController extends BaseController {
                 }
             });
 
-            setValues();
+            isSettingValues = true;
+
+            gridWidthSelector.setValue(UserConfig.getInt("GridLinesWidth", 1) + "");
+            int gi = UserConfig.getInt("GridLinesInterval", -1);
+            gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
+            gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
+            decimalSelector.setValue(UserConfig.imageScale() + "");
+
+            gridColorController.asSaved();
+
+            thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
+
+            isSettingValues = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -351,26 +361,6 @@ public class ImageOptionsController extends BaseController {
 
             checkHints();
 
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setValues() {
-        try {
-            isSettingValues = true;
-
-            gridWidthSelector.setValue(UserConfig.getInt("GridLinesWidth", 1) + "");
-            int gi = UserConfig.getInt("GridLinesInterval", -1);
-            gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
-            gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
-            decimalSelector.setValue(UserConfig.imageScale() + "");
-
-            gridColorController.asSaved();
-
-            thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
-
-            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

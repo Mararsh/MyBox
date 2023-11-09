@@ -46,7 +46,7 @@ public class ControlImageEffectOptions extends BaseController {
     @FXML
     protected VBox setBox, binrayBox, quanBox, edgeBox;
     @FXML
-    protected RadioButton PosterizingRadio, ThresholdingRadio, GrayRadio,
+    protected RadioButton ReduceColorsRadio, ThresholdingRadio, GrayRadio,
             SepiaRadio, BlackOrWhiteRadio, EdgeDetectionRadio, EmbossRadio,
             effectMosaicRadio, effectFrostedRadio,
             eightLaplaceRadio, eightLaplaceExcludedRadio, fourLaplaceRadio, fourLaplaceExcludedRadio;
@@ -126,9 +126,9 @@ public class ControlImageEffectOptions extends BaseController {
                 effectType = OperationType.Emboss;
                 makeEmbossBox();
 
-            } else if (PosterizingRadio.isSelected()) {
+            } else if (ReduceColorsRadio.isSelected()) {
                 effectType = OperationType.Quantization;
-                makePosterizingBox();
+                makeReduceColorsBox();
 
             } else if (ThresholdingRadio.isSelected()) {
                 effectType = OperationType.Thresholding;
@@ -293,7 +293,7 @@ public class ControlImageEffectOptions extends BaseController {
         }
     }
 
-    protected void makePosterizingBox() {
+    protected void makeReduceColorsBox() {
         try {
             setBox.getChildren().addAll(quanBox);
             if (okButton != null) {

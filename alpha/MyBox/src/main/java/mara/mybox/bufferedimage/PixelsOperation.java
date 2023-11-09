@@ -73,7 +73,6 @@ public abstract class PixelsOperation {
         }
         if (scope != null) {
             scope = ImageScopeFactory.create(scope);
-            skipTransparent = scope.isSkipTransparent();
         }
         if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
             isDithering = false;

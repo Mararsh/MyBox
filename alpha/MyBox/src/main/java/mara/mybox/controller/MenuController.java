@@ -268,12 +268,12 @@ public class MenuController extends BaseChildController {
     }
 
     public static MenuController open(BaseController parent, Node node, Event event) {
-        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+        Point2D everntCoord = LocateTools.coordinate(event);
         return open(parent, node, everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
     }
 
     public static MenuController pop(BaseController parent, Node node, Event event) {
-        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+        Point2D everntCoord = LocateTools.coordinate(event);
         return pop(parent, node, everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
     }
 

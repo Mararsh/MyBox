@@ -18,7 +18,7 @@ import mara.mybox.value.Languages;
  */
 public abstract class ImagesBrowserController_Menu extends ImagesBrowserController_Action {
 
-    protected void popImageMenu(int index, ImageView iView, MouseEvent event) {
+    protected void popContextMenu(int index, ImageView iView, MouseEvent event) {
         if (iView == null || iView.getImage() == null) {
             return;
         }

@@ -6,6 +6,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Blend;
+import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Color;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -21,27 +23,24 @@ public class PixelsOperationFactory {
     }
 
     public static PixelsOperation create(BufferedImage image, ImageScope scope, OperationType operationType) {
-        switch (operationType) {
-            case ShowScope:
-                return new ShowScope(image, scope);
-            case Sepia:
-                return new Sepia(image, scope);
-            case Thresholding:
-                return new Thresholding(image, scope);
-            default:
-                return null;
-        }
+        return create(image, scope, operationType, null);
     }
 
     public static PixelsOperation create(BufferedImage image, ImageScope scope,
             OperationType operationType, ColorActionType colorActionType) {
         switch (operationType) {
+            case ShowScope:
+                return new ShowScope(image, scope);
             case ReplaceColor:
                 return new ReplaceColor(image, scope);
             case Color:
                 return new ColorSet(image, scope);
             case Blend:
                 return new BlendColor(image, scope);
+            case Sepia:
+                return new Sepia(image, scope);
+            case Thresholding:
+                return new Thresholding(image, scope);
             case Opacity:
                 switch (colorActionType) {
                     case Increase:

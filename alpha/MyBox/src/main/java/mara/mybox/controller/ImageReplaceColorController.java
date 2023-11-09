@@ -1,23 +1,18 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
-import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -100,7 +95,8 @@ public class ImageReplaceColorController extends ImageSelectScopeController {
                             .setBoolPara1(hueCheck.isSelected())
                             .setBoolPara2(saturationCheck.isSelected())
                             .setBoolPara3(brightnessCheck.isSelected())
-                            .setExcludeScope(excludeRadio.isSelected());
+                            .setExcludeScope(excludeRadio.isSelected())
+                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
                     handledImage = pixelsOperation.operateFxImage();
                     return handledImage != null;
                 } catch (Exception e) {
@@ -122,52 +118,23 @@ public class ImageReplaceColorController extends ImageSelectScopeController {
         start(task);
     }
 
-    @FXML
-    protected void demo() {
-        if (scopeController.srcImage() == null) {
-            return;
+    @Override
+    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+        try {
+            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                    dbf, scope,
+                    PixelsOperation.OperationType.Color,
+                    PixelsOperation.ColorActionType.Set)
+                    .setColorPara1(colorController.awtColor())
+                    .setBoolPara1(true)
+                    .setBoolPara2(false)
+                    .setBoolPara3(false)
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            return pixelsOperation.operateFxImage();
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private File tmpFile;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    BufferedImage dimage = SwingFXUtils.fromFXImage(scopeController.srcImage(), null);
-                    dimage = ScaleTools.scaleImageLess(dimage, 1000000);
-                    ImageScope scope = new ImageScope();
-                    scope.setScopeType(ImageScope.ScopeType.Rectangle)
-                            .setRectangle(DoubleRectangle.xywh(
-                                    dimage.getWidth() / 8, dimage.getHeight() / 8,
-                                    dimage.getWidth() * 3 / 4, dimage.getHeight() * 3 / 4));
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                            dimage, scope,
-                            PixelsOperation.OperationType.Color,
-                            PixelsOperation.ColorActionType.Set)
-                            .setColorPara1(colorController.awtColor())
-                            .setBoolPara1(true)
-                            .setBoolPara2(false)
-                            .setBoolPara3(false);
-                    BufferedImage bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("ReplaceColor"), "png");
-                    ImageFileWriters.writeImageFile(bufferedImage, tmpFile);
-                    return tmpFile != null && tmpFile.exists();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                ImageViewerController.openFile(tmpFile);
-            }
-
-        };
-        start(task);
     }
 
     /*

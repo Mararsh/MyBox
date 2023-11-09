@@ -96,7 +96,8 @@ public class ImageCopyController extends ImageSelectScopeController {
                         scopedImage = scopeController.scopedImage(
                                 bgColorController.color(),
                                 marginsCheck.isSelected(),
-                                excludeRadio.isSelected());
+                                excludeRadio.isSelected(),
+                                ignoreTransparentCheck.isSelected());
                     }
                     if (scopedImage == null || task == null || isCancelled()) {
                         return false;

@@ -16,6 +16,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -147,7 +148,8 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
             scope.setMaskColor(maskColor);
             resetShapeOptions();
 
-            opPane.getChildren().clear();
+            shapeButton.setVisible(false);
+            withdrawButton.setVisible(false);
             scopeDistanceSelector.getItems().clear();
             scopeDistanceSelector.getEditor().setStyle(null);
             areaExcludedCheck.setSelected(false);
@@ -268,7 +270,6 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
         try {
             Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
             tabPane.getTabs().clear();
-            opPane.getChildren().clear();
             areaBox.getChildren().clear();
             scopeTips.setText("");
             if (srcImage() == null || scope == null) {
@@ -279,22 +280,22 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
             if (scope.getScopeType() == null) {
                 scope.setScopeType(ScopeType.Rectangle);
             }
-            addPointCheck.setSelected(true);
+            UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true);
+            shapeButton.setVisible(true);
+            withdrawButton.setVisible(false);
             switch (scope.getScopeType()) {
                 case Matting:
                     tips = message("ScopeMattingTips");
-                    tabPane.getTabs().addAll(areaTab, matchTab, optionsTab);
-                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck,
-                            shapeButton, popScopeButton, withdrawPointButton);
-                    areaBox.getChildren().add(pointsBox);
+                    tabPane.getTabs().addAll(areaTab, matchTab);
+                    withdrawButton.setVisible(true);
+                    areaBox.getChildren().addAll(eightNeighborCheck, pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     break;
 
                 case Rectangle:
                     tips = message("ScopeDragMoveTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
-                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, shapeButton, popScopeButton);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
@@ -305,8 +306,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
 
                 case Circle:
                     tips = message("ScopeDragMoveTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
-                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, shapeButton, popScopeButton);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().addAll(circleBox, goScopeButton);
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
@@ -315,9 +315,8 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
 
                 case Ellipse:
                     tips = message("ScopeDragMoveTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().addAll(rectangleBox, goScopeButton);
-                    opPane.getChildren().addAll(popAnchorCheck, anchorCheck, shapeButton, popScopeButton);
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
@@ -327,9 +326,8 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
 
                 case Polygon:
                     tips = message("ScopePolygonTips");
-                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab);
-                    opPane.getChildren().addAll(popAnchorCheck, addPointCheck, anchorCheck,
-                            shapeButton, popScopeButton, withdrawPointButton);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab);
+                    withdrawButton.setVisible(true);
                     areaBox.getChildren().addAll(pointsBox);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
@@ -337,17 +335,16 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
 
                 case Color:
                     tips = message("ScopeColorTips");
-                    tabPane.getTabs().addAll(colorsTab, matchTab, optionsTab);
-                    opPane.getChildren().addAll(popScopeButton);
+                    tabPane.getTabs().addAll(colorsTab, matchTab);
+                    shapeButton.setVisible(false);
                     break;
 
                 case Outline:
                     tips = message("ScopeOutlineTips");
-                    tabPane.getTabs().addAll(pixTab, optionsTab);
+                    tabPane.getTabs().addAll(pixTab);
                     if (outlinesList.getItems().isEmpty()) {
                         initPixTab();
                     }
-                    opPane.getChildren().addAll(anchorCheck, shapeButton, popScopeButton);
                     break;
 
             }

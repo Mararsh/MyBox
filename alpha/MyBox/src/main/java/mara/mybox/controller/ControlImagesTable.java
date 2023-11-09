@@ -316,7 +316,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null) {
                 return;
             }
-            ImageManufactureController.openImageInfo(info);
+            ImageEditorController.openImageInfo(info);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

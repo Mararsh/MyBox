@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
@@ -59,7 +61,8 @@ public class ImageBlackWhiteController extends ImageSelectScopeController {
                     imageBinary.setScope(scope)
                             .setIntPara1(threshold)
                             .setIsDithering(binaryController.dither())
-                            .setExcludeScope(excludeRadio.isSelected());
+                            .setExcludeScope(excludeRadio.isSelected())
+                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
                     handledImage = imageBinary.operateFxImage();
                     return handledImage != null;
                 } catch (Exception e) {
@@ -72,7 +75,8 @@ public class ImageBlackWhiteController extends ImageSelectScopeController {
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
-                editor.updateImage("BlackOrWhite", null, scope, handledImage, cost);
+                editor.updateImage("BlackOrWhite", message("Threshold") + ": " + threshold,
+                        scope, handledImage, cost);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }
@@ -81,6 +85,20 @@ public class ImageBlackWhiteController extends ImageSelectScopeController {
         start(task);
     }
 
+    @Override
+    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+        try {
+            ImageBinary imageBinary = new ImageBinary();
+            imageBinary.setImage(dbf)
+                    .setScope(scope)
+                    .setIntPara1(-1)
+                    .setIsDithering(true);
+            return imageBinary.operateFxImage();
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
+        }
+    }
 
     /*
         static methods

@@ -16,7 +16,7 @@
    <children>
       <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="80.0" prefWrapLength="200.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0">
          <children>
-            <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" selected="true" text="%Posterizing">
+            <RadioButton fx:id="ReduceColorsRadio" layoutX="103.0" layoutY="10.0" selected="true" text="%ReduceColors">
                <toggleGroup>
                   <ToggleGroup fx:id="effectTypeGroup" />
                </toggleGroup>

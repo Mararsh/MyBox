@@ -90,16 +90,16 @@ public abstract class BaseFileController extends BaseController {
     }
 
     @FXML
-    public void popFileMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "FilePopWhenMouseHovering", true)) {
-            showFileMenu(event);
+    public void popDataMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "DataPopWhenMouseHovering", true)) {
+            showDataMenu(event);
         }
     }
 
     @FXML
-    public void showFileMenu(Event fevent) {
+    public void showDataMenu(Event fevent) {
         try {
-            List<MenuItem> items = fileMenuItems(fevent);
+            List<MenuItem> items = dataMenuItems(fevent);
             if (items == null || items.isEmpty()) {
                 return;
             }
@@ -111,7 +111,7 @@ public abstract class BaseFileController extends BaseController {
             popItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "FilePopWhenMouseHovering", popItem.isSelected());
+                    UserConfig.setBoolean(baseName + "DataPopWhenMouseHovering", popItem.isSelected());
                 }
             });
             items.add(popItem);
@@ -122,7 +122,7 @@ public abstract class BaseFileController extends BaseController {
         }
     }
 
-    public List<MenuItem> fileMenuItems(Event fevent) {
+    public List<MenuItem> dataMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;

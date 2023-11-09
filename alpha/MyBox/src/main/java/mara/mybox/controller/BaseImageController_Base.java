@@ -2,9 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -23,7 +21,6 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -80,6 +77,56 @@ public abstract class BaseImageController_Base extends BaseFileController {
     public void notifyLoad() {
         loadNotify.set(!loadNotify.get());
     }
+
+    public void fitSize() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        try {
+            if (scrollPane.getHeight() < imageHeight()
+                    || scrollPane.getWidth() < imageWidth()) {
+                paneSize();
+            } else {
+                loadedSize();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void paneSize() {
+        if (imageView == null || imageView.getImage() == null || scrollPane == null) {
+            return;
+        }
+        try {
+            ImageViewTools.paneSize(scrollPane, imageView);
+            refinePane();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void loadedSize() {
+        if (imageView == null || imageView.getImage() == null || scrollPane == null) {
+            return;
+        }
+        try {
+            ImageViewTools.imageSize(scrollPane, imageView);
+            refinePane();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void popContextMenu(double x, double y) {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        MenuImageViewController.imageViewMenu((BaseImageController) this, x, y);
+    }
+
 
     /*
         status
@@ -309,105 +356,6 @@ public abstract class BaseImageController_Base extends BaseFileController {
         } else {
             return (int) (width / 10000) * 10;
         }
-    }
-
-
-    /*
-        action
-     */
-    @FXML
-    public void paneSize() {
-        if (imageView == null || imageView.getImage() == null || scrollPane == null) {
-            return;
-        }
-        try {
-            ImageViewTools.paneSize(scrollPane, imageView);
-            refinePane();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void loadedSize() {
-        if (imageView == null || imageView.getImage() == null || scrollPane == null) {
-            return;
-        }
-        try {
-            ImageViewTools.imageSize(scrollPane, imageView);
-            refinePane();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void fitSize() {
-        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        try {
-            if (scrollPane.getHeight() < imageHeight()
-                    || scrollPane.getWidth() < imageWidth()) {
-                paneSize();
-            } else {
-                loadedSize();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void zoomIn() {
-        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        ImageViewTools.zoomIn(scrollPane, imageView, xZoomStep, yZoomStep);
-        refinePane();
-    }
-
-    @FXML
-    public void zoomOut() {
-        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        ImageViewTools.zoomOut(scrollPane, imageView, xZoomStep, yZoomStep);
-        refinePane();
-    }
-
-    @FXML
-    public void moveRight() {
-        NodeTools.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
-    }
-
-    @FXML
-    public void moveLeft() {
-        NodeTools.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
-    }
-
-    @FXML
-    public void moveUp() {
-        NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
-    }
-
-    @FXML
-    public void moveDown() {
-        NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
-    }
-
-    protected void popImageMenu(double x, double y) {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        MenuImageBaseController.imageMenu((BaseImageController) this, x, y);
-    }
-
-    protected void popImageMenu(Event event) {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-        popImageMenu(everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
     }
 
 }

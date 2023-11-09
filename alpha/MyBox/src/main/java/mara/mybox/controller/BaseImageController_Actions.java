@@ -2,26 +2,33 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import java.util.Optional;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import mara.mybox.bufferedimage.ImageFileInformation;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -36,53 +43,42 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     protected int currentAngle = 0, rotateAngle = 90;
     protected Color bgColor = Color.WHITE;
 
-    protected void initCheckboxs() {
-        try {
-            if (pickColorCheck != null) {
-                pickColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        isPickingColor = pickColorCheck.isSelected();
-                        checkPickingColor();
-                    }
-                });
-            }
-
-            if (rulerXCheck != null) {
-                rulerXCheck.setSelected(UserConfig.getBoolean("ImageRulerXY", false));
-                rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean("ImageRulerXY", rulerXCheck.isSelected());
-                        drawMaskRulers();
-                    }
-                });
-            }
-            if (gridCheck != null) {
-                gridCheck.setSelected(UserConfig.getBoolean("ImageGridLines", false));
-                gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean("ImageGridLines", gridCheck.isSelected());
-                        drawMaskGrid();
-                    }
-                });
-            }
-
-            if (coordinateCheck != null) {
-                coordinateCheck.setSelected(UserConfig.getBoolean("ImagePopCooridnate", false));
-                coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
-                        checkCoordinate();
-                    }
-                });
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+    @FXML
+    public void zoomIn() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return;
         }
+        ImageViewTools.zoomIn(scrollPane, imageView, xZoomStep, yZoomStep);
+        refinePane();
+    }
+
+    @FXML
+    public void zoomOut() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        ImageViewTools.zoomOut(scrollPane, imageView, xZoomStep, yZoomStep);
+        refinePane();
+    }
+
+    @FXML
+    public void moveRight() {
+        NodeTools.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
+    }
+
+    @FXML
+    public void moveLeft() {
+        NodeTools.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
+    }
+
+    @FXML
+    public void moveUp() {
+        NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
+    }
+
+    @FXML
+    public void moveDown() {
+        NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
     }
 
     @FXML
@@ -117,8 +113,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
-    protected void manufactureAction() {
-        ImageManufactureController controller = (ImageManufactureController) openStage(Fxmls.ImageManufactureFxml);
+    protected void editAction() {
+        ImageEditorController controller = (ImageEditorController) openStage(Fxmls.ImageEditorFxml);
         checkImage(controller);
     }
 
@@ -279,112 +275,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         }
     }
 
-    @Override
-    public List<MenuItem> functionsMenuItems(Event fevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu;
-
-            menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                popAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("View"), StyleTools.getIconImageView("iconView.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                viewAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                manufactureAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Statistic"), StyleTools.getIconImageView("iconStatistic.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                statisticAction();
-
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("OCR"), StyleTools.getIconImageView("iconTxt.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ocrAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Split"), StyleTools.getIconImageView("iconSplit.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                splitAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Sample"), StyleTools.getIconImageView("iconSample.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                sampleAction();
-
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Repeat"), StyleTools.getIconImageView("iconRepeat.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                repeatAction();
-            });
-            items.add(menu);
-
-            if (imageFile() != null) {
-                menu = new MenuItem(message("Convert"), StyleTools.getIconImageView("iconConvert.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    ImageConverterController.open((BaseImageController) this);
-                });
-                items.add(menu);
-
-                menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    svgAction();
-                });
-                items.add(menu);
-            }
-
-            Menu copyMenu = new Menu(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
-            items.add(copyMenu);
-
-            menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImageView("iconCopySystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyToSystemClipboard();
-            });
-            copyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("CopyToMyBoxClipboard"), StyleTools.getIconImageView("iconCopy.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyToMyBoxClipboard();
-            });
-            copyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ImagesInSystemClipboard"), StyleTools.getIconImageView("iconSystemClipboard.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageInSystemClipboardController.oneOpen();
-            });
-            copyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ImagesInMyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageInMyBoxClipboardController.oneOpen();
-
-            });
-            copyMenu.getItems().add(menu);
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     @FXML
     public void editFrames() {
         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
@@ -404,9 +294,16 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     @Override
     public boolean menuAction() {
-        Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-        MenuImageBaseController.imageMenu((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
+        popContextMenu(null);
         return true;
+    }
+
+    protected void popContextMenu(Event event) {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        Point2D everntCoord = LocateTools.coordinate(event);
+        popContextMenu(everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
     }
 
     @FXML
@@ -454,6 +351,99 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
+    public void renameAction() {
+        try {
+            if (imageChanged) {
+                saveAction();
+            }
+            if (sourceFile == null) {
+                return;
+            }
+            FileRenameController controller = (FileRenameController) openStage(Fxmls.FileRenameFxml);
+            controller.set(sourceFile);
+            controller.getMyStage().setOnHiding((WindowEvent event) -> {
+                File newFile = controller.getNewFile();
+                Platform.runLater(() -> {
+                    fileRenamed(newFile);
+                });
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            popError(e.toString());
+        }
+    }
+
+    public void fileRenamed(File newFile) {
+        try {
+            if (newFile == null) {
+                return;
+            }
+            popSuccessful();
+            sourceFile = newFile;
+            recordFileOpened(sourceFile);
+            if (imageInformation != null) {
+                imageInformation.setFile(sourceFile);
+            }
+            updateLabelsTitle();
+            if (browseController != null) {
+                browseController.setCurrentFile(sourceFile);
+            }
+            notifyLoad();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            popError(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void deleteAction() {
+        if (sourceFile == null) {
+            return;
+        }
+        if (!PopTools.askSure(getTitle(), message("Delete"), sourceFile.getAbsolutePath())) {
+            return;
+        }
+        File focusFile = nextFile();
+        if (focusFile == null) {
+            focusFile = previousFile();
+        }
+        if (FileDeleteTools.delete(sourceFile)) {
+            popSuccessful();
+            sourceFile = null;
+            image = null;
+            imageView.setImage(null);
+            if (focusFile != null) {
+                sourceFileChanged(focusFile);
+            }
+        } else {
+            popFailed();
+        }
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (imageView == null) {
+            return;
+        }
+        imageView.setImage(image);
+        setImageChanged(false);
+        popInformation(message("Recovered"));
+    }
+
+    @FXML
+    @Override
+    public void pasteAction() {
+        loadContentInSystemClipboard();
+    }
+
+    @FXML
+    public void selectScope() {
+        ImageSelectScopeController.open((BaseImageController) this);
+    }
+
+    @FXML
     @Override
     public void playAction() {
         try {
@@ -466,15 +456,115 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     @Override
+    public void saveAction() {
+        if (imageView == null || imageView.getImage() == null
+                || (saveButton != null && saveButton.isDisabled())) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        File srcFile = imageFile();
+        if (srcFile == null) {
+            targetFile = chooseSaveFile();
+            if (targetFile == null) {
+                return;
+            }
+        } else {
+            targetFile = srcFile;
+        }
+        if (imageInformation != null && imageInformation.isIsScaled()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("SureSaveScaled"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || result.get() == buttonCancel) {
+                return;
+            } else if (result.get() == buttonSaveAs) {
+                saveAsAction();
+                return;
+            }
+        }
+
+        task = new SingletonCurrentTask<Void>(this) {
+
+            private Image savedImage;
+            private boolean needBackup = false;
+            private FileBackup backup;
+
+            @Override
+            protected boolean handle() {
+                savedImage = imageView.getImage();
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(savedImage, null);
+                if (bufferedImage == null || task == null || isCancelled()) {
+                    return false;
+                }
+                needBackup = srcFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", false);
+                if (needBackup) {
+                    backup = addBackup(task, srcFile);
+                }
+                String format = FileNameTools.suffix(targetFile.getName());
+                if (framesNumber > 1) {
+                    error = ImageFileWriters.writeFrame(targetFile, frameIndex, bufferedImage, targetFile, null);
+                    ok = error == null;
+                } else {
+                    ok = ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
+                }
+                if (!ok || task == null || isCancelled()) {
+                    return false;
+                }
+                ImageFileInformation finfo = ImageFileInformation.create(targetFile);
+                if (finfo == null || finfo.getImageInformation() == null) {
+                    return false;
+                }
+                imageInformation = finfo.getImageInformation();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFile = targetFile;
+                recordFileWritten(sourceFile);
+                if (srcFile == null) {
+                    if (savedImage != imageView.getImage()) {
+                        ImageViewerController.openFile(sourceFile);
+                    } else {
+                        sourceFileChanged(sourceFile);
+                    }
+                } else {
+                    image = savedImage;
+                    imageView.setImage(image);
+                    setImageChanged(false);
+                    if (needBackup) {
+                        if (backup != null && backup.getBackup() != null) {
+                            popInformation(message("SavedAndBacked"));
+                            FileBackupController.updateList(sourceFile);
+                        } else {
+                            popError(message("FailBackup"));
+                        }
+                    } else {
+                        popInformation(sourceFile + "   " + message("Saved"));
+                    }
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    @Override
     public void saveAsAction() {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        File file = chooseSaveFile();
-        if (file == null) {
-            return;
-        }
-        saveImage(imageFile(), file, imageToSaveAs());
+        ImageConverterController.open((BaseImageController) this);
     }
 
     public void saveImage(File srcFile, File newfile, Object imageToSave) {

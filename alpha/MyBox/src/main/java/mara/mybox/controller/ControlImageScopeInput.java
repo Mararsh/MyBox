@@ -25,7 +25,6 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.ShapeStyle;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
@@ -192,15 +191,6 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
 
     protected void initOptionsTab() {
         try {
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || scope == null) {
-                        return;
-                    }
-                    indicateScope();
-                }
-            });
 
             maskColorController.init(this, baseName + "MaskColor", Color.TRANSPARENT);
             maskColor = maskColorController.awtColor();
@@ -238,76 +228,6 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     } catch (Exception e) {
                         ValidationTools.setEditorBadStyle(opacitySelector);
                     }
-                }
-            });
-
-            strokeWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
-            strokeWidthSelector.setValue(UserConfig.getFloat("StrokeWidth", 2) + "");
-            strokeWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (isSettingValues || newValue == null || newValue.isEmpty()) {
-                        return;
-                    }
-                    try {
-                        float v = Float.parseFloat(newValue);
-                        if (v > 0) {
-                            UserConfig.setFloat("StrokeWidth", v);
-                            ValidationTools.setEditorNormal(strokeWidthSelector);
-                            setMaskShapesStyle();
-                        } else {
-                            ValidationTools.setEditorBadStyle(strokeWidthSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(strokeWidthSelector);
-                    }
-                }
-            });
-
-            strokeColorController.init(this, "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
-            strokeColorController.asSaved();
-            strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    setMaskAnchorsStyle();
-                }
-            });
-
-            anchorSizeSelector.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-            anchorSizeSelector.setValue(UserConfig.getFloat("AnchorSize", 10) + "");
-            anchorSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (isSettingValues || newValue == null || newValue.isEmpty()) {
-                        return;
-                    }
-                    try {
-                        float v = Float.parseFloat(newValue);
-                        if (v > 0) {
-                            UserConfig.setFloat("AnchorSize", v);
-                            ValidationTools.setEditorNormal(anchorSizeSelector);
-                            setMaskAnchorsStyle();
-                        } else {
-                            ValidationTools.setEditorBadStyle(anchorSizeSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(anchorSizeSelector);
-                    }
-                }
-            });
-
-            anchorColorController.init(this, "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
-            anchorColorController.asSaved();
-            anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    setMaskAnchorsStyle();
                 }
             });
 
@@ -376,10 +296,11 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         }
     }
 
-    public void setParameters(BaseImageController parent) {
+    public void setParameters(ImageSelectScopeController parent) {
         try {
             this.parentController = parent;
-            imageController = parent;
+            selector = parent;
+            imageController = selector.imageController;
 
             loadImage();
             loadScope(imageController.scope);
@@ -535,7 +456,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
     @Override
     public void cleanPane() {
         try {
-            if (imageController != null) {
+            if (imageController != null && imageController.isShowing()) {
                 imageController.scope = scope;
             }
         } catch (Exception e) {

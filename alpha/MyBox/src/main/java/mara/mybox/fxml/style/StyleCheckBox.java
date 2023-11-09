@@ -138,7 +138,7 @@ public class StyleCheckBox {
             case "invertCheck":
                 return new StyleData("invertCheck", "", message("Invert"), "", "iconInvert.png");
             case "pickColorCheck":
-                return new StyleData(id, message("PickColor"), message("ColorPickerComments"), "CTRL+k / ALT+k", "iconPickColor.png");
+                return new StyleData(id, message("PickColor"), "CTRL+K / ALT+K", "iconPickColor.png");
             case "ditherCheck":
                 return new StyleData(id, message("DitherComments"), "", "");
             case "withNamesCheck":

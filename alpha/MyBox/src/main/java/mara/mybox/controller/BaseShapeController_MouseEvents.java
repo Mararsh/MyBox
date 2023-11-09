@@ -74,10 +74,10 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
                 if (shapeData != null) {
                     popEventMenu(event, maskShapeMenu(event, shapeData, p));
                 } else {
-                    popImageMenu(event.getScreenX(), event.getScreenY());
+                    popContextMenu(event.getScreenX(), event.getScreenY());
                 }
             } else {
-                popImageMenu(event.getScreenX(), event.getScreenY());
+                popContextMenu(event.getScreenX(), event.getScreenY());
             }
         }
     }
@@ -233,11 +233,11 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             });
             items.add(menu);
 
-            menu = new MenuItem(message("ImageMenu"), StyleTools.getIconImageView("iconMenu.png"));
+            menu = new MenuItem(message("ContextMenu"), StyleTools.getIconImageView("iconMenu.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    popImageMenu(event);
+                    popContextMenu(event);
                 }
             });
             items.add(menu);

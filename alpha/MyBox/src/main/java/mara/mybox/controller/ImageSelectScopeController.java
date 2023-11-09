@@ -1,8 +1,11 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -10,6 +13,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -38,6 +43,8 @@ public class ImageSelectScopeController extends BaseChildController {
     protected ToggleGroup selectGroup;
     @FXML
     protected RadioButton includeRadio, excludeRadio, wholeRadio;
+    @FXML
+    protected CheckBox ignoreTransparentCheck;
 
     public ImageSelectScopeController() {
         baseTitle = message("SelectScope");
@@ -61,7 +68,7 @@ public class ImageSelectScopeController extends BaseChildController {
 
     protected void initMore() {
         try {
-            scopeController.setParameters(imageController);
+            scopeController.setParameters(this);
             if (bgColorController != null) {
                 bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
             }
@@ -109,6 +116,15 @@ public class ImageSelectScopeController extends BaseChildController {
                 }
             }
 
+            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (!isSettingValues) {
+                        scopeController.indicateScope();
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -133,7 +149,7 @@ public class ImageSelectScopeController extends BaseChildController {
 
     public ImageScope scope() {
         if (wholeRadio != null && wholeRadio.isSelected()) {
-            return scopeController.whole();
+            return null;
         } else {
             return scopeController.finalScope();
         }
@@ -156,7 +172,8 @@ public class ImageSelectScopeController extends BaseChildController {
                     handledImage = scopeController.scopedImage(
                             bgColorController.color(),
                             true,
-                            excludeRadio.isSelected());
+                            excludeRadio.isSelected(),
+                            ignoreTransparentCheck.isSelected());
                     return handledImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -186,6 +203,50 @@ public class ImageSelectScopeController extends BaseChildController {
     @Override
     public void recoverAction() {
         editor.recoverAction();
+    }
+
+    @FXML
+    protected void demo() {
+        if (scopeController.srcImage() == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            private Image demoImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    BufferedImage dbf = SwingFXUtils.fromFXImage(scopeController.srcImage(), null);
+                    dbf = ScaleTools.scaleImageLess(dbf, 1000000);
+
+                    ImageScope scope = new ImageScope();
+                    scope.setScopeType(ImageScope.ScopeType.Rectangle)
+                            .setRectangle(DoubleRectangle.xywh(
+                                    dbf.getWidth() / 8, dbf.getHeight() / 8,
+                                    dbf.getWidth() * 3 / 4, dbf.getHeight() * 3 / 4));
+
+                    demoImage = makeDemo(dbf, scope);
+                    return demoImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImagePopController.openImage(myController, demoImage);
+            }
+
+        };
+        start(task);
+    }
+
+    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+        return null;
     }
 
     /*

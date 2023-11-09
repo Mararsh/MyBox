@@ -13,65 +13,68 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2021-8-11
  * @License Apache License Version 2.0
  */
-public class MenuImageManufactureController extends MenuImageViewController {
+public class MenuImageEditController extends MenuImageViewController {
 
-    protected ImageManufactureController manufactureController;
+    protected ImageEditorController editor;
 
-    public void setParameters(ImageManufactureController manufactureController, double x, double y) {
+    public void setParameters(ImageEditorController controller, double x, double y) {
         try {
-            this.manufactureController = manufactureController;
-            super.setParameters(manufactureController, x, y);
+            editor = controller;
+            super.setParameters(controller, x, y);
+
+            undoButton.disableProperty().bind(editor.undoButton.disableProperty());
+            redoButton.disableProperty().bind(editor.redoButton.disableProperty());
+            recoverButton.disableProperty().bind(editor.recoverButton.disableProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void updateImage() {
-        super.updateImage();
-        cropButton.setDisable(false);
-    }
-
     @FXML
     @Override
     public void undoAction() {
-        manufactureController.undoAction();
+        editor.undoAction();
     }
 
     @FXML
     @Override
     public void redoAction() {
-        manufactureController.redoAction();
+        editor.redoAction();
+    }
+
+    @FXML
+    public void showHistories() {
+        editor.showHistories();
     }
 
 
     /*
         static methods
      */
-    public static MenuImageManufactureController manufactureMenu(ImageManufactureController manufactureController, double x, double y) {
+    public static MenuImageEditController editMenu(ImageEditorController editor, double x, double y) {
         try {
             try {
-                if (manufactureController == null) {
+                if (editor == null) {
                     return null;
                 }
                 List<Window> windows = new ArrayList<>();
                 windows.addAll(Window.getWindows());
                 for (Window window : windows) {
                     Object object = window.getUserData();
-                    if (object != null && object instanceof MenuImageManufactureController) {
+                    if (object != null && object instanceof MenuImageEditController) {
                         try {
-                            MenuImageManufactureController controller = (MenuImageManufactureController) object;
-                            if (controller.manufactureController.equals(manufactureController)) {
+                            MenuImageEditController controller = (MenuImageEditController) object;
+                            if (controller.editor.equals(editor)) {
                                 controller.close();
                             }
                         } catch (Exception e) {
                         }
                     }
                 }
-                MenuImageManufactureController controller = (MenuImageManufactureController) WindowTools.openChildStage(
-                        manufactureController.getMyWindow(), Fxmls.MenuImageManufactureFxml, false);
-                controller.setParameters(manufactureController, x, y);
+                MenuImageEditController controller = (MenuImageEditController) WindowTools.openChildStage(
+                        editor.getMyWindow(), Fxmls.MenuImageEditFxml, false);
+                controller.setParameters(editor, x, y);
                 return controller;
             } catch (Exception e) {
                 MyBoxLog.error(e);

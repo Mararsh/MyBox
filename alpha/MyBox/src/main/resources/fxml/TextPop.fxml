@@ -12,58 +12,72 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextPopController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextPopController">
     <children>
-        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+        <HBox alignment="CENTER_RIGHT" spacing="2.0">
             <children>
-                <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/red/iconWrap.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-                <CheckBox fx:id="refreshChangeCheck" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/red/iconRefresh.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>               
-                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconRefresh.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconSaveAs.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconEdit.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+            <Button fx:id="myboxButton" mnemonicParsing="false" onAction="#mybox">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconMyBox.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0" HBox.hgrow="ALWAYS">
+               <children>
+                      <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+                          <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/red/iconWrap.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </CheckBox>
+                      <CheckBox fx:id="refreshChangeCheck" mnemonicParsing="false">
+                          <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/red/iconRefresh.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </CheckBox>               
+                      <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                          <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/Red/iconRefresh.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                      <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
+                          <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/iconSaveAs.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                      <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                          <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/Red/iconEdit.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+               </children>
+            </FlowPane>
             </children>
         </HBox>
         <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />

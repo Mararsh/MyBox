@@ -162,7 +162,7 @@ public abstract class ImageManufactureScopeController_Base extends BaseShapeCont
     }
 
     @Override
-    protected void popImageMenu(double x, double y) {
+    protected void popContextMenu(double x, double y) {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
@@ -174,7 +174,7 @@ public abstract class ImageManufactureScopeController_Base extends BaseShapeCont
     public boolean menuAction() {
         try {
             Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-            popImageMenu(localToScreen.getX(), localToScreen.getY());
+            popContextMenu(localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

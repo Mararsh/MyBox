@@ -19,6 +19,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImagePopController extends BaseShapeController {
 
+    protected BaseImageController sourceController;
     protected ImageView sourceImageView;
     protected ChangeListener sourceListener;
 
@@ -103,10 +104,29 @@ public class ImagePopController extends BaseShapeController {
         }
     }
 
+    public void setController(BaseImageController parent) {
+        try {
+            this.parentController = parent;
+            this.sourceController = parent;
+            sourceImageView = sourceController.imageView;
+            refreshAction();
+
+            setControls();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
     @FXML
     @Override
     public void refreshAction() {
-        if (sourceImageView != null) {
+        if (sourceController != null) {
+            loadImage(sourceController.sourceFile,
+                    sourceController.imageInformation,
+                    sourceController.image,
+                    sourceController.imageChanged);
+
+        } else if (sourceImageView != null) {
             loadImage(sourceImageView.getImage());
 
         } else {
@@ -154,6 +174,20 @@ public class ImagePopController extends BaseShapeController {
             }
             ImagePopController controller = (ImagePopController) WindowTools.openStage(Fxmls.ImagePopFxml);
             controller.setSourceImageView(parent, imageView);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagePopController openController(BaseImageController parent) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            ImagePopController controller = (ImagePopController) WindowTools.openStage(Fxmls.ImagePopFxml);
+            controller.setController(parent);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -128,7 +128,15 @@ public class Fxmls {
     public static final String ImageReplaceColorFxml = "/fxml/ImageReplaceColor.fxml";
     public static final String ImageBlendColorFxml = "/fxml/ImageBlendColor.fxml";
     public static final String ImageAdjustColorFxml = "/fxml/ImageAdjustColor.fxml";
+    public static final String ImageThresholdingFxml = "/fxml/ImageThresholding.fxml";
+    public static final String ImageEdgeFxml = "/fxml/ImageEdge.fxml";
+    public static final String ImageEmbossFxml = "/fxml/ImageEmboss.fxml";
     public static final String ImageBlackWhiteFxml = "/fxml/ImageBlackWhite.fxml";
+    public static final String ImageGreyFxml = "/fxml/ImageGrey.fxml";
+    public static final String ImageSepiaFxml = "/fxml/ImageSepia.fxml";
+    public static final String ImageMosaicFxml = "/fxml/ImageMosaic.fxml";
+    public static final String ImageGlassFxml = "/fxml/ImageGlass.fxml";
+    public static final String ImageReduceColorsFxml = "/fxml/ImageReduceColors.fxml";
     public static final String ImageRotateFxml = "/fxml/ImageRotate.fxml";
     public static final String ImageShearFxml = "/fxml/ImageShear.fxml";
     public static final String ImageEraseFxml = "/fxml/ImageErase.fxml";
@@ -232,6 +240,7 @@ public class Fxmls {
 
     public static final String ImageFramesFxml = "/fxml/ImageFrames.fxml";
     public static final String ImageOptionsFxml = "/fxml/ImageOptions.fxml";
+    public static final String ImageShapeOptionsFxml = "/fxml/ImageShapeOptions.fxml";
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
@@ -473,6 +482,7 @@ public class Fxmls {
     public static final String MenuImageFxml = "/fxml/MenuImage.fxml";
     public static final String MenuImageBaseFxml = "/fxml/MenuImageBase.fxml";
     public static final String MenuImageViewFxml = "/fxml/MenuImageView.fxml";
+    public static final String MenuImageEditFxml = "/fxml/MenuImageEdit.fxml";
     public static final String MenuImageManufactureFxml = "/fxml/MenuImageManufacture.fxml";
     public static final String MenuImageScopeFxml = "/fxml/MenuImageScope.fxml";
 

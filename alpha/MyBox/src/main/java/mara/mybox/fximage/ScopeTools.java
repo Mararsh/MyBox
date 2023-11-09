@@ -31,17 +31,18 @@ import static mara.mybox.fximage.FxColorTools.toAwtColor;
  * @License Apache License Version 2.0
  */
 public class ScopeTools {
-
+    
     public static Image scopeImage(Image srcImage, ImageScope scope, Color bgColor,
-            boolean cutMargins, boolean exclude) {
+            boolean cutMargins, boolean exclude, boolean ignoreTransparent) {
         try {
             if (scope == null || scope.getScopeType() == null) {
                 return srcImage;
             } else {
                 PixelsOperation pixelsOperation = PixelsOperationFactory.create(srcImage, scope,
-                        PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
-                pixelsOperation.setColorPara1(ColorConvertTools.converColor(bgColor));
-                pixelsOperation.setExcludeScope(!exclude);
+                        PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set)
+                        .setColorPara1(ColorConvertTools.converColor(bgColor))
+                        .setExcludeScope(!exclude)
+                        .setSkipTransparent(ignoreTransparent);
                 Image scopeImage = pixelsOperation.operateFxImage();
                 if (cutMargins) {
                     return MarginTools.cutMarginsByColor(scopeImage, bgColor, 0, true, true, true, true);
@@ -54,28 +55,28 @@ public class ScopeTools {
             return null;
         }
     }
-
+    
     public static Image indicateRectangle(Image image, Color color, int lineWidth, DoubleRectangle rect) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageScopeTools.indicateRectangle(source, toAwtColor(color), lineWidth, rect);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
-
+    
     public static Image indicateCircle(Image image, Color color, int lineWidth, DoubleCircle circle) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageScopeTools.indicateCircle(source, toAwtColor(color), lineWidth, circle);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
-
+    
     public static Image indicateEllipse(Image image, Color color, int lineWidth, DoubleEllipse ellipse) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageScopeTools.indicateEllipse(source, toAwtColor(color), lineWidth, ellipse);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
-
+    
     public static Image indicateSplit(Image image, List<Integer> rows, List<Integer> cols,
             Color lineColor, int lineWidth, boolean showSize, double scale) {
         if (rows == null || cols == null || rows.size() < 2 || cols.size() < 2) {
@@ -146,5 +147,5 @@ public class ScopeTools {
             return null;
         }
     }
-
+    
 }

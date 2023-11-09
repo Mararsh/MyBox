@@ -126,11 +126,11 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
     }
 
     @Override
-    protected void popImageMenu(double x, double y) {
+    protected void popContextMenu(double x, double y) {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        MenuImageManufactureController.manufactureMenu((ImageManufactureController) this, x, y);
+//        MenuImageEditController.manufactureMenu((ImageManufactureController) this, x, y);
     }
 
     @FXML
@@ -193,7 +193,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
                 Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
-                MenuImageManufactureController.manufactureMenu((ImageManufactureController) this, localToScreen.getX(), localToScreen.getY());
+//                MenuImageEditController.manufactureMenu((ImageManufactureController) this, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (tab == scopeTab) {

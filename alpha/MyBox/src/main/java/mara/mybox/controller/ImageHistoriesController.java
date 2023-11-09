@@ -148,7 +148,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
             recordHistoriesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    checkRecordHistoriesStatus();
+                    UserConfig.setBoolean("ImageHistoriesRecord", recordHistoriesCheck.isSelected());
                 }
             });
 
@@ -186,7 +186,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
                 }
             });
 
-            checkRecordHistoriesStatus();
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -198,17 +198,6 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
         return sourceFile != null
                 && imageController != null
                 && sourceFile.equals(imageController.sourceFile);
-    }
-
-    protected void checkRecordHistoriesStatus() {
-        UserConfig.setBoolean("ImageHistoriesRecord", recordHistoriesCheck.isSelected());
-        if (recordHistoriesCheck.isSelected()) {
-            historiesListBox.setDisable(false);
-            refreshAction();
-        } else {
-            historiesListBox.setDisable(true);
-            tableData.clear();
-        }
     }
 
     @Override
@@ -244,9 +233,6 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
             @Override
             protected boolean handle() {
                 list = null;
-                if (!recordHistoriesCheck.isSelected()) {
-                    return true;
-                }
                 try (Connection conn = DerbyBase.getConnection()) {
                     list = tableImageEditHistory.read(conn, sourceFile);
                     if (list != null) {

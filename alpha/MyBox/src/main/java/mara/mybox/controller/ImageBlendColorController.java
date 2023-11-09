@@ -30,6 +30,8 @@ public class ImageBlendColorController extends ImageSelectScopeController {
     @Override
     protected void initMore() {
         try {
+            ignoreTransparentCheck = blendController.ignoreTransparentCheck;
+
             super.initMore();
 
             colorController.init(this, baseName + "NewColor", Color.PINK);
@@ -60,10 +62,10 @@ public class ImageBlendColorController extends ImageSelectScopeController {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             editor.imageView.getImage(),
                             scope,
-                            PixelsOperation.OperationType.Blend,
-                            PixelsOperation.ColorActionType.Set)
+                            PixelsOperation.OperationType.Blend)
                             .setColorPara1(colorController.awtColor())
-                            .setExcludeScope(excludeRadio.isSelected());
+                            .setExcludeScope(excludeRadio.isSelected())
+                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
                     ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blendController.blender());
                     handledImage = pixelsOperation.operateFxImage();
                     return handledImage != null;

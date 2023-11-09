@@ -43,11 +43,20 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="myboxButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#mybox" onMouseEntered="#popSourceFile">
+            <Button fx:id="myboxButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#mybox">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../buttons/iconMyBox.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="dataButton" mnemonicParsing="false" onAction="#showDataMenu" onMouseEntered="#popDataMenu">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconData.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -73,60 +82,33 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconMenu.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                  <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
+                  <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconZoomOut.png" />
+                              <Image url="@../buttons/Red/iconView.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+                  <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconZoomIn.png" />
+                              <Image url="@../buttons/Red/iconFunction.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                  <Button fx:id="operationsButton" mnemonicParsing="false" onAction="#showOperationsMenu" onMouseEntered="#popOperationsMenu">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconPaneSize.png" />
+                              <Image url="@../buttons/Red/iconOperation.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconLoadSize.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                        <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconFunction.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
                     </children>
                 </FlowPane>
             </children>

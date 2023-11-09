@@ -190,7 +190,7 @@ public class TextPopController extends BaseChildController {
             if (textInput == null) {
                 return null;
             }
-            TextPopController controller = (TextPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.TextPopFxml, false);
+            TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
             controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public class TextPopController extends BaseChildController {
 
     public static TextPopController loadText(BaseController parent, String text) {
         try {
-            TextPopController controller = (TextPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.TextPopFxml, false);
+            TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
             controller.setText(text);
             return controller;
         } catch (Exception e) {

@@ -43,13 +43,13 @@ License:    Apache License Version 2.0
                                     <children>
                                         <FlowPane fx:id="commonCompressPane" hgap="5.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="80.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0">
                                             <children>
-                                                <RadioButton fx:id="PosterizingRadio22" selected="true" text="zip">
+                                                <RadioButton  selected="true" text="zip">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="compressGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="PosterizingRadio211" text="7z" toggleGroup="$compressGroup" />
-                                                <RadioButton fx:id="PosterizingRadio2" text="jar" toggleGroup="$compressGroup" />
+                                                <RadioButton  text="7z" toggleGroup="$compressGroup" />
+                                                <RadioButton  text="jar" toggleGroup="$compressGroup" />
                                                 <RadioButton fx:id="gzRadio" layoutX="103.0" layoutY="10.0" text="gz" toggleGroup="$compressGroup" />
                                                 <RadioButton layoutX="15.0" layoutY="15.0" text="bzip2" toggleGroup="$compressGroup" />
                                                 <RadioButton layoutX="183.0" layoutY="15.0" text="xz" toggleGroup="$compressGroup" />

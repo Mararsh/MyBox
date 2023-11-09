@@ -196,7 +196,7 @@ public class ImageConverterController extends BaseChildController {
             ImageViewerController.openFile(file);
 
         } else if (saveAsType == SaveAsType.Edit) {
-            ImageManufactureController.openFile(file);
+            ImageEditorController.openFile(file);
 
         }
     }

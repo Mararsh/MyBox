@@ -262,7 +262,8 @@ public class ImageAdjustColorController extends ImageSelectScopeController {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             editor.imageView.getImage(),
                             scope, colorOperationType, colorActionType)
-                            .setExcludeScope(excludeRadio.isSelected());
+                            .setExcludeScope(excludeRadio.isSelected())
+                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
                     switch (colorOperationType) {
                         case RGB:
                             pixelsOperation.setIntPara1(colorValue);
@@ -308,6 +309,7 @@ public class ImageAdjustColorController extends ImageSelectScopeController {
     }
 
     @FXML
+    @Override
     protected void demo() {
         if (scopeController.srcImage() == null) {
             return;
@@ -461,7 +463,7 @@ public class ImageAdjustColorController extends ImageSelectScopeController {
     }
 
     @Override
-    public boolean controlAlt1() {
+    public boolean controlAltE() {
         if (!colorSetButton.isDisabled()) {
             setAction();
             return true;
@@ -471,7 +473,7 @@ public class ImageAdjustColorController extends ImageSelectScopeController {
     }
 
     @Override
-    public boolean controlAlt2() {
+    public boolean controlAltI() {
         if (!colorIncreaseButton.isDisabled()) {
             increaseAction();
             return true;
@@ -481,7 +483,10 @@ public class ImageAdjustColorController extends ImageSelectScopeController {
     }
 
     @Override
-    public boolean controlAlt3() {
+    public boolean controlAltD() {
+        if (targetIsTextInput()) {
+            return false;
+        }
         if (!colorDecreaseButton.isDisabled()) {
             decreaseAction();
             return true;
@@ -491,7 +496,7 @@ public class ImageAdjustColorController extends ImageSelectScopeController {
     }
 
     @Override
-    public boolean controlAlt4() {
+    public boolean controlAltF() {
         if (!colorFilterButton.isDisabled()) {
             filterAction();
             return true;
@@ -501,7 +506,10 @@ public class ImageAdjustColorController extends ImageSelectScopeController {
     }
 
     @Override
-    public boolean controlAlt5() {
+    public boolean controlAltX() {
+        if (targetIsTextInput()) {
+            return false;
+        }
         if (!colorInvertButton.isDisabled()) {
             invertAction();
             return true;

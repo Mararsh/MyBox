@@ -59,8 +59,7 @@ public class ImagePasteController extends BaseShapeController {
     protected CheckBox closeAfterCheck;
 
     public ImagePasteController() {
-        baseTitle = message("SelectScope");
-        TipsLabelKey = "ImageScopeTips";
+        baseTitle = message("Paste");
     }
 
     @Override
