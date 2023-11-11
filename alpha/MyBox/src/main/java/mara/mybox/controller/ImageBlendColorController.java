@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class ImageBlendColorController extends ImageSelectScopeController {
+public class ImageBlendColorController extends BaseScopeController {
 
     @FXML
     protected ControlColorSet colorController;

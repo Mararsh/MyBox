@@ -1,15 +1,23 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -26,8 +34,10 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -36,9 +46,8 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlImageScopeInput_Base extends BaseShapeController {
 
-    protected ImageSelectScopeController selector;
+    protected BaseScopeController handler;
     protected BaseImageController imageController;
-    protected Image srcImage;
     protected TableColor tableColor;
     protected java.awt.Color maskColor;
     protected float maskOpacity;
@@ -76,14 +85,19 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
             colorRGBRadio, colorGreenRadio, colorRedRadio, colorBlueRadio,
             colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
     @FXML
-    protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
+    protected Label scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
     public Image srcImage() {
-        if (srcImage == null) {
-            srcImage = new Image("img/" + "cover" + AppValues.AppYear + "g9.png");
-            loadImage(srcImage);
+        if (imageController != null) {
+            image = imageController.imageView.getImage();
+        } else {
+            image = imageView.getImage();
         }
-        return srcImage;
+        if (image == null) {
+            image = new Image("img/" + "cover" + AppValues.AppYear + "g9.png");
+            loadImage(image);
+        }
+        return image;
     }
 
     @FXML
@@ -142,7 +156,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
                 try {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             srcImage(), scope, PixelsOperation.OperationType.ShowScope);
-                    pixelsOperation.setSkipTransparent(selector.ignoreTransparentCheck.isSelected());
+                    pixelsOperation.setSkipTransparent(handler.ignoreTransparentCheck.isSelected());
                     if (task == null || isCancelled()) {
                         return false;
                     }
@@ -203,10 +217,55 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
     }
 
     @FXML
+    public void popPopMenu(Event fevent) {
+        if (UserConfig.getBoolean(baseName + "PopPopMenuWhenMouseHovering", true)) {
+            popAction();
+        }
+    }
+
+    @FXML
     @Override
     public boolean popAction() {
-        ImagePopController.openView(this, imageView);
-        return true;
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("Source"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                ImagePopController.openView(this, imageController.imageView);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Scope"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                popScope();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Mask"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                ImagePopController.openView(this, imageView);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "PopPopMenuWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "PopPopMenuWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popNodeMenu(popButton, items);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     public Image scopedImage(Color bgColor, boolean cutMargins,
@@ -234,8 +293,9 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
                 try {
                     scopedImage = scopedImage(
                             ColorConvertTools.converColor(scope.getMaskColor()),
-                            true, false,
-                            selector.ignoreTransparentCheck.isSelected());
+                            false,
+                            handler.excludeRadio.isSelected(),
+                            handler.ignoreTransparentCheck.isSelected());
                     return scopedImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);

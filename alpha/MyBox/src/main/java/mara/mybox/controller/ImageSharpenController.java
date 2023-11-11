@@ -5,10 +5,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
+import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.PixelsOperation;
-import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
@@ -21,15 +22,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageSepiaController extends BaseScopeController {
+public class ImageSharpenController extends BaseScopeController {
 
     protected int intensity;
 
     @FXML
     protected ComboBox<String> intensitySelector;
+    @FXML
+    protected RadioButton unmaskRadio, eightRadio, fourRadio;
 
-    public ImageSepiaController() {
-        baseTitle = message("Grey");
+    public ImageSharpenController() {
+        baseTitle = message("Sharpen");
     }
 
     @Override
@@ -40,18 +43,18 @@ public class ImageSepiaController extends BaseScopeController {
                 close();
                 return;
             }
-            intensity = UserConfig.getInt(baseName + "Intensity", 60);
-            if (intensity <= 0 || intensity >= 255) {
-                intensity = 60;
+            intensity = UserConfig.getInt(baseName + "Intensity", 2);
+            if (intensity <= 0) {
+                intensity = 2;
             }
-            intensitySelector.getItems().addAll(Arrays.asList("60", "80", "20", "50", "10", "5", "100", "15", "20"));
+            intensitySelector.getItems().addAll(Arrays.asList("2", "1", "3", "4"));
             intensitySelector.getSelectionModel().select(intensity + "");
             intensitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.parseInt(newValue);
-                        if (v > 0 && v < 255) {
+                        if (v > 0) {
                             intensity = v;
                             UserConfig.setInt(baseName + "Intensity", intensity);
                             ValidationTools.setEditorNormal(intensitySelector);
@@ -63,6 +66,8 @@ public class ImageSepiaController extends BaseScopeController {
                     }
                 }
             });
+
+            intensitySelector.disableProperty().bind(unmaskRadio.selectedProperty().not());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -85,15 +90,25 @@ public class ImageSepiaController extends BaseScopeController {
     @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                    inImage, inScope,
-                    PixelsOperation.OperationType.Sepia)
-                    .setIntPara1(intensity)
+            ConvolutionKernel kernel;
+            if (unmaskRadio.isSelected()) {
+                kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
+            } else if (eightRadio.isSelected()) {
+                kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
+            } else if (fourRadio.isSelected()) {
+                kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+            } else {
+                return null;
+            }
+            ImageConvolution convolution = ImageConvolution.create();
+            convolution.setImage(inImage)
+                    .setScope(inScope)
+                    .setKernel(kernel)
                     .setExcludeScope(excludeRadio.isSelected())
                     .setSkipTransparent(ignoreTransparentCheck.isSelected());
-            operation = message("Sepia");
+            operation = message("Sharpen");
             opInfo = message("Intensity") + ": " + intensity;
-            return pixelsOperation.operateFxImage();
+            return convolution.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
             return null;
@@ -103,13 +118,13 @@ public class ImageSepiaController extends BaseScopeController {
     /*
         static methods
      */
-    public static ImageSepiaController open(BaseImageController parent) {
+    public static ImageSharpenController open(BaseImageController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageSepiaController controller = (ImageSepiaController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageSepiaFxml, false);
+            ImageSharpenController controller = (ImageSharpenController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageSharpenFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

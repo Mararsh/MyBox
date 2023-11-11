@@ -430,6 +430,9 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "EditImage")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageManufactureTips")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message(lang, "Scope")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ScopeTips")).append("</PRE>\n");
+
             s.append("    <H3>").append(message(lang, "SVGEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "SVGEditorTips")).append("</PRE>\n");
 

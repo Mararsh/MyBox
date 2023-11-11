@@ -49,16 +49,34 @@ public class ImageEditHistory extends BaseData {
         }
     }
 
-    public String getDesc() {
-        String s = message(updateType);
-        if (objectType != null && !objectType.isEmpty()) {
-            s += " " + message(objectType);
-        }
+    public String getType() {
         if (opType != null && !opType.isEmpty()) {
-            s += " " + message(opType);
+            return message(opType);
+        } else if (objectType != null && !objectType.isEmpty()) {
+            return message(objectType);
+        } else if (updateType != null && !updateType.isEmpty()) {
+            return message(updateType);
+        } else if (scopeType != null && !scopeType.isEmpty()) {
+            return message(scopeType);
+        } else if (scopeName != null && !scopeName.isEmpty()) {
+            return message(scopeName);
+        }
+        return null;
+    }
+
+    public String getDesc() {
+        String s;
+        if (objectType != null && !objectType.isEmpty()) {
+            s = objectType + " ";
+        } else if (opType != null && !opType.isEmpty()) {
+            s = opType + " ";
+        } else if (updateType != null && !updateType.isEmpty()) {
+            s = updateType + " ";
+        } else {
+            s = " ";
         }
         if (scopeType != null && !scopeType.isEmpty()) {
-            s += " " + message(scopeType);
+            s += message(scopeType);
         }
         if (scopeName != null && !scopeName.isEmpty()) {
             s += " " + message(scopeName);

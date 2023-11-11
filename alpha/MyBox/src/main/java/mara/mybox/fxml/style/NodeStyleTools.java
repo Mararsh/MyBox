@@ -138,10 +138,31 @@ public class NodeStyleTools {
         tooltip.setShowDuration(Duration.millis(360000));
         tooltip.setHideDelay(Duration.millis(10));
         Tooltip.install(node, tooltip);
+
     }
 
     public static void setTooltip(final Node node, String tips) {
         setTooltip(node, new Tooltip(tips));
+    }
+
+    public static Tooltip getTooltip(final Node node) {
+        try {
+            return (Tooltip) node.getProperties().get("javafx.scene.control.Tooltip");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String getTips(final Node node) {
+        try {
+            Tooltip t = getTooltip(node);
+            if (t == null) {
+                return null;
+            }
+            return t.getText();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static void setTooltip(final Node node, final Tooltip tooltip) {

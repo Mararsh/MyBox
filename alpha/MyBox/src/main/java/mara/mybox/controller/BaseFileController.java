@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -39,8 +38,6 @@ public abstract class BaseFileController extends BaseController {
     protected ControlFileBrowse browseController;
     @FXML
     protected Label fileInfoLabel;
-    @FXML
-    protected Button fileButton, operationsButton;
 
     @Override
     public void initControls() {
@@ -74,18 +71,6 @@ public abstract class BaseFileController extends BaseController {
             }
             MyBoxLog.error(e);
         }
-//        File bfile = backup != null ? backup.getBackup() : null;
-//        Platform.runLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (bfile != null) {
-//                    popInformation(message("Saved") + ": " + bfile);
-//                    FileBackupController.updateList(file);
-//                } else {
-//                    popError(message("FailBackup") + ": " + file);
-//                }
-//            }
-//        });
         return backup;
     }
 

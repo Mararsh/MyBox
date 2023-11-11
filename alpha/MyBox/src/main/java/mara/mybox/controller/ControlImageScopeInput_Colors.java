@@ -3,11 +3,9 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,13 +18,8 @@ public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInp
     @Override
     protected void startPickingColor() {
         imageView.setCursor(Cursor.HAND);
-        setShapesCursor(Cursor.HAND);;
-        imageLabelOriginal = new Label(scopeTips.getText());
-        imageLabelOriginal.setStyle(scopeTips.getStyle());
-        String tips = pickingColorTips();
-        scopeTips.setText(tips);
-        scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
-        popInformation(tips);
+        setShapesCursor(Cursor.HAND);
+        popInformation(pickingColorTips());
     }
 
     @Override
@@ -38,15 +31,6 @@ public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInp
     protected void stopPickingColor() {
         imageView.setCursor(Cursor.DEFAULT);
         setShapesCursor(Cursor.MOVE);
-        if (imageLabelOriginal != null) {
-            String tips = imageLabelOriginal.getText();
-            scopeTips.setText(tips);
-            scopeTips.setStyle(imageLabelOriginal.getStyle());
-            imageLabelOriginal = null;
-        } else {
-            scopeTips.setText("");
-        }
-
     }
 
     public boolean addColor(Color color) {

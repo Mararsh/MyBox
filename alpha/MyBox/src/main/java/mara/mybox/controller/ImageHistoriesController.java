@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,6 +35,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppPaths;
@@ -64,7 +66,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
     @FXML
     protected TableColumn<ImageEditHistory, Date> timeColumn;
     @FXML
-    protected TableColumn<ImageEditHistory, String> descColumn;
+    protected TableColumn<ImageEditHistory, String> typeColumn, descColumn;
     @FXML
     protected VBox historiesListBox;
     @FXML
@@ -88,6 +90,8 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
             timeColumn.setCellFactory(new TableDateCell());
 
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+
+            typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
 
             descColumn.setCellValueFactory(new PropertyValueFactory<>("desc"));
 
@@ -124,6 +128,16 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(viewButton, new Tooltip(message("View") + "\nCTRL+P / ALT+P"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
@@ -354,6 +368,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
             @Override
             protected boolean handle() {
                 deletedCount = tableImageEditHistory.clearHistories(task, sourceFile);
+                MyBoxLog.console(deletedCount);
                 return true;
             }
 
@@ -369,8 +384,8 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
                 super.finalAction();
                 if (deletedCount > 0) {
                     popInformation(message("Deleted") + ":" + deletedCount);
-                    refreshAction();
                 }
+                refreshAction();
             }
 
         };
@@ -417,21 +432,31 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
     }
 
     @FXML
+    @Override
+    public boolean popAction() {
+        viewAction();
+        return true;
+    }
+
+    @FXML
     public void hisPath() {
         SingletonTask pathtask = new SingletonCurrentTask<Void>(this) {
             File path;
 
             @Override
             protected boolean handle() {
+                MyBoxLog.console(sourceFile);
                 path = tableImageEditHistory.path(sourceFile);
                 return true;
             }
 
             @Override
             protected void whenSucceeded() {
+                MyBoxLog.console(path);
                 if (path == null) {
-                    path = new File(AppPaths.getBackupsPath());
+                    path = new File(imageHistoriesRootPath);
                 }
+                MyBoxLog.console(path);
                 browseURI(path.toURI());
             }
 

@@ -48,7 +48,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class ImageAdjustColorController extends ImageSelectScopeController {
+public class ImageAdjustColorController extends BaseScopeController {
 
     private OperationType colorOperationType;
     private ColorActionType colorActionType;

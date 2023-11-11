@@ -22,6 +22,12 @@ public class StyleCheckBox {
         if (id.startsWith("contextMenu")) {
             return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
         }
+        if (id.startsWith("toolbar")) {
+            return new StyleData(id, "", message("Toolbar"), "", "iconPanes.png");
+        }
+        if (id.startsWith("tips")) {
+            return new StyleData(id, "", message("Tips"), "", "iconTips.png");
+        }
         if (id.startsWith("openPath")) {
             return new StyleData(id, "", message("OpenDirectory"), "", "iconOpenPath.png");
         }

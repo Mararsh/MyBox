@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -73,8 +72,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             stopPickingColor();
             return;
         }
-        imageLabelOriginal = new Label(scopeTips.getText());
-        imageLabelOriginal.setStyle(scopeTips.getStyle());
         String tips = message("PickingColorsForScope");
         scopeTips.setText(tips);
         scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
@@ -83,14 +80,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
 
     @Override
     protected void stopPickingColor() {
-        if (imageLabelOriginal != null) {
-            String tips = imageLabelOriginal.getText();
-            scopeTips.setText(tips);
-            scopeTips.setStyle(imageLabelOriginal.getStyle());
-            imageLabelOriginal = null;
-        } else {
-            scopeTips.setText("");
-        }
 
     }
 

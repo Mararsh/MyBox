@@ -625,12 +625,31 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 if (TipsLabelKey != null) {
                     NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
                 }
+                tipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        String tips = NodeStyleTools.getTips(tipsView);
+                        if (tips != null && !tips.isBlank()) {
+                            TextPopController.loadText(tips);
+                        }
+                    }
+                });
+
             }
             if (rightTipsView != null) {
                 rightTipsView.setPickOnBounds(true);
                 if (TipsLabelKey != null) {
                     NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
                 }
+                rightTipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        String tips = NodeStyleTools.getTips(rightTipsView);
+                        if (tips != null && !tips.isBlank()) {
+                            TextPopController.loadText(tips);
+                        }
+                    }
+                });
             }
 
             if (copyButton == null) {

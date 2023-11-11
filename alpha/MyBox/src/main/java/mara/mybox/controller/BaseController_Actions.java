@@ -579,7 +579,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             return;
         }
         Robot robot = new Robot();
-        popMenu(node, menuItems, robot.getMouseX(), robot.getMouseY() + 10);
+        popMenu(node, menuItems, robot.getMouseX() - 20, robot.getMouseY() + 10);
     }
 
     public void popCenterMenu(Node node, List<MenuItem> menuItems) {

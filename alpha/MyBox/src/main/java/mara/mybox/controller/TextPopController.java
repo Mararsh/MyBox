@@ -199,7 +199,7 @@ public class TextPopController extends BaseChildController {
         }
     }
 
-    public static TextPopController loadText(BaseController parent, String text) {
+    public static TextPopController loadText(String text) {
         try {
             TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
             controller.setText(text);

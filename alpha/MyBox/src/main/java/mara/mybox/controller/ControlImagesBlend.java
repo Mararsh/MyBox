@@ -184,9 +184,9 @@ public class ControlImagesBlend extends BaseController {
                     int x = (int) (backImage.getWidth() - foreImage.getWidth()) / 2;
                     int y = (int) (backImage.getHeight() - foreImage.getHeight()) / 2;
                     BufferedImage foreBI = SwingFXUtils.fromFXImage(foreImage, null);
-                    foreBI = ScaleTools.scaleImageLess(foreBI, 1000000);
+                    foreBI = ScaleTools.demoImage(foreBI);
                     BufferedImage backBI = SwingFXUtils.fromFXImage(backImage, null);
-                    backBI = ScaleTools.scaleImageLess(backBI, 1000000);
+                    backBI = ScaleTools.demoImage(backBI);
                     files = new ArrayList<>();
                     boolean reversed = !isTop();
                     boolean ignoreTrans = ignoreTransparent();

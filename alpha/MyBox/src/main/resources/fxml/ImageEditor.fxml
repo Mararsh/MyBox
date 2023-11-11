@@ -68,6 +68,25 @@ License:    Apache License Version 2.0
                         </ImageView>
                         <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0" HBox.hgrow="ALWAYS">
                             <children>
+                        <CheckBox fx:id="toolbarCheck" mnemonicParsing="false">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconPanes.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </CheckBox>
+                                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
+                                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconMenu.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Button fx:id="optionsButton" mnemonicParsing="false" onAction="#options">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -77,21 +96,20 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
-                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                                <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconPop.png" />
+                                                <Image url="@../buttons/Red/iconFunction.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                                <Button fx:id="dataButton" mnemonicParsing="false" onAction="#showDataMenu" onMouseEntered="#popDataMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconMenu.png" />
+                                                <Image url="@../buttons/Red/iconData.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -105,15 +123,6 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                       </graphic>
                                   </Button>
-                                <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconFunction.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
                                   <Button fx:id="operationsButton" mnemonicParsing="false" onAction="#showOperationsMenu" onMouseEntered="#popOperationsMenu">
                                       <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -129,22 +138,22 @@ License:    Apache License Version 2.0
                 </HBox>
                 <VBox fx:id="imageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                        <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
                             <children>
-                                <Button fx:id="dataButton" layoutX="526.0" layoutY="10.0" mnemonicParsing="false" onAction="#showDataMenu" onMouseEntered="#popDataMenu">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconData.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
                                 <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconHistory.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconPop.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

@@ -517,7 +517,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (node != null) {
             s += "\n" + value(node);
         }
-        TextPopController.loadText(this, s);
+        TextPopController.loadText(s);
     }
 
     @FXML

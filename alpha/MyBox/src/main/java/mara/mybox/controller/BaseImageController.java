@@ -295,9 +295,37 @@ public class BaseImageController extends BaseImageController_Actions {
                 });
             }
 
+            if (toolbarCheck != null) {
+                toolbarCheck.setSelected(UserConfig.getBoolean(baseName + "Toolbar", true));
+                toolbarCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "Toolbar", toolbarCheck.isSelected());
+                        checkToolsBar();
+                    }
+                });
+                checkToolsBar();
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void checkToolsBar() {
+        if (toolbar == null || toolbarCheck == null || imageBox == null) {
+            return;
+        }
+        if (toolbarCheck.isSelected()) {
+            if (!imageBox.getChildren().contains(toolbar)) {
+                imageBox.getChildren().add(0, toolbar);
+            }
+        } else {
+            if (imageBox.getChildren().contains(toolbar)) {
+                imageBox.getChildren().remove(toolbar);
+            }
+        }
+        refreshStyle(imageBox);
     }
 
     @Override
@@ -478,12 +506,6 @@ public class BaseImageController extends BaseImageController_Actions {
             items.add(menu);
 
             if (imageFile() != null) {
-                menu = new MenuItem(message("Convert"), StyleTools.getIconImageView("iconConvert.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    ImageConverterController.open(this);
-                });
-                items.add(menu);
-
                 menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     svgAction();

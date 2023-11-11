@@ -71,7 +71,7 @@ public class ShapeRotateInputController extends BaseShapeTransformController {
             imageController.showMaskPath();
             imageController.maskShapeDataChanged();
         } else {
-            TextPopController.loadText(imageController, pathData.pathAbs());
+            TextPopController.loadText(pathData.pathAbs());
         }
         close();
     }

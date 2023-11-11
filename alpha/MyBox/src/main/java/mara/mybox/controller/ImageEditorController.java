@@ -21,6 +21,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -37,6 +38,7 @@ import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -97,6 +99,16 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(historyButton, new Tooltip(message("Histories") + "\nCTRL+H / ALT+H"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
     public boolean afterImageLoaded() {
         try {
 
@@ -111,7 +123,7 @@ public class ImageEditorController extends BaseImageController {
             historyButton.setDisable(sourceFile == null);
             updateLabel(message("Loaded"));
 
-            recordImageHistory("Load", null, image);
+            recordImageHistory("Load", null, null, image);
 
             return true;
         } catch (Exception e) {
@@ -155,7 +167,7 @@ public class ImageEditorController extends BaseImageController {
     public void updateImage(String operation, String value, ImageScope opScope, Image newImage, long cost) {
         try {
             scope = opScope;
-            recordImageHistory(operation, opScope, newImage);
+            recordImageHistory(operation, value, opScope, newImage);
             String info = operation == null ? "" : message(operation);
             if (value != null && !value.isBlank()) {
                 info += ": " + value;
@@ -182,7 +194,7 @@ public class ImageEditorController extends BaseImageController {
         redoButton.setDisable(historyIndex <= 0);
     }
 
-    protected void recordImageHistory(String op, ImageScope scope, Image hisImage) {
+    protected void recordImageHistory(String op, String info, ImageScope scope, Image hisImage) {
         if (sourceFile == null || !UserConfig.getBoolean("ImageHistoriesRecord", true)) {
             hisSize = 0;
             setHistoryIndex(-1);
@@ -248,7 +260,8 @@ public class ImageEditorController extends BaseImageController {
                             .setHistoryFile(hisFile)
                             .setThumbnailFile(thumbFile)
                             .setThumbnail(SwingFXUtils.toFXImage(thumb, null))
-                            .setUpdateType(op)
+                            .setOpType(message(op))
+                            .setObjectType(info)
                             .setOperationTime(new Date());
                     if (scope != null) {
                         if (scope.getScopeType() != null) {
@@ -274,7 +287,7 @@ public class ImageEditorController extends BaseImageController {
                 String name = imageHistoriesPath.getAbsolutePath() + File.separator
                         + prefix + "_" + (new Date().getTime()) + "_" + op;
                 name += "_" + new Random().nextInt(1000);
-                return FileNameTools.filter(name);
+                return name;
             }
 
             @Override
@@ -428,7 +441,7 @@ public class ImageEditorController extends BaseImageController {
 
             items.add(colorMenu(fevent));
 
-            items.add(effectMenu(fevent));
+            items.add(pixelsMenu(fevent));
 
             items.add(tranformMenu(fevent));
 
@@ -504,59 +517,59 @@ public class ImageEditorController extends BaseImageController {
         }
     }
 
-    public Menu effectMenu(Event fevent) {
+    public Menu pixelsMenu(Event fevent) {
         try {
-            Menu effectNenu = new Menu(message("Effect"), StyleTools.getIconImageView("iconMatrix.png"));
+            Menu pixelsNenu = new Menu(message("Pixels"), StyleTools.getIconImageView("iconMatrix.png"));
 
             MenuItem menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageMosaicController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
             menu = new MenuItem(message("FrostedGlass"), StyleTools.getIconImageView("iconFrosted.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageGlassController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
             menu = new MenuItem(message("Smooth"), StyleTools.getIconImageView("iconSmooth.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageSmoothController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
             menu = new MenuItem(message("Sharpen"), StyleTools.getIconImageView("iconSharpen.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageSharpenController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
             menu = new MenuItem(message("Contrast"), StyleTools.getIconImageView("iconGrey.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageBlackWhiteController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
             menu = new MenuItem(message("EdgeDetection"), StyleTools.getIconImageView("iconEdgeDetection.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEdgeController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
             menu = new MenuItem(message("Emboss"), StyleTools.getIconImageView("iconEmboss.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEmbossController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
             menu = new MenuItem(message("Convolution"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageBlackWhiteController.open(this);
             });
-            effectNenu.getItems().add(menu);
+            pixelsNenu.getItems().add(menu);
 
-            return effectNenu;
+            return pixelsNenu;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -789,6 +802,12 @@ public class ImageEditorController extends BaseImageController {
             return false;
         }
 
+    }
+
+    @Override
+    public boolean controlAltH() {
+        showHistories();
+        return true;
     }
 
     /*

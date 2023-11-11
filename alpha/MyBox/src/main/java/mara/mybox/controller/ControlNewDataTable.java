@@ -8,10 +8,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -123,7 +123,7 @@ public class ControlNewDataTable extends BaseController {
                     alertWarning(message("AlreadyExisted") + ": " + tableName);
                     return true;
                 } else {
-                    if (PopTools.askSure( message("AlreadyExisted") + ": " + tableName,
+                    if (PopTools.askSure(message("AlreadyExisted") + ": " + tableName,
                             message("SureReplaceExistedDatabaseTable"))) {
                         if (dataTable == null) {
                             dataTable = new DataTable();
@@ -266,12 +266,12 @@ public class ControlNewDataTable extends BaseController {
 
     @FXML
     public void sqlAction() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (!checkOptions(conn, true) || !makeTable()) {
                 return;
             }
             String sql = tableData2D.createTableStatement();
-            TextPopController.loadText(this, sql);
+            TextPopController.loadText(sql);
         } catch (Exception e) {
             popError(e.toString());
         }

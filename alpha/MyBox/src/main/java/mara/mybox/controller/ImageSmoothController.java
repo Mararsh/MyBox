@@ -1,14 +1,16 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.ImageMosaic;
+import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -20,15 +22,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageSmoothController extends ImageSelectScopeController {
+public class ImageSmoothController extends BaseScopeController {
 
     protected int intensity;
 
     @FXML
     protected ComboBox<String> intensitySelector;
+    @FXML
+    protected RadioButton avarageRadio, gaussianRadio, motionRadio;
 
     public ImageSmoothController() {
-        baseTitle = message("Mosaic");
+        baseTitle = message("Smooth");
     }
 
     @Override
@@ -39,13 +43,29 @@ public class ImageSmoothController extends ImageSelectScopeController {
                 close();
                 return;
             }
-            intensity = UserConfig.getInt(baseName + "Intensity", 80);
+            intensity = UserConfig.getInt(baseName + "Intensity", 10);
             if (intensity <= 0) {
-                intensity = 80;
+                intensity = 10;
             }
-            intensitySelector.getItems().addAll(Arrays.asList("80", "20", "50", "10", "5", "100", "15", "20", "60"));
+            intensitySelector.getItems().addAll(Arrays.asList("3", "5", "10", "2", "1", "8", "15", "20", "30"));
             intensitySelector.getSelectionModel().select(intensity + "");
-
+            intensitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v > 0) {
+                            intensity = v;
+                            UserConfig.setInt(baseName + "Intensity", intensity);
+                            ValidationTools.setEditorNormal(intensitySelector);
+                        } else {
+                            ValidationTools.setEditorBadStyle(intensitySelector);
+                        }
+                    } catch (Exception e) {
+                        ValidationTools.setEditorBadStyle(intensitySelector);
+                    }
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -56,76 +76,36 @@ public class ImageSmoothController extends ImageSelectScopeController {
         if (!super.checkOptions()) {
             return false;
         }
-        intensity = -1;
-        try {
-            int v = Integer.parseInt(intensitySelector.getValue());
-            if (v > 0) {
-                intensity = v;
-            }
-        } catch (Exception e) {
-        }
         if (intensity > 0) {
-            ValidationTools.setEditorNormal(intensitySelector);
-            UserConfig.setInt(baseName + "Intensity", intensity);
             return true;
         } else {
-            ValidationTools.setEditorBadStyle(intensitySelector);
             popError(message("InvalidParameter"));
             return false;
         }
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private ImageScope scope;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    ImageMosaic mosaic
-                            = ImageMosaic.create(
-                                    editor.imageView.getImage(), scope,
-                                    ImageMosaic.MosaicType.Mosaic, intensity);
-                    mosaic.setExcludeScope(excludeRadio.isSelected())
-                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
-                    handledImage = mosaic.operateFxImage();
-                    return handledImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage("Mosaic", message("Intensity") + ": " + intensity,
-                        scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
-    }
-
-    @Override
-    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+    protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            ImageMosaic mosaic = ImageMosaic.create(
-                    dbf, scope,
-                    ImageMosaic.MosaicType.Mosaic, 30);
-            return mosaic.operateFxImage();
+            ConvolutionKernel kernel;
+            if (avarageRadio.isSelected()) {
+                kernel = ConvolutionKernel.makeAverageBlur(intensity);
+            } else if (gaussianRadio.isSelected()) {
+                kernel = ConvolutionKernel.makeGaussBlur(intensity);
+            } else if (motionRadio.isSelected()) {
+                kernel = ConvolutionKernel.makeMotionBlur(intensity);
+            } else {
+                return null;
+            }
+            ImageConvolution convolution = ImageConvolution.create();
+            convolution.setImage(inImage)
+                    .setScope(inScope)
+                    .setKernel(kernel)
+                    .setExcludeScope(excludeRadio.isSelected())
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            operation = message("Smooth");
+            opInfo = message("Intensity") + ": " + intensity;
+            return convolution.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
             return null;
@@ -141,7 +121,7 @@ public class ImageSmoothController extends ImageSelectScopeController {
                 return null;
             }
             ImageSmoothController controller = (ImageSmoothController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageMosaicFxml, false);
+                    parent.getMyWindow(), Fxmls.ImageSmoothFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

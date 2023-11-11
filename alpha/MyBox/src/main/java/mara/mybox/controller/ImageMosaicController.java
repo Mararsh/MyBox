@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,7 +9,6 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageMosaic;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -22,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageMosaicController extends ImageSelectScopeController {
+public class ImageMosaicController extends BaseScopeController {
 
     protected int intensity;
 
@@ -82,62 +80,22 @@ public class ImageMosaicController extends ImageSelectScopeController {
         }
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private ImageScope scope;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    ImageMosaic mosaic
-                            = ImageMosaic.create(
-                                    editor.imageView.getImage(), scope,
-                                    ImageMosaic.MosaicType.Mosaic, intensity);
-                    mosaic.setExcludeScope(excludeRadio.isSelected())
-                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
-                    handledImage = mosaic.operateFxImage();
-                    return handledImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage("Mosaic", message("Intensity") + ": " + intensity,
-                        scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
-    }
-
-    @Override
-    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+    protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            ImageMosaic mosaic = ImageMosaic.create(
-                    dbf, scope,
-                    ImageMosaic.MosaicType.Mosaic, 30);
+            ImageMosaic mosaic = ImageMosaic.create(inImage, inScope,
+                    ImageMosaic.MosaicType.Mosaic, intensity);
+            mosaic.setExcludeScope(excludeRadio.isSelected())
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            operation = message("Mosaic");
+            opInfo = message("Intensity") + ": " + intensity;
             return mosaic.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
             return null;
         }
     }
+
 
     /*
         static methods

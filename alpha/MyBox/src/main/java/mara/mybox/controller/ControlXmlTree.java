@@ -388,7 +388,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             if (xml == null || xml.isBlank()) {
                 popInformation(message("NoData"));
             } else {
-                TextPopController.loadText(this, xml);
+                TextPopController.loadText(xml);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -404,7 +404,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             if (texts == null || texts.isEmpty()) {
                 popInformation(message("NoData"));
             } else {
-                TextPopController.loadText(this, texts);
+                TextPopController.loadText(texts);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

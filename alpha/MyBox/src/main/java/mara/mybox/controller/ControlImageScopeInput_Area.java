@@ -71,7 +71,8 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
     }
 
     @FXML
-    public void selectAllRect() {
+    @Override
+    public void selectAllAction() {
         if (!isValidScope() || isSettingValues
                 || scope.getScopeType() != ScopeType.Rectangle) {
             return;

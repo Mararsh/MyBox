@@ -135,9 +135,10 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
         try {
             isSettingValues = true;
             clearMask();
-            imageView.setImage(srcImage());
-            if (srcImage != null) {
-                scope = new ImageScope(srcImage);
+            image = srcImage();
+            imageView.setImage(image);
+            if (image != null) {
+                scope = new ImageScope(image);
                 if (sourceFile != null) {
                     scope.setFile(sourceFile.getAbsolutePath());
                 }
@@ -271,7 +272,6 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
             Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
             tabPane.getTabs().clear();
             areaBox.getChildren().clear();
-            scopeTips.setText("");
             if (srcImage() == null || scope == null) {
                 return;
             }
@@ -283,6 +283,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
             UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true);
             shapeButton.setVisible(true);
             withdrawButton.setVisible(false);
+            selectAllButton.setVisible(false);
             switch (scope.getScopeType()) {
                 case Matting:
                     tips = message("ScopeMattingTips");
@@ -302,6 +303,7 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     rightBottomXInput.setText(scale(maskRectangleData.getMaxX(), 2) + "");
                     rightBottomYInput.setText(scale(maskRectangleData.getMaxY(), 2) + "");
                     rectangleLabel.setText(message("Rectangle"));
+                    selectAllButton.setVisible(true);
                     break;
 
                 case Circle:
@@ -348,7 +350,6 @@ public abstract class ControlImageScopeInput_Set extends ControlImageScopeInput_
                     break;
 
             }
-            scopeTips.setText(tips);
             areaBox.applyCss();
             areaBox.layout();
             refreshStyle(tabPane);

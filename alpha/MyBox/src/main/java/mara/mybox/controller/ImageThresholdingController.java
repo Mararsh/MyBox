@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -11,7 +10,6 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -23,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageThresholdingController extends ImageSelectScopeController {
+public class ImageThresholdingController extends BaseScopeController {
 
     protected int threshold, small, big;
 
@@ -31,7 +29,7 @@ public class ImageThresholdingController extends ImageSelectScopeController {
     protected TextField thresholdInput, smallInput, bigInput;
 
     public ImageThresholdingController() {
-        baseTitle = message("Mosaic");
+        baseTitle = message("Thresholding");
         TipsLabelKey = message("ImageThresholdingComments");
     }
 
@@ -145,64 +143,19 @@ public class ImageThresholdingController extends ImageSelectScopeController {
         }
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private ImageScope scope;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                            editor.imageView.getImage(),
-                            scope,
-                            PixelsOperation.OperationType.Thresholding)
-                            .setIntPara1(threshold)
-                            .setIntPara2(big)
-                            .setIntPara3(small)
-                            .setIsDithering(false)
-                            .setExcludeScope(excludeRadio.isSelected())
-                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
-                    handledImage = pixelsOperation.operateFxImage();
-                    return handledImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage("Thresholding", message("Threshold") + ": " + threshold,
-                        scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
-    }
-
-    @Override
-    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+    protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                    dbf, scope,
-                    PixelsOperation.OperationType.Thresholding)
-                    .setIntPara1(128)
-                    .setIntPara2(0)
-                    .setIntPara3(255)
-                    .setIsDithering(false);
+                    inImage, inScope, PixelsOperation.OperationType.Thresholding)
+                    .setIntPara1(threshold)
+                    .setIntPara2(big)
+                    .setIntPara3(small)
+                    .setIsDithering(false)
+                    .setExcludeScope(excludeRadio.isSelected())
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            operation = message("Thresholding");
+            opInfo = message("Threshold") + ": " + threshold;
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());

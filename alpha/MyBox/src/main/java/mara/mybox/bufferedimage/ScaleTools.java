@@ -108,6 +108,10 @@ public class ScaleTools {
         return scaleImage(source, width, height);
     }
 
+    public static BufferedImage demoImage(BufferedImage source) {
+        return scaleImageLess(source, 1000000);
+    }
+
     public static BufferedImage scaleImageLess(BufferedImage source, int size) {
         if (size <= 0) {
             return source;

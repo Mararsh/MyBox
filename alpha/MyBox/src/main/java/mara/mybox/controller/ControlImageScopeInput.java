@@ -42,6 +42,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageScopeInput extends ControlImageScopeInput_Save {
 
+    public ControlImageScopeInput() {
+        TipsLabelKey = "ScopeTips";
+    }
+
     @Override
     public void initControls() {
         try {
@@ -296,14 +300,13 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         }
     }
 
-    public void setParameters(ImageSelectScopeController parent) {
+    public void setParameters(BaseScopeController parent) {
         try {
             this.parentController = parent;
-            selector = parent;
-            imageController = selector.imageController;
+            handler = parent;
+            imageController = handler.imageController;
 
             loadImage();
-            loadScope(imageController.scope);
 
             imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -321,14 +324,14 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         if (imageController == null || !imageController.isShowing()) {
             return;
         }
-        loadImage(imageController.imageView.getImage());
+        loadImage(srcImage());
     }
 
     @Override
     public boolean afterImageLoaded() {
         if (super.afterImageLoaded()) {
-            srcImage = image;
-            checkScopeType();
+            imageView.setRotate(0);
+            loadScope(imageController.scope);
             return true;
         } else {
             return false;
@@ -353,7 +356,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             return;
         }
         if (tabPane.getTabs().contains(colorsTab) && isPickingColor) {
-            Color color = ImageViewTools.imagePixel(p, imageView);
+            Color color = ImageViewTools.imagePixel(p, imageController.imageView);
             if (color != null) {
                 addColor(color);
             }
@@ -451,6 +454,12 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
     @FXML
     public void showSaved() {
         ImageScopesSavedController.load(this);
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        imageController.saveAction();
     }
 
     @Override

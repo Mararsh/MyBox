@@ -132,6 +132,7 @@ License:    Apache License Version 2.0
                                 <TableColumn fx:id="timeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="160.0" prefWidth="-1.0" text="%RecordTime" />
                                 <TableColumn fx:id="sizeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="%Size" />
                                 <TableColumn fx:id="imageColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="%Image" />
+                        <TableColumn fx:id="typeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="100.0" text="%Type" />
                                 <TableColumn fx:id="descColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="300.0" text="%Description" />
                                 <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="500.0" text="%File" />
                             </columns>

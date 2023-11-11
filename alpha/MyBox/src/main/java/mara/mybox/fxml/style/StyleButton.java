@@ -197,7 +197,7 @@ public class StyleButton {
         if (id.startsWith("example")) {
             return new StyleData(id, message("Examples"), "", "iconExamples.png");
         }
-        if (id.startsWith("histor")) {
+        if (id.startsWith("history")) {
             return new StyleData(id, message("Histories"), "", "iconHistory.png");
         }
         if (id.startsWith("sql")) {

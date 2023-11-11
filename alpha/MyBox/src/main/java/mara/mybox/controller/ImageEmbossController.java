@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,7 +13,6 @@ import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -26,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageEmbossController extends ImageSelectScopeController {
+public class ImageEmbossController extends BaseScopeController {
 
     protected int direction, raduis;
 
@@ -117,62 +115,19 @@ public class ImageEmbossController extends ImageSelectScopeController {
         return true;
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private ImageScope scope;
-            protected ConvolutionKernel kernel;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    kernel = ConvolutionKernel.makeEmbossKernel(
-                            direction, raduis, greyCheck.isSelected());
-                    ImageConvolution convolution = ImageConvolution.create();
-                    convolution.setImage(editor.imageView.getImage())
-                            .setScope(scope)
-                            .setKernel(kernel)
-                            .setExcludeScope(excludeRadio.isSelected())
-                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
-                    handledImage = convolution.operateFxImage();
-                    return handledImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage(kernel.getName(), message("Grey") + ": " + kernel.isGray(),
-                        scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
-    }
-
-    @Override
-    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+    protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             ConvolutionKernel kernel = ConvolutionKernel.makeEmbossKernel(
-                    BufferedImageTools.Direction.Top, 3, true);
-            ImageConvolution convolution = ImageConvolution.create()
-                    .setImage(dbf)
-                    .setScope(scope)
-                    .setKernel(kernel);
+                    direction, raduis, greyCheck.isSelected());
+            ImageConvolution convolution = ImageConvolution.create();
+            convolution.setImage(inImage)
+                    .setScope(inScope)
+                    .setKernel(kernel)
+                    .setExcludeScope(excludeRadio.isSelected())
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            operation = kernel.getName();
+            opInfo = message("Grey") + ": " + kernel.isGray();
             return convolution.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());

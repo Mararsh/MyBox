@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -11,7 +10,6 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -22,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class ImageReplaceColorController extends ImageSelectScopeController {
+public class ImageReplaceColorController extends BaseScopeController {
 
     @FXML
     protected CheckBox hueCheck, saturationCheck, brightnessCheck;
@@ -70,66 +68,19 @@ public class ImageReplaceColorController extends ImageSelectScopeController {
 
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private ImageScope scope;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                            editor.imageView.getImage(),
-                            scope,
-                            PixelsOperation.OperationType.Color,
-                            PixelsOperation.ColorActionType.Set)
-                            .setColorPara1(colorController.awtColor())
-                            .setBoolPara1(hueCheck.isSelected())
-                            .setBoolPara2(saturationCheck.isSelected())
-                            .setBoolPara3(brightnessCheck.isSelected())
-                            .setExcludeScope(excludeRadio.isSelected())
-                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
-                    handledImage = pixelsOperation.operateFxImage();
-                    return handledImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage("ReplaceColor", null, scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
-    }
-
-    @Override
-    protected Image makeDemo(BufferedImage dbf, ImageScope scope) {
+    protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                    dbf, scope,
-                    PixelsOperation.OperationType.Color,
-                    PixelsOperation.ColorActionType.Set)
+                    inImage, inScope, PixelsOperation.OperationType.Color)
                     .setColorPara1(colorController.awtColor())
-                    .setBoolPara1(true)
-                    .setBoolPara2(false)
-                    .setBoolPara3(false)
+                    .setBoolPara1(hueCheck.isSelected())
+                    .setBoolPara2(saturationCheck.isSelected())
+                    .setBoolPara3(brightnessCheck.isSelected())
+                    .setExcludeScope(excludeRadio.isSelected())
                     .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            operation = message("ReplaceColor");
+            opInfo = null;
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());

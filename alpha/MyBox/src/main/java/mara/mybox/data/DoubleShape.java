@@ -418,7 +418,7 @@ public interface DoubleShape {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, pathData.getContent());
+                    TextPopController.loadText(pathData.getContent());
                 }
             });
             items.add(menu);
@@ -439,7 +439,7 @@ public interface DoubleShape {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, shapeData.elementAbs());
+                    TextPopController.loadText(shapeData.elementAbs());
                 }
             });
             items.add(menu);
@@ -448,7 +448,7 @@ public interface DoubleShape {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, shapeData.elementRel());
+                    TextPopController.loadText(shapeData.elementRel());
                 }
             });
             items.add(menu);
@@ -457,7 +457,7 @@ public interface DoubleShape {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, shapeData.elementAbs());
+                    TextPopController.loadText(shapeData.elementAbs());
                 }
             });
             items.add(menu);
@@ -466,7 +466,7 @@ public interface DoubleShape {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, "<path d=\"\n" + shapeData.pathAbs() + "\n\">");
+                    TextPopController.loadText("<path d=\"\n" + shapeData.pathAbs() + "\n\">");
                 }
             });
             items.add(menu);
@@ -475,7 +475,7 @@ public interface DoubleShape {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, "<path d=\"\n" + shapeData.pathRel() + "\n\">");
+                    TextPopController.loadText("<path d=\"\n" + shapeData.pathRel() + "\n\">");
                 }
             });
             items.add(menu);
