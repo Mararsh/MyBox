@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageMosaicController extends BaseScopeController {
+public class ImageMosaicController extends BaseImageScopeController {
 
     protected int intensity;
 

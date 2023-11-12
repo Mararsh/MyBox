@@ -335,8 +335,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public void withdrawAction() {
-
+    public boolean withdrawAction() {
+        return false;
     }
 
     @FXML

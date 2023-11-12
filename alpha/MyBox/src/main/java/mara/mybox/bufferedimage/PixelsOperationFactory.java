@@ -9,6 +9,7 @@ import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Blend;
 import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Color;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -31,6 +32,8 @@ public class PixelsOperationFactory {
         switch (operationType) {
             case ShowScope:
                 return new ShowScope(image, scope);
+            case SelectScope:
+                return new SelectScope(image, scope);
             case ReplaceColor:
                 return new ReplaceColor(image, scope);
             case Color:
@@ -245,8 +248,53 @@ public class PixelsOperationFactory {
         }
 
         @Override
+        protected boolean inScope(boolean isWhole, int x, int y, Color color) {
+            return !super.inScope(isWhole, x, y, color);
+        }
+
+        @Override
+        protected Color skipTransparent(BufferedImage target, int x, int y) {
+            try {
+                Color color = ColorBlendTools.blendColor(Colors.TRANSPARENT, maskOpacity, maskColor, true);
+                target.setRGB(x, y, color.getRGB());
+                return Colors.TRANSPARENT;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
         protected Color operateColor(Color color) {
-            return ColorBlendTools.blendColor(color, maskOpacity, maskColor);
+            return ColorBlendTools.blendColor(color, maskOpacity, maskColor, true);
+        }
+    }
+
+    public static class SelectScope extends PixelsOperation {
+
+        public SelectScope(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.SelectScope;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color skipTransparent(BufferedImage target, int x, int y) {
+            try {
+                target.setRGB(x, y, colorPara1.getRGB());
+                return colorPara1;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected boolean inScope(boolean isWhole, int x, int y, Color color) {
+            return !super.inScope(isWhole, x, y, color);
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return colorPara1;
         }
     }
 

@@ -118,12 +118,13 @@ public class ImageEraseController extends BaseImageEditController {
 
     @FXML
     @Override
-    public void withdrawAction() {
+    public boolean withdrawAction() {
         if (imageView == null || imageView.getImage() == null) {
-            return;
+            return false;
         }
         maskPolylinesData.removeLastLine();
         showMaskPolylines();
+        return true;
     }
 
     @FXML

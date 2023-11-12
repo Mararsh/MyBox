@@ -805,6 +805,39 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @Override
+    public boolean controlAltR() {
+        recoverAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltX() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        cropAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltZ() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        undoAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltY() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        redoAction();
+        return false;
+    }
+
+    @Override
     public boolean controlAltH() {
         showHistories();
         return true;

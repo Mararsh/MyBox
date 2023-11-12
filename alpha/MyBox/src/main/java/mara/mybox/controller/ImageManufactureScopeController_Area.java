@@ -200,15 +200,16 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     @FXML
     @Override
-    public void withdrawAction() {
+    public boolean withdrawAction() {
         if (!isValidScope() || isSettingValues
                 || scope.getScopeType() != ScopeType.Polygon) {
-            return;
+            return false;
         }
         if (scope.getScopeType() == ScopeType.Polygon || scope.getScopeType() == ScopeType.Matting) {
             pointsController.removeLastItem();
+            return true;
         }
-
+        return false;
     }
 
     @Override

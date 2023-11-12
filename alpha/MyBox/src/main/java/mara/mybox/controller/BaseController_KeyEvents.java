@@ -490,12 +490,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltW() {
-        if (cancelButton != null) {
-            if (!cancelButton.isDisabled() && cancelButton.isVisible()) {
-                cancelAction();
-            }
-            return true;
-        } else if (withdrawButton != null) {
+        if (withdrawButton != null) {
             if (!withdrawButton.isDisabled() && withdrawButton.isVisible()) {
                 withdrawAction();
             }

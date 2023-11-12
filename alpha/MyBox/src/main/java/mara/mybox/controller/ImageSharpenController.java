@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageSharpenController extends BaseScopeController {
+public class ImageSharpenController extends BaseImageScopeController {
 
     protected int intensity;
 

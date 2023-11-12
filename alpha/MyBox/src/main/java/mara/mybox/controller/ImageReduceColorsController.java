@@ -24,7 +24,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageReduceColorsController extends BaseScopeController {
+public class ImageReduceColorsController extends BaseImageScopeController {
 
     protected List<Color> quantizationColors;
     protected StringTable quanTable;

@@ -165,7 +165,7 @@ public class ImageItem {
                     "Clear", "Clipboard", "Close", "Copy",
                     "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
                     "Edit", "Examples", "Export", "File", "Frame",
-                    "Function", "Go", "Import", "Manage", "Menu", "NewItem",
+                    "Function", "Go", "History", "Import", "Manage", "Menu", "NewItem",
                     "OK", "OpenPath", "Operation", "Options",
                     "Panes", "Play", "Permission", "Polylines", "Pop", "Query",
                     "Random", "Recover", "Refresh", "Repeat",

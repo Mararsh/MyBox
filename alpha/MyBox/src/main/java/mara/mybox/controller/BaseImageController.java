@@ -716,6 +716,14 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
+            if (TipsLabelKey != null) {
+                menu = new MenuItem(message("Tips"), StyleTools.getIconImageView("iconTips.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    TextPopController.loadText(message(TipsLabelKey));
+                });
+                items.add(menu);
+            }
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -725,17 +733,19 @@ public class BaseImageController extends BaseImageController_Actions {
 
     @Override
     public boolean controlAltC() {
-        if (targetIsTextInput()) {
+        if (imageView == null || imageView.getImage() == null
+                || targetIsTextInput()) {
             return false;
         }
         copyAction();
-        return false;
+        return true;
 
     }
 
     @Override
     public boolean controlAltV() {
-        if (targetIsTextInput()) {
+        if (imageView == null || imageView.getImage() == null
+                || targetIsTextInput()) {
             return false;
         }
         if (sourceFile != null) {
@@ -743,52 +753,25 @@ public class BaseImageController extends BaseImageController_Actions {
         } else {
             loadContentInSystemClipboard();
         }
-        return false;
+        return true;
     }
 
     @Override
     public boolean controlAltS() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         saveAction();
         return true;
     }
 
     @Override
     public boolean controlAltB() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         saveAsAction();
-        return false;
-    }
-
-    @Override
-    public boolean controlAltR() {
-        recoverAction();
-        return false;
-    }
-
-    @Override
-    public boolean controlAltX() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        cropAction();
-        return false;
-    }
-
-    @Override
-    public boolean controlAltZ() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        undoAction();
-        return false;
-    }
-
-    @Override
-    public boolean controlAltY() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        redoAction();
-        return false;
+        return true;
     }
 
     @Override
@@ -818,46 +801,57 @@ public class BaseImageController extends BaseImageController_Actions {
     }
 
     @Override
-    public boolean controlAltW() {
-        withdrawAction();
-        return false;
-    }
-
-    @Override
     public boolean controlAltI() {
+        if (imageView == null || imageView.getImage() == null
+                || imageInformation == null) {
+            return false;
+        }
         infoAction();
-        return false;
+        return true;
     }
 
     @Override
     public boolean controlAltD() {
-        if (targetIsTextInput()) {
+        if (imageView == null || imageView.getImage() == null
+                || targetIsTextInput() || sourceFile == null) {
             return false;
         }
         deleteAction();
-        return false;
+        return true;
     }
 
     @Override
     public boolean controlAlt1() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         loadedSize();
         return true;
     }
 
     @Override
     public boolean controlAlt2() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         paneSize();
         return true;
     }
 
     @Override
     public boolean controlAlt3() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         zoomIn();
         return true;
     }
 
     @Override
     public boolean controlAlt4() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         zoomOut();
         return true;
     }

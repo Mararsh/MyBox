@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageScopeViewsController">
+    <children>
+      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+         <tabs>
+            <Tab fx:id="sourceTab" text="%Source">
+              <content>
+                  <VBox>
+                     <children>
+                        <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+              </content>
+            </Tab>
+            <Tab fx:id="scopeTab" text="%Scope">
+              <content>
+                  <VBox fx:id="scopeBox">
+                     <children>
+                        <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+              </content>
+            </Tab>
+            <Tab fx:id="maskTab" text="%Mask">
+               <content>
+                  <VBox>
+                     <children>
+                        <fx:include fx:id="mask" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+    </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</VBox>

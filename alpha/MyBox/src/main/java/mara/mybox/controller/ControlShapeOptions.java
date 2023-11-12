@@ -653,19 +653,20 @@ public abstract class ControlShapeOptions extends BaseController {
 
     @FXML
     @Override
-    public void withdrawAction() {
+    public boolean withdrawAction() {
         if (null == shapeType || imageController == null) {
-            return;
+            return false;
         }
         switch (shapeType) {
             case Polyline:
             case Polygon:
                 parametersController.pointsController.removeLastItem();
-                break;
+                return true;
             case Polylines:
                 parametersController.linesController.removeLastItem();
-                break;
+                return true;
         }
+        return false;
     }
 
 }

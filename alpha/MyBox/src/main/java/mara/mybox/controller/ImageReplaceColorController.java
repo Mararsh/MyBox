@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class ImageReplaceColorController extends BaseScopeController {
+public class ImageReplaceColorController extends BaseImageScopeController {
 
     @FXML
     protected CheckBox hueCheck, saturationCheck, brightnessCheck;

@@ -63,11 +63,7 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
         eightNeighborCheck.setSelected(scope.isEightNeighbor());
         isSettingValues = false;
         setScopeControls();
-        if (scope.getScopeType() != ImageScope.ScopeType.Outline) {
-            indicateScope();
-        } else {
-            loadOutlineSource(scope.getOutlineSource(), scope.getRectangle());
-        }
+        showScope();
     }
 
     private boolean showScopeType(ImageScope scope) {

@@ -70,6 +70,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("Pop") + "\nCTRL+P / ALT+P"));
             NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -130,7 +131,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     }
                     scope.setAreaExcluded(newValue);
                     if (scope.getScopeType() == ScopeType.Outline) {
-                        makeOutline();
+                        indicateOutline();
                     } else {
                         indicateScope();
                     }
@@ -300,13 +301,11 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         }
     }
 
-    public void setParameters(BaseScopeController parent) {
+    public void setParameters(BaseImageScopeController parent) {
         try {
             this.parentController = parent;
             handler = parent;
             imageController = handler.imageController;
-
-            loadImage();
 
             imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -400,7 +399,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             return true;
         }
         if (scope.getScopeType() == ScopeType.Outline) {
-            makeOutline();
+            indicateOutline();
         } else {
             indicateScope();
         }
@@ -440,7 +439,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     break;
                 case Outline:
                     scope.setRectangle(maskRectangleData.copy());
-                    makeOutline();
+                    indicateOutline();
                     return;
                 default:
                     return;
@@ -454,12 +453,6 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
     @FXML
     public void showSaved() {
         ImageScopesSavedController.load(this);
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        imageController.saveAction();
     }
 
     @Override

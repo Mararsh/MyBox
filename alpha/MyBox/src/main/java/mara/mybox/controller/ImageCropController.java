@@ -1,13 +1,16 @@
 package mara.mybox.controller;
 
+import java.awt.Color;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -93,8 +96,11 @@ public class ImageCropController extends ImageSelectScopeController {
             @Override
             protected boolean handle() {
                 try {
-                    handledImage = scopeController.scopedImage(
-                            bgColorController.color(),
+                    Image srcImage = scopeController.srcImage();
+                    ImageScope scope = scopeController.finalScope();
+                    Color bgColor = bgColorController.awtColor();
+                    handledImage = ScopeTools.selectedScope(
+                            srcImage, scope, bgColor,
                             imageMarginsCheck.isSelected(),
                             includeRadio.isSelected(),
                             ignoreTransparentCheck.isSelected());
@@ -102,8 +108,8 @@ public class ImageCropController extends ImageSelectScopeController {
                         return false;
                     }
                     if (copyClipboardCheck.isSelected()) {
-                        cuttedClip = scopeController.scopedImage(
-                                bgColorController.color(),
+                        cuttedClip = ScopeTools.selectedScope(
+                                srcImage, scope, bgColor,
                                 clipMarginsCheck.isSelected(),
                                 excludeRadio.isSelected(),
                                 ignoreTransparentCheck.isSelected());

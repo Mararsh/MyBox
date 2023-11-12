@@ -13,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageGreyController extends BaseScopeController {
+public class ImageGreyController extends BaseImageScopeController {
 
     public ImageGreyController() {
         baseTitle = message("Grey");

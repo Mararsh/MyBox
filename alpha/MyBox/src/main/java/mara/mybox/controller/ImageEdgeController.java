@@ -18,7 +18,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageEdgeController extends BaseScopeController {
+public class ImageEdgeController extends BaseImageScopeController {
 
     protected int threshold, small, big;
 

@@ -8,7 +8,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
@@ -95,7 +94,6 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
             @Override
             protected boolean handle() {
                 try {
-                    Color bgColor = colorSetController.color();
                     if (wholeRadio.isSelected()) {
                         newImage = imageView.getImage();
 
@@ -103,8 +101,9 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                         if (scopeController.scopeWhole()) {
                             newImage = imageView.getImage();
                         } else {
-                            newImage = ScopeTools.scopeImage(imageView.getImage(),
-                                    scopeController.scope, bgColor,
+                            newImage = ScopeTools.selectedScope(imageView.getImage(),
+                                    scopeController.scope,
+                                    colorSetController.awtColor(),
                                     marginsCheck.isSelected(),
                                     excludeRadio.isSelected(),
                                     true);

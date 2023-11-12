@@ -213,7 +213,7 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
         }
         scope.setOutlineSource(bufferedImage);
         maskRectangleData = rect.copy();
-        makeOutline();
+        indicateOutline();
     }
 
     public boolean validOutline() {
@@ -224,7 +224,7 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
                 && maskRectangleData != null;
     }
 
-    public void makeOutline() {
+    public void indicateOutline() {
         if (isSettingValues || !validOutline()) {
             return;
         }
@@ -240,7 +240,9 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
                 try {
                     Image bgImage = srcImage();
                     outline = AlphaTools.outline(scope.getOutlineSource(),
-                            maskRectangleData, (int) bgImage.getWidth(), (int) bgImage.getHeight(),
+                            maskRectangleData,
+                            (int) bgImage.getWidth(),
+                            (int) bgImage.getHeight(),
                             scopeOutlineKeepRatioCheck.isSelected());
                     if (outline == null || task == null || isCancelled()
                             || !validOutline()) {
@@ -270,6 +272,7 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
                 image = outlineImage;
                 imageView.setImage(outlineImage);
                 showMaskRectangle();
+                showNotify.set(!showNotify.get());
             }
 
         };

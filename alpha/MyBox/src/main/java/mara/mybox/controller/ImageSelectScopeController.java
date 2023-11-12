@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-10-28
  * @License Apache License Version 2.0
  */
-public class ImageSelectScopeController extends BaseScopeController {
+public class ImageSelectScopeController extends BaseImageScopeController {
 
     public ImageSelectScopeController() {
         baseTitle = message("SelectScope");
@@ -32,11 +32,8 @@ public class ImageSelectScopeController extends BaseScopeController {
             @Override
             protected boolean handle() {
                 try {
-                    handledImage = scopeController.scopedImage(
-                            bgColorController.color(),
-                            true,
-                            excludeRadio.isSelected(),
-                            ignoreTransparentCheck.isSelected());
+                    handledImage = scopeController.selectedScope(
+                            bgColorController.awtColor(), true);
                     return handledImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);

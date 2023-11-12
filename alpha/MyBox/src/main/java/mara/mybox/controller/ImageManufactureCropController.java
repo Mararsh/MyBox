@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Color;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -7,7 +8,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
@@ -95,15 +95,15 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
 
             @Override
             protected boolean handle() {
-                Color bgColor = colorSetController.color();
-                newImage = ScopeTools.scopeImage(imageView.getImage(),
+                Color bgColor = colorSetController.awtColor();
+                newImage = ScopeTools.selectedScope(imageView.getImage(),
                         scopeController.scope, bgColor,
                         imageMarginsCheck.isSelected(), includeRadio.isSelected(), true);
                 if (task == null || isCancelled()) {
                     return false;
                 }
                 if (UserConfig.getBoolean(baseName + "CropPutClipboard", false)) {
-                    cuttedClip = ScopeTools.scopeImage(imageView.getImage(),
+                    cuttedClip = ScopeTools.selectedScope(imageView.getImage(),
                             scopeController.scope, bgColor,
                             clipMarginsCheck.isSelected(), excludeRadio.isSelected(), true);
                     ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);

@@ -10,15 +10,18 @@ import java.awt.Color;
 public class ColorBlendTools {
 
     // https://www.cnblogs.com/xiaonanxia/p/9448444.html
-    public static Color blendColor(Color color, float opocity, Color bgColor, boolean keepAlpha) {
-        int red = (int) (color.getRed() * opocity + bgColor.getRed() * (1 - opocity));
-        int green = (int) (color.getGreen() * opocity + bgColor.getGreen() * (1 - opocity));
-        int blue = (int) (color.getBlue() * opocity + bgColor.getBlue() * (1 - opocity));
-        if (keepAlpha) {
-            return new Color(red, green, blue, Math.round(opocity * 255));
-        } else {
-            return new Color(red, green, blue);
-        }
+    public static Color blendColor(Color foreColor, float opacity, Color backColor, boolean keepAlpha) {
+        int red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
+        int green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
+        int blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
+        int alpha = keepAlpha
+                ? (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity))
+                : 255;
+        return new Color(
+                Math.min(Math.max(red, 0), 255),
+                Math.min(Math.max(green, 0), 255),
+                Math.min(Math.max(blue, 0), 255),
+                Math.min(Math.max(alpha, 0), 255));
     }
 
     public static Color blendColor(Color color, int opocity, Color bgColor, boolean keepAlpha) {
@@ -26,10 +29,6 @@ public class ColorBlendTools {
     }
 
     public static Color blendColor(Color color, float opocity, Color bgColor) {
-        return blendColor(color, opocity, bgColor, false);
-    }
-
-    public static Color blendColor(Color color, int opocity, Color bgColor) {
         return blendColor(color, opocity, bgColor, false);
     }
 
@@ -48,15 +47,7 @@ public class ColorBlendTools {
             foreColor = new Color(forePixel, true);
             backColor = new Color(backPixel, true);
         }
-        int red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
-        int green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
-        int blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
-        int alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
-        Color newColor = new Color(
-                Math.min(Math.max(red, 0), 255),
-                Math.min(Math.max(green, 0), 255),
-                Math.min(Math.max(blue, 0), 255),
-                Math.min(Math.max(alpha, 0), 255));
+        Color newColor = blendColor(foreColor, opacity, backColor, true);
         return newColor.getRGB();
     }
 

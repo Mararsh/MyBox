@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public abstract class BaseScopeController extends BaseChildController {
+public abstract class BaseImageScopeController extends BaseChildController {
 
     protected BaseImageController imageController;
     protected ImageEditorController editor;
@@ -68,15 +68,17 @@ public abstract class BaseScopeController extends BaseChildController {
                 selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (includeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Include");
-                            showLeftPane();
-                        } else if (excludeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Exclude");
-                            showLeftPane();
-                        } else {
+                        if (wholeRadio.isSelected()) {
                             UserConfig.setString(baseName + "SelectType", "Whole");
                             hideLeftPane();
+                        } else {
+                            if (includeRadio.isSelected()) {
+                                UserConfig.setString(baseName + "SelectType", "Include");
+                            } else if (excludeRadio.isSelected()) {
+                                UserConfig.setString(baseName + "SelectType", "Exclude");
+                            }
+                            showLeftPane();
+                            scopeController.showScope();
                         }
                     }
                 });
@@ -101,6 +103,8 @@ public abstract class BaseScopeController extends BaseChildController {
                         } else if (excludeRadio.isSelected()) {
                             UserConfig.setString(baseName + "SelectType", "Exclude");
                         }
+                        showLeftPane();
+                        scopeController.showScope();
                     }
                 });
             }
@@ -109,14 +113,16 @@ public abstract class BaseScopeController extends BaseChildController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
-                        scopeController.indicateScope();
+                        scopeController.showScope();
                     }
                 }
             });
 
             reset();
-
             initMore();
+
+            scopeController.loadImage();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -264,12 +270,12 @@ public abstract class BaseScopeController extends BaseChildController {
     /*
         static methods
      */
-    public static BaseScopeController open(BaseImageController parent) {
+    public static BaseImageScopeController open(BaseImageController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            BaseScopeController controller = (BaseScopeController) WindowTools.openChildStage(
+            BaseImageScopeController controller = (BaseImageScopeController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.ImageBlackWhiteFxml, false);
             controller.setParameters(parent);
             return controller;

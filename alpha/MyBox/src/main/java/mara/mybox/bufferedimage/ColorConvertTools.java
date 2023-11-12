@@ -42,6 +42,10 @@ public class ColorConvertTools {
     /*
         rgb
      */
+    public static Color rgb(Color color) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
     public static Color pixel2rgb(int pixel) {
         return new Color(pixel);
     }

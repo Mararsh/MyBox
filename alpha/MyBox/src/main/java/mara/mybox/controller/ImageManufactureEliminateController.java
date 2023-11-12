@@ -252,12 +252,13 @@ public class ImageManufactureEliminateController extends ImageManufactureOperati
 
     @FXML
     @Override
-    public void withdrawAction() {
+    public boolean withdrawAction() {
         if (imageView == null || imageView.getImage() == null) {
-            return;
+            return false;
         }
         editor.maskPolylinesData.removeLastLine();
         redraw();
+        return true;
     }
 
     @FXML

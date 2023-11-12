@@ -214,15 +214,15 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
 
     @FXML
     @Override
-    public void withdrawAction() {
+    public boolean withdrawAction() {
         if (!isValidScope() || isSettingValues
                 || scope.getScopeType() != ScopeType.Polygon) {
-            return;
+            return false;
         }
         if (scope.getScopeType() == ScopeType.Polygon || scope.getScopeType() == ScopeType.Matting) {
             pointsController.removeLastItem();
         }
-
+        return true;
     }
 
     @Override

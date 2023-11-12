@@ -144,6 +144,7 @@ public class Fxmls {
     public static final String ImageSharpenFxml = "/fxml/ImageSharpen.fxml";
 
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
+    public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
     public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
     public static final String ImageClipSelectFxml = "/fxml/ImageClipSelect.fxml";
 

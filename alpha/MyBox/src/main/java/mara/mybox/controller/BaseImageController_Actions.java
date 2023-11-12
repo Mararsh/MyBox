@@ -104,6 +104,9 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     @Override
     public boolean popAction() {
+        if (imageToHandle() == null) {
+            return false;
+        }
         if (imageView != null) {
             ImagePopController.openView(this, imageView);
         } else {

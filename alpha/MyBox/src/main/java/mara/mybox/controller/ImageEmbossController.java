@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageEmbossController extends BaseScopeController {
+public class ImageEmbossController extends BaseImageScopeController {
 
     protected int direction, raduis;
 

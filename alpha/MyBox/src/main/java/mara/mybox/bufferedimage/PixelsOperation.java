@@ -9,6 +9,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -39,7 +40,7 @@ public abstract class PixelsOperation {
         Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
         ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
         Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, Blend,
-        ShowScope, Convolution, Contrast
+        ShowScope, SelectScope, Convolution, Contrast
     }
 
     public enum ColorActionType {
@@ -97,7 +98,6 @@ public abstract class PixelsOperation {
         try {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
-            boolean isShowScope = (operationType == OperationType.ShowScope);
             boolean isWhole = (scope == null || scope.getScopeType() == null);
             boolean inScope;
             if (isDithering) {
@@ -112,19 +112,13 @@ public abstract class PixelsOperation {
                 for (int x = 0; x < image.getWidth(); x++) {
                     pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
-                    if (pixel == 0 && skipTransparent) {  // transparency  need write dithering lines while they affect nothing
-                        target.setRGB(x, y, pixel);
-                        newColor = color;
+                    if (pixel == 0 && skipTransparent) {
+                        // transparency  need write dithering lines while they affect nothing
+                        newColor = skipTransparent(target, x, y);
 
                     } else {
 
-                        inScope = isWhole || scope.inScope(x, y, color);
-                        if (excludeScope) {
-                            inScope = !inScope;
-                        }
-                        if (isShowScope) {
-                            inScope = !inScope;
-                        }
+                        inScope = inScope(isWhole, x, y, color);
                         if (isDithering && y == thisLineY) {
                             color = thisLine[x];
                         }
@@ -158,14 +152,13 @@ public abstract class PixelsOperation {
             if (image == null || scope == null || scope.getScopeType() == null) {
                 return image;
             }
-            boolean isShowScope = operationType == OperationType.ShowScope;
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean excluded = scope.isColorExcluded();
             if (excludeScope) {
                 excluded = !excluded;
             }
-            if (isShowScope) {
+            if (operationType == OperationType.ShowScope) {
                 excluded = !excluded;
             }
             if (excluded) {
@@ -207,7 +200,7 @@ public abstract class PixelsOperation {
                     Color color = new Color(pixel, true);
                     if (scope.inColorMatch(startColor, color)) {
                         if (pixel == 0 && skipTransparent) {
-                            target.setRGB(x, y, pixel);
+                            skipTransparent(target, x, y);
                         } else {
                             if (excluded) {
                                 target.setRGB(x, y, pixel);
@@ -233,6 +226,27 @@ public abstract class PixelsOperation {
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    protected boolean inScope(boolean isWhole, int x, int y, Color color) {
+        try {
+            boolean inScope = isWhole || scope.inScope(x, y, color);
+            if (excludeScope) {
+                inScope = !inScope;
+            }
+            return inScope;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    protected Color skipTransparent(BufferedImage target, int x, int y) {
+        try {
+            target.setRGB(x, y, 0);
+            return Colors.TRANSPARENT;
+        } catch (Exception e) {
             return null;
         }
     }

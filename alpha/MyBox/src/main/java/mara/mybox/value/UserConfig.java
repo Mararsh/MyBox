@@ -436,7 +436,8 @@ public class UserConfig {
 
     public static Color alphaColor() {
         String color = getString("AlphaAsColor", Color.WHITE.toString());
-        return Color.web(color);
+        Color c = Color.web(color);
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), 1d);
     }
 
     public static String errorColor() {

@@ -420,16 +420,18 @@ public class ImageScope extends BaseData {
         return maskOpacity;
     }
 
-    public void setMaskOpacity(float maskOpacity) {
+    public ImageScope setMaskOpacity(float maskOpacity) {
         this.maskOpacity = maskOpacity;
+        return this;
     }
 
     public Color getMaskColor() {
         return maskColor;
     }
 
-    public void setMaskColor(Color maskColor) {
+    public ImageScope setMaskColor(Color maskColor) {
         this.maskColor = maskColor;
+        return this;
     }
 
     public ScopeType getScopeType() {
