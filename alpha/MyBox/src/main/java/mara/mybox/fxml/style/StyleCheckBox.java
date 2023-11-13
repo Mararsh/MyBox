@@ -28,6 +28,15 @@ public class StyleCheckBox {
         if (id.startsWith("tips")) {
             return new StyleData(id, "", message("Tips"), "", "iconTips.png");
         }
+        if (id.startsWith("scopeExclude")) {
+            return new StyleData(id, "", message("ScopeExclude"), "", "iconInvert.png");
+        }
+        if (id.startsWith("ignoreTransparent")) {
+            return new StyleData(id, "", message("IgnoreTransparent"), "", "iconOpacity.png");
+        }
+        if (id.startsWith("eightNeighbor")) {
+            return new StyleData(id, "", message("EightNeighborCheckComments"), "", "");
+        }
         if (id.startsWith("openPath")) {
             return new StyleData(id, "", message("OpenDirectory"), "", "iconOpenPath.png");
         }

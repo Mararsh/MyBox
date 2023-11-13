@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class ImageBlendColorController extends BaseImageScopeController {
+public class ImageBlendColorController extends BasePixelsController {
 
     @FXML
     protected ControlColorSet colorController;
@@ -30,8 +30,6 @@ public class ImageBlendColorController extends BaseImageScopeController {
     @Override
     protected void initMore() {
         try {
-            ignoreTransparentCheck = blendController.ignoreTransparentCheck;
-
             super.initMore();
 
             colorController.init(this, baseName + "NewColor", Color.PINK);
@@ -64,8 +62,8 @@ public class ImageBlendColorController extends BaseImageScopeController {
                             scope,
                             PixelsOperation.OperationType.Blend)
                             .setColorPara1(colorController.awtColor())
-                            .setExcludeScope(excludeRadio.isSelected())
-                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                            .setExcludeScope(scopeExclude())
+                            .setSkipTransparent(ignoreTransparent());
                     ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blendController.blender());
                     handledImage = pixelsOperation.operateFxImage();
                     return handledImage != null;

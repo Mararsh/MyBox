@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageSmoothController extends BaseImageScopeController {
+public class ImageSmoothController extends BasePixelsController {
 
     protected int intensity;
 
@@ -101,8 +101,8 @@ public class ImageSmoothController extends BaseImageScopeController {
             convolution.setImage(inImage)
                     .setScope(inScope)
                     .setKernel(kernel)
-                    .setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = message("Smooth");
             opInfo = message("Intensity") + ": " + intensity;
             return convolution.operateFxImage();

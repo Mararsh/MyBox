@@ -1,12 +1,6 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -16,14 +10,13 @@ import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public abstract class BaseImageScopeController extends BaseChildController {
+public abstract class BasePixelsController extends BaseChildController {
 
     protected BaseImageController imageController;
     protected ImageEditorController editor;
@@ -34,12 +27,6 @@ public abstract class BaseImageScopeController extends BaseChildController {
     protected ControlImageScopeInput scopeController;
     @FXML
     protected ControlColorSet bgColorController;
-    @FXML
-    protected ToggleGroup selectGroup;
-    @FXML
-    protected RadioButton includeRadio, excludeRadio, wholeRadio;
-    @FXML
-    protected CheckBox ignoreTransparentCheck;
 
     protected void setParameters(BaseImageController parent) {
         try {
@@ -55,68 +42,6 @@ public abstract class BaseImageScopeController extends BaseChildController {
             if (bgColorController != null) {
                 bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
             }
-
-            if (wholeRadio != null) {
-                String select = UserConfig.getString(baseName + "SelectType", "Whole");
-                if ("Include".equals(select)) {
-                    includeRadio.setSelected(true);
-                } else if ("Exclude".equals(select)) {
-                    excludeRadio.setSelected(true);
-                } else {
-                    wholeRadio.setSelected(true);
-                }
-                selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (wholeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Whole");
-                            hideLeftPane();
-                        } else {
-                            if (includeRadio.isSelected()) {
-                                UserConfig.setString(baseName + "SelectType", "Include");
-                            } else if (excludeRadio.isSelected()) {
-                                UserConfig.setString(baseName + "SelectType", "Exclude");
-                            }
-                            showLeftPane();
-                            scopeController.showScope();
-                        }
-                    }
-                });
-                if (wholeRadio.isSelected()) {
-                    hideLeftPane();
-                } else if (excludeRadio.isSelected()) {
-                    showLeftPane();
-                }
-
-            } else {
-                String select = UserConfig.getString(baseName + "SelectType", "Include");
-                if ("Exclude".equals(select)) {
-                    excludeRadio.setSelected(true);
-                } else {
-                    includeRadio.setSelected(true);
-                }
-                selectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (includeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Include");
-                        } else if (excludeRadio.isSelected()) {
-                            UserConfig.setString(baseName + "SelectType", "Exclude");
-                        }
-                        showLeftPane();
-                        scopeController.showScope();
-                    }
-                });
-            }
-
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (!isSettingValues) {
-                        scopeController.showScope();
-                    }
-                }
-            });
 
             reset();
             initMore();
@@ -151,11 +76,15 @@ public abstract class BaseImageScopeController extends BaseChildController {
     }
 
     public ImageScope scope() {
-        if (wholeRadio != null && wholeRadio.isSelected()) {
-            return null;
-        } else {
-            return scopeController.finalScope();
-        }
+        return scopeController.pickScopeValues();
+    }
+
+    public boolean scopeExclude() {
+        return scopeController.scopeExcludeCheck.isSelected();
+    }
+
+    public boolean ignoreTransparent() {
+        return scopeController.ignoreTransparentCheck.isSelected();
     }
 
     protected boolean checkOptions() {
@@ -270,12 +199,12 @@ public abstract class BaseImageScopeController extends BaseChildController {
     /*
         static methods
      */
-    public static BaseImageScopeController open(BaseImageController parent) {
+    public static BasePixelsController open(BaseImageController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            BaseImageScopeController controller = (BaseImageScopeController) WindowTools.openChildStage(
+            BasePixelsController controller = (BasePixelsController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.ImageBlackWhiteFxml, false);
             controller.setParameters(parent);
             return controller;

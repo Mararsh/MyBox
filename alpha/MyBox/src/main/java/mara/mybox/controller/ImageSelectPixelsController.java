@@ -12,9 +12,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-10-28
  * @License Apache License Version 2.0
  */
-public class ImageSelectScopeController extends BaseImageScopeController {
+public class ImageSelectPixelsController extends BasePixelsController {
 
-    public ImageSelectScopeController() {
+    public ImageSelectPixelsController() {
         baseTitle = message("SelectScope");
     }
 
@@ -57,13 +57,12 @@ public class ImageSelectScopeController extends BaseImageScopeController {
     /*
         static methods
      */
-    public static ImageSelectScopeController open(BaseImageController parent) {
+    public static ImageSelectPixelsController open(BaseImageController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageSelectScopeController controller = (ImageSelectScopeController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageSelectScopeFxml, false);
+            ImageSelectPixelsController controller = (ImageSelectPixelsController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImageSelectPixelsFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

@@ -24,7 +24,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageReduceColorsController extends BaseImageScopeController {
+public class ImageReduceColorsController extends BasePixelsController {
 
     protected List<Color> quantizationColors;
     protected StringTable quanTable;
@@ -68,8 +68,8 @@ public class ImageReduceColorsController extends BaseImageScopeController {
             calData = optionsController.quanDataCheck.isSelected();
             quantization = ImageQuantizationFactory.create(inImage, inScope,
                     optionsController, calData);
-            quantization.setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            quantization.setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             if (optionsController.algorithm == QuantizationAlgorithm.KMeansClustering) {
                 KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
                 q.getKmeans().setMaxIteration(optionsController.kmeansLoop);

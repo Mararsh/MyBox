@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageThresholdingController extends BaseImageScopeController {
+public class ImageThresholdingController extends BasePixelsController {
 
     protected int threshold, small, big;
 
@@ -152,8 +152,8 @@ public class ImageThresholdingController extends BaseImageScopeController {
                     .setIntPara2(big)
                     .setIntPara3(small)
                     .setIsDithering(false)
-                    .setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = message("Thresholding");
             opInfo = message("Threshold") + ": " + threshold;
             return pixelsOperation.operateFxImage();

@@ -14,7 +14,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageBlackWhiteController extends BaseImageScopeController {
+public class ImageBlackWhiteController extends BasePixelsController {
 
     protected int threshold;
 
@@ -47,8 +47,8 @@ public class ImageBlackWhiteController extends BaseImageScopeController {
             imageBinary.setScope(inScope)
                     .setIntPara1(threshold)
                     .setIsDithering(binaryController.dither())
-                    .setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             return imageBinary.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());

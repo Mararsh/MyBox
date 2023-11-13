@@ -119,7 +119,7 @@ public class Fxmls {
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
 
     public static final String ImageEditorFxml = "/fxml/ImageEditor.fxml";
-    public static final String ImageSelectScopeFxml = "/fxml/ImageSelectScope.fxml";
+    public static final String ImageSelectPixelsFxml = "/fxml/ImageSelectPixels.fxml";
     public static final String ImageCopyFxml = "/fxml/ImageCopy.fxml";
     public static final String ImageCropFxml = "/fxml/ImageCrop.fxml";
     public static final String ImagePasteFxml = "/fxml/ImagePaste.fxml";

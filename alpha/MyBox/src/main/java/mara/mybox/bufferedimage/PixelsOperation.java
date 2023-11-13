@@ -98,7 +98,7 @@ public abstract class PixelsOperation {
         try {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
-            boolean isWhole = (scope == null || scope.getScopeType() == null);
+            boolean isWhole = (scope == null || scope.isWhole());
             boolean inScope;
             if (isDithering) {
                 thisLine = new Color[imageWidth];
@@ -149,7 +149,7 @@ public abstract class PixelsOperation {
     // https://www.codeproject.com/Articles/6017/QuickFill-An-Efficient-Flood-Fill-Algorithm
     protected BufferedImage operateMatting() {
         try {
-            if (image == null || scope == null || scope.getScopeType() == null) {
+            if (image == null || scope == null || scope.isWhole()) {
                 return image;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;

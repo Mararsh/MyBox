@@ -19,12 +19,12 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageScopeViewsController extends BaseChildController {
 
-    protected BaseImageScopeController handler;
+    protected BasePixelsController handler;
 
     @FXML
-    protected BaseImageController scopeController, sourceController, maskController;
+    protected BaseImageController selectedController, sourceController, maskController;
     @FXML
-    protected Tab scopeTab, sourceTab, maskTab;
+    protected Tab selectedTab, sourceTab, maskTab;
     @FXML
     protected VBox scopeBox;
 
@@ -32,7 +32,7 @@ public class ImageScopeViewsController extends BaseChildController {
         baseTitle = message("Scope");
     }
 
-    protected void setParameters(BaseImageScopeController parent) {
+    protected void setParameters(BasePixelsController parent) {
         try {
             handler = parent;
 
@@ -117,7 +117,7 @@ public class ImageScopeViewsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                scopeController.loadImage(selectedScope);
+                selectedController.loadImage(selectedScope);
             }
 
         };
@@ -127,7 +127,7 @@ public class ImageScopeViewsController extends BaseChildController {
     /*
         static methods
      */
-    public static ImageScopeViewsController open(BaseImageScopeController parent) {
+    public static ImageScopeViewsController open(BasePixelsController parent) {
         try {
             if (parent == null || !parent.isShowing()) {
                 return null;

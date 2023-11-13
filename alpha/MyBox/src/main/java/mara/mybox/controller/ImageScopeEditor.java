@@ -82,7 +82,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
     @FXML
     @Override
     public void clearValue() {
-        valuesController.clearScope();
+        valuesController.clearControls();
     }
 
     @Override

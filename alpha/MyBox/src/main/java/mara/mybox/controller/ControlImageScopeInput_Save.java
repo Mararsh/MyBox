@@ -15,13 +15,13 @@ import mara.mybox.fxml.style.NodeStyleTools;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput_Set {
+public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput_Apply {
 
     @FXML
     public void saveScope() {
-        if (finalScope() == null) {
-            return;
-        }
+//        if (finalScope() == null) {
+//            return;
+//        }
 //        String name = scopeNameInput.getText().trim();
 //        if (name.isEmpty()) {
 //            popError(message("InvalidParameters"));
@@ -49,10 +49,10 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
 
     public void loadScope(ImageScope inScope) {
         if (inScope == null || inScope.getScopeType() == null) {
-            checkScopeType();
+            applyScope();
             return;
         }
-        clearScope();
+        clearControls();
         scope = inScope;
         isSettingValues = true;
         showScopeType(scope);
@@ -62,7 +62,7 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
         showDistanceValue(scope);
         eightNeighborCheck.setSelected(scope.isEightNeighbor());
         isSettingValues = false;
-        setScopeControls();
+        setControls();
         showScope();
     }
 

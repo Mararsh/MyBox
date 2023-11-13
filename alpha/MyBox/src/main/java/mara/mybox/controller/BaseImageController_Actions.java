@@ -443,7 +443,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     public void selectScope() {
-        ImageSelectScopeController.open((BaseImageController) this);
+        ImageSelectPixelsController.open((BaseImageController) this);
     }
 
     @FXML

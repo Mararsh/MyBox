@@ -18,7 +18,7 @@ public class ScopeTools {
     public static Image selectedScope(Image srcImage, ImageScope scope, Color bgColor,
             boolean cutMargins, boolean exclude, boolean ignoreTransparent) {
         try {
-            if (scope == null || scope.getScopeType() == null) {
+            if (scope == null) {
                 return srcImage;
             } else {
                 PixelsOperation pixelsOperation = PixelsOperationFactory.create(

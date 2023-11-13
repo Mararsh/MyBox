@@ -140,20 +140,20 @@ License:    Apache License Version 2.0
                     <children>
                         <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
                             <children>
-                                <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconHistory.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
                                 <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconPop.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconHistory.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -246,6 +246,15 @@ License:    Apache License Version 2.0
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/Red/iconPaste.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="selectScopeButton" mnemonicParsing="false" onAction="#selectScope">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelect.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>

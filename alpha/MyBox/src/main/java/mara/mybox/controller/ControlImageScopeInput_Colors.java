@@ -99,15 +99,4 @@ public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInp
         start(task);
     }
 
-    public void pickColors() {
-        List<Color> colors = colorsList.getItems();
-        if (colors == null || colors.isEmpty()) {
-            scope.getColors().clear();
-            return;
-        }
-        for (Color color : colors) {
-            scope.addColor(ColorConvertTools.converColor(color));
-        }
-    }
-
 }

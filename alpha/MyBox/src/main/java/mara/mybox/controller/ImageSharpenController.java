@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageSharpenController extends BaseImageScopeController {
+public class ImageSharpenController extends BasePixelsController {
 
     protected int intensity;
 
@@ -104,8 +104,8 @@ public class ImageSharpenController extends BaseImageScopeController {
             convolution.setImage(inImage)
                     .setScope(inScope)
                     .setKernel(kernel)
-                    .setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = message("Sharpen");
             opInfo = message("Intensity") + ": " + intensity;
             return convolution.operateFxImage();

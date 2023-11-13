@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-10-28
  * @License Apache License Version 2.0
  */
-public class ImageCropController extends ImageSelectScopeController {
+public class ImageCropController extends ImageSelectPixelsController {
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -97,13 +97,12 @@ public class ImageCropController extends ImageSelectScopeController {
             protected boolean handle() {
                 try {
                     Image srcImage = scopeController.srcImage();
-                    ImageScope scope = scopeController.finalScope();
+                    ImageScope scope = scopeController.pickScopeValues();
                     Color bgColor = bgColorController.awtColor();
                     handledImage = ScopeTools.selectedScope(
                             srcImage, scope, bgColor,
                             imageMarginsCheck.isSelected(),
-                            includeRadio.isSelected(),
-                            ignoreTransparentCheck.isSelected());
+                            scopeExclude(), ignoreTransparent());
                     if (handledImage == null || task == null || isCancelled()) {
                         return false;
                     }
@@ -111,8 +110,7 @@ public class ImageCropController extends ImageSelectScopeController {
                         cuttedClip = ScopeTools.selectedScope(
                                 srcImage, scope, bgColor,
                                 clipMarginsCheck.isSelected(),
-                                excludeRadio.isSelected(),
-                                ignoreTransparentCheck.isSelected());
+                                scopeExclude(), ignoreTransparent());
                         return ImageClipboard.add(cuttedClip,
                                 ImageClipboard.ImageSource.Crop) != null;
                     } else {

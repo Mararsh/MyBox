@@ -15,7 +15,6 @@ import mara.mybox.db.data.BaseData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Colors;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -44,7 +43,7 @@ public class ImageScope extends BaseData {
     protected BufferedImage outlineSource, outline;
 
     public static enum ScopeType {
-        Matting, Rectangle, Circle, Ellipse, Polygon, Color, Outline
+        Whole, Matting, Rectangle, Circle, Ellipse, Polygon, Color, Outline
     }
 
     public static enum ColorScopeType {
@@ -67,7 +66,7 @@ public class ImageScope extends BaseData {
     }
 
     private void init() {
-        scopeType = ScopeType.Rectangle;
+        scopeType = ScopeType.Whole;
         colorScopeType = ColorScopeType.AllColor;
         colors = new ArrayList<>();
         points = new ArrayList<>();
@@ -96,6 +95,10 @@ public class ImageScope extends BaseData {
 
     public ImageScope cloneValues() {
         return ImageScopeTools.cloneAll(this);
+    }
+
+    public boolean isWhole() {
+        return scopeType == null || scopeType == ScopeType.Whole;
     }
 
     public void decode() {
@@ -172,77 +175,6 @@ public class ImageScope extends BaseData {
 
     public void clearColors() {
         colors = new ArrayList<>();
-    }
-
-    public String getScopeText() {
-        String s = "";
-        if (null != scopeType) {
-            switch (scopeType) {
-                case Matting:
-                    String pointsString = "";
-                    if (points.isEmpty()) {
-                        pointsString += Languages.message("None");
-                    } else {
-                        for (IntPoint p : points) {
-                            pointsString += "(" + p.getX() + "," + p.getY() + ") ";
-                        }
-                    }
-                    s = Languages.message("Points") + ":" + pointsString;
-                    s += " " + Languages.message("ColorDistance") + ":" + colorDistance;
-                    break;
-                case Color:
-                    s = getScopeColorText();
-                    break;
-                default:
-                    break;
-            }
-        }
-        return s;
-    }
-
-    public String getScopeColorText() {
-        String s = "";
-        String colorString = "";
-        if (colors.isEmpty()) {
-            colorString += Languages.message("None") + " ";
-        } else {
-            for (Color c : colors) {
-                colorString += c.toString() + " ";
-            }
-        }
-        switch (colorScopeType) {
-            case AllColor:
-                s += " " + Languages.message("AllColors");
-                break;
-            case Color:
-            case Red:
-            case Green:
-            case Blue:
-                s += " " + Languages.message("SelectedColors") + ":" + colorString;
-                s += Languages.message("ColorDistance") + ":" + colorDistance;
-                if (colorExcluded) {
-                    s += " " + Languages.message("Excluded");
-                }
-                break;
-            case Brightness:
-            case Saturation:
-                s += " " + Languages.message("SelectedColors") + ":" + colorString;
-                s += Languages.message("ColorDistance") + ":" + (int) (hsbDistance * 100);
-                if (colorExcluded) {
-                    s += " " + Languages.message("Excluded");
-                }
-                break;
-            case Hue:
-                s += " " + Languages.message("SelectedColors") + ":" + colorString;
-                s += Languages.message("HueDistance") + ":" + (int) (hsbDistance * 360);
-                if (colorExcluded) {
-                    s += " " + Languages.message("Excluded");
-                }
-                break;
-            default:
-                break;
-        }
-        return s;
     }
 
     /*

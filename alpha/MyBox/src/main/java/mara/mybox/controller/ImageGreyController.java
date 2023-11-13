@@ -13,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageGreyController extends BaseImageScopeController {
+public class ImageGreyController extends BasePixelsController {
 
     public ImageGreyController() {
         baseTitle = message("Grey");
@@ -23,8 +23,8 @@ public class ImageGreyController extends BaseImageScopeController {
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             ImageGray imageGray = new ImageGray(inImage, inScope);
-            imageGray.setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            imageGray.setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = message("Grey");
             opInfo = null;
             return imageGray.operateFxImage();

@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageSepiaController extends BaseImageScopeController {
+public class ImageSepiaController extends BasePixelsController {
 
     protected int intensity;
 
@@ -89,8 +89,8 @@ public class ImageSepiaController extends BaseImageScopeController {
                     inImage, inScope,
                     PixelsOperation.OperationType.Sepia)
                     .setIntPara1(intensity)
-                    .setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = message("Sepia");
             opInfo = message("Intensity") + ": " + intensity;
             return pixelsOperation.operateFxImage();

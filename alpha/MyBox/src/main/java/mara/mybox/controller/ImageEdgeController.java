@@ -18,7 +18,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageEdgeController extends BaseImageScopeController {
+public class ImageEdgeController extends BasePixelsController {
 
     protected int threshold, small, big;
 
@@ -75,8 +75,8 @@ public class ImageEdgeController extends BaseImageScopeController {
             convolution.setImage(inImage)
                     .setScope(inScope)
                     .setKernel(kernel)
-                    .setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = kernel.getName();
             opInfo = message("Grey") + ": " + kernel.isGray();
             return convolution.operateFxImage();

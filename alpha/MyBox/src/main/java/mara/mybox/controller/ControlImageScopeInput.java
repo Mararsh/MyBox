@@ -12,7 +12,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -51,13 +51,10 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         try {
             super.initControls();
 
-            initScope();
-
-            initSplitPane();
+            initOptions();
             initAreaTab();
             initColorsTab();
             initMatchTab();
-            initOptionsTab();
 
             imageView.toBack();
             thisPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
@@ -66,35 +63,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         }
     }
 
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("Pop") + "\nCTRL+P / ALT+P"));
-            NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    protected void initSplitPane() {
-        try {
-            String mv = UserConfig.getString(baseName + "ScopePanePosition", "0.5");
-            splitPane.setDividerPositions(Double.valueOf(mv));
-
-            splitPane.getDividers().get(0).positionProperty().addListener(
-                    (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                        if (Math.abs(newValue.doubleValue() - oldValue.doubleValue()) * splitPane.getWidth() > 5) {
-                            UserConfig.setString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
-                        }
-                    });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initScope() {
+    protected void initOptions() {
         try {
             tableColor = new TableColor();
             popShapeMenu = true;
@@ -105,14 +74,64 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             scopeTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkScopeType();
+                    applyScope();
                 }
             });
 
-            pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
+            scopeExcludeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
-                    pickPoints();
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (!isSettingValues) {
+                        showScope();
+                    }
+                }
+            });
+
+            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (!isSettingValues) {
+                        showScope();
+                    }
+                }
+            });
+
+            maskColorController.init(this, baseName + "MaskColor", Color.TRANSPARENT);
+            maskColor = maskColorController.awtColor();
+            maskColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    maskColor = maskColorController.awtColor();
+                    scope.setMaskColor(maskColor);
+                    redrawMaskShape();
+                }
+            });
+
+            maskOpacity = UserConfig.getFloat(baseName + "ScopeOpacity", 0.5f);
+            opacitySelector.getItems().addAll(
+                    Arrays.asList("0.5", "0.2", "1", "0", "0.8", "0.3", "0.6", "0.7", "0.9", "0.4")
+            );
+            opacitySelector.setValue(maskOpacity + "");
+            opacitySelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                    try {
+                        if (newVal == null) {
+                            return;
+                        }
+                        float f = Float.parseFloat(newVal);
+                        if (f >= 0 && f <= 1.0) {
+                            maskOpacity = f;
+                            ValidationTools.setEditorNormal(opacitySelector);
+                            UserConfig.setFloat(baseName + "ScopeOpacity", f);
+                            scope.setMaskOpacity(maskOpacity);
+                            redrawMaskShape();
+                        } else {
+                            ValidationTools.setEditorBadStyle(opacitySelector);
+                        }
+                    } catch (Exception e) {
+                        ValidationTools.setEditorBadStyle(opacitySelector);
+                    }
                 }
             });
 
@@ -135,6 +154,13 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     } else {
                         indicateScope();
                     }
+                }
+            });
+
+            pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
+                    pickPoints();
                 }
             });
 
@@ -194,53 +220,6 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         }
     }
 
-    protected void initOptionsTab() {
-        try {
-
-            maskColorController.init(this, baseName + "MaskColor", Color.TRANSPARENT);
-            maskColor = maskColorController.awtColor();
-            maskColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    maskColor = maskColorController.awtColor();
-                    scope.setMaskColor(maskColor);
-                    redrawMaskShape();
-                }
-            });
-
-            maskOpacity = UserConfig.getFloat(baseName + "ScopeOpacity", 0.5f);
-            opacitySelector.getItems().addAll(
-                    Arrays.asList("0.5", "0.2", "1", "0", "0.8", "0.3", "0.6", "0.7", "0.9", "0.4")
-            );
-            opacitySelector.setValue(maskOpacity + "");
-            opacitySelector.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                    try {
-                        if (newVal == null) {
-                            return;
-                        }
-                        float f = Float.parseFloat(newVal);
-                        if (f >= 0 && f <= 1.0) {
-                            maskOpacity = f;
-                            ValidationTools.setEditorNormal(opacitySelector);
-                            UserConfig.setFloat(baseName + "ScopeOpacity", f);
-                            scope.setMaskOpacity(maskOpacity);
-                            redrawMaskShape();
-                        } else {
-                            ValidationTools.setEditorBadStyle(opacitySelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(opacitySelector);
-                    }
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void initMatchTab() {
         try {
             matchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -249,9 +228,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     if (isSettingValues) {
                         return;
                     }
-                    if (checkMatchType()) {
-                        indicateScope();
-                    }
+                    indicateScope();
                 }
             });
 
@@ -264,22 +241,17 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     if (isSettingValues) {
                         return;
                     }
-                    if (checkDistanceValue()) {
-                        indicateScope();
-                    }
+                    indicateScope();
                 }
             });
 
             eightNeighborCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || scope == null) {
+                    if (isSettingValues) {
                         return;
                     }
-                    scope.setEightNeighbor(eightNeighborCheck.isSelected());
-                    if (checkMatchType()) {
-                        indicateScope();
-                    }
+                    indicateScope();
                 }
             });
 
@@ -291,7 +263,6 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     if (isSettingValues || !colorRGBRadio.isSelected()) {
                         return;
                     }
-                    checkMatchType();
                     indicateScope();
                 }
             });
@@ -301,7 +272,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
         }
     }
 
-    public void setParameters(BaseImageScopeController parent) {
+    public void setParameters(BasePixelsController parent) {
         try {
             this.parentController = parent;
             handler = parent;
@@ -387,6 +358,32 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
 
     @FXML
     @Override
+    public void createAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        ImageCanvasInputController controller = ImageCanvasInputController.open(this, baseTitle);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                Image canvas = controller.getCanvas();
+                if (canvas != null) {
+                    loadImage(canvas);
+                }
+                controller.close();
+            }
+        });
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        ImageScopeViewsController.open(handler);
+        return true;
+    }
+
+    @FXML
+    @Override
     public void refreshAction() {
         isSettingValues = false;
         redrawMaskShape();
@@ -398,11 +395,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             clearMaskShapes();
             return true;
         }
-        if (scope.getScopeType() == ScopeType.Outline) {
-            indicateOutline();
-        } else {
-            indicateScope();
-        }
+        showScope();
         return true;
     }
 

@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public class ImageGlassController extends BaseImageScopeController {
+public class ImageGlassController extends BasePixelsController {
 
     protected int intensity;
 
@@ -87,8 +87,8 @@ public class ImageGlassController extends BaseImageScopeController {
             ImageMosaic mosaic = ImageMosaic.create(
                     inImage, inScope,
                     ImageMosaic.MosaicType.FrostedGlass, intensity);
-            mosaic.setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+            mosaic.setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = message("FrostedGlass");
             opInfo = message("Intensity") + ": " + intensity;
             return mosaic.operateFxImage();

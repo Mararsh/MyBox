@@ -70,6 +70,7 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
 
                 @Override
                 protected void whenSucceeded() {
+                    outlinesList.getSelectionModel().select(0);
                 }
 
             };
@@ -225,7 +226,7 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
     }
 
     public void indicateOutline() {
-        if (isSettingValues || !validOutline()) {
+        if (isSettingValues || !validOutline() || !pickBaseValues()) {
             return;
         }
         if (task != null) {
@@ -253,7 +254,7 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
                             outline[0].getWidth(), outline[0].getHeight());
                     scope.setOutline(outline[1]);
                     scope.setRectangle(maskRectangleData.copy());
-                    finalScope();
+
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             bgImage, scope, PixelsOperation.OperationType.ShowScope);
                     outlineImage = pixelsOperation.operateFxImage();

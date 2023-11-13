@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-10-28
  * @License Apache License Version 2.0
  */
-public class ImageCopyController extends ImageSelectScopeController {
+public class ImageCopyController extends ImageSelectPixelsController {
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -91,12 +91,9 @@ public class ImageCopyController extends ImageSelectScopeController {
             @Override
             protected boolean handle() {
                 try {
-                    scopedImage = scopeController.srcImage();
-                    if (!wholeRadio.isSelected()) {
-                        scopedImage = scopeController.selectedScope(
-                                bgColorController.awtColor(),
-                                marginsCheck.isSelected());
-                    }
+                    scopedImage = scopeController.selectedScope(
+                            bgColorController.awtColor(),
+                            marginsCheck.isSelected());
                     if (scopedImage == null || task == null || isCancelled()) {
                         return false;
                     }

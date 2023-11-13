@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class ImageReplaceColorController extends BaseImageScopeController {
+public class ImageReplaceColorController extends BasePixelsController {
 
     @FXML
     protected CheckBox hueCheck, saturationCheck, brightnessCheck;
@@ -77,8 +77,8 @@ public class ImageReplaceColorController extends BaseImageScopeController {
                     .setBoolPara1(hueCheck.isSelected())
                     .setBoolPara2(saturationCheck.isSelected())
                     .setBoolPara3(brightnessCheck.isSelected())
-                    .setExcludeScope(excludeRadio.isSelected())
-                    .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
             operation = message("ReplaceColor");
             opInfo = null;
             return pixelsOperation.operateFxImage();

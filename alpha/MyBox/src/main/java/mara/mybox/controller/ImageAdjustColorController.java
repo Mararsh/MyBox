@@ -48,7 +48,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class ImageAdjustColorController extends BaseImageScopeController {
+public class ImageAdjustColorController extends BasePixelsController {
 
     private OperationType colorOperationType;
     private ColorActionType colorActionType;
@@ -262,8 +262,8 @@ public class ImageAdjustColorController extends BaseImageScopeController {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                             editor.imageView.getImage(),
                             scope, colorOperationType, colorActionType)
-                            .setExcludeScope(excludeRadio.isSelected())
-                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                            .setExcludeScope(scopeExclude())
+                            .setSkipTransparent(ignoreTransparent());
                     switch (colorOperationType) {
                         case RGB:
                             pixelsOperation.setIntPara1(colorValue);
