@@ -10,10 +10,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -27,7 +25,7 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageScopeInput.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelectPixels.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>
@@ -36,15 +34,8 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox fx:id="setBox" spacing="5.0">
                             <children>
-                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%BlackOrWhite" VBox.vgrow="ALWAYS" />
-                                <VBox fx:id="binrayBox" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                    <children>
-                                        <fx:include fx:id="binary" source="ControlImageBinary.fxml" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                    </padding>
-                                </VBox>
+                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%BlackOrWhite" wrapText="true" VBox.vgrow="ALWAYS" />
+                                  <fx:include fx:id="binary" source="ControlImageBinary.fxml" />
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
                                         <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
@@ -74,6 +65,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSave.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </FlowPane>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">

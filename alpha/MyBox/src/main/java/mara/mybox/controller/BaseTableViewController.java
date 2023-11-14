@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -109,16 +110,19 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 }
             });
 
-            tableView.setOnMouseClicked((MouseEvent event) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                if (event.getButton() == MouseButton.SECONDARY) {
-                    popTableMenu(event);
-                } else if (event.getClickCount() == 1) {
-                    itemClicked();
-                } else if (event.getClickCount() > 1) {
-                    itemDoubleClicked();
+            tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (popMenu != null && popMenu.isShowing()) {
+                        popMenu.hide();
+                    }
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        popTableMenu(event);
+                    } else if (event.getClickCount() == 1) {
+                        itemClicked();
+                    } else if (event.getClickCount() > 1) {
+                        itemDoubleClicked();
+                    }
                 }
             });
 

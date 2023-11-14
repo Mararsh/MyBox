@@ -16,7 +16,6 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
@@ -29,7 +28,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput_Base {
+public abstract class ControlSelectPixels_Area extends ControlSelectPixels_Base {
 
     @FXML
     public void goScope() {
@@ -64,7 +63,7 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
             }
             maskRectangleData = rect;
             scope.setRectangle(maskRectangleData.copy());
-            indicateScope();
+            showScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -95,7 +94,7 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
             }
             maskEllipseData = DoubleEllipse.rect(rect);
             scope.setEllipse(maskEllipseData.copy());
-            indicateScope();
+            showScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -179,34 +178,7 @@ public abstract class ControlImageScopeInput_Area extends ControlImageScopeInput
             }
             maskCircleData = circle;
             scope.setCircle(maskCircleData.copy());
-            indicateScope();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void pickPoints() {
-        try {
-            if (!isValidScope() || isSettingValues
-                    || pointsController.isSettingValues
-                    || pointsController.isSettingTable) {
-                return;
-            }
-            if (scope.getScopeType() == ScopeType.Matting) {
-                scope.clearPoints();
-                for (int i = 0; i < pointsController.tableData.size(); i++) {
-                    DoublePoint p = pointsController.tableData.get(i);
-                    scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
-                }
-                indicateScope();
-
-            } else if (scope.getScopeType() == ScopeType.Polygon) {
-                maskPolygonData = new DoublePolygon();
-                maskPolygonData.setAll(pointsController.getPoints());
-                scope.setPolygon(maskPolygonData.copy());
-                indicateScope();
-            }
-
+            showScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

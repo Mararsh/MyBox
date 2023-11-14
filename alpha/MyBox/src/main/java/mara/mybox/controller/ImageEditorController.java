@@ -14,11 +14,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Menu;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
@@ -166,7 +167,7 @@ public class ImageEditorController extends BaseImageController {
 
     public void updateImage(String operation, String value, ImageScope opScope, Image newImage, long cost) {
         try {
-            scope = opScope;
+            scope = opScope != null ? opScope.cloneValues() : null;
             recordImageHistory(operation, value, opScope, newImage);
             String info = operation == null ? "" : message(operation);
             if (value != null && !value.isBlank()) {
@@ -439,12 +440,6 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            items.add(colorMenu(fevent));
-
-            items.add(pixelsMenu(fevent));
-
-            items.add(tranformMenu(fevent));
-
             menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEraseController.open(this);
@@ -458,175 +453,231 @@ public class ImageEditorController extends BaseImageController {
         }
     }
 
-    public Menu colorMenu(Event fevent) {
-        try {
-            Menu colorNenu = new Menu(message("Color"), StyleTools.getIconImageView("iconColor.png"));
+    @FXML
+    public void popColorsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "ColorsMenuPopWhenMouseHovering", true)) {
+            showColorsMenu(event);
+        }
+    }
 
-            MenuItem menu = new MenuItem(message("ReplaceColor"), StyleTools.getIconImageView("iconReplace.png"));
+    @FXML
+    public void showColorsMenu(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("ReplaceColor"), StyleTools.getIconImageView("iconPalette.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageReplaceColorController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("BlendColor"), StyleTools.getIconImageView("iconCross.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageBlendColorController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("AdjustColor"), StyleTools.getIconImageView("iconColorWheel.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageAdjustColorController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("BlackOrWhite"), StyleTools.getIconImageView("iconBlackWhite.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageBlackWhiteController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Grey"), StyleTools.getIconImageView("iconGrey.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageGreyController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Sepia"), StyleTools.getIconImageView("iconSepia.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSepiaController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("ReduceColors"), StyleTools.getIconImageView("iconReduceColors.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageReduceColorsController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Thresholding"), StyleTools.getIconImageView("iconThresholding.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageThresholdingController.open(this);
             });
-            colorNenu.getItems().add(menu);
+            items.add(menu);
 
-            return colorNenu;
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "ColorsMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ColorsMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
         }
     }
 
-    public Menu pixelsMenu(Event fevent) {
-        try {
-            Menu pixelsNenu = new Menu(message("Pixels"), StyleTools.getIconImageView("iconMatrix.png"));
+    @FXML
+    public void popPixelsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "PixelsMenuPopWhenMouseHovering", true)) {
+            showPixelsMenu(event);
+        }
+    }
 
+    @FXML
+    public void showPixelsMenu(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
             MenuItem menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageMosaicController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("FrostedGlass"), StyleTools.getIconImageView("iconFrosted.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageGlassController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Smooth"), StyleTools.getIconImageView("iconSmooth.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSmoothController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Sharpen"), StyleTools.getIconImageView("iconSharpen.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSharpenController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Contrast"), StyleTools.getIconImageView("iconGrey.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageContrastController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("EdgeDetection"), StyleTools.getIconImageView("iconEdgeDetection.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEdgeController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Emboss"), StyleTools.getIconImageView("iconEmboss.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEmbossController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Convolution"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageBlackWhiteController.open(this);
+                ImageConvolutionController.open(this);
             });
-            pixelsNenu.getItems().add(menu);
+            items.add(menu);
 
-            return pixelsNenu;
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "PixelsMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "PixelsMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
         }
     }
 
-    public Menu tranformMenu(Event fevent) {
+    @FXML
+    public void popTransformMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "TransformMenuPopWhenMouseHovering", true)) {
+            showTransformMenu(event);
+        }
+    }
+
+    @FXML
+    public void showTransformMenu(Event fevent) {
         try {
-            Menu tranformNenu = new Menu(message("Transform"), StyleTools.getIconImageView("iconRotateRight.png"));
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 rotateRight();
             });
-            tranformNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
             menu.setOnAction((ActionEvent event) -> {
                 rotateLeft();
             });
-            tranformNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
             menu.setOnAction((ActionEvent event) -> {
                 turnOver();
             });
-            tranformNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Rotate"), StyleTools.getIconImageView("iconReplace.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageRotateController.open(this);
             });
-            tranformNenu.getItems().add(menu);
-            tranformNenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageShearController.open(this);
             });
-            tranformNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("MirrorHorizontal"), StyleTools.getIconImageView("iconHorizontal.png"));
             menu.setOnAction((ActionEvent event) -> {
                 horizontalAction();
             });
-            tranformNenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("MirrorVertical"), StyleTools.getIconImageView("iconVertical.png"));
             menu.setOnAction((ActionEvent event) -> {
                 verticalAction();
             });
-            tranformNenu.getItems().add(menu);
+            items.add(menu);
 
-            return tranformNenu;
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "TransformMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TransformMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
         }
     }
 

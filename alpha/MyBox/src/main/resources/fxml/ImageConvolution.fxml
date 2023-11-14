@@ -9,8 +9,8 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
@@ -18,16 +18,16 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageGlassController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageConvolutionController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                            <children>
-                                <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelectPixels.fxml" VBox.vgrow="ALWAYS" />
-                            </children>
+                     <children>
+                        <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelectPixels.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
                         </VBox>
                     </content>
                 </ScrollPane>
@@ -35,24 +35,33 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox fx:id="setBox" spacing="5.0">
                             <children>
-                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%FrostedGlass" VBox.vgrow="ALWAYS" />
-                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
-                                    <children>
-                                        <Label minHeight="-Infinity" text="%Intensity" wrapText="true" />
-                                        <ComboBox fx:id="intensitySelector" editable="true" prefWidth="80.0" />
-                                    </children>
-                                </FlowPane>
-                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                    <children>
-                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Convolution" wrapText="true" VBox.vgrow="ALWAYS" />
+                        <FlowPane fx:id="rightValuePane" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                           <children>
+                              <Label minHeight="-Infinity" text="%ConvolutionKernel" wrapText="true" />
+                              <Button fx:id="refreshButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                        <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/Red/iconDemo.png" />
+                                                        <Image url="@../buttons/Red/iconManage.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                           </children>
+                        </FlowPane>
+                        <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
                                         <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

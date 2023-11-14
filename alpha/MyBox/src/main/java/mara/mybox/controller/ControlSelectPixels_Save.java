@@ -15,7 +15,7 @@ import mara.mybox.fxml.style.NodeStyleTools;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput_Apply {
+public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask {
 
     @FXML
     public void saveScope() {
@@ -53,7 +53,7 @@ public abstract class ControlImageScopeInput_Save extends ControlImageScopeInput
             return;
         }
         clearControls();
-        scope = inScope;
+        scope = inScope.cloneValues();
         isSettingValues = true;
         showScopeType(scope);
         showAreaData(scope);

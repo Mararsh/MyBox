@@ -30,7 +30,7 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageScopeInput.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelectPixels.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>
@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%AdjustColor" VBox.vgrow="ALWAYS" />
                                 <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
-                                        <FlowPane fx:id="opBox11" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
+                                        <FlowPane hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                                             <children>
                                                 <RadioButton fx:id="colorHueRadio" selected="true">
                                                     <graphic>
@@ -215,6 +215,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSave.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </FlowPane>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">

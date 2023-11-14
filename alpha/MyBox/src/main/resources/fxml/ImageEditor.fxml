@@ -132,6 +132,33 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                       </graphic>
                                   </Button>
+                        <Button fx:id="pixelsButton" layoutX="465.0" layoutY="10.0" mnemonicParsing="false" onAction="#showPixelsMenu" onMouseEntered="#popPixelsMenu">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconMatrix.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="transformButton" layoutX="426.0" layoutY="10.0" mnemonicParsing="false" onAction="#showTransformMenu" onMouseEntered="#popTransformMenu">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconReplace.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="colorsButton" layoutX="465.0" layoutY="10.0" mnemonicParsing="false" onAction="#showColorsMenu" onMouseEntered="#popColorsMenu">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/iconColor.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                             </children>
                         </FlowPane>
                     </children>
@@ -158,6 +185,15 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
+                        <Button fx:id="saveAsButton" layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAsAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/iconSaveAs.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                     <children>
                                         <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">

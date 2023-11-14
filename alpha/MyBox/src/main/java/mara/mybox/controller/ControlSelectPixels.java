@@ -12,6 +12,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +31,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.ListColorCell;
+import mara.mybox.fxml.cell.ListImageCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -40,9 +42,9 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  *
  */
-public class ControlImageScopeInput extends ControlImageScopeInput_Save {
+public class ControlSelectPixels extends ControlSelectPixels_Save {
 
-    public ControlImageScopeInput() {
+    public ControlSelectPixels() {
         TipsLabelKey = "ScopeTips";
     }
 
@@ -55,11 +57,21 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             initAreaTab();
             initColorsTab();
             initMatchTab();
+            initPixTab();
 
-            imageView.toBack();
             thisPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(opacitySelector, new Tooltip(message("Opacity")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
@@ -145,14 +157,8 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             areaExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || scope == null) {
-                        return;
-                    }
-                    scope.setAreaExcluded(newValue);
-                    if (scope.getScopeType() == ScopeType.Outline) {
-                        indicateOutline();
-                    } else {
-                        indicateScope();
+                    if (!isSettingValues) {
+                        showScope();
                     }
                 }
             });
@@ -160,7 +166,12 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
                 @Override
                 public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
-                    pickPoints();
+                    if (isSettingValues
+                            || pointsController.isSettingValues
+                            || pointsController.isSettingTable) {
+                        return;
+                    }
+                    showScope();
                 }
             });
 
@@ -189,6 +200,9 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                         colorsSizeLabel.setStyle(NodeStyleTools.blueTextStyle());
                     }
                     clearColorsButton.setDisable(size == 0);
+                    if (!isSettingValues) {
+                        showScope();
+                    }
                 }
             });
 
@@ -207,11 +221,9 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             colorExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || scope == null) {
-                        return;
+                    if (!isSettingValues) {
+                        showScope();
                     }
-                    scope.setColorExcluded(newValue);
-                    indicateScope();
                 }
             });
 
@@ -225,10 +237,10 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             matchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (isSettingValues) {
-                        return;
+                    if (!isSettingValues) {
+                        showScope();
                     }
-                    indicateScope();
+
                 }
             });
 
@@ -238,20 +250,18 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
             scopeDistanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (isSettingValues) {
-                        return;
+                    if (!isSettingValues) {
+                        showScope();
                     }
-                    indicateScope();
                 }
             });
 
             eightNeighborCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues) {
-                        return;
+                    if (!isSettingValues) {
+                        showScope();
                     }
-                    indicateScope();
                 }
             });
 
@@ -263,12 +273,36 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                     if (isSettingValues || !colorRGBRadio.isSelected()) {
                         return;
                     }
-                    indicateScope();
+                    showScope();
                 }
             });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void initPixTab() {
+        try {
+            outlinesList.setCellFactory(new Callback<ListView<Image>, ListCell<Image>>() {
+                @Override
+                public ListCell<Image> call(ListView<Image> param) {
+                    return new ListImageCell();
+                }
+            });
+
+            outlinesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Image>() {
+                @Override
+                public void changed(ObservableValue ov, Image oldValue, Image newValue) {
+                    if (isSettingValues || newValue == null) {
+                        return;
+                    }
+                    loadOutlineSource(newValue);
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
@@ -339,8 +373,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                         isSettingValues = true;
                         pointsController.addPoint(x, y);
                         isSettingValues = false;
-                        scope.addPoint(x, y);
-                        indicateScope();
+                        showScope();
 
                     } else if (scope.getScopeType() == ScopeType.Polygon
                             && !maskControlDragged) {
@@ -437,7 +470,7 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
                 default:
                     return;
             }
-            indicateScope();
+            showScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -446,17 +479,6 @@ public class ControlImageScopeInput extends ControlImageScopeInput_Save {
     @FXML
     public void showSaved() {
         ImageScopesSavedController.load(this);
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            if (imageController != null && imageController.isShowing()) {
-                imageController.scope = scope;
-            }
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
 }

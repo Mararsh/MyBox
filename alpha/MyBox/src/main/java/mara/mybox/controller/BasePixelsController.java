@@ -24,7 +24,7 @@ public abstract class BasePixelsController extends BaseChildController {
     protected Image handledImage;
 
     @FXML
-    protected ControlImageScopeInput scopeController;
+    protected ControlSelectPixels scopeController;
     @FXML
     protected ControlColorSet bgColorController;
 

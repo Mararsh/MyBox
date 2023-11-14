@@ -80,7 +80,7 @@ public class StylePrefix {
         switch (id) {
             case "scopeButton":
                 return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
-            case "scopeAllRadio":
+            case "scopeWholeRadio":
                 return new StyleData(id, "", message("WholeImage"), "", "iconSelectAll.png");
             case "scopeMattingRadio":
                 return new StyleData(id, "", message("Matting"), "", "iconColorFill.png");
@@ -94,14 +94,6 @@ public class StylePrefix {
                 return new StyleData(id, "", message("Polygon"), "", "iconStar.png");
             case "scopeColorRadio":
                 return new StyleData(id, "", message("ColorMatching"), "", "iconColor.png");
-            case "scopeRectangleColorRadio":
-                return new StyleData(id, "", message("RectangleColor"), "", "iconRectangleFilled.png");
-            case "scopeCircleColorRadio":
-                return new StyleData(id, "", message("CircleColor"), "", "iconCircleFilled.png");
-            case "scopeEllipseColorRadio":
-                return new StyleData(id, "", message("EllipseColor"), "", "iconEllipseFilled.png");
-            case "scopePolygonColorRadio":
-                return new StyleData(id, "", message("PolygonColor"), "", "iconStarFilled.png");
             case "scopeOutlineRadio":
                 return new StyleData(id, "", message("Outline"), "", "iconButterfly.png");
             case "scopeCreateButton":

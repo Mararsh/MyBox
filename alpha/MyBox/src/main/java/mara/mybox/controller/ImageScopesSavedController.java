@@ -33,7 +33,7 @@ import mara.mybox.value.UserConfig;
 public class ImageScopesSavedController extends BaseSysTableController<ImageScope> {
 
     protected TableImageScope tableImageScope;
-    protected ControlImageScopeInput scopeController;
+    protected ControlSelectPixels scopeController;
 
     @FXML
     protected TableColumn<ImageScope, String> nameColumn, colorTypeColumn, fileColumn;
@@ -135,7 +135,7 @@ public class ImageScopesSavedController extends BaseSysTableController<ImageScop
         tableDefinition = tableImageScope;
     }
 
-    public void setParameters(ControlImageScopeInput controller) {
+    public void setParameters(ControlSelectPixels controller) {
         try {
             if (controller == null) {
                 close();
@@ -232,7 +232,7 @@ public class ImageScopesSavedController extends BaseSysTableController<ImageScop
     /*
         static
      */
-    public static ImageScopesSavedController load(ControlImageScopeInput scopeController) {
+    public static ImageScopesSavedController load(ControlSelectPixels scopeController) {
         try {
             ImageScopesSavedController controller = (ImageScopesSavedController) WindowTools.openChildStage(
                     scopeController.getMyWindow(), Fxmls.ImageScopeSavedFxml, false);

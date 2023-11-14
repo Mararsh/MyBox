@@ -36,7 +36,6 @@ public class BaseImageEditController extends BaseShapeController {
                 return;
             }
             editor = parent;
-            loadImage();
 
             editor.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -54,12 +53,21 @@ public class BaseImageEditController extends BaseShapeController {
             closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
 
             initMore();
+
+            loadImage();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     protected void initMore() {
+    }
+
+    public void reset() {
+        operation = null;
+        opInfo = null;
+        handledImage = null;
     }
 
     protected void loadImage() {
@@ -87,6 +95,7 @@ public class BaseImageEditController extends BaseShapeController {
         if (task != null) {
             task.cancel();
         }
+        reset();
         task = new SingletonCurrentTask<Void>(this) {
 
             @Override

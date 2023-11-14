@@ -4,7 +4,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import static mara.mybox.value.Languages.message;
 
@@ -13,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInput_Area {
+public abstract class ControlSelectPixels_Colors extends ControlSelectPixels_Area {
 
     @Override
     protected void startPickingColor() {
@@ -45,9 +44,7 @@ public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInp
             case Circle:
             case Ellipse:
             case Polygon:
-                scope.addColor(ColorConvertTools.converColor(color));
                 colorsList.getItems().add(color);
-                indicateScope();
                 return true;
             default:
                 return false;
@@ -63,11 +60,10 @@ public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInp
         if (colors == null || colors.isEmpty()) {
             return;
         }
-        for (Color color : colors) {
-            scope.getColors().remove(ColorConvertTools.converColor(color));
-        }
+        isSettingValues = true;
         colorsList.getItems().removeAll(colors);
-        indicateScope();
+        isSettingValues = false;
+        showScope();
     }
 
     @FXML
@@ -75,9 +71,10 @@ public abstract class ControlImageScopeInput_Colors extends ControlImageScopeInp
         if (isSettingValues) {
             return;
         }
-        scope.getColors().clear();
+        isSettingValues = true;
         colorsList.getItems().clear();
-        indicateScope();
+        isSettingValues = false;
+        showScope();
     }
 
     @FXML

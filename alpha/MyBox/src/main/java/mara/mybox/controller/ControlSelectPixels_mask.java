@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
@@ -12,8 +13,11 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
+import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -22,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Apply extends ControlImageScopeInput_Outline {
+public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outline {
 
     public void applyScope() {
         if (isSettingValues) {
@@ -46,13 +50,15 @@ public abstract class ControlImageScopeInput_Apply extends ControlImageScopeInpu
             if (srcImage() == null || scope == null) {
                 return null;
             }
-            if (scopeTypeGroup.getSelectedToggle() == null) {
-                scope.setScopeType(ImageScope.ScopeType.Whole);
-            } else {
-                if (scopeWholeRadio.isSelected()) {
-                    scope.setScopeType(ImageScope.ScopeType.Whole);
 
-                } else if (scopeMattingRadio.isSelected()) {
+            if (scopeTypeGroup.getSelectedToggle() == null
+                    || scopeWholeRadio.isSelected()) {
+                scope.setScopeType(ImageScope.ScopeType.Whole);
+                hideLeftPane();
+
+            } else {
+
+                if (scopeMattingRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
 
                 } else if (scopeRectangleRadio.isSelected()) {
@@ -80,7 +86,10 @@ public abstract class ControlImageScopeInput_Apply extends ControlImageScopeInpu
                     scope.setScopeType(ImageScope.ScopeType.Outline);
 
                 }
+
+                showLeftPane();
             }
+
             return scope;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -157,9 +166,6 @@ public abstract class ControlImageScopeInput_Apply extends ControlImageScopeInpu
 
                 case Outline:
                     tabPane.getTabs().setAll(pixTab);
-                    if (outlinesList.getItems().isEmpty()) {
-                        initPixTab();
-                    }
                     break;
 
             }
@@ -206,11 +212,72 @@ public abstract class ControlImageScopeInput_Apply extends ControlImageScopeInpu
         }
     }
 
-    public void showScope() {
-        if (scope.getScopeType() != ImageScope.ScopeType.Outline) {
-            indicateScope();
-        } else {
-            loadOutlineSource(scope.getOutlineSource(), scope.getRectangle());
+    @Override
+    public synchronized void showScope() {
+        if (scope.getScopeType() == ImageScope.ScopeType.Outline) {
+            loadOutlineSource(scope.getOutlineSource());
+            return;
+        }
+        if (pickScopeValues() == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            private Image maskImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    maskImage = maskImage();
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    return maskImage != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                image = maskImage;
+                imageView.setImage(maskImage);
+                if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
+                    drawMattingPoints();
+                } else {
+                    drawMaskShape();
+                }
+                showNotify.set(!showNotify.get());
+            }
+
+            @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+        };
+        start(task, viewBox);
+    }
+
+    public void drawMattingPoints() {
+        try {
+            clearMaskAnchors();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
+            for (int i = 0; i < scope.getPoints().size(); i++) {
+                IntPoint p = scope.getPoints().get(i);
+                double x = p.getX() * xRatio;
+                double y = p.getY() * yRatio;
+                addMaskAnchor(i, new DoublePoint(p.getX(), p.getY()), x, y);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

@@ -21,7 +21,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
     protected ImageScope scope;
 
     @FXML
-    protected ControlImageScopeInput valuesController;
+    protected ControlSelectPixels valuesController;
 
     public ImageScopeEditor() {
         defaultExt = "png";

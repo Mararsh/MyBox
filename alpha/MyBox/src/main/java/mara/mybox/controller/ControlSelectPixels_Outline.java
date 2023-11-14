@@ -4,15 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.util.Callback;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
@@ -25,7 +20,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.cell.ListImageCell;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -36,17 +30,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Outline extends ControlImageScopeInput_Colors {
+public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Colors {
 
-    public void initPixTab() {
+    public void outlineExamples() {
         try {
-            outlinesList.setCellFactory(new Callback<ListView<Image>, ListCell<Image>>() {
-                @Override
-                public ListCell<Image> call(ListView<Image> param) {
-                    return new ListImageCell();
-                }
-            });
-            outlinesList.getItems().clear();
             SingletonCurrentTask outlinesTask = new SingletonCurrentTask<Void>(this) {
 
                 @Override
@@ -76,16 +63,6 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
             };
             start(outlinesTask);
 
-            outlinesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Image>() {
-                @Override
-                public void changed(ObservableValue ov, Image oldValue, Image newValue) {
-                    if (isSettingValues || newValue == null) {
-                        return;
-                    }
-                    loadOutlineSource(newValue);
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -103,63 +80,6 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
             loadOutlineSource(file);
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void showOutlineFileMenu(Event event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event, false) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber;
-                return VisitHistoryTools.getRecentAlphaImages(fileNumber);
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return recentSourcePathsBesidesFiles();
-            }
-
-            @Override
-            public void handleSelect() {
-                selectOutlineFile();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    handleSelect();
-                    return;
-                }
-                loadOutlineSource(file);
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleSourcePath(fname);
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void pickOutlineFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
-            selectOutlineFile();
-        } else {
-            showOutlineFileMenu(event);
-        }
-    }
-
-    @FXML
-    public void popOutlineFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
-            showOutlineFileMenu(event);
         }
     }
 
@@ -278,6 +198,63 @@ public abstract class ControlImageScopeInput_Outline extends ControlImageScopeIn
 
         };
         start(task, viewBox);
+    }
+
+    @FXML
+    public void showOutlineFileMenu(Event event) {
+        if (AppVariables.fileRecentNumber <= 0) {
+            return;
+        }
+        new RecentVisitMenu(this, event, false) {
+            @Override
+            public List<VisitHistory> recentFiles() {
+                int fileNumber = AppVariables.fileRecentNumber;
+                return VisitHistoryTools.getRecentAlphaImages(fileNumber);
+            }
+
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePathsBesidesFiles();
+            }
+
+            @Override
+            public void handleSelect() {
+                selectOutlineFile();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                loadOutlineSource(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
+    }
+
+    @FXML
+    public void pickOutlineFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectOutlineFile();
+        } else {
+            showOutlineFileMenu(event);
+        }
+    }
+
+    @FXML
+    public void popOutlineFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showOutlineFileMenu(event);
+        }
     }
 
 }

@@ -22,7 +22,6 @@ import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Brightness;
 import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Hue;
 import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Saturation;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
-import static mara.mybox.bufferedimage.ImageScope.ScopeType.Color;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
@@ -30,11 +29,9 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
-import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -44,7 +41,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScopeInput_Base extends BaseShapeController {
+public abstract class ControlSelectPixels_Base extends BaseShapeController {
 
     protected BasePixelsController handler;
     protected BaseImageController imageController;
@@ -310,68 +307,7 @@ public abstract class ControlImageScopeInput_Base extends BaseShapeController {
         return valid;
     }
 
-    protected synchronized void indicateScope() {
-        if (pickScopeValues() == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image maskImage;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    maskImage = maskImage();
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return maskImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                image = maskImage;
-                imageView.setImage(maskImage);
-                if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                    drawMattingPoints();
-                } else {
-                    drawMaskShape();
-                }
-                showNotify.set(!showNotify.get());
-            }
-
-            @Override
-            protected void whenCanceled() {
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
-        };
-        start(task, viewBox);
-    }
-
-    public void drawMattingPoints() {
-        try {
-            clearMaskAnchors();
-            double xRatio = viewXRatio();
-            double yRatio = viewYRatio();
-            for (int i = 0; i < scope.getPoints().size(); i++) {
-                IntPoint p = scope.getPoints().get(i);
-                double x = p.getX() * xRatio;
-                double y = p.getY() * yRatio;
-                addMaskAnchor(i, new DoublePoint(p.getX(), p.getY()), x, y);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public void showScope() {
     }
 
 }

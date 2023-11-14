@@ -44,7 +44,7 @@ public class StyleButton {
             if (id.startsWith("saveAs")) {
                 switch (id) {
                     case "saveAsButton":
-                        return new StyleData(id, message("SaveAs"), "F11", "iconSaveAs.png");
+                        return new StyleData(id, message("SaveAs"), "F11 / CTRL+B / ALT+B", "iconSaveAs.png");
                     default:
                         return new StyleData(id, message("SaveAs"), "", "iconSaveAs.png");
                 }
@@ -301,7 +301,15 @@ public class StyleButton {
             }
         }
         if (id.startsWith("color")) {
-            return new StyleData(id, message("ColorPalette"), "", "iconColor.png");
+            switch (id) {
+                case "colorsButton":
+                    return new StyleData(id, message("Colors"), "", "iconColor.png");
+                default:
+                    return new StyleData(id, message("Color"), "", "iconColor.png");
+            }
+        }
+        if (id.startsWith("pixels")) {
+            return new StyleData(id, message("Pixels"), "", "iconMatrix.png");
         }
         if (id.startsWith("open")) {
             if (id.startsWith("openPath") || id.startsWith("openTarget") || id.startsWith("openSource")) {
@@ -687,6 +695,9 @@ public class StyleButton {
         }
         if (id.startsWith("translate")) {
             return new StyleData(id, message("TranslateShape"), "", "iconMove.png");
+        }
+        if (id.startsWith("transform")) {
+            return new StyleData(id, message("Transform"), "", "iconReplace.png");
         }
         if (id.startsWith("anchor")) {
             return new StyleData(id, message("Anchor"), "", "iconAnchor.png");
