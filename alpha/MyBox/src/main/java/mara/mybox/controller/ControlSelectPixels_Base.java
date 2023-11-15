@@ -45,6 +45,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
 
     protected BasePixelsController handler;
     protected BaseImageController imageController;
+    protected ImageScope scope;
     protected TableColor tableColor;
     protected java.awt.Color maskColor;
     protected float maskOpacity;
@@ -55,7 +56,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     @FXML
     protected Tab areaTab, colorsTab, matchTab, pixTab;
     @FXML
-    protected VBox viewBox, setBox, areaBox, rectangleBox, circleBox, pointsBox;
+    protected VBox viewBox, areaBox, rectangleBox, circleBox, pointsBox;
     @FXML
     protected ComboBox<String> scopeDistanceSelector, opacitySelector;
     @FXML
@@ -241,26 +242,25 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
         }
         boolean valid = true;
         try {
-            RadioButton selected = (RadioButton) matchGroup.getSelectedToggle();
-            if (selected.equals(colorRGBRadio)) {
+            if (colorRGBRadio.isSelected()) {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Color);
 
-            } else if (selected.equals(colorRedRadio)) {
+            } else if (colorRedRadio.isSelected()) {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Red);
 
-            } else if (selected.equals(colorGreenRadio)) {
+            } else if (colorGreenRadio.isSelected()) {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Green);
 
-            } else if (selected.equals(colorBlueRadio)) {
+            } else if (colorBlueRadio.isSelected()) {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Blue);
 
-            } else if (selected.equals(colorSaturationRadio)) {
+            } else if (colorSaturationRadio.isSelected()) {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Saturation);
 
-            } else if (selected.equals(colorHueRadio)) {
+            } else if (colorHueRadio.isSelected()) {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
 
-            } else if (selected.equals(colorBrightnessRadio)) {
+            } else if (colorBrightnessRadio.isSelected()) {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Brightness);
             }
 

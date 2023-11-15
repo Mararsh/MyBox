@@ -348,9 +348,23 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
-            if (sourceFile == null) {
-                return items;
+            if (sourceFile != null) {
+                Menu fileMenu = new Menu(message("File"), StyleTools.getIconImageView("iconFile.png"));
+                fileMenu.getItems().addAll(fileMenuItems(fevent));
+                items.add(fileMenu);
             }
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
 
             String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
             if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
@@ -509,6 +523,29 @@ public class BaseImageController extends BaseImageController_Actions {
                 menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     svgAction();
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ManageColors"), StyleTools.getIconImageView("iconPalette.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ColorsManageController.oneOpen();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ColorQuery"), StyleTools.getIconImageView("iconColor.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ColorQueryController.open();
+            });
+            items.add(menu);
+
+            if (mainMenuController == null) {
+
+                menu = new MenuItem(message("Home"), StyleTools.getIconImageView("iconMyBox.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    mybox(event);
                 });
                 items.add(menu);
             }
@@ -744,11 +781,10 @@ public class BaseImageController extends BaseImageController_Actions {
 
     @Override
     public boolean controlAltV() {
-        if (imageView == null || imageView.getImage() == null
-                || targetIsTextInput()) {
+        if (imageView == null || targetIsTextInput()) {
             return false;
         }
-        if (sourceFile != null) {
+        if (imageView.getImage() != null) {
             pasteAction();
         } else {
             loadContentInSystemClipboard();

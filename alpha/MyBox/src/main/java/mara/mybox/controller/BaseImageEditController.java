@@ -89,6 +89,16 @@ public class BaseImageEditController extends BaseShapeController {
     @FXML
     @Override
     public void okAction() {
+        action(false);
+    }
+
+    @FXML
+    public void previewAction() {
+        action(true);
+    }
+
+    @FXML
+    protected void action(boolean isPreview) {
         if (!checkOptions()) {
             return;
         }
@@ -112,9 +122,13 @@ public class BaseImageEditController extends BaseShapeController {
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
-                editor.updateImage(operation, opInfo, null, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
+                if (isPreview) {
+                    ImagePopController.openImage(myController, handledImage);
+                } else {
+                    editor.updateImage(operation, opInfo, null, handledImage, cost);
+                    if (closeAfterCheck.isSelected()) {
+                        close();
+                    }
                 }
             }
 
@@ -135,6 +149,42 @@ public class BaseImageEditController extends BaseShapeController {
     @Override
     public void recoverAction() {
         editor.recoverAction();
+    }
+
+    @FXML
+    protected void demo() {
+        if (!checkOptions()) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        reset();
+        task = new SingletonCurrentTask<Void>(this) {
+            private Image demoImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    demoImage = handleDemo();
+                    return demoImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImagePopController.openImage(myController, demoImage);
+            }
+
+        };
+        start(task);
+    }
+
+    protected Image handleDemo() {
+        return null;
     }
 
     @FXML

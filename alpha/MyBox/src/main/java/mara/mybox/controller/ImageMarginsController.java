@@ -102,12 +102,37 @@ public class ImageMarginsController extends BaseImageEditController {
                     .or(distanceInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
-            checkOperationType();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
 
+    }
+
+    @Override
+    protected void loadImage() {
+        if (editor == null || !editor.isShowing()) {
+            close();
+            return;
+        }
+        loadImage(editor.imageView.getImage());
+
+    }
+
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded() || image == null) {
+                return false;
+            }
+            String info = message("CurrentSize") + ": " + Math.round(image.getWidth())
+                    + "x" + Math.round(image.getHeight());
+            commentsLabel.setText(info);
+            checkOperationType();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
     }
 
     protected void checkOperationType() {
@@ -205,34 +230,6 @@ public class ImageMarginsController extends BaseImageEditController {
                 + message("AfterChange") + ": " + (int) Math.round(maskRectangleData.getWidth())
                 + "x" + (int) Math.round(maskRectangleData.getHeight());
         commentsLabel.setText(info);
-    }
-
-    @Override
-    protected void loadImage() {
-        if (editor == null || !editor.isShowing()) {
-            close();
-            return;
-        }
-        loadImage(editor.imageView.getImage());
-        if (dragRadio.isSelected()) {
-            initDragging();
-        }
-    }
-
-    @Override
-    public boolean afterImageLoaded() {
-        try {
-            if (!super.afterImageLoaded() || image == null) {
-                return false;
-            }
-            String info = message("CurrentSize") + ": " + Math.round(image.getWidth())
-                    + "x" + Math.round(image.getHeight());
-            commentsLabel.setText(info);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
     }
 
     @FXML

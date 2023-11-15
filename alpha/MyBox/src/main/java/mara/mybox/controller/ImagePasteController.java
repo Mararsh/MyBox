@@ -36,9 +36,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-10-28
  * @License Apache License Version 2.0
  */
-public class ImagePasteController extends BaseShapeController {
+public class ImagePasteController extends BaseImageEditController {
 
-    protected ImageEditorController editor;
+    protected ImageScope scope;
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
     protected int keepRatioType;
@@ -55,29 +55,14 @@ public class ImagePasteController extends BaseShapeController {
     protected Label listLabel;
     @FXML
     protected ControlImagesBlend blendController;
-    @FXML
-    protected CheckBox closeAfterCheck;
 
     public ImagePasteController() {
         baseTitle = message("Paste");
     }
 
     @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
-    protected void setParameters(ImageEditorController parent) {
+    protected void initMore() {
         try {
-            if (parent == null) {
-                close();
-            }
-            editor = parent;
-            loadImage(editor.sourceFile,
-                    editor.imageInformation,
-                    editor.image,
-                    false);
-
             rotateAngle = currentAngle = 0;
 
             enlargeCheck.setSelected(UserConfig.getBoolean(baseName + "EnlargerImageAsClip", true));
@@ -149,14 +134,6 @@ public class ImagePasteController extends BaseShapeController {
                     }
                 }
             });
-
-            closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
-                }
-            });
-            closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -319,18 +296,9 @@ public class ImagePasteController extends BaseShapeController {
     public void okAction() {
         popSuccessful();
         editor.updateImage("Paste", null, scope, imageView.getImage(), -1);
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
-    }
-
-    @Override
-    public boolean keyESC() {
-        close();
-        return false;
+        if (closeAfterCheck.isSelected()) {
+            close();
+        }
     }
 
 

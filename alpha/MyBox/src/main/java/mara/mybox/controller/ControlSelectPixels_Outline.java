@@ -92,13 +92,14 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
         }
         task = new SingletonCurrentTask<Void>(this) {
 
-            private BufferedImage bufferedImage;
+            private Image outlineImage;
 
             @Override
             protected boolean handle() {
                 try {
-                    bufferedImage = ImageFileReaders.readImage(file);
-                    return bufferedImage != null;
+                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+                    outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                    return outlineImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -107,7 +108,10 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
 
             @Override
             protected void whenSucceeded() {
-                loadOutlineSource(bufferedImage);
+                isSettingValues = true;
+                outlinesList.getItems().add(0, outlineImage);
+                isSettingValues = false;
+                outlinesList.getSelectionModel().select(0);
             }
 
         };
@@ -115,10 +119,12 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
     }
 
     public void loadOutlineSource(BufferedImage bufferedImage) {
-        if (bufferedImage == null) {
+        if (isSettingValues || bufferedImage == null) {
             return;
         }
-        loadOutlineSource(bufferedImage, DoubleRectangle.image(bufferedImage));
+        scope.setOutlineSource(bufferedImage);
+        maskRectangleData = DoubleRectangle.image(bufferedImage);
+        indicateOutline();
     }
 
     public void loadOutlineSource(Image image) {
@@ -126,15 +132,6 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
             return;
         }
         loadOutlineSource(SwingFXUtils.fromFXImage(image, null));
-    }
-
-    public void loadOutlineSource(BufferedImage bufferedImage, DoubleRectangle rect) {
-        if (bufferedImage == null || rect == null) {
-            return;
-        }
-        scope.setOutlineSource(bufferedImage);
-        maskRectangleData = rect.copy();
-        indicateOutline();
     }
 
     public boolean validOutline() {

@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.control.Tab;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -14,10 +17,10 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -54,7 +57,6 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             if (scopeTypeGroup.getSelectedToggle() == null
                     || scopeWholeRadio.isSelected()) {
                 scope.setScopeType(ImageScope.ScopeType.Whole);
-                hideLeftPane();
 
             } else {
 
@@ -76,8 +78,6 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 } else if (scopePolygonRadio.isSelected()) {
                     showMaskPolygon();
                     scope.setScopeType(ImageScope.ScopeType.Polygon);
-                    maskPolygonData = new DoublePolygon();
-                    maskPolygonData.setAll(pointsController.getPoints());
 
                 } else if (scopeColorRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Color);
@@ -87,7 +87,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
 
                 }
 
-                showLeftPane();
+//                showLeftPane();
             }
 
             return scope;
@@ -106,28 +106,33 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             if (srcImage() == null || scope == null) {
                 return;
             }
-            isSettingValues = true;
             if (scope.getScopeType() == null) {
                 scope.setScopeType(ScopeType.Whole);
             }
             UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true);
             switch (scope.getScopeType()) {
+                case Whole:
+                    hideLeftPane();
+                    break;
                 case Matting:
                     tabPane.getTabs().setAll(areaTab, matchTab);
                     areaBox.getChildren().setAll(eightNeighborCheck, pointsBox);
                     opBox.getChildren().setAll(shapeButton, withdrawButton);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
+                    addPointCheck.setSelected(true);
                     break;
 
                 case Rectangle:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
                     opBox.getChildren().setAll(shapeButton, pickColorBox);
+                    isSettingValues = true;
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskRectangleData.getMaxX(), 2) + "");
                     rightBottomYInput.setText(scale(maskRectangleData.getMaxY(), 2) + "");
+                    isSettingValues = false;
                     rectangleLabel.setText(message("Rectangle"));
                     break;
 
@@ -135,19 +140,23 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(circleBox, goScopeButton);
                     opBox.getChildren().setAll(shapeButton, pickColorBox);
+                    isSettingValues = true;
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
                     circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
+                    isSettingValues = false;
                     break;
 
                 case Ellipse:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
                     opBox.getChildren().setAll(shapeButton, pickColorBox);
+                    isSettingValues = true;
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
                     rightBottomXInput.setText(scale(maskEllipseData.getMaxX(), 2) + "");
                     rightBottomYInput.setText(scale(maskEllipseData.getMaxY(), 2) + "");
+                    isSettingValues = false;
                     rectangleLabel.setText(message("Ellipse"));
                     break;
 
@@ -162,6 +171,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Color:
                     tabPane.getTabs().setAll(colorsTab, matchTab);
                     opBox.getChildren().setAll(pickColorBox);
+                    pickColorCheck.setSelected(true);
                     break;
 
                 case Outline:
@@ -169,7 +179,6 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     break;
 
             }
-            isSettingValues = false;
             refreshStyle(tabPane);
             refreshStyle(opBox);
 
@@ -177,17 +186,49 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 tabPane.getSelectionModel().select(selectedTab);
             }
 
+            setDistanceValue();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
 
+    protected void setDistanceValue() {
+        try {
+            int distance, max;
+            if (colorSaturationRadio.isSelected() || colorHueRadio.isSelected()) {
+                max = 100;
+                distance = scope != null ? (int) (scope.getHsbDistance() * 100) : 50;
+
+            } else if (colorHueRadio.isSelected()) {
+                max = 360;
+                distance = scope != null ? (int) (scope.getHsbDistance() * 360) : 60;
+
+            } else {
+                max = 255;
+                distance = scope != null ? scope.getColorDistance() : 50;
+
+            }
+
+            NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
+            List<String> vList = new ArrayList<>();
+            for (int i = 0; i <= max; i += 10) {
+                vList.add(i + "");
+            }
+            isSettingValues = true;
+            scopeDistanceSelector.getItems().setAll(vList);
+            scopeDistanceSelector.getSelectionModel().select(distance + "");
+            isSettingValues = false;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public void clearControls() {
         try {
-            isSettingValues = true;
-            clearMask();
+            clearMaskShapes();
             image = srcImage();
+            imageView.setRotate(0);
             imageView.setImage(image);
             if (scope == null) {
                 scope = new ImageScope(image);
@@ -199,14 +240,6 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             scope.setMaskColor(maskColor);
             resetShapeOptions();
 
-            scopeDistanceSelector.getItems().clear();
-            scopeDistanceSelector.getEditor().setStyle(null);
-            areaExcludedCheck.setSelected(false);
-            colorExcludedCheck.setSelected(false);
-            outlinesList.getSelectionModel().select(null);
-            isSettingValues = false;
-
-            pickColorCheck.setSelected(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

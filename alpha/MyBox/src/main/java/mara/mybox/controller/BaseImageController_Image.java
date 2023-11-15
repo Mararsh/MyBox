@@ -291,7 +291,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             drawMaskRulers();
             checkCoordinate();
 
-            isPickingColor = false;
+            if (pickColorCheck != null) {
+                isPickingColor = pickColorCheck.isSelected();
+            } else {
+                isPickingColor = false;
+            }
             checkPickingColor();
 
             notifyLoad();

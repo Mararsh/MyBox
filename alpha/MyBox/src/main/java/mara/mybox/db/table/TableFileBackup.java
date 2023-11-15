@@ -87,9 +87,9 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (conn == null || file == null || !file.exists()) {
             return null;
         }
-        try (PreparedStatement query = conn.prepareStatement(QueryPath)) {
-            query.setString(1, file.getAbsolutePath());
-            FileBackup backup = query(conn, query);
+        try (PreparedStatement s = conn.prepareStatement(QueryPath)) {
+            s.setString(1, file.getAbsolutePath());
+            FileBackup backup = query(conn, s);
             if (backup != null) {
                 File backFile = backup.getBackup();
                 if (backFile != null && backFile.exists()) {
@@ -145,6 +145,18 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             MyBoxLog.debug(e, file.getAbsolutePath());
         }
         return records;
+    }
+
+    public FileBackup addBackup(File file) {
+        if (file == null) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return addBackup(conn, file);
+        } catch (Exception e) {
+            MyBoxLog.debug(e, file.getAbsolutePath());
+            return null;
+        }
     }
 
     public FileBackup addBackup(Connection conn, File file) {

@@ -16,12 +16,12 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlImageScale extends ControlImageSize {
 
-    protected ImageScaleController scaleController;
+    protected ImageSizeController scaleController;
 
     @FXML
     protected RadioButton dragRadio;
 
-    public void setParameters(ImageScaleController scaleController) {
+    public void setParameters(ImageSizeController scaleController) {
         this.scaleController = scaleController;
         imageController = scaleController;
         infoLabel = scaleController.commentsLabel;

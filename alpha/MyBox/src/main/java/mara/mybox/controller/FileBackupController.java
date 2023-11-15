@@ -356,8 +356,8 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
 
             @Override
             protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    tableFileBackup.addBackup(conn, sourceFile);
+                try {
+                    tableFileBackup.addBackup(sourceFile);
                     if (!validFile()) {
                         return false;
                     }

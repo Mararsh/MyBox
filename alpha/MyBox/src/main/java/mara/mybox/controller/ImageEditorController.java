@@ -69,7 +69,7 @@ public class ImageEditorController extends BaseImageController {
 
     public ImageEditorController() {
         baseTitle = message("EditImage");
-        TipsLabelKey = "ImageManufactureTips";
+        TipsLabelKey = "ImageEditTips";
     }
 
     @Override
@@ -167,7 +167,6 @@ public class ImageEditorController extends BaseImageController {
 
     public void updateImage(String operation, String value, ImageScope opScope, Image newImage, long cost) {
         try {
-            scope = opScope != null ? opScope.cloneValues() : null;
             recordImageHistory(operation, value, opScope, newImage);
             String info = operation == null ? "" : message(operation);
             if (value != null && !value.isBlank()) {
@@ -375,7 +374,7 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @Override
-    public List<MenuItem> operationsMenuItems(Event fevent) {
+    public List<MenuItem> dataMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -407,6 +406,21 @@ public class ImageEditorController extends BaseImageController {
                 items.add(new SeparatorMenuItem());
             }
 
+            items.addAll(super.dataMenuItems(fevent));
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
             menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
                     StyleTools.getIconImageView("iconTarget.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -434,9 +448,9 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Scale"), StyleTools.getIconImageView("iconExpand.png"));
+            menu = new MenuItem(message("Size"), StyleTools.getIconImageView("iconExpand.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageScaleController.open(this);
+                ImageSizeController.open(this);
             });
             items.add(menu);
 

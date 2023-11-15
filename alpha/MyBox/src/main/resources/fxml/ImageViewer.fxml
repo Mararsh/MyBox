@@ -60,29 +60,20 @@ License:    Apache License Version 2.0
                         <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
-                                <Button fx:id="optionsButton" layoutX="335.0" layoutY="10.0" mnemonicParsing="false" onAction="#options">
+                        <CheckBox fx:id="toolbarCheck" mnemonicParsing="false">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconPanes.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </CheckBox>
+                                <Button fx:id="dataButton" mnemonicParsing="false" onAction="#showDataMenu" onMouseEntered="#popDataMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconOptions.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconPop.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconMenu.png" />
+                                                <Image url="@../buttons/Red/iconData.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -122,15 +113,24 @@ License:    Apache License Version 2.0
                     <children>
                   <HBox alignment="CENTER_LEFT" spacing="2.0">
                      <children>
-                                <Button fx:id="dataButton" mnemonicParsing="false" onAction="#showDataMenu" onMouseEntered="#popDataMenu">
+                                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconData.png" />
+                                                <Image url="@../buttons/Red/iconMenu.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
+                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/iconSaveAs.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                               <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                   <children>
                                       <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
@@ -142,33 +142,24 @@ License:    Apache License Version 2.0
                                               </ImageView>
                                           </graphic>
                                       </CheckBox>
-                                      <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
+                                      <Button fx:id="optionsButton" mnemonicParsing="false" onAction="#options">
                                           <graphic>
-                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                   <image>
-                                                      <Image url="@../buttons/Red/iconLocation.png" />
+                                                      <Image url="@../buttons/Red/iconOptions.png" />
                                                   </image>
                                               </ImageView>
                                           </graphic>
-                                      </CheckBox>
-                                      <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
+                                      </Button>
+                                      <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                           <graphic>
-                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                   <image>
-                                                      <Image url="@../buttons/Red/iconXRuler.png" />
+                                                      <Image url="@../buttons/Red/iconPop.png" />
                                                   </image>
                                               </ImageView>
                                           </graphic>
-                                      </CheckBox>
-                                      <CheckBox fx:id="gridCheck" mnemonicParsing="false">
-                                          <graphic>
-                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                  <image>
-                                                      <Image url="@../buttons/Red/iconGrid.png" />
-                                                  </image>
-                                              </ImageView>
-                                          </graphic>
-                                      </CheckBox>
+                                      </Button>
                                       <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                           <graphic>
                                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -232,6 +223,15 @@ License:    Apache License Version 2.0
                                               </ImageView>
                                           </graphic>
                                       </Button>
+                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSave.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                   </children>
                               </FlowPane>
                      </children>

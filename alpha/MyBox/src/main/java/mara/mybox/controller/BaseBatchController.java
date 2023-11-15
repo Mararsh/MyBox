@@ -370,6 +370,19 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            if (previewButton != null) {
+                StyleTools.setIconTooltips(previewButton, "iconPreview.png", message("BatchPreviewComments"));
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
             if (tableController != null) {

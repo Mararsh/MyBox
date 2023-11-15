@@ -344,9 +344,7 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
-        }
+        imageController.popFunctionsMenu(event);
     }
 
     @FXML

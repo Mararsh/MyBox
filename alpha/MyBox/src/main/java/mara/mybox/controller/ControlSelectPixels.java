@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.ListCell;
@@ -115,7 +116,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
                     maskColor = maskColorController.awtColor();
                     scope.setMaskColor(maskColor);
-                    redrawMaskShape();
+                    showScope();
                 }
             });
 
@@ -137,7 +138,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                             ValidationTools.setEditorNormal(opacitySelector);
                             UserConfig.setFloat(baseName + "ScopeOpacity", f);
                             scope.setMaskOpacity(maskOpacity);
-                            redrawMaskShape();
+                            showScope();
                         } else {
                             ValidationTools.setEditorBadStyle(opacitySelector);
                         }
@@ -238,9 +239,9 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     if (!isSettingValues) {
+                        setDistanceValue();
                         showScope();
                     }
-
                 }
             });
 
@@ -311,6 +312,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
             this.parentController = parent;
             handler = parent;
             imageController = handler.imageController;
+            handler.rightPaneControl = rightPaneControl;
 
             imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -324,6 +326,17 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
         }
     }
 
+    @Override
+    public void initRightPaneControl() {
+        rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                handler.controlRightPane();
+            }
+        });
+        rightPaneControl.setPickOnBounds(true);
+    }
+
     protected void loadImage() {
         if (imageController == null || !imageController.isShowing()) {
             return;
@@ -334,8 +347,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
     @Override
     public boolean afterImageLoaded() {
         if (super.afterImageLoaded()) {
-            imageView.setRotate(0);
-            loadScope(imageController.scope);
+            applyScope();
             return true;
         } else {
             return false;
@@ -419,17 +431,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
     @Override
     public void refreshAction() {
         isSettingValues = false;
-        redrawMaskShape();
-    }
-
-    @Override
-    public boolean redrawMaskShape() {
-        if (scope == null) {
-            clearMaskShapes();
-            return true;
-        }
         showScope();
-        return true;
     }
 
     @Override
@@ -465,10 +467,6 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                     break;
                 case Outline:
                     scope.setRectangle(maskRectangleData.copy());
-                    indicateOutline();
-                    return;
-                default:
-                    return;
             }
             showScope();
         } catch (Exception e) {
@@ -477,8 +475,14 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
     }
 
     @FXML
-    public void showSaved() {
-        ImageScopesSavedController.load(this);
+    public void manageAction() {
+
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+
     }
 
 }

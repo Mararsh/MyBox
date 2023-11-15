@@ -14,6 +14,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
@@ -55,11 +56,12 @@ public class ImageAdjustColorController extends BasePixelsController {
     protected int colorValue, max, min;
 
     @FXML
-    protected ToggleGroup colorGroup;
+    protected ToggleGroup colorGroup, opGroup;
     @FXML
     protected RadioButton colorBrightnessRadio, colorHueRadio, colorSaturationRadio,
             colorRedRadio, colorGreenRadio, colorBlueRadio, colorOpacityRadio,
-            colorYellowRadio, colorCyanRadio, colorMagentaRadio, colorRGBRadio;
+            colorYellowRadio, colorCyanRadio, colorMagentaRadio, colorRGBRadio,
+            setRadio, plusRadio, minusRadio, filterRadio, invertRadio;
     @FXML
     protected ComboBox<String> valueSelector;
     @FXML
@@ -67,8 +69,7 @@ public class ImageAdjustColorController extends BasePixelsController {
     @FXML
     protected Label colorUnit;
     @FXML
-    protected Button colorSetButton, colorIncreaseButton, colorDecreaseButton,
-            colorFilterButton, colorInvertButton, demoButton;
+    protected Button demoButton;
 
     public ImageAdjustColorController() {
         baseTitle = message("AdjustColor");
@@ -103,35 +104,35 @@ public class ImageAdjustColorController extends BasePixelsController {
         try {
             valueSelector.getItems().clear();
             ValidationTools.setEditorNormal(valueSelector);
-            colorSetButton.setDisable(false);
-            colorIncreaseButton.setDisable(false);
-            colorDecreaseButton.setDisable(false);
-            colorFilterButton.setDisable(false);
-            colorInvertButton.setDisable(false);
+            setRadio.setDisable(false);
+            plusRadio.setDisable(false);
+            minusRadio.setDisable(false);
+            filterRadio.setDisable(false);
+            invertRadio.setDisable(false);
+            plusRadio.setSelected(true);
 
             if (colorRGBRadio.isSelected()) {
                 colorOperationType = PixelsOperation.OperationType.RGB;
                 makeValues(0, 255);
-                colorSetButton.setDisable(true);
-                colorFilterButton.setDisable(true);
+                setRadio.setDisable(true);
+                filterRadio.setDisable(true);
 
             } else if (colorBrightnessRadio.isSelected()) {
                 colorOperationType = PixelsOperation.OperationType.Brightness;
                 makeValues(0, 100);
-                colorFilterButton.setDisable(true);
-                colorInvertButton.setDisable(true);
-
+                filterRadio.setDisable(true);
+                invertRadio.setDisable(true);
             } else if (colorSaturationRadio.isSelected()) {
                 colorOperationType = PixelsOperation.OperationType.Saturation;
                 makeValues(0, 100);
-                colorFilterButton.setDisable(true);
-                colorInvertButton.setDisable(true);
+                filterRadio.setDisable(true);
+                invertRadio.setDisable(true);
 
             } else if (colorHueRadio.isSelected()) {
                 colorOperationType = PixelsOperation.OperationType.Hue;
                 makeValues(0, 360);
-                colorFilterButton.setDisable(true);
-                colorInvertButton.setDisable(true);
+                filterRadio.setDisable(true);
+                invertRadio.setDisable(true);
 
             } else if (colorRedRadio.isSelected()) {
                 colorOperationType = PixelsOperation.OperationType.Red;
@@ -160,8 +161,8 @@ public class ImageAdjustColorController extends BasePixelsController {
             } else if (colorOpacityRadio.isSelected()) {
                 colorOperationType = PixelsOperation.OperationType.Opacity;
                 makeValues(0, 255);
-                colorFilterButton.setDisable(true);
-                colorInvertButton.setDisable(true);
+                filterRadio.setDisable(true);
+                invertRadio.setDisable(true);
 
             }
 
@@ -194,41 +195,22 @@ public class ImageAdjustColorController extends BasePixelsController {
         }
     }
 
-    @FXML
-    @Override
-    public void setAction() {
-        colorActionType = ColorActionType.Set;
-        applyChange();
-    }
-
-    @FXML
-    public void increaseAction() {
-        colorActionType = ColorActionType.Increase;
-        applyChange();
-    }
-
-    @FXML
-    public void decreaseAction() {
-        colorActionType = ColorActionType.Decrease;
-        applyChange();
-    }
-
-    @FXML
-    public void filterAction() {
-        colorActionType = ColorActionType.Filter;
-        applyChange();
-    }
-
-    @FXML
-    public void invertAction() {
-        colorActionType = ColorActionType.Invert;
-        applyChange();
-    }
-
     @Override
     protected boolean checkOptions() {
-        if (!super.checkOptions()
-                || colorOperationType == null || colorActionType == null) {
+        if (!super.checkOptions() || colorOperationType == null) {
+            return false;
+        }
+        if (setRadio.isSelected()) {
+            colorActionType = ColorActionType.Set;
+        } else if (plusRadio.isSelected()) {
+            colorActionType = ColorActionType.Increase;
+        } else if (minusRadio.isSelected()) {
+            colorActionType = ColorActionType.Decrease;
+        } else if (filterRadio.isSelected()) {
+            colorActionType = ColorActionType.Filter;
+        } else if (invertRadio.isSelected()) {
+            colorActionType = ColorActionType.Invert;
+        } else {
             return false;
         }
         colorValue = max + 1;
@@ -245,67 +227,42 @@ public class ImageAdjustColorController extends BasePixelsController {
         }
     }
 
-    private void applyChange() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private ImageScope scope;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
-                            editor.imageView.getImage(),
-                            scope, colorOperationType, colorActionType)
-                            .setExcludeScope(scopeExclude())
-                            .setSkipTransparent(ignoreTransparent());
-                    switch (colorOperationType) {
-                        case RGB:
-                            pixelsOperation.setIntPara1(colorValue);
-                            break;
-                        case Hue:
-                            pixelsOperation.setFloatPara1(colorValue / 360.0f);
-                            break;
-                        case Brightness:
-                        case Saturation:
-                            pixelsOperation.setFloatPara1(colorValue / 100.0f);
-                            break;
-                        case Red:
-                        case Green:
-                        case Blue:
-                        case Yellow:
-                        case Cyan:
-                        case Magenta:
-                        case Opacity:
-                            pixelsOperation.setIntPara1(colorValue);
-                            break;
-                    }
-                    handledImage = pixelsOperation.operateFxImage();
-                    return true;
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
+    @Override
+    protected Image handleImage(Image inImage, ImageScope inScope) {
+        try {
+            operation = message("AdjustColor");
+            opInfo = message(colorActionType.name()) + ": " + colorValue;
+            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                    inImage, inScope,
+                    colorOperationType, colorActionType)
+                    .setExcludeScope(scopeExclude())
+                    .setSkipTransparent(ignoreTransparent());
+            switch (colorOperationType) {
+                case RGB:
+                    pixelsOperation.setIntPara1(colorValue);
+                    break;
+                case Hue:
+                    pixelsOperation.setFloatPara1(colorValue / 360.0f);
+                    break;
+                case Brightness:
+                case Saturation:
+                    pixelsOperation.setFloatPara1(colorValue / 100.0f);
+                    break;
+                case Red:
+                case Green:
+                case Blue:
+                case Yellow:
+                case Cyan:
+                case Magenta:
+                case Opacity:
+                    pixelsOperation.setIntPara1(colorValue);
+                    break;
             }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage(colorOperationType.name(),
-                        colorActionType.name() + ": " + colorValue,
-                        scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
+            return pixelsOperation.operateFxImage();
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
+        }
     }
 
     @FXML
@@ -462,61 +419,6 @@ public class ImageAdjustColorController extends BasePixelsController {
         start(task);
     }
 
-    @Override
-    public boolean controlAltE() {
-        if (!colorSetButton.isDisabled()) {
-            setAction();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean controlAltI() {
-        if (!colorIncreaseButton.isDisabled()) {
-            increaseAction();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean controlAltD() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        if (!colorDecreaseButton.isDisabled()) {
-            decreaseAction();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean controlAltF() {
-        if (!colorFilterButton.isDisabled()) {
-            filterAction();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean controlAltX() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        if (!colorInvertButton.isDisabled()) {
-            invertAction();
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /*
         static methods

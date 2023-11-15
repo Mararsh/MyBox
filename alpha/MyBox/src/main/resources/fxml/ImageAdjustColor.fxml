@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageAdjustColorController">
     <children>
-        <SplitPane fx:id="splitPane" dividerPositions="0.75" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
+        <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
@@ -126,64 +126,67 @@ License:    Apache License Version 2.0
                                         </FlowPane>
                                     </children>
                                 </VBox>
+                        <VBox layoutX="12.0" layoutY="32.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <FlowPane hgap="5.0" prefWrapLength="80.0" vgap="5.0">
+                                 <children>
+                                    <RadioButton fx:id="setRadio" selected="true">
+                                       <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconEqual.png" />
+                                                          </image>
+                                                      </ImageView>
+                                       </graphic>
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="opGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="plusRadio" toggleGroup="$opGroup">
+                                       <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconPlus.png" />
+                                                          </image>
+                                                      </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="minusRadio" toggleGroup="$opGroup">
+                                       <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconMinus.png" />
+                                                          </image>
+                                                      </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="filterRadio" toggleGroup="$opGroup">
+                                       <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconFilter.png" />
+                                                          </image>
+                                                      </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                    <RadioButton fx:id="invertRadio" toggleGroup="$opGroup">
+                                       <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconInvert.png" />
+                                                          </image>
+                                                      </ImageView>
+                                       </graphic>
+                                    </RadioButton>
+                                 </children>
+                              </FlowPane>
+                           </children>
+                        </VBox>
                                 <Slider fx:id="valueSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" />
                                 <FlowPane hgap="5.0" layoutX="12.0" layoutY="254.0" prefWrapLength="80.0" vgap="5.0">
                                     <children>
                                         <ComboBox fx:id="valueSelector" editable="true" prefWidth="100.0" />
                                         <Label fx:id="colorUnit" />
-                                    </children>
-                                </FlowPane>
-                                <FlowPane hgap="5.0" prefWrapLength="80.0" vgap="5.0">
-                                    <children>
-                                        <Button fx:id="colorSetButton" mnemonicParsing="false" onAction="#setAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconEqual.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="colorIncreaseButton" mnemonicParsing="false" onAction="#increaseAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconPlus.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="colorDecreaseButton" mnemonicParsing="false" onAction="#decreaseAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconMinus.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </FlowPane>
-                                <FlowPane alignment="CENTER_LEFT" columnHalignment="CENTER" hgap="2.0" prefWrapLength="80.0" vgap="2.0">
-                                    <children>
-                                        <Button fx:id="colorFilterButton" mnemonicParsing="false" onAction="#filterAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconFilter.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="colorInvertButton" mnemonicParsing="false" onAction="#invertAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconInvert.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                     </children>
                                 </FlowPane>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
@@ -246,6 +249,24 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconPreview.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconOK.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </FlowPane>
                             </children>

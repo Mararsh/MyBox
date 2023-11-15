@@ -176,7 +176,7 @@ public class StyleButton {
         }
 
         if (id.startsWith("mybox")) {
-            return new StyleData(id, "MyBox", "", "iconMyBox.png");
+            return new StyleData(id, message("Home"), "", "iconMyBox.png");
         }
         if (id.startsWith("download")) {
             return new StyleData(id, message("Download"), "", "iconDownload.png");
@@ -477,7 +477,7 @@ public class StyleButton {
         }
 
         if (id.startsWith("preview")) {
-            return new StyleData(id, message("PreviewComments"), "", "iconExamples.png");
+            return new StyleData(id, message("Preview"), "", "iconPreview.png");
         }
         if (id.startsWith("rotateLeft")) {
             return new StyleData(id, message("RotateLeft"), "", "iconRotateLeft.png");

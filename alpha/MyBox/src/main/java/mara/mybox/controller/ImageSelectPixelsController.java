@@ -43,7 +43,7 @@ public class ImageSelectPixelsController extends BasePixelsController {
 
             @Override
             protected void whenSucceeded() {
-                ImageViewerController.openImage(handledImage);
+                ImagePopController.openImage(myController, handledImage);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }

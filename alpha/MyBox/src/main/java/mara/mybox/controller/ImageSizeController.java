@@ -30,7 +30,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-5
  * @License Apache License Version 2.0
  */
-public class ImageScaleController extends BaseImageEditController {
+public class ImageSizeController extends BaseImageEditController {
 
     protected double width, height;
     protected float scale = 1.0f;
@@ -56,7 +56,7 @@ public class ImageScaleController extends BaseImageEditController {
     @FXML
     protected Label commentsLabel;
 
-    public ImageScaleController() {
+    public ImageSizeController() {
         baseTitle = message("Scale");
     }
 
@@ -108,7 +108,6 @@ public class ImageScaleController extends BaseImageEditController {
             });
             scaleSelector.getSelectionModel().select(0);
 
-            checkScaleType();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -384,13 +383,13 @@ public class ImageScaleController extends BaseImageEditController {
     /*
         static methods
      */
-    public static ImageScaleController open(ImageEditorController parent) {
+    public static ImageSizeController open(ImageEditorController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageScaleController controller = (ImageScaleController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageScaleFxml, false);
+            ImageSizeController controller = (ImageSizeController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageSizeFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

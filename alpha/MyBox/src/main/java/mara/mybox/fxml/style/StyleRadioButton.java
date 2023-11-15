@@ -101,6 +101,16 @@ public class StyleRadioButton {
                 return new StyleData(id, "", message("Map"), "", "iconMap.png");
             case "pcxSelect":
                 return new StyleData(id, "pcx", message("PcxComments"), "", "");
+            case "setRadio":
+                return new StyleData(id, message("Set"), "", "");
+            case "plusRadio":
+                return new StyleData(id, message("Plus"), "", "");
+            case "minusRadio":
+                return new StyleData(id, message("Minus"), "", "");
+            case "filterRadio":
+                return new StyleData(id, message("Filter"), "", "");
+            case "invertRadio":
+                return new StyleData(id, message("Invert"), "", "");
             default:
                 return null;
         }

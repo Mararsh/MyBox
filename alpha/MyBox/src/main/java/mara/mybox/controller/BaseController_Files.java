@@ -237,6 +237,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             if (path != null) {
                 UserConfig.setString(conn, "LastPath", path);
                 UserConfig.setString(conn, baseName + "TargetPath", path);
+                MyBoxLog.console(pathType + "    " + path);
                 UserConfig.setString(conn, VisitHistoryTools.getPathKey(pathType), path);
                 UserConfig.setString(conn, VisitHistoryTools.getPathKey(FileType.All), path);
                 VisitHistoryTools.writePath(conn, pathType, path);

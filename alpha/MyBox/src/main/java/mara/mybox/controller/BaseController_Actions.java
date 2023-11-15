@@ -351,6 +351,14 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         }
     }
 
+    @FXML
+    public void setAlwaysOnTop() {
+        if (getMyStage() == null) {
+            return;
+        }
+        myStage.setAlwaysOnTop(true);
+    }
+
     public void clearUserSettings() {
         if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
@@ -579,7 +587,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             return;
         }
         Robot robot = new Robot();
-        popMenu(node, menuItems, robot.getMouseX() - 20, robot.getMouseY() + 10);
+        popMenu(node, menuItems, robot.getMouseX() - 60, robot.getMouseY() + 10);
     }
 
     public void popCenterMenu(Node node, List<MenuItem> menuItems) {

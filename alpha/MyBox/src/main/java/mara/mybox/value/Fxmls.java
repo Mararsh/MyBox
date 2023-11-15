@@ -124,7 +124,7 @@ public class Fxmls {
     public static final String ImageCropFxml = "/fxml/ImageCrop.fxml";
     public static final String ImagePasteFxml = "/fxml/ImagePaste.fxml";
     public static final String ImageMarginsFxml = "/fxml/ImageMargins.fxml";
-    public static final String ImageScaleFxml = "/fxml/ImageScale.fxml";
+    public static final String ImageSizeFxml = "/fxml/ImageSize.fxml";
     public static final String ImageReplaceColorFxml = "/fxml/ImageReplaceColor.fxml";
     public static final String ImageBlendColorFxml = "/fxml/ImageBlendColor.fxml";
     public static final String ImageAdjustColorFxml = "/fxml/ImageAdjustColor.fxml";

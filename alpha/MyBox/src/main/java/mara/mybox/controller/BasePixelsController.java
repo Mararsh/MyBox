@@ -98,6 +98,15 @@ public abstract class BasePixelsController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
+        action(false);
+    }
+
+    @FXML
+    public void previewAction() {
+        action(true);
+    }
+
+    public void action(boolean isPreview) {
         if (!checkOptions()) {
             return;
         }
@@ -122,12 +131,16 @@ public abstract class BasePixelsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage(operation, opInfo, scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
+                if (isPreview) {
+                    ImagePopController.openImage(myController, handledImage);
+                } else {
+                    popSuccessful();
+                    editor.updateImage(operation, opInfo, scope, handledImage, cost);
+                    if (closeAfterCheck.isSelected()) {
+                        close();
+                    }
+                    afterHandle();
                 }
-                afterHandle();
             }
         };
         start(task);

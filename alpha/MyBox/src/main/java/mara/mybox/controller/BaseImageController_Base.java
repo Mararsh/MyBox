@@ -18,7 +18,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.LocateTools;
@@ -38,7 +37,6 @@ public abstract class BaseImageController_Base extends BaseFileController {
 
     protected ImageInformation imageInformation;
     protected Image image;
-    protected ImageScope scope;
     protected ImageAttributes attributes;
     protected final SimpleBooleanProperty loadNotify;
     protected boolean imageChanged, isPickingColor;

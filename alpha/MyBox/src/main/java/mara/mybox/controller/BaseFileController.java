@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -12,7 +11,6 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
@@ -58,20 +56,10 @@ public abstract class BaseFileController extends BaseController {
         if (file == null || !file.exists()) {
             return null;
         }
-        FileBackup backup = null;
-        try (Connection conn = DerbyBase.getConnection()) {
-            if (tableFileBackup == null) {
-                tableFileBackup = new TableFileBackup();
-            }
-            backup = tableFileBackup.addBackup(conn, file);
-
-        } catch (Exception e) {
-            if (inTask != null) {
-                inTask.setError(e.toString());
-            }
-            MyBoxLog.error(e);
+        if (tableFileBackup == null) {
+            tableFileBackup = new TableFileBackup();
         }
-        return backup;
+        return tableFileBackup.addBackup(file);
     }
 
     @FXML
