@@ -384,17 +384,14 @@ public class PixelsOperationFactory {
 
         @Override
         public BufferedImage operate() {
-            MyBoxLog.console(boolPara1 + " " + boolPara2 + "  " + boolPara3);
             directReplace = (boolPara1 && boolPara2 && boolPara3)
                     || (!boolPara1 && !boolPara2 && !boolPara3);
             if (!directReplace) {
-                MyBoxLog.console(colorPara1);
                 float[] hsb = ColorConvertTools.color2hsb(colorPara1);
                 paraHue = hsb[0];
                 paraSaturation = hsb[1];
                 paraBrightness = hsb[2];
             }
-            MyBoxLog.console(directReplace);
             return super.operate();
         }
 

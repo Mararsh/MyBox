@@ -1,9 +1,9 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
@@ -25,8 +25,9 @@ public abstract class BasePixelsController extends BaseChildController {
 
     @FXML
     protected ControlSelectPixels scopeController;
+
     @FXML
-    protected ControlColorSet bgColorController;
+    protected Button demoButton;
 
     protected void setParameters(BaseImageController parent) {
         try {
@@ -38,10 +39,6 @@ public abstract class BasePixelsController extends BaseChildController {
                 editor = (ImageEditorController) imageController;
             }
             scopeController.setParameters(this);
-
-            if (bgColorController != null) {
-                bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
-            }
 
             reset();
             initMore();

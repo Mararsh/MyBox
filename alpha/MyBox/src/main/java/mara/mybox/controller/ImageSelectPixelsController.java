@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -14,8 +15,21 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageSelectPixelsController extends BasePixelsController {
 
+    @FXML
+    protected ControlColorSet bgColorController;
+
     public ImageSelectPixelsController() {
         baseTitle = message("SelectScope");
+    }
+
+    @Override
+    protected void initMore() {
+        try {
+            bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML
