@@ -21,7 +21,7 @@ import mara.mybox.value.Languages;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchEffectsController extends BaseImageManufactureBatchController {
+public class ImageManufactureBatchEffectsController extends BaseImageEditBatchController {
 
     @FXML
     protected ControlImageEffectOptions optionsController;

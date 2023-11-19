@@ -54,16 +54,13 @@ public class ImageAdjustColorController extends BasePixelsController {
             operation = message("AdjustColor");
             opInfo = message(optionsController.colorActionType.name()) + ": "
                     + optionsController.colorValue;
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, inScope,
                     optionsController.colorOperationType,
                     optionsController.colorActionType)
-                    .setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             switch (optionsController.colorOperationType) {
-                case RGB:
-                    pixelsOperation.setIntPara1(optionsController.colorValue);
-                    break;
                 case Hue:
                     pixelsOperation.setFloatPara1(optionsController.colorValue / 360.0f);
                     break;
@@ -77,6 +74,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                 case Yellow:
                 case Cyan:
                 case Magenta:
+                case RGB:
                 case Opacity:
                     pixelsOperation.setIntPara1(optionsController.colorValue);
                     break;

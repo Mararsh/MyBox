@@ -172,7 +172,7 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
                     scope.setOutline(outline[1]);
                     scope.setRectangle(maskRectangleData.copy());
 
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                             bgImage, scope, PixelsOperation.OperationType.ShowScope);
                     outlineImage = pixelsOperation.operateFxImage();
                     if (task == null || isCancelled()) {

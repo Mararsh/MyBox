@@ -314,8 +314,9 @@ public class ImageScope extends BaseData {
         return colors;
     }
 
-    public void setColors(List<Color> colors) {
+    public ImageScope setColors(List<Color> colors) {
         this.colors = colors;
+        return this;
     }
 
     public DoubleRectangle getRectangle() {

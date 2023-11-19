@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.scene.control.Tab;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -20,7 +17,6 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -106,11 +102,13 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             if (srcImage() == null || scope == null) {
                 return;
             }
-            if (scope.getScopeType() == null) {
-                scope.setScopeType(ScopeType.Whole);
+            ScopeType type = scope.getScopeType();
+            if (type == null) {
+                type = ScopeType.Whole;
+                scope.setScopeType(type);
             }
             UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true);
-            switch (scope.getScopeType()) {
+            switch (type) {
                 case Whole:
                     hideLeftPane();
                     break;
@@ -172,6 +170,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     tabPane.getTabs().setAll(colorsTab, matchTab);
                     opBox.getChildren().setAll(pickColorBox);
                     pickColorCheck.setSelected(true);
+                    showLeftPane();
                     break;
 
                 case Outline:
@@ -186,41 +185,14 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 tabPane.getSelectionModel().select(selectedTab);
             }
 
-            setDistanceValue();
+            if (type != ScopeType.Color) {
+                pickColorCheck.setSelected(false);
+            }
+
+            matchController.setDistanceValue(scope);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    protected void setDistanceValue() {
-        try {
-            int distance, max;
-            if (colorSaturationRadio.isSelected() || colorHueRadio.isSelected()) {
-                max = 100;
-                distance = scope != null ? (int) (scope.getHsbDistance() * 100) : 50;
-
-            } else if (colorHueRadio.isSelected()) {
-                max = 360;
-                distance = scope != null ? (int) (scope.getHsbDistance() * 360) : 60;
-
-            } else {
-                max = 255;
-                distance = scope != null ? scope.getColorDistance() : 50;
-
-            }
-
-            NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
-            List<String> vList = new ArrayList<>();
-            for (int i = 0; i <= max; i += 10) {
-                vList.add(i + "");
-            }
-            isSettingValues = true;
-            scopeDistanceSelector.getItems().setAll(vList);
-            scopeDistanceSelector.getSelectionModel().select(distance + "");
-            isSettingValues = false;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 

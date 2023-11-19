@@ -14,7 +14,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchTextController extends BaseImageManufactureBatchController {
+public class ImageManufactureBatchTextController extends BaseImageEditBatchController {
 
     @FXML
     protected ControlImageText optionsController;

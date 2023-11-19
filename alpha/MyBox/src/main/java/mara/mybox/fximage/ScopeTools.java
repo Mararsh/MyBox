@@ -21,7 +21,7 @@ public class ScopeTools {
             if (scope == null) {
                 return srcImage;
             } else {
-                PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                         srcImage, scope,
                         PixelsOperation.OperationType.SelectScope)
                         .setColorPara1(bgColor)
@@ -45,7 +45,7 @@ public class ScopeTools {
     public static Image maskScope(Image srcImage, ImageScope scope,
             boolean exclude, boolean ignoreTransparent) {
         try {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     srcImage, scope,
                     PixelsOperation.OperationType.ShowScope)
                     .setExcludeScope(exclude)

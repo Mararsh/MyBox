@@ -43,7 +43,7 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
 
     public void resetShapeOptions() {
         showAnchors = UserConfig.getBoolean(baseName + "ImageShapeShowAnchor", true);
-        popAnchorMenu = UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true);
+        popItemMenu = UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true);
         addPointWhenClick = UserConfig.getBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true);
         String aShape = UserConfig.getString(baseName + "ImageShapeAnchorShape", "Rectangle");
         if ("Circle".equals(aShape)) {
@@ -72,13 +72,24 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
                 });
             }
 
-            if (popAnchorCheck != null) {
-                popAnchorCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true));
-                popAnchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (popAnchorMenuCheck != null) {
+                popAnchorMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
+                popAnchorMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", popAnchorCheck.isSelected());
-                        popAnchorMenu = popAnchorCheck.isSelected();
+                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popAnchorMenuCheck.isSelected());
+                        popItemMenu = popAnchorMenuCheck.isSelected();
+                    }
+                });
+            }
+
+            if (popLineMenuCheck != null) {
+                popLineMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
+                popLineMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popLineMenuCheck.isSelected());
+                        popItemMenu = popLineMenuCheck.isSelected();
                     }
                 });
             }

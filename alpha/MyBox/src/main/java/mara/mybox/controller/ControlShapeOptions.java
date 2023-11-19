@@ -65,7 +65,7 @@ public abstract class ControlShapeOptions extends BaseController {
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorCheck, addPointCheck;
+    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorMenuCheck, addPointCheck;
     @FXML
     protected FlowPane opPane;
     @FXML
@@ -92,7 +92,7 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             this.imageController = imageController;
             imageController.anchorCheck = anchorCheck;
-            imageController.popAnchorCheck = popAnchorCheck;
+            imageController.popAnchorMenuCheck = popAnchorMenuCheck;
             imageController.addPointCheck = addPointCheck;
             imageController.initMaskControls();
 
@@ -492,7 +492,7 @@ public abstract class ControlShapeOptions extends BaseController {
 
             switch (shapeType) {
                 case Polylines:
-                    opPane.getChildren().addAll(operationsButton, withdrawButton, anchorCheck, popAnchorCheck);
+                    opPane.getChildren().addAll(operationsButton, withdrawButton, anchorCheck, popAnchorMenuCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastLine") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapePolylinesTips"));
@@ -500,14 +500,14 @@ public abstract class ControlShapeOptions extends BaseController {
                     break;
                 case Polyline:
                 case Polygon:
-                    opPane.getChildren().addAll(operationsButton, withdrawButton, anchorCheck, popAnchorCheck, addPointCheck);
+                    opPane.getChildren().addAll(operationsButton, withdrawButton, anchorCheck, popAnchorMenuCheck, addPointCheck);
                     NodeStyleTools.setTooltip(withdrawButton, new Tooltip(message("RemoveLastPoint") + "\nCTRL+w / ALT+w"));
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveTips"));
                     }
                     break;
                 default:
-                    opPane.getChildren().addAll(operationsButton, anchorCheck, popAnchorCheck);
+                    opPane.getChildren().addAll(operationsButton, anchorCheck, popAnchorMenuCheck);
                     if (infoLabel != null) {
                         infoLabel.setText(message("ShapeDragMoveTips"));
                     }

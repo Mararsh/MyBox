@@ -57,13 +57,13 @@ public class ImageBlendColorController extends BasePixelsController {
             protected boolean handle() {
                 try {
                     scope = scope();
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                             editor.imageView.getImage(),
                             scope,
                             PixelsOperation.OperationType.Blend)
                             .setColorPara1(colorController.awtColor())
-                            .setExcludeScope(scopeExclude())
-                            .setSkipTransparent(ignoreTransparent());
+                            .setExcludeScope(excludeScope())
+                            .setSkipTransparent(skipTransparent());
                     ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blendController.blender());
                     handledImage = pixelsOperation.operateFxImage();
                     return handledImage != null;

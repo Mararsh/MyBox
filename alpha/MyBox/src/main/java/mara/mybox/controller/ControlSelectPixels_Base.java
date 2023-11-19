@@ -18,9 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
-import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Brightness;
-import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Hue;
-import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Saturation;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
@@ -32,7 +29,6 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -52,13 +48,13 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     protected SimpleBooleanProperty showNotify;
 
     @FXML
-    protected ToggleGroup scopeTypeGroup, matchGroup;
+    protected ToggleGroup scopeTypeGroup;
     @FXML
     protected Tab areaTab, colorsTab, matchTab, pixTab;
     @FXML
     protected VBox viewBox, areaBox, rectangleBox, circleBox, pointsBox;
     @FXML
-    protected ComboBox<String> scopeDistanceSelector, opacitySelector;
+    protected ComboBox<String> opacitySelector;
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
@@ -68,9 +64,10 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     @FXML
     protected ControlPoints pointsController;
     @FXML
-    protected CheckBox areaExcludedCheck, colorExcludedCheck,
-            scopeExcludeCheck, ignoreTransparentCheck,
-            scopeOutlineKeepRatioCheck, eightNeighborCheck, squareRootCheck;
+    protected ControlColorMatch matchController;
+    @FXML
+    protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeExcludeCheck,
+            handleTransparentCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
@@ -80,9 +77,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
     protected RadioButton scopeWholeRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
-            scopeEllipseRadio, scopePolygonRadio, scopeColorRadio, scopeOutlineRadio,
-            colorRGBRadio, colorGreenRadio, colorRedRadio, colorBlueRadio,
-            colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
+            scopeEllipseRadio, scopePolygonRadio, scopeColorRadio, scopeOutlineRadio;
     @FXML
     protected Label scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
     @FXML
@@ -120,7 +115,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
         return ScopeTools.selectedScope(srcImage(), scope,
                 bgColor, cutMargins,
                 scopeExcludeCheck.isSelected(),
-                ignoreTransparentCheck.isSelected());
+                !handleTransparentCheck.isSelected());
     }
 
     public Image maskImage() {
@@ -129,7 +124,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
         }
         return ScopeTools.maskScope(srcImage(), scope,
                 scopeExcludeCheck.isSelected(),
-                ignoreTransparentCheck.isSelected());
+                !handleTransparentCheck.isSelected());
     }
 
     public boolean isValidScope() {
@@ -148,7 +143,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
                     for (DoublePoint p : pointsController.tableData) {
                         scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
                     }
-                    valid = pickMatchValues();
+                    valid = matchController.pickValues(scope);
                     break;
 
                 case Rectangle:
@@ -229,82 +224,11 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
                     scope.addColor(ColorConvertTools.converColor(color));
                 }
             }
-            return pickMatchValues();
+            return matchController.pickValues(scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    protected boolean pickMatchValues() {
-        if (!isValidScope()) {
-            return false;
-        }
-        boolean valid = true;
-        try {
-            if (colorRGBRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-
-            } else if (colorRedRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Red);
-
-            } else if (colorGreenRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Green);
-
-            } else if (colorBlueRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Blue);
-
-            } else if (colorSaturationRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Saturation);
-
-            } else if (colorHueRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
-
-            } else if (colorBrightnessRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Brightness);
-            }
-
-            int distance = Integer.parseInt(scopeDistanceSelector.getValue());
-            switch (scope.getColorScopeType()) {
-                case Hue:
-                    if (distance >= 0 && distance <= 360) {
-                        scope.setHsbDistance(distance / 360.0f);
-                    } else {
-                        valid = false;
-                    }
-                    break;
-                case Brightness:
-                case Saturation:
-                    if (distance >= 0 && distance <= 100) {
-                        scope.setHsbDistance(distance / 100.0f);
-                    } else {
-                        valid = false;
-                    }
-                    break;
-                default:
-                    if (squareRootCheck.isSelected() && colorRGBRadio.isSelected()) {
-                        if (distance >= 0 && distance <= 255 * 255) {
-                            scope.setColorDistanceSquare(distance);
-                        } else {
-                            valid = false;
-                        }
-                    } else {
-                        if (distance >= 0 && distance <= 255) {
-                            scope.setColorDistance(distance);
-                        } else {
-                            valid = false;
-                        }
-                    }
-            }
-        } catch (Exception e) {
-            valid = false;
-        }
-        if (valid) {
-            ValidationTools.setEditorNormal(scopeDistanceSelector);
-        } else {
-            ValidationTools.setEditorBadStyle(scopeDistanceSelector);
-        }
-        return valid;
     }
 
     public void showScope() {

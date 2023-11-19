@@ -456,7 +456,7 @@ public class ImageEditorController extends BaseImageController {
 
             menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageEraseController.open(this);
+                ImageEraserController.open(this);
             });
             items.add(menu);
 

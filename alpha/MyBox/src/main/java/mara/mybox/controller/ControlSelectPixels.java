@@ -100,7 +100,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 }
             });
 
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            handleTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
@@ -219,6 +219,15 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 }
             });
 
+            eightNeighborCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (!isSettingValues) {
+                        showScope();
+                    }
+                }
+            });
+
             colorExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -235,46 +244,12 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
 
     public void initMatchTab() {
         try {
-            matchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            matchController.changeNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (!isSettingValues) {
-                        setDistanceValue();
-                        showScope();
-                    }
-                }
-            });
-
-            int colorDistance = UserConfig.getInt(baseName + "ColorDistance", 20);
-            colorDistance = colorDistance <= 0 ? 20 : colorDistance;
-            scopeDistanceSelector.setValue(colorDistance + "");
-            scopeDistanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         showScope();
                     }
-                }
-            });
-
-            eightNeighborCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (!isSettingValues) {
-                        showScope();
-                    }
-                }
-            });
-
-            squareRootCheck.setSelected(UserConfig.getBoolean(baseName + "ColorDistanceSquare", false));
-            squareRootCheck.disableProperty().bind(colorRGBRadio.selectedProperty().not());
-            squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || !colorRGBRadio.isSelected()) {
-                        return;
-                    }
-                    showScope();
                 }
             });
 

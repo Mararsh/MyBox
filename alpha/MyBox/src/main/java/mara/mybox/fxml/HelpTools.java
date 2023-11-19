@@ -424,8 +424,6 @@ public class HelpTools {
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "ImageTools")).append("</H1>\n");
-            s.append("    <H3>").append(message(lang, "ImageViewer")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageViewerTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "EditImage")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageManufactureTips")).append("</PRE>\n");

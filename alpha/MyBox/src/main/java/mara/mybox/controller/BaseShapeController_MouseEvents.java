@@ -123,16 +123,18 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
 
             CheckMenuItem anchorMenuItem = new CheckMenuItem(
                     isMaskPolylinesShown() ? message("PopLineMenu") : message("PopAnchorMenu"),
-                    StyleTools.getIconImageView("iconMenu.png"));
-            anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true));
+                    StyleTools.getIconImageView("iconShape.png"));
+            anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
             anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent cevent) {
-                    if (popAnchorCheck != null) {
-                        popAnchorCheck.setSelected(anchorMenuItem.isSelected());
+                    if (popAnchorMenuCheck != null) {
+                        popAnchorMenuCheck.setSelected(anchorMenuItem.isSelected());
+                    } else if (popLineMenuCheck != null) {
+                        popLineMenuCheck.setSelected(anchorMenuItem.isSelected());
                     } else {
-                        UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", anchorMenuItem.isSelected());
-                        popAnchorMenu = anchorMenuItem.isSelected();
+                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", anchorMenuItem.isSelected());
+                        popItemMenu = anchorMenuItem.isSelected();
                     }
                 }
             });
@@ -663,9 +665,8 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
         if (p == null) {
             return;
         }
-        makeCurrentLine(p);
-        addMaskLinesData();
-        maskPane.getChildren().remove(currentPolyline);
+        endCurrentLine(p);
+        currentLineData = null;
         currentPolyline = null;
         lastPoint = null;
     }

@@ -153,7 +153,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </CheckBox>
-            <CheckBox fx:id="ignoreTransparentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" wrapText="true">
+            <CheckBox fx:id="handleTransparentCheck" minHeight="-Infinity" mnemonicParsing="false" wrapText="true">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -384,88 +384,12 @@ License:    Apache License Version 2.0
                                                   <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="NEVER">
                                                       <content>
                                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                              <children>
-                                                                  <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                                                      <children>
-                                                                          <RadioButton fx:id="colorRGBRadio" selected="true">
-                                                                              <graphic>
-                                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                      <image>
-                                                                                          <Image url="@../buttons/iconRGB.png" />
-                                                                                      </image>
-                                                                                  </ImageView>
-                                                                              </graphic>
-                                                                              <toggleGroup>
-                                                                                  <ToggleGroup fx:id="matchGroup" />
-                                                                              </toggleGroup>
-                                                                          </RadioButton>
-                                                                          <RadioButton fx:id="colorSaturationRadio" toggleGroup="$matchGroup">
-                                                                              <graphic>
-                                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                      <image>
-                                                                                          <Image url="@../buttons/Red/iconSaturation.png" />
-                                                                                      </image>
-                                                                                  </ImageView>
-                                                                              </graphic>
-                                                                          </RadioButton>
-                                                                          <RadioButton fx:id="colorHueRadio" toggleGroup="$matchGroup">
-                                                                              <graphic>
-                                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                      <image>
-                                                                                          <Image url="@../buttons/iconHue.png" />
-                                                                                      </image>
-                                                                                  </ImageView>
-                                                                              </graphic>
-                                                                          </RadioButton>
-                                                                          <RadioButton fx:id="colorBrightnessRadio" toggleGroup="$matchGroup">
-                                                                              <graphic>
-                                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                      <image>
-                                                                                          <Image url="@../buttons/Red/iconBrightness.png" />
-                                                                                      </image>
-                                                                                  </ImageView>
-                                                                              </graphic>
-                                                                          </RadioButton>
-                                                                          <RadioButton fx:id="colorRedRadio" toggleGroup="$matchGroup">
-                                                                              <graphic>
-                                                                                  <Rectangle fx:id="redRect" fill="red" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-                                                                              </graphic>
-                                                                          </RadioButton>
-                                                                          <RadioButton fx:id="colorGreenRadio" toggleGroup="$matchGroup">
-                                                                              <graphic>
-                                                                                  <Rectangle fx:id="greenRect" fill="green" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-                                                                              </graphic>
-                                                                          </RadioButton>
-                                                                          <RadioButton fx:id="colorBlueRadio" toggleGroup="$matchGroup">
-                                                                              <graphic>
-                                                                                  <Rectangle fx:id="blueRect" fill="blue" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-                                                                              </graphic>
-                                                                          </RadioButton>
-                                                                      </children>
-                                                                      <VBox.margin>
-                                                                          <Insets top="10.0" />
-                                                                      </VBox.margin>
-                                                                  </FlowPane>
-                                                                  <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                                                      <children>
-                                                                          <Label text="%Distance" />
-                                                                          <ComboBox fx:id="scopeDistanceSelector" editable="true" prefWidth="100.0" />
-                                                                      </children>
-                                                                  </FlowPane>
-                                                                  <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
-                                                                      <children>
-                                                                          <CheckBox fx:id="squareRootCheck" mnemonicParsing="false" text="%SquareRoot" />
-                                                                          <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                              <image>
-                                                                                  <Image url="@../buttons/Red/iconTips.png" />
-                                                                              </image>
-                                                                          </ImageView>
-                                                                      </children>
-                                                                  </FlowPane>
-                                                              </children>
                                                               <padding>
-                                                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                               </padding>
+                                             <children>
+                                                <fx:include fx:id="match" source="ControlColorMatch.fxml" />
+                                             </children>
                                                           </VBox>
                                                       </content>
                                                   </ScrollPane>
@@ -477,7 +401,7 @@ License:    Apache License Version 2.0
                                                       <children>
                                                           <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="389.0" spacing="2.0">
                                                               <children>
-                                                                  <Button fx:id="scopeOutlineFileButton" mnemonicParsing="false" onAction="#pickOutlineFile" onMouseEntered="#popOutlineFile">
+                                                                  <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickOutlineFile" onMouseEntered="#popOutlineFile">
                                                                       <graphic>
                                                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                               <image>

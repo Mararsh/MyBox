@@ -16,10 +16,10 @@ import mara.mybox.value.UserConfig;
  */
 public class DoublePolylines implements DoubleShape {
 
-    private List<List<DoublePoint>> points;
+    private List<List<DoublePoint>> lines;
 
     public DoublePolylines() {
-        points = new ArrayList<>();
+        lines = new ArrayList<>();
     }
 
     @Override
@@ -29,11 +29,11 @@ public class DoublePolylines implements DoubleShape {
 
     @Override
     public Path2D.Double getShape() {
-        if (points == null) {
+        if (lines == null) {
             return null;
         }
         Path2D.Double path = new Path2D.Double();
-        for (List<DoublePoint> line : points) {
+        for (List<DoublePoint> line : lines) {
             DoublePoint p = line.get(0);
             path.moveTo(p.getX(), p.getY());
             for (int i = 1; i < line.size(); i++) {
@@ -48,40 +48,42 @@ public class DoublePolylines implements DoubleShape {
         if (line == null) {
             return false;
         }
-        points.add(line);
+        List<DoublePoint> newline = new ArrayList<>();
+        newline.addAll(line);
+        lines.add(newline);
         return true;
     }
 
     public boolean setLine(int index, List<DoublePoint> line) {
-        if (line == null || index < 0 || index >= points.size()) {
+        if (line == null || index < 0 || index >= lines.size()) {
             return false;
         }
-        points.set(index, line);
+        lines.set(index, line);
         return true;
     }
 
     public boolean removeLine(int index) {
-        if (points == null || index < 0 || index >= points.size()) {
+        if (lines == null || index < 0 || index >= lines.size()) {
             return false;
         }
-        points.remove(index);
+        lines.remove(index);
         return true;
     }
 
     @Override
     public boolean isValid() {
-        return points != null;
+        return lines != null;
     }
 
     @Override
     public boolean isEmpty() {
-        return !isValid() || points.isEmpty();
+        return !isValid() || lines.isEmpty();
     }
 
     @Override
     public DoublePolylines copy() {
         DoublePolylines np = new DoublePolylines();
-        for (List<DoublePoint> line : points) {
+        for (List<DoublePoint> line : lines) {
             List<DoublePoint> newline = new ArrayList<>();
             newline.addAll(line);
             np.addLine(newline);
@@ -92,7 +94,7 @@ public class DoublePolylines implements DoubleShape {
     public List<Line> getLineList() {
         List<Line> dlines = new ArrayList<>();
         int lastx, lasty = -1, thisx, thisy;
-        for (List<DoublePoint> lineData : points) {
+        for (List<DoublePoint> lineData : lines) {
             if (lineData.size() == 1) {
                 DoublePoint linePoint = lineData.get(0);
                 thisx = (int) Math.round(linePoint.getX());
@@ -130,69 +132,69 @@ public class DoublePolylines implements DoubleShape {
     }
 
     public void clear() {
-        points.clear();
+        lines.clear();
     }
 
     @Override
     public boolean translateRel(double offsetX, double offsetY) {
         List<List<DoublePoint>> npoints = new ArrayList<>();
-        for (List<DoublePoint> line : points) {
+        for (List<DoublePoint> line : lines) {
             List<DoublePoint> newline = new ArrayList<>();
             for (DoublePoint p : line) {
                 newline.add(new DoublePoint(p.getX() + offsetX, p.getY() + offsetY));
             }
             npoints.add(newline);
         }
-        points.clear();
-        points.addAll(npoints);
+        lines.clear();
+        lines.addAll(npoints);
         return true;
     }
 
     public void translateLineRel(int index, double offsetX, double offsetY) {
-        if (index < 0 || index >= points.size()) {
+        if (index < 0 || index >= lines.size()) {
             return;
         }
         List<DoublePoint> newline = new ArrayList<>();
-        List<DoublePoint> line = points.get(index);
+        List<DoublePoint> line = lines.get(index);
         for (int i = 0; i < line.size(); i++) {
             DoublePoint p = line.get(i);
             newline.add(p.translate(offsetX, offsetY));
         }
-        points.set(index, newline);
+        lines.set(index, newline);
     }
 
     @Override
     public boolean scale(double scaleX, double scaleY) {
         List<List<DoublePoint>> npoints = new ArrayList<>();
-        for (List<DoublePoint> line : points) {
+        for (List<DoublePoint> line : lines) {
             List<DoublePoint> newline = new ArrayList<>();
             for (DoublePoint p : line) {
                 newline.add(p.scale(scaleX, scaleY));
             }
             npoints.add(newline);
         }
-        points.clear();
-        points.addAll(npoints);
+        lines.clear();
+        lines.addAll(npoints);
         return true;
     }
 
     public void scale(int index, double scaleX, double scaleY) {
-        if (index < 0 || index >= points.size()) {
+        if (index < 0 || index >= lines.size()) {
             return;
         }
         List<DoublePoint> newline = new ArrayList<>();
-        List<DoublePoint> line = points.get(index);
+        List<DoublePoint> line = lines.get(index);
         for (int i = 0; i < line.size(); i++) {
             DoublePoint p = line.get(i);
             newline.add(p.scale(scaleX, scaleY));
         }
-        points.set(index, newline);
+        lines.set(index, newline);
     }
 
     @Override
     public String pathAbs() {
         String path = "";
-        for (List<DoublePoint> line : points) {
+        for (List<DoublePoint> line : lines) {
             DoublePoint p = line.get(0);
             path += "M " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
             for (int i = 1; i < line.size(); i++) {
@@ -207,7 +209,7 @@ public class DoublePolylines implements DoubleShape {
     public String pathRel() {
         String path = "";
         double lastx = 0, lasty = 0;
-        for (List<DoublePoint> line : points) {
+        for (List<DoublePoint> line : lines) {
             DoublePoint p = line.get(0);
             path += "m " + imageScale(p.getX() - lastx) + "," + imageScale(p.getY() - lasty) + "\n";
             lastx = p.getX();
@@ -226,7 +228,7 @@ public class DoublePolylines implements DoubleShape {
     public String elementAbs() {
         String e = "";
         int scale = UserConfig.imageScale();
-        for (List<DoublePoint> line : points) {
+        for (List<DoublePoint> line : lines) {
             e += "<polygon points=\""
                     + DoublePoint.toText(line, scale, " ") + "\">\n";
         }
@@ -239,22 +241,22 @@ public class DoublePolylines implements DoubleShape {
     }
 
     public int getLinesSize() {
-        return points.size();
+        return lines.size();
     }
 
     public List<List<DoublePoint>> getLines() {
-        return points;
+        return lines;
     }
 
     public void setLines(List<List<DoublePoint>> linePoints) {
-        this.points = linePoints;
+        this.lines = linePoints;
     }
 
     public boolean removeLastLine() {
-        if (points.isEmpty()) {
+        if (lines.isEmpty()) {
             return false;
         }
-        points.remove(points.size() - 1);
+        lines.remove(lines.size() - 1);
         return true;
     }
 

@@ -10,14 +10,17 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
@@ -272,6 +275,15 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
+    public void previewAction() {
+    }
+
+    @FXML
+    public void operationsAction() {
+        showOperationsMenu(null);
+    }
+
+    @FXML
     public void nextAction() {
 
     }
@@ -340,7 +352,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public void mybox(ActionEvent event) {
+    public void mybox() {
         openStage(Fxmls.MyboxFxml);
     }
 
@@ -561,6 +573,43 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             MyBoxLog.debug(e);
         }
 
+    }
+
+    @FXML
+    public void popOperationsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "OperationsMenuPopWhenMouseHovering", true)) {
+            showOperationsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showOperationsMenu(Event fevent) {
+        try {
+            List<MenuItem> items = operationsMenuItems(fevent);
+            if (items == null || items.isEmpty()) {
+                return;
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "OperationsMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "OperationsMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        return null;
     }
 
     @FXML

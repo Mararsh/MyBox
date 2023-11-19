@@ -270,9 +270,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 NodeStyleTools.setTooltip(synchronizeViewButton, message("SynchronizeChangesToOtherPanes"));
                 NodeStyleTools.setTooltip(popViewButton, message("Pop"));
             } else {
-                NodeStyleTools.setTooltip(menuViewButton, message("MenuButtonTips"));
+                NodeStyleTools.setTooltip(menuViewButton, message("ContextMenuTips"));
             }
-            NodeStyleTools.setTooltip(menuButton, message("MenuButtonTips"));
+            NodeStyleTools.setTooltip(menuButton, message("ContextMenuTips"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

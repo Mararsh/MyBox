@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchArcController extends BaseImageManufactureBatchController {
+public class ImageManufactureBatchArcController extends BaseImageEditBatchController {
 
     private int arc, percent;
     private boolean isPercent;

@@ -31,8 +31,8 @@ public class StyleCheckBox {
         if (id.startsWith("scopeExclude")) {
             return new StyleData(id, "", message("ScopeExclude"), "", "iconInvert.png");
         }
-        if (id.startsWith("ignoreTransparent")) {
-            return new StyleData(id, "", message("IgnoreTransparent"), "", "iconOpacity.png");
+        if (id.startsWith("handleTransparent")) {
+            return new StyleData(id, "", message("HandleTransparent"), "", "iconOpacity.png");
         }
         if (id.startsWith("eightNeighbor")) {
             return new StyleData(id, "", message("EightNeighborCheckComments"), "", "");
@@ -111,8 +111,10 @@ public class StyleCheckBox {
         }
         if (id.startsWith("pop")) {
             switch (id) {
-                case "popAnchorCheck":
+                case "popAnchorMenuCheck":
                     return new StyleData(id, message("PopAnchorMenu"), "", "iconShape.png");
+                case "popLineMenuCheck":
+                    return new StyleData(id, message("PopLineMenu"), "", "iconShape.png");
                 default:
                     return new StyleData(id, message("Pop"), "", "iconPop.png");
             }
@@ -156,6 +158,8 @@ public class StyleCheckBox {
                 return new StyleData(id, message("PickColor"), "CTRL+K / ALT+K", "iconPickColor.png");
             case "ditherCheck":
                 return new StyleData(id, message("DitherComments"), "", "");
+            case "scopeOutlineKeepRatioCheck":
+                return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
             case "withNamesCheck":
             case "sourceWithNamesCheck":
             case "targetWithNamesCheck":

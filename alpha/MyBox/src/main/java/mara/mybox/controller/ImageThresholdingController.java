@@ -146,14 +146,14 @@ public class ImageThresholdingController extends BasePixelsController {
     @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, inScope, PixelsOperation.OperationType.Thresholding)
                     .setIntPara1(threshold)
                     .setIntPara2(big)
                     .setIntPara3(small)
                     .setIsDithering(false)
-                    .setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = message("Thresholding");
             opInfo = message("Threshold") + ": " + threshold;
             return pixelsOperation.operateFxImage();

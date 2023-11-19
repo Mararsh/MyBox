@@ -605,51 +605,32 @@ public abstract class BaseController_Interface extends BaseController_Files {
     // Do not call "refreshStyle" in this method, or else endless loop happens
     public void setControlsStyle() {
         try {
-            if (leftPaneControl != null) {
-                NodeStyleTools.setTooltip(leftPaneControl, new Tooltip(message("ControlLeftPane") + "\nF4"));
-            }
-            if (leftPaneCheck != null) {
-                NodeStyleTools.setTooltip(leftPaneCheck, new Tooltip(message("ControlLeftPane") + "\nF4"));
-            }
-            if (rightPaneControl != null) {
-                NodeStyleTools.setTooltip(rightPaneControl, new Tooltip(message("ControlRightPane") + "\nF5"));
-            }
-            if (rightPaneCheck != null) {
-                NodeStyleTools.setTooltip(rightPaneCheck, new Tooltip(message("ControlRightPane") + "\nF5"));
-            }
-            if (tipsLabel != null && TipsLabelKey != null) {
-                NodeStyleTools.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));
-            }
-            if (tipsView != null) {
-                tipsView.setPickOnBounds(true);
-                if (TipsLabelKey != null) {
-                    NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
+            if (TipsLabelKey != null) {
+                if (tipsLabel != null) {
+                    NodeStyleTools.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));
                 }
-                tipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        String tips = NodeStyleTools.getTips(tipsView);
-                        if (tips != null && !tips.isBlank()) {
-                            TextPopController.loadText(tips);
-                        }
-                    }
-                });
 
-            }
-            if (rightTipsView != null) {
-                rightTipsView.setPickOnBounds(true);
-                if (TipsLabelKey != null) {
-                    NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
-                }
-                rightTipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        String tips = NodeStyleTools.getTips(rightTipsView);
-                        if (tips != null && !tips.isBlank()) {
-                            TextPopController.loadText(tips);
+                if (tipsView != null) {
+                    tipsView.setPickOnBounds(true);
+                    NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
+                    tipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            popTips();
                         }
-                    }
-                });
+                    });
+                }
+
+                if (rightTipsView != null) {
+                    rightTipsView.setPickOnBounds(true);
+                    NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
+                    rightTipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            popTips();
+                        }
+                    });
+                }
             }
 
             if (copyButton == null) {

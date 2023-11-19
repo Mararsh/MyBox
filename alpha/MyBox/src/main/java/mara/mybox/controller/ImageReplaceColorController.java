@@ -38,7 +38,7 @@ public class ImageReplaceColorController extends BasePixelsController {
 
             colorController.init(this, baseName + "NewColor", Color.PINK);
 
-            hueCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceHue", false));
+            hueCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceHue", true));
             hueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
@@ -71,14 +71,14 @@ public class ImageReplaceColorController extends BasePixelsController {
     @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, inScope, PixelsOperation.OperationType.Color)
                     .setColorPara1(colorController.awtColor())
                     .setBoolPara1(hueCheck.isSelected())
                     .setBoolPara2(saturationCheck.isSelected())
                     .setBoolPara3(brightnessCheck.isSelected())
-                    .setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = message("ReplaceColor");
             opInfo = colorController.css();
             return pixelsOperation.operateFxImage();

@@ -87,8 +87,8 @@ public class ImageGlassController extends BasePixelsController {
             ImageMosaic mosaic = ImageMosaic.create(
                     inImage, inScope,
                     ImageMosaic.MosaicType.FrostedGlass, intensity);
-            mosaic.setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+            mosaic.setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = message("FrostedGlass");
             opInfo = message("Intensity") + ": " + intensity;
             return mosaic.operateFxImage();

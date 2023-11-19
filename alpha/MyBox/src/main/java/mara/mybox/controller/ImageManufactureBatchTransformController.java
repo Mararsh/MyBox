@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchTransformController extends BaseImageManufactureBatchController {
+public class ImageManufactureBatchTransformController extends BaseImageEditBatchController {
 
     private int transformType, rotateAngle;
     private float shearX;

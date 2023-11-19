@@ -85,8 +85,8 @@ public class ImageMosaicController extends BasePixelsController {
         try {
             ImageMosaic mosaic = ImageMosaic.create(inImage, inScope,
                     ImageMosaic.MosaicType.Mosaic, intensity);
-            mosaic.setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+            mosaic.setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = message("Mosaic");
             opInfo = message("Intensity") + ": " + intensity;
             return mosaic.operateFxImage();

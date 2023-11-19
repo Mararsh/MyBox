@@ -132,8 +132,8 @@ public class ImageConvolutionController extends BasePixelsController {
             convolution.setImage(inImage)
                     .setScope(inScope)
                     .setKernel(kernel)
-                    .setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = message("Convolution");
             opInfo = kernel.getName();
             return convolution.operateFxImage();

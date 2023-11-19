@@ -252,7 +252,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     scope.setOutline(outline[1]);
                     scope.setRectangle(maskRectangleData.copy());
                     finalScope();
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                             bgImage, scope, PixelsOperation.OperationType.ShowScope);
                     pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
                     outlineImage = pixelsOperation.operateFxImage();

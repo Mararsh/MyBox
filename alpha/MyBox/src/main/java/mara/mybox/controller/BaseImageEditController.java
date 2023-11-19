@@ -70,12 +70,16 @@ public class BaseImageEditController extends BaseShapeController {
         handledImage = null;
     }
 
+    protected Image srcImage() {
+        return editor.imageView.getImage();
+    }
+
     protected void loadImage() {
         if (editor == null || !editor.isShowing()) {
             close();
             return;
         }
-        loadImage(editor.imageView.getImage());
+        loadImage(srcImage());
     }
 
     protected boolean checkOptions() {
@@ -93,6 +97,7 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     @FXML
+    @Override
     public void previewAction() {
         action(true);
     }

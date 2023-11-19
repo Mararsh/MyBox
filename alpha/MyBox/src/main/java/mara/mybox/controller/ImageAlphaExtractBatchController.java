@@ -18,7 +18,7 @@ import mara.mybox.value.Languages;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchController {
+public class ImageAlphaExtractBatchController extends BaseImageEditBatchController {
 
     public ImageAlphaExtractBatchController() {
         baseTitle = Languages.message("ImageAlphaExtract");

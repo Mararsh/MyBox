@@ -153,7 +153,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                             value = optionsController.intPara1 + "";
                             break;
                         case Thresholding:
-                            pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                            pixelsOperation = PixelsOperationFactory.createFX(imageView.getImage(),
                                     scopeController.scope, optionsController.effectType);
                             pixelsOperation.setIntPara1(optionsController.intPara1);
                             pixelsOperation.setIntPara2(optionsController.intPara2);
@@ -175,7 +175,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                             newImage = imageGray.operateFxImage();
                             break;
                         case Sepia:
-                            pixelsOperation = PixelsOperationFactory.create(imageView.getImage(), scopeController.scope, optionsController.effectType);
+                            pixelsOperation = PixelsOperationFactory.createFX(imageView.getImage(), scopeController.scope, optionsController.effectType);
                             pixelsOperation.setIntPara1(optionsController.intPara1);
                             newImage = pixelsOperation.operateFxImage();
                             value = optionsController.intPara1 + "";

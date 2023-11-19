@@ -44,14 +44,14 @@ public class StyleButton {
             if (id.startsWith("saveAs")) {
                 switch (id) {
                     case "saveAsButton":
-                        return new StyleData(id, message("SaveAs"), "F11 / CTRL+B / ALT+B", "iconSaveAs.png");
+                        return new StyleData(id, message("SaveAs"), "F5 / CTRL+B / ALT+B", "iconSaveAs.png");
                     default:
                         return new StyleData(id, message("SaveAs"), "", "iconSaveAs.png");
                 }
             }
             switch (id) {
                 case "saveButton":
-                    return new StyleData(id, message("Save"), "F2 / CTRL+S / ALT+S", "iconSave.png");
+                    return new StyleData(id, message("Save"), "CTRL+S / ALT+S", "iconSave.png");
                 case "saveImagesButton":
                     return new StyleData(id, message("SaveAsImages"), message("SaveAsImages") + "\n" + message("FilePrefixInput"), "", "");
                 case "saveTiffButton":
@@ -85,7 +85,7 @@ public class StyleButton {
         if (id.startsWith("go")) {
             switch (id) {
                 case "goButton":
-                    return new StyleData(id, message("Go"), "F9 / CTRL+G / ALT+G", "iconGo.png");
+                    return new StyleData(id, message("Go"), "F2 / CTRL+G / ALT+G", "iconGo.png");
                 default:
                     return new StyleData(id, message("Go"), "", "iconGo.png");
             }
@@ -209,7 +209,7 @@ public class StyleButton {
         if (id.startsWith("recover")) {
             switch (id) {
                 case "recoverButton":
-                    return new StyleData("recoverButton", message("Recover"), "F3 / CTRL+R / ALT+R", "iconRecover.png");
+                    return new StyleData("recoverButton", message("Recover"), "CTRL+R / ALT+R", "iconRecover.png");
                 default:
                     return new StyleData(id, message("Recover"), "", "iconRecover.png");
             }
@@ -477,7 +477,12 @@ public class StyleButton {
         }
 
         if (id.startsWith("preview")) {
-            return new StyleData(id, message("Preview"), "", "iconPreview.png");
+            switch (id) {
+                case "previewButton":
+                    return new StyleData(id, message("Preview"), "F3 / CTRL+U / ALT+U", "iconPreview.png");
+                default:
+                    return new StyleData(id, message("Preview"), "", "iconPreview.png");
+            }
         }
         if (id.startsWith("rotateLeft")) {
             return new StyleData(id, message("RotateLeft"), "", "iconRotateLeft.png");
@@ -560,18 +565,18 @@ public class StyleButton {
         if (id.startsWith("menu")) {
             switch (id) {
                 case "menuButton":
-                    return new StyleData(id, message("MenuButtonTips"), "", "iconMenu.png");
+                    return new StyleData(id, message("ContextMenuTips"), "", "iconMenu.png");
                 default:
                     return new StyleData(id, message("ContextMenu"), "", "iconMenu.png");
             }
         }
         if (id.startsWith("close")) {
             if (id.startsWith("closePop")) {
-                return new StyleData(id, message("Close"), "ESC / F6", "iconCancel.png");
+                return new StyleData(id, message("Close"), "ESC", "iconCancel.png");
             }
             switch (id) {
                 case "closeButton":
-                    return new StyleData("closeButton", message("Close"), "F7", "iconClose.png");
+                    return new StyleData("closeButton", message("Close"), "", "iconClose.png");
                 default:
                     return new StyleData(id, message("Close"), "", "iconClose.png");
             }
@@ -687,29 +692,6 @@ public class StyleButton {
         if (id.startsWith("panesMenu")) {
             return new StyleData(id, message("Panes"), "", "iconPanes.png");
         }
-        if (id.startsWith("draw")) {
-            return new StyleData(id, message("Draw"), "", "iconDraw.png");
-        }
-        if (id.startsWith("typesetting")) {
-            return new StyleData(id, message("Typesetting"), "", "iconTypesetting.png");
-        }
-        if (id.startsWith("translate")) {
-            return new StyleData(id, message("TranslateShape"), "", "iconMove.png");
-        }
-        if (id.startsWith("transform")) {
-            return new StyleData(id, message("Transform"), "", "iconReplace.png");
-        }
-        if (id.startsWith("anchor")) {
-            return new StyleData(id, message("Anchor"), "", "iconAnchor.png");
-        }
-        if (id.startsWith("withdraw")) {
-            switch (id) {
-                case "withdrawButton":
-                    return new StyleData(id, message("Withdraw"), "CTRL+W / ALT+W", "iconUndo.png");
-                default:
-                    return new StyleData(id, message("Withdraw"), "", "iconUndo.png");
-            }
-        }
         if (id.startsWith("backup")) {
             return new StyleData(id, message("FileBackups"), "", "iconBackup.png");
         }
@@ -736,11 +718,57 @@ public class StyleButton {
         if (id.startsWith("manage")) {
             return new StyleData(id, message("Manage"), "", "iconManage.png");
         }
+        if (id.startsWith("draw")) {
+            return new StyleData(id, message("Draw"), "", "iconDraw.png");
+        }
+        if (id.startsWith("typesetting")) {
+            return new StyleData(id, message("Typesetting"), "", "iconTypesetting.png");
+        }
+
+        if (id.startsWith("translate")) {
+            return new StyleData(id, message("TranslateShape"), "", "iconMove.png");
+        }
+        if (id.startsWith("transform")) {
+            return new StyleData(id, message("Transform"), "", "iconReplace.png");
+        }
+        if (id.startsWith("anchor")) {
+            return new StyleData(id, message("Anchor"), "", "iconAnchor.png");
+        }
+        if (id.startsWith("withdraw")) {
+            switch (id) {
+                case "withdrawButton":
+                    return new StyleData(id, message("Withdraw"), "CTRL+W / ALT+W", "iconUndo.png");
+                default:
+                    return new StyleData(id, message("Withdraw"), "", "iconUndo.png");
+            }
+        }
         if (id.startsWith("onTop")) {
             return new StyleData(id, message("AlwayOnTop"), "", "iconDoubleUp.png");
         }
         if (id.startsWith("disableOnTop")) {
             return new StyleData(id, message("DisableAlwayOnTop"), "", "iconDown.png");
+        }
+        if (id.startsWith("settings")) {
+            switch (id) {
+                case "settingsClearButton":
+                    return new StyleData(id, message("ClearPersonalSettings"), "", "iconClear.png");
+                case "settingsOpenButton":
+                    return new StyleData(id, message("OpenDataPath"), "", "iconOpenPath.png");
+                case "settingsRecentOKButton":
+                    return new StyleData(id, message("OK"), "", "iconOK.png");
+                case "settingsJVMButton":
+                    return new StyleData(id, message("OK"), "", "iconOK.png");
+                case "settingsRecentClearButton":
+                    return new StyleData(id, message("Clear"), "", "iconClear.png");
+                case "settingsChangeRootButton":
+                    return new StyleData(id, message("Change"), "", "iconOK.png");
+                case "settingsImageHisOKButton":
+                    return new StyleData(id, message("OK"), "", "iconOK.png");
+                case "settingsImageHisNoButton":
+                    return new StyleData(id, message("NotRecord"), "", "iconCancel.png");
+                case "settingsImageHisClearButton":
+                    return new StyleData(id, message("Clear"), "", "iconClear.png");
+            }
         }
         return null;
     }

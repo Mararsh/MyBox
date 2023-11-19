@@ -68,8 +68,8 @@ public class ImageReduceColorsController extends BasePixelsController {
             calData = optionsController.quanDataCheck.isSelected();
             quantization = ImageQuantizationFactory.create(inImage, inScope,
                     optionsController, calData);
-            quantization.setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+            quantization.setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             if (optionsController.algorithm == QuantizationAlgorithm.KMeansClustering) {
                 KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
                 q.getKmeans().setMaxIteration(optionsController.kmeansLoop);

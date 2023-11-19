@@ -76,12 +76,12 @@ public abstract class BasePixelsController extends BaseChildController {
         return scopeController.pickScopeValues();
     }
 
-    public boolean scopeExclude() {
+    public boolean excludeScope() {
         return scopeController.scopeExcludeCheck.isSelected();
     }
 
-    public boolean ignoreTransparent() {
-        return scopeController.ignoreTransparentCheck.isSelected();
+    public boolean skipTransparent() {
+        return !scopeController.handleTransparentCheck.isSelected();
     }
 
     protected boolean checkOptions() {
@@ -99,6 +99,7 @@ public abstract class BasePixelsController extends BaseChildController {
     }
 
     @FXML
+    @Override
     public void previewAction() {
         action(true);
     }

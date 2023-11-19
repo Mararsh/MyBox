@@ -75,8 +75,8 @@ public class ImageEdgeController extends BasePixelsController {
             convolution.setImage(inImage)
                     .setScope(inScope)
                     .setKernel(kernel)
-                    .setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = kernel.getName();
             opInfo = message("Grey") + ": " + kernel.isGray();
             return convolution.operateFxImage();

@@ -139,7 +139,7 @@ public class Fxmls {
     public static final String ImageReduceColorsFxml = "/fxml/ImageReduceColors.fxml";
     public static final String ImageRotateFxml = "/fxml/ImageRotate.fxml";
     public static final String ImageShearFxml = "/fxml/ImageShear.fxml";
-    public static final String ImageEraseFxml = "/fxml/ImageErase.fxml";
+    public static final String ImageEraserFxml = "/fxml/ImageEraser.fxml";
     public static final String ImageSmoothFxml = "/fxml/ImageSmooth.fxml";
     public static final String ImageSharpenFxml = "/fxml/ImageSharpen.fxml";
     public static final String ImageContrastFxml = "/fxml/ImageContrast.fxml";
@@ -149,6 +149,9 @@ public class Fxmls {
     public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
     public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
     public static final String ImageClipSelectFxml = "/fxml/ImageClipSelect.fxml";
+
+    public static final String ImageAdjustColorBatchFxml = "/fxml/ImageAdjustColorBatch.fxml";
+    public static final String ImageReplaceColorBatchFxml = "/fxml/ImageReplaceColorBatch.fxml";
 
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
@@ -174,10 +177,8 @@ public class Fxmls {
     public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
     public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
     public static final String ImageManufactureBatchPasteFxml = "/fxml/ImageManufactureBatchPaste.fxml";
-    public static final String ImageManufactureBatchColorFxml = "/fxml/ImageManufactureBatchColor.fxml";
     public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
     public static final String ImageManufactureBatchEnhancementFxml = "/fxml/ImageManufactureBatchEnhancement.fxml";
-    public static final String ImageManufactureBatchReplaceColorFxml = "/fxml/ImageManufactureBatchReplaceColor.fxml";
     public static final String ImageManufactureBatchTextFxml = "/fxml/ImageManufactureBatchText.fxml";
     public static final String ImageManufactureBatchArcFxml = "/fxml/ImageManufactureBatchArc.fxml";
     public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";

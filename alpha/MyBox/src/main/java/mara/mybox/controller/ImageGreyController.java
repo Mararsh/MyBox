@@ -23,8 +23,8 @@ public class ImageGreyController extends BasePixelsController {
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             ImageGray imageGray = new ImageGray(inImage, inScope);
-            imageGray.setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+            imageGray.setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = message("Grey");
             opInfo = null;
             return imageGray.operateFxImage();

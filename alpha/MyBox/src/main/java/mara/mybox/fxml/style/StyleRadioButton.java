@@ -46,6 +46,29 @@ public class StyleRadioButton {
         if (id.startsWith("json")) {
             return new StyleData(id, "", "json", "", "iconJSON.png");
         }
+        if (id.startsWith("scope")) {
+            switch (id) {
+                case "scopeWholeRadio":
+                    return new StyleData(id, message("WholeImage"), "", "iconSelectAll.png");
+                case "scopeMattingRadio":
+                    return new StyleData(id, "", message("Matting"), "", "iconColorFill.png");
+                case "scopeRectangleRadio":
+                    return new StyleData(id, "", message("Rectangle"), "", "iconRectangle.png");
+                case "scopeCircleRadio":
+                    return new StyleData(id, "", message("Circle"), "", "iconCircle.png");
+                case "scopeEllipseRadio":
+                    return new StyleData(id, "", message("Ellipse"), "", "iconEllipse.png");
+                case "scopePolygonRadio":
+                    return new StyleData(id, "", message("Polygon"), "", "iconStar.png");
+                case "scopeColorRadio":
+                    return new StyleData(id, "", message("ColorMatching"), "", "iconColor.png");
+                case "scopeOutlineRadio":
+                    return new StyleData(id, "", message("Outline"), "", "iconButterfly.png");
+                case "scopeOutlineKeepRatioCheck":
+                    return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
+            }
+        }
+
         switch (id) {
             case "miaoRadio":
                 return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
@@ -111,6 +134,28 @@ public class StyleRadioButton {
                 return new StyleData(id, message("Filter"), "", "");
             case "invertRadio":
                 return new StyleData(id, message("Invert"), "", "");
+            case "colorRGBRadio":
+                return new StyleData(id, "", message("RGB"), "", "");
+            case "colorBrightnessRadio":
+                return new StyleData(id, "", message("Brightness"), "", "iconBrightness.png");
+            case "colorHueRadio":
+                return new StyleData(id, "", message("Hue"), "", "iconHue.png");
+            case "colorSaturationRadio":
+                return new StyleData(id, "", message("Saturation"), "", "iconSaturation.png");
+            case "colorRedRadio":
+                return new StyleData(id, "", message("Red"), "", "");
+            case "colorGreenRadio":
+                return new StyleData(id, "", message("Green"), "", "");
+            case "colorBlueRadio":
+                return new StyleData(id, "", message("Blue"), "", "");
+            case "colorYellowRadio":
+                return new StyleData(id, "", message("Yellow"), "", "");
+            case "colorCyanRadio":
+                return new StyleData(id, "", message("Cyan"), "", "");
+            case "colorMagentaRadio":
+                return new StyleData(id, "", message("Magenta"), "", "");
+            case "colorOpacityRadio":
+                return new StyleData(id, "", message("Opacity"), "", "iconOpacity.png");
             default:
                 return null;
         }

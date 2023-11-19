@@ -33,7 +33,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageMarginsController extends BaseImageEditController {
 
-    protected int addedWidth, distance;
+    protected int margin, distance;
 
     @FXML
     protected ToggleGroup opGroup;
@@ -72,18 +72,9 @@ public class ImageMarginsController extends BaseImageEditController {
 
             colorSetController.init(this, baseName + "Color");
 
-            widthSelector.getItems().clear();
-            int width = (int) imageView.getImage().getWidth();
-            widthSelector.getItems().addAll(Arrays.asList(
-                    width / 6 + "", width / 8 + "", width / 4 + "", width / 10 + "",
-                    "20", "10", "5", "100", "200", "300", "50", "150", "500"));
-            widthSelector.getSelectionModel().select(UserConfig.getInt("ImageMarginsWidth", 20) + "");
-            widthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            widthSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
                     checkMarginWidth();
                 }
             });
@@ -109,16 +100,6 @@ public class ImageMarginsController extends BaseImageEditController {
     }
 
     @Override
-    protected void loadImage() {
-        if (editor == null || !editor.isShowing()) {
-            close();
-            return;
-        }
-        loadImage(editor.imageView.getImage());
-
-    }
-
-    @Override
     public boolean afterImageLoaded() {
         try {
             if (!super.afterImageLoaded() || image == null) {
@@ -127,6 +108,16 @@ public class ImageMarginsController extends BaseImageEditController {
             String info = message("CurrentSize") + ": " + Math.round(image.getWidth())
                     + "x" + Math.round(image.getHeight());
             commentsLabel.setText(info);
+
+            margin = UserConfig.getInt(baseName + "MarginsWidth", 20);
+            int width = (int) imageView.getImage().getWidth();
+            isSettingValues = true;
+            widthSelector.getItems().setAll(Arrays.asList(
+                    width / 6 + "", width / 8 + "", width / 4 + "", width / 10 + "",
+                    "20", "10", "5", "100", "200", "300", "50", "150", "500"));
+            widthSelector.setValue(margin + "");
+            isSettingValues = false;
+
             checkOperationType();
             return true;
         } catch (Exception e) {
@@ -181,7 +172,7 @@ public class ImageMarginsController extends BaseImageEditController {
             commentsLabel.setText(message("ImageDragMarginsComments"));
             maskRectangleData = DoubleRectangle.image(imageView.getImage());
             showMaskRectangle();
-            popAnchorMenu = false;
+            popItemMenu = false;
             showAnchors = true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -191,10 +182,13 @@ public class ImageMarginsController extends BaseImageEditController {
 
     protected void checkMarginWidth() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             int v = Integer.parseInt(widthSelector.getValue());
             if (v > 0) {
-                addedWidth = v;
-                UserConfig.setInt("ImageMarginsWidth", v);
+                margin = v;
+                UserConfig.setInt(baseName + "MarginsWidth", v);
                 ValidationTools.setEditorNormal(widthSelector);
             } else {
                 ValidationTools.setEditorBadStyle(widthSelector);
@@ -267,16 +261,16 @@ public class ImageMarginsController extends BaseImageEditController {
 
         } else if (addRadio.isSelected()) {
             handledImage = MarginTools.addMarginsFx(imageView.getImage(),
-                    (Color) colorSetController.rect.getFill(), addedWidth,
+                    (Color) colorSetController.rect.getFill(), margin,
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-            opInfo = addedWidth + "";
+            opInfo = margin + "";
 
         } else if (blurRadio.isSelected()) {
-            handledImage = MarginTools.blurMarginsAlpha(imageView.getImage(), addedWidth,
+            handledImage = MarginTools.blurMarginsAlpha(imageView.getImage(), margin,
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-            opInfo = addedWidth + "";
+            opInfo = margin + "";
 
         } else if (cutColorRadio.isSelected()) {
             handledImage = MarginTools.cutMarginsByColor(imageView.getImage(),
@@ -286,10 +280,10 @@ public class ImageMarginsController extends BaseImageEditController {
             opInfo = distance + "";
 
         } else if (cutWidthRadio.isSelected()) {
-            handledImage = MarginTools.cutMarginsByWidth(imageView.getImage(), addedWidth,
+            handledImage = MarginTools.cutMarginsByWidth(imageView.getImage(), margin,
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-            opInfo = addedWidth + "";
+            opInfo = margin + "";
         }
     }
 

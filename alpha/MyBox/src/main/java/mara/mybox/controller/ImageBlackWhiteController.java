@@ -47,8 +47,8 @@ public class ImageBlackWhiteController extends BasePixelsController {
             imageBinary.setScope(inScope)
                     .setIntPara1(threshold)
                     .setIsDithering(binaryController.dither())
-                    .setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             return imageBinary.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());

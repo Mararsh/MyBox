@@ -57,8 +57,8 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageManufactureBatchColor(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchColorFxml);
+    protected void imageAdjustColorBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageAdjustColorBatchFxml);
     }
 
     @FXML
@@ -72,8 +72,8 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageManufactureBatchReplaceColor(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchReplaceColorFxml);
+    protected void imageReplaceColorBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageReplaceColorBatchFxml);
     }
 
     @FXML

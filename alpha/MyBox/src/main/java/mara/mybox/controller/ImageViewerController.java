@@ -17,7 +17,6 @@ public class ImageViewerController extends BaseImageController {
 
     public ImageViewerController() {
         baseTitle = message("ImageViewer");
-        TipsLabelKey = "ImageViewerTips";
     }
 
     /*

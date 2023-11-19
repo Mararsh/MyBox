@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchMarginsController extends BaseImageManufactureBatchController {
+public class ImageManufactureBatchMarginsController extends BaseImageEditBatchController {
 
     protected int width, distance;
     private ImageManufactureMarginsController.OperationType opType;

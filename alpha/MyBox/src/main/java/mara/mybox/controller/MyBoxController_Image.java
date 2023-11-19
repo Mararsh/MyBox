@@ -163,9 +163,9 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageManufactureBatchPasteFxml);
         });
 
-        MenuItem imageColorMenu = new MenuItem(message("Color"));
+        MenuItem imageColorMenu = new MenuItem(message("AdjustColor"));
         imageColorMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchColorFxml);
+            loadScene(Fxmls.ImageAdjustColorBatchFxml);
         });
 
         MenuItem imageEffectsMenu = new MenuItem(message("Effects"));
@@ -180,7 +180,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem imageReplaceColorMenu = new MenuItem(message("ReplaceColor"));
         imageReplaceColorMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchReplaceColorFxml);
+            loadScene(Fxmls.ImageReplaceColorBatchFxml);
         });
 
         MenuItem imageTextMenu = new MenuItem(message("Text"));

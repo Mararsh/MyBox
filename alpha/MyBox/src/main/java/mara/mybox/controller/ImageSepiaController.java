@@ -85,12 +85,12 @@ public class ImageSepiaController extends BasePixelsController {
     @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, inScope,
                     PixelsOperation.OperationType.Sepia)
                     .setIntPara1(intensity)
-                    .setExcludeScope(scopeExclude())
-                    .setSkipTransparent(ignoreTransparent());
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
             operation = message("Sepia");
             opInfo = message("Intensity") + ": " + intensity;
             return pixelsOperation.operateFxImage();

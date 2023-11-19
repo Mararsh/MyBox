@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-9-22
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchColorController extends BaseImageManufactureBatchController {
+public class ImageColorsBatchController extends BaseImageEditBatchController {
 
     private int colorValue, valueMax;
     private OperationType colorOperationType;
@@ -60,7 +60,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
     @FXML
     protected ControlImagesBlend blendController;
 
-    public ImageManufactureBatchColorController() {
+    public ImageColorsBatchController() {
         baseTitle = message("ImageManufactureBatchColor");
     }
 

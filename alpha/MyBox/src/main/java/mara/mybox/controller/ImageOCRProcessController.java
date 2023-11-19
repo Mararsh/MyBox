@@ -300,7 +300,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
 
                     } else if (message("Invert").equals(algorithm)) {
-                        PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                        PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(imageView.getImage(),
                                 null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
                         ocrImage = pixelsOperation.operateFxImage();
 
@@ -520,7 +520,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         task.setInfo(tmpFile);
                     }
 
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(imageView.getImage(),
                             null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
                     bufferedImage = pixelsOperation.operateImage();
                     tmpFile = FileTmpTools.generateFile(message("Invert"), "png").getAbsolutePath();

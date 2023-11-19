@@ -102,7 +102,7 @@ public class ImageCropController extends ImageSelectPixelsController {
                     handledImage = ScopeTools.selectedScope(
                             srcImage, scope, bgColor,
                             imageMarginsCheck.isSelected(),
-                            scopeExclude(), ignoreTransparent());
+                            excludeScope(), skipTransparent());
                     if (handledImage == null || task == null || isCancelled()) {
                         return false;
                     }
@@ -110,7 +110,7 @@ public class ImageCropController extends ImageSelectPixelsController {
                         cuttedClip = ScopeTools.selectedScope(
                                 srcImage, scope, bgColor,
                                 clipMarginsCheck.isSelected(),
-                                scopeExclude(), ignoreTransparent());
+                                excludeScope(), skipTransparent());
                         return ImageClipboard.add(cuttedClip,
                                 ImageClipboard.ImageSource.Crop) != null;
                     } else {

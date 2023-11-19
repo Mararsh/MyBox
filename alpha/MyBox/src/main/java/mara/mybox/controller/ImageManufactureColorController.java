@@ -490,7 +490,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         scope.setHsbDistance(colorDistance / 360.0f);
                     }
                     scope.setColorExcluded(distanceExcludeCheck.isSelected());
-                    pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                    pixelsOperation = PixelsOperationFactory.createFX(imageView.getImage(),
                             scope, OperationType.ReplaceColor, colorActionType)
                             .setColorPara1(originalColor)
                             .setColorPara2(newColor)
@@ -500,7 +500,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             .setBoolPara3(brightnessCheck.isSelected());
 
                 } else {
-                    pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                    pixelsOperation = PixelsOperationFactory.createFX(imageView.getImage(),
                             scopeController.scope, colorOperationType, colorActionType)
                             .setSkipTransparent(ignoreTransparentCheck.isSelected());
                     switch (colorOperationType) {

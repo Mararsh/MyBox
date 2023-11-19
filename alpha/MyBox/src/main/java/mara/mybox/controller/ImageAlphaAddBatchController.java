@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAlphaAddBatchController extends BaseImageManufactureBatchController {
+public class ImageAlphaAddBatchController extends BaseImageEditBatchController {
 
     private float opacityValue;
     private boolean useOpacityValue;

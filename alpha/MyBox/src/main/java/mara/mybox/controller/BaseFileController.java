@@ -162,43 +162,6 @@ public abstract class BaseFileController extends BaseController {
     }
 
     @FXML
-    public void popOperationsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "OperationsMenuPopWhenMouseHovering", true)) {
-            showOperationsMenu(event);
-        }
-    }
-
-    @FXML
-    public void showOperationsMenu(Event fevent) {
-        try {
-            List<MenuItem> items = operationsMenuItems(fevent);
-            if (items == null || items.isEmpty()) {
-                return;
-            }
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "OperationsMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "OperationsMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            popEventMenu(fevent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public List<MenuItem> operationsMenuItems(Event fevent) {
-        return null;
-    }
-
-    @FXML
     public void popViewMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "ViewMenuPopWhenMouseHovering", true)) {
             showViewMenu(event);

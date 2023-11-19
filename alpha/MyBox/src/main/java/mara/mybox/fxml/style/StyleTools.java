@@ -46,28 +46,10 @@ public class StyleTools {
         Style Data
      */
     public static StyleData getStyleData(Node node) {
-        if (node == null || node.getId() == null) {
+        if (node == null) {
             return null;
         }
-        String id = node.getId();
-        StyleData style;
-        if (id.startsWith("color")) {
-            style = StylePrefix.color(node, id);
-
-        } else if (id.startsWith("his")) {
-            style = StylePrefix.his(node, id);
-
-        } else if (id.startsWith("settings")) {
-            style = StylePrefix.settings(node, id);
-
-        } else if (id.startsWith("scope")) {
-            style = StylePrefix.scope(node, id);
-
-        } else {
-            style = getStyleData(node, id);
-
-        }
-        return style;
+        return getStyleData(node, node.getId());
     }
 
     public static StyleData getStyleData(Node node, String id) {

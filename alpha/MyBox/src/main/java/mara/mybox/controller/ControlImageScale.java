@@ -73,7 +73,7 @@ public class ControlImageScale extends ControlImageSize {
             height = image.getHeight();
             scaleController.maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
             scaleController.showMaskRectangle();
-            scaleController.popAnchorMenu = false;
+            scaleController.popItemMenu = false;
             scaleController.showAnchors = true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

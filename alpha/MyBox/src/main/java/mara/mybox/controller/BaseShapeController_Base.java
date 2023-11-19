@@ -70,10 +70,11 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     protected DoubleCubic maskCubicData;
     protected DoubleArc maskArcData;
     protected DoublePath maskPathData;
-    protected boolean maskControlDragged, showAnchors, popAnchorMenu, popShapeMenu,
+    protected boolean maskControlDragged, showAnchors, popItemMenu, popShapeMenu,
             addPointWhenClick, supportPath;
     protected AnchorShape anchorShape;
     protected Polyline currentPolyline;
+    protected List<DoublePoint> currentLineData;
     protected List<Polyline> maskPolylines;
     protected DoublePoint lastPoint;
 
@@ -105,7 +106,8 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     @FXML
     protected SVGPath maskSVGPath;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck, popAnchorCheck, addPointCheck;
+    protected CheckBox fillCheck, dashCheck, anchorCheck,
+            popAnchorMenuCheck, popLineMenuCheck, addPointCheck;
 
     /*
         values
@@ -121,7 +123,8 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     }
 
     public float strokeWidth() {
-        float v = shapeStyle == null ? UserConfig.getFloat("StrokeWidth", 2) : shapeStyle.getStrokeWidth();
+        float v = shapeStyle == null ? UserConfig.getFloat("StrokeWidth", 2)
+                : shapeStyle.getStrokeWidth() * (float) viewXRatio();
         if (v < 0) {
             v = 2;
         }
@@ -484,7 +487,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                             anchor.setCursor(Cursor.HAND);
                         } else {
                             anchor.setCursor(cursor);
-                            if (popAnchorMenu) {
+                            if (popItemMenu) {
                                 popNodeMenu(anchor, maskAnchorMenu(index, name, title, p));
                             }
                         }
@@ -536,22 +539,21 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 items.add(menu);
             }
 
-            CheckMenuItem anchorMenuItem = new CheckMenuItem(
-                    isMaskPolylinesShown() ? message("PopLineMenu") : message("PopAnchorMenu"),
-                    StyleTools.getIconImageView("iconMenu.png"));
-            anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAnchorPopMenu", true));
-            anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            CheckMenuItem popMenuItem = new CheckMenuItem(message("PopAnchorMenu"),
+                    StyleTools.getIconImageView("iconShape.png"));
+            popMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
+            popMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent cevent) {
-                    if (popAnchorCheck != null) {
-                        popAnchorCheck.setSelected(anchorMenuItem.isSelected());
+                    if (popAnchorMenuCheck != null) {
+                        popAnchorMenuCheck.setSelected(popMenuItem.isSelected());
                     } else {
-                        UserConfig.setBoolean(baseName + "ImageShapeAnchorPopMenu", anchorMenuItem.isSelected());
-                        popAnchorMenu = anchorMenuItem.isSelected();
+                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popMenuItem.isSelected());
+                        popItemMenu = popMenuItem.isSelected();
                     }
                 }
             });
-            items.add(anchorMenuItem);
+            items.add(popMenuItem);
 
             items.add(new SeparatorMenuItem());
 
@@ -1369,12 +1371,12 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
             for (int i = 0; i < maskPolylinesData.getLinesSize(); i++) {
-                List<DoublePoint> points = maskPolylinesData.getLines().get(i);
-                if (points.isEmpty()) {
+                List<DoublePoint> line = maskPolylinesData.getLines().get(i);
+                if (line.isEmpty()) {
                     continue;
                 }
                 Polyline pline = new Polyline();
-                for (DoublePoint p : points) {
+                for (DoublePoint p : line) {
                     pline.getPoints().add(p.getX() * xRatio);
                     pline.getPoints().add(p.getY() * yRatio);
                 }
@@ -1429,8 +1431,8 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                                 pline.setCursor(Cursor.HAND);
                             } else {
                                 pline.setCursor(Cursor.MOVE);
-                                if (popAnchorMenu) {
-                                    popNodeMenu(pline, lineMenu(pline, points));
+                                if (popItemMenu) {
+                                    popNodeMenu(pline, lineMenu(pline, line));
                                 }
                             }
                         }
@@ -1488,6 +1490,24 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             });
             items.add(menu);
 
+            CheckMenuItem popMenuItem = new CheckMenuItem(message("PopLineMenu"),
+                    StyleTools.getIconImageView("iconShape.png"));
+            popMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
+            popMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    if (popAnchorMenuCheck != null) {
+                        popAnchorMenuCheck.setSelected(popMenuItem.isSelected());
+                    } else if (popLineMenuCheck != null) {
+                        popLineMenuCheck.setSelected(popMenuItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popMenuItem.isSelected());
+                        popItemMenu = popMenuItem.isSelected();
+                    }
+                }
+            });
+            items.add(popMenuItem);
+
             items.add(new SeparatorMenuItem());
 
             return items;
@@ -1499,15 +1519,20 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     }
 
     public boolean makeCurrentLine(DoublePoint p) {
-        if (!DoubleShape.changed(lastPoint, p)) {
+        if (lastPoint != null && !DoubleShape.changed(lastPoint, p)) {
             return false;
         }
+        if (currentLineData == null) {
+            currentLineData = new ArrayList<>();
+        }
+        currentLineData.add(p);
+
         double xRatio = viewXRatio();
         double yRatio = viewYRatio();
         if (currentPolyline == null) {
             currentPolyline = new Polyline();
             currentPolyline.setStroke(Color.RED);
-            currentPolyline.setStrokeWidth((shapeStyle != null ? shapeStyle.getStrokeWidth() : strokeWidth()) * xRatio);
+            currentPolyline.setStrokeWidth(strokeWidth());
             currentPolyline.getStrokeDashArray().clear();
             maskPane.getChildren().add(currentPolyline);
             currentPolyline.setLayoutX(imageView.getLayoutX());
@@ -1518,19 +1543,18 @@ public abstract class BaseShapeController_Base extends BaseImageController {
         return true;
     }
 
-    public void addMaskLinesData() {
-        if (maskPolylines == null || maskPolylinesData == null
-                || currentPolyline == null) {
+    public void endCurrentLine(DoublePoint p) {
+        if (maskPolylines == null || maskPolylinesData == null) {
             return;
         }
-        List<DoublePoint> newLine = new ArrayList<>();
-        double xRatio = imageXRatio();
-        double yRatio = imageYRatio();
-        List<Double> values = currentPolyline.getPoints();
-        for (int i = 0; i < values.size(); i++) {
-            newLine.add(new DoublePoint(values.get(i) * xRatio, values.get(++i) * yRatio));
+        if (currentLineData == null) {
+            currentLineData = new ArrayList<>();
         }
-        maskPolylinesData.addLine(newLine);
+        if (lastPoint == null || DoubleShape.changed(lastPoint, p)) {
+            currentLineData.add(p);
+        }
+        maskPolylinesData.addLine(currentLineData);
+        maskPane.getChildren().remove(currentPolyline);
         maskShapeDataChanged();
     }
 

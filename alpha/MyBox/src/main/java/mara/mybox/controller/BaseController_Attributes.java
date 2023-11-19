@@ -33,6 +33,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -227,6 +228,19 @@ public abstract class BaseController_Attributes {
             return myStage.isShowing();
         } else {
             return false;
+        }
+    }
+
+    @FXML
+    public void popTips() {
+        String tips = null;
+        if (tipsView != null) {
+            tips = NodeStyleTools.getTips(tipsView);
+        } else if (rightTipsView != null) {
+            tips = NodeStyleTools.getTips(rightTipsView);
+        }
+        if (tips != null && !tips.isBlank()) {
+            TextPopController.loadText(tips);
         }
     }
 

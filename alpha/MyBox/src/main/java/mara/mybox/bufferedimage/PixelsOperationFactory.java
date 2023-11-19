@@ -18,7 +18,7 @@ import mara.mybox.value.Colors;
  */
 public class PixelsOperationFactory {
 
-    public static PixelsOperation create(Image image, ImageScope scope, OperationType operationType) {
+    public static PixelsOperation createFX(Image image, ImageScope scope, OperationType operationType) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         return create(bufferedImage, scope, operationType);
     }
@@ -195,7 +195,7 @@ public class PixelsOperationFactory {
         }
     }
 
-    public static PixelsOperation create(Image image, ImageScope scope,
+    public static PixelsOperation createFX(Image image, ImageScope scope,
             OperationType operationType, ColorActionType colorActionType) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         return create(bufferedImage, scope, operationType, colorActionType);

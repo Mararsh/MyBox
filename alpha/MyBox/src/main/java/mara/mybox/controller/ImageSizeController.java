@@ -158,7 +158,7 @@ public class ImageSizeController extends BaseImageEditController {
                 width = image.getWidth();
                 height = image.getHeight();
                 maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
-                popAnchorMenu = false;
+                popItemMenu = false;
                 showAnchors = true;
                 showMaskRectangle();
 

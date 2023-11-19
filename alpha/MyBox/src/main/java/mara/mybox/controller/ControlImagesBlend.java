@@ -157,8 +157,6 @@ public class ControlImagesBlend extends BaseController {
             foreImage = ((ImageManufactureClipboardController) parentController).finalClip;
         } else if (parentController instanceof ImageManufactureColorController) {
             foreColor = ((ImageManufactureColorController) parentController).valueColorSetController.color();
-        } else if (parentController instanceof ImageManufactureBatchColorController) {
-            foreColor = ((ImageManufactureBatchColorController) parentController).colorSetController.color();
         }
         if (foreImage == null) {
             foreImage = FxImageTools.createImage(

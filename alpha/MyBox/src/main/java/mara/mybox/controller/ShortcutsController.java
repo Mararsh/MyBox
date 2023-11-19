@@ -99,23 +99,23 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             omitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
 
             tableData.add(new ShortCut("F1", "", message("Start") + " / " + message("OK"), "CTRL+E / ALT+E", "iconStart.png"));
-            tableData.add(new ShortCut("F2", "", message("Save"), "CTRL+S / ALT+S", "iconSave.png"));
-            tableData.add(new ShortCut("F3", "", message("Recover"), "CTRL+R / ALT+R", "iconRecover.png"));
-            tableData.add(new ShortCut("F4", "", message("ControlLeftPane"), "", "iconDoubleLeft.png"));
-            tableData.add(new ShortCut("F5", "", message("ControlRightPane"), "", "iconDoubleRight.png"));
-            tableData.add(new ShortCut("F6", "", message("ClosePopup"), "", "iconCancel.png"));
-            tableData.add(new ShortCut("F7", "", message("CloseStage"), "", "iconClose.png"));
-            tableData.add(new ShortCut("F8", "", message("RefreshStage"), "", "iconRefresh.png"));
-            tableData.add(new ShortCut("F9", "", message("Go"), "CTRL+G / ALT+G", "iconGo.png"));
+            tableData.add(new ShortCut("F2", "", message("Go"), "CTRL+G / ALT+G", "iconGo.png"));
+            tableData.add(new ShortCut("F3", "", message("Preview"), "CTRL+U / ALT+U", "iconPreview.png"));
+            tableData.add(new ShortCut("F4", "", message("Pop"), "CTRL+P / ALT+P", "iconPop.png"));
+            tableData.add(new ShortCut("F5", "", message("SaveAs"), "CTRL+B / ALT+B", "iconSaveAs.png"));
+            tableData.add(new ShortCut("F6", "", message("ContextMenu"), "", "iconMenu.png"));
+            tableData.add(new ShortCut("F7", "", message("Operations"), "", "iconOperation.png"));
+            tableData.add(new ShortCut("F8", "", message("Home"), "", "iconMyBox.png"));
+            tableData.add(new ShortCut("F9", "", message("Tips"), "", "iconTips.png"));
             tableData.add(new ShortCut("F10", "", message("Synchronize"), "", "iconSynchronize.png"));
-            tableData.add(new ShortCut("F11", "", message("SaveAs"), "CTRL+B / ALT+B", "iconSaveAs.png"));
-            tableData.add(new ShortCut("F12", "", message("ContextMenu"), "", "iconMenu.png"));
+            tableData.add(new ShortCut("F11", "", message("ControlLeftPane"), "", "iconDoubleLeft.png"));
+            tableData.add(new ShortCut("F12", "", message("ControlRightPane"), "", "iconDoubleRight.png"));
             tableData.add(new ShortCut("DELETE", "", message("Delete"), "CTRL+D / ALT+D", "iconDelete.png"));
             tableData.add(new ShortCut("PAGE_UP", "", message("Previous"), "ALT+PAGE_UP", "iconPrevious.png"));
             tableData.add(new ShortCut("PAGE_DOWN", "", message("Next"), "ALT+PAGE_DOWN", "iconNext.png"));
             tableData.add(new ShortCut("HOME", "", message("First"), "ALT+HOME", "iconFirst.png"));
             tableData.add(new ShortCut("END", "", message("Last"), "ALT+END", "iconLast.png"));
-            tableData.add(new ShortCut("ESCAPE", "", message("Cancel"), "", "iconCancel.png"));
+            tableData.add(new ShortCut("ESCAPE", "", message("Cancel") + " / " + message("ClosePopup"), "", "iconCancel.png"));
 
             tableData.add(new ShortCut("CTRL", "E", message("Start") + " /" + message("OK"), "F1 / ALT+E", "iconOK.png"));
             tableData.add(new ShortCut("CTRL", "C", message("Copy"), "ALT+C", "iconCopy.png"));
@@ -124,19 +124,20 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "Y", message("Redo"), "ALT+Y", "iconRedo.png"));
             tableData.add(new ShortCut("CTRL", "D", message("Delete"), "DELETE / ALT+D", "iconDelete.png"));
             tableData.add(new ShortCut("CTRL", "X", message("Crop"), "ALT+X", "iconCrop.png"));
-            tableData.add(new ShortCut("CTRL", "S", message("Save"), "F2 / ALT+S", "iconSave.png"));
-            tableData.add(new ShortCut("CTRL", "B", message("SaveAs"), "F11 / ALT+B", "iconSaveAs.png"));
+            tableData.add(new ShortCut("CTRL", "S", message("Save"), "ALT+S", "iconSave.png"));
+            tableData.add(new ShortCut("CTRL", "B", message("SaveAs"), "F5 / ALT+B", "iconSaveAs.png"));
             tableData.add(new ShortCut("CTRL", "F", message("Find"), "ALT+F", "iconFind.png"));
-            tableData.add(new ShortCut("CTRL", "H", message("Replace"), "ALT+F", "iconReplace.png"));
-            tableData.add(new ShortCut("CTRL", "R", message("Recover"), "F3 / ALT+R", "iconRecover.png"));
-            tableData.add(new ShortCut("CTRL", "G", message("Go"), "F9 / ALT+G", "iconGo.png"));
+            tableData.add(new ShortCut("CTRL", "H", message("Replace"), "ALT+H", "iconReplace.png"));
+            tableData.add(new ShortCut("CTRL", "H", message("Histories"), "ALT+H", "iconHistory.png"));
+            tableData.add(new ShortCut("CTRL", "R", message("Recover"), "ALT+R", "iconRecover.png"));
+            tableData.add(new ShortCut("CTRL", "G", message("Go"), "F2 / ALT+G", "iconGo.png"));
             tableData.add(new ShortCut("CTRL", "N", message("Create"), "ALT+N", "iconAdd.png"));
             tableData.add(new ShortCut("CTRL", "A", message("SelectAll"), "ALT+A", "iconSelectAll.png"));
             tableData.add(new ShortCut("CTRL", "O", message("SelectNone"), "ALT+O", "iconSelectNone.png"));
-            tableData.add(new ShortCut("CTRL", "U", message("Select"), "ALT+T", "iconSelect.png"));
+            tableData.add(new ShortCut("CTRL", "U", message("Preview"), "F3 / ALT+U", "iconPreview.png"));
             tableData.add(new ShortCut("CTRL", "L", message("Clear"), "ALT+L", "iconClear.png"));
-            tableData.add(new ShortCut("CTRL", "W", message("Withdraw") + " / " + message("ReplaceAll"), "ALT+W", "iconUndo.png"));
-            tableData.add(new ShortCut("CTRL", "P", message("Pop"), "ALT+P", "iconPop.png"));
+            tableData.add(new ShortCut("CTRL", "W", message("Withdraw"), "ALT+W", "iconUndo.png"));
+            tableData.add(new ShortCut("CTRL", "P", message("Pop"), "F4 / ALT+P", "iconPop.png"));
             tableData.add(new ShortCut("CTRL", "Q", message("Query"), "ALT+Q", "iconQuery.png"));
             tableData.add(new ShortCut("CTRL", "K", message("PickColor"), "ALT+K", "iconPickColor.png"));
             tableData.add(new ShortCut("CTRL", "M", message("MyBoxClipboard"), "ALT+M", "iconClipboard.png"));
@@ -160,7 +161,6 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
 
             tableData.add(new ShortCut("", "", message("Tips"), "", "iconTips.png"));
             tableData.add(new ShortCut("", "", message("Function"), "", "iconFunction.png"));
-            tableData.add(new ShortCut("", "", message("Operations"), "", "iconOperation.png"));
             tableData.add(new ShortCut("", "", message("Options"), "", "iconOptions.png"));
             tableData.add(new ShortCut("", "", message("Manage"), "", "iconManage.png"));
             tableData.add(new ShortCut("", "", message("Data"), "", "iconData.png"));
@@ -168,9 +168,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message("View"), "", "iconView.png"));
             tableData.add(new ShortCut("", "", message("Export"), "", "iconExport.png"));
             tableData.add(new ShortCut("", "", message("Import"), "", "iconImport.png"));
-            tableData.add(new ShortCut("", "", message("ContextMenu"), "", "iconMenu.png"));
             tableData.add(new ShortCut("", "", message("Examples"), "", "iconExamples.png"));
-            tableData.add(new ShortCut("", "", message("Histories"), "", "iconHistory.png"));
             tableData.add(new ShortCut("", "", message("Demo"), "", "iconDemo.png"));
             tableData.add(new ShortCut("", "", message("Random"), "", "iconRandom.png"));
             tableData.add(new ShortCut("", "", message("Default"), "", "iconDefault.png"));
@@ -221,7 +219,6 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message("CustomizeColors"), "", "iconColorWheel.png"));
             tableData.add(new ShortCut("", "", message("ColorPalette"), "", "iconColor.png"));
             tableData.add(new ShortCut("", "", message("Help"), "", "iconClaw.png"));
-            tableData.add(new ShortCut("", "", "MyBox", "", "iconMyBox.png"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -107,7 +107,7 @@ public abstract class ImageManufactureScopeController_Base extends BaseShapeCont
             @Override
             protected boolean handle() {
                 try {
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                             editor.imageView.getImage(),
                             scope, PixelsOperation.OperationType.ShowScope);
                     pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());

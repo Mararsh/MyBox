@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchShadowController extends BaseImageManufactureBatchController {
+public class ImageManufactureBatchShadowController extends BaseImageEditBatchController {
 
     private int shadow, percent;
     private boolean isPercent;

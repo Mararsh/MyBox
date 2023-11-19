@@ -418,6 +418,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @FXML
+    @Override
     public void previewAction() {
         if (task != null && !task.isQuit()) {
             return;

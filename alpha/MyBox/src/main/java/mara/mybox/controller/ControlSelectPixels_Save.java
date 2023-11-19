@@ -3,12 +3,10 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 
 /**
  * @Author Mara
@@ -54,14 +52,10 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
         }
         clearControls();
         scope = inScope.cloneValues();
-        isSettingValues = true;
         showScopeType(scope);
         showAreaData(scope);
         showColorData(scope);
-        showMatchType(scope);
-        showDistanceValue(scope);
-        eightNeighborCheck.setSelected(scope.isEightNeighbor());
-        isSettingValues = false;
+        matchController.show(scope);
         setControls();
         showScope();
     }
@@ -70,6 +64,7 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
+        isSettingValues = true;
         switch (scope.getScopeType()) {
             case Matting:
                 scopeMattingRadio.setSelected(true);
@@ -93,6 +88,7 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
                 scopeOutlineRadio.setSelected(true);
                 break;
         }
+        isSettingValues = false;
         return true;
 
     }
@@ -126,7 +122,6 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
                     return showMaskPolygon();
                 }
             }
-
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -139,8 +134,10 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
             return false;
         }
         try {
+            isSettingValues = true;
             colorsList.getItems().clear();
             colorExcludedCheck.setSelected(scope.isColorExcluded());
+            eightNeighborCheck.setSelected(scope.isEightNeighbor());
             switch (scope.getScopeType()) {
                 case Color:
                 case Rectangle:
@@ -157,74 +154,12 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
                         colorsList.getSelectionModel().selectLast();
                     }
             }
+            isSettingValues = false;
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            isSettingValues = false;
             return false;
-        }
-    }
-
-    private void showMatchType(ImageScope scope) {
-        try {
-            if (scope == null) {
-                return;
-            }
-            switch (scope.getColorScopeType()) {
-                case Color:
-                    colorRGBRadio.setSelected(true);
-                    break;
-                case Red:
-                    colorRedRadio.setSelected(true);
-                    break;
-                case Green:
-                    colorGreenRadio.setSelected(true);
-                    break;
-                case Blue:
-                    colorBlueRadio.setSelected(true);
-                    break;
-                case Hue:
-                    colorHueRadio.setSelected(true);
-                    break;
-                case Brightness:
-                    colorBrightnessRadio.setSelected(true);
-                    break;
-                case Saturation:
-                    colorSaturationRadio.setSelected(true);
-                    break;
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-
-    }
-
-    private void showDistanceValue(ImageScope scope) {
-        try {
-            int distance, max = 255;
-            switch (scope.getColorScopeType()) {
-                case Hue:
-                    max = 360;
-                    distance = (int) (scope.getHsbDistance() * 360);
-                    break;
-                case Brightness:
-                case Saturation:
-                    max = 100;
-                    distance = (int) (scope.getHsbDistance() * 100);
-                    break;
-                default:
-                    distance = scope.getColorDistance();
-            }
-            NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
-            List<String> vList = new ArrayList<>();
-            for (int i = 0; i <= max; i += 10) {
-                vList.add(i + "");
-            }
-            scopeDistanceSelector.getItems().clear();
-            scopeDistanceSelector.getItems().addAll(vList);
-            scopeDistanceSelector.getSelectionModel().select(distance + "");
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 
