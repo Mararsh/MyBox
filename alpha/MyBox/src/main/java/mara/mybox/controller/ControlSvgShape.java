@@ -643,7 +643,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 element.removeAttribute("stroke-dasharray");
             }
 
-            String v = style.getLineCapText();
+            String v = style.getStrokeLineCapText();
             if (v != null && !v.isBlank()) {
                 element.setAttribute("stroke-linecap", v);
             } else {

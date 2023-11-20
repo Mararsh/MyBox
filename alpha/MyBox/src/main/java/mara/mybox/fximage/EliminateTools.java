@@ -18,7 +18,7 @@ public class EliminateTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.EliminateTools.drawErase(source, penData, strokeWidth);
+        BufferedImage target = mara.mybox.bufferedimage.EliminateTools.drawErase2(source, penData, strokeWidth);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

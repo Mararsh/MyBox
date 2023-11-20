@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsBlend;
+import mara.mybox.data.DoublePolylines;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 
@@ -20,6 +21,16 @@ public class ShapeTools {
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.bufferedimage.ShapeTools.drawShape(source, shape, style, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawErase(Image image, DoublePolylines penData, ShapeStyle style) {
+        if (penData == null || style == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.ShapeTools.drawErase(source, penData, style);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

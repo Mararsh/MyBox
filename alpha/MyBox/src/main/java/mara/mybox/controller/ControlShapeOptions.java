@@ -319,7 +319,7 @@ public abstract class ControlShapeOptions extends BaseController {
             }
 
             if (linecapSquareRadio != null) {
-                StrokeLineCap lineCap = style.getLineCap();
+                StrokeLineCap lineCap = style.getStrokeLineCap();
                 if (null == lineCap) {
                     linecapButtRadio.setSelected(true);
                 } else {
@@ -342,13 +342,13 @@ public abstract class ControlShapeOptions extends BaseController {
                             return;
                         }
                         if (linecapSquareRadio.isSelected()) {
-                            style.setLineCap(StrokeLineCap.SQUARE);
+                            style.setStrokeLineCap(StrokeLineCap.SQUARE);
                         } else if (linecapRoundRadio.isSelected()) {
-                            style.setLineCap(StrokeLineCap.ROUND);
+                            style.setStrokeLineCap(StrokeLineCap.ROUND);
                         } else if (linecapButtRadio.isSelected()) {
-                            style.setLineCap(StrokeLineCap.BUTT);
+                            style.setStrokeLineCap(StrokeLineCap.BUTT);
                         } else {
-                            style.setLineCap(null);
+                            style.setStrokeLineCap(null);
                         }
                         goStyle();
                     }

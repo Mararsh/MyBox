@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.ROUND;
 import static javafx.scene.shape.StrokeLineCap.SQUARE;
+import javafx.scene.shape.StrokeLineJoin;
 import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
 import mara.mybox.value.UserConfig;
@@ -21,10 +22,11 @@ public class ShapeStyle {
 
     private String name, more;
     private Color strokeColor, fillColor, anchorColor;
-    private float strokeWidth, strokeOpacity, fillOpacity, anchorSize;
+    private float strokeWidth, strokeOpacity, fillOpacity, anchorSize, strokeLineLimit, dashOffset;
     private boolean isFillColor, isStrokeDash;
     private List<Double> strokeDash;
-    private StrokeLineCap lineCap;
+    private StrokeLineCap strokeLineCap;
+    private StrokeLineJoin strokeLineJoin;
 
     public ShapeStyle() {
         init("");
@@ -72,7 +74,11 @@ public class ShapeStyle {
         String text = UserConfig.getString(name + "StrokeDash", null);
         strokeDash = text2StrokeDash(text);
         text = UserConfig.getString(name + "StrokeLineCap", "BUTT");
-        lineCap = lineCap(text);
+        strokeLineCap = strokeLineCap(text);
+        text = UserConfig.getString(name + "StrokeLineJoin", "MITER");
+        strokeLineJoin = strokeLineJoin(text);
+        strokeLineLimit = UserConfig.getFloat(name + "StrokeLineLimit", 10f);
+        dashOffset = UserConfig.getFloat(name + "DashOffset", 0f);
         more = null;
     }
 
@@ -128,7 +134,7 @@ public class ShapeStyle {
         }
     }
 
-    public static StrokeLineCap lineCap(String text) {
+    public static StrokeLineCap strokeLineCap(String text) {
         try {
             if (text == null || text.isBlank()) {
                 return StrokeLineCap.BUTT;
@@ -145,7 +151,7 @@ public class ShapeStyle {
         }
     }
 
-    public static int lineCapAwt(StrokeLineCap v) {
+    public static int strokeLineCapAwt(StrokeLineCap v) {
         try {
             if (null == v) {
                 return java.awt.BasicStroke.CAP_BUTT;
@@ -161,6 +167,42 @@ public class ShapeStyle {
             }
         } catch (Exception e) {
             return java.awt.BasicStroke.CAP_BUTT;
+        }
+    }
+
+    public static StrokeLineJoin strokeLineJoin(String text) {
+        try {
+            if (text == null || text.isBlank()) {
+                return StrokeLineJoin.MITER;
+            }
+            if ("ROUND".equalsIgnoreCase(text)) {
+                return StrokeLineJoin.ROUND;
+            } else if ("BEVEL".equalsIgnoreCase(text)) {
+                return StrokeLineJoin.BEVEL;
+            } else {
+                return StrokeLineJoin.MITER;
+            }
+        } catch (Exception e) {
+            return StrokeLineJoin.MITER;
+        }
+    }
+
+    public static int strokeLineJoinAwt(StrokeLineJoin v) {
+        try {
+            if (null == v) {
+                return java.awt.BasicStroke.JOIN_MITER;
+            } else {
+                switch (v) {
+                    case ROUND:
+                        return java.awt.BasicStroke.JOIN_ROUND;
+                    case BEVEL:
+                        return java.awt.BasicStroke.JOIN_BEVEL;
+                    default:
+                        return java.awt.BasicStroke.JOIN_MITER;
+                }
+            }
+        } catch (Exception e) {
+            return java.awt.BasicStroke.JOIN_MITER;
         }
     }
 
@@ -245,9 +287,29 @@ public class ShapeStyle {
         return this;
     }
 
-    public ShapeStyle setLineCap(StrokeLineCap lineCap) {
-        this.lineCap = lineCap;
-        UserConfig.setString(name + "StrokeLineCap", lineCap != null ? lineCap.name() : null);
+    public ShapeStyle setDashOffset(float dashOffset) {
+        this.dashOffset = dashOffset;
+        UserConfig.setFloat(name + "DashOffset", dashOffset);
+        return this;
+    }
+
+    public ShapeStyle setStrokeLineCap(StrokeLineCap strokeLineCap) {
+        this.strokeLineCap = strokeLineCap;
+        UserConfig.setString(name + "StrokeLineCap",
+                strokeLineCap != null ? strokeLineCap.name() : null);
+        return this;
+    }
+
+    public ShapeStyle setStrokeLineLimit(float strokeLineLimit) {
+        this.strokeLineLimit = strokeLineLimit;
+        UserConfig.setFloat(name + "StrokeLineLimit", strokeLineLimit);
+        return this;
+    }
+
+    public ShapeStyle setStrokeLineJoin(StrokeLineJoin strokeLineJoin) {
+        this.strokeLineJoin = strokeLineJoin;
+        UserConfig.setString(name + "StrokeLineJoin",
+                strokeLineJoin != null ? strokeLineJoin.name() : null);
         return this;
     }
 
@@ -331,16 +393,32 @@ public class ShapeStyle {
         return strokeDash2Text(strokeDash);
     }
 
-    public StrokeLineCap getLineCap() {
-        return lineCap;
+    public float getDashOffset() {
+        return dashOffset;
     }
 
-    public int getLineCapAwt() {
-        return lineCapAwt(lineCap);
+    public StrokeLineCap getStrokeLineCap() {
+        return strokeLineCap;
     }
 
-    public String getLineCapText() {
-        return lineCap != null ? lineCap.name() : null;
+    public int getStrokeLineCapAwt() {
+        return strokeLineCapAwt(strokeLineCap);
+    }
+
+    public String getStrokeLineCapText() {
+        return strokeLineCap != null ? strokeLineCap.name() : null;
+    }
+
+    public float getStrokeLineLimit() {
+        return strokeLineLimit;
+    }
+
+    public StrokeLineJoin getStrokeLineJoin() {
+        return strokeLineJoin;
+    }
+
+    public int getStrokeLineJoinAwt() {
+        return strokeLineJoinAwt(strokeLineJoin);
     }
 
     public String getMore() {

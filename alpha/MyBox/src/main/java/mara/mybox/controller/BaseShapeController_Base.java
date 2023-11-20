@@ -28,6 +28,8 @@ import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import mara.mybox.data.DoubleArc;
@@ -73,7 +75,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     protected boolean maskControlDragged, showAnchors, popItemMenu, popShapeMenu,
             addPointWhenClick, supportPath;
     protected AnchorShape anchorShape;
-    protected Polyline currentPolyline;
+    protected Polyline currentLine;
     protected List<DoublePoint> currentLineData;
     protected List<Polyline> maskPolylines;
     protected DoublePoint lastPoint;
@@ -229,7 +231,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 } else {
                     shape.setFill(Color.TRANSPARENT);
                 }
-                shape.setStrokeLineCap(shapeStyle.getLineCap());
+                shape.setStrokeLineCap(shapeStyle.getStrokeLineCap());
                 if (shapeStyle.isIsStrokeDash() && shapeStyle.getStrokeDash() != null) {
                     shape.getStrokeDashArray().addAll(shapeStyle.getStrokeDash());
                 }
@@ -318,9 +320,9 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 for (Polyline line : maskPolylines) {
                     line.setOpacity(0);
                 }
-                if (currentPolyline != null) {
-                    maskPane.getChildren().remove(currentPolyline);
-                    currentPolyline = null;
+                if (currentLine != null) {
+                    maskPane.getChildren().remove(currentLine);
+                    currentLine = null;
                 }
                 lastPoint = null;
             } else {
@@ -1371,81 +1373,91 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
             for (int i = 0; i < maskPolylinesData.getLinesSize(); i++) {
-                List<DoublePoint> line = maskPolylinesData.getLines().get(i);
-                if (line.isEmpty()) {
+                List<DoublePoint> points = maskPolylinesData.getLines().get(i);
+                if (points.isEmpty()) {
                     continue;
                 }
                 Polyline pline = new Polyline();
-                for (DoublePoint p : line) {
+                for (DoublePoint p : points) {
                     pline.getPoints().add(p.getX() * xRatio);
                     pline.getPoints().add(p.getY() * yRatio);
                 }
-                maskPolylines.add(pline);
-                maskPane.getChildren().add(pline);
-                pline.setLayoutX(imageView.getLayoutX());
-                pline.setLayoutY(imageView.getLayoutY());
-                setShapeStyle(pline);
-                int index = i;
-                pline.setOnMousePressed(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        controlPressed(event);
-                        if (isPickingColor) {
-                            return;
-                        }
-                        maskControlDragged = true;
-                    }
-                });
-                pline.setOnMouseDragged(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (isPickingColor) {
-                            return;
-                        }
-                        maskControlDragged = true;
-                    }
-                });
-                pline.setOnMouseReleased(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        scrollPane.setPannable(true);
-                        if (isPickingColor) {
-                            return;
-                        }
-                        double offsetX = imageOffsetX(event);
-                        double offsetY = imageOffsetY(event);
-                        if (!DoubleShape.changed(offsetX, offsetY)) {
-                            maskControlDragged = false;
-                            return;
-                        }
-                        maskPolylinesData.translateLineRel(index, offsetX, offsetY);
-                        maskShapeDataChanged();
-                        maskControlDragged = true;
-                    }
-                });
-                pline.hoverProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        if (newValue) {
-                            if (isPickingColor) {
-                                pline.setCursor(Cursor.HAND);
-                            } else {
-                                pline.setCursor(Cursor.MOVE);
-                                if (popItemMenu) {
-                                    popNodeMenu(pline, lineMenu(pline, line));
-                                }
-                            }
-                        }
-                    }
-                });
+                addToPolylines(pline, points);
             }
-
             maskShapeChanged();
-
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
+        }
+    }
+
+    public void addToPolylines(Polyline line, List<DoublePoint> points) {
+        try {
+            if (line == null || maskPolylines == null) {
+                return;
+            }
+            maskPolylines.add(line);
+            maskPane.getChildren().add(line);
+            line.setLayoutX(imageView.getLayoutX());
+            line.setLayoutY(imageView.getLayoutY());
+            setShapeStyle(line);
+            int index = maskPolylines.indexOf(line);
+            line.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    controlPressed(event);
+                    if (isPickingColor) {
+                        return;
+                    }
+                    maskControlDragged = true;
+                }
+            });
+            line.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (isPickingColor) {
+                        return;
+                    }
+                    maskControlDragged = true;
+                }
+            });
+            line.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    scrollPane.setPannable(true);
+                    if (isPickingColor) {
+                        return;
+                    }
+                    double offsetX = imageOffsetX(event);
+                    double offsetY = imageOffsetY(event);
+                    if (!DoubleShape.changed(offsetX, offsetY)) {
+                        maskControlDragged = false;
+                        return;
+                    }
+                    maskPolylinesData.translateLineRel(index, offsetX, offsetY);
+                    maskShapeDataChanged();
+                    maskControlDragged = true;
+                }
+            });
+            line.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        if (isPickingColor) {
+                            line.setCursor(Cursor.HAND);
+                        } else {
+                            line.setCursor(Cursor.MOVE);
+                            if (popItemMenu) {
+                                popNodeMenu(line, lineMenu(line, points));
+                            }
+                        }
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -1518,44 +1530,30 @@ public abstract class BaseShapeController_Base extends BaseImageController {
         }
     }
 
-    public boolean makeCurrentLine(DoublePoint p) {
+    public boolean addPointToCurrentLine(DoublePoint p) {
         if (lastPoint != null && !DoubleShape.changed(lastPoint, p)) {
             return false;
         }
         if (currentLineData == null) {
             currentLineData = new ArrayList<>();
+            maskPolylinesData.addLine(currentLineData);
         }
+
+        if (currentLine == null) {
+            currentLine = new Polyline();
+            currentLine.setStrokeMiterLimit(10);
+            currentLine.setStrokeLineCap(StrokeLineCap.BUTT);
+            currentLine.setStrokeLineJoin(StrokeLineJoin.MITER);
+            addToPolylines(currentLine, currentLineData);
+        }
+
         currentLineData.add(p);
 
         double xRatio = viewXRatio();
         double yRatio = viewYRatio();
-        if (currentPolyline == null) {
-            currentPolyline = new Polyline();
-            currentPolyline.setStroke(Color.RED);
-            currentPolyline.setStrokeWidth(strokeWidth());
-            currentPolyline.getStrokeDashArray().clear();
-            maskPane.getChildren().add(currentPolyline);
-            currentPolyline.setLayoutX(imageView.getLayoutX());
-            currentPolyline.setLayoutY(imageView.getLayoutY());
-        }
-        currentPolyline.getPoints().add(p.getX() * xRatio);
-        currentPolyline.getPoints().add(p.getY() * yRatio);
+        currentLine.getPoints().add(p.getX() * xRatio);
+        currentLine.getPoints().add(p.getY() * yRatio);
         return true;
-    }
-
-    public void endCurrentLine(DoublePoint p) {
-        if (maskPolylines == null || maskPolylinesData == null) {
-            return;
-        }
-        if (currentLineData == null) {
-            currentLineData = new ArrayList<>();
-        }
-        if (lastPoint == null || DoubleShape.changed(lastPoint, p)) {
-            currentLineData.add(p);
-        }
-        maskPolylinesData.addLine(currentLineData);
-        maskPane.getChildren().remove(currentPolyline);
-        maskShapeDataChanged();
     }
 
     public void hideMaskPolylines() {
@@ -1564,9 +1562,9 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 line.setOpacity(0);
             }
         }
-        if (currentPolyline != null) {
-            maskPane.getChildren().remove(currentPolyline);
-            currentPolyline = null;
+        if (currentLine != null) {
+            maskPane.getChildren().remove(currentLine);
+            currentLine = null;
         }
         lastPoint = null;
     }
@@ -1582,9 +1580,9 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             maskPolylines.clear();
             maskPolylines = null;
         }
-        if (currentPolyline != null) {
-            maskPane.getChildren().remove(currentPolyline);
-            currentPolyline = null;
+        if (currentLine != null) {
+            maskPane.getChildren().remove(currentLine);
+            currentLine = null;
         }
         lastPoint = null;
     }

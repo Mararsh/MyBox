@@ -48,9 +48,7 @@ public class DoublePolylines implements DoubleShape {
         if (line == null) {
             return false;
         }
-        List<DoublePoint> newline = new ArrayList<>();
-        newline.addAll(line);
-        lines.add(newline);
+        lines.add(line);
         return true;
     }
 
@@ -246,6 +244,24 @@ public class DoublePolylines implements DoubleShape {
 
     public List<List<DoublePoint>> getLines() {
         return lines;
+    }
+
+    public List<Path2D.Double> getPaths() {
+        if (lines == null) {
+            return null;
+        }
+        List<Path2D.Double> paths = new ArrayList<>();
+        for (List<DoublePoint> line : lines) {
+            Path2D.Double path = new Path2D.Double();
+            DoublePoint p = line.get(0);
+            path.moveTo(p.getX(), p.getY());
+            for (int i = 1; i < line.size(); i++) {
+                p = line.get(i);
+                path.lineTo(p.getX(), p.getY());
+            }
+            paths.add(path);
+        }
+        return paths;
     }
 
     public void setLines(List<List<DoublePoint>> linePoints) {

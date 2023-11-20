@@ -648,7 +648,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             return;
         }
         scrollPane.setPannable(false);
-        makeCurrentLine(p);
+        addPointToCurrentLine(p);
         lastPoint = p;
     }
 
@@ -665,9 +665,9 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
         if (p == null) {
             return;
         }
-        endCurrentLine(p);
+        addPointToCurrentLine(p);
         currentLineData = null;
-        currentPolyline = null;
+        currentLine = null;
         lastPoint = null;
     }
 
@@ -684,11 +684,15 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
         if (DoubleShape.translateRel(shapeData, offsetX, offsetY)) {
-            maskShapeDataChanged();
+            translateShape();
             maskControlDragged = true;
         } else {
             maskControlDragged = false;
         }
+    }
+
+    public void translateShape() {
+        maskShapeDataChanged();
     }
 
     @FXML

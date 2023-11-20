@@ -1,25 +1,12 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.data.DoublePolylines;
-import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.EliminateTools;
-import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -28,16 +15,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageEraserController extends BaseImageEditController {
 
-    protected int strokeWidth;
-
     @FXML
-    protected ControlColorSet colorController;
-    @FXML
-    protected ComboBox<String> widthSelector;
-    @FXML
-    protected Label commentsLabel;
-    @FXML
-    protected CheckBox coordinatePenCheck;
+    protected ControlStroke strokeController;
 
     public ImageEraserController() {
         baseTitle = message("Eraser");
@@ -47,59 +26,11 @@ public class ImageEraserController extends BaseImageEditController {
     protected void initMore() {
         try {
             operation = "Eraser";
-
-            colorController.init(this, baseName + "Color", Color.RED);
-            colorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue v, Paint ov, Paint nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (shapeStyle == null) {
-                        shapeStyle = new ShapeStyle(baseName);
-                        shapeStyle.setStrokeWidth(strokeWidth);
-                    }
-                    shapeStyle.setStrokeColor(colorController.color());
-                    drawMaskPolylines();
-                }
-            });
-
-            widthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue o, String ov, String nv) {
-                    try {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        int v = Integer.parseInt(nv);
-                        if (v > 0) {
-                            strokeWidth = v;
-                            UserConfig.setInt(baseName + "StrokeWidth", v);
-                            if (shapeStyle == null) {
-                                shapeStyle = new ShapeStyle(baseName);
-                                shapeStyle.setStrokeColor(colorController.color());
-                            }
-                            shapeStyle.setStrokeWidth(strokeWidth);
-                            drawMaskPolylines();
-                            ValidationTools.setEditorNormal(widthSelector);
-                        } else {
-                            ValidationTools.setEditorBadStyle(widthSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(widthSelector);
-                    }
-                }
-            });
+            strokeController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
-    }
-
-    @Override
-    public void maskShapeDataChanged() {
-        drawMaskPolylines();
     }
 
     @Override
@@ -108,39 +39,18 @@ public class ImageEraserController extends BaseImageEditController {
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
-            strokeWidth = UserConfig.getInt(baseName + "StrokeWidth", 50);
-            if (strokeWidth <= 0) {
-                strokeWidth = 50;
-            }
-            shapeStyle = new ShapeStyle(baseName);
-            shapeStyle.setStrokeWidth(strokeWidth);
-            shapeStyle.setStrokeColor(colorController.color());
             showAnchors = false;
             popItemMenu = popAnchorMenuCheck.isSelected();
             addPointWhenClick = false;
             popShapeMenu = false;
             supportPath = false;
             maskPolylinesData = new DoublePolylines();
+            shapeStyle = strokeController.style;
 
-            List<String> ws = new ArrayList<>();
-            ws.addAll(Arrays.asList("3", "1", "2", "5", "8", "10", "15", "25", "30",
-                    "50", "80", "100", "150", "200", "300", "500"));
-            int max = (int) (image.getWidth() / 20);
-            int step = max / 10;
-            for (int w = 10; w < max; w += step) {
-                if (!ws.contains(w + "")) {
-                    ws.add(0, w + "");
-                }
-            }
+            strokeController.setWidthList((int) (image.getWidth() / 20),
+                    (int) shapeStyle.getStrokeWidth());
 
-            if (!ws.contains(strokeWidth + "")) {
-                ws.add(0, strokeWidth + "");
-            }
-            isSettingValues = true;
-            widthSelector.getItems().setAll(ws);
-            widthSelector.setValue(strokeWidth + "");
-            isSettingValues = false;
-
+            maskPolylinesData = null;
             showMaskPolylines();
 
             return true;
@@ -148,6 +58,13 @@ public class ImageEraserController extends BaseImageEditController {
             MyBoxLog.debug(e);
             return false;
         }
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        shapeStyle = strokeController.pickValues();
+        drawMaskPolylines();
     }
 
     @FXML
@@ -170,7 +87,7 @@ public class ImageEraserController extends BaseImageEditController {
 
     @Override
     protected void handleImage() {
-        handledImage = EliminateTools.drawErase(srcImage(), maskPolylinesData, strokeWidth);
+        handledImage = ShapeTools.drawErase(srcImage(), maskPolylinesData, shapeStyle);
     }
 
     /*

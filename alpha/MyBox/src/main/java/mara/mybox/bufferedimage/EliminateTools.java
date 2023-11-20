@@ -19,7 +19,7 @@ import mara.mybox.value.AppVariables;
  */
 public class EliminateTools {
 
-    public static BufferedImage drawErase(BufferedImage srcImage, DoublePolylines linesData, int strokeWidth) {
+    public static BufferedImage drawErase2(BufferedImage srcImage, DoublePolylines linesData, int strokeWidth) {
         try {
             if (linesData == null || linesData.getLinesSize() == 0 || strokeWidth < 1) {
                 return srcImage;
