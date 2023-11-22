@@ -138,7 +138,21 @@ public class ControlImagesBlend extends BaseController {
         return ignoreTransparentCheck.isSelected();
     }
 
-    public PixelsBlend blender() {
+    public PixelsBlend pickValues() {
+        float f = -1;
+        try {
+            f = Float.parseFloat(opacitySelector.getValue());
+        } catch (Exception e) {
+        }
+        if (f >= 0.0f && f <= 1.0f) {
+            opacity = f;
+            UserConfig.setInt(baseName + "BlendOpacity", (int) (f * 100));
+            ValidationTools.setEditorNormal(opacitySelector);
+            notifyOptionChanged();
+        } else {
+            ValidationTools.setEditorBadStyle(opacitySelector);
+            return null;
+        }
         return PixelsBlend.blender(blendMode, opacity, !isTop(), ignoreTransparent());
     }
 
@@ -243,11 +257,11 @@ public class ControlImagesBlend extends BaseController {
     }
 
     public BufferedImage blend(BufferedImage fore, BufferedImage back, int x, int y) {
-        return PixelsBlend.blend(fore, back, x, y, blender());
+        return PixelsBlend.blend(fore, back, x, y, pickValues());
     }
 
     public Image blend(Image foreImage, Image backImage, int x, int y) {
-        return FxImageTools.blend(foreImage, backImage, x, y, blender());
+        return FxImageTools.blend(foreImage, backImage, x, y, pickValues());
     }
 
 }

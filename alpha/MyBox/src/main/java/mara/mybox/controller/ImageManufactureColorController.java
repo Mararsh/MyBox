@@ -512,7 +512,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             break;
                         case Blend:
                             pixelsOperation.setColorPara1(valueColorSetController.awtColor());
-                            ((BlendColor) pixelsOperation).setBlender(blendController.blender());
+                            ((BlendColor) pixelsOperation).setBlender(blendController.pickValues());
                             break;
                         case RGB:
                             pixelsOperation.setIntPara1(colorValue);

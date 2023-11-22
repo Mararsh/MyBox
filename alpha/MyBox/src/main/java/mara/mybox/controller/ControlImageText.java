@@ -802,7 +802,7 @@ public class ControlImageText extends BaseController {
     }
 
     public PixelsBlend blender() {
-        return blendController.blender();
+        return blendController.pickValues();
     }
 
     public boolean showBorders() {

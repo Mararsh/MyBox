@@ -17,11 +17,27 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlStroke">
     <children>
+      <VBox layoutX="10.0" layoutY="97.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%AnchorColor" wrapText="true" />
+                  <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
+               </children>
+            </FlowPane>
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%Width" wrapText="true" />
+                  <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="80.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
       <VBox layoutX="10.0" layoutY="268.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
             <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
                <children>
-                  <Label text="%Color" />
+                  <Label text="%StrokeColor" />
                   <fx:include fx:id="color" source="ControlColorSet.fxml" />
                </children>
             </FlowPane>

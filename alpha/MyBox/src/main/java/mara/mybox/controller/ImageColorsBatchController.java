@@ -310,7 +310,8 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                     break;
                 case Blend:
                     pixelsOperation.setColorPara1(colorSetController.awtColor());
-                    ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blendController.blender());
+                    ((PixelsOperationFactory.BlendColor) pixelsOperation)
+                            .setBlender(blendController.pickValues());
                     break;
                 case Hue:
                     pixelsOperation.setFloatPara1(colorValue / 360.0f);

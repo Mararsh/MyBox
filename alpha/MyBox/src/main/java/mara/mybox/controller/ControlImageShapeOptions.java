@@ -106,7 +106,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             @Override
             protected boolean handle() {
                 newImage = ShapeTools.drawShape(imageView.getImage(),
-                        shapeData, style, blendController.blender());
+                        shapeData, style, blendController.pickValues());
                 return newImage != null;
             }
 
@@ -131,7 +131,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
     @FXML
     @Override
     public void okAction() {
-        MyBoxLog.debug(getClass());
         if (okButton.isDisabled() || shapeType == null) {
             return;
         }
@@ -147,7 +146,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        MyBoxLog.debug(getClass());
         if (parametersController.keyEventsFilter(event)) {
             return true;
         }

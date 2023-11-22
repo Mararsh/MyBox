@@ -435,7 +435,8 @@ public interface DoubleShape {
 
         if (shapeData instanceof DoublePath || shapeData instanceof DoubleQuadratic
                 || shapeData instanceof DoubleCubic || shapeData instanceof DoubleArc) {
-            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("AbsoluteCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("AbsoluteCoordinate"),
+                    StyleTools.getIconImageView("iconView.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
@@ -444,7 +445,8 @@ public interface DoubleShape {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("RelativeCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("RelativeCoordinate"),
+                    StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
@@ -453,7 +455,7 @@ public interface DoubleShape {
             });
             items.add(menu);
         } else {
-            menu = new MenuItem(message("DisplaySVGElement"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGElement"), StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
@@ -462,7 +464,8 @@ public interface DoubleShape {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("AbsoluteCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("AbsoluteCoordinate"),
+                    StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
@@ -471,7 +474,8 @@ public interface DoubleShape {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("RelativeCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("RelativeCoordinate"),
+                    StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {

@@ -436,12 +436,6 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                pasteAction();
-            });
-            items.add(menu);
-
             menu = new MenuItem(message("Margins"), StyleTools.getIconImageView("iconRectangle.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageMarginsController.open(this);
@@ -685,6 +679,60 @@ public class ImageEditorController extends BaseImageController {
                 @Override
                 public void handle(ActionEvent event) {
                     UserConfig.setBoolean(baseName + "TransformMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void popAddMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "AddMenuPopWhenMouseHovering", true)) {
+            showAddMenu(event);
+        }
+    }
+
+    @FXML
+    public void showAddMenu(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                pasteAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageRectangleController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageCircleController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Polylines"), StyleTools.getIconImageView("iconPolylines.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagePolylinesController.open(this);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "AddMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "AddMenuPopWhenMouseHovering", popItem.isSelected());
                 }
             });
             items.add(popItem);

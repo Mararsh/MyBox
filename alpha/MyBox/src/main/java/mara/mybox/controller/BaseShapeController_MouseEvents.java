@@ -184,18 +184,6 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             numberItem.setToggleGroup(anchorGroup);
             anchorStyleMenu.getItems().add(numberItem);
 
-            if (shapeStyle == null) {
-                anchorStyleMenu.getItems().add(new SeparatorMenuItem());
-                menu = new MenuItem(message("Options"), StyleTools.getIconImageView("iconOptions.png"));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent mevent) {
-                        options();
-                    }
-                });
-                anchorStyleMenu.getItems().add(menu);
-            }
-
             items.add(new SeparatorMenuItem());
 
             List<MenuItem> pointItems = shapeDataMenu(event, p);
@@ -666,6 +654,9 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             return;
         }
         addPointToCurrentLine(p);
+        if (maskPolylines.contains(currentLine)) {
+            maskShapeChanged();
+        }
         currentLineData = null;
         currentLine = null;
         lastPoint = null;

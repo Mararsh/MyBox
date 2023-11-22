@@ -28,8 +28,6 @@ import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import mara.mybox.data.DoubleArc;
@@ -144,7 +142,8 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     }
 
     public float anchorSize() {
-        float v = shapeStyle == null ? UserConfig.getFloat("AnchorSize", 10) : shapeStyle.getAnchorSize();
+        float v = shapeStyle == null ? UserConfig.getFloat(baseName + "AnchorSize", 10)
+                : shapeStyle.getAnchorSize();
         if (v < 0) {
             v = 10;
         }
@@ -271,7 +270,6 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             clearMaskArc();
             clearMaskPath();
             clearMaskAnchors();
-            shapeStyle = null;
             maskControlDragged = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1374,7 +1372,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             double yRatio = viewYRatio();
             for (int i = 0; i < maskPolylinesData.getLinesSize(); i++) {
                 List<DoublePoint> points = maskPolylinesData.getLines().get(i);
-                if (points.isEmpty()) {
+                if (points.size() < 2) {
                     continue;
                 }
                 Polyline pline = new Polyline();
@@ -1394,7 +1392,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
     public void addToPolylines(Polyline line, List<DoublePoint> points) {
         try {
-            if (line == null || maskPolylines == null) {
+            if (maskPolylines == null || line == null || points == null) {
                 return;
             }
             maskPolylines.add(line);
@@ -1536,15 +1534,11 @@ public abstract class BaseShapeController_Base extends BaseImageController {
         }
         if (currentLineData == null) {
             currentLineData = new ArrayList<>();
-            maskPolylinesData.addLine(currentLineData);
-        }
-
-        if (currentLine == null) {
             currentLine = new Polyline();
-            currentLine.setStrokeMiterLimit(10);
-            currentLine.setStrokeLineCap(StrokeLineCap.BUTT);
-            currentLine.setStrokeLineJoin(StrokeLineJoin.MITER);
+        } else if (currentLineData.size() > 1
+                && !maskPolylines.contains(currentLine)) {
             addToPolylines(currentLine, currentLineData);
+            maskPolylinesData.addLine(currentLineData);
         }
 
         currentLineData.add(p);
