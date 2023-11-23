@@ -21,10 +21,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Arc?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageRectangleController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageArcController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
             <items>
@@ -50,7 +51,16 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </CheckBox>
-                                    <CheckBox fx:id="popAnchorMenuCheck" mnemonicParsing="false" selected="true">
+                                    <CheckBox fx:id="addPointCheck" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconNewItem.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </CheckBox>
+                                    <CheckBox fx:id="popAnchorMenuCheck" layoutX="233.0" layoutY="14.0" mnemonicParsing="false" selected="true">
                                        <graphic>
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -137,11 +147,11 @@ License:    Apache License Version 2.0
                                                 </Rectangle>
                                                 <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
                                                 <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true" />
-                                    <Rectangle fx:id="maskRectangle" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="14.0" layoutY="14.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" stroke="RED" strokeType="INSIDE" width="200.0">
+                                    <Arc fx:id="maskArc" fill="#ffffff00" layoutX="193.0" layoutY="137.0" length="270.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" radiusX="93.0" radiusY="91.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND">
                                        <cursor>
                                           <Cursor fx:constant="MOVE" />
                                        </cursor>
-                                    </Rectangle>
+                                    </Arc>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
                                             </children>
                                         </AnchorPane>
@@ -155,7 +165,7 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Rectangle" VBox.vgrow="ALWAYS" />
+                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Arc" VBox.vgrow="ALWAYS" />
                         <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                           <tabs>
                             <Tab text="%Shape">
@@ -176,7 +186,7 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
-                                                <fx:include fx:id="rect" source="ControlRectangle.fxml" />
+                                                <fx:include source="ControlArc.fxml" />
                                              </children>
                                           </VBox>
                                        </content>

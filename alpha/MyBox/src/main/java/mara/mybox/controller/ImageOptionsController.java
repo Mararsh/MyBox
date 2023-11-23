@@ -68,6 +68,10 @@ public class ImageOptionsController extends BaseController {
     @FXML
     protected Label alphaLabel;
 
+    public ImageOptionsController() {
+        baseTitle = message("Options");
+    }
+
     @Override
     public void setControlsStyle() {
         try {

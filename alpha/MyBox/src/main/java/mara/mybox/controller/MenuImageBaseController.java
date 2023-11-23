@@ -131,7 +131,6 @@ public class MenuImageBaseController extends MenuController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
-                        imageController.checkCoordinate();
                     }
                 });
             }

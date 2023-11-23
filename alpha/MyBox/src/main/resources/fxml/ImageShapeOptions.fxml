@@ -28,13 +28,13 @@ License:    Apache License Version 2.0
     <children>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
-                <Tab text="%Shape">
+                <Tab fx:id="shapeTan" text="%Shape">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                                        <FlowPane fx:id="strokePane" hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
                                             <children>
                                                 <Label text="%StrokeColor" />
                                                 <fx:include fx:id="strokeColor" source="ControlColorSet.fxml" />
@@ -42,14 +42,30 @@ License:    Apache License Version 2.0
                                                 <ComboBox fx:id="strokeWidthSelector" editable="true" prefWidth="100.0" />
                                             </children>
                                         </FlowPane>
-                                        <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
-                                            <children>
-                                                <Label text="%AnchorColor" />
-                                                <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
-                                                <Label text="%Width" />
-                                                <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="100.0" />
-                                            </children>
-                                        </FlowPane>
+                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                                <Label text="%Anchor" />
+                                    <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+                                       <children>
+                                          <Label layoutX="10.0" layoutY="14.0" text="%Color" />
+                                                      <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
+                                                      <Label text="%Width" />
+                                                      <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="100.0" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+                                       <children>
+                                          <RadioButton fx:id="anchorRectRadio" mnemonicParsing="false" selected="true" text="%Rectangle">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="anchorShapeGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="anchorCircleRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Circle" toggleGroup="$anchorShapeGroup" />
+                                          <RadioButton fx:id="anchorNameRadio" layoutX="93.0" layoutY="10.0" mnemonicParsing="false" text="%Name" toggleGroup="$anchorShapeGroup" />
+                                       </children>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -59,7 +75,7 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab text="%View">
+                <Tab fx:id="viewTab" text="%View">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
@@ -126,7 +142,7 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab text="%Render">
+                <Tab fx:id="renderTab" text="%Render">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>

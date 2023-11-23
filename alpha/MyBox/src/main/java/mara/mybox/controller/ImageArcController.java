@@ -11,12 +11,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageRectangleController extends BaseShapeEditController {
+public class ImageArcController extends BaseShapeEditController {
 
     @FXML
     protected ControlRectangle rectController;
 
-    public ImageRectangleController() {
+    public ImageArcController() {
         baseTitle = message("Rectangle");
     }
 
@@ -56,13 +56,13 @@ public class ImageRectangleController extends BaseShapeEditController {
     /*
         static methods
      */
-    public static ImageRectangleController open(ImageEditorController parent) {
+    public static ImageArcController open(ImageEditorController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageRectangleController controller = (ImageRectangleController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageRectangleFxml, false);
+            ImageArcController controller = (ImageArcController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageArcFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

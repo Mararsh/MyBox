@@ -14,8 +14,8 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -27,9 +27,9 @@ public class ControlStroke extends BaseController {
     protected ShapeStyle style;
 
     @FXML
-    protected ControlColorSet colorController, anchorColorController;
+    protected ControlColorSet colorController, fillController;
     @FXML
-    protected ComboBox<String> widthSelector, limitSelector, anchorSizeSelector;
+    protected ComboBox<String> widthSelector, limitSelector;
     @FXML
     protected ToggleGroup joinGroup, capGroup;
     @FXML
@@ -38,7 +38,7 @@ public class ControlStroke extends BaseController {
     @FXML
     protected TextField arrayInput, offsetInput;
     @FXML
-    protected CheckBox dashCheck;
+    protected CheckBox dashCheck, fillCheck;
 
     protected void setParameters(BaseController parent) {
         try {
@@ -46,25 +46,12 @@ public class ControlStroke extends BaseController {
             baseName = parent.baseName;
             style = new ShapeStyle(baseName);
 
-            if (anchorColorController != null) {
-                anchorColorController.init(this, baseName + "AnchorColor", style.getAnchorColor());
-            }
-
             if (colorController != null) {
                 colorController.init(this, baseName + "Color", style.getStrokeColor());
             }
 
             if (widthSelector != null) {
                 setWidthList(200, (int) style.getStrokeWidth());
-            }
-
-            if (anchorSizeSelector != null) {
-                float s = UserConfig.getFloat(baseName + "AnchorSize", 10);
-                if (s < 0) {
-                    s = 10;
-                }
-                anchorSizeSelector.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-                anchorSizeSelector.setValue(s + "");
             }
 
             if (joinGroup != null) {
@@ -116,27 +103,17 @@ public class ControlStroke extends BaseController {
                 }
             }
 
+            if (fillCheck != null) {
+                fillCheck.setSelected(style.isIsFillColor());
+                fillController.init(this, baseName + "Fill", style.getFillColor());
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     protected ShapeStyle pickValues() {
-        if (anchorColorController != null) {
-            style.setAnchorColor(anchorColorController.color());
-        }
-        if (anchorSizeSelector != null) {
-            float v = -1;
-            try {
-                v = Float.parseFloat(anchorSizeSelector.getValue());
-            } catch (Exception e) {
-            }
-            if (v <= 0) {
-                popError(message("InvalidParameter") + ": " + message("AnchorSize"));
-                return null;
-            }
-            style.setAnchorSize(v);
-        }
         if (widthSelector != null) {
             float v = -1;
             try {
@@ -205,6 +182,10 @@ public class ControlStroke extends BaseController {
                 style.setDashOffset(v);
             }
         }
+        if (fillCheck != null) {
+            style.setIsFillColor(fillCheck.isSelected());
+            style.setFillColor(fillController.color());
+        }
 
         return style;
     }
@@ -229,6 +210,11 @@ public class ControlStroke extends BaseController {
         widthSelector.getItems().setAll(ws);
         widthSelector.setValue(initValue + "");
         isSettingValues = false;
+    }
+
+    @FXML
+    public void aboutStroke() {
+        openLink(HelpTools.strokeLink());
     }
 
 }

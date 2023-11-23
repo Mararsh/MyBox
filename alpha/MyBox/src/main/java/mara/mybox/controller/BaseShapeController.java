@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -41,14 +42,14 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
     }
 
     public void resetShapeOptions() {
-        showAnchors = UserConfig.getBoolean(baseName + "ImageShapeShowAnchor", true);
-        popItemMenu = UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true);
-        addPointWhenClick = UserConfig.getBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true);
-        String aShape = UserConfig.getString(baseName + "ImageShapeAnchorShape", "Rectangle");
+        showAnchors = UserConfig.getBoolean(baseName + "ShowAnchor", true);
+        popItemMenu = UserConfig.getBoolean(baseName + "ItemPopMenu", true);
+        addPointWhenClick = UserConfig.getBoolean(baseName + "AddPointWhenLeftClick", true);
+        String aShape = UserConfig.getString(baseName + "AnchorShape", "Rectangle");
         if ("Circle".equals(aShape)) {
             anchorShape = AnchorShape.Circle;
-        } else if ("Number".equals(aShape)) {
-            anchorShape = AnchorShape.Number;
+        } else if ("Name".equals(aShape)) {
+            anchorShape = AnchorShape.Name;
         } else {
             anchorShape = AnchorShape.Rectangle;
         }
@@ -60,11 +61,11 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
     public void initMaskControls() {
         try {
             if (anchorCheck != null) {
-                anchorCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeShowAnchor", true));
+                anchorCheck.setSelected(UserConfig.getBoolean(baseName + "ShowAnchor", true));
                 anchorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean(baseName + "ImageShapeShowAnchor", anchorCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ShowAnchor", anchorCheck.isSelected());
                         showAnchors = anchorCheck.isSelected();
                         setMaskAnchorsStyle();
                     }
@@ -72,35 +73,35 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
             }
 
             if (popAnchorMenuCheck != null) {
-                popAnchorMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
+                popAnchorMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ItemPopMenu", true));
                 popAnchorMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popAnchorMenuCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ItemPopMenu", popAnchorMenuCheck.isSelected());
                         popItemMenu = popAnchorMenuCheck.isSelected();
                     }
                 });
             }
 
             if (popLineMenuCheck != null) {
-                popLineMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
+                popLineMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ItemPopMenu", true));
                 popLineMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popLineMenuCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ItemPopMenu", popLineMenuCheck.isSelected());
                         popItemMenu = popLineMenuCheck.isSelected();
                     }
                 });
             }
 
             if (addPointCheck != null) {
-                addPointCheck.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true));
+                addPointCheck.setSelected(UserConfig.getBoolean(baseName + "AddPointWhenLeftClick", true));
                 addPointCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                         addPointWhenClick = addPointCheck.isSelected();
                         if (!isSettingValues) {
-                            UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", addPointCheck.isSelected());
+                            UserConfig.setBoolean(baseName + "AddPointWhenLeftClick", addPointCheck.isSelected());
                         }
                     }
                 });
@@ -156,6 +157,12 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
             MyBoxLog.debug(e);
             return false;
         }
+    }
+
+    @FXML
+    @Override
+    public void options() {
+        ImageShapeOptionsController.open(this, true);
     }
 
     @Override

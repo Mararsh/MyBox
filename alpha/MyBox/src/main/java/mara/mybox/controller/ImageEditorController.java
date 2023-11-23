@@ -117,7 +117,7 @@ public class ImageEditorController extends BaseImageController {
                 return false;
             }
             if (sourceFile == null) {
-                saveAsTmp();
+                saveAsAction();
                 return true;
             }
             imageChanged = false;
@@ -707,6 +707,12 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("StraightLine"), StyleTools.getIconImageView("iconLine.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageLineController.open(this);
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageRectangleController.open(this);
@@ -716,6 +722,30 @@ public class ImageEditorController extends BaseImageController {
             menu = new MenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageCircleController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Ellipse"), StyleTools.getIconImageView("iconEllipse.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageEllipseController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Polyline"), StyleTools.getIconImageView("iconPolyline.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagePolylineController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Polygon"), StyleTools.getIconImageView("iconStar.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagePolygonController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Arc"), StyleTools.getIconImageView("iconArc.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageArcController.open(this);
             });
             items.add(menu);
 

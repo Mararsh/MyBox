@@ -107,7 +107,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 type = ScopeType.Whole;
                 scope.setScopeType(type);
             }
-            UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true);
+            UserConfig.setBoolean(baseName + "AddPointWhenLeftClick", true);
             switch (type) {
                 case Whole:
                     hideLeftPane();

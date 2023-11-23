@@ -15,7 +15,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -178,29 +177,7 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
-                                                <Label text="%Center" />
-                                                <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
-                                                   <children>
-                                                      <Label text="x">
-                                                         <FlowPane.margin>
-                                                            <Insets />
-                                                         </FlowPane.margin>
-                                                      </Label>
-                                                      <TextField fx:id="circleXInput" prefWidth="100.0" />
-                                                   </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
-                                                   <children>
-                                                      <Label text="y" />
-                                                      <TextField fx:id="circleYInput" prefWidth="100.0" />
-                                                   </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
-                                                   <children>
-                                                      <Label text="%Radius" />
-                                                      <TextField fx:id="circleRadiusInput" prefWidth="100.0" />
-                                                   </children>
-                                                </FlowPane>
+                                                <fx:include fx:id="circle" source="ControlCircle.fxml" />
                                              </children>
                                           </VBox>
                                        </content>

@@ -83,7 +83,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     public SimpleBooleanProperty maskShapeDataChanged = new SimpleBooleanProperty(false);
 
     public enum AnchorShape {
-        Rectangle, Circle, Number
+        Rectangle, Circle, Name
     }
     @FXML
     protected Rectangle maskRectangle;
@@ -115,7 +115,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     public Color strokeColor() {
         try {
             return shapeStyle == null
-                    ? Color.web(UserConfig.getString("StrokeColor", ShapeStyle.DefaultStrokeColor))
+                    ? Color.web(UserConfig.getString(baseName + "StrokeColor", ShapeStyle.DefaultStrokeColor))
                     : shapeStyle.getStrokeColor();
         } catch (Exception e) {
             return Color.web(ShapeStyle.DefaultStrokeColor);
@@ -123,7 +123,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     }
 
     public float strokeWidth() {
-        float v = shapeStyle == null ? UserConfig.getFloat("StrokeWidth", 2)
+        float v = shapeStyle == null ? UserConfig.getFloat(baseName + "StrokeWidth", 2)
                 : shapeStyle.getStrokeWidth() * (float) viewXRatio();
         if (v < 0) {
             v = 2;
@@ -134,7 +134,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     public Color anchorColor() {
         try {
             return shapeStyle == null
-                    ? Color.web(UserConfig.getString("AnchorColor", ShapeStyle.DefaultAnchorColor))
+                    ? Color.web(UserConfig.getString(baseName + "AnchorColor", ShapeStyle.DefaultAnchorColor))
                     : shapeStyle.getAnchorColor();
         } catch (Exception e) {
             return Color.web(ShapeStyle.DefaultAnchorColor);
@@ -149,7 +149,6 @@ public abstract class BaseShapeController_Base extends BaseImageController {
         }
         return v;
     }
-
 
     /*
         shapes
@@ -236,7 +235,6 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 }
             } else {
                 shape.setFill(Color.TRANSPARENT);
-//                shape.setStrokeLineCap(StrokeLineCap.BUTT);
                 shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
             }
             if (isPickingColor) {
@@ -432,7 +430,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             double x, double y, Cursor cursor) {
         try {
             Node anchor;
-            if (anchorShape == AnchorShape.Number) {
+            if (anchorShape == AnchorShape.Name) {
                 Text text = new Text(name == null || name.isBlank() ? "p" + index : name);
                 text.setX(x - anchorSize() * 0.5);
                 text.setY(y);
@@ -539,21 +537,11 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 items.add(menu);
             }
 
-            CheckMenuItem popMenuItem = new CheckMenuItem(message("PopAnchorMenu"),
-                    StyleTools.getIconImageView("iconShape.png"));
-            popMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
-            popMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    if (popAnchorMenuCheck != null) {
-                        popAnchorMenuCheck.setSelected(popMenuItem.isSelected());
-                    } else {
-                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popMenuItem.isSelected());
-                        popItemMenu = popMenuItem.isSelected();
-                    }
-                }
-            });
-            items.add(popMenuItem);
+            items.add(anchorShowItem());
+
+            items.add(anchorMenuItem());
+
+            items.add(optionsMenu());
 
             items.add(new SeparatorMenuItem());
 
@@ -563,6 +551,56 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public MenuItem anchorShowItem() {
+        CheckMenuItem anchorShowItem = new CheckMenuItem(message("ShowAnchors"), StyleTools.getIconImageView("iconAnchor.png"));
+        anchorShowItem.setSelected(UserConfig.getBoolean(baseName + "ShowAnchor", true));
+        anchorShowItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                if (anchorCheck != null) {
+                    anchorCheck.setSelected(anchorShowItem.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "ShowAnchor", anchorShowItem.isSelected());
+                    showAnchors = anchorShowItem.isSelected();
+                    setMaskAnchorsStyle();
+                }
+            }
+        });
+        return anchorShowItem;
+    }
+
+    public MenuItem anchorMenuItem() {
+        CheckMenuItem anchorMenuItem = new CheckMenuItem(
+                isMaskPolylinesShown() ? message("PopLineMenu") : message("PopAnchorMenu"),
+                StyleTools.getIconImageView("iconShape.png"));
+        anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ItemPopMenu", true));
+        anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                if (popAnchorMenuCheck != null) {
+                    popAnchorMenuCheck.setSelected(anchorMenuItem.isSelected());
+                } else if (popLineMenuCheck != null) {
+                    popLineMenuCheck.setSelected(anchorMenuItem.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "ItemPopMenu", anchorMenuItem.isSelected());
+                    popItemMenu = anchorMenuItem.isSelected();
+                }
+            }
+        });
+        return anchorMenuItem;
+    }
+
+    public MenuItem optionsMenu() {
+        MenuItem menu = new MenuItem(message("Options"), StyleTools.getIconImageView("iconOptions.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                options();
+            }
+        });
+        return menu;
     }
 
     public void moveMaskAnchor(int index, String name, DoublePoint p) {
@@ -1500,23 +1538,9 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             });
             items.add(menu);
 
-            CheckMenuItem popMenuItem = new CheckMenuItem(message("PopLineMenu"),
-                    StyleTools.getIconImageView("iconShape.png"));
-            popMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
-            popMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    if (popAnchorMenuCheck != null) {
-                        popAnchorMenuCheck.setSelected(popMenuItem.isSelected());
-                    } else if (popLineMenuCheck != null) {
-                        popLineMenuCheck.setSelected(popMenuItem.isSelected());
-                    } else {
-                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", popMenuItem.isSelected());
-                        popItemMenu = popMenuItem.isSelected();
-                    }
-                }
-            });
-            items.add(popMenuItem);
+            items.add(anchorShowItem());
+
+            items.add(anchorMenuItem());
 
             items.add(new SeparatorMenuItem());
 

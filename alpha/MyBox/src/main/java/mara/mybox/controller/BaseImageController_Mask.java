@@ -10,6 +10,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
 import mara.mybox.data.DoublePoint;
@@ -216,11 +217,21 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
             xyText.setText(s);
             xyText.setX(event.getX() + 10);
             xyText.setY(event.getY());
+            xyText.setFill(xyColor());
+            xyText.setFont(xyFont());
             return p;
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
+    }
+
+    public Color xyColor() {
+        return rulerColor();
+    }
+
+    public Font xyFont() {
+        return new Font(12);
     }
 
     public String pickingColorTips() {
@@ -498,13 +509,6 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
                 maskPane.getChildren().remove(node);
                 node = null;
             }
-        }
-    }
-
-    protected void checkCoordinate() {
-        if (xyText != null) {
-            xyText.setText("");
-            xyText.setFill(rulerColor());
         }
     }
 

@@ -289,7 +289,6 @@ public class BaseImageController extends BaseImageController_Actions {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
-                        checkCoordinate();
                     }
                 });
             }

@@ -30,6 +30,9 @@ public class ImagePolylinesController extends BaseShapeEditController {
             super.initMore();
 
             operation = "Polylines";
+            showAnchors = false;
+            addPointWhenClick = false;
+            popShapeMenu = false;
 
             linesController.tableData.addListener(new ListChangeListener<List<DoublePoint>>() {
                 @Override
@@ -41,14 +44,26 @@ public class ImagePolylinesController extends BaseShapeEditController {
                         return;
                     }
                     maskPolylinesData.setLines(linesController.getLines());
-                    isSettingValues = true;
-                    okAction();
-                    isSettingValues = false;
+                    drawShape();
                 }
             });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void initShape() {
+        try {
+            popItemMenu = popLineMenuCheck.isSelected();
+
+            maskPolylinesData = null;
+            showMaskPolylines();
+
+            drawShape();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
@@ -63,28 +78,6 @@ public class ImagePolylinesController extends BaseShapeEditController {
             linesController.loadList(maskPolylinesData.getLines());
         } else {
             linesController.loadList(null);
-        }
-    }
-
-    @Override
-    public boolean afterImageLoaded() {
-        try {
-            if (!super.afterImageLoaded() || image == null) {
-                return false;
-            }
-            showAnchors = false;
-            popItemMenu = popLineMenuCheck.isSelected();
-            addPointWhenClick = false;
-            popShapeMenu = false;
-            supportPath = false;
-
-            maskPolylinesData = null;
-            showMaskPolylines();
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
         }
     }
 

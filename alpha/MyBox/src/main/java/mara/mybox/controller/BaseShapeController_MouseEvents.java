@@ -11,9 +11,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
@@ -102,87 +100,11 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
                 items.add(new SeparatorMenuItem());
             }
 
-            Menu anchorStyleMenu = new Menu(message("Anchor"), StyleTools.getIconImageView("iconAnchor.png"));
-            items.add(anchorStyleMenu);
+            items.add(anchorShowItem());
 
-            CheckMenuItem anchorShowItem = new CheckMenuItem(message("ShowAnchors"), StyleTools.getIconImageView("iconAnchor.png"));
-            anchorShowItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeShowAnchor", true));
-            anchorShowItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    if (anchorCheck != null) {
-                        anchorCheck.setSelected(anchorShowItem.isSelected());
-                    } else {
-                        UserConfig.setBoolean(baseName + "ImageShapeShowAnchor", anchorShowItem.isSelected());
-                        showAnchors = anchorShowItem.isSelected();
-                        setMaskAnchorsStyle();
-                    }
-                }
-            });
-            anchorStyleMenu.getItems().add(anchorShowItem);
+            items.add(anchorMenuItem());
 
-            CheckMenuItem anchorMenuItem = new CheckMenuItem(
-                    isMaskPolylinesShown() ? message("PopLineMenu") : message("PopAnchorMenu"),
-                    StyleTools.getIconImageView("iconShape.png"));
-            anchorMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeItemPopMenu", true));
-            anchorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    if (popAnchorMenuCheck != null) {
-                        popAnchorMenuCheck.setSelected(anchorMenuItem.isSelected());
-                    } else if (popLineMenuCheck != null) {
-                        popLineMenuCheck.setSelected(anchorMenuItem.isSelected());
-                    } else {
-                        UserConfig.setBoolean(baseName + "ImageShapeItemPopMenu", anchorMenuItem.isSelected());
-                        popItemMenu = anchorMenuItem.isSelected();
-                    }
-                }
-            });
-            anchorStyleMenu.getItems().add(anchorMenuItem);
-
-            anchorStyleMenu.getItems().add(new SeparatorMenuItem());
-
-            ToggleGroup anchorGroup = new ToggleGroup();
-            String current = UserConfig.getString(baseName + "ImageShapeAnchorShape", "Rectangle");
-
-            RadioMenuItem rectItem = new RadioMenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
-            rectItem.setSelected(!"Circle".equals(current) && !"Text".equals(current));
-            rectItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    UserConfig.setString(baseName + "ImageShapeAnchorShape", "Rectangle");
-                    anchorShape = AnchorShape.Rectangle;
-                    redrawMaskShape();
-                }
-            });
-            rectItem.setToggleGroup(anchorGroup);
-            anchorStyleMenu.getItems().add(rectItem);
-
-            RadioMenuItem circleItem = new RadioMenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
-            circleItem.setSelected("Circle".equals(current));
-            circleItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    UserConfig.setString(baseName + "ImageShapeAnchorShape", "Circle");
-                    anchorShape = AnchorShape.Circle;
-                    redrawMaskShape();
-                }
-            });
-            circleItem.setToggleGroup(anchorGroup);
-            anchorStyleMenu.getItems().add(circleItem);
-
-            RadioMenuItem numberItem = new RadioMenuItem(message("Name"), StyleTools.getIconImageView("iconNumber.png"));
-            numberItem.setSelected("Number".equals(current));
-            numberItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    UserConfig.setString(baseName + "ImageShapeAnchorShape", "Number");
-                    anchorShape = AnchorShape.Number;
-                    redrawMaskShape();
-                }
-            });
-            numberItem.setToggleGroup(anchorGroup);
-            anchorStyleMenu.getItems().add(numberItem);
+            items.add(optionsMenu());
 
             items.add(new SeparatorMenuItem());
 
@@ -252,14 +174,14 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
 
             if (isMaskPolygonShown() || isMaskPolylineShown()) {
                 CheckMenuItem pointMenuItem = new CheckMenuItem(message("AddPointWhenLeftClick"), StyleTools.getIconImageView("iconNewItem.png"));
-                pointMenuItem.setSelected(UserConfig.getBoolean(baseName + "ImageShapeAddPointWhenLeftClick", true));
+                pointMenuItem.setSelected(UserConfig.getBoolean(baseName + "AddPointWhenLeftClick", true));
                 pointMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent cevent) {
                         if (addPointCheck != null) {
                             addPointCheck.setSelected(pointMenuItem.isSelected());
                         } else {
-                            UserConfig.setBoolean(baseName + "ImageShapeAddPointWhenLeftClick", pointMenuItem.isSelected());
+                            UserConfig.setBoolean(baseName + "AddPointWhenLeftClick", pointMenuItem.isSelected());
                             addPointWhenClick = pointMenuItem.isSelected();
                         }
                     }

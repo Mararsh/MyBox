@@ -53,9 +53,9 @@ public class ShapeStyle {
         } catch (Exception e) {
             anchorColor = Color.web(DefaultAnchorColor);
         }
-        strokeWidth = UserConfig.getFloat(name + "StrokeWidth", 2);
+        strokeWidth = UserConfig.getFloat(name + "StrokeWidth", 10);
         if (strokeWidth < 0) {
-            strokeWidth = 2f;
+            strokeWidth = 10f;
         }
         strokeOpacity = UserConfig.getFloat(name + "StrokeOpacity", 1);
         if (strokeOpacity < 0) {

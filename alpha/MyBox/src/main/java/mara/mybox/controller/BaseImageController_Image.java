@@ -17,7 +17,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class BaseImageController_Image extends BaseImageController_MouseEvents {
-
+    
     @Override
     public void sourceFileChanged(File file) {
         if (file == null) {
@@ -27,19 +27,19 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         framesNumber = 0;
         loadImageFile(file, loadWidth);
     }
-
+    
     public void loadImageFile(File file) {
         loadImageFile(file, loadWidth);
     }
-
+    
     public void loadImageFile(File file, int width) {
         loadImage(file, false, width, frameIndex);
     }
-
+    
     public void loadImageFile(File file, boolean onlyInformation) {
         loadImage(file, onlyInformation, loadWidth, frameIndex);
     }
-
+    
     public void loadImageFile(File file, int width, int index) {
         loadImage(file, false, width, index);
     }
@@ -54,7 +54,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         loadTask = new SingletonTask<Void>(this) {
             private ImageInformation loadedInfo;
-
+            
             @Override
             protected boolean handle() {
                 if (framesNumber <= 0) {
@@ -78,7 +78,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 error = loadedInfo.getError();
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 recordFileOpened(file);
@@ -95,22 +95,22 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                     popError(error);
                 }
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
                 loadTask = null;
             }
-
+            
         };
         start(loadTask);
     }
-
+    
     public void askSample(ImageInformation imageInfo) {
         ImageTooLargeController controller = (ImageTooLargeController) openChildStage(Fxmls.ImageTooLargeFxml, true);
         controller.setParameters((BaseImageController) this, imageInfo);
     }
-
+    
     public void loadImage(File file, ImageInformation info) {
         if (info == null) {
             loadImageFile(file);
@@ -121,15 +121,15 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
         loadTask = new SingletonTask<Void>(this) {
-
+            
             private Image thumbLoaded;
-
+            
             @Override
             protected boolean handle() {
                 thumbLoaded = info.loadThumbnail(loadWidth);
                 return thumbLoaded != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 image = thumbLoaded;
@@ -138,7 +138,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 afterImageLoaded();
                 setImageChanged(exist);
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -147,7 +147,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         };
         loadingController = start(loadTask);
     }
-
+    
     public void loadImageInfo(ImageInformation info) {
         if (info == null) {
             loadImageFile(sourceFile);
@@ -159,7 +159,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         loadImage(info.getFile(), info);
     }
-
+    
     public void loadRegion(ImageInformation info) {
         if (info == null) {
             loadImageFile(sourceFile);
@@ -173,18 +173,18 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         loadTask = new SingletonTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 image = info.loadThumbnail(loadWidth);
                 return image != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 loadImage(image);
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -193,14 +193,14 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         };
         loadingController = start(loadTask);
     }
-
+    
     public void loadImage(Image inImage) {
         sourceFile = null;
         imageInformation = null;
         image = inImage;
         afterImageLoaded();
     }
-
+    
     public void loadImage(File sourceFile, ImageInformation imageInformation,
             Image image, boolean changed) {
         this.sourceFile = sourceFile;
@@ -209,7 +209,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         afterImageLoaded();
         setImageChanged(changed);
     }
-
+    
     public void loadImage(Image inImage, int maxWidth) {
         sourceFile = null;
         imageInformation = null;
@@ -217,14 +217,14 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         loadWidth = maxWidth;
         afterImageLoaded();
     }
-
+    
     public void loadFrame(int index) {
         if (index == frameIndex) {
             return;
         }
         loadImage(sourceFile, false, loadWidth, index);
     }
-
+    
     public void afterInfoLoaded() {
         if (infoButton != null) {
             infoButton.setDisable(imageInformation == null);
@@ -250,11 +250,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         checkSystemMethodButton(file);
     }
-
+    
     public boolean afterImageLoaded() {
         try {
             afterInfoLoaded();
-
+            
             if (imageInformation != null) {
                 frameIndex = imageInformation.getIndex();
                 if (imageInformation.getImageFileInformation() != null) {
@@ -267,7 +267,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 frameIndex = 0;
                 framesNumber = 0;
             }
-
+            
             if (image != null) {
                 setZoomStep(image);
             }
@@ -279,25 +279,27 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             if (image == null) {
                 return true;
             }
-
+            
             fitSize();
-
+            
             if (imageInformation == null) {
                 setImageChanged(true);
             } else {
                 setImageChanged(imageInformation.isIsScaled());
             }
-
+            
             drawMaskRulers();
-            checkCoordinate();
-
+            if (xyText != null) {
+                xyText.setText("");
+            }
+            
             if (pickColorCheck != null) {
                 isPickingColor = pickColorCheck.isSelected();
             } else {
                 isPickingColor = false;
             }
             checkPickingColor();
-
+            
             notifyLoad();
             return true;
         } catch (Exception e) {
@@ -309,7 +311,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return false;
         }
     }
-
+    
     public void updateImage(Image image) {
         try {
             imageView.setImage(image);
@@ -320,12 +322,12 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             MyBoxLog.debug(e);
         }
     }
-
+    
     protected void setLoadWidth(int width) {
         loadWidth = width;
         setLoadWidth();
     }
-
+    
     protected void setLoadWidth() {
         if (isSettingValues) {
             return;
@@ -345,11 +347,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             setImageChanged(false);
         }
     }
-
+    
     protected boolean canPickColor() {
         return imageView != null && imageView.getImage() != null
                 && !(this instanceof ImageSplitController)
                 && !(this instanceof ImageSampleController);
     }
-
+    
 }

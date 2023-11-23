@@ -689,11 +689,11 @@ public class HelpTools {
     }
 
     public static String derbyLink() {
-        return "https://db.apache.org/derby/docs/10.15/ref/index.html";
+        return "https://db.apache.org/derby/docs/10.17/ref/index.html";
     }
 
     public static String sqlLink() {
-        return "https://db.apache.org/derby/docs/10.15/ref/crefsqlj18919.html";
+        return "https://db.apache.org/derby/docs/10.17/ref/crefsqlj18919.html";
     }
 
     public static String javaLink() {
@@ -818,6 +818,10 @@ public class HelpTools {
 
     public static String jexlRefLink() {
         return "https://commons.apache.org/proper/commons-jexl/reference/index.html";
+    }
+
+    public static String strokeLink() {
+        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/Shape.html";
     }
 
     public static List<MenuItem> javaHelps() {

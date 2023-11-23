@@ -132,7 +132,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                     return;
                 }
                 if (error != null && !error.isBlank()) {
-                    //https://db.apache.org/derby/docs/10.15/ref/rrefsqljvarsamp.html#rrefsqljvarsamp
+                    //https://db.apache.org/derby/docs/10.17/ref/rrefsqljvarsamp.html#rrefsqljvarsamp
                     if (error.contains("java.sql.SQLDataException: 22003 : [0] DOUBLE")) {
                         alertError(error + "\n\n" + message("DataOverflow"));
                     } else {

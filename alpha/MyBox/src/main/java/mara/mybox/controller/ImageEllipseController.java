@@ -11,13 +11,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageRectangleController extends BaseShapeEditController {
+public class ImageEllipseController extends BaseShapeEditController {
 
     @FXML
-    protected ControlRectangle rectController;
+    protected ControlEllipse ellipseController;
 
-    public ImageRectangleController() {
-        baseTitle = message("Rectangle");
+    public ImageEllipseController() {
+        baseTitle = message("Ellipse");
     }
 
     @Override
@@ -25,8 +25,8 @@ public class ImageRectangleController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Rectangle";
-            rectController.setParameters(this);
+            operation = "Ellipse";
+            ellipseController.setParameters(this);
 
             anchorCheck.setSelected(true);
             showAnchors = true;
@@ -39,13 +39,13 @@ public class ImageRectangleController extends BaseShapeEditController {
 
     @Override
     public boolean pickShape() {
-        return rectController.pickValues();
+        return ellipseController.pickValues();
     }
 
     @Override
     public void initShape() {
         try {
-            rectController.initShape();
+            ellipseController.initShape();
 
             goShape();
         } catch (Exception e) {
@@ -56,13 +56,13 @@ public class ImageRectangleController extends BaseShapeEditController {
     /*
         static methods
      */
-    public static ImageRectangleController open(ImageEditorController parent) {
+    public static ImageEllipseController open(ImageEditorController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageRectangleController controller = (ImageRectangleController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageRectangleFxml, false);
+            ImageEllipseController controller = (ImageEllipseController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageEllipseFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

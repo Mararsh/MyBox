@@ -356,7 +356,7 @@ public abstract class ControlShapeOptions extends BaseController {
             }
 
             if (anchorColorController != null) {
-                anchorColorController.init(this, interfaceName + "AnchorColor", Color.web(DefaultAnchorColor));
+                anchorColorController.init(this, baseName + "AnchorColor", Color.web(DefaultAnchorColor));
                 anchorColorController.initColor(style.getAnchorColor());
                 anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                     @Override

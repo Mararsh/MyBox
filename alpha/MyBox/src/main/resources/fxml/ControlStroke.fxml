@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
@@ -17,22 +18,6 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlStroke">
     <children>
-      <VBox layoutX="10.0" layoutY="97.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%AnchorColor" wrapText="true" />
-                  <fx:include fx:id="anchorColor" source="ControlColorSet.fxml" />
-               </children>
-            </FlowPane>
-            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%Width" wrapText="true" />
-                  <ComboBox fx:id="anchorSizeSelector" editable="true" prefWidth="80.0" />
-               </children>
-            </FlowPane>
-         </children>
-      </VBox>
       <VBox layoutX="10.0" layoutY="268.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
             <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
@@ -47,6 +32,16 @@ License:    Apache License Version 2.0
                             <ComboBox fx:id="widthSelector" editable="true" prefWidth="80.0" />
                         </children>
                     </FlowPane>
+         </children>
+      </VBox>
+      <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%Fill" />
+                  <fx:include fx:id="fill" source="ControlColorSet.fxml" />
+               </children>
+            </FlowPane>
          </children>
       </VBox>
       <VBox layoutX="10.0" layoutY="353.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -104,5 +99,6 @@ License:    Apache License Version 2.0
             </FlowPane>
          </children>
       </VBox>
+      <Hyperlink onAction="#aboutStroke" text="%AboutStroke" />
     </children>
 </VBox>

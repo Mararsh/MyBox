@@ -59,7 +59,7 @@ public class BaseShapeEditController extends BaseImageEditController {
             }
 
             initShape();
-
+            fitSize();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -127,8 +127,10 @@ public class BaseShapeEditController extends BaseImageEditController {
                     return;
                 }
                 imageView.setImage(newImage);
+                isSettingValues = true;
                 drawMaskShape();
                 hideMaskShape();
+                isSettingValues = false;
             }
 
         };
@@ -142,6 +144,12 @@ public class BaseShapeEditController extends BaseImageEditController {
     @Override
     protected void handleImage() {
         handledImage = imageView.getImage();
+    }
+
+    @FXML
+    @Override
+    public void options() {
+        ImageShapeOptionsController.open(this, false);
     }
 
 }
