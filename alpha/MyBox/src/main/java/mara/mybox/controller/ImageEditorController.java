@@ -707,6 +707,12 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Graffiti"), StyleTools.getIconImageView("iconPolylines.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagePolylinesController.open(this);
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("StraightLine"), StyleTools.getIconImageView("iconLine.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageLineController.open(this);
@@ -743,15 +749,27 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Arc"), StyleTools.getIconImageView("iconArc.png"));
+            menu = new MenuItem(message("ArcCurve"), StyleTools.getIconImageView("iconArc.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageArcController.open(this);
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Polylines"), StyleTools.getIconImageView("iconPolylines.png"));
+            menu = new MenuItem(message("QuadraticCurve"), StyleTools.getIconImageView("iconQuadratic.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImagePolylinesController.open(this);
+                ImageQuadraticController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("CubicCurve"), StyleTools.getIconImageView("iconCubic.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageCubicController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SVGPath"), StyleTools.getIconImageView("iconSVG.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageSVGPathController.open(this);
             });
             items.add(menu);
 

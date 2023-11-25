@@ -159,7 +159,7 @@ License:    Apache License Version 2.0
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Ellipse" VBox.vgrow="ALWAYS" />
                         <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                           <tabs>
-                            <Tab text="%Shape">
+                            <Tab text="%Values">
                                  <content>
                                     <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                        <content>

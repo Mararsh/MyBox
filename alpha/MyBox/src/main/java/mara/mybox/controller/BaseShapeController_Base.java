@@ -541,6 +541,10 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
             items.add(anchorMenuItem());
 
+            if (isMaskPolygonShown() || isMaskPolylineShown()) {
+                items.add(addPointMenu());
+            }
+
             items.add(optionsMenu());
 
             items.add(new SeparatorMenuItem());
@@ -601,6 +605,23 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             }
         });
         return menu;
+    }
+
+    public MenuItem addPointMenu() {
+        CheckMenuItem pointMenuItem = new CheckMenuItem(message("AddPointWhenLeftClick"), StyleTools.getIconImageView("iconNewItem.png"));
+        pointMenuItem.setSelected(UserConfig.getBoolean(baseName + "AddPointWhenLeftClick", true));
+        pointMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                if (addPointCheck != null) {
+                    addPointCheck.setSelected(pointMenuItem.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "AddPointWhenLeftClick", pointMenuItem.isSelected());
+                    addPointWhenClick = pointMenuItem.isSelected();
+                }
+            }
+        });
+        return pointMenuItem;
     }
 
     public void moveMaskAnchor(int index, String name, DoublePoint p) {

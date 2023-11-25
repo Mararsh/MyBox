@@ -4,6 +4,8 @@ import java.awt.BasicStroke;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -24,6 +26,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlStroke extends BaseController {
 
+    protected BaseShapeController shapeController;
     protected ShapeStyle style;
 
     @FXML
@@ -40,18 +43,28 @@ public class ControlStroke extends BaseController {
     @FXML
     protected CheckBox dashCheck, fillCheck;
 
-    protected void setParameters(BaseController parent) {
+    protected void setParameters(BaseShapeController parent) {
         try {
-            parentController = parent;
+            if (parent == null) {
+                return;
+            }
+            shapeController = parent;
             baseName = parent.baseName;
             style = new ShapeStyle(baseName);
+
+            shapeController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    setWidthList();
+                }
+            });
 
             if (colorController != null) {
                 colorController.init(this, baseName + "Color", style.getStrokeColor());
             }
 
             if (widthSelector != null) {
-                setWidthList(200, (int) style.getStrokeWidth());
+                widthSelector.setValue((int) style.getStrokeWidth() + "");
             }
 
             if (joinGroup != null) {
@@ -111,6 +124,30 @@ public class ControlStroke extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    protected void setWidthList() {
+        if (widthSelector == null || shapeController == null) {
+            return;
+        }
+        List<String> ws = new ArrayList<>();
+        ws.addAll(Arrays.asList("3", "1", "2", "5", "8", "10", "15", "25", "30",
+                "50", "80", "100", "150", "200", "300", "500"));
+        int max = (int) shapeController.imageView.getImage().getWidth();
+        int initValue = (int) style.getStrokeWidth();
+        int step = max / 10;
+        for (int w = 10; w < max; w += step) {
+            if (!ws.contains(w + "")) {
+                ws.add(0, w + "");
+            }
+        }
+        if (!ws.contains(initValue + "")) {
+            ws.add(0, initValue + "");
+        }
+        isSettingValues = true;
+        widthSelector.getItems().setAll(ws);
+        widthSelector.setValue(initValue + "");
+        isSettingValues = false;
     }
 
     protected ShapeStyle pickValues() {
@@ -188,28 +225,6 @@ public class ControlStroke extends BaseController {
         }
 
         return style;
-    }
-
-    protected void setWidthList(int max, int initValue) {
-        if (widthSelector == null || max <= 0 || initValue <= 0) {
-            return;
-        }
-        List<String> ws = new ArrayList<>();
-        ws.addAll(Arrays.asList("3", "1", "2", "5", "8", "10", "15", "25", "30",
-                "50", "80", "100", "150", "200", "300", "500"));
-        int step = max / 10;
-        for (int w = 10; w < max; w += step) {
-            if (!ws.contains(w + "")) {
-                ws.add(0, w + "");
-            }
-        }
-        if (!ws.contains(initValue + "")) {
-            ws.add(0, initValue + "");
-        }
-        isSettingValues = true;
-        widthSelector.getItems().setAll(ws);
-        widthSelector.setValue(initValue + "");
-        isSettingValues = false;
     }
 
     @FXML

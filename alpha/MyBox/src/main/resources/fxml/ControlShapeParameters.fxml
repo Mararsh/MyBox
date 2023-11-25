@@ -17,23 +17,23 @@
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlShapeParameters">
     <children>
-      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-         <content>
-            <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" spacing="2.0">
-               <children>
-                  <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconGo.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </VBox>
-         </content>
-      </ScrollPane>
+        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" spacing="2.0">
+                    <children>
+                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconGo.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab text="circle">
@@ -104,12 +104,12 @@
                                         <TextField fx:id="rectHeightInput" prefWidth="100.0" />
                                     </children>
                                 </FlowPane>
-                        <FlowPane fx:id="rectArcPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
-                           <children>
-                              <Label text="%Arc" />
-                              <ComboBox fx:id="roundSizeSelector" editable="true" prefWidth="90.0" />
-                           </children>
-                        </FlowPane>
+                                <FlowPane fx:id="rectArcPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                                    <children>
+                                        <Label text="%Arc" />
+                                        <ComboBox fx:id="roundSizeSelector" editable="true" prefWidth="90.0" />
+                                    </children>
+                                </FlowPane>
                             </children>
                         </VBox>
                     </content>
@@ -211,7 +211,7 @@
                         </VBox>
                     </content>
                 </Tab>
-                <Tab text="quadraic">
+                <Tab text="quadratic">
                     <content>
                         <VBox fx:id="quadraticBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                             <children>
@@ -391,31 +391,31 @@
                                         <TextField fx:id="arcExtentAngleInput" prefWidth="100.0" />
                                     </children>
                                 </FlowPane>
-                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="175.0" minHeight="-Infinity" vgap="5.0">
-                           <children>
-                              <Label text="%Type" />
-                              <RadioButton fx:id="arcOpenRadio" mnemonicParsing="false" selected="true" text="%Open">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="arcType" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <RadioButton fx:id="arcChordRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="%ChordClose" toggleGroup="$arcType" />
-                              <RadioButton fx:id="arcPieRadio" layoutX="137.0" layoutY="10.0" mnemonicParsing="false" text="%PieClose" toggleGroup="$arcType" />
-                           </children>
-                        </FlowPane>
+                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="175.0" minHeight="-Infinity" vgap="5.0">
+                                    <children>
+                                        <Label text="%Type" />
+                                        <RadioButton fx:id="arcOpenRadio" mnemonicParsing="false" selected="true" text="%Open">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="arcType" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="arcChordRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="%ChordClose" toggleGroup="$arcType" />
+                                        <RadioButton fx:id="arcPieRadio" layoutX="137.0" layoutY="10.0" mnemonicParsing="false" text="%PieClose" toggleGroup="$arcType" />
+                                    </children>
+                                </FlowPane>
                             </children>
                         </VBox>
                     </content>
                 </Tab>
-            <Tab text="path">
-               <content>
-                  <VBox fx:id="pathBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                     <children>
-                        <fx:include fx:id="path" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPath2D.fxml" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
+                <Tab text="path">
+                    <content>
+                        <VBox fx:id="pathBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                            <children>
+                                <fx:include fx:id="path" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPath2D.fxml" VBox.vgrow="ALWAYS" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
             </tabs>
         </TabPane>
     </children>

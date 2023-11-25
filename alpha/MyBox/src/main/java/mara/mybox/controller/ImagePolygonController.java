@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -29,22 +27,28 @@ public class ImagePolygonController extends BaseShapeEditController {
 
             operation = "Polygon";
 
-            pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
-                @Override
-                public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
-                    if (isSettingValues
-                            || maskPolylineData == null
-                            || pointsController.isSettingValues
-                            || pointsController.isSettingTable) {
-                        return;
-                    }
-                    maskPolygonData.setAll(pointsController.getPoints());
-                    drawShape();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setInputs() {
+        if (maskPolygonData != null) {
+            pointsController.loadList(maskPolygonData.getPoints());
+        } else {
+            pointsController.loadList(null);
+        }
+    }
+
+    @Override
+    public boolean pickShape() {
+        try {
+            maskPolygonData.setAll(pointsController.getPoints());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -66,18 +70,15 @@ public class ImagePolygonController extends BaseShapeEditController {
         }
     }
 
+    @FXML
     @Override
-    public void maskShapeChanged() {
-        if (isSettingValues
-                || pointsController.isSettingValues
-                || pointsController.isSettingTable) {
-            return;
+    public boolean withdrawAction() {
+        if (imageView == null || imageView.getImage() == null) {
+            return false;
         }
-        if (maskPolygonData != null) {
-            pointsController.loadList(maskPolygonData.getPoints());
-        } else {
-            pointsController.loadList(null);
-        }
+        pointsController.removeLastItem();
+        goShape();
+        return true;
     }
 
     /*

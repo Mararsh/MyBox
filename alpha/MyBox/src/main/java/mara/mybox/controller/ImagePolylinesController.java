@@ -1,11 +1,7 @@
 package mara.mybox.controller;
 
-import java.util.List;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -21,7 +17,7 @@ public class ImagePolylinesController extends BaseShapeEditController {
     protected ControlLines linesController;
 
     public ImagePolylinesController() {
-        baseTitle = message("Polylines");
+        baseTitle = message("Graffiti");
     }
 
     @Override
@@ -29,27 +25,33 @@ public class ImagePolylinesController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Polylines";
+            operation = "Graffiti";
             showAnchors = false;
             addPointWhenClick = false;
             popShapeMenu = false;
 
-            linesController.tableData.addListener(new ListChangeListener<List<DoublePoint>>() {
-                @Override
-                public void onChanged(ListChangeListener.Change<? extends List<DoublePoint>> c) {
-                    if (isSettingValues
-                            || maskPolylinesData == null
-                            || linesController.isSettingValues
-                            || linesController.isSettingTable) {
-                        return;
-                    }
-                    maskPolylinesData.setLines(linesController.getLines());
-                    drawShape();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setInputs() {
+        if (maskPolylinesData != null) {
+            linesController.loadList(maskPolylinesData.getLines());
+        } else {
+            linesController.loadList(null);
+        }
+    }
+
+    @Override
+    public boolean pickShape() {
+        try {
+            maskPolylinesData.setLines(linesController.getLines());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -67,20 +69,6 @@ public class ImagePolylinesController extends BaseShapeEditController {
         }
     }
 
-    @Override
-    public void maskShapeChanged() {
-        if (isSettingValues
-                || linesController.isSettingValues
-                || linesController.isSettingTable) {
-            return;
-        }
-        if (maskPolylinesData != null) {
-            linesController.loadList(maskPolylinesData.getLines());
-        } else {
-            linesController.loadList(null);
-        }
-    }
-
     @FXML
     @Override
     public boolean withdrawAction() {
@@ -88,19 +76,8 @@ public class ImagePolylinesController extends BaseShapeEditController {
             return false;
         }
         linesController.removeLastItem();
+        goShape();
         return true;
-    }
-
-    @FXML
-    @Override
-    public void clearAction() {
-        loadImage(srcImage());
-    }
-
-    @Override
-    protected void handleImage() {
-        handledImage = ShapeTools.drawShape(srcImage(),
-                maskPolylinesData, shapeStyle, blender);
     }
 
     /*

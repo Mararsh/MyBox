@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -32,41 +30,6 @@ public class ControlRectangle extends BaseController {
                 return;
             }
             shapeController = parent;
-            shapeController.maskShapeChanged.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    loadValues();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void initShape() {
-        try {
-            shapeController.showMaskRectangle();
-
-            float round = 0;
-            try {
-                round = Float.parseFloat(roundSizeSelector.getValue());
-            } catch (Exception e) {
-            }
-            if (round < 0) {
-                round = 0;
-            }
-            List<String> ws = new ArrayList<>();
-            ws.addAll(Arrays.asList("0", "2", "5", "10", "15", "30", "40", "50"));
-            int max = (int) (shapeController.image.getWidth() / 4);
-            int step = max / 10;
-            for (int w = 10; w < max; w += step) {
-                if (!ws.contains(w + "")) {
-                    ws.add(0, w + "");
-                }
-            }
-            roundSizeSelector.getItems().setAll(ws);
-            roundSizeSelector.setValue(round + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -85,6 +48,31 @@ public class ControlRectangle extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void setRoundList() {
+        if (shapeController == null) {
+            return;
+        }
+        float round = 0;
+        try {
+            round = Float.parseFloat(roundSizeSelector.getValue());
+        } catch (Exception e) {
+        }
+        if (round < 0) {
+            round = 0;
+        }
+        List<String> ws = new ArrayList<>();
+        ws.addAll(Arrays.asList("0", "2", "5", "10", "15", "30", "40", "50"));
+        int max = (int) (shapeController.image.getWidth() / 4);
+        int step = max / 10;
+        for (int w = 10; w < max; w += step) {
+            if (!ws.contains(w + "")) {
+                ws.add(0, w + "");
+            }
+        }
+        roundSizeSelector.getItems().setAll(ws);
+        roundSizeSelector.setValue(round + "");
     }
 
     public boolean pickValues() {

@@ -192,11 +192,11 @@ License:    Apache License Version 2.0
                                         </Label>
                                         <HBox fx:id="actionBox" alignment="CENTER_RIGHT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                                                <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/Red/iconGo.png" />
+                                                                <Image url="@../buttons/Red/iconDemo.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

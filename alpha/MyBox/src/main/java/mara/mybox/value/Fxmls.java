@@ -152,6 +152,9 @@ public class Fxmls {
     public static final String ImagePolylineFxml = "/fxml/ImagePolyline.fxml";
     public static final String ImagePolygonFxml = "/fxml/ImagePolygon.fxml";
     public static final String ImageArcFxml = "/fxml/ImageArc.fxml";
+    public static final String ImageQuadraticFxml = "/fxml/ImageQuadratic.fxml";
+    public static final String ImageCubicFxml = "/fxml/ImageCubic.fxml";
+    public static final String ImageSVGPathFxml = "/fxml/ImageSVGPath.fxml";
 
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";

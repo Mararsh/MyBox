@@ -38,6 +38,11 @@ public class ImageRectangleController extends BaseShapeEditController {
     }
 
     @Override
+    public void setInputs() {
+        rectController.loadValues();
+    }
+
+    @Override
     public boolean pickShape() {
         return rectController.pickValues();
     }
@@ -45,7 +50,8 @@ public class ImageRectangleController extends BaseShapeEditController {
     @Override
     public void initShape() {
         try {
-            rectController.initShape();
+            showMaskRectangle();
+            rectController.setRoundList();
 
             goShape();
         } catch (Exception e) {

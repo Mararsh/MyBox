@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import mara.mybox.data.DoubleCircle;
@@ -26,22 +24,6 @@ public class ControlCircle extends BaseController {
                 return;
             }
             shapeController = parent;
-            shapeController.maskShapeChanged.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    loadValues();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void initShape() {
-        try {
-            shapeController.showMaskCircle();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

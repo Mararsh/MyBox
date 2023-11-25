@@ -38,6 +38,11 @@ public class ImageCircleController extends BaseShapeEditController {
     }
 
     @Override
+    public void setInputs() {
+        circleController.loadValues();
+    }
+
+    @Override
     public boolean pickShape() {
         return circleController.pickValues();
     }
@@ -45,7 +50,7 @@ public class ImageCircleController extends BaseShapeEditController {
     @Override
     public void initShape() {
         try {
-            circleController.initShape();
+            showMaskCircle();
 
             goShape();
         } catch (Exception e) {

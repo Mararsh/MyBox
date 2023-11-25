@@ -173,20 +173,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             MenuItem menu;
 
             if (isMaskPolygonShown() || isMaskPolylineShown()) {
-                CheckMenuItem pointMenuItem = new CheckMenuItem(message("AddPointWhenLeftClick"), StyleTools.getIconImageView("iconNewItem.png"));
-                pointMenuItem.setSelected(UserConfig.getBoolean(baseName + "AddPointWhenLeftClick", true));
-                pointMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent cevent) {
-                        if (addPointCheck != null) {
-                            addPointCheck.setSelected(pointMenuItem.isSelected());
-                        } else {
-                            UserConfig.setBoolean(baseName + "AddPointWhenLeftClick", pointMenuItem.isSelected());
-                            addPointWhenClick = pointMenuItem.isSelected();
-                        }
-                    }
-                });
-                items.add(pointMenuItem);
+                items.add(addPointMenu());
             }
 
             if (isMaskPolylineShown()) {
@@ -577,7 +564,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
         }
         addPointToCurrentLine(p);
         if (maskPolylines.contains(currentLine)) {
-            maskShapeChanged();
+            maskShapeDataChanged();
         }
         currentLineData = null;
         currentLine = null;

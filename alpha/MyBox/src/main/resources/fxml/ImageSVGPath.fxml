@@ -21,11 +21,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Arc?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageArcController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageSVGPathController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
             <items>
@@ -147,11 +147,11 @@ License:    Apache License Version 2.0
                                                 </Rectangle>
                                                 <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
                                                 <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true" />
-                                    <Arc fx:id="maskArc" fill="#ffffff00" layoutX="193.0" layoutY="137.0" length="270.0" onMousePressed="#controlPressed" onMouseReleased="#translateShape" radiusX="93.0" radiusY="91.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND">
+                                    <SVGPath fx:id="maskSVGPath" content="M40,60 C42,48 44,30 25,32" onMousePressed="#controlPressed" onMouseReleased="#translateShape">
                                        <cursor>
                                           <Cursor fx:constant="MOVE" />
                                        </cursor>
-                                    </Arc>
+                                    </SVGPath>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
                                             </children>
                                         </AnchorPane>
@@ -165,14 +165,14 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Arc" VBox.vgrow="ALWAYS" />
+                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%SVGPath" VBox.vgrow="ALWAYS" />
                         <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                           <tabs>
                             <Tab text="%Values">
                                  <content>
                                     <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                        <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                              <padding>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                              </padding>
@@ -186,7 +186,7 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
-                                                <fx:include fx:id="arc" source="ControlArc.fxml" />
+                                                <fx:include fx:id="path" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPath2D.fxml" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
                                        </content>
@@ -247,6 +247,15 @@ License:    Apache License Version 2.0
                         </TabPane>
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                               <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

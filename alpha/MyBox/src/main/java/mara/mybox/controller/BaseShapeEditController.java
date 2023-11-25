@@ -50,10 +50,6 @@ public class BaseShapeEditController extends BaseImageEditController {
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
-
-            strokeController.setWidthList((int) (image.getWidth() / 20),
-                    (int) shapeStyle.getStrokeWidth());
-
             if (anchorCheck != null) {
                 anchorCheck.setSelected(true);
             }
@@ -69,7 +65,16 @@ public class BaseShapeEditController extends BaseImageEditController {
 
     @Override
     public void maskShapeDataChanged() {
+        notifyShapeDataChanged();
         drawShape();
+    }
+
+    @Override
+    public void maskShapeChanged() {
+        setInputs();
+    }
+
+    public void setInputs() {
     }
 
     public void initShape() {
@@ -104,10 +109,6 @@ public class BaseShapeEditController extends BaseImageEditController {
     }
 
     public void drawShape() {
-        shapeData = currentMaskShapeData();
-        if (shapeData == null || shapeStyle == null || blender == null) {
-            return;
-        }
         if (task != null) {
             task.cancel();
         }
@@ -117,6 +118,7 @@ public class BaseShapeEditController extends BaseImageEditController {
 
             @Override
             protected boolean handle() {
+                shapeData = currentMaskShapeData();
                 newImage = handleShape();
                 return newImage != null;
             }
@@ -127,14 +129,12 @@ public class BaseShapeEditController extends BaseImageEditController {
                     return;
                 }
                 imageView.setImage(newImage);
-                isSettingValues = true;
                 drawMaskShape();
                 hideMaskShape();
-                isSettingValues = false;
             }
 
         };
-        start(task, thisPane);
+        start(task, okButton);
     }
 
     protected Image handleShape() {
@@ -150,6 +150,12 @@ public class BaseShapeEditController extends BaseImageEditController {
     @Override
     public void options() {
         ImageShapeOptionsController.open(this, false);
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        loadImage(srcImage());
     }
 
 }

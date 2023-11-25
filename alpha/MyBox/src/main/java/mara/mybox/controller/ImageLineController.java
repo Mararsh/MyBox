@@ -38,6 +38,11 @@ public class ImageLineController extends BaseShapeEditController {
     }
 
     @Override
+    public void setInputs() {
+        lineController.loadValues();
+    }
+
+    @Override
     public boolean pickShape() {
         return lineController.pickValues();
     }
@@ -45,7 +50,7 @@ public class ImageLineController extends BaseShapeEditController {
     @Override
     public void initShape() {
         try {
-            lineController.initShape();
+            showMaskLine();
 
             goShape();
         } catch (Exception e) {

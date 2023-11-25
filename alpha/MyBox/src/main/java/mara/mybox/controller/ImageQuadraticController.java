@@ -11,13 +11,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageArcController extends BaseShapeEditController {
+public class ImageQuadraticController extends BaseShapeEditController {
 
     @FXML
-    protected ControlArc arcController;
+    protected ControlQuadratic quadraticController;
 
-    public ImageArcController() {
-        baseTitle = message("Arc");
+    public ImageQuadraticController() {
+        baseTitle = message("QuadraticCurve");
     }
 
     @Override
@@ -25,8 +25,8 @@ public class ImageArcController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Arc";
-            arcController.setParameters(this);
+            operation = "QuadraticCurve";
+            quadraticController.setParameters(this);
 
             anchorCheck.setSelected(true);
             showAnchors = true;
@@ -39,19 +39,19 @@ public class ImageArcController extends BaseShapeEditController {
 
     @Override
     public void setInputs() {
-        arcController.loadValues();
+        quadraticController.loadValues();
     }
 
     @Override
     public boolean pickShape() {
-        return arcController.pickValues();
+        return quadraticController.pickValues();
     }
 
     @Override
     public void initShape() {
         try {
-            maskArcData = null;
-            showMaskArc();
+            maskQuadraticData = null;
+            showMaskQuadratic();
 
             goShape();
         } catch (Exception e) {
@@ -62,13 +62,13 @@ public class ImageArcController extends BaseShapeEditController {
     /*
         static methods
      */
-    public static ImageArcController open(ImageEditorController parent) {
+    public static ImageQuadraticController open(ImageEditorController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageArcController controller = (ImageArcController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageArcFxml, false);
+            ImageQuadraticController controller = (ImageQuadraticController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageQuadraticFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

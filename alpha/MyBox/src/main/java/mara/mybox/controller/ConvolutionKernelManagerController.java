@@ -638,8 +638,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
     }
 
     @FXML
-    @Override
-    public void goAction() {
+    public void demo() {
         if (!pickKernel()) {
             return;
         }

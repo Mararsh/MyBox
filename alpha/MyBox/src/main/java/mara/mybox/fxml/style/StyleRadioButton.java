@@ -83,7 +83,7 @@ public class StyleRadioButton {
             case "polylineRadio":
                 return new StyleData(id, "", message("Polyline"), "", "iconPolyline.png");
             case "polylinesRadio":
-                return new StyleData(id, "", message("Polylines"), "", "iconPolylines.png");
+                return new StyleData(id, "", message("Graffiti"), "", "iconPolylines.png");
             case "polygonRadio":
                 return new StyleData(id, "", message("Polygon"), "", "iconStar.png");
             case "quadraticRadio":

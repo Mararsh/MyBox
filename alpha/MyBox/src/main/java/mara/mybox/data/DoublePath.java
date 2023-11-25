@@ -264,6 +264,9 @@ public class DoublePath implements DoubleShape {
         static
      */
     public static List<DoublePathSegment> stringToSegments(BaseController controller, String content, int scale) {
+        if (content == null || content.isBlank()) {
+            return null;
+        }
         DoublePathParser parser = new DoublePathParser().parse(controller, content, scale);
         if (parser == null) {
             return null;

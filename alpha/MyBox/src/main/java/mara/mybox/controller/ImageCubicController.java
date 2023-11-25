@@ -11,13 +11,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageArcController extends BaseShapeEditController {
+public class ImageCubicController extends BaseShapeEditController {
 
     @FXML
-    protected ControlArc arcController;
+    protected ControlCubic cubicController;
 
-    public ImageArcController() {
-        baseTitle = message("Arc");
+    public ImageCubicController() {
+        baseTitle = message("CubicCurve");
     }
 
     @Override
@@ -25,8 +25,8 @@ public class ImageArcController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Arc";
-            arcController.setParameters(this);
+            operation = "CubicCurve";
+            cubicController.setParameters(this);
 
             anchorCheck.setSelected(true);
             showAnchors = true;
@@ -39,19 +39,19 @@ public class ImageArcController extends BaseShapeEditController {
 
     @Override
     public void setInputs() {
-        arcController.loadValues();
+        cubicController.loadValues();
     }
 
     @Override
     public boolean pickShape() {
-        return arcController.pickValues();
+        return cubicController.pickValues();
     }
 
     @Override
     public void initShape() {
         try {
-            maskArcData = null;
-            showMaskArc();
+            maskCubicData = null;
+            showMaskCubic();
 
             goShape();
         } catch (Exception e) {
@@ -62,13 +62,13 @@ public class ImageArcController extends BaseShapeEditController {
     /*
         static methods
      */
-    public static ImageArcController open(ImageEditorController parent) {
+    public static ImageCubicController open(ImageEditorController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            ImageArcController controller = (ImageArcController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageArcFxml, false);
+            ImageCubicController controller = (ImageCubicController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.ImageCubicFxml, false);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

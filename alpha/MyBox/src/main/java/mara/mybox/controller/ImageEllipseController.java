@@ -38,6 +38,11 @@ public class ImageEllipseController extends BaseShapeEditController {
     }
 
     @Override
+    public void setInputs() {
+        ellipseController.loadValues();
+    }
+
+    @Override
     public boolean pickShape() {
         return ellipseController.pickValues();
     }
@@ -45,7 +50,7 @@ public class ImageEllipseController extends BaseShapeEditController {
     @Override
     public void initShape() {
         try {
-            ellipseController.initShape();
+            showMaskEllipse();
 
             goShape();
         } catch (Exception e) {
