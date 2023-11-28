@@ -51,6 +51,9 @@ public class UserConfig {
 
     public static String getString(Connection conn, String key, String defaultValue) {
         try {
+            if (conn == null) {
+                return getString(key, defaultValue);
+            }
             String value;
             if (userConfigValues.containsKey(key)) {
                 value = userConfigValues.get(key);
@@ -109,6 +112,9 @@ public class UserConfig {
     }
 
     public static int getInt(Connection conn, String key, int defaultValue) {
+        if (conn == null) {
+            return getInt(key, defaultValue);
+        }
         if (userConfigValues.containsKey(key)) {
             try {
                 int v = Integer.parseInt(userConfigValues.get(key));
@@ -153,6 +159,9 @@ public class UserConfig {
     }
 
     public static boolean getBoolean(Connection conn, String key, boolean defaultValue) {
+        if (conn == null) {
+            return getBoolean(key, defaultValue);
+        }
         if (userConfigValues.containsKey(key)) {
             try {
                 boolean v = userConfigValues.get(key).equals("true");
@@ -230,6 +239,9 @@ public class UserConfig {
     }
 
     public static double getDouble(Connection conn, String key, double defaultValue) {
+        if (conn == null) {
+            return getDouble(key, defaultValue);
+        }
         if (userConfigValues.containsKey(key)) {
             try {
                 double v = Double.parseDouble(userConfigValues.get(key));
@@ -294,6 +306,9 @@ public class UserConfig {
     }
 
     public static long getLong(Connection conn, String key, long defaultValue) {
+        if (conn == null) {
+            return getLong(key, defaultValue);
+        }
         if (userConfigValues.containsKey(key)) {
             try {
                 long v = Long.parseLong(userConfigValues.get(key));
@@ -358,6 +373,9 @@ public class UserConfig {
     }
 
     public static float getFloat(Connection conn, String key, float defaultValue) {
+        if (conn == null) {
+            return getFloat(key, defaultValue);
+        }
         if (userConfigValues.containsKey(key)) {
             try {
                 float v = Float.parseFloat(userConfigValues.get(key));

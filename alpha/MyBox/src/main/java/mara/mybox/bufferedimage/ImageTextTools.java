@@ -12,9 +12,9 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.controller.ControlImageText;
-import mara.mybox.data.DoubleText;
-import mara.mybox.data.ShapeStyle;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
@@ -25,7 +25,8 @@ import mara.mybox.value.Colors;
  */
 public class ImageTextTools {
 
-    public static BufferedImage addText(BufferedImage sourceImage, ControlImageText optionsController) {
+    public static BufferedImage addText(SingletonTask task,
+            BufferedImage sourceImage, ControlImageText optionsController) {
         try {
             String text = optionsController.text();
             if (text == null || text.isEmpty()) {
@@ -37,8 +38,9 @@ public class ImageTextTools {
             }
             int width = sourceImage.getWidth();
             int height = sourceImage.getHeight();
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             Font font = optionsController.font();
-            BufferedImage foreImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
             Graphics2D fg = foreImage.createGraphics();
             if (AppVariables.imageRenderHints != null) {
                 fg.addRenderingHints(AppVariables.imageRenderHints);
@@ -46,52 +48,82 @@ public class ImageTextTools {
             FontMetrics metrics = fg.getFontMetrics(font);
             optionsController.countValues(fg, metrics, width, height);
             BufferedImage backImage = sourceImage;
+            PixelsBlend blend = optionsController.getBlend();
+            if (blend == null || task == null || !task.isWorking()) {
+                return null;
+            }
+
             if (optionsController.showBorders()) {
                 int m = optionsController.getBordersMargin();
-                DoubleText textRect = DoubleText.xywh(
+                DoubleRectangle border = DoubleRectangle.xywh(
                         optionsController.getBaseX() - m,
                         optionsController.getBaseY() - m,
-                        optionsController.getTextWidth() + m,
-                        optionsController.getTextHeight() + m);
-                textRect.setRound(optionsController.getBordersArc());
-                ShapeStyle style = new ShapeStyle("Text");
-                style.setStrokeColor(optionsController.bordersStrokeColor());
-                style.setStrokeWidth(optionsController.getBordersStrokeWidth());
-                style.setIsFillColor(optionsController.bordersFilled());
-                style.setFillColor(optionsController.bordersFillColor());
-                style.setFillOpacity(opacity);
-                style.setStrokeDashed(optionsController.bordersDotted());
-                backImage = ShapeTools.drawShape(sourceImage, textRect, style,
-                        PixelsBlend.blender(PixelsBlend.ImagesBlendMode.NORMAL, opacity, false, true));
+                        optionsController.getTextWidth() + 2 * m,
+                        optionsController.getTextHeight() + 2 * m);
+                border.setRound(optionsController.getBordersArc());
+                backImage = ShapeTools.drawShape(sourceImage, border,
+                        optionsController.getBorderStyle(), blend);
+            }
+
+            if (backImage == null || task == null || !task.isWorking()) {
+                return null;
             }
             Color textColor = optionsController.textColor();
-            boolean noBlend = textColor.equals(Colors.TRANSPARENT);
-            if (noBlend) {
-                fg.drawImage(backImage, 0, 0, width, height, null);
+            Color shadowColor = optionsController.shadowColor();
+            int textPixel = textColor.getRGB();
+            int shadowPixel = shadowColor.getRGB();
+            int bgPixel = 0;
+            if (textPixel == bgPixel) {
+                bgPixel = Color.WHITE.getRGB();
+                if (shadowPixel == bgPixel) {
+                    fg.setBackground(Color.BLACK);
+                    bgPixel = Color.BLACK.getRGB();
+                } else {
+                    fg.setBackground(Color.WHITE);
+                }
+            } else if (shadowPixel == bgPixel) {
+                bgPixel = Color.WHITE.getRGB();
+                if (textPixel == bgPixel) {
+                    fg.setBackground(Color.BLACK);
+                    bgPixel = Color.BLACK.getRGB();
+                } else {
+                    fg.setBackground(Color.WHITE);
+                }
             } else {
                 fg.setBackground(Colors.TRANSPARENT);
             }
             int textBaseX = optionsController.getBaseX();
             int textBaseY = optionsController.getTextY();
-            int shadow = optionsController.getShadow();
-            float textOpacity = noBlend ? opacity : 1.0F;
+            int shadowSize = optionsController.getShadow();
+            float textOpacity = opacity;
             fg.rotate(Math.toRadians(optionsController.getAngle()), textBaseX, textBaseY);
             fg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, textOpacity));
             fg.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             fg.setFont(font);
-            if (shadow > 0) {
-                fg.setColor(optionsController.shadowColor());
-                drawText(fg, optionsController, text, noBlend, shadow);
+            if (shadowSize > 0) {
+                fg.setColor(shadowColor);
+                drawText(fg, optionsController, text, shadowSize);
             }
-            fg.setColor(textColor.equals(Colors.TRANSPARENT) ? null : textColor);
-            drawText(fg, optionsController, text, noBlend, 0);
-
+            fg.setColor(textColor);
+            drawText(fg, optionsController, text, 0);
             fg.dispose();
-            if (noBlend) {
-                return foreImage;
-            } else {
-                return PixelsBlend.blend(foreImage, backImage, 0, 0, optionsController.blender());
+
+            if (blend == null || task == null || !task.isWorking()) {
+                return null;
             }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
+                    int backPixel = backImage.getRGB(i, j);
+                    int forePixel = foreImage.getRGB(i, j);
+                    if (forePixel == bgPixel) {
+                        target.setRGB(i, j, backPixel);
+                    } else {
+                        target.setRGB(i, j, blend.blend(forePixel, backPixel));
+                    }
+                }
+            }
+            return target;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -99,7 +131,7 @@ public class ImageTextTools {
     }
 
     public static boolean drawText(Graphics2D g, ControlImageText optionsController,
-            String text, boolean noBlend, int shadow) {
+            String text, int shadow) {
         try {
             if (g == null) {
                 return false;

@@ -155,6 +155,7 @@ public class Fxmls {
     public static final String ImageQuadraticFxml = "/fxml/ImageQuadratic.fxml";
     public static final String ImageCubicFxml = "/fxml/ImageCubic.fxml";
     public static final String ImageSVGPathFxml = "/fxml/ImageSVGPath.fxml";
+    public static final String ImageTextFxml = "/fxml/ImageText.fxml";
 
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
@@ -255,6 +256,7 @@ public class Fxmls {
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ImageBase64Fxml = "/fxml/ImageBase64.fxml";
 
+    public static final String ImageLoadWidthFxml = "/fxml/ImageLoadWidth.fxml";
     public static final String ImageFramesFxml = "/fxml/ImageFrames.fxml";
     public static final String ImageOptionsFxml = "/fxml/ImageOptions.fxml";
     public static final String ImageShapeOptionsFxml = "/fxml/ImageShapeOptions.fxml";

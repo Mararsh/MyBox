@@ -53,7 +53,7 @@ public class ImageCubicController extends BaseShapeEditController {
             maskCubicData = null;
             showMaskCubic();
 
-            goShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

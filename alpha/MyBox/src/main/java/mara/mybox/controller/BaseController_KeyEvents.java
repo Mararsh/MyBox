@@ -267,7 +267,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return true;
         }
         return false;
-
     }
 
     public boolean controlAltV() {

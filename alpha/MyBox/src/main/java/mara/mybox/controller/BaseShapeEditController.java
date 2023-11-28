@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.data.DoubleShape;
@@ -20,18 +21,25 @@ public class BaseShapeEditController extends BaseImageEditController {
     protected PixelsBlend blender;
 
     @FXML
+    protected Tab valuesTab, strokeTab, blendTab;
+    @FXML
     protected ControlStroke strokeController;
     @FXML
     protected ControlImagesBlend blendController;
     @FXML
     protected Button shapeButton;
 
+    public BaseShapeEditController() {
+        TipsLabelKey = "ShapeEditTips";
+    }
+
     @Override
     protected void initMore() {
         try {
-            strokeController.setParameters(this);
-            shapeStyle = strokeController.pickValues();
-
+            if (strokeController != null) {
+                strokeController.setParameters(this);
+                shapeStyle = strokeController.pickValues();
+            }
             if (blendController != null) {
                 blendController.setParameters(this, imageView);
                 blender = blendController.pickValues();
@@ -41,25 +49,6 @@ public class BaseShapeEditController extends BaseImageEditController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public boolean afterImageLoaded() {
-        try {
-            if (!super.afterImageLoaded() || image == null) {
-                return false;
-            }
-            if (anchorCheck != null) {
-                anchorCheck.setSelected(true);
-            }
-
-            initShape();
-            fitSize();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
         }
     }
 
@@ -77,35 +66,50 @@ public class BaseShapeEditController extends BaseImageEditController {
     public void setInputs() {
     }
 
-    public void initShape() {
-        drawShape();
+    public boolean checkStroke() {
+        if (strokeController != null) {
+            shapeStyle = strokeController.pickValues();
+            if (shapeStyle == null) {
+                if (strokeTab != null) {
+                    tabPane.getSelectionModel().select(strokeTab);
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean checkBlend() {
+        if (blendController != null) {
+            blender = blendController.pickValues();
+            if (blender == null) {
+                if (blendTab != null) {
+                    tabPane.getSelectionModel().select(blendTab);
+                }
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean pickShape() {
         return false;
     }
 
-    @FXML
     public void goShape() {
-        if (pickShape()) {
-            drawShape();
+        if (!pickShape()) {
+            return;
         }
+        drawShape();
     }
 
     @FXML
-    public void goStroke() {
-        shapeStyle = strokeController.pickValues();
-        if (shapeStyle != null) {
-            drawShape();
+    @Override
+    public void goAction() {
+        if (!checkStroke() || !checkBlend() || !pickShape()) {
+            return;
         }
-    }
-
-    @FXML
-    public void goBlend() {
-        blender = blendController.pickValues();
-        if (blender != null) {
-            drawShape();
-        }
+        drawShape();
     }
 
     public void drawShape() {
@@ -135,6 +139,35 @@ public class BaseShapeEditController extends BaseImageEditController {
 
         };
         start(task, okButton);
+    }
+
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded() || image == null) {
+                return false;
+            }
+            if (anchorCheck != null) {
+                anchorCheck.setSelected(true);
+            }
+            initStroke();
+            initShape();
+            fitSize();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public void initStroke() {
+        if (strokeController != null) {
+            strokeController.setWidthList();
+        }
+    }
+
+    public void initShape() {
+        goAction();
     }
 
     protected Image handleShape() {

@@ -64,7 +64,7 @@ public class ImagePolylineController extends BaseShapeEditController {
             maskPolylineData = null;
             showMaskPolyline();
 
-            drawShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -53,7 +53,7 @@ public class ImageRectangleController extends BaseShapeEditController {
             showMaskRectangle();
             rectController.setRoundList();
 
-            goShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

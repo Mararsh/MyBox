@@ -52,7 +52,7 @@ public class ImageCircleController extends BaseShapeEditController {
         try {
             showMaskCircle();
 
-            goShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

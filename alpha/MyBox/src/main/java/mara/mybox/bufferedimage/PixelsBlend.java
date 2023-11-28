@@ -62,13 +62,8 @@ public abstract class PixelsBlend {
     }
 
     protected int blend(int forePixel, int backPixel) {
-        if (ignoreTransparency) {
-            if (forePixel == 0) {
-                return backPixel;
-            }
-            if (backPixel == 0) {
-                return forePixel;
-            }
+        if (backPixel == 0 && ignoreTransparency) {
+            return 0;
         }
         if (orderReversed) {
             foreColor = new Color(backPixel, true);
@@ -140,13 +135,8 @@ public abstract class PixelsBlend {
         static
      */
     public static Color blend(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
-        if (ignoreTransparency) {
-            if (foreColor.getRGB() == 0) {
-                return backColor;
-            }
-            if (backColor.getRGB() == 0) {
-                return foreColor;
-            }
+        if (backColor.getRGB() == 0 && ignoreTransparency) {
+            return backColor;
         }
         return blend(foreColor, backColor, opacity);
     }

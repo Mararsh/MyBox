@@ -22,11 +22,9 @@ import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ShadowTools;
-import mara.mybox.controller.ControlImageText;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
@@ -174,13 +172,6 @@ public class FxImageTools {
     public static Image clearAlpha(Image image) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = AlphaTools.removeAlpha(source);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image addText(Image image, ControlImageText optionsController) {
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageTextTools.addText(source, optionsController);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

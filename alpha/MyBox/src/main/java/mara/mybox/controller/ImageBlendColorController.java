@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
@@ -17,6 +18,8 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageBlendColorController extends BasePixelsController {
+
+    protected PixelsBlend blend;
 
     @FXML
     protected ControlColorSet colorController;
@@ -39,6 +42,16 @@ public class ImageBlendColorController extends BasePixelsController {
             MyBoxLog.error(e);
         }
 
+    }
+
+    @Override
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            close();
+            return false;
+        }
+        blend = blendController.pickValues();
+        return blend != null;
     }
 
     @FXML
@@ -65,7 +78,7 @@ public class ImageBlendColorController extends BasePixelsController {
                             .setExcludeScope(excludeScope())
                             .setSkipTransparent(skipTransparent());
                     ((PixelsOperationFactory.BlendColor) pixelsOperation)
-                            .setBlender(blendController.pickValues());
+                            .setBlender(blend);
                     handledImage = pixelsOperation.operateFxImage();
                     return handledImage != null;
                 } catch (Exception e) {

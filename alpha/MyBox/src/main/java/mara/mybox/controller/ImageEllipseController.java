@@ -52,7 +52,7 @@ public class ImageEllipseController extends BaseShapeEditController {
         try {
             showMaskEllipse();
 
-            goShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

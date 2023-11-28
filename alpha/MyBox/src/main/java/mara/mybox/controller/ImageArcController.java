@@ -53,7 +53,7 @@ public class ImageArcController extends BaseShapeEditController {
             maskArcData = null;
             showMaskArc();
 
-            goShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

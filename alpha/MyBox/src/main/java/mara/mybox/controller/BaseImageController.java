@@ -327,96 +327,108 @@ public class BaseImageController extends BaseImageController_Actions {
     }
 
     @Override
-    public List<MenuItem> dataMenuItems(Event fevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
-                    StyleTools.getIconImageView("iconSave.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                saveAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
-                    StyleTools.getIconImageView("iconSaveAs.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                saveAsAction();
-            });
-            items.add(menu);
-
-            if (sourceFile != null) {
-                Menu fileMenu = new Menu(message("File"), StyleTools.getIconImageView("iconFile.png"));
-                fileMenu.getItems().addAll(fileMenuItems(fevent));
-                items.add(fileMenu);
-            }
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
-            if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
-                menu = new MenuItem(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
+            if (imageView != null && imageView.getImage() != null) {
+                menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
+                        StyleTools.getIconImageView("iconSave.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    ImageFramesController.open(this);
+                    saveAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                        StyleTools.getIconImageView("iconSaveAs.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    saveAsAction();
                 });
                 items.add(menu);
             }
 
-            if (imageInformation != null) {
-                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
-                        StyleTools.getIconImageView("iconInfo.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                items.add(menu);
-
-                menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    metaAction();
-                });
-                items.add(menu);
-            }
-
-            menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
-                    StyleTools.getIconImageView("iconRecover.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                recoverAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Refresh") + "    Ctrl+B " + message("Or") + " Alt+B",
-                    StyleTools.getIconImageView("iconRefresh.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                refreshAction();
-            });
-            items.add(menu);
-
-            CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-            backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", false));
-            backItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+            if (sourceFile != null) {
+                String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
+                if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
+                    menu = new MenuItem(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        ImageFramesController.open(this);
+                    });
+                    items.add(menu);
                 }
-            });
-            items.add(backItem);
 
-            menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                FileBackupController.load(this);
+                if (imageInformation != null) {
+                    menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                            StyleTools.getIconImageView("iconInfo.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        infoAction();
+                    });
+                    items.add(menu);
+
+                    menu = new MenuItem(message("MetaData"), StyleTools.getIconImageView("iconMeta.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        metaAction();
+                    });
+                    items.add(menu);
+                }
+
+                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                        StyleTools.getIconImageView("iconRecover.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    recoverAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Refresh") + "    Ctrl+B " + message("Or") + " Alt+B",
+                        StyleTools.getIconImageView("iconRefresh.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    refreshAction();
+                });
+                items.add(menu);
+
+                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", false));
+                backItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                    }
+                });
+                items.add(backItem);
+
+                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    FileBackupController.load(this);
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Create"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                createAction();
             });
             items.add(menu);
+
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadContentInSystemClipboard();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("LoadWidth") + ": "
+                    + (loadWidth <= 0 ? message("OriginalSize") : ("" + loadWidth)),
+                    StyleTools.getIconImageView("iconInput.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageLoadWidthController.open(this);
+            });
+            items.add(menu);
+
+            if (sourceFile == null) {
+                return items;
+            }
 
             items.add(new SeparatorMenuItem());
 

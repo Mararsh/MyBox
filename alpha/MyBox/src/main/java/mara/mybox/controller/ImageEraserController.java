@@ -1,5 +1,12 @@
 package mara.mybox.controller;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
+import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.WindowTools;
@@ -13,6 +20,9 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageEraserController extends ImagePolylinesController {
 
+    @FXML
+    protected ComboBox<String> widthSelector;
+
     public ImageEraserController() {
         baseTitle = message("Eraser");
     }
@@ -23,14 +33,44 @@ public class ImageEraserController extends ImagePolylinesController {
             super.initMore();
             operation = "Eraser";
 
+            shapeStyle = new ShapeStyle(baseName);
+            shapeStyle.setStrokeColor(Color.WHITE)
+                    .setIsFillColor(false)
+                    .setIsStrokeDash(false)
+                    .setStrokeLineCap(StrokeLineCap.BUTT)
+                    .setStrokeLineJoin(StrokeLineJoin.MITER)
+                    .setStrokeLineLimit(10f);
+
+            widthSelector.setValue((int) shapeStyle.getStrokeWidth() + "");
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     @Override
-    protected void handleImage() {
-        handledImage = ShapeTools.drawErase(srcImage(), maskPolylinesData, shapeStyle);
+    public void initStroke() {
+        ControlStroke.setWidthList(widthSelector, imageView, (int) shapeStyle.getStrokeWidth());
+    }
+
+    @Override
+    public boolean checkStroke() {
+        float v = -1;
+        try {
+            v = Float.parseFloat(widthSelector.getValue());
+        } catch (Exception e) {
+        }
+        if (v <= 0) {
+            popError(message("InvalidParameter") + ": " + message("Width"));
+            return false;
+        }
+        shapeStyle.setStrokeWidth(v);
+        return true;
+    }
+
+    @Override
+    protected Image handleShape() {
+        return ShapeTools.drawErase(srcImage(), maskPolylinesData, shapeStyle);
     }
 
     /*

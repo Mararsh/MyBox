@@ -15,6 +15,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
@@ -33,6 +34,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
     private int colorValue, valueMax;
     private OperationType colorOperationType;
     private ColorActionType colorActionType;
+    private PixelsBlend blend;
 
     @FXML
     protected ToggleGroup colorGroup, opGroup;
@@ -293,6 +295,21 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
     }
 
     @Override
+    public boolean makeMoreParameters() {
+        if (formatController != null) {
+            attributes = formatController.getAttributes();
+            targetFileSuffix = attributes.getImageFormat();
+        }
+        if (colorBlendRadio.isSelected()) {
+            blend = blendController.pickValues();
+            if (blend == null) {
+                return false;
+            }
+        }
+        return super.makeMoreParameters();
+    }
+
+    @Override
     protected BufferedImage handleImage(BufferedImage source) {
         if (null == colorOperationType || colorActionType == null) {
             return null;
@@ -311,7 +328,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 case Blend:
                     pixelsOperation.setColorPara1(colorSetController.awtColor());
                     ((PixelsOperationFactory.BlendColor) pixelsOperation)
-                            .setBlender(blendController.pickValues());
+                            .setBlender(blend);
                     break;
                 case Hue:
                     pixelsOperation.setFloatPara1(colorValue / 360.0f);

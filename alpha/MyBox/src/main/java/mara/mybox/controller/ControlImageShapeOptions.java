@@ -1,11 +1,10 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
@@ -53,13 +52,6 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
 
             blendController.setParameters(this, imageView);
 
-            blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    redrawShape();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -97,6 +89,10 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         if (shapeData == null) {
             return;
         }
+        PixelsBlend blend = blendController.pickValues();
+        if (blend == null) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -106,7 +102,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
             @Override
             protected boolean handle() {
                 newImage = ShapeTools.drawShape(imageView.getImage(),
-                        shapeData, style, blendController.pickValues());
+                        shapeData, style, blend);
                 return newImage != null;
             }
 

@@ -10,7 +10,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -35,11 +34,6 @@ License:    Apache License Version 2.0
                             <children>
                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
-                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconTips.png" />
-                                 </image>
-                              </ImageView>
                                       <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                           <children>
                                     <CheckBox fx:id="anchorCheck" mnemonicParsing="false" selected="true">
@@ -165,10 +159,36 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%SVGPath" VBox.vgrow="ALWAYS" />
-                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+                           <children>
+                              <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleData">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconExamples.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconGo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTips.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </FlowPane>
+                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                           <tabs>
-                            <Tab text="%Values">
+                            <Tab fx:id="valuesTab" text="%SVGPath">
                                  <content>
                                     <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                        <content>
@@ -177,15 +197,6 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                              </padding>
                                              <children>
-                                                <Button fx:id="goShapeButton" mnemonicParsing="false" onAction="#goShape">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconGo.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
                                                 <fx:include fx:id="path" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPath2D.fxml" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
@@ -193,21 +204,12 @@ License:    Apache License Version 2.0
                                     </ScrollPane>
                                  </content>
                               </Tab>
-                            <Tab text="%Stroke">
+                            <Tab fx:id="strokeTab" text="%Stroke">
                                  <content>
                                     <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                        <content>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                              <children>
-                                                <Button fx:id="goStrokeButton" mnemonicParsing="false" onAction="#goStroke">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconGo.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
                                                 <fx:include fx:id="stroke" source="ControlStroke.fxml" />
                                              </children>
                                              <padding>
@@ -218,21 +220,12 @@ License:    Apache License Version 2.0
                                     </ScrollPane>
                                  </content>
                               </Tab>
-                              <Tab text="%Blend" fx:id="xmlTab">
+                              <Tab fx:id="blendTab" text="%Blend">
                                  <content>
                                     <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                        <content>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                              <children>
-                                                <Button fx:id="goBlendButton" mnemonicParsing="false" onAction="#goBlend">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconGo.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
                                                 <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
                                              </children>
                                              <padding>
@@ -247,11 +240,20 @@ License:    Apache License Version 2.0
                         </TabPane>
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
-                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                              <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                          <Image url="@../buttons/Red/iconClose.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </CheckBox>
+                              <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconCancel.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -292,28 +294,6 @@ License:    Apache License Version 2.0
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/Red/iconSave.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </FlowPane>
-                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                           <children>
-                              <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconClose.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </CheckBox>
-                              <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconCancel.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>

@@ -64,7 +64,7 @@ public class ImagePolygonController extends BaseShapeEditController {
             maskPolygonData = null;
             showMaskPolygon();
 
-            drawShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -80,6 +80,7 @@ public class ImagePolygonController extends BaseShapeEditController {
         goShape();
         return true;
     }
+
 
     /*
         static methods

@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.bufferedimage.MarginTools;
+import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
@@ -31,6 +32,7 @@ public class ImageManufactureBatchPasteController extends BaseImageEditBatchCont
     protected int margin, posX, posY;
     protected BufferedImage clipSource;
     protected int rotateAngle;
+    protected PixelsBlend blend;
 
     @FXML
     protected ComboBox<String> angleSelector;
@@ -198,6 +200,10 @@ public class ImageManufactureBatchPasteController extends BaseImageEditBatchCont
 
     @Override
     public boolean beforeHandleFiles() {
+        blend = blendController.pickValues();
+        if (blend == null) {
+            return false;
+        }
         clipSource = ImageFileReaders.readImage(sourceFile);
         if (clipSource != null) {
             clipSource = TransformTools.rotateImage(clipSource, rotateAngle);
@@ -250,7 +256,7 @@ public class ImageManufactureBatchPasteController extends BaseImageEditBatchCont
             } else {
                 return null;
             }
-            BufferedImage target = blendController.blend(clipSource, bgImage, x, y);
+            BufferedImage target = PixelsBlend.blend(clipSource, bgImage, x, y, blend);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -62,7 +62,7 @@ public class ImageSVGPathController extends BaseShapeEditController {
             maskPathData = null;
             showMaskPath();
 
-            goShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

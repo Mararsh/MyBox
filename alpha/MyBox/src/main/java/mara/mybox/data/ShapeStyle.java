@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.paint.Color;
@@ -7,6 +8,8 @@ import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.ROUND;
 import static javafx.scene.shape.StrokeLineCap.SQUARE;
 import javafx.scene.shape.StrokeLineJoin;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
 import mara.mybox.value.UserConfig;
@@ -36,51 +39,92 @@ public class ShapeStyle {
         init(name);
     }
 
-    final public void init(String name) {
-        this.name = name != null ? name : "";
-        try {
-            strokeColor = Color.web(UserConfig.getString(name + "StrokeColor", DefaultStrokeColor));
-        } catch (Exception e) {
-            strokeColor = Color.web(DefaultStrokeColor);
-        }
-        try {
-            fillColor = Color.web(UserConfig.getString(name + "FillColor", "0xFFFFFFFF"));
-        } catch (Exception e) {
-            fillColor = Color.TRANSPARENT;
-        }
-        try {
-            anchorColor = Color.web(UserConfig.getString(name + "AnchorColor", DefaultAnchorColor));
-        } catch (Exception e) {
-            anchorColor = Color.web(DefaultAnchorColor);
-        }
-        strokeWidth = UserConfig.getFloat(name + "StrokeWidth", 10);
-        if (strokeWidth < 0) {
-            strokeWidth = 10f;
-        }
-        strokeOpacity = UserConfig.getFloat(name + "StrokeOpacity", 1);
-        if (strokeOpacity < 0) {
-            strokeOpacity = 1;
-        }
-        fillOpacity = UserConfig.getFloat(name + "FillOpacity", 1f);
-        if (fillOpacity < 0) {
-            fillOpacity = 1f;
-        }
-        isFillColor = UserConfig.getBoolean(name + "IsFillColor", false);
-        isStrokeDash = UserConfig.getBoolean(name + "IsStrokeDash", false);
-        anchorSize = UserConfig.getFloat(name + "AnchorSize", 10);
-        if (anchorSize < 0) {
-            anchorSize = 10;
-        }
-        String text = UserConfig.getString(name + "StrokeDash", null);
-        strokeDash = text2StrokeDash(text);
-        text = UserConfig.getString(name + "StrokeLineCap", "BUTT");
-        strokeLineCap = strokeLineCap(text);
-        text = UserConfig.getString(name + "StrokeLineJoin", "MITER");
-        strokeLineJoin = strokeLineJoin(text);
-        strokeLineLimit = UserConfig.getFloat(name + "StrokeLineLimit", 10f);
-        dashOffset = UserConfig.getFloat(name + "DashOffset", 0f);
-        more = null;
+    public ShapeStyle(Connection conn, String name) {
+        init(conn, name);
     }
+
+    final public void init(String name) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            init(conn, name);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    final public void init(Connection conn, String name) {
+        try {
+            this.name = name != null ? name : "";
+            try {
+                strokeColor = Color.web(UserConfig.getString(conn, name + "StrokeColor", DefaultStrokeColor));
+            } catch (Exception e) {
+                strokeColor = Color.web(DefaultStrokeColor);
+            }
+            try {
+                fillColor = Color.web(UserConfig.getString(conn, name + "FillColor", "0xFFFFFFFF"));
+            } catch (Exception e) {
+                fillColor = Color.TRANSPARENT;
+            }
+            try {
+                anchorColor = Color.web(UserConfig.getString(conn, name + "AnchorColor", DefaultAnchorColor));
+            } catch (Exception e) {
+                anchorColor = Color.web(DefaultAnchorColor);
+            }
+            strokeWidth = UserConfig.getFloat(conn, name + "StrokeWidth", 10);
+            if (strokeWidth < 0) {
+                strokeWidth = 10f;
+            }
+            strokeOpacity = UserConfig.getFloat(conn, name + "StrokeOpacity", 1);
+            if (strokeOpacity < 0) {
+                strokeOpacity = 1;
+            }
+            fillOpacity = UserConfig.getFloat(conn, name + "FillOpacity", 1f);
+            if (fillOpacity < 0) {
+                fillOpacity = 1f;
+            }
+            isFillColor = UserConfig.getBoolean(conn, name + "IsFillColor", false);
+            isStrokeDash = UserConfig.getBoolean(conn, name + "IsStrokeDash", false);
+            anchorSize = UserConfig.getFloat(conn, name + "AnchorSize", 10);
+            if (anchorSize < 0) {
+                anchorSize = 10;
+            }
+            String text = UserConfig.getString(conn, name + "StrokeDash", null);
+            strokeDash = text2StrokeDash(text);
+            text = UserConfig.getString(conn, name + "StrokeLineCap", "BUTT");
+            strokeLineCap = strokeLineCap(text);
+            text = UserConfig.getString(conn, name + "StrokeLineJoin", "MITER");
+            strokeLineJoin = strokeLineJoin(text);
+            strokeLineLimit = UserConfig.getFloat(conn, name + "StrokeLineLimit", 10f);
+            dashOffset = UserConfig.getFloat(conn, name + "DashOffset", 0f);
+            more = null;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public ShapeStyle save() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            UserConfig.setString(conn, name + "StrokeColor", strokeColor != null ? strokeColor.toString() : null);
+            UserConfig.setString(conn, name + "AnchorColor", anchorColor != null ? anchorColor.toString() : null);
+            UserConfig.setBoolean(conn, name + "IsFillColor", isFillColor);
+            UserConfig.setString(conn, name + "FillColor", fillColor != null ? fillColor.toString() : null);
+            UserConfig.setFloat(conn, name + "StrokeWidth", strokeWidth);
+            UserConfig.setFloat(conn, name + "AnchorSize", anchorSize);
+            UserConfig.setFloat(conn, name + "StrokeOpacity", strokeOpacity);
+            UserConfig.setFloat(conn, name + "FillOpacity", fillOpacity);
+            UserConfig.setBoolean(conn, name + "IsStrokeDash", isStrokeDash);
+            UserConfig.setString(conn, name + "StrokeDash", strokeDash2Text(strokeDash));
+            UserConfig.setFloat(conn, name + "DashOffset", dashOffset);
+            UserConfig.setString(conn, name + "StrokeLineCap",
+                    strokeLineCap != null ? strokeLineCap.name() : null);
+            UserConfig.setFloat(conn, name + "StrokeLineLimit", strokeLineLimit);
+            UserConfig.setString(conn, name + "StrokeLineJoin",
+                    strokeLineJoin != null ? strokeLineJoin.name() : null);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return this;
+    }
+
 
     /*
         static
@@ -216,55 +260,46 @@ public class ShapeStyle {
 
     public ShapeStyle setStrokeColor(Color strokeColor) {
         this.strokeColor = strokeColor;
-        UserConfig.setString(name + "StrokeColor", strokeColor != null ? strokeColor.toString() : null);
         return this;
     }
 
     public ShapeStyle setAnchorColor(Color anchorColor) {
         this.anchorColor = anchorColor;
-        UserConfig.setString(name + "AnchorColor", anchorColor != null ? anchorColor.toString() : null);
         return this;
     }
 
     public ShapeStyle setIsFillColor(boolean isFillColor) {
         this.isFillColor = isFillColor;
-        UserConfig.setBoolean(name + "IsFillColor", isFillColor);
         return this;
     }
 
     public ShapeStyle setFillColor(Color fillColor) {
         this.fillColor = fillColor;
-        UserConfig.setString(name + "FillColor", fillColor != null ? fillColor.toString() : null);
         return this;
     }
 
     public ShapeStyle setStrokeWidth(float strokeWidth) {
         this.strokeWidth = strokeWidth;
-        UserConfig.setFloat(name + "StrokeWidth", strokeWidth);
         return this;
     }
 
     public ShapeStyle setAnchorSize(float anchorSize) {
         this.anchorSize = anchorSize;
-        UserConfig.setFloat(name + "AnchorSize", anchorSize);
         return this;
     }
 
     public ShapeStyle setStrokeOpacity(float strokeOpacity) {
         this.strokeOpacity = strokeOpacity;
-        UserConfig.setFloat(name + "StrokeOpacity", strokeOpacity);
         return this;
     }
 
     public ShapeStyle setFillOpacity(float fillOpacity) {
         this.fillOpacity = fillOpacity;
-        UserConfig.setFloat(name + "FillOpacity", fillOpacity);
         return this;
     }
 
     public ShapeStyle setIsStrokeDash(boolean isStrokeDash) {
         this.isStrokeDash = isStrokeDash;
-        UserConfig.setBoolean(name + "IsStrokeDash", isStrokeDash);
         return this;
     }
 
@@ -278,7 +313,6 @@ public class ShapeStyle {
 
     public ShapeStyle setStrokeDash(List<Double> strokeDash) {
         this.strokeDash = strokeDash;
-        UserConfig.setString(name + "StrokeDash", strokeDash2Text(strokeDash));
         return this;
     }
 
@@ -289,27 +323,21 @@ public class ShapeStyle {
 
     public ShapeStyle setDashOffset(float dashOffset) {
         this.dashOffset = dashOffset;
-        UserConfig.setFloat(name + "DashOffset", dashOffset);
         return this;
     }
 
     public ShapeStyle setStrokeLineCap(StrokeLineCap strokeLineCap) {
         this.strokeLineCap = strokeLineCap;
-        UserConfig.setString(name + "StrokeLineCap",
-                strokeLineCap != null ? strokeLineCap.name() : null);
         return this;
     }
 
     public ShapeStyle setStrokeLineLimit(float strokeLineLimit) {
         this.strokeLineLimit = strokeLineLimit;
-        UserConfig.setFloat(name + "StrokeLineLimit", strokeLineLimit);
         return this;
     }
 
     public ShapeStyle setStrokeLineJoin(StrokeLineJoin strokeLineJoin) {
         this.strokeLineJoin = strokeLineJoin;
-        UserConfig.setString(name + "StrokeLineJoin",
-                strokeLineJoin != null ? strokeLineJoin.name() : null);
         return this;
     }
 

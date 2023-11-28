@@ -117,7 +117,7 @@ public class ImageEditorController extends BaseImageController {
                 return false;
             }
             if (sourceFile == null) {
-                saveAsAction();
+                saveAsTmp();
                 return true;
             }
             imageChanged = false;
@@ -374,52 +374,35 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @Override
-    public List<MenuItem> dataMenuItems(Event fevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            if (sourceFile != null) {
-                menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
-                        StyleTools.getIconImageView("iconUndo.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    undoAction();
-                });
-                menu.setDisable(undoButton.isDisabled());
-                items.add(menu);
-
-                menu = new MenuItem(message("Redo") + "    Ctrl+Y " + message("Or") + " Alt+Y",
-                        StyleTools.getIconImageView("iconRedo.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    redoAction();
-                });
-                menu.setDisable(redoButton.isDisabled());
-                items.add(menu);
-
-                menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    showHistories();
-                });
-                menu.setDisable(recoverButton.isDisabled());
-                items.add(menu);
-
-                items.add(new SeparatorMenuItem());
-            }
-
-            items.addAll(super.dataMenuItems(fevent));
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
+
+            menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
+                    StyleTools.getIconImageView("iconUndo.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                undoAction();
+            });
+            menu.setDisable(undoButton.isDisabled());
+            items.add(menu);
+
+            menu = new MenuItem(message("Redo") + "    Ctrl+Y " + message("Or") + " Alt+Y",
+                    StyleTools.getIconImageView("iconRedo.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                redoAction();
+            });
+            menu.setDisable(redoButton.isDisabled());
+            items.add(menu);
+
+            menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                showHistories();
+            });
+            menu.setDisable(recoverButton.isDisabled());
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
                     StyleTools.getIconImageView("iconTarget.png"));
@@ -690,18 +673,18 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @FXML
-    public void popAddMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "AddMenuPopWhenMouseHovering", true)) {
-            showAddMenu(event);
+    public void popPasteMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "PasteMenuPopWhenMouseHovering", true)) {
+            showPasteMenu(event);
         }
     }
 
     @FXML
-    public void showAddMenu(Event fevent) {
+    public void showPasteMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
+            MenuItem menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconDefault.png"));
             menu.setOnAction((ActionEvent event) -> {
                 pasteAction();
             });
@@ -710,6 +693,12 @@ public class ImageEditorController extends BaseImageController {
             menu = new MenuItem(message("Graffiti"), StyleTools.getIconImageView("iconPolylines.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImagePolylinesController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Text"), StyleTools.getIconImageView("iconBinary.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageTextController.open(this);
             });
             items.add(menu);
 
@@ -776,11 +765,11 @@ public class ImageEditorController extends BaseImageController {
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "AddMenuPopWhenMouseHovering", true));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "PasteMenuPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "AddMenuPopWhenMouseHovering", popItem.isSelected());
+                    UserConfig.setBoolean(baseName + "PasteMenuPopWhenMouseHovering", popItem.isSelected());
                 }
             });
             items.add(popItem);
@@ -803,11 +792,21 @@ public class ImageEditorController extends BaseImageController {
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 Image canvas = controller.getCanvas();
                 if (canvas != null) {
-                    loadImage(canvas);
+                    create(canvas);
                 }
                 controller.close();
             }
         });
+    }
+
+    public void create(Image canvas) {
+        if (canvas == null) {
+            return;
+        }
+        sourceFile = null;
+        imageInformation = null;
+        imageView.setImage(canvas);
+        saveAction();
     }
 
     @FXML

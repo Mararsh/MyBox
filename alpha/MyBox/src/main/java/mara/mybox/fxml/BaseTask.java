@@ -122,6 +122,10 @@ public class BaseTask<P> extends Task<P> {
         return DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime());
     }
 
+    public boolean isWorking() {
+        return !quit && !isCancelled() && !isDone();
+    }
+
     /*
         get/set
      */

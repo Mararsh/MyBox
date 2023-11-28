@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
@@ -75,14 +76,6 @@ public class ImagePasteController extends BaseImageEditController {
             });
 
             blendController.setParameters(this, imageView);
-            blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (editor != null) {
-                        pasteClip(currentAngle);
-                    }
-                }
-            });
 
             keepRatioCheck.setSelected(UserConfig.getBoolean(baseName + "KeepClipRatio", true));
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -160,6 +153,10 @@ public class ImagePasteController extends BaseImageEditController {
         if (clipSource == null) {
             return;
         }
+        PixelsBlend blend = blendController.pickValues();
+        if (blend == null) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -196,9 +193,10 @@ public class ImagePasteController extends BaseImageEditController {
                             maskRectangleData.setY(0);
                         }
                     }
-                    blendedImage = blendController.blend(finalClip, bgImage,
+                    blendedImage = FxImageTools.blend(finalClip, bgImage,
                             (int) maskRectangleData.getX(),
-                            (int) maskRectangleData.getY());
+                            (int) maskRectangleData.getY(),
+                            blend);
                     if (task == null || isCancelled()) {
                         return false;
                     }
@@ -289,6 +287,12 @@ public class ImagePasteController extends BaseImageEditController {
     @Override
     public void selectAction() {
         ImageClipSelectController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        pasteClip(currentAngle);
     }
 
     @FXML

@@ -53,7 +53,7 @@ public class ImageQuadraticController extends BaseShapeEditController {
             maskQuadraticData = null;
             showMaskQuadratic();
 
-            goShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

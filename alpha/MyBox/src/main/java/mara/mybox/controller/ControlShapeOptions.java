@@ -638,6 +638,7 @@ public abstract class ControlShapeOptions extends BaseController {
     }
 
     public void goStyle() {
+        style.save();
         redrawShape();
     }
 

@@ -100,7 +100,9 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
                 items.add(new SeparatorMenuItem());
             }
 
-            items.add(anchorShowItem());
+            if (!isMaskPolylinesShown()) {
+                items.add(anchorShowItem());
+            }
 
             items.add(anchorMenuItem());
 
@@ -626,6 +628,25 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
         }
     }
 
+    @FXML
+    public void exampleData(Event event) {
+        if (isMaskPolygonShown()) {
+            setMaskPolygonExample();
+            maskShapeDataChanged();
+
+        } else if (isMaskPolylineShown()) {
+            setMaskPolylineExample();
+            maskShapeDataChanged();
+
+        } else if (isMaskPolylinesShown()) {
+            setMaskPolylinesExample();
+            maskShapeDataChanged();
+
+        } else if (isMaskPathShown()) {
+            setMaskPathExample();
+            maskShapeDataChanged();
+        }
+    }
 
     /*
         pick color

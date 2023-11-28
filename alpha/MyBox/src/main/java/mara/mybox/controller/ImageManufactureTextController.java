@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
@@ -12,7 +10,6 @@ import javafx.scene.layout.HBox;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.Languages;
@@ -38,13 +35,6 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             super.initPane();
 
             optionsController.setParameters(this, imageView);
-
-            optionsController.changeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    write(true);
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -98,11 +88,11 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         }
         task = new SingletonCurrentTask<Void>(this) {
 
-            private Image newImage;
+            private Image newImage = null;
 
             @Override
             protected boolean handle() {
-                newImage = FxImageTools.addText(imageView.getImage(), optionsController);
+//                newImage = FxImageTools.addText(imageView.getImage(), optionsController);
                 if (task == null || isCancelled()) {
                     return false;
                 }
@@ -131,7 +121,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     @Override
     public void goAction() {
-        if (!optionsController.checkParameters()) {
+        if (!optionsController.pickValues()) {
             popError(Languages.message("InvalidParameters"));
             return;
         }

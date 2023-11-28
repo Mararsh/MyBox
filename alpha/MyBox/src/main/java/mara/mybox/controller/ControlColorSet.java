@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -32,6 +33,7 @@ public class ControlColorSet extends BaseController {
     protected String thisName;
     protected Object data;
     protected Color defaultColor;
+    protected Connection conn;
 
     @FXML
     protected Rectangle rect;
@@ -129,13 +131,22 @@ public class ControlColorSet extends BaseController {
     }
 
     public Color saved() {
-        return Color.web(UserConfig.getString(thisName, FxColorTools.color2rgba(defaultColor)));
+        return Color.web(UserConfig.getString(conn, thisName, FxColorTools.color2rgba(defaultColor)));
     }
 
     public void asSaved() {
         isSettingValues = true;
         setColor(saved());
         isSettingValues = false;
+    }
+
+    public Connection getConn() {
+        return conn;
+    }
+
+    public ControlColorSet setConn(Connection conn) {
+        this.conn = conn;
+        return this;
     }
 
     public void showColorPalette() {

@@ -26,9 +26,6 @@ public class ImagePolylinesController extends BaseShapeEditController {
             super.initMore();
 
             operation = "Graffiti";
-            showAnchors = false;
-            addPointWhenClick = false;
-            popShapeMenu = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -59,11 +56,14 @@ public class ImagePolylinesController extends BaseShapeEditController {
     public void initShape() {
         try {
             popItemMenu = popLineMenuCheck.isSelected();
+            showAnchors = false;
+            addPointWhenClick = false;
+            popShapeMenu = true;
 
             maskPolylinesData = null;
             showMaskPolylines();
 
-            drawShape();
+            goAction();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

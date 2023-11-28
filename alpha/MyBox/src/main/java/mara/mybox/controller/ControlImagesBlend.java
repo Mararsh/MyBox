@@ -2,12 +2,10 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -20,10 +18,10 @@ import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppValues;
@@ -43,7 +41,6 @@ public class ControlImagesBlend extends BaseController {
     protected ImagesBlendMode blendMode;
     protected float opacity;
     protected int keepRatioType;
-    protected SimpleBooleanProperty optionChangedNotify;
 
     @FXML
     protected ComboBox<String> blendSelector, opacitySelector;
@@ -52,82 +49,41 @@ public class ControlImagesBlend extends BaseController {
     @FXML
     protected Button demoButton;
 
-    public ControlImagesBlend() {
-        optionChangedNotify = new SimpleBooleanProperty(false);
-    }
-
     public void setParameters(BaseController parent) {
         setParameters(parent, null);
     }
 
     public void setParameters(BaseController parent, ImageView imageView) {
-        try {
-            this.parentController = parent;
-            baseName = parentController.interfaceName + "Blend";
-            this.backView = imageView;
-
-            foreTopCheck.setSelected(UserConfig.getBoolean(baseName + "OnTop", true));
-            foreTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "OnTop", foreTopCheck.isSelected());
-                    notifyOptionChanged();
-                }
-            });
-
-            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
-                    notifyOptionChanged();
-                }
-            });
-
-            String mode = UserConfig.getString(baseName + "BlendMode", message("NormalMode"));
-            blendMode = PixelsBlendFactory.blendMode(mode);
-            blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
-            blendSelector.setValue(mode);
-            blendSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    String mode = blendSelector.getSelectionModel().getSelectedItem();
-                    blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setString(baseName + "BlendMode", mode);
-                    notifyOptionChanged();
-                }
-            });
-
-            opacity = UserConfig.getInt(baseName + "BlendOpacity", 100) / 100f;
-            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
-            opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacitySelector.setValue(opacity + "");
-            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        float f = Float.parseFloat(newValue);
-                        if (opacity >= 0.0f && opacity <= 1.0f) {
-                            opacity = f;
-                            UserConfig.setInt(baseName + "BlendOpacity", (int) (f * 100));
-                            ValidationTools.setEditorNormal(opacitySelector);
-                            notifyOptionChanged();
-                        } else {
-                            ValidationTools.setEditorBadStyle(opacitySelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(opacitySelector);
-                    }
-                }
-            });
-
+        try (Connection conn = DerbyBase.getConnection()) {
+            setParameters(conn, parent, null);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void notifyOptionChanged() {
-        optionChangedNotify.set(!optionChangedNotify.get());
+    public void setParameters(Connection conn, BaseController parent, ImageView imageView) {
+        try {
+            this.parentController = parent;
+            baseName = parentController.interfaceName + "Blend";
+            this.backView = imageView;
+
+            foreTopCheck.setSelected(UserConfig.getBoolean(conn, baseName + "OnTop", true));
+
+            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(conn, baseName + "IgnoreTransparent", true));
+
+            String mode = UserConfig.getString(conn, baseName + "BlendMode", message("NormalMode"));
+            blendMode = PixelsBlendFactory.blendMode(mode);
+            blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
+            blendSelector.setValue(mode);
+
+            opacity = UserConfig.getInt(conn, baseName + "BlendOpacity", 100) / 100f;
+            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
+            opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            opacitySelector.setValue(opacity + "");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public boolean isTop() {
@@ -138,7 +94,7 @@ public class ControlImagesBlend extends BaseController {
         return ignoreTransparentCheck.isSelected();
     }
 
-    public PixelsBlend pickValues() {
+    public boolean checkValues() {
         float f = -1;
         try {
             f = Float.parseFloat(opacitySelector.getValue());
@@ -146,13 +102,43 @@ public class ControlImagesBlend extends BaseController {
         }
         if (f >= 0.0f && f <= 1.0f) {
             opacity = f;
-            UserConfig.setInt(baseName + "BlendOpacity", (int) (f * 100));
-            ValidationTools.setEditorNormal(opacitySelector);
-            notifyOptionChanged();
         } else {
-            ValidationTools.setEditorBadStyle(opacitySelector);
+            popError(message("InvalidParameter") + ": " + message("Opacity"));
+            return false;
+        }
+        return true;
+    }
+
+    public PixelsBlend pickValues() {
+        if (!checkValues()) {
             return null;
         }
+        PixelsBlend blend = null;
+        try (Connection conn = DerbyBase.getConnection()) {
+            blend = pickValues(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return blend;
+    }
+
+    public PixelsBlend pickValues(Connection conn) {
+        try {
+            String mode = blendSelector.getValue();
+            blendMode = PixelsBlendFactory.blendMode(mode);
+            UserConfig.setString(conn, baseName + "BlendMode", mode);
+
+            UserConfig.setInt(conn, baseName + "BlendOpacity", (int) (opacity * 100));
+
+            UserConfig.setBoolean(conn, baseName + "OnTop", foreTopCheck.isSelected());
+            UserConfig.setBoolean(conn, baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return makeBlend();
+    }
+
+    public PixelsBlend makeBlend() {
         return PixelsBlend.blender(blendMode, opacity, !isTop(), ignoreTransparent());
     }
 
@@ -254,14 +240,6 @@ public class ControlImagesBlend extends BaseController {
 
         };
         start(task);
-    }
-
-    public BufferedImage blend(BufferedImage fore, BufferedImage back, int x, int y) {
-        return PixelsBlend.blend(fore, back, x, y, pickValues());
-    }
-
-    public Image blend(Image foreImage, Image backImage, int x, int y) {
-        return FxImageTools.blend(foreImage, backImage, x, y, pickValues());
     }
 
 }

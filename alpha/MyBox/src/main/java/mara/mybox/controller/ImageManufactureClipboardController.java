@@ -16,11 +16,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
@@ -102,14 +104,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             });
 
             blendController.setParameters(this, imageView);
-            blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (editor != null) {
-                        pasteClip(currentAngle);
-                    }
-                }
-            });
 
             keepRatioCheck.setSelected(UserConfig.getBoolean(baseName + "KeepClipRatio", true));
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -233,6 +227,10 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         if (clipSource == null) {
             return;
         }
+        PixelsBlend blend = blendController.pickValues();
+        if (blend == null) {
+            return;
+        }
         editor.showRightPane();
         if (task != null) {
             task.cancel();
@@ -273,9 +271,10 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                             enlarged = true;
                         }
                     }
-                    blendedImage = blendController.blend(finalClip, bgImage,
+                    blendedImage = FxImageTools.blend(finalClip, bgImage,
                             (int) editor.scope.getRectangle().getX(),
-                            (int) editor.scope.getRectangle().getY());
+                            (int) editor.scope.getRectangle().getY(),
+                            blend);
                     if (task == null || isCancelled()) {
                         return false;
                     }

@@ -47,13 +47,13 @@ public class ImageManufactureBatchTextController extends BaseImageEditBatchContr
 
     @Override
     public boolean makeMoreParameters() {
-        return super.makeMoreParameters() && optionsController.checkParameters();
+        return super.makeMoreParameters() && optionsController.pickValues();
     }
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
-            BufferedImage target = ImageTextTools.addText(source, optionsController);
+            BufferedImage target = ImageTextTools.addText(task, source, optionsController);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

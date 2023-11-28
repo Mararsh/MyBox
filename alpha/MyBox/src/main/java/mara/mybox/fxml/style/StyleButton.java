@@ -697,8 +697,10 @@ public class StyleButton {
         }
         if (id.startsWith("file")) {
             switch (id) {
+                case "fileMenuButton":
+                    return new StyleData(id, message("File"), "", "iconFile.png");
                 case "filesListButton":
-                    return new StyleData("filesListButton", message("FilesList"), "", "iconList.png");
+                    return new StyleData(id, message("FilesList"), "", "iconList.png");
                 default:
                     return new StyleData(id, message("File"), "", "iconFile.png");
             }

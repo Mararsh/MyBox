@@ -1559,8 +1559,6 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             });
             items.add(menu);
 
-            items.add(anchorShowItem());
-
             items.add(anchorMenuItem());
 
             items.add(new SeparatorMenuItem());

@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageText">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageText">
     <children>
         <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
@@ -32,15 +32,6 @@
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconHistory.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="goTextButton" mnemonicParsing="false" onAction="#goText">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconGo.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -69,14 +60,6 @@
                                  <toggleGroup>
                                                   <ToggleGroup fx:id="positionGroup" />
                                  </toggleGroup></RadioButton>
-                                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                                            <children>
-                                                <RadioButton fx:id="leftTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftTop" toggleGroup="$positionGroup" wrapText="true" />
-                                                <RadioButton fx:id="rightTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" wrapText="true" />
-                                                <RadioButton fx:id="rightBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightBottom" toggleGroup="$positionGroup" wrapText="true" />
-                                                <RadioButton fx:id="leftBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" wrapText="true" />
-                                            </children>
-                                        </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <RadioButton fx:id="customRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" wrapText="true" />
@@ -84,6 +67,14 @@
                                                 <TextField prefWidth="90.0" promptText="X" fx:id="xInput" />
                                                 <Label layoutX="60.0" layoutY="14.0" text="y" />
                                                 <TextField fx:id="yInput" prefWidth="90.0" promptText="Y" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
+                                                <RadioButton fx:id="leftTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftTop" toggleGroup="$positionGroup" wrapText="true" />
+                                                <RadioButton fx:id="rightTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" wrapText="true" />
+                                                <RadioButton fx:id="rightBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightBottom" toggleGroup="$positionGroup" wrapText="true" />
+                                                <RadioButton fx:id="leftBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" wrapText="true" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="15.0" layoutY="35.0" prefWrapLength="0.0" vgap="5.0">
@@ -94,15 +85,6 @@
                                         </FlowPane>
                                     </children>
                                 </VBox>
-                                <Button fx:id="goLocationButton" mnemonicParsing="false" onAction="#goLocation">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconGo.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
                             </children>
                         </VBox>
                     </content>
@@ -205,7 +187,7 @@
                                         </FlowPane>
                                         <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
-                                                <Label fx:id="strokeWidthLabel1" text="%StrokeWidth" />
+                                                <Label text="%StrokeWidth" />
                                                 <ComboBox fx:id="bordersStrokeWidthSelector" editable="true" prefWidth="100.0" />
                                                 <CheckBox fx:id="bordersStrokeDottedCheck" mnemonicParsing="false" text="%Dotted" />
                                             </children>
@@ -220,15 +202,6 @@
                                             <children>
                                                 <Label text="%Margins" />
                                                 <TextField fx:id="bordersMarginInput" prefWidth="80.0" text="2" />
-                                                <Button fx:id="goBordersButton" mnemonicParsing="false" onAction="#goBorders">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconGo.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
                                             </children>
                                         </FlowPane>
                                     </children>

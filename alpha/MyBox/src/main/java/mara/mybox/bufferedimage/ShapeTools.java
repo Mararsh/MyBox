@@ -34,7 +34,7 @@ public class ShapeTools {
     public static BufferedImage drawShape(BufferedImage srcImage, DoubleShape doubleShape,
             ShapeStyle style, PixelsBlend blender) {
         try {
-            if (doubleShape == null || doubleShape.isEmpty() || style == null) {
+            if (srcImage == null || doubleShape == null || doubleShape.isEmpty() || style == null) {
                 return srcImage;
             }
             Shape shape = doubleShape.getShape();
@@ -42,42 +42,6 @@ public class ShapeTools {
             int height = srcImage.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
-            Color strokeColor = style.getStrokeColorAwt();
-            float strokeWidth = style.getStrokeWidth();
-            float opacity = blender.getOpacity();
-            if (strokeWidth > 0) {
-                BufferedImage foreImage = new BufferedImage(width, height, imageType);
-                Graphics2D g = foreImage.createGraphics();
-                if (AppVariables.imageRenderHints != null) {
-                    g.addRenderingHints(AppVariables.imageRenderHints);
-                }
-                if (strokeColor.getRGB() == 0) {
-                    g.setBackground(Color.WHITE);
-                    g.setColor(Color.BLACK);
-                } else {
-                    g.setBackground(Colors.TRANSPARENT);
-                    g.setColor(strokeColor);
-                }
-                g.setStroke(stroke(style));
-                g.draw(shape);
-                g.dispose();
-                if (strokeColor.getRGB() == 0) {
-                    target = new BufferedImage(width, height, imageType);
-                    int black = Color.BLACK.getRGB();
-                    int alpha = 255 - (int) (opacity * 255);
-                    for (int j = 0; j < height; ++j) {
-                        for (int i = 0; i < width; ++i) {
-                            if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
-                            } else {
-                                target.setRGB(i, j, srcImage.getRGB(i, j));
-                            }
-                        }
-                    }
-                } else {
-                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
-                }
-            }
             if (style.isIsFillColor()) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
@@ -85,32 +49,64 @@ public class ShapeTools {
                     g.addRenderingHints(AppVariables.imageRenderHints);
                 }
                 Color fillColor = style.getFillColorAwt();
+                int fillPixel = fillColor.getRGB();
                 if (fillColor.getRGB() == 0) {
                     g.setBackground(Color.WHITE);
                     g.setColor(Color.BLACK);
+                    fillPixel = Color.BLACK.getRGB();
                 } else {
                     g.setBackground(Colors.TRANSPARENT);
                     g.setColor(fillColor);
                 }
                 g.fill(shape);
                 g.dispose();
-                BufferedImage backImage = target;
-                if (fillColor.getRGB() == 0) {
-                    target = new BufferedImage(width, height, imageType);
-                    int black = Color.BLACK.getRGB();
-                    int alpha = 255 - (int) (opacity * 255);
-                    for (int j = 0; j < height; ++j) {
-                        for (int i = 0; i < width; ++i) {
-                            if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
-                            } else {
-                                target.setRGB(i, j, srcImage.getRGB(i, j));
-                            }
+                BufferedImage backImage = srcImage;
+                target = new BufferedImage(width, height, imageType);
+                for (int j = 0; j < height; ++j) {
+                    for (int i = 0; i < width; ++i) {
+                        int backPixel = backImage.getRGB(i, j);
+                        int forePixel = foreImage.getRGB(i, j);
+                        if (forePixel == fillPixel) {
+                            target.setRGB(i, j, blender.blend(forePixel, backPixel));
+                        } else {
+                            target.setRGB(i, j, backPixel);
                         }
                     }
+                }
+            }
 
+            float strokeWidth = style.getStrokeWidth();
+            if (strokeWidth > 0) {
+                BufferedImage backImage = target;
+                BufferedImage foreImage = new BufferedImage(width, height, imageType);
+                Graphics2D g = foreImage.createGraphics();
+                if (AppVariables.imageRenderHints != null) {
+                    g.addRenderingHints(AppVariables.imageRenderHints);
+                }
+                g.setStroke(stroke(style));
+                Color strokeColor = style.getStrokeColorAwt();
+                int strokePixel = strokeColor.getRGB();
+                if (strokePixel == 0) {
+                    g.setBackground(Color.WHITE);
+                    g.setColor(Color.BLACK);
+                    strokePixel = Color.BLACK.getRGB();
                 } else {
-                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
+                    g.setBackground(Colors.TRANSPARENT);
+                    g.setColor(strokeColor);
+                }
+                g.draw(shape);
+                g.dispose();
+                target = new BufferedImage(width, height, imageType);
+                for (int j = 0; j < height; ++j) {
+                    for (int i = 0; i < width; ++i) {
+                        int backPixel = backImage.getRGB(i, j);
+                        int forePixel = foreImage.getRGB(i, j);
+                        if (forePixel == strokePixel) {
+                            target.setRGB(i, j, blender.blend(forePixel, backPixel));
+                        } else {
+                            target.setRGB(i, j, backPixel);
+                        }
+                    }
                 }
             }
             return target;
