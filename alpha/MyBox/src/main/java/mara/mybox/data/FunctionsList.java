@@ -27,12 +27,13 @@ public class FunctionsList {
     protected MenuBar menuBar;
     protected boolean withLink;
     protected StringTable table;
-    protected String goImageFile;
+    protected String goImageFile, lang;
     protected Map<String, MenuItem> map;
 
-    public FunctionsList(MenuBar menuBar, boolean withLink) {
+    public FunctionsList(MenuBar menuBar, boolean withLink, String lang) {
         this.menuBar = menuBar;
         this.withLink = withLink;
+        this.lang = lang;
     }
 
     public StringTable make() {
@@ -48,12 +49,12 @@ public class FunctionsList {
             }
             List<String> names = new ArrayList<>();
             for (int i = 1; i <= MaxLevel; i++) {
-                names.add(message("Level") + " " + i);
+                names.add(message(lang, "Level") + " " + i);
             }
             if (withLink) {
-                names.add(message("Go"));
+                names.add(message(lang, "Go"));
             }
-            table = new StringTable(names, message("FunctionsList"));
+            table = new StringTable(names, message(lang, "FunctionsList"));
             map = new HashMap<>();
             List<Menu> menus = menuBar.getMenus();
             for (Menu menu : menus) {
@@ -91,7 +92,7 @@ public class FunctionsList {
             if (menu.getOnAction() != null) {
                 link = "<a><img src=\"" + goImageFile + "\" "
                         + "onclick=\"alert('" + name + "')\" "
-                        + "alt=\"" + message("Go") + "\"></a>";
+                        + "alt=\"" + message(lang, "Go") + "\"></a>";
                 map.put(name, menu);
             } else {
                 link = "";

@@ -511,7 +511,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 if (bufferedImage == null || task == null || isCancelled()) {
                     return false;
                 }
-                needBackup = srcFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", false);
+                needBackup = srcFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
                 if (needBackup) {
                     backup = addBackup(task, srcFile);
                 }

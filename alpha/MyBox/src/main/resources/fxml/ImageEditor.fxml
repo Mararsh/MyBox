@@ -66,6 +66,15 @@ License:    Apache License Version 2.0
                               </ImageView>
                            </graphic>
                         </CheckBox>
+                                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconMenu.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -137,15 +146,15 @@ License:    Apache License Version 2.0
                     <children>
                         <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
                             <children>
-                                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconMenu.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
+                        <Button fx:id="backupButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#openBackups">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconBackup.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                                 <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

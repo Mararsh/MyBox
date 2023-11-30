@@ -322,7 +322,8 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     public void makeDocuments() {
-        ShortcutsController.documents((MainMenuController) this);
+        ShortcutsController.documents();
+        FunctionsListController.documents();
     }
 
     @FXML

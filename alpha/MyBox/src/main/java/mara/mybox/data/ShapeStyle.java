@@ -125,7 +125,6 @@ public class ShapeStyle {
         return this;
     }
 
-
     /*
         static
      */

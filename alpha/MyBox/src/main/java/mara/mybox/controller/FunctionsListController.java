@@ -10,9 +10,14 @@ import javafx.scene.web.WebEvent;
 import mara.mybox.data.FunctionsList;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -65,7 +70,7 @@ public class FunctionsListController extends ControlWebView {
         try {
             super.afterSceneLoaded();
 
-            FunctionsList list = new FunctionsList(mainMenuController.menuBar, true);
+            FunctionsList list = new FunctionsList(mainMenuController.menuBar, true, Languages.getLangName());
             table = list.make();
             map = list.getMap();
             if (table != null) {
@@ -75,7 +80,52 @@ public class FunctionsListController extends ControlWebView {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
 
+    public void makeDocuments(String lang) {
+        task = new SingletonTask<Void>(this) {
+            private File path;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    path = new File(AppVariables.MyboxDataPath + "/doc/");
+
+                    FunctionsList list = new FunctionsList(mainMenuController.menuBar, true, lang);
+                    StringTable table = list.make();
+                    File file = new File(path, "mybox_functions_" + lang + ".html");
+                    TextFileTools.writeFile(file, table.html());
+                    task.setInfo(file.getAbsolutePath());
+
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                close();
+            }
+
+        };
+        start(task);
+    }
+
+    /*
+        static
+     */
+    public static void documents() {
+        try {
+            FunctionsListController zh = (FunctionsListController) WindowTools.openStage(Fxmls.FunctionsListFxml, Languages.BundleZhCN);
+            zh.makeDocuments("zh");
+
+            FunctionsListController en = (FunctionsListController) WindowTools.openStage(Fxmls.FunctionsListFxml, Languages.BundleEn);
+            en.makeDocuments("en");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }

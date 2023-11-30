@@ -122,7 +122,7 @@ public abstract class BaseFileController extends BaseController {
                 items.add(menu);
 
                 CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", false));
+                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
                 backItem.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -133,7 +133,7 @@ public abstract class BaseFileController extends BaseController {
 
                 menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    FileBackupController.load(this);
+                    openBackups();
                 });
                 items.add(menu);
 
@@ -353,6 +353,11 @@ public abstract class BaseFileController extends BaseController {
             MyBoxLog.debug(e);
             return null;
         }
+    }
+
+    @FXML
+    public void openBackups() {
+        FileBackupController.load(this);
     }
 
 }

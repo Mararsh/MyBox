@@ -332,7 +332,8 @@ public class BaseImageController extends BaseImageController_Actions {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            if (imageView != null && imageView.getImage() != null) {
+            boolean imageShown = imageView != null && imageView.getImage() != null;
+            if (imageShown) {
                 menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
                         StyleTools.getIconImageView("iconSave.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -388,7 +389,7 @@ public class BaseImageController extends BaseImageController_Actions {
                 items.add(menu);
 
                 CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", false));
+                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
                 backItem.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -399,7 +400,7 @@ public class BaseImageController extends BaseImageController_Actions {
 
                 menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    FileBackupController.load(this);
+                    openBackups();
                 });
                 items.add(menu);
             }
@@ -412,7 +413,9 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
+            menu = new MenuItem(message("LoadContentInSystemClipboard")
+                    + (imageShown ? "" : ("    Ctrl+V " + message("Or") + " Alt+V")),
+                    StyleTools.getIconImageView("iconImageSystem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 loadContentInSystemClipboard();
             });

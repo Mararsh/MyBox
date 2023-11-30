@@ -13,7 +13,6 @@ import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -37,82 +36,57 @@ public class ShapeTools {
             if (srcImage == null || doubleShape == null || doubleShape.isEmpty() || style == null) {
                 return srcImage;
             }
-            Shape shape = doubleShape.getShape();
+            float strokeWidth = style.getStrokeWidth();
+            boolean showStroke = strokeWidth > 0;
+            boolean fill = style.isIsFillColor();
+            if (!fill && !showStroke) {
+                return srcImage;
+            }
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            BufferedImage target = srcImage;
-            if (style.isIsFillColor()) {
-                BufferedImage foreImage = new BufferedImage(width, height, imageType);
-                Graphics2D g = foreImage.createGraphics();
-                if (AppVariables.imageRenderHints != null) {
-                    g.addRenderingHints(AppVariables.imageRenderHints);
-                }
-                Color fillColor = style.getFillColorAwt();
-                int fillPixel = fillColor.getRGB();
-                if (fillColor.getRGB() == 0) {
-                    g.setBackground(Color.WHITE);
-                    g.setColor(Color.BLACK);
-                    fillPixel = Color.BLACK.getRGB();
-                } else {
-                    g.setBackground(Colors.TRANSPARENT);
-                    g.setColor(fillColor);
-                }
-                g.fill(shape);
-                g.dispose();
-                BufferedImage backImage = srcImage;
-                target = new BufferedImage(width, height, imageType);
-                for (int j = 0; j < height; ++j) {
-                    for (int i = 0; i < width; ++i) {
-                        int backPixel = backImage.getRGB(i, j);
-                        int forePixel = foreImage.getRGB(i, j);
-                        if (forePixel == fillPixel) {
-                            target.setRGB(i, j, blender.blend(forePixel, backPixel));
-                        } else {
-                            target.setRGB(i, j, backPixel);
-                        }
-                    }
-                }
+            Color strokeColor = Color.WHITE;
+            Color fillColor = Color.BLACK;
+            Color backgroundColor = Color.RED;
+            BufferedImage shapeImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = shapeImage.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
             }
-
-            float strokeWidth = style.getStrokeWidth();
-            if (strokeWidth > 0) {
-                BufferedImage backImage = target;
-                BufferedImage foreImage = new BufferedImage(width, height, imageType);
-                Graphics2D g = foreImage.createGraphics();
-                if (AppVariables.imageRenderHints != null) {
-                    g.addRenderingHints(AppVariables.imageRenderHints);
-                }
-                g.setStroke(stroke(style));
-                Color strokeColor = style.getStrokeColorAwt();
-                int strokePixel = strokeColor.getRGB();
-                if (strokePixel == 0) {
-                    g.setBackground(Color.WHITE);
-                    g.setColor(Color.BLACK);
-                    strokePixel = Color.BLACK.getRGB();
-                } else {
-                    g.setBackground(Colors.TRANSPARENT);
-                    g.setColor(strokeColor);
-                }
+            g.setStroke(stroke(style));
+            g.setBackground(backgroundColor);
+            Shape shape = doubleShape.getShape();
+            if (fill) {
+                g.setColor(fillColor);
+                g.fill(shape);
+            }
+            if (showStroke) {
+                g.setColor(strokeColor);
                 g.draw(shape);
-                g.dispose();
-                target = new BufferedImage(width, height, imageType);
-                for (int j = 0; j < height; ++j) {
-                    for (int i = 0; i < width; ++i) {
-                        int backPixel = backImage.getRGB(i, j);
-                        int forePixel = foreImage.getRGB(i, j);
-                        if (forePixel == strokePixel) {
-                            target.setRGB(i, j, blender.blend(forePixel, backPixel));
-                        } else {
-                            target.setRGB(i, j, backPixel);
-                        }
+            }
+            g.dispose();
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            int strokePixel = strokeColor.getRGB();
+            int fillPixel = fillColor.getRGB();
+            int realStrokePixel = style.getStrokeColorAwt().getRGB();
+            int realFillPixel = style.getFillColorAwt().getRGB();
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
+                    int srcPixel = srcImage.getRGB(i, j);
+                    int shapePixel = shapeImage.getRGB(i, j);
+                    if (shapePixel == strokePixel) {
+                        target.setRGB(i, j, blender.blend(realStrokePixel, srcPixel));
+                    } else if (shapePixel == fillPixel) {
+                        target.setRGB(i, j, blender.blend(realFillPixel, srcPixel));
+                    } else {
+                        target.setRGB(i, j, srcPixel);
                     }
                 }
             }
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return srcImage;
+            return null;
         }
     }
 

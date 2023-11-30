@@ -29,10 +29,11 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                     <children>
-                        <Label fx:id="fileLabel1" text="%File" />
+                        <Label text="%File" />
                         <Label fx:id="fileLabel" minHeight="-Infinity" wrapText="true" />
                     </children>
                 </HBox>
+            <CheckBox fx:id="backupCheck" mnemonicParsing="false" selected="true" text="%BackupWhenSave" />
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Button fx:id="refreshButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">

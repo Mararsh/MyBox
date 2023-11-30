@@ -630,12 +630,12 @@ public class ControlImageText extends BaseController {
         return bordersFillCheck.isSelected();
     }
 
-    public Color bordersStrokeColor() {
-        return bordersStrokeColorController.color();
+    public java.awt.Color bordersStrokeColor() {
+        return bordersStrokeColorController.awtColor();
     }
 
-    public Color bordersFillColor() {
-        return bordersFillColorController.color();
+    public java.awt.Color bordersFillColor() {
+        return bordersFillColorController.awtColor();
     }
 
     /*

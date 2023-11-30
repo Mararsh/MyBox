@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -67,6 +68,8 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
     protected Label fileLabel;
     @FXML
     protected Button okMaxButton, useButton;
+    @FXML
+    protected CheckBox backupCheck;
 
     public FileBackupController() {
         baseTitle = message("FileBackups");
@@ -132,12 +135,20 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
                 return;
             }
             parentController = parent;
-            baseName = parent.baseName + "_" + baseName;
+            baseName = parent.baseName;
             sourceFile = parentController.sourceFile;
             tableFileBackup = new TableFileBackup();
 
             fileLabel.setText(sourceFile.getAbsolutePath());
             setTitle(baseTitle + " - " + sourceFile.getAbsolutePath());
+
+            backupCheck.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+            backupCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "BackupWhenSave", backupCheck.isSelected());
+                }
+            });
 
             maxBackups = UserConfig.getInt("MaxFileBackups", Default_Max_Backups);
             if (maxBackups <= 0) {

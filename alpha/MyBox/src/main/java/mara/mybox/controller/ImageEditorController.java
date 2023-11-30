@@ -379,29 +379,31 @@ public class ImageEditorController extends BaseImageController {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
-                    StyleTools.getIconImageView("iconUndo.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                undoAction();
-            });
-            menu.setDisable(undoButton.isDisabled());
-            items.add(menu);
+            if (!undoButton.isDisabled()) {
+                menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
+                        StyleTools.getIconImageView("iconUndo.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    undoAction();
+                });
+                items.add(menu);
+            }
 
-            menu = new MenuItem(message("Redo") + "    Ctrl+Y " + message("Or") + " Alt+Y",
-                    StyleTools.getIconImageView("iconRedo.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                redoAction();
-            });
-            menu.setDisable(redoButton.isDisabled());
-            items.add(menu);
+            if (!redoButton.isDisabled()) {
+                menu = new MenuItem(message("Redo") + "    Ctrl+Y " + message("Or") + " Alt+Y",
+                        StyleTools.getIconImageView("iconRedo.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    redoAction();
+                });
+                items.add(menu);
+            }
 
-            menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                showHistories();
-            });
-            menu.setDisable(recoverButton.isDisabled());
-            items.add(menu);
-
+            if (!recoverButton.isDisabled()) {
+                menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    showHistories();
+                });
+                items.add(menu);
+            }
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
@@ -684,7 +686,8 @@ public class ImageEditorController extends BaseImageController {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconDefault.png"));
+            MenuItem menu = new MenuItem(message("Image") + "    Ctrl+V " + message("Or") + " Alt+V",
+                    StyleTools.getIconImageView("iconDefault.png"));
             menu.setOnAction((ActionEvent event) -> {
                 pasteAction();
             });

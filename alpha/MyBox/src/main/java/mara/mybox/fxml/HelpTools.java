@@ -7,13 +7,11 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorQueryController;
 import mara.mybox.controller.WebBrowserController;
-import mara.mybox.data.FunctionsList;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -333,24 +331,6 @@ public class HelpTools {
                     + "/mybox_useful_link_" + lang + ".html");
 
             return TextFileTools.writeFile(file, html);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public static File makeFunctionsList(MenuBar menuBar) {
-        try {
-            FunctionsList list = new FunctionsList(menuBar, false);
-            StringTable table = list.make();
-            if (table != null) {
-                File htmlFile = new File(FileTmpTools.generatePath("html")
-                        + "/mybox_functions_" + Languages.getLangName() + ".html");
-                TextFileTools.writeFile(htmlFile, table.html());
-                return htmlFile;
-            } else {
-                return null;
-            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
