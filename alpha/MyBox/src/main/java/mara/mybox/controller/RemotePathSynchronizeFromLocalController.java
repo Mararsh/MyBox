@@ -78,14 +78,14 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     @Override
     public void deleteTargetFile(FileNode targetNode) {
         if (targetNode != null) {
-            remoteController.delete(targetNode.fullName());
+            remoteController.delete(targetNode.nodeFullName());
         }
     }
 
     @Override
     public void targetMkdirs(File srcFile, FileNode targetNode) {
         if (targetNode != null) {
-            remoteController.mkdirs(targetNode.fullName(),
+            remoteController.mkdirs(targetNode.nodeFullName(),
                     copyAttr.isCopyMTime() && srcFile != null ? (int) (srcFile.lastModified() / 1000) : -1,
                     copyAttr.getPermissions());
         }
@@ -97,7 +97,7 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
             if (targetNode == null) {
                 return false;
             }
-            return remoteController.put(sourceFile, targetNode.fullName(),
+            return remoteController.put(sourceFile, targetNode.nodeFullName(),
                     copyAttr.isCopyMTime(), copyAttr.getPermissions());
         } catch (Exception e) {
             showLogs(e.toString());

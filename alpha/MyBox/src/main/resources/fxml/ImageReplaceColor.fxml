@@ -35,6 +35,28 @@ License:    Apache License Version 2.0
                         <VBox fx:id="setBox" spacing="5.0">
                             <children>
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%ReplaceColor" VBox.vgrow="ALWAYS" />
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                           <children>
+                              <Button fx:id="previewButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#previewAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconPreview.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </FlowPane>
                                   <FlowPane fx:id="newColorPane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                                       <children>
                                           <Label minHeight="-Infinity" text="%NewColor" wrapText="true" />
@@ -48,20 +70,20 @@ License:    Apache License Version 2.0
                                   <Label minHeight="-Infinity" text="%NoSelectionMeansAll" wrapText="true" />
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
-                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                              <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                          <Image url="@../buttons/Red/iconClose.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
-                              </Button>
-                              <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
+                              </CheckBox>
+                              <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconPreview.png" />
+                                          <Image url="@../buttons/Red/iconCancel.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -102,28 +124,6 @@ License:    Apache License Version 2.0
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/Red/iconSave.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </FlowPane>
-                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                           <children>
-                              <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconClose.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </CheckBox>
-                              <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconCancel.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>

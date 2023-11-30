@@ -77,8 +77,8 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageManufactureBatchText(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchTextFxml);
+    protected void imageTextBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageTextBatchFxml);
     }
 
     @FXML

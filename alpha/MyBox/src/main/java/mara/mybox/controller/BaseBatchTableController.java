@@ -62,7 +62,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
             listButton, exampleRegexButton;
     @FXML
-    protected TableColumn<P, String> handledColumn, fileColumn, typeColumn;
+    protected TableColumn<P, String> handledColumn, fileColumn, dirColumn, typeColumn;
     @FXML
     protected TableColumn<P, Long> currentIndexColumn, numberColumn, sizeColumn, modifyTimeColumn, createTimeColumn;
     @FXML
@@ -338,9 +338,17 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                     }
                 });
             }
+
             if (fileColumn != null) {
-                fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
-                fileColumn.setPrefWidth(320);
+                if (dirColumn != null) {
+                    dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
+                    dirColumn.setPrefWidth(260);
+                    fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+                    fileColumn.setPrefWidth(160);
+                } else {
+                    fileColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+                    fileColumn.setPrefWidth(320);
+                }
             }
             if (typeColumn != null) {
                 typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));

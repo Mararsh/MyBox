@@ -43,7 +43,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
 
     protected TableView<ImageInformation> tableView;
     protected TableColumn<ImageInformation, ImageInformation> imageColumn;
-    protected TableColumn<ImageInformation, String> fileColumn, formatColumn, pixelsColumn, csColumn, loadColumn;
+    protected TableColumn<ImageInformation, String> dirColumn, fileColumn, formatColumn, pixelsColumn, csColumn, loadColumn;
     protected TableColumn<ImageInformation, Integer> indexColumn;
     protected TableColumn<ImageInformation, Long> fileSizeColumn, modifiedTimeColumn, createTimeColumn;
     protected TableColumn<ImageInformation, Boolean> isScaledColumn, isMutipleFramesColumn;

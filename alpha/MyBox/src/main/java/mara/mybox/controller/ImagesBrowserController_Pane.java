@@ -362,8 +362,10 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.setTableMenuButtonVisible(true);
 
+            dirColumn = new TableColumn<>(Languages.message("Directory"));
+            dirColumn.setPrefWidth(260);
             fileColumn = new TableColumn<>(Languages.message("File"));
-            fileColumn.setPrefWidth(220);
+            fileColumn.setPrefWidth(160);
             formatColumn = new TableColumn<>(Languages.message("Format"));
             formatColumn.setPrefWidth(60);
             csColumn = new TableColumn<>(Languages.message("Color"));
@@ -379,6 +381,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             createTimeColumn = new TableColumn<>(Languages.message("CreateTime"));
             createTimeColumn.setPrefWidth(200);
 
+            dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
             formatColumn.setCellValueFactory(new PropertyValueFactory<>("imageFormat"));
             csColumn.setCellValueFactory(new PropertyValueFactory<>("colorSpace"));

@@ -68,8 +68,8 @@ public class ImageTextController extends BaseImageEditController {
 
     @FXML
     @Override
-    public void goAction() {
-        if (isSettingValues || !optionsController.pickValues()) {
+    public synchronized void goAction() {
+        if (isSettingValues || !optionsController.checkValues()) {
             return;
         }
         if (task != null) {
@@ -81,6 +81,9 @@ public class ImageTextController extends BaseImageEditController {
 
             @Override
             protected boolean handle() {
+                if (!optionsController.pickValues()) {
+                    return false;
+                }
                 BufferedImage target = ImageTextTools.addText(this,
                         SwingFXUtils.fromFXImage(srcImage(), null),
                         optionsController);

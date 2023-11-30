@@ -1,11 +1,17 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -55,6 +61,96 @@ public class ImageBlackWhiteController extends BasePixelsController {
             return null;
         }
     }
+
+    @Override
+    protected List<String> makeDemoFiles(Image demoImage) {
+        try {
+            List<String> files = new ArrayList<>();
+            ImageBinary imageBinary = new ImageBinary(demoImage);
+            imageBinary.setScope(scope())
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
+            String prefix = message("BlackOrWhite");
+
+            BufferedImage bufferedImage = imageBinary
+                    .setIntPara1(-1)
+                    .setIsDithering(true)
+                    .operate();
+            String tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Default")
+                    + "_" + message("Dithering"), "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            bufferedImage = imageBinary
+                    .setIntPara1(-1)
+                    .setIsDithering(false)
+                    .operate();
+            tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Default"), "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            List<Integer> inputs = new ArrayList<>();
+            inputs.addAll(Arrays.asList(64, 96, 112, 128, 144, 160, 176, 198, 228));
+            int input = binaryController.threshold;
+            if (input > 0 && input < 255 && !inputs.contains(input)) {
+                inputs.add(input);
+            }
+            for (int v : inputs) {
+                bufferedImage = imageBinary
+                        .setIntPara1(v)
+                        .setIsDithering(true)
+                        .operate();
+                tmpFile = FileTmpTools.generateFile(prefix + "_" + v
+                        + "_" + message("Dithering"), "png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                    files.add(tmpFile);
+                    task.setInfo(tmpFile);
+                }
+
+                bufferedImage = imageBinary
+                        .setIntPara1(v)
+                        .setIsDithering(false)
+                        .operate();
+                tmpFile = FileTmpTools.generateFile(prefix + "_" + v, "png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                    files.add(tmpFile);
+                    task.setInfo(tmpFile);
+                }
+            }
+
+            int otsu = ImageBinary.calculateThreshold(srcImage());
+            bufferedImage = imageBinary
+                    .setIntPara1(otsu)
+                    .setIsDithering(true)
+                    .operate();
+            tmpFile = FileTmpTools.generateFile(prefix + "_" + message("OTSU")
+                    + otsu + "_" + message("Dithering"), "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            bufferedImage = imageBinary
+                    .setIntPara1(otsu)
+                    .setIsDithering(false)
+                    .operate();
+            tmpFile = FileTmpTools.generateFile(prefix + "_" + message("OTSU") + otsu, "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            return files;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
+        }
+    }
+
 
     /*
         static methods

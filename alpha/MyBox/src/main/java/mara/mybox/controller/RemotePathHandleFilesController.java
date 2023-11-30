@@ -49,7 +49,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             List<TreeItem<FileNode>> items = manageController.filesTreeView.getSelectionModel().getSelectedItems();
             if (items != null) {
                 for (TreeItem<FileNode> item : items) {
-                    namesArea.appendText(item.getValue().fullName() + "\n");
+                    namesArea.appendText(item.getValue().nodeFullName() + "\n");
                 }
             }
 

@@ -57,7 +57,7 @@ public class ControlImageAdjustColor extends BaseController {
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkColorType();
+                    checkOpType();
                 }
             });
 

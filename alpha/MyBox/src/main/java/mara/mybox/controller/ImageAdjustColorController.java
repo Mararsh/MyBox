@@ -24,10 +24,7 @@ import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Red;
 import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Saturation;
 import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Yellow;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
-import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
@@ -86,160 +83,122 @@ public class ImageAdjustColorController extends BasePixelsController {
         }
     }
 
-    @FXML
     @Override
-    protected void demo() {
-        if (scopeController.srcImage() == null) {
-            return;
+    protected List<String> makeDemoFiles(Image inImage) {
+        try {
+            List<String> files = new ArrayList<>();
+            BufferedImage demoImage = SwingFXUtils.fromFXImage(inImage, null);
+
+            PixelsOperation pixelsOperation;
+            BufferedImage bufferedImage;
+            String tmpFile;
+
+            scope = scope();
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Color, ColorActionType.Set);
+            pixelsOperation.setColorPara1(ColorConvertTools.converColor(Color.LIGHTPINK))
+                    .setBoolPara1(true).setBoolPara2(false).setBoolPara3(false);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Color") + "_" + message("Filter"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Brightness, ColorActionType.Increase);
+            pixelsOperation.setFloatPara1(0.5f);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Brightness") + "_" + message("Increase"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Hue, ColorActionType.Decrease);
+            pixelsOperation.setFloatPara1(0.3f);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Hue") + "_" + message("Decrease"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Saturation, ColorActionType.Increase);
+            pixelsOperation.setFloatPara1(0.5f);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Saturation") + "_" + message("Increase"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Opacity, ColorActionType.Decrease);
+            pixelsOperation.setIntPara1(128);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Opacity") + "_" + message("Decrease"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.RGB, ColorActionType.Invert);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("RGB") + "_" + message("Invert"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Red, ColorActionType.Filter);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Red") + "_" + message("Filter"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Yellow, ColorActionType.Increase);
+            pixelsOperation.setIntPara1(60);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Yellow") + "_" + message("Increase"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            pixelsOperation = PixelsOperationFactory.create(demoImage,
+                    scope, OperationType.Magenta, ColorActionType.Decrease);
+            pixelsOperation.setIntPara1(60);
+            bufferedImage = pixelsOperation.operate();
+            tmpFile = FileTmpTools.generateFile(message("Magenta") + "_" + message("Decrease"), "png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            return files;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private List<String> files;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    files = new ArrayList<>();
-                    BufferedImage image = SwingFXUtils.fromFXImage(scopeController.srcImage(), null);
-                    image = ScaleTools.scaleImageLess(image, 1000000);
-
-                    PixelsOperation pixelsOperation;
-                    BufferedImage bufferedImage;
-                    String tmpFile;
-
-                    ImageScope scope = new ImageScope();
-                    scope.setScopeType(ImageScope.ScopeType.Rectangle)
-                            .setRectangle(DoubleRectangle.xywh(
-                                    image.getWidth() / 8, image.getHeight() / 8,
-                                    image.getWidth() * 3 / 4, image.getHeight() * 3 / 4));
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Color, ColorActionType.Set);
-                    pixelsOperation.setColorPara1(ColorConvertTools.converColor(Color.LIGHTPINK))
-                            .setBoolPara1(true)
-                            .setBoolPara2(false)
-                            .setBoolPara3(false);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Color") + "_" + message("Filter"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Brightness, ColorActionType.Increase);
-                    pixelsOperation.setFloatPara1(0.5f);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Brightness") + "_" + message("Increase"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Hue, ColorActionType.Decrease);
-                    pixelsOperation.setFloatPara1(0.3f);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Hue") + "_" + message("Decrease"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Saturation, ColorActionType.Increase);
-                    pixelsOperation.setFloatPara1(0.5f);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Saturation") + "_" + message("Increase"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Opacity, ColorActionType.Decrease);
-                    pixelsOperation.setIntPara1(128);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Opacity") + "_" + message("Decrease"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.RGB, ColorActionType.Invert);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("RGB") + "_" + message("Invert"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Red, ColorActionType.Filter);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Red") + "_" + message("Filter"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Yellow, ColorActionType.Increase);
-                    pixelsOperation.setIntPara1(60);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Yellow") + "_" + message("Increase"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    pixelsOperation = PixelsOperationFactory.create(image,
-                            scope, OperationType.Magenta, ColorActionType.Decrease);
-                    pixelsOperation.setIntPara1(60);
-                    bufferedImage = pixelsOperation.operate();
-                    tmpFile = FileTmpTools.generateFile(message("Magenta") + "_" + message("Decrease"), "png")
-                            .getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile);
-                    }
-
-                    return !files.isEmpty();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                if (files != null && !files.isEmpty()) {
-                    ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                    b.loadFiles(files);
-                }
-            }
-
-        };
-        start(task);
     }
-
 
     /*
         static methods

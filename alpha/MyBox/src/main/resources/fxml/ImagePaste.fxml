@@ -143,7 +143,7 @@ License:    Apache License Version 2.0
                 </VBox>
                 <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
-                        <VBox spacing="5.0">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
                                 <VBox layoutX="10.0" layoutY="30.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
@@ -197,7 +197,7 @@ License:    Apache License Version 2.0
                                         <ComboBox fx:id="ratioSelector" prefWidth="150.0" />
                                     </children>
                                 </VBox>
-                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS">
                                     <children>
                                         <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
                                     </children>
@@ -232,7 +232,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                                 <Label minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PasteComments" wrapText="true" VBox.vgrow="NEVER">
                                     <VBox.margin>
-                                        <Insets bottom="20.0" />
+                                        <Insets />
                                     </VBox.margin>
                                 </Label>
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">

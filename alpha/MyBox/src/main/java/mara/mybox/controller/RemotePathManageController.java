@@ -183,7 +183,7 @@ public class RemotePathManageController extends FilesTreeController {
                             return 1;
                         }
                     }
-                    return v1.getFileName().compareTo(v2.getFileName());
+                    return v1.getFullName().compareTo(v2.getFullName());
                 }
             });
             for (FileNode fileInfo : fileNodes) {
@@ -300,7 +300,7 @@ public class RemotePathManageController extends FilesTreeController {
             popError(message("SelectToHandle"));
             return;
         }
-        TextClipboardTools.copyToSystemClipboard(this, item.getValue().fullName());
+        TextClipboardTools.copyToSystemClipboard(this, item.getValue().nodeFullName());
     }
 
     @FXML
@@ -454,7 +454,7 @@ public class RemotePathManageController extends FilesTreeController {
         if (item == null || item.getValue() == null) {
             filename = null;
         } else if (item.getValue().isDirectory()) {
-            filename = StringTools.menuSuffix(item.getValue().fullName());
+            filename = StringTools.menuSuffix(item.getValue().nodeFullName());
         } else {
             filename = (StringTools.menuSuffix(item.getValue().path(true)) + "\n"
                     + StringTools.menuSuffix(item.getValue().getNodename()));

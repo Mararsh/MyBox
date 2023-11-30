@@ -1,5 +1,6 @@
 package mara.mybox.bufferedimage;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -60,6 +61,9 @@ public class ImageTextTools {
 
             if (optionsController.showBorders()) {
                 ShapeStyle style = optionsController.getBorderStyle();
+                if (style == null || task == null || !task.isWorking()) {
+                    return null;
+                }
                 g.setStroke(stroke(style));
                 int m = optionsController.getBordersMargin();
                 DoubleRectangle border = DoubleRectangle.xywh(
@@ -85,6 +89,7 @@ public class ImageTextTools {
                 return null;
             }
 
+            g.setStroke(new BasicStroke());
             g.setFont(font);
             if (shadowSize > 0) {
                 g.setColor(shadowColor);

@@ -185,7 +185,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem imageTextMenu = new MenuItem(message("Text"));
         imageTextMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchTextFxml);
+            loadScene(Fxmls.ImageTextBatchFxml);
         });
 
         MenuItem imageArcMenu = new MenuItem(message("Arc"));

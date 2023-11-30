@@ -1,13 +1,13 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -54,51 +54,26 @@ public class ImageBlendColorController extends BasePixelsController {
         return blend != null;
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
+    protected Image handleImage(Image inImage, ImageScope inScope) {
+        try {
+            operation = message("BlendColor");
+            opInfo = colorController.css();
+            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
+                    editor.imageView.getImage(), inScope,
+                    PixelsOperation.OperationType.Blend)
+                    .setColorPara1(colorController.awtColor())
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
+            ((PixelsOperationFactory.BlendColor) pixelsOperation)
+                    .setBlender(blend);
+            return pixelsOperation.operateFxImage();
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
-            private ImageScope scope;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
-                            editor.imageView.getImage(),
-                            scope,
-                            PixelsOperation.OperationType.Blend)
-                            .setColorPara1(colorController.awtColor())
-                            .setExcludeScope(excludeScope())
-                            .setSkipTransparent(skipTransparent());
-                    ((PixelsOperationFactory.BlendColor) pixelsOperation)
-                            .setBlender(blend);
-                    handledImage = pixelsOperation.operateFxImage();
-                    return handledImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage("BlendColor", null, scope, handledImage, cost);
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
-            }
-        };
-        start(task);
     }
+
 
     /*
         static methods

@@ -26,7 +26,7 @@ public class FileNode extends FileInformation {
     public FileNode(File file) {
         setFileAttributes(file);
         isExisted = file != null && file.exists();
-        nodename = super.getFileName();
+        nodename = super.getFullName();
     }
 
     public FileNode attrs(SftpATTRS attrs) {
@@ -67,7 +67,7 @@ public class FileNode extends FileInformation {
     }
 
     public String parentName() {
-        return parentNode != null ? parentNode.fullName() : "";
+        return parentNode != null ? parentNode.nodeFullName() : "";
     }
 
     public String path(boolean endSeparator) {
@@ -75,15 +75,15 @@ public class FileNode extends FileInformation {
         if (parentNode == null) {
             pathname = nodename;
         } else if (isDirectory()) {
-            pathname = fullName();
+            pathname = nodeFullName();
         } else {
-            pathname = parentNode.fullName();
+            pathname = parentNode.nodeFullName();
         }
         return endSeparator ? pathname + separator() : pathname;
     }
 
-    public String fullName() {
-        return (parentNode != null ? parentNode.fullName() + separator() : "") + nodename;
+    public String nodeFullName() {
+        return (parentNode != null ? parentNode.nodeFullName() + separator() : "") + nodename;
     }
 
     public boolean isExisted() {
@@ -99,11 +99,11 @@ public class FileNode extends FileInformation {
         customized get/set
      */
     @Override
-    public String getFileName() {
+    public String getFullName() {
         if (isRemote) {
-            return fullName();
+            return nodeFullName();
         } else {
-            return super.getFileName();
+            return super.getFullName();
         }
     }
 

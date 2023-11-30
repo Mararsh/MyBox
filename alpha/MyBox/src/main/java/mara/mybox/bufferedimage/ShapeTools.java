@@ -22,12 +22,16 @@ import mara.mybox.value.AppVariables;
 public class ShapeTools {
 
     public static BasicStroke stroke(ShapeStyle style) {
-        return new BasicStroke(style.getStrokeWidth(),
-                style.getStrokeLineCapAwt(),
-                style.getStrokeLineJoinAwt(),
-                style.getStrokeLineLimit(),
-                style.isIsStrokeDash() ? style.getStrokeDashAwt() : null,
-                0.0F);
+        if (style == null) {
+            return new BasicStroke();
+        } else {
+            return new BasicStroke(style.getStrokeWidth(),
+                    style.getStrokeLineCapAwt(),
+                    style.getStrokeLineJoinAwt(),
+                    style.getStrokeLineLimit(),
+                    style.isIsStrokeDash() ? style.getStrokeDashAwt() : null,
+                    0.0F);
+        }
     }
 
     public static BufferedImage drawShape(BufferedImage srcImage, DoubleShape doubleShape,

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -34,7 +33,7 @@ public class FilesFindController extends BaseBatchFileController {
     @FXML
     protected TableView<FileInformation> filesView;
     @FXML
-    protected TableColumn<FileInformation, String> fileColumn, typeColumn;
+    protected TableColumn<FileInformation, String> dirColumn, fileColumn, typeColumn;
     @FXML
     protected TableColumn<FileInformation, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
 
@@ -65,8 +64,11 @@ public class FilesFindController extends BaseBatchFileController {
             filesList = FXCollections.observableArrayList();
             filesView.setItems(filesList);
 
+            dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
+            dirColumn.setPrefWidth(260);
+
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
-            fileColumn.setPrefWidth(400);
+            fileColumn.setPrefWidth(160);
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
 

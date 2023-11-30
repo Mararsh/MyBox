@@ -200,8 +200,8 @@ public class DirectorySynchronizeController extends BaseTaskController {
                         continue;
                     }
                 }
-                FileNode targetChildNode = targetNode(targetNode.getFileName() + File.separator + srcFile.getName());
-                String targetChildName = targetChildNode.fullName();
+                FileNode targetChildNode = targetNode(targetNode.getFullName() + File.separator + srcFile.getName());
+                String targetChildName = targetChildNode.nodeFullName();
                 if (srcFile.isFile()) {
                     if (copyAttr.isOnlyCopyModified()) {
                         if (srcFile.lastModified() <= copyAttr.getModifyAfter()) {
@@ -287,8 +287,8 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     copyAttr.setTotalDirectoriesNumber(copyAttr.getTotalDirectoriesNumber() + 1);
                 }
                 copyAttr.setTotalSize(copyAttr.getTotalSize() + srcFile.length());
-                FileNode targetChildNode = targetNode(targetNode.getFileName() + File.separator + srcFile.getName());
-                String targetChildName = targetChildNode.getFileName();
+                FileNode targetChildNode = targetNode(targetNode.getFullName() + File.separator + srcFile.getName());
+                String targetChildName = targetChildNode.getFullName();
                 if (srcFile.isFile()) {
                     if (copyFile(srcFile, targetChildNode)) {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
@@ -339,7 +339,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                 return false;
             }
             String srcname = sourceFile.getAbsolutePath();
-            String tarname = targetNode.getFileName();
+            String tarname = targetNode.getFullName();
             if (!targetNode.isExisted()) {
                 if (copyAttr.isCopyAttrinutes()) {
                     Files.copy(Paths.get(srcname), Paths.get(tarname),
@@ -388,14 +388,14 @@ public class DirectorySynchronizeController extends BaseTaskController {
                             copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
                             if (verboseCheck == null || verboseCheck.isSelected()) {
                                 updateLogs(copyAttr.getDeletedDirectories() + "  "
-                                        + strDirectoryDeleteSuccessfully + child.fullName());
+                                        + strDirectoryDeleteSuccessfully + child.nodeFullName());
                             }
                         }
                     } catch (Exception e) {
                         if (record) {
                             copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                             copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                            updateLogs(strFailedDelete + child.fullName());
+                            updateLogs(strFailedDelete + child.nodeFullName());
                         }
                         if (!copyAttr.isContinueWhenError()) {
                             return false;
@@ -406,7 +406,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(strFailedDelete + child.fullName());
+                            updateLogs(strFailedDelete + child.nodeFullName());
                         }
                     }
                     if (!copyAttr.isContinueWhenError()) {
@@ -421,14 +421,14 @@ public class DirectorySynchronizeController extends BaseTaskController {
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(copyAttr.getDeletedFiles() + "  "
-                                    + strFileDeleteSuccessfully + child.fullName());
+                                    + strFileDeleteSuccessfully + child.nodeFullName());
                         }
                     }
                 } catch (Exception e) {
                     if (record) {
                         copyAttr.setFailedDeletedFiles(copyAttr.getFailedDeletedFiles() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                        updateLogs(strFailedDelete + child.fullName());
+                        updateLogs(strFailedDelete + child.nodeFullName());
                     }
                     if (!copyAttr.isContinueWhenError()) {
                         return false;
@@ -466,13 +466,13 @@ public class DirectorySynchronizeController extends BaseTaskController {
                         copyAttr.setDeletedDirectories(copyAttr.getDeletedDirectories() + 1);
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(strDirectoryDeleteSuccessfully + child.fullName());
+                            updateLogs(strDirectoryDeleteSuccessfully + child.nodeFullName());
                         }
                     } catch (Exception e) {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            showLogs(strFailedDelete + child.fullName());
+                            showLogs(strFailedDelete + child.nodeFullName());
                         }
                         if (!copyAttr.isContinueWhenError()) {
                             return false;
@@ -482,7 +482,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                     copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
                     if (verboseCheck == null || verboseCheck.isSelected()) {
-                        updateLogs(strFailedDelete + child.fullName());
+                        updateLogs(strFailedDelete + child.nodeFullName());
                     }
                     if (!copyAttr.isContinueWhenError()) {
                         return false;
@@ -494,12 +494,12 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     copyAttr.setDeletedFiles(copyAttr.getDeletedFiles() + 1);
                     copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
                     if (verboseCheck == null || verboseCheck.isSelected()) {
-                        updateLogs(strFileDeleteSuccessfully + child.fullName());
+                        updateLogs(strFileDeleteSuccessfully + child.nodeFullName());
                     }
                 } catch (Exception e) {
                     copyAttr.setFailedDeletedFiles(copyAttr.getFailedDeletedFiles() + 1);
                     copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                    showLogs(strFailedDelete + child.fullName());
+                    showLogs(strFailedDelete + child.nodeFullName());
                     if (!copyAttr.isContinueWhenError()) {
                         return false;
                     }
@@ -545,7 +545,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
     public List<FileNode> targetChildren(FileNode targetNode) {
         List<FileNode> list = new ArrayList<>();
         try {
-            String path = targetNode.getFileName();
+            String path = targetNode.getFullName();
             String[] names = new File(path).list();
             for (String name : names) {
                 if (".".equals(name) || "..".equals(name)) {
@@ -560,12 +560,12 @@ public class DirectorySynchronizeController extends BaseTaskController {
     }
 
     public void deleteTargetFile(FileNode targetNode) {
-        FileDeleteTools.delete(targetNode.getFileName());
+        FileDeleteTools.delete(targetNode.getFullName());
     }
 
     public void targetMkdirs(File srcFile, FileNode targetNode) {
         try {
-            File tFile = new File(targetNode.getFileName());
+            File tFile = new File(targetNode.getFullName());
             tFile.mkdirs();
             tFile.setExecutable(true);
             tFile.setReadable(true);

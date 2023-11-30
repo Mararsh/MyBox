@@ -11,15 +11,14 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2018-9-25
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchTextController extends BaseImageEditBatchController {
+public class ImageTextBatchController extends BaseImageEditBatchController {
 
     @FXML
     protected ControlImageText optionsController;
 
-    public ImageManufactureBatchTextController() {
+    public ImageTextBatchController() {
         baseTitle = Languages.message("ImageManufactureBatchText");
 
     }
@@ -47,7 +46,12 @@ public class ImageManufactureBatchTextController extends BaseImageEditBatchContr
 
     @Override
     public boolean makeMoreParameters() {
-        return super.makeMoreParameters() && optionsController.pickValues();
+        return super.makeMoreParameters() && optionsController.checkValues();
+    }
+
+    @Override
+    public boolean beforeHandleFiles() {
+        return optionsController.pickValues();
     }
 
     @Override

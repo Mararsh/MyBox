@@ -43,7 +43,7 @@ public class FilesRenameResultsController extends BaseTaskController {
             tableView.setItems(tableData);
 
             pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
-            oNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            oNameColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
             nNameColumn.setCellValueFactory(new PropertyValueFactory<>("nodename"));
             invalidColumn.setCellValueFactory(new PropertyValueFactory<>("permission"));
 
@@ -106,7 +106,7 @@ public class FilesRenameResultsController extends BaseTaskController {
                 if (task == null || task.isCancelled()) {
                     break;
                 }
-                String file = node.getFileName();
+                String file = node.getFullName();
                 String newname = node.getData();
                 if (newname == null || newname.isBlank()) {
                     updateLogs(message("Skipped") + ": " + file);

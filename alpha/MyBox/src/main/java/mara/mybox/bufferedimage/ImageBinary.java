@@ -45,8 +45,8 @@ public class ImageBinary extends PixelsOperation {
             return image;
         }
         grayed = false;
-        if (scope == null || scope.getScopeType() == null) {
-            if (!isDithering && !calculate && intPara1 < 0) {
+        if (scope == null || scope.isWhole()) {
+            if (!isDithering && !calculate && intPara1 < 0 && !excludeScope && !skipTransparent) {
                 return byteBinary(image);
             }
             image = ImageGray.byteGray(image);

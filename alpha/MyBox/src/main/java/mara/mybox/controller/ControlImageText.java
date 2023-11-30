@@ -382,11 +382,12 @@ public class ControlImageText extends BaseController {
         return blendController.checkValues();
     }
 
+    public boolean checkValues() {
+        return checkText() && checkLocation()
+                && checkStyle() && checkBorders() && checkBlend();
+    }
+
     public boolean pickValues() {
-        if (!checkText() || !checkLocation()
-                || !checkStyle() || !checkBorders() || !checkBlend()) {
-            return false;
-        }
         blend = null;
         borderStyle = null;
         try (Connection conn = DerbyBase.getConnection()) {

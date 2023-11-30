@@ -156,7 +156,7 @@ public class FileInformation {
         }
     }
 
-    public String getFileName() {
+    public String getFullName() {
         if (file != null) {
             return file.getAbsolutePath();
         } else {
@@ -166,17 +166,25 @@ public class FileInformation {
 
     public String getPath() {
         if (file != null) {
-            return file.getParent();
+            if (file.isDirectory()) {
+                return file.getAbsolutePath() + File.separator;
+            } else {
+                return file.getParent() + File.separator;
+            }
         } else {
             return null;
         }
     }
 
-    public String getName() {
+    public String getFileName() {
         if (file != null) {
-            return file.getName();
+            if (file.isDirectory()) {
+                return null;
+            } else {
+                return file.getName();
+            }
         } else {
-            return data;
+            return null;
         }
     }
 

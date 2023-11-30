@@ -35,29 +35,29 @@ License:    Apache License Version 2.0
                         <VBox fx:id="setBox" spacing="5.0">
                             <children>
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%AdjustColor" VBox.vgrow="ALWAYS" />
-                        <fx:include fx:id="options" source="ControlImageAdjustColor.fxml" />
-                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                    <children>
-                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDemo.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                              <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                           <children>
+                              <Button fx:id="previewButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#previewAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconGo.png" />
+                                          <Image url="@../buttons/Red/iconPreview.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
                               </Button>
-                                    </children>
-                                </FlowPane>
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </FlowPane>
+                        <fx:include fx:id="options" source="ControlImageAdjustColor.fxml" />
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" layoutX="12.0" layoutY="286.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
                                         <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">

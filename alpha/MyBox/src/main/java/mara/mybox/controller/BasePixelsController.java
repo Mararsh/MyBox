@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -22,6 +23,7 @@ public abstract class BasePixelsController extends BaseChildController {
     protected ImageEditorController editor;
     protected String operation, opInfo;
     protected Image handledImage;
+    protected ImageScope scope;
 
     @FXML
     protected ControlSelectPixels scopeController;
@@ -162,14 +164,14 @@ public abstract class BasePixelsController extends BaseChildController {
         }
         reset();
         task = new SingletonCurrentTask<Void>(this) {
-            private Image demoImage;
+            private List<String> files;
 
             @Override
             protected boolean handle() {
                 try {
-                    demoImage = ScaleTools.demoImage(srcImage());
-                    demoImage = handleImage(demoImage, scope());
-                    return demoImage != null;
+                    Image demoImage = ScaleTools.demoImage(srcImage());
+                    files = makeDemoFiles(demoImage);
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -178,11 +180,25 @@ public abstract class BasePixelsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                ImagePopController.openImage(myController, demoImage);
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (files != null && !files.isEmpty()) {
+                    ImagesBrowserController b
+                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                    b.loadFiles(files);
+                    b.setAlwaysOnTop();
+                }
             }
 
         };
         start(task);
+    }
+
+    protected List<String> makeDemoFiles(Image demoImage) {
+        return null;
     }
 
     @FXML
@@ -204,7 +220,7 @@ public abstract class BasePixelsController extends BaseChildController {
     @FXML
     @Override
     public void saveAction() {
-        imageController.saveAction();
+        editor.saveAction();
     }
 
     /*

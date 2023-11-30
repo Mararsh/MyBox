@@ -1,5 +1,8 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -11,6 +14,8 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -82,6 +87,56 @@ public class ImageReplaceColorController extends BasePixelsController {
             operation = message("ReplaceColor");
             opInfo = colorController.css();
             return pixelsOperation.operateFxImage();
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
+        }
+    }
+
+    @Override
+    protected List<String> makeDemoFiles(Image demoImage) {
+        try {
+            List<String> files = new ArrayList<>();
+            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
+                    demoImage, scope(), PixelsOperation.OperationType.Color)
+                    .setColorPara1(colorController.awtColor())
+                    .setExcludeScope(excludeScope())
+                    .setSkipTransparent(skipTransparent());
+            String prefix = message("ReplaceColor") + "_" + colorController.css();
+
+            BufferedImage bufferedImage = pixelsOperation
+                    .setBoolPara1(true).setBoolPara2(false).setBoolPara3(false).operate();
+            String tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Hue"), "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            bufferedImage = pixelsOperation
+                    .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false).operate();
+            tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Saturation"), "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            bufferedImage = pixelsOperation
+                    .setBoolPara1(false).setBoolPara2(false).setBoolPara3(true).operate();
+            tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Brightness"), "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            bufferedImage = pixelsOperation
+                    .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false).operate();
+            tmpFile = FileTmpTools.generateFile(prefix + "_" + message("All"), "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                task.setInfo(tmpFile);
+            }
+
+            return files;
         } catch (Exception e) {
             displayError(e.toString());
             return null;

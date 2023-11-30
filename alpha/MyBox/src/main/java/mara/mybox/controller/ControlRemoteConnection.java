@@ -385,7 +385,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     public List<FileNode> children(FileNode targetNode) {
         List<FileNode> children = new ArrayList<>();
         try {
-            Iterator<ChannelSftp.LsEntry> iterator = ls(targetNode.fullName());
+            Iterator<ChannelSftp.LsEntry> iterator = ls(targetNode.nodeFullName());
             if (iterator == null) {
                 return children;
             }

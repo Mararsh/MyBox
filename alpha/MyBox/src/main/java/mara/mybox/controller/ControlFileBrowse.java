@@ -62,7 +62,7 @@ public class ControlFileBrowse extends BaseController {
                 tableData = FXCollections.observableArrayList();
                 tableView.setItems(tableData);
 
-                fileColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+                fileColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
                 typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
                 sizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
                 sizeColumn.setCellFactory(new TableFileSizeCell());

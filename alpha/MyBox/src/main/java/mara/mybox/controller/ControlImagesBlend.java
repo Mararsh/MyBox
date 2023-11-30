@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -43,7 +45,9 @@ public class ControlImagesBlend extends BaseController {
     protected int keepRatioType;
 
     @FXML
-    protected ComboBox<String> blendSelector, opacitySelector;
+    protected ListView<String> modeList;
+    @FXML
+    protected ComboBox<String> opacitySelector;
     @FXML
     protected CheckBox foreTopCheck, ignoreTransparentCheck;
     @FXML
@@ -55,7 +59,7 @@ public class ControlImagesBlend extends BaseController {
 
     public void setParameters(BaseController parent, ImageView imageView) {
         try (Connection conn = DerbyBase.getConnection()) {
-            setParameters(conn, parent, null);
+            setParameters(conn, parent, imageView);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -73,8 +77,10 @@ public class ControlImagesBlend extends BaseController {
 
             String mode = UserConfig.getString(conn, baseName + "BlendMode", message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
-            blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
-            blendSelector.setValue(mode);
+            modeList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            modeList.getItems().setAll(PixelsBlendFactory.blendModes());
+            modeList.scrollTo(mode);
+            modeList.getSelectionModel().select(mode);
 
             opacity = UserConfig.getInt(conn, baseName + "BlendOpacity", 100) / 100f;
             opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
@@ -124,7 +130,7 @@ public class ControlImagesBlend extends BaseController {
 
     public PixelsBlend pickValues(Connection conn) {
         try {
-            String mode = blendSelector.getValue();
+            String mode = modeList.getSelectionModel().getSelectedItem();
             blendMode = PixelsBlendFactory.blendMode(mode);
             UserConfig.setString(conn, baseName + "BlendMode", mode);
 
@@ -153,10 +159,10 @@ public class ControlImagesBlend extends BaseController {
         }
         Image foreImage = null;
         Color foreColor = Color.PINK;
-        if (parentController instanceof ImageManufactureClipboardController) {
-            foreImage = ((ImageManufactureClipboardController) parentController).finalClip;
-        } else if (parentController instanceof ImageManufactureColorController) {
-            foreColor = ((ImageManufactureColorController) parentController).valueColorSetController.color();
+        if (parentController instanceof ImagePasteController) {
+            foreImage = ((ImagePasteController) parentController).finalClip;
+        } else if (parentController instanceof ImageBlendColorController) {
+            foreColor = ((ImageBlendColorController) parentController).colorController.color();
         }
         if (foreImage == null) {
             foreImage = FxImageTools.createImage(
