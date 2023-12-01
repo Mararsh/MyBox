@@ -92,8 +92,22 @@ public class MarkdownPopController extends TextPopController {
             if (textInput == null) {
                 return null;
             }
-            MarkdownPopController controller = (MarkdownPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.MarkdownPopFxml, false);
-            controller.setSourceInput(parent.baseName, textInput);
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.openStage(Fxmls.MarkdownPopFxml);
+            controller.setSourceInput(parent, textInput);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static MarkdownPopController openFile(BaseController parent, String filename) {
+        try {
+            if (filename == null) {
+                return null;
+            }
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.openStage(Fxmls.MarkdownPopFxml);
+            controller.setFile(parent, filename);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

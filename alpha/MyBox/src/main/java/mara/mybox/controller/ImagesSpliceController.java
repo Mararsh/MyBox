@@ -40,7 +40,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-8-11
  * @License Apache License Version 2.0
  */
-public class ImagesSpliceController extends ImageViewerController {
+public class ImagesSpliceController extends BaseImageController {
 
     protected ObservableList<ImageInformation> tableData;
     protected TableView<ImageInformation> tableView;

@@ -648,9 +648,7 @@ public class ControlImagesSave extends BaseController {
             protected void whenSucceeded() {
                 parentController.popSuccessful();
                 recordFileWritten(targetFile);
-                ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
-                controller.selectSourceFile(targetFile);
-                controller.requestMouse();
+                ImageEditorController.openFile(targetFile);
             }
 
         };
@@ -709,9 +707,7 @@ public class ControlImagesSave extends BaseController {
             protected void whenSucceeded() {
                 parentController.popSuccessful();
                 recordFileWritten(targetFile);
-                ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
-                controller.selectSourceFile(targetFile);
-                controller.requestMouse();
+                ImageEditorController.openFile(targetFile);
             }
 
         };

@@ -301,7 +301,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 controller.loadFile(info.getFile(), info.getIndex());
 
             } else {
-                ImageViewerController.openImageInfo(info);
+                ImageEditorController.openImageInfo(info);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

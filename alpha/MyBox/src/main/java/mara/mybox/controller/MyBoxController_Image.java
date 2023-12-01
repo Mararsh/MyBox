@@ -155,7 +155,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem imageCropMenu = new MenuItem(message("Crop"));
         imageCropMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchCropFxml);
+            loadScene(Fxmls.ImageCropBatchFxml);
         });
 
         MenuItem imagePasteMenu = new MenuItem(message("Paste"));
@@ -181,6 +181,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         MenuItem imageReplaceColorMenu = new MenuItem(message("ReplaceColor"));
         imageReplaceColorMenu.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImageReplaceColorBatchFxml);
+        });
+
+        MenuItem imageSharpenMenu = new MenuItem(message("Sharpen"));
+        imageEnhancementMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSharpenBatchFxml);
         });
 
         MenuItem imageTextMenu = new MenuItem(message("Text"));
@@ -236,6 +241,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         Menu manufactureBatchMenu = new Menu(message("ImageManufactureBatch"));
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
                 imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
+                imageSharpenMenu,
                 imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, new SeparatorMenuItem(),
                 imageOCRBatch);

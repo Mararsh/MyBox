@@ -378,7 +378,7 @@ public class BaseWebViewController extends BaseFileController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(webView));
+        ImageEditorController.openImage(NodeTools.snap(webView));
     }
 
     @Override

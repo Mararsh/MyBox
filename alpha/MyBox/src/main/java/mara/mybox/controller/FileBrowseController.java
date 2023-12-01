@@ -7,8 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -36,7 +36,7 @@ public class FileBrowseController extends BaseController {
     protected FileSortMode sortMode;
 
     @FXML
-    protected CheckBox newCheck;
+    protected RadioButton openRadio, loadRadio, popRadio, sysRadio;
     @FXML
     protected TableView<FileInformation> tableView;
     @FXML
@@ -122,7 +122,6 @@ public class FileBrowseController extends BaseController {
                 for (File file : files) {
                     tableData.add(new FileInformation(file));
                 }
-                info += "  " + message("DoubleClickToOpen");
             }
             bottomLabel.setText(info);
         } catch (Exception e) {
@@ -159,9 +158,13 @@ public class FileBrowseController extends BaseController {
         if (selected == null) {
             return;
         }
-        if (parentController == null || newCheck.isSelected()) {
+        if (sysRadio.isSelected()) {
+            browse(selected.getFile());
+        } else if (parentController == null || openRadio.isSelected()) {
             ControllerTools.openTarget(selected.getFile().getAbsolutePath());
-        } else {
+        } else if (popRadio.isSelected()) {
+            ControllerTools.popTarget(parentController, selected.getFile().getAbsolutePath(), true);
+        } else if (loadRadio.isSelected()) {
             parentController.selectSourceFile(selected.getFile());
         }
     }

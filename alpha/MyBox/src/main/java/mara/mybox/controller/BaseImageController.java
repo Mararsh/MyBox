@@ -381,8 +381,7 @@ public class BaseImageController extends BaseImageController_Actions {
                 });
                 items.add(menu);
 
-                menu = new MenuItem(message("Refresh") + "    Ctrl+B " + message("Or") + " Alt+B",
-                        StyleTools.getIconImageView("iconRefresh.png"));
+                menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     refreshAction();
                 });
@@ -575,15 +574,6 @@ public class BaseImageController extends BaseImageController_Actions {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
-                    StyleTools.getIconImageView("iconTarget.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                selectScope();
-            });
-            items.add(menu);
-
-            items.add(copyMenu(fevent));
-
             menu = new MenuItem(message("Paste") + "    Ctrl+V " + message("Or") + " Alt+V",
                     StyleTools.getIconImageView("iconPaste.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -677,6 +667,17 @@ public class BaseImageController extends BaseImageController_Actions {
                 controlAltK();
             });
             items.add(menu);
+
+            menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
+                    StyleTools.getIconImageView("iconTarget.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                selectScope();
+            });
+            items.add(menu);
+
+            items.add(copyMenu(fevent));
+
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("LoadedSize") + "    Ctrl+1 " + message("Or") + " Alt+1",
                     StyleTools.getIconImageView("iconLoadSize.png"));

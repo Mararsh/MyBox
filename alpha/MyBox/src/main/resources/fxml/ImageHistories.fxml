@@ -135,7 +135,6 @@ License:    Apache License Version 2.0
                         <TableColumn fx:id="typeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="100.0" text="%Type" />
                                 <TableColumn fx:id="descColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="300.0" text="%Description" />
                         <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="160.0" text="%File" />
-                        <TableColumn fx:id="dirColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="260.0" text="%Directory" />
                             </columns>
                         </TableView>
                     </children>

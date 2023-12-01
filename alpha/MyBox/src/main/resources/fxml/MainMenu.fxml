@@ -171,12 +171,13 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%ImageManufactureBatch">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchSize" text="%Size" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
+                                        <MenuItem mnemonicParsing="false" onAction="#imageCropBatch" text="%Crop" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchPaste" text="%Paste" />
                                         <MenuItem mnemonicParsing="false" onAction="#imageAdjustColorBatch" text="%AdjustColor" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEnhancement" text="%Enhancement" />
                                         <MenuItem mnemonicParsing="false" onAction="#imageReplaceColorBatch" text="%ReplaceColor" />
+                                        <MenuItem mnemonicParsing="false" onAction="#imageSharpenBatch" text="%Sharpen" />
                                         <MenuItem mnemonicParsing="false" onAction="#imageTextBatch" text="%Text" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />

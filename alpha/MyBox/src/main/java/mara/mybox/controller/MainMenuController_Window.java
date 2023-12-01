@@ -55,13 +55,13 @@ public abstract class MainMenuController_Window extends MainMenuController_Base 
 
     @FXML
     protected void SnapshotWindow(ActionEvent event) {
-        ImageViewerController.openImage(NodeTools.snap(parentController.thisPane));
+        ImageEditorController.openImage(NodeTools.snap(parentController.thisPane));
     }
 
     @FXML
     protected void SnapshotPane(ActionEvent event) {
         thisPane.getChildren().remove(mainMenuPane);
-        ImageViewerController.openImage(NodeTools.snap(parentController.thisPane));
+        ImageEditorController.openImage(NodeTools.snap(parentController.thisPane));
         thisPane.getChildren().add(0, mainMenuPane);
     }
 

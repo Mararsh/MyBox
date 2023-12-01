@@ -116,7 +116,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
         File tmpFile = SvgTools.textToImage(this, currentXML, width, height, viewBox);
         if (tmpFile != null && tmpFile.exists()) {
             if (tmpFile.length() > 0) {
-                ImageViewerController.openFile(tmpFile);
+                ImageEditorController.openFile(tmpFile);
             } else {
                 FileDeleteTools.delete(tmpFile);
             }

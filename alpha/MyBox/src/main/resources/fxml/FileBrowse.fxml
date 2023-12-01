@@ -8,10 +8,11 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -40,7 +41,19 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <CheckBox fx:id="newCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OpenInNewWindow" wrapText="true" />
+            <Label minHeight="-Infinity" text="%DoubleClick" wrapText="true">
+               <FlowPane.margin>
+                  <Insets left="20.0" />
+               </FlowPane.margin>
+            </Label>
+            <RadioButton fx:id="openRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%OpenInNewWindow" wrapText="true">
+               <toggleGroup>
+                  <ToggleGroup fx:id="dcGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="loadRadio" layoutX="159.0" layoutY="16.0" minHeight="-Infinity" mnemonicParsing="false" text="%Load" toggleGroup="$dcGroup" wrapText="true" />
+            <RadioButton fx:id="popRadio" layoutX="325.0" layoutY="16.0" minHeight="-Infinity" mnemonicParsing="false" text="%Pop" toggleGroup="$dcGroup" wrapText="true" />
+            <RadioButton fx:id="sysRadio" layoutX="377.0" layoutY="16.0" minHeight="-Infinity" mnemonicParsing="false" text="%SystemMethod" toggleGroup="$dcGroup" wrapText="true" />
          </children>
       </FlowPane>
       <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">

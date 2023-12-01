@@ -539,7 +539,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 recordFileWritten(sourceFile);
                 if (srcFile == null) {
                     if (savedImage != imageView.getImage()) {
-                        ImageViewerController.openFile(sourceFile);
+                        ImageEditorController.openFile(sourceFile);
                     } else {
                         sourceFileChanged(sourceFile);
                     }
@@ -609,7 +609,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     sourceFileChanged(newfile);
 
                 } else if (saveAsType == SaveAsType.Open) {
-                    ImageViewerController.openFile(newfile);
+                    ImageEditorController.openFile(newfile);
 
                 }
             }

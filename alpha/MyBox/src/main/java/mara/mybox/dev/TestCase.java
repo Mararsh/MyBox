@@ -126,10 +126,11 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImagesPlay"), Fxmls.ImagesPlayFxml));
             cases.add(new TestCase(index++, message("ImageManufacture"), Fxmls.ImageManufactureFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Size"), Fxmls.ImageManufactureBatchSizeFxml));
-            cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Crop"), Fxmls.ImageManufactureBatchCropFxml));
+            cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Crop"), Fxmls.ImageCropBatchFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Paste"), Fxmls.ImageManufactureBatchPasteFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("AdjustColor"), Fxmls.ImageAdjustColorBatchFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Effects"), Fxmls.ImageManufactureBatchEffectsFxml));
+            cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Sharpen"), Fxmls.ImageSharpenBatchFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Enhancement"), Fxmls.ImageManufactureBatchEnhancementFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("ReplaceColor"), Fxmls.ImageReplaceColorBatchFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Text"), Fxmls.ImageTextBatchFxml));

@@ -36,7 +36,7 @@ public class ImageRepeatController extends BaseShapeController {
     @FXML
     protected ControlImageSize sizeController;
     @FXML
-    protected ImageViewerController scaleController, repeatController;
+    protected BaseImageController scaleController, repeatController;
     @FXML
     protected Tab imageTab, scaleTab, repeatTab, saveTab;
     @FXML

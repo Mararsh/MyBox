@@ -1021,7 +1021,7 @@ public class ControlWebView extends BaseController {
                         ImageEditorController.openImage(image);
                         break;
                     default:
-                        ImageViewerController.openImage(image);
+                        ImageEditorController.openImage(image);
                 }
             }
 
@@ -1932,7 +1932,7 @@ public class ControlWebView extends BaseController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(webView));
+        ImageEditorController.openImage(NodeTools.snap(webView));
     }
 
     @Override

@@ -57,13 +57,14 @@ public class HtmlCodesPopController extends TextPopController {
         }
     }
 
-    public void setWebView(String baseName, WebView sourceWebView) {
+    public void setWebView(BaseController parent, WebView sourceWebView) {
         try {
-            this.baseName = baseName;
+            this.parentController = parent;
             this.sourceWebView = sourceWebView;
-            refreshAction();
 
             setControls();
+
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -164,8 +165,8 @@ public class HtmlCodesPopController extends TextPopController {
             if (textInput == null) {
                 return null;
             }
-            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
-            controller.setSourceInput(parent.baseName, textInput);
+            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openStage(Fxmls.HtmlCodesPopFxml);
+            controller.setSourceInput(parent, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -178,8 +179,8 @@ public class HtmlCodesPopController extends TextPopController {
             if (srcWebView == null) {
                 return null;
             }
-            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
-            controller.setWebView(parent.baseName, srcWebView);
+            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openStage(Fxmls.HtmlCodesPopFxml);
+            controller.setWebView(parent, srcWebView);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

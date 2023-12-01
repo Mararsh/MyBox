@@ -63,9 +63,8 @@ public class ImageBlackWhiteController extends BasePixelsController {
     }
 
     @Override
-    protected List<String> makeDemoFiles(Image demoImage) {
+    protected void makeDemoFiles(List<String> files, Image demoImage) {
         try {
-            List<String> files = new ArrayList<>();
             ImageBinary imageBinary = new ImageBinary(demoImage);
             imageBinary.setScope(scope())
                     .setExcludeScope(excludeScope())
@@ -80,7 +79,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
                     + "_" + message("Dithering"), "png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             bufferedImage = imageBinary
@@ -90,7 +89,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Default"), "png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             List<Integer> inputs = new ArrayList<>();
@@ -108,7 +107,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
                         + "_" + message("Dithering"), "png").getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
                     files.add(tmpFile);
-                    task.setInfo(tmpFile);
+                    demoTask.setInfo(tmpFile);
                 }
 
                 bufferedImage = imageBinary
@@ -118,7 +117,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
                 tmpFile = FileTmpTools.generateFile(prefix + "_" + v, "png").getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
                     files.add(tmpFile);
-                    task.setInfo(tmpFile);
+                    demoTask.setInfo(tmpFile);
                 }
             }
 
@@ -131,7 +130,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
                     + otsu + "_" + message("Dithering"), "png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             bufferedImage = imageBinary
@@ -141,13 +140,10 @@ public class ImageBlackWhiteController extends BasePixelsController {
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("OTSU") + otsu, "png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
-
-            return files;
         } catch (Exception e) {
-            displayError(e.toString());
-            return null;
+            MyBoxLog.error(e.toString());
         }
     }
 

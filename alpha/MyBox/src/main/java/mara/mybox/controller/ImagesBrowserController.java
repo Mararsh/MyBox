@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  *
  * ImagesBrowserController < ImagesBrowserController_Pane <
  * ImagesBrowserController_Menu < ImagesBrowserController_Action <
- * ImagesBrowserController_Load < ImageViewerController
+ * ImagesBrowserController_Load < BaseImageController
  */
 public class ImagesBrowserController extends ImagesBrowserController_Pane {
 

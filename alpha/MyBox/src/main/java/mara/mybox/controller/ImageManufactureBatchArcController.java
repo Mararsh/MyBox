@@ -168,7 +168,7 @@ public class ImageManufactureBatchArcController extends BaseImageEditBatchContro
             if (isPercent) {
                 value = source.getWidth() * percent / 100;
             }
-            BufferedImage target = BufferedImageTools.addArc(source, value,
+            BufferedImage target = BufferedImageTools.setRound(source, value,
                     FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()));
             return target;
         } catch (Exception e) {

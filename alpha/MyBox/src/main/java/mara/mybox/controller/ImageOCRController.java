@@ -51,7 +51,7 @@ or 8 bpp grayscale uncompressed TIFF or PNG format.
 PNG is usually smaller in size than other image formats and still keeps high quality due to its employing lossless data compression algorithms;
 TIFF has the advantage of the ability to contain multiple images (pages) in a file.
  */
-public class ImageOCRController extends ImageViewerController {
+public class ImageOCRController extends BaseImageController {
 
     protected float scale;
     protected int threshold, rotate;

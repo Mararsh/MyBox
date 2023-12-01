@@ -42,7 +42,7 @@ import net.sourceforge.tess4j.util.ImageHelper;
  * @CreateDate 2019-9-17
  * @License Apache License Version 2.0
  */
-public class ImageOCRProcessController extends ImageViewerController {
+public class ImageOCRProcessController extends BaseImageController {
 
     protected ImageOCRController OCRController;
     protected float scale;

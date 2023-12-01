@@ -59,7 +59,7 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
  * @Description
  * @License Apache License Version 2.0
  */
-public class BarcodeCreatorController extends ImageViewerController {
+public class BarcodeCreatorController extends BaseImageController {
 
     protected int fontSize, orientation, qrWidth, qrHeight, qrMargin,
             pdf417ErrorCorrectionLevel, pdf417Width, pdf417Height, pdf417Margin,

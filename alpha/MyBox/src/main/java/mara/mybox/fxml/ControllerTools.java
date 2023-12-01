@@ -7,10 +7,13 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
-import mara.mybox.controller.ImageViewerController;
+import mara.mybox.controller.HtmlPopController;
+import mara.mybox.controller.ImageEditorController;
+import mara.mybox.controller.ImagePopController;
 import mara.mybox.controller.JavaScriptController;
 import mara.mybox.controller.JsonEditorController;
 import mara.mybox.controller.MarkdownEditorController;
+import mara.mybox.controller.MarkdownPopController;
 import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.PptViewController;
@@ -58,7 +61,7 @@ public class ControllerTools {
         }
         String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
         if (FileExtensions.SupportedImages.contains(suffix)) {
-            controller = ImageViewerController.openFile(file);
+            controller = ImageEditorController.openFile(file);
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
             controller = WebBrowserController.openFile(file);
         } else if ("md".equals(suffix)) {
@@ -89,6 +92,37 @@ public class ControllerTools {
             controller = MediaPlayerController.open(file);
         } else if (mustOpen) {
             PopTools.browseURI(controller, file.toURI());
+        }
+        return controller;
+    }
+
+    public static BaseController popTarget(BaseController parent, String filename, boolean mustOpen) {
+        BaseController controller = null;
+        if (filename == null) {
+            return controller;
+        }
+        if (filename.startsWith("http") || filename.startsWith("ftp")) {
+            return HtmlPopController.openHtml(parent, filename);
+        }
+        File file = new File(filename);
+        if (!file.exists()) {
+            return controller;
+        }
+        if (file.isDirectory()) {
+            PopTools.browseURI(controller, file.toURI());
+            return controller;
+        }
+        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
+        if (FileExtensions.SupportedImages.contains(suffix)) {
+            controller = ImagePopController.openFile(parent, filename);
+        } else if ("html".equals(suffix) || "htm".equals(suffix)) {
+            controller = HtmlPopController.openHtml(parent, filename);
+        } else if ("md".equals(suffix)) {
+            controller = MarkdownPopController.openFile(parent, filename);
+        } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {
+            controller = TextEditorController.open(file);
+        } else if (mustOpen) {
+            controller = openTarget(filename, mustOpen);
         }
         return controller;
     }

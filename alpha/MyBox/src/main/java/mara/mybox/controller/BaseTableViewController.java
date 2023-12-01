@@ -506,7 +506,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(tableView));
+        ImageEditorController.openImage(NodeTools.snap(tableView));
     }
 
     @FXML

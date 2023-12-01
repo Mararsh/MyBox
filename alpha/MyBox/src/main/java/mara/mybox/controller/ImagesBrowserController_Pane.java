@@ -259,7 +259,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                     popContextMenu(index, iView, event);
                     return;
                 } else if (event.getClickCount() > 1) {
-                    ImageViewerController.openFile(clickedFile);
+                    ImageEditorController.openFile(clickedFile);
                     return;
                 }
                 currentIndex = index;
@@ -560,7 +560,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                         }
                         File file = info.getImageFileInformation().getFile();
                         if (event.getClickCount() > 1) {
-                            ImageViewerController.openFile(file);
+                            ImageEditorController.openFile(file);
                         } else {
                             viewImage(file);
                         }

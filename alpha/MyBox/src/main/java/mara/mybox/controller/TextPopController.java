@@ -45,31 +45,16 @@ public class TextPopController extends BaseChildController {
         setFileType(FileType.Text);
     }
 
-    public void setSourceInput(String baseName, TextInputControl sourceInput) {
-        try {
-            this.baseName = baseName;
-            this.sourceInput = sourceInput;
-            refreshAction();
-
-            setControls();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void setText(String text) {
-        try {
-            this.sourceInput = null;
-            refreshAction();
-            setControls();
-            textArea.setText(text);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+    @Override
+    public void setStageStatus() {
     }
 
     public void setControls() {
         try {
+            if (parentController != null) {
+                baseName = parentController.baseName + "_" + baseName;
+            }
+
             editButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
             saveAsButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
 
@@ -92,6 +77,66 @@ public class TextPopController extends BaseChildController {
             });
             textArea.setWrapText(wrapCheck.isSelected());
 
+            setAsPop(baseName);
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void setSourceInput(BaseController parent, TextInputControl sourceInput) {
+        try {
+            this.parentController = parent;
+            this.sourceInput = sourceInput;
+            setControls();
+
+            refreshAction();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void setFile(BaseController parent, String filename) {
+        this.parentController = parent;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            private String texts;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    texts = TextFileTools.readTexts(new File(filename));
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                setText(texts);
+            }
+
+        };
+        start(task);
+    }
+
+    public void setText(String text) {
+        try {
+            this.sourceInput = null;
+            setControls();
+            refreshAction();
+            textArea.setText(text);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -191,7 +236,21 @@ public class TextPopController extends BaseChildController {
                 return null;
             }
             TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
-            controller.setSourceInput(parent.baseName, textInput);
+            controller.setSourceInput(parent, textInput);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static TextPopController openFile(BaseController parent, String filename) {
+        try {
+            if (filename == null) {
+                return null;
+            }
+            TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
+            controller.setFile(parent, filename);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

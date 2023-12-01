@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -34,7 +35,9 @@ public class ImagePopController extends BaseShapeController {
 
     public void setControls() {
         try {
-            baseName += parentController.baseName;
+            if (parentController != null) {
+                baseName = parentController.baseName + "_" + baseName;
+            }
 
             saveAsType = SaveAsType.Open;
 
@@ -57,7 +60,7 @@ public class ImagePopController extends BaseShapeController {
             });
 
             setAsPop(baseName);
-            paneSize();
+            fitSize();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -81,9 +84,10 @@ public class ImagePopController extends BaseShapeController {
         try {
             this.parentController = parent;
             this.sourceImageView = sourceImageView;
-            refreshAction();
 
             setControls();
+
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -96,22 +100,25 @@ public class ImagePopController extends BaseShapeController {
             refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
 
+            setControls();
+
             loadImage(image);
 
-            setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void setController(BaseImageController parent) {
+    public void setFile(BaseController parent, String filename) {
         try {
             this.parentController = parent;
-            this.sourceController = parent;
-            sourceImageView = sourceController.imageView;
-            refreshAction();
+            refreshChangeCheck.setVisible(false);
+            refreshButton.setVisible(false);
 
             setControls();
+
+            sourceFileChanged(new File(filename));
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -155,7 +162,7 @@ public class ImagePopController extends BaseShapeController {
      */
     public static ImagePopController openImage(BaseController parent, Image image) {
         try {
-            if (parent == null || image == null) {
+            if (image == null) {
                 return null;
             }
             ImagePopController controller = (ImagePopController) WindowTools.openStage(Fxmls.ImagePopFxml);
@@ -181,13 +188,10 @@ public class ImagePopController extends BaseShapeController {
         }
     }
 
-    public static ImagePopController openController(BaseImageController parent) {
+    public static ImagePopController openFile(BaseController parent, String filename) {
         try {
-            if (parent == null) {
-                return null;
-            }
             ImagePopController controller = (ImagePopController) WindowTools.openStage(Fxmls.ImagePopFxml);
-            controller.setController(parent);
+            controller.setFile(parent, filename);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

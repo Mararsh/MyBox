@@ -79,7 +79,7 @@ public class BufferedImageTools {
     // https://stackoverflow.com/questions/24038524/how-to-get-byte-from-javafx-imageview
     public static byte[] bytes(BufferedImage srcImage, String format) {
         byte[] bytes = null;
-        try ( ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
             BufferedImage tmpImage = srcImage;
             if (!FileExtensions.AlphaImages.contains(format)) {
                 tmpImage = AlphaTools.removeAlpha(srcImage);
@@ -186,7 +186,7 @@ public class BufferedImageTools {
         return true;
     }
 
-    public static BufferedImage addArc(BufferedImage source, int arc, Color bgColor) {
+    public static BufferedImage setRound(BufferedImage source, int round, Color bgColor) {
         int width = source.getWidth();
         int height = source.getHeight();
         int imageType = BufferedImage.TYPE_INT_ARGB;
@@ -198,7 +198,7 @@ public class BufferedImageTools {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         g.setColor(bgColor);
         g.fillRect(0, 0, width, height);
-        g.setClip(new RoundRectangle2D.Double(0, 0, width, height, arc, arc));
+        g.setClip(new RoundRectangle2D.Double(0, 0, width, height, round, round));
         g.drawImage(source, 0, 0, null);
         g.dispose();
         return target;

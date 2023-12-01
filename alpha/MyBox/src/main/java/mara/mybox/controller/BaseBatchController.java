@@ -492,29 +492,14 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public boolean makeMoreParameters() {
         try {
-            if (tableData == null || tableData.isEmpty()) {
+            List<File> files = pickSourceFiles(isPreview, true);
+            if (files == null || files.isEmpty()) {
                 popError(message("NoData"));
                 actualParameters = null;
                 return false;
             }
-            ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-            for (int i = 0; i < tableData.size(); ++i) {
-                FileInformation d = tableController.fileInformation(i);
-                if (d == null) {
-                    continue;
-                }
-                d.setHandled("");
-                if (selected != null && !selected.isEmpty() && !selected.contains(i)) {
-                    continue;
-                }
-                File file = d.getFile();
-                if (!sourceFiles.contains(file)) {
-                    sourceFiles.add(file);
-                    if (isPreview) {
-                        break;
-                    }
-                }
-            }
+            sourceFiles.clear();
+            sourceFiles.addAll(files);
 
             initLogs();
             totalFilesHandled = totalItemsHandled = 0;
@@ -524,6 +509,39 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
+        }
+    }
+
+    public List<File> pickSourceFiles(boolean onlyOne, boolean reset) {
+        try {
+            if (tableData == null || tableData.isEmpty()) {
+                return null;
+            }
+            List<File> files = new ArrayList<>();
+            ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+            for (int i = 0; i < tableData.size(); ++i) {
+                FileInformation d = tableController.fileInformation(i);
+                if (d == null) {
+                    continue;
+                }
+                if (reset) {
+                    d.setHandled("");
+                }
+                if (selected != null && !selected.isEmpty() && !selected.contains(i)) {
+                    continue;
+                }
+                File file = d.getFile();
+                if (!files.contains(file)) {
+                    files.add(file);
+                    if (onlyOne) {
+                        break;
+                    }
+                }
+            }
+            return files;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
         }
     }
 

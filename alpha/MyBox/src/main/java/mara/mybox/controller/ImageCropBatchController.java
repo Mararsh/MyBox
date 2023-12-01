@@ -11,16 +11,15 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2018-9-22
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchCropController extends BaseImageEditBatchController {
+public class ImageCropBatchController extends BaseImageEditBatchController {
 
     private boolean isCenter;
     private int centerWidth, centerHeight, leftX, leftY, rightX, rightY;
@@ -32,8 +31,8 @@ public class ImageManufactureBatchCropController extends BaseImageEditBatchContr
     @FXML
     protected TextField centerWidthInput, centerHeightInput, leftXInput, leftYInput, rightXInput, rightYInput;
 
-    public ImageManufactureBatchCropController() {
-        baseTitle = Languages.message("ImageManufactureBatchCrop");
+    public ImageCropBatchController() {
+        baseTitle = message("ImageManufactureBatchCrop");
 
     }
 
@@ -60,7 +59,6 @@ public class ImageManufactureBatchCropController extends BaseImageEditBatchContr
     @Override
     public void initOptionsSection() {
         try {
-
             centerWidthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -188,7 +186,7 @@ public class ImageManufactureBatchCropController extends BaseImageEditBatchContr
     private void checkLeftX() {
         try {
             leftX = Integer.parseInt(leftXInput.getText());
-            if (leftX > 0) {
+            if (leftX >= 0) {
                 leftXInput.setStyle(null);
             } else {
                 leftXInput.setStyle(UserConfig.badStyle());
@@ -201,13 +199,13 @@ public class ImageManufactureBatchCropController extends BaseImageEditBatchContr
     private void checkLeftY() {
         try {
             leftY = Integer.parseInt(leftYInput.getText());
-            if (leftX > 0) {
-                leftXInput.setStyle(null);
+            if (leftY >= 0) {
+                leftYInput.setStyle(null);
             } else {
-                leftXInput.setStyle(UserConfig.badStyle());
+                leftYInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            leftXInput.setStyle(UserConfig.badStyle());
+            leftYInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -246,8 +244,8 @@ public class ImageManufactureBatchCropController extends BaseImageEditBatchContr
             if (isCenter) {
                 x1 = (source.getWidth() - centerWidth) / 2;
                 y1 = (source.getHeight() - centerHeight) / 2;
-                x2 = (source.getWidth() + centerWidth) / 2 - 1;
-                y2 = (source.getHeight() + centerHeight) / 2 - 1;
+                x2 = (source.getWidth() + centerWidth) / 2;
+                y2 = (source.getHeight() + centerHeight) / 2;
             } else {
                 x1 = leftX;
                 y1 = leftY;
@@ -258,7 +256,7 @@ public class ImageManufactureBatchCropController extends BaseImageEditBatchContr
                     || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
                     || x1 > width || y1 > height
                     || x2 > width || y2 > height) {
-                errorString = Languages.message("BeyondSize");
+                errorString = message("BeyondSize");
                 return null;
             }
             return CropTools.cropOutside(source, x1, y1, x2, y2);

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,6 +10,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 
@@ -24,6 +26,7 @@ public abstract class BasePixelsController extends BaseChildController {
     protected String operation, opInfo;
     protected Image handledImage;
     protected ImageScope scope;
+    protected SingletonTask demoTask;
 
     @FXML
     protected ControlSelectPixels scopeController;
@@ -159,18 +162,21 @@ public abstract class BasePixelsController extends BaseChildController {
         if (!checkOptions()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (demoTask != null) {
+            demoTask.cancel();
         }
-        reset();
-        task = new SingletonCurrentTask<Void>(this) {
+        demoTask = new SingletonTask<Void>(this) {
             private List<String> files;
 
             @Override
             protected boolean handle() {
                 try {
                     Image demoImage = ScaleTools.demoImage(srcImage());
-                    files = makeDemoFiles(demoImage);
+                    if (demoImage == null || demoTask == null || !demoTask.isWorking()) {
+                        return false;
+                    }
+                    files = new ArrayList<>();
+                    makeDemoFiles(files, demoImage);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -194,11 +200,10 @@ public abstract class BasePixelsController extends BaseChildController {
             }
 
         };
-        start(task);
+        start(demoTask);
     }
 
-    protected List<String> makeDemoFiles(Image demoImage) {
-        return null;
+    protected void makeDemoFiles(List<String> files, Image demoImage) {
     }
 
     @FXML

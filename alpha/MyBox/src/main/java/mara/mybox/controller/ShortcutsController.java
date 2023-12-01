@@ -244,7 +244,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
     @FXML
     @Override
     public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(tableView));
+        ImageEditorController.openImage(NodeTools.snap(tableView));
     }
 
     public void makeDocuments(String lang) {

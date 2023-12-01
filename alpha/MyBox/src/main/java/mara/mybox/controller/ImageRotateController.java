@@ -65,7 +65,20 @@ public class ImageRotateController extends BaseImageEditController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
 
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded() || image == null) {
+                return false;
+            }
+            rotate(0);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
     }
 
     @FXML

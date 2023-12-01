@@ -13,7 +13,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -23,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageRotateController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageRoundController">
     <children>
       <SplitPane fx:id="splitPane" dividerPositions="0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
          <items>
@@ -140,55 +139,31 @@ License:    Apache License Version 2.0
                <content>
                   <VBox spacing="5.0">
                      <children>
-                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Rotate" VBox.vgrow="ALWAYS" />
-                        <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" />
-                        <FlowPane hgap="5.0" layoutX="12.0" layoutY="135.0" prefWidth="200.0" vgap="5.0">
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Round" VBox.vgrow="ALWAYS" />
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
-                              <ComboBox fx:id="angleSelector" editable="true" prefWidth="100.0" />
-                              <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                              <Button fx:id="previewButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#previewAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconGo.png" />
+                                          <Image url="@../buttons/Red/iconPreview.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
                               </Button>
                            </children>
                         </FlowPane>
-                        <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                            <children>
-                              <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRotateLeft.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRotateRight.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="turnOverButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#turnOver">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconTurnOver.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                              <Label text="%Background" />
+                              <fx:include fx:id="color" source="ControlColorSet.fxml" />
                            </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
+                        </FlowPane>
+                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                           <children>
+                              <Label text="%Size" />
+                              <ComboBox fx:id="roundSelector" editable="true" prefWidth="100.0" />
+                           </children>
                         </FlowPane>
                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" layoutX="12.0" layoutY="140.0" prefWrapLength="100.0" vgap="2.0">
                            <children>

@@ -58,7 +58,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
     protected int maxEditHistories;
 
     @FXML
-    protected TableColumn<ImageEditHistory, String> dirColumn, fileColumn;
+    protected TableColumn<ImageEditHistory, String> fileColumn;
     @FXML
     protected TableColumn<ImageEditHistory, Image> imageColumn;
     @FXML
@@ -88,9 +88,6 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
 
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("operationTime"));
             timeColumn.setCellFactory(new TableDateCell());
-
-            dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
-            dirColumn.setPrefWidth(260);
 
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
             fileColumn.setPrefWidth(160);

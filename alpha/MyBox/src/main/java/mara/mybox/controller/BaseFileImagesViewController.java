@@ -33,7 +33,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-5-22
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileImagesViewController extends ImageViewerController {
+public abstract class BaseFileImagesViewController extends BaseImageController {
 
     protected final int ThumbWidth = 200;
     protected int percent;

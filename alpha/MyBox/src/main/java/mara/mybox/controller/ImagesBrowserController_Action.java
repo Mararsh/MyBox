@@ -114,7 +114,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             ImageInformation imageInfo = tableData.get(index);
             if (imageInfo != null) {
                 File file = imageInfo.getImageFileInformation().getFile();
-                ImageViewerController.openFile(file);
+                ImageEditorController.openFile(file);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

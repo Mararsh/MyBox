@@ -209,12 +209,12 @@ public class FxImageTools {
         }
     }
 
-    public static Image addArc(Image image, int arc, Color bgColor) {
-        if (image == null || arc <= 0) {
+    public static Image setRound(Image image, int round, Color bgColor) {
+        if (image == null || round <= 0) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = BufferedImageTools.addArc(source, arc, toAwtColor(bgColor));
+        BufferedImage target = BufferedImageTools.setRound(source, round, toAwtColor(bgColor));
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

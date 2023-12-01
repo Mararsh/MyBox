@@ -192,6 +192,7 @@ public class ImageEditorController extends BaseImageController {
         historyIndex = index;
         undoButton.setDisable(historyIndex < 0 || historyIndex >= hisSize - 1);
         redoButton.setDisable(historyIndex <= 0);
+//        MyBoxLog.console(historyIndex + "/" + hisSize);
     }
 
     protected void recordImageHistory(String op, String info, ImageScope scope, Image hisImage) {
@@ -406,15 +407,6 @@ public class ImageEditorController extends BaseImageController {
             }
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
-                    StyleTools.getIconImageView("iconTarget.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                selectScope();
-            });
-            items.add(menu);
-
-            items.add(copyMenu(fevent));
-
             menu = new MenuItem(message("Crop"), StyleTools.getIconImageView("iconCrop.png"));
             menu.setOnAction((ActionEvent event) -> {
                 cropAction();
@@ -430,6 +422,12 @@ public class ImageEditorController extends BaseImageController {
             menu = new MenuItem(message("Size"), StyleTools.getIconImageView("iconExpand.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSizeController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Round"), StyleTools.getIconImageView("iconRound.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageRoundController.open(this);
             });
             items.add(menu);
 

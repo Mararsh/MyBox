@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -84,9 +83,8 @@ public class ImageAdjustColorController extends BasePixelsController {
     }
 
     @Override
-    protected List<String> makeDemoFiles(Image inImage) {
+    protected void makeDemoFiles(List<String> files, Image inImage) {
         try {
-            List<String> files = new ArrayList<>();
             BufferedImage demoImage = SwingFXUtils.fromFXImage(inImage, null);
 
             PixelsOperation pixelsOperation;
@@ -104,7 +102,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -115,7 +113,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -126,7 +124,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -137,7 +135,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -148,7 +146,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -158,7 +156,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -168,7 +166,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -179,7 +177,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
             pixelsOperation = PixelsOperationFactory.create(demoImage,
@@ -190,13 +188,11 @@ public class ImageAdjustColorController extends BasePixelsController {
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                 files.add(tmpFile);
-                task.setInfo(tmpFile);
+                demoTask.setInfo(tmpFile);
             }
 
-            return files;
         } catch (Exception e) {
-            displayError(e.toString());
-            return null;
+            MyBoxLog.error(e.toString());
         }
     }
 

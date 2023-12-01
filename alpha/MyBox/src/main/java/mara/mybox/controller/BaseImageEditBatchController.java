@@ -2,16 +2,26 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageAttributes;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.value.AppValues;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -24,6 +34,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
 
     protected ImageAttributes attributes;
     protected String errorString;
+    protected SingletonTask demoTask;
 
     @FXML
     protected ControlImageFormat formatController;
@@ -105,6 +116,65 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             MyBoxLog.error(e);
             return Languages.message("Failed");
         }
+    }
+
+    @FXML
+    public void demo() {
+        if (demoTask != null) {
+            demoTask.cancel();
+        }
+        demoTask = new SingletonCurrentTask<Void>(this) {
+            private List<String> files;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    BufferedImage demoImage = null;
+                    List<File> sources = pickSourceFiles(true, false);
+                    if (sources != null && !sources.isEmpty()) {
+                        demoImage = ImageFileReaders.readImage(sources.get(0));
+                        if (demoTask == null || !demoTask.isWorking()) {
+                            return false;
+                        }
+                        if (demoImage != null) {
+                            demoImage = ScaleTools.demoImage(demoImage);
+                        }
+                    }
+                    if (demoImage == null) {
+                        demoImage = SwingFXUtils.fromFXImage(new Image("img/" + "cover" + AppValues.AppYear + "g9.png"), null);
+                    }
+                    if (demoImage == null || demoTask == null || !demoTask.isWorking()) {
+                        return false;
+                    }
+                    files = new ArrayList<>();
+                    makeDemoFiles(files, demoImage);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (files != null && !files.isEmpty()) {
+                    ImagesBrowserController b
+                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                    b.loadFiles(files);
+                    b.setAlwaysOnTop();
+                }
+            }
+
+        };
+        start(demoTask);
+    }
+
+    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
     }
 
 }

@@ -79,8 +79,7 @@ public class ImageTooLargeController extends BaseController {
             parent.loadImageInfo(imageInfo);
             closeStage();
         } else {
-            ImageViewerController controller = (ImageViewerController) loadScene(Fxmls.ImageViewerFxml);
-            controller.loadImageInfo(imageInfo);
+            ImageEditorController.openImageInfo(imageInfo);
             parent.closeStage();
             closeStage();
         }

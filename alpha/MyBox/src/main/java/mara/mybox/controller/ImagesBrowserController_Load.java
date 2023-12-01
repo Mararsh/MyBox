@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-21
  * @License Apache License Version 2.0
  */
-public abstract class ImagesBrowserController_Load extends ImageViewerController {
+public abstract class ImagesBrowserController_Load extends BaseImageController {
 
     protected final ObservableList<File> imageFileList = FXCollections.observableArrayList();
     protected final ObservableList<ImageInformation> tableData = FXCollections.observableArrayList();

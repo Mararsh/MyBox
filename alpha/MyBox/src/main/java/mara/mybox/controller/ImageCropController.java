@@ -11,7 +11,6 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -22,13 +21,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-10-28
  * @License Apache License Version 2.0
  */
-public class ImageCropController extends ImageSelectPixelsController {
+public class ImageCropController extends BasePixelsController {
+
+    private Image cuttedClip;
 
     @FXML
     protected ToggleGroup targetGroup;
     @FXML
     protected CheckBox clipMarginsCheck, imageMarginsCheck,
             copyClipboardCheck, openClipboardCheck;
+    @FXML
+    protected ControlColorSet bgColorController;
 
     public ImageCropController() {
         baseTitle = message("Crop");
@@ -38,18 +41,8 @@ public class ImageCropController extends ImageSelectPixelsController {
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
 
-            clipMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "ClipCutMargins", true));
-            clipMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "ClipCutMargins", clipMarginsCheck.isSelected());
-                }
-            });
+            bgColorController.init(this, baseName + "BackgroundColor", javafx.scene.paint.Color.DARKGREEN);
 
             imageMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "ImageCutMargins", true));
             imageMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -67,6 +60,15 @@ public class ImageCropController extends ImageSelectPixelsController {
                 }
             });
 
+            clipMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "ClipCutMargins", true));
+            clipMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "ClipCutMargins", clipMarginsCheck.isSelected());
+                }
+            });
+            clipMarginsCheck.visibleProperty().bind(copyClipboardCheck.selectedProperty());
+
             openClipboardCheck.setSelected(UserConfig.getBoolean(baseName + "OpenClipboard", true));
             openClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -74,68 +76,52 @@ public class ImageCropController extends ImageSelectPixelsController {
                     UserConfig.setBoolean(baseName + "OpenClipboard", openClipboardCheck.isSelected());
                 }
             });
+            openClipboardCheck.visibleProperty().bind(copyClipboardCheck.selectedProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonCurrentTask<Void>(this) {
+    public void reset() {
+        super.reset();
+        cuttedClip = null;
+    }
 
-            private Image cuttedClip;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    Image srcImage = scopeController.srcImage();
-                    ImageScope scope = scopeController.pickScopeValues();
-                    Color bgColor = bgColorController.awtColor();
-                    handledImage = ScopeTools.selectedScope(
-                            srcImage, scope, bgColor,
-                            imageMarginsCheck.isSelected(),
-                            excludeScope(), skipTransparent());
-                    if (handledImage == null || task == null || isCancelled()) {
-                        return false;
-                    }
-                    if (copyClipboardCheck.isSelected()) {
-                        cuttedClip = ScopeTools.selectedScope(
-                                srcImage, scope, bgColor,
-                                clipMarginsCheck.isSelected(),
-                                excludeScope(), skipTransparent());
-                        return ImageClipboard.add(cuttedClip,
-                                ImageClipboard.ImageSource.Crop) != null;
-                    } else {
-                        return true;
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    error = e.toString();
-                    return false;
-                }
+    @Override
+    protected Image handleImage(Image inImage, ImageScope inScope) {
+        try {
+            operation = message("Crop");
+            opInfo = null;
+            Color bgColor = bgColorController.awtColor();
+            handledImage = ScopeTools.selectedScope(
+                    inImage, inScope, bgColor,
+                    imageMarginsCheck.isSelected(),
+                    excludeScope(), skipTransparent());
+            if (handledImage == null || task == null || task.isCancelled()) {
+                return null;
             }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                editor.updateImage("Crop", null, scopeController.scope, handledImage, cost);
-                if (openClipboardCheck.isSelected() && cuttedClip != null) {
-                    ImageInMyBoxClipboardController.oneOpen();
-                }
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
+            if (copyClipboardCheck.isSelected()) {
+                cuttedClip = ScopeTools.selectedScope(
+                        inImage, inScope, bgColor,
+                        clipMarginsCheck.isSelected(),
+                        excludeScope(), skipTransparent());
+                ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);
             }
-        };
-        start(task);
+            return handledImage;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
+        }
+    }
+
+    @Override
+    protected void afterHandle() {
+        if (copyClipboardCheck.isSelected() && openClipboardCheck.isSelected()
+                && cuttedClip != null) {
+            ImageInMyBoxClipboardController.oneOpen();
+        }
     }
 
     /*

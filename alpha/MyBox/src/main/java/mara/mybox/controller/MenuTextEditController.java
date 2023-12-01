@@ -346,7 +346,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             popError(message("NoData"));
             return;
         }
-        ImageViewerController.openImage(NodeTools.snap(textInput));
+        ImageEditorController.openImage(NodeTools.snap(textInput));
     }
 
     @Override

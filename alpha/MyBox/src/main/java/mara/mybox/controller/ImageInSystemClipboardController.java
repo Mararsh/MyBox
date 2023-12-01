@@ -33,7 +33,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-1-22
  * @License Apache License Version 2.0
  */
-public class ImageInSystemClipboardController extends ImageViewerController {
+public class ImageInSystemClipboardController extends BaseImageController {
 
     private int scaledWidth;
     private String filePrefix;

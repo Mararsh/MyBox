@@ -87,7 +87,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
             @Override
             protected boolean handle() {
-                newImage = FxImageTools.addArc(imageView.getImage(), arc, (Color) colorSetController.rect.getFill());
+                newImage = FxImageTools.setRound(imageView.getImage(), arc, (Color) colorSetController.rect.getFill());
                 if (task == null || isCancelled()) {
                     return false;
                 }

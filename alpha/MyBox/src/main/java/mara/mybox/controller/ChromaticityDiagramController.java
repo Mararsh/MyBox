@@ -62,7 +62,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-5-20
  * @License Apache License Version 2.0
  */
-public class ChromaticityDiagramController extends ImageViewerController {
+public class ChromaticityDiagramController extends BaseImageController {
 
     protected boolean isLine, inputInit = true;
     protected int dotSize, fontSize;
@@ -945,7 +945,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             @Override
             protected void whenSucceeded() {
                 recordFileWritten(file, VisitHistory.FileType.Image);
-                ImageViewerController.openFile(file);
+                ImageEditorController.openFile(file);
             }
 
         };
