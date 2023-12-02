@@ -32,8 +32,8 @@ public class PixelsOperationFactory {
         switch (operationType) {
             case ShowScope:
                 return new ShowScope(image, scope);
-            case SelectScope:
-                return new SelectScope(image, scope);
+            case SelectPixels:
+                return new SelectPixels(image, scope);
             case ReplaceColor:
                 return new ReplaceColor(image, scope);
             case Color:
@@ -269,10 +269,10 @@ public class PixelsOperationFactory {
         }
     }
 
-    public static class SelectScope extends PixelsOperation {
+    public static class SelectPixels extends PixelsOperation {
 
-        public SelectScope(BufferedImage image, ImageScope scope) {
-            this.operationType = OperationType.SelectScope;
+        public SelectPixels(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.SelectPixels;
             this.image = image;
             this.scope = scope;
         }

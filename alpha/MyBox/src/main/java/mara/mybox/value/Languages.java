@@ -64,10 +64,10 @@ public class Languages {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
         ResourceBundle bundle;
-        if (lang.equals("zh") || lang.startsWith("zh_")) {
-            bundle = BundleZhCN;
-        } else if (lang.equals("en") || lang.startsWith("en_")) {
+        if (lang.equals("en") || lang.startsWith("en_")) {
             bundle = BundleEn;
+        } else if (lang.equals("zh") || lang.startsWith("zh_")) {
+            bundle = BundleZhCN;
         } else {
             File file = interfaceLanguageFile(lang);
             if (file.exists()) {
@@ -80,8 +80,7 @@ public class Languages {
                 bundle = null;
             }
             if (bundle == null) {
-                setLanguage(Locale.getDefault().getLanguage().toLowerCase());
-                bundle = currentBundle;
+                bundle = BundleEn;
             }
         }
         return bundle;

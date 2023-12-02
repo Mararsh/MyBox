@@ -168,8 +168,8 @@ public class StyleButton {
                         return new StyleData(id, message("UnselectAll"), "", "iconSelectNone.png");
                 }
             }
-            if (id.startsWith("selectScope")) {
-                return new StyleData(id, message("SelectScope"), "CTRL+T / ALT+T", "iconSelect.png");
+            if (id.startsWith("selectPixels")) {
+                return new StyleData(id, message("SelectPixels"), "CTRL+T / ALT+T", "iconSelect.png");
             }
 
             return new StyleData(id, message("Select"), "CTRL+T / ALT+T", "iconSelect.png");

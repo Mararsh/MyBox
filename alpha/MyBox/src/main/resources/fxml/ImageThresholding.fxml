@@ -36,11 +36,33 @@ License:    Apache License Version 2.0
                         <VBox fx:id="setBox" spacing="5.0">
                             <children>
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Thresholding" VBox.vgrow="ALWAYS" />
-                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconTips.png" />
-                                    </image>
-                                </ImageView>
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                           <children>
+                              <Button fx:id="previewButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#previewAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconPreview.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDemo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                      <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconTips.png" />
+                                          </image>
+                                      </ImageView>
+                           </children>
+                        </FlowPane>
                                 <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="100.0" vgap="5.0">
                                     <children>
                                         <Label text="%Threshold" />
@@ -57,46 +79,6 @@ License:    Apache License Version 2.0
                                     <children>
                                         <Label text="%BigValue" />
                                         <TextField fx:id="bigInput" prefWidth="80.0" />
-                                    </children>
-                                </FlowPane>
-                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                    <children>
-                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDemo.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconRecover.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconUndo.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconSave.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                                     </children>
                                 </FlowPane>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
@@ -130,6 +112,38 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </FlowPane>
+                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
+                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRecover.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconUndo.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSave.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                    </children>
+                                </FlowPane>
+                        <Label minHeight="-Infinity" text="%SelectPixelsTips" wrapText="true" />
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

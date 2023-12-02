@@ -40,7 +40,7 @@ public abstract class PixelsOperation {
         Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
         ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
         Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, Blend,
-        ShowScope, SelectScope, Convolution, Contrast
+        ShowScope, SelectPixels, Convolution, Contrast
     }
 
     public enum ColorActionType {

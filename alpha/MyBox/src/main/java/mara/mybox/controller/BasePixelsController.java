@@ -45,6 +45,16 @@ public abstract class BasePixelsController extends BaseChildController {
             }
             scopeController.setParameters(this);
 
+            if (undoButton != null) {
+                undoButton.disableProperty().bind(editor.undoButton.disableProperty());
+            }
+            if (recoverButton != null) {
+                recoverButton.disableProperty().bind(editor.recoverButton.disableProperty());
+            }
+            if (saveButton != null) {
+                saveButton.disableProperty().bind(editor.saveButton.disableProperty());
+            }
+
             reset();
             initMore();
 
@@ -209,17 +219,13 @@ public abstract class BasePixelsController extends BaseChildController {
     @FXML
     @Override
     public void undoAction() {
-        if (editor != null) {
-            editor.undoAction();
-        }
+        editor.undoAction();
     }
 
     @FXML
     @Override
     public void recoverAction() {
-        if (editor != null) {
-            editor.recoverAction();
-        }
+        editor.recoverAction();
     }
 
     @FXML

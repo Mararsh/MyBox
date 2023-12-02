@@ -19,7 +19,7 @@ public class ImageSelectPixelsController extends BasePixelsController {
     protected ControlColorSet bgColorController;
 
     public ImageSelectPixelsController() {
-        baseTitle = message("SelectScope");
+        baseTitle = message("SelectPixels");
     }
 
     @Override

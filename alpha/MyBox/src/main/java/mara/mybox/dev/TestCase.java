@@ -120,7 +120,6 @@ public class TestCase {
             cases.add(new TestCase(index++, message("TextInMyBoxClipboard"), Fxmls.TextInMyBoxClipboardFxml));
             cases.add(new TestCase(index++, message("TextInSystemClipboard"), Fxmls.TextInSystemClipboardFxml));
 
-            cases.add(new TestCase(index++, message("ImageViewer"), Fxmls.ImageViewerFxml));
             cases.add(new TestCase(index++, message("ImagesBrowser"), Fxmls.ImagesBrowserFxml));
             cases.add(new TestCase(index++, message("ImageAnalyse"), Fxmls.ImageAnalyseFxml));
             cases.add(new TestCase(index++, message("ImagesPlay"), Fxmls.ImagesPlayFxml));

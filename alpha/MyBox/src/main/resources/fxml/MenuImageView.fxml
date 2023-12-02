@@ -266,7 +266,7 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" />
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                  <Button fx:id="selectScopeButton" mnemonicParsing="false" onAction="#selectScope">
+                  <Button fx:id="selectPixelsButton" mnemonicParsing="false" onAction="#selectPixels">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>

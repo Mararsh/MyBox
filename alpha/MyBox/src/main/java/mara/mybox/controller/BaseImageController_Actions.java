@@ -96,12 +96,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
-    public void viewAction() {
-        ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
-        checkImage(controller);
-    }
-
-    @FXML
     @Override
     public boolean popAction() {
         if (imageToHandle() == null) {
@@ -442,7 +436,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
-    public void selectScope() {
+    public void selectPixels() {
         ImageSelectPixelsController.open((BaseImageController) this);
     }
 

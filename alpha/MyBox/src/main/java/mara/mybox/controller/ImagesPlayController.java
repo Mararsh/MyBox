@@ -613,7 +613,7 @@ public class ImagesPlayController extends BaseImagesListController {
     public void viewFile() {
         try {
             if (fileFormat == null) {
-                viewAction();
+                editAction();
 
             } else if (fileFormat.equalsIgnoreCase("pdf")) {
                 PdfViewController controller = (PdfViewController) openStage(Fxmls.PdfViewFxml);
@@ -624,7 +624,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 controller.loadFile(sourceFile, frameIndex);
 
             } else {
-                viewAction();
+                editAction();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

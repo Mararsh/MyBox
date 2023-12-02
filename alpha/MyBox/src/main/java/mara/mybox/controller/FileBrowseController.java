@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
@@ -19,6 +20,7 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
 import mara.mybox.value.FileFilters;
@@ -75,6 +77,17 @@ public class FileBrowseController extends BaseController {
                 });
             }
 
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            NodeStyleTools.setTooltip(viewButton, new Tooltip(message("DoubleClick")));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -154,6 +167,11 @@ public class FileBrowseController extends BaseController {
     }
 
     public void itemDoubleClicked() {
+        viewAction();
+    }
+
+    @FXML
+    public void viewAction() {
         FileInformation selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;

@@ -25,9 +25,9 @@ License:    Apache License Version 2.0
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                     <children>
-                        <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelectPixels.fxml" VBox.vgrow="ALWAYS" />
-                     </children>
+                            <children>
+                                <fx:include fx:id="scope" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelectPixels.fxml" VBox.vgrow="ALWAYS" />
+                            </children>
                         </VBox>
                     </content>
                 </ScrollPane>
@@ -36,18 +36,31 @@ License:    Apache License Version 2.0
                         <VBox fx:id="setBox" spacing="5.0">
                             <children>
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Convolution" wrapText="true" VBox.vgrow="ALWAYS" />
-                        <FlowPane fx:id="rightValuePane" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                            <children>
-                              <Label minHeight="-Infinity" text="%ConvolutionKernel" wrapText="true" />
-                              <Button fx:id="refreshButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                              <Button fx:id="previewButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#previewAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                          <Image url="@../buttons/Red/iconPreview.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
                               </Button>
+                           </children>
+                        </FlowPane>
+                                <FlowPane fx:id="rightValuePane" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%ConvolutionKernel" wrapText="true" />
+                                        <Button fx:id="refreshButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -57,40 +70,9 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                           </children>
-                        </FlowPane>
-                        <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                    <children>
-                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconRecover.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconUndo.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconSave.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                                     </children>
                                 </FlowPane>
+                                <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
                                         <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
@@ -122,6 +104,38 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </FlowPane>
+                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
+                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRecover.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconUndo.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconSave.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </FlowPane>
+                                <Label minHeight="-Infinity" text="%SelectPixelsTips" wrapText="true" /> 
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

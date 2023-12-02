@@ -41,11 +41,15 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Label minHeight="-Infinity" text="%DoubleClick" wrapText="true">
-               <FlowPane.margin>
-                  <Insets left="20.0" />
-               </FlowPane.margin>
-            </Label>
+            <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconView.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <RadioButton fx:id="openRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%OpenInNewWindow" wrapText="true">
                <toggleGroup>
                   <ToggleGroup fx:id="dcGroup" />

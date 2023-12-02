@@ -133,6 +133,21 @@ public class ImagePasteController extends BaseImageEditController {
         }
     }
 
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
+            rotateAngle = currentAngle = 0;
+            clipSource = null;
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
     public void setSourceClip(Image image) {
         try {
             if (image == null) {
@@ -150,13 +165,14 @@ public class ImagePasteController extends BaseImageEditController {
     }
 
     public void pasteClip(int angle) {
-        if (clipSource == null) {
+        if (clipSource == null || scope == null || maskRectangleData == null) {
             return;
         }
         PixelsBlend blend = blendController.pickValues();
         if (blend == null) {
             return;
         }
+        MyBoxLog.console(blend.isIgnoreTransparency());
         if (task != null) {
             task.cancel();
         }
@@ -299,7 +315,7 @@ public class ImagePasteController extends BaseImageEditController {
     @Override
     public void okAction() {
         popSuccessful();
-        editor.updateImage("Paste", null, scope, imageView.getImage(), -1);
+        editor.updateImage("Paste", currentImage(), -1);
         if (closeAfterCheck.isSelected()) {
             close();
         }

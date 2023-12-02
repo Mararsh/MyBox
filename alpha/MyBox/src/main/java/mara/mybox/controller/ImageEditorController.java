@@ -399,12 +399,19 @@ public class ImageEditorController extends BaseImageController {
             }
 
             if (!recoverButton.isDisabled()) {
-                menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
+                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                        StyleTools.getIconImageView("iconRedo.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    showHistories();
+                    recoverAction();
                 });
                 items.add(menu);
             }
+
+            menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                showHistories();
+            });
+            items.add(menu);
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Crop"), StyleTools.getIconImageView("iconCrop.png"));

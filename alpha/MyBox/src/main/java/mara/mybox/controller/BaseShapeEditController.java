@@ -174,9 +174,13 @@ public class BaseShapeEditController extends BaseImageEditController {
         return ShapeTools.drawShape(srcImage(), shapeData, shapeStyle, blender);
     }
 
+    @FXML
     @Override
-    protected void handleImage() {
-        handledImage = imageView.getImage();
+    public void okAction() {
+        editor.updateImage(operation, imageView.getImage(), -1);
+        if (closeAfterCheck.isSelected()) {
+            close();
+        }
     }
 
     @FXML

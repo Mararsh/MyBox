@@ -32,11 +32,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
     @FXML
     protected void showImageMenu(Event event) {
-        MenuItem imageViewer = new MenuItem(message("ImageViewer"));
-        imageViewer.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageViewerFxml);
-        });
-
         MenuItem EditImage = new MenuItem(message("EditImage"));
         EditImage.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImageEditorFxml);
@@ -83,7 +78,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         });
 
         List<MenuItem> items = new ArrayList<>();
-        items.addAll(Arrays.asList(imageViewer, EditImage,
+        items.addAll(Arrays.asList(EditImage,
                 imageManufactureMenu(), manufactureBatchMenu(),
                 imageScope, ImageAnalyse, ImagesPlay, imagesBrowser, svgMenu(), new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),

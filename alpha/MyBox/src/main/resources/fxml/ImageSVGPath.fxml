@@ -10,6 +10,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -161,20 +162,20 @@ License:    Apache License Version 2.0
                             <children>
                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                            <children>
-                              <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleData">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconExamples.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                               <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/Red/iconGo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleData">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconExamples.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -300,6 +301,7 @@ License:    Apache License Version 2.0
                               </Button>
                            </children>
                         </FlowPane>
+                        <Label minHeight="-Infinity" text="%ImageShapeTips" wrapText="true" />
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

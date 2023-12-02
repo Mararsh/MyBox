@@ -80,8 +80,8 @@ public class MenuImageViewController extends MenuImageBaseController {
     }
 
     @FXML
-    public void selectScope() {
-        viewerController.selectScope();
+    public void selectPixels() {
+        viewerController.selectPixels();
     }
 
     @FXML

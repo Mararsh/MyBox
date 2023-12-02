@@ -229,7 +229,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="selectScopeButton" mnemonicParsing="false" onAction="#selectScope">
+                              <Button fx:id="selectPixelsButton" mnemonicParsing="false" onAction="#selectPixels">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

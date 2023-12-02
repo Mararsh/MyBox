@@ -44,7 +44,7 @@ public class BaseImageController extends BaseImageController_Actions {
     protected FlowPane buttonsPane;
 
     public BaseImageController() {
-        baseTitle = message("ImageViewer");
+        baseTitle = message("Image");
     }
 
     @Override
@@ -485,17 +485,23 @@ public class BaseImageController extends BaseImageController_Actions {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("View"), StyleTools.getIconImageView("iconView.png"));
+            MenuItem menu = new MenuItem(message("Pop") + "    Ctrl+P " + message("Or") + " Alt+P",
+                    StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {
-                viewAction();
+                popAction();
             });
             items.add(menu);
 
             menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 editAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SelectPixels") + "    Ctrl+T " + message("Or") + " Alt+T",
+                    StyleTools.getIconImageView("iconTarget.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                selectPixels();
             });
             items.add(menu);
 
@@ -654,24 +660,10 @@ public class BaseImageController extends BaseImageController_Actions {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Pop") + "    Ctrl+P " + message("Or") + " Alt+P",
-                    StyleTools.getIconImageView("iconPop.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                popAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("PickColors") + "    Ctrl+K " + message("Or") + " Alt+K",
+            MenuItem menu = new MenuItem(message("PickColors") + "    Ctrl+K " + message("Or") + " Alt+K",
                     StyleTools.getIconImageView("iconPickColor.png"));
             menu.setOnAction((ActionEvent event) -> {
                 controlAltK();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SelectScope") + "    Ctrl+T " + message("Or") + " Alt+T",
-                    StyleTools.getIconImageView("iconTarget.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                selectScope();
             });
             items.add(menu);
 
@@ -682,14 +674,14 @@ public class BaseImageController extends BaseImageController_Actions {
             menu = new MenuItem(message("LoadedSize") + "    Ctrl+1 " + message("Or") + " Alt+1",
                     StyleTools.getIconImageView("iconLoadSize.png"));
             menu.setOnAction((ActionEvent event) -> {
-                paneSize();
+                loadedSize();
             });
             items.add(menu);
 
             menu = new MenuItem(message("PaneSize") + "    Ctrl+2 " + message("Or") + " Alt+2",
                     StyleTools.getIconImageView("iconPaneSize.png"));
             menu.setOnAction((ActionEvent event) -> {
-                loadedSize();
+                paneSize();
             });
             items.add(menu);
 
@@ -845,7 +837,7 @@ public class BaseImageController extends BaseImageController_Actions {
         if (imageView == null || imageView.getImage() == null) {
             return false;
         }
-        selectScope();
+        selectPixels();
         return true;
     }
 

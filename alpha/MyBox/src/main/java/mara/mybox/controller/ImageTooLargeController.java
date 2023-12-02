@@ -73,16 +73,11 @@ public class ImageTooLargeController extends BaseController {
     }
 
     @FXML
-    public void view() {
+    public void edit() {
         thisPane.setDisable(true);
-        if (parent.baseName.equals("ImageViewer")) {
-            parent.loadImageInfo(imageInfo);
-            closeStage();
-        } else {
-            ImageEditorController.openImageInfo(imageInfo);
-            parent.closeStage();
-            closeStage();
-        }
+        ImageEditorController.openImageInfo(imageInfo);
+        parent.closeStage();
+        closeStage();
     }
 
     @FXML

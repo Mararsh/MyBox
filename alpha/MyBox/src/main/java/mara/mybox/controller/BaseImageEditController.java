@@ -17,14 +17,8 @@ import mara.mybox.value.UserConfig;
 public class BaseImageEditController extends BaseShapeController {
 
     protected ImageEditorController editor;
-    protected long handleCost;
     protected String operation, opInfo;
     protected Image handledImage;
-    protected ActionType actionType;
-
-    public enum ActionType {
-        Go, Preview, OK
-    }
 
     @FXML
     protected CheckBox closeAfterCheck;
@@ -57,8 +51,18 @@ public class BaseImageEditController extends BaseShapeController {
             });
             closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
 
-            initMore();
+            if (undoButton != null) {
+                undoButton.disableProperty().bind(editor.undoButton.disableProperty());
+            }
+            if (recoverButton != null) {
+                recoverButton.disableProperty().bind(editor.recoverButton.disableProperty());
+            }
+            if (saveButton != null) {
+                saveButton.disableProperty().bind(editor.saveButton.disableProperty());
+            }
 
+            initMore();
+            reset();
             loadImage();
 
         } catch (Exception e) {
@@ -73,11 +77,14 @@ public class BaseImageEditController extends BaseShapeController {
         operation = null;
         opInfo = null;
         handledImage = null;
-        handleCost = -1;
     }
 
     protected Image srcImage() {
         return editor.imageView.getImage();
+    }
+
+    protected Image currentImage() {
+        return imageView.getImage();
     }
 
     protected void loadImage() {
@@ -99,14 +106,7 @@ public class BaseImageEditController extends BaseShapeController {
     @FXML
     @Override
     public void okAction() {
-        if (goButton != null) {
-            editor.updateImage(operation, opInfo, null, imageView.getImage(), handleCost);
-            if (closeAfterCheck.isSelected()) {
-                close();
-            }
-        } else {
-            action(false);
-        }
+        action(false);
     }
 
     @FXML
@@ -160,64 +160,6 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     @FXML
-    @Override
-    public synchronized void goAction() {
-        if (isSettingValues || !checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        reset();
-        task = new SingletonCurrentTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                handledImage = null;
-                opInfo = null;
-                goImage();
-                if (task == null || isCancelled()) {
-                    return false;
-                }
-                return handledImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (isCancelled()) {
-                    return;
-                }
-                imageView.setImage(handledImage);
-            }
-
-            @Override
-            protected void whenCanceled() {
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
-        };
-        start(task, okButton);
-    }
-
-    protected void goImage() {
-    }
-
-    @FXML
-    @Override
-    public void undoAction() {
-        editor.undoAction();
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        editor.recoverAction();
-    }
-
-    @FXML
     protected void demo() {
         if (!checkOptions()) {
             return;
@@ -251,6 +193,24 @@ public class BaseImageEditController extends BaseShapeController {
 
     protected Image handleDemo() {
         return null;
+    }
+
+    @FXML
+    @Override
+    public void undoAction() {
+        editor.undoAction();
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        editor.recoverAction();
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        editor.saveAction();
     }
 
     @FXML
