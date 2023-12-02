@@ -245,7 +245,6 @@ public class FxImageTools {
         }
         BufferedImage source1 = SwingFXUtils.fromFXImage(foreImage, null);
         BufferedImage source2 = SwingFXUtils.fromFXImage(backImage, null);
-        MyBoxLog.console(blender.isIgnoreTransparency());
         BufferedImage target = PixelsBlend.blend(source1, source2, x, y, blender);
         if (target == null) {
             target = source1;

@@ -177,7 +177,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 }
             });
 
-            blendController.setParameters(this, imageView);
+            blendController.setParameters(this);
 
             checkDistance();
         } catch (Exception e) {

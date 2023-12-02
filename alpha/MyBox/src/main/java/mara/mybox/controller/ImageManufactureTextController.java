@@ -34,7 +34,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         try {
             super.initPane();
 
-            optionsController.setParameters(this, imageView);
+            optionsController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

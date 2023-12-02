@@ -41,7 +41,7 @@ public class BaseShapeEditController extends BaseImageEditController {
                 shapeStyle = strokeController.pickValues();
             }
             if (blendController != null) {
-                blendController.setParameters(this, imageView);
+                blendController.setParameters(this);
                 blender = blendController.pickValues();
             }
 

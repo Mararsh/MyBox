@@ -50,7 +50,7 @@ public class ControlImageShapeOptions extends ControlShapeOptions {
         try {
             super.initShapeControls();
 
-            blendController.setParameters(this, imageView);
+            blendController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

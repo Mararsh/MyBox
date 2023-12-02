@@ -28,7 +28,7 @@ public class ImageTextBatchController extends BaseImageEditBatchController {
         try {
             super.initControls();
 
-            optionsController.setParameters(this, null);
+            optionsController.setParameters(this);
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()

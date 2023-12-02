@@ -20,7 +20,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
@@ -41,7 +40,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageText extends BaseController {
 
-    protected ImageView imageView;
     protected int margin, rowHeight, x, y, fontSize, shadow, angle, baseX, baseY, textY,
             textWidth, textHeight, bordersStrokeWidth, bordersArc, bordersMargin;
     protected String text, fontFamily, fontName;
@@ -75,9 +73,8 @@ public class ControlImageText extends BaseController {
     @FXML
     protected Label sizeLabel;
 
-    public void setParameters(BaseController parent, ImageView imageView) {
+    public void setParameters(BaseController parent) {
         parentController = parent;
-        this.imageView = imageView;
         baseName = parentController.baseName;
 
         try (Connection conn = DerbyBase.getConnection()) {
@@ -85,7 +82,7 @@ public class ControlImageText extends BaseController {
             initStyle(conn);
             initBorders(conn);
             initPosition(conn);
-            blendController.setParameters(conn, parent, imageView);
+            blendController.setParameters(conn, parent);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -419,7 +416,6 @@ public class ControlImageText extends BaseController {
                         .setStrokeWidth(bordersStrokeWidth)
                         .setIsFillColor(bordersFillCheck.isSelected())
                         .setFillColor(bordersFillColorController.color())
-                        .setFillOpacity(getOpacity())
                         .setStrokeDashed(bordersStrokeDottedCheck.isSelected());
             }
 
@@ -593,22 +589,6 @@ public class ControlImageText extends BaseController {
 
     public boolean isOutline() {
         return outlineCheck.isSelected();
-    }
-
-    public boolean orderReversed() {
-        return !blendController.foreTopCheck.isSelected();
-    }
-
-    public boolean ignoreTransparent() {
-        return blendController.ignoreTransparentCheck.isSelected();
-    }
-
-    public PixelsBlend.ImagesBlendMode getBlendMode() {
-        return blendController.blendMode;
-    }
-
-    public float getOpacity() {
-        return blendController.opacity;
     }
 
     public PixelsBlend getBlend() {

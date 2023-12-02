@@ -103,7 +103,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             });
 
-            blendController.setParameters(this, imageView);
+            blendController.setParameters(this);
 
             keepRatioCheck.setSelected(UserConfig.getBoolean(baseName + "KeepClipRatio", true));
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

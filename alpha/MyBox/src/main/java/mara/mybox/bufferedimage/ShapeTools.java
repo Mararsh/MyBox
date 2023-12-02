@@ -37,7 +37,8 @@ public class ShapeTools {
     public static BufferedImage drawShape(BufferedImage srcImage, DoubleShape doubleShape,
             ShapeStyle style, PixelsBlend blender) {
         try {
-            if (srcImage == null || doubleShape == null || doubleShape.isEmpty() || style == null) {
+            if (srcImage == null || doubleShape == null || doubleShape.isEmpty()
+                    || style == null || blender == null) {
                 return srcImage;
             }
             float strokeWidth = style.getStrokeWidth();

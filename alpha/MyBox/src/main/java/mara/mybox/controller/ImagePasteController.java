@@ -75,7 +75,7 @@ public class ImagePasteController extends BaseImageEditController {
                 }
             });
 
-            blendController.setParameters(this, imageView);
+            blendController.setParameters(this);
 
             keepRatioCheck.setSelected(UserConfig.getBoolean(baseName + "KeepClipRatio", true));
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -172,7 +172,6 @@ public class ImagePasteController extends BaseImageEditController {
         if (blend == null) {
             return;
         }
-        MyBoxLog.console(blend.isIgnoreTransparency());
         if (task != null) {
             task.cancel();
         }

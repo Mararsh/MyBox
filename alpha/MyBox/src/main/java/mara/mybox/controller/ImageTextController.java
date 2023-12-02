@@ -33,7 +33,7 @@ public class ImageTextController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
-            optionsController.setParameters(this, imageView);
+            optionsController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

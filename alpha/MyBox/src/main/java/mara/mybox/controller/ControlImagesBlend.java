@@ -12,12 +12,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
+import mara.mybox.bufferedimage.PixelsBlend.TransparentAs;
+import static mara.mybox.bufferedimage.PixelsBlend.fixedOpacity;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.DerbyBase;
@@ -39,41 +42,63 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImagesBlend extends BaseController {
 
-    protected ImageView backView;
     protected ImagesBlendMode blendMode;
     protected float opacity;
     protected int keepRatioType;
+    protected TransparentAs baseTransparentAs = TransparentAs.Transparent,
+            overlayTransparentAs = TransparentAs.Another;
 
     @FXML
     protected ListView<String> modeList;
     @FXML
     protected ComboBox<String> opacitySelector;
     @FXML
-    protected CheckBox foreTopCheck, ignoreTransparentCheck;
+    protected CheckBox baseAboveCheck;
+    @FXML
+    protected ToggleGroup baseGroup, overlayGroup;
+    @FXML
+    protected RadioButton baseAsOverlayRadio, baseAsTransparentRadio, baseBlendRadio,
+            overlayAsBaseRadio, overlayAsTransparentRadio, overlayBlendRadio;
     @FXML
     protected Button demoButton;
 
     public void setParameters(BaseController parent) {
-        setParameters(parent, null);
-    }
-
-    public void setParameters(BaseController parent, ImageView imageView) {
         try (Connection conn = DerbyBase.getConnection()) {
-            setParameters(conn, parent, imageView);
+            setParameters(conn, parent);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void setParameters(Connection conn, BaseController parent, ImageView imageView) {
+    public void setParameters(Connection conn, BaseController parent) {
         try {
             this.parentController = parent;
-            baseName = parentController.interfaceName + "Blend";
-            this.backView = imageView;
+            baseName = parentController.baseName + "_Blend";
 
-            foreTopCheck.setSelected(UserConfig.getBoolean(conn, baseName + "OnTop", true));
+//            baseAboveCheck.setSelected(UserConfig.getBoolean(conn, baseName + "BaseAbove", false));
+            String v = UserConfig.getString(conn, baseName + "BaseTransparentAs", "Transparent");
+            if ("Overlay".equals(v)) {
+                baseAsOverlayRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Another;
+            } else if ("Blend".equals(v)) {
+                baseBlendRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Blend;
+            } else {
+                baseAsTransparentRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Transparent;
+            }
 
-            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(conn, baseName + "IgnoreTransparent", true));
+            v = UserConfig.getString(conn, baseName + "OverlayTransparentAs", "Another");
+            if ("Transparent".equals(v)) {
+                overlayAsTransparentRadio.setSelected(true);
+                overlayTransparentAs = TransparentAs.Transparent;
+            } else if ("Blend".equals(v)) {
+                overlayBlendRadio.setSelected(true);
+                overlayTransparentAs = TransparentAs.Blend;
+            } else {
+                overlayAsBaseRadio.setSelected(true);
+                overlayTransparentAs = TransparentAs.Another;
+            }
 
             String mode = UserConfig.getString(conn, baseName + "BlendMode", message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
@@ -92,15 +117,33 @@ public class ControlImagesBlend extends BaseController {
         }
     }
 
-    public boolean isTop() {
-        return foreTopCheck.isSelected();
+    public boolean isBaseAbove() {
+        return baseAboveCheck.isSelected();
     }
 
-    public boolean ignoreTransparent() {
-        return ignoreTransparentCheck.isSelected();
+    public TransparentAs baseTransparentAs() {
+        if (baseAsOverlayRadio.isSelected()) {
+            baseTransparentAs = TransparentAs.Another;
+        } else if (baseBlendRadio.isSelected()) {
+            baseTransparentAs = TransparentAs.Blend;
+        } else {
+            baseTransparentAs = TransparentAs.Transparent;
+        }
+        return baseTransparentAs;
     }
 
-    public boolean checkValues() {
+    public TransparentAs overlayTransparentAs() {
+        if (overlayAsTransparentRadio.isSelected()) {
+            overlayTransparentAs = TransparentAs.Transparent;
+        } else if (overlayBlendRadio.isSelected()) {
+            overlayTransparentAs = TransparentAs.Blend;
+        } else {
+            overlayTransparentAs = TransparentAs.Another;
+        }
+        return overlayTransparentAs;
+    }
+
+    public float opacity() {
         float f = -1;
         try {
             f = Float.parseFloat(opacitySelector.getValue());
@@ -110,9 +153,12 @@ public class ControlImagesBlend extends BaseController {
             opacity = f;
         } else {
             popError(message("InvalidParameter") + ": " + message("Opacity"));
-            return false;
         }
-        return true;
+        return f;
+    }
+
+    public boolean checkValues() {
+        return opacity() >= 0;
     }
 
     public PixelsBlend pickValues() {
@@ -136,8 +182,13 @@ public class ControlImagesBlend extends BaseController {
 
             UserConfig.setInt(conn, baseName + "BlendOpacity", (int) (opacity * 100));
 
-            UserConfig.setBoolean(conn, baseName + "OnTop", foreTopCheck.isSelected());
-            UserConfig.setBoolean(conn, baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+//            UserConfig.setBoolean(conn, baseName + "BaseAbove", baseAboveCheck.isSelected());
+            baseTransparentAs();
+            UserConfig.setString(conn, baseName + "BaseTransparentAs", baseTransparentAs.name());
+
+            overlayTransparentAs();
+            UserConfig.setString(conn, baseName + "OverlayTransparentAs", overlayTransparentAs.name());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -145,35 +196,45 @@ public class ControlImagesBlend extends BaseController {
     }
 
     public PixelsBlend makeBlend() {
-        return PixelsBlend.blender(blendMode, opacity, !isTop(), ignoreTransparent());
+        return PixelsBlendFactory.create(blendMode)
+                .setBlendMode(blendMode)
+                .setOpacity(fixedOpacity(opacity))
+                .setBaseAbove(baseAboveCheck.isSelected())
+                .setBaseTransparentAs(baseTransparentAs)
+                .setOverlayTransparentAs(overlayTransparentAs);
     }
 
     @FXML
     public void demo() {
-        Image backImage = null;
-        if (backView != null) {
-            backImage = backView.getImage();
+        Image baseImage = null;
+        Image overlay = null;
+        Color color = Color.PINK;
+        if (parentController instanceof ImageBlendColorController) {
+            baseImage = ((ImageBlendColorController) parentController).srcImage();
+            color = ((ImageBlendColorController) parentController).colorController.color();
+
+        } else if (parentController instanceof ImagePasteController) {
+            baseImage = ((ImagePasteController) parentController).srcImage();
+            overlay = ((ImagePasteController) parentController).finalClip;
+
+        } else if (parentController instanceof BaseImageEditController) {
+            baseImage = ((BaseImageEditController) parentController).srcImage();
+
         }
-        if (backImage == null) {
-            backImage = new Image("img/cover" + AppValues.AppYear + "g5.png");
+
+        if (baseImage == null) {
+            baseImage = new Image("img/cover" + AppValues.AppYear + "g5.png");
         }
-        Image foreImage = null;
-        Color foreColor = Color.PINK;
-        if (parentController instanceof ImagePasteController) {
-            foreImage = ((ImagePasteController) parentController).finalClip;
-        } else if (parentController instanceof ImageBlendColorController) {
-            foreColor = ((ImageBlendColorController) parentController).colorController.color();
+        if (overlay == null) {
+            overlay = FxImageTools.createImage(
+                    (int) (baseImage.getWidth() * 3 / 4), (int) (baseImage.getHeight() * 3 / 4),
+                    color);
         }
-        if (foreImage == null) {
-            foreImage = FxImageTools.createImage(
-                    (int) (backImage.getWidth() * 3 / 4), (int) (backImage.getHeight() * 3 / 4),
-                    foreColor);
-        }
-        demo(backImage, foreImage);
+        demo(baseImage, overlay);
     }
 
-    public void demo(Image backImage, Image foreImage) {
-        if (backImage == null || foreImage == null) {
+    public void demo(Image baseImage, Image overlay) {
+        if (baseImage == null || overlay == null) {
             return;
         }
         if (task != null) {
@@ -185,18 +246,21 @@ public class ControlImagesBlend extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    int x = (int) (backImage.getWidth() - foreImage.getWidth()) / 2;
-                    int y = (int) (backImage.getHeight() - foreImage.getHeight()) / 2;
-                    BufferedImage foreBI = SwingFXUtils.fromFXImage(foreImage, null);
-                    foreBI = ScaleTools.demoImage(foreBI);
-                    BufferedImage backBI = SwingFXUtils.fromFXImage(backImage, null);
-                    backBI = ScaleTools.demoImage(backBI);
+                    BufferedImage overlayBI = SwingFXUtils.fromFXImage(overlay, null);
+                    overlayBI = ScaleTools.demoImage(overlayBI);
+                    BufferedImage baseBI = SwingFXUtils.fromFXImage(baseImage, null);
+                    baseBI = ScaleTools.demoImage(baseBI);
+                    int x = (int) (baseBI.getWidth() - overlayBI.getWidth()) / 2;
+                    int y = (int) (baseBI.getHeight() - overlayBI.getHeight()) / 2;
                     files = new ArrayList<>();
-                    boolean reversed = !isTop();
-                    boolean ignoreTrans = ignoreTransparent();
                     float copacity = opacity >= 1f ? 0.5f : 1f;
-                    BufferedImage blended = PixelsBlend.blend(foreBI, backBI, x, y,
-                            PixelsBlend.blender(ImagesBlendMode.NORMAL, copacity, reversed, ignoreTrans));
+                    PixelsBlend blender = PixelsBlendFactory.create(ImagesBlendMode.NORMAL)
+                            .setBlendMode(ImagesBlendMode.NORMAL)
+                            .setOpacity(copacity)
+                            .setBaseAbove(baseAboveCheck.isSelected())
+                            .setBaseTransparentAs(baseTransparentAs)
+                            .setOverlayTransparentAs(overlayTransparentAs);
+                    BufferedImage blended = PixelsBlend.blend(overlayBI, baseBI, x, y, blender);
                     if (task == null || isCancelled()) {
                         return true;
                     }
@@ -211,8 +275,13 @@ public class ControlImagesBlend extends BaseController {
                             return true;
                         }
                         PixelsBlend.ImagesBlendMode mode = PixelsBlendFactory.blendMode(name);
-                        blended = PixelsBlend.blend(foreBI, backBI, x, y,
-                                PixelsBlend.blender(mode, opacity, reversed, ignoreTrans));
+                        blender = PixelsBlendFactory.create(mode)
+                                .setBlendMode(mode)
+                                .setOpacity(opacity)
+                                .setBaseAbove(baseAboveCheck.isSelected())
+                                .setBaseTransparentAs(baseTransparentAs)
+                                .setOverlayTransparentAs(overlayTransparentAs);
+                        blended = PixelsBlend.blend(overlayBI, baseBI, x, y, blender);
                         if (task == null || isCancelled()) {
                             return true;
                         }
