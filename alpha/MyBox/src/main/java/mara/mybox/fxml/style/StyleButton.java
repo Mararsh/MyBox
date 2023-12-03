@@ -628,6 +628,24 @@ public class StyleButton {
                     return new StyleData(id, message("SetAllOrSelected"), "", "iconEqual.png");
                 case "setValuesButton":
                     return new StyleData(id, message("SetValues"), "", "iconEqual.png");
+                case "settingsClearButton":
+                    return new StyleData(id, message("ClearPersonalSettings"), "", "iconClear.png");
+                case "settingsOpenButton":
+                    return new StyleData(id, message("OpenDataPath"), "", "iconOpenPath.png");
+                case "settingsRecentOKButton":
+                    return new StyleData(id, message("OK"), "", "iconOK.png");
+                case "settingsJVMButton":
+                    return new StyleData(id, message("OK"), "", "iconOK.png");
+                case "settingsRecentClearButton":
+                    return new StyleData(id, message("Clear"), "", "iconClear.png");
+                case "settingsChangeRootButton":
+                    return new StyleData(id, message("Change"), "", "iconOK.png");
+                case "settingsImageHisOKButton":
+                    return new StyleData(id, message("OK"), "", "iconOK.png");
+                case "settingsImageHisNoButton":
+                    return new StyleData(id, message("NotRecord"), "", "iconCancel.png");
+                case "settingsImageHisClearButton":
+                    return new StyleData(id, message("Clear"), "", "iconClear.png");
                 default:
                     return new StyleData(id, message("Set"), "", "iconEqual.png");
             }
@@ -750,28 +768,7 @@ public class StyleButton {
         if (id.startsWith("disableOnTop")) {
             return new StyleData(id, message("DisableAlwayOnTop"), "", "iconDown.png");
         }
-        if (id.startsWith("settings")) {
-            switch (id) {
-                case "settingsClearButton":
-                    return new StyleData(id, message("ClearPersonalSettings"), "", "iconClear.png");
-                case "settingsOpenButton":
-                    return new StyleData(id, message("OpenDataPath"), "", "iconOpenPath.png");
-                case "settingsRecentOKButton":
-                    return new StyleData(id, message("OK"), "", "iconOK.png");
-                case "settingsJVMButton":
-                    return new StyleData(id, message("OK"), "", "iconOK.png");
-                case "settingsRecentClearButton":
-                    return new StyleData(id, message("Clear"), "", "iconClear.png");
-                case "settingsChangeRootButton":
-                    return new StyleData(id, message("Change"), "", "iconOK.png");
-                case "settingsImageHisOKButton":
-                    return new StyleData(id, message("OK"), "", "iconOK.png");
-                case "settingsImageHisNoButton":
-                    return new StyleData(id, message("NotRecord"), "", "iconCancel.png");
-                case "settingsImageHisClearButton":
-                    return new StyleData(id, message("Clear"), "", "iconClear.png");
-            }
-        }
+
         return null;
     }
 

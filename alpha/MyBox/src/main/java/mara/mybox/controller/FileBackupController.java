@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -108,14 +109,24 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
                                 return;
                             }
                             setText(item.getName());
-                            if (parentController instanceof ImageManufactureController) {
-                                int width = AppVariables.thumbnailWidth;
-                                BufferedImage bufferedImage = ImageFileReaders.readImage(item, width);
-                                if (bufferedImage != null) {
-                                    view.setFitWidth(width);
-                                    view.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
-                                    setGraphic(view);
-                                }
+                            if (parentController instanceof BaseImageController) {
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        int width = AppVariables.thumbnailWidth;
+                                        BufferedImage bufferedImage = ImageFileReaders.readImage(item, width);
+                                        if (bufferedImage != null) {
+                                            Platform.runLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    view.setFitWidth(width);
+                                                    view.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
+                                                    setGraphic(view);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }.start();
                             }
                         }
                     };
@@ -241,6 +252,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
                 } else {
                     tableData.clear();
                 }
+                bottomLabel.setText(message("Total") + ": " + tableData.size());
             }
 
         };

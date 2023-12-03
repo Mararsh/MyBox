@@ -30,14 +30,25 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
                 if (empty || item == null) {
                     return;
                 }
-                Platform.runLater(() -> {
-                    int width = item.getWidth() > AppVariables.thumbnailWidth ? AppVariables.thumbnailWidth : (int) item.getWidth();
-                    Image image = item.loadThumbnail(width);
-                    imageview.setImage(image);
-                    imageview.setRotate(item.getThumbnailRotation());
-                    imageview.setFitWidth(width);
-                    setGraphic(imageview);
-                });
+                new Thread() {
+                    @Override
+                    public void run() {
+                        int width = item.getWidth() > AppVariables.thumbnailWidth
+                                ? AppVariables.thumbnailWidth : (int) item.getWidth();
+                        Image image = item.loadThumbnail(width);
+                        if (image != null) {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imageview.setImage(image);
+                                    imageview.setRotate(item.getThumbnailRotation());
+                                    imageview.setFitWidth(width);
+                                    setGraphic(imageview);
+                                }
+                            });
+                        }
+                    }
+                }.start();
             }
         };
         return cell;

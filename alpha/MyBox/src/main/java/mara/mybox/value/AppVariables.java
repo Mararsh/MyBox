@@ -45,6 +45,7 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
+    public static long maxDemoImage;
     public static boolean isChinese, isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
@@ -68,6 +69,7 @@ public class AppVariables {
             fileRecentNumber = UserConfig.getInt("FileRecentNumber", VisitHistory.Default_Max_Histories);
             iconSize = UserConfig.getInt("IconSize", 20);
             thumbnailWidth = UserConfig.getInt("ThumbnailWidth", 100);
+            maxDemoImage = UserConfig.getLong("MaxDemoImage", 1000000);
             ControlColor = StyleTools.getConfigStyleColor();
             controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
             icons40px = UserConfig.getBoolean("Icons40px", Toolkit.getDefaultToolkit().getScreenResolution() <= 120);

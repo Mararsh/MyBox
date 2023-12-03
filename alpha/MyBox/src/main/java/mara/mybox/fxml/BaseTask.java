@@ -62,17 +62,10 @@ public class BaseTask<P> extends Task<P> {
     @Override
     protected void succeeded() {
         super.succeeded();
-        if (startTime != null) {
-            cost = new Date().getTime() - startTime.getTime();
-        }
         taskQuit();
         Platform.runLater(() -> {
-            if (isCancelled()) {
-                whenCanceled();
-            } else if (ok) {
+            if (!isCancelled() && ok) {
                 whenSucceeded();
-            } else {
-                whenFailed();
             }
             finalAction();
         });
@@ -93,29 +86,36 @@ public class BaseTask<P> extends Task<P> {
     protected void failed() {
         super.failed();
         taskQuit();
-        whenFailed();
-        finalAction();
+        Platform.runLater(() -> {
+            whenFailed();
+            finalAction();
+        });
+
     }
 
     @Override
     protected void cancelled() {
         super.cancelled();
         taskQuit();
-        whenCanceled();
-        finalAction();
+        Platform.runLater(() -> {
+            whenCanceled();
+            finalAction();
+        });
     }
 
     protected void taskQuit() {
         endTime = new Date();
+        if (startTime != null) {
+            cost = endTime.getTime() - startTime.getTime();
+        }
         self = null;
         quit = true;
-        if (disableNode != null) {
-            disableNode.setDisable(false);
-        }
     }
 
     protected void finalAction() {
-
+        if (disableNode != null) {
+            disableNode.setDisable(false);
+        }
     }
 
     public String duration() {

@@ -221,7 +221,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
             }
             if (imageInformation != null) {
                 imageInfo += message("Format") + ":" + imageInformation.getImageFormat() + "\n"
-                        + message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight();
+                        + message("Pixels") + ":" + (int) imageInformation.getWidth() + "x" + (int) imageInformation.getHeight();
                 if (imageInformation.isIsScaled()) {
                     imageInfo += "\n" + message("Scaled");
                 }

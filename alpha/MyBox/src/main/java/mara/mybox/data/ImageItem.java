@@ -167,7 +167,7 @@ public class ImageItem {
                     "Edit", "Examples", "Export", "File", "Frame",
                     "Function", "Go", "History", "Import", "Manage", "Menu", "NewItem",
                     "OK", "OpenPath", "Operation", "Options",
-                    "Panes", "Play", "Permission", "Polylines", "Pop", "Query",
+                    "Panes", "Play", "Permission", "Polylines", "Pop", "Preview", "Query",
                     "Random", "Recover", "Refresh", "Repeat",
                     "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Shape", "Style",
                     "SVG", "Tips", "Tree", "Typesetting",

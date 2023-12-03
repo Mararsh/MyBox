@@ -302,6 +302,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
                 } else {
                     tableData.clear();
                 }
+                bottomLabel.setText(message("Total") + ": " + tableData.size());
             }
 
         };

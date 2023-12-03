@@ -2,6 +2,7 @@ package mara.mybox.fxml.cell;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -41,15 +42,25 @@ public class TableImageFileCell<T> extends TableCell<T, String>
                 setText(null);
                 setGraphic(null);
                 if (!empty && item != null) {
-                    try {
-                        File file = new File(item);
-                        BufferedImage image = ImageFileReaders.readImage(file, thumbWidth);
-                        if (image != null) {
-                            imageview.setImage(SwingFXUtils.toFXImage(image, null));
-                            setGraphic(imageview);
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                File file = new File(item);
+                                BufferedImage image = ImageFileReaders.readImage(file, thumbWidth);
+                                if (image != null) {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            imageview.setImage(SwingFXUtils.toFXImage(image, null));
+                                            setGraphic(imageview);
+                                        }
+                                    });
+                                }
+                            } catch (Exception e) {
+                            }
                         }
-                    } catch (Exception e) {
-                    }
+                    }.start();
                 }
             }
         };

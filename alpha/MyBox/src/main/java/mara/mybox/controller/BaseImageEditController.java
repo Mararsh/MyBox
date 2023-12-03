@@ -62,8 +62,8 @@ public class BaseImageEditController extends BaseShapeController {
             }
 
             initMore();
-            reset();
-            loadImage();
+
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -106,6 +106,14 @@ public class BaseImageEditController extends BaseShapeController {
     @FXML
     @Override
     public void okAction() {
+        if (goButton != null && !goButton.isDisabled()) {
+            editor.updateImage(operation, currentImage(), -1);
+            if (closeAfterCheck.isSelected()) {
+                close();
+            }
+            return;
+        }
+
         action(false);
     }
 
@@ -160,8 +168,12 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     @FXML
-    protected void demo() {
-        if (!checkOptions()) {
+    @Override
+    public void goAction() {
+        if (goButton == null || goButton.isDisabled()) {
+            return;
+        }
+        if (isSettingValues || !checkOptions()) {
             return;
         }
         if (task != null) {
@@ -169,30 +181,28 @@ public class BaseImageEditController extends BaseShapeController {
         }
         reset();
         task = new SingletonCurrentTask<Void>(this) {
-            private Image demoImage;
 
             @Override
             protected boolean handle() {
-                try {
-                    demoImage = handleDemo();
-                    return demoImage != null;
-                } catch (Exception e) {
-                    error = e.toString();
+                handledImage = null;
+                opInfo = null;
+                handleImage();
+                if (task == null || isCancelled()) {
                     return false;
                 }
+                return handledImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                ImagePopController.openImage(myController, demoImage);
+                if (isCancelled()) {
+                    return;
+                }
+                loadImage(handledImage);
             }
 
         };
         start(task);
-    }
-
-    protected Image handleDemo() {
-        return null;
     }
 
     @FXML
@@ -211,6 +221,13 @@ public class BaseImageEditController extends BaseShapeController {
     @Override
     public void saveAction() {
         editor.saveAction();
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        reset();
+        loadImage();
     }
 
     @FXML

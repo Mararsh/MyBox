@@ -22,7 +22,6 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.MarginTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -266,41 +265,6 @@ public class ImageMarginsController extends BaseImageEditController {
         return true;
     }
 
-    @FXML
-    @Override
-    public void goAction() {
-        if (isSettingValues || !checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        reset();
-        task = new SingletonCurrentTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                handledImage = null;
-                opInfo = null;
-                handleImage();
-                if (task == null || isCancelled()) {
-                    return false;
-                }
-                return handledImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (isCancelled()) {
-                    return;
-                }
-                loadImage(handledImage);
-            }
-
-        };
-        start(task);
-    }
-
     @Override
     protected void handleImage() {
         if (dragRadio.isSelected()) {
@@ -332,15 +296,6 @@ public class ImageMarginsController extends BaseImageEditController {
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
             opInfo = margin + "";
-        }
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        editor.updateImage(operation, currentImage(), -1);
-        if (closeAfterCheck.isSelected()) {
-            close();
         }
     }
 

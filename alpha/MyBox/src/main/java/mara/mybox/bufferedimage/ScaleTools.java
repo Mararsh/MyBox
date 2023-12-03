@@ -109,14 +109,14 @@ public class ScaleTools {
     }
 
     public static BufferedImage demoImage(BufferedImage source) {
-        return scaleImageLess(source, 1000000);
+        return scaleImageLess(source, AppVariables.maxDemoImage);
     }
 
-    public static BufferedImage scaleImageLess(BufferedImage source, int size) {
+    public static BufferedImage scaleImageLess(BufferedImage source, long size) {
         if (size <= 0) {
             return source;
         }
-        float scale = size / (source.getWidth() * source.getHeight());
+        float scale = size * 1f / (source.getWidth() * source.getHeight());
         if (scale >= 1) {
             return source;
         }

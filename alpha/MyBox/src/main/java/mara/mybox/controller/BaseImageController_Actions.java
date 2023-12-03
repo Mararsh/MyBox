@@ -473,7 +473,9 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageInformation != null && imageInformation.isIsScaled()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(message("SureSaveScaled"));
+            alert.setContentText(message("SureSaveScaled") + "\n"
+                    + message("OriginalSize") + ":" + (int) imageInformation.getWidth() + "x" + (int) imageInformation.getHeight() + "\n"
+                    + message("CurrentSize") + ":" + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight());
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(message("Save"));
             ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));

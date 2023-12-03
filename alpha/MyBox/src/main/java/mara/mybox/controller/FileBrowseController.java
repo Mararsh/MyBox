@@ -1,19 +1,26 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
@@ -21,8 +28,10 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -59,24 +68,67 @@ public class FileBrowseController extends BaseController {
         try {
             super.initControls();
 
-            if (tableView != null) {
-                tableData = FXCollections.observableArrayList();
-                tableView.setItems(tableData);
+            tableData = FXCollections.observableArrayList();
+            tableView.setItems(tableData);
 
-                fileColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-                typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
-                sizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
-                sizeColumn.setCellFactory(new TableFileSizeCell());
-                timeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
-                timeColumn.setCellFactory(new TableTimeCell());
+            fileColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+            fileColumn.setCellFactory(new Callback<TableColumn<FileInformation, String>, TableCell<FileInformation, String>>() {
+                @Override
+                public TableCell<FileInformation, String> call(TableColumn<FileInformation, String> param) {
+                    TableCell<FileInformation, String> cell = new TableCell<FileInformation, String>() {
+                        private final ImageView view;
 
-                tableView.setOnMouseClicked((MouseEvent event) -> {
-                    if (event.getClickCount() > 1) {
-                        itemDoubleClicked();
-                    }
-                });
-            }
+                        {
+                            setContentDisplay(ContentDisplay.LEFT);
+                            view = new ImageView();
+                            view.setPreserveRatio(true);
+                        }
 
+                        @Override
+                        public void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty || item == null) {
+                                setText(null);
+                                setGraphic(null);
+                                return;
+                            }
+                            setText(item);
+                            if (parentController != null && parentController instanceof BaseImageController) {
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        int width = AppVariables.thumbnailWidth;
+                                        BufferedImage bufferedImage = ImageFileReaders.readImage(new File(item), width);
+                                        if (bufferedImage != null) {
+                                            Platform.runLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    view.setFitWidth(width);
+                                                    view.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
+                                                    setGraphic(view);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }.start();
+                            }
+                        }
+                    };
+                    return cell;
+                }
+            });
+
+            typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
+            sizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
+            sizeColumn.setCellFactory(new TableFileSizeCell());
+            timeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
+            timeColumn.setCellFactory(new TableTimeCell());
+
+            tableView.setOnMouseClicked((MouseEvent event) -> {
+                if (event.getClickCount() > 1) {
+                    itemDoubleClicked();
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -174,6 +226,7 @@ public class FileBrowseController extends BaseController {
     public void viewAction() {
         FileInformation selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
+            popError(message("SelectToHandle"));
             return;
         }
         if (sysRadio.isSelected()) {

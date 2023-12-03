@@ -14,7 +14,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -35,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-7-19
  * @License Apache License Version 2.0
  */
-public class ImageOptionsController extends BaseController {
+public class ImageOptionsController extends BaseChildController {
 
     protected BaseImageController imageController;
 
@@ -49,7 +48,7 @@ public class ImageOptionsController extends BaseController {
     protected ToggleGroup renderGroup, colorRenderGroup, pixelsInterGroup, alphaInterGroup, shapeAntiGroup,
             textAntiGroup, fontFmGroup, strokeGroup, ditherGroup;
     @FXML
-    protected TextField thumbnailWidthInput;
+    protected TextField thumbnailWidthInput, maxDemoInput;
     @FXML
     protected CheckBox renderCheck;
     @FXML
@@ -70,17 +69,6 @@ public class ImageOptionsController extends BaseController {
 
     public ImageOptionsController() {
         baseTitle = message("Options");
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(zoomStepSelector, new Tooltip(message("ZoomStep")));
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     public void setParameters(BaseImageController parent) {
@@ -152,6 +140,11 @@ public class ImageOptionsController extends BaseController {
             });
 
             gridWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
+            int v = UserConfig.getInt("GridLinesWidth", 1);
+            if (v <= 0) {
+                v = 1;
+            }
+            gridWidthSelector.setValue(v + "");
             gridWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -174,6 +167,8 @@ public class ImageOptionsController extends BaseController {
             });
 
             gridIntervalSelector.getItems().addAll(Arrays.asList(message("Automatic"), "10", "20", "25", "50", "100", "5", "1", "2", "200", "500"));
+            v = UserConfig.getInt("GridLinesInterval", -1);
+            gridIntervalSelector.setValue(v <= 0 ? message("Automatic") : (v + ""));
             gridIntervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -193,6 +188,11 @@ public class ImageOptionsController extends BaseController {
             });
 
             gridOpacitySelector.getItems().addAll(Arrays.asList("0.5", "0.2", "1.0", "0.7", "0.1", "0.3", "0.8", "0.9", "0.6", "0.4"));
+            float f = UserConfig.getFloat("GridLinesOpacity", 0.1f);
+            if (f < 0) {
+                f = 0.1f;
+            }
+            gridOpacitySelector.setValue(f + "");
             gridOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -210,6 +210,11 @@ public class ImageOptionsController extends BaseController {
             });
 
             decimalSelector.getItems().addAll(Arrays.asList("2", "1", "3", "0", "4", "5", "6", "7", "8"));
+            v = UserConfig.imageScale();
+            if (v < 0) {
+                v = 0;
+            }
+            decimalSelector.setValue(v + "");
             decimalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -244,6 +249,7 @@ public class ImageOptionsController extends BaseController {
                 }
             });
 
+            thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
             thumbnailWidthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -262,19 +268,24 @@ public class ImageOptionsController extends BaseController {
                 }
             });
 
-            isSettingValues = true;
-
-            gridWidthSelector.setValue(UserConfig.getInt("GridLinesWidth", 1) + "");
-            int gi = UserConfig.getInt("GridLinesInterval", -1);
-            gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
-            gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
-            decimalSelector.setValue(UserConfig.imageScale() + "");
-
-            gridColorController.asSaved();
-
-            thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
-
-            isSettingValues = false;
+            maxDemoInput.setText(AppVariables.maxDemoImage + "");
+            maxDemoInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    try {
+                        long v = Long.parseLong(maxDemoInput.getText());
+                        if (v > 0) {
+                            UserConfig.setLong("MaxDemoImage", v);
+                            AppVariables.maxDemoImage = v;
+                            maxDemoInput.setStyle(null);
+                        } else {
+                            maxDemoInput.setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        maxDemoInput.setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -283,7 +294,6 @@ public class ImageOptionsController extends BaseController {
 
     public void initRenderOptions() {
         try {
-
             renderCheck.setSelected(ImageRenderHints.applyHints());
             renderCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

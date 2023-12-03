@@ -139,6 +139,7 @@ License:    Apache License Version 2.0
                         </TableView>
                     </children>
                 </VBox>
+            <Label fx:id="bottomLabel" minHeight="-Infinity" wrapText="true" />
             </children>
         </VBox>
     </center>

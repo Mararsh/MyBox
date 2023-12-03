@@ -103,11 +103,6 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
         updateLabelsTitle();
     }
 
-    @Override
-    protected String moreDisplayInfo() {
-        return "";
-    }
-
     /*
         values
      */

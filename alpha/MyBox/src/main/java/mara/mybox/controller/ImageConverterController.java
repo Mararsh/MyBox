@@ -9,6 +9,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -40,6 +41,11 @@ public class ImageConverterController extends BaseChildController {
 
     public ImageConverterController() {
         baseTitle = message("ImageConverter");
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     public void setParameters(BaseImageController controller) {
@@ -177,7 +183,6 @@ public class ImageConverterController extends BaseChildController {
             protected void whenSucceeded() {
                 popInformation(message("Saved"));
                 recordFileWritten(targetFile);
-
                 afterSaveAs(targetFile);
                 if (closeAfterCheck.isSelected()) {
                     close();
