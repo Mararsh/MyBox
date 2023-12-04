@@ -66,8 +66,8 @@ public class ShadowTools {
             }
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             Color bgColor = Colors.TRANSPARENT;
             g.setColor(bgColor);
@@ -127,8 +127,8 @@ public class ShadowTools {
             }
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setColor(alphaColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);

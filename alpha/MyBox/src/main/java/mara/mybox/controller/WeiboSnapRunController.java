@@ -378,7 +378,7 @@ public class WeiboSnapRunController extends BaseController {
                     tempdir = AppVariables.MyBoxTempPath;
                 }
             }
-            memSettings = AppVariables.pdfMemUsage.setTempDir(tempdir);
+            memSettings = AppVariables.PdfMemUsage.setTempDir(tempdir);
 
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
             if (parameters.getWebWidth() <= 0) {

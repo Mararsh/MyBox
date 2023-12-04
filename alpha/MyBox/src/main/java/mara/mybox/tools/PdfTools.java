@@ -90,7 +90,7 @@ public class PdfTools {
     public static PDDocument createPDF(File file, String author) {
         PDDocument targetDoc = null;
         try {
-            PDDocument document = new PDDocument(AppVariables.pdfMemUsage);
+            PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
             PDDocumentInformation info = new PDDocumentInformation();
             info.setCreationDate(Calendar.getInstance());
             info.setModificationDate(Calendar.getInstance());
@@ -257,7 +257,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = images.size();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -315,7 +315,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = files.size();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -429,7 +429,7 @@ public class PdfTools {
                 return false;
             }
             File tmpFile = FileTmpTools.getTempFile();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (imageInformation.getImage() != null && !imageInformation.isIsScaled()) {

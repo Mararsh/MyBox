@@ -72,7 +72,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             currentParameters.toPage = info.getToPage();
             currentParameters.password = info.getUserPassword();
             try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.pdfMemUsage)) {
+                    currentParameters.password, AppVariables.PdfMemUsage)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
@@ -118,7 +118,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             Splitter splitter = new Splitter();
             splitter.setStartPage(from);  // 1-based
             splitter.setEndPage(to);
-            splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
+            splitter.setMemoryUsageSetting(AppVariables.PdfMemUsage);
             splitter.setSplitAtPage(size);
             return splitter;
         } catch (Exception e) {

@@ -10,7 +10,7 @@ import mara.mybox.db.table.TableSystemConf;
 public class SystemConfig {
 
     public static boolean setString(String key, String value) {
-        AppVariables.systemConfigValues.put(key, value);
+        AppVariables.SystemConfigValues.put(key, value);
         if (TableSystemConf.writeString(key, value) >= 0) {
             return true;
         } else {
@@ -22,11 +22,11 @@ public class SystemConfig {
         try {
             //            MyBoxLog.debug("getSystemConfigString:" + key);
             String value;
-            if (AppVariables.systemConfigValues.containsKey(key)) {
-                value = AppVariables.systemConfigValues.get(key);
+            if (AppVariables.SystemConfigValues.containsKey(key)) {
+                value = AppVariables.SystemConfigValues.get(key);
             } else {
                 value = TableSystemConf.readString(key, defaultValue);
-                AppVariables.systemConfigValues.put(key, value);
+                AppVariables.SystemConfigValues.put(key, value);
             }
             return value;
         } catch (Exception e) {
@@ -36,7 +36,7 @@ public class SystemConfig {
     }
 
     public static boolean setInt(String key, int value) {
-        AppVariables.systemConfigValues.put(key, value + "");
+        AppVariables.SystemConfigValues.put(key, value + "");
         if (TableSystemConf.writeInt(key, value) >= 0) {
             return true;
         } else {
@@ -47,11 +47,11 @@ public class SystemConfig {
     public static int getInt(String key, int defaultValue) {
         try {
             int v;
-            if (AppVariables.systemConfigValues.containsKey(key)) {
-                v = Integer.parseInt(AppVariables.systemConfigValues.get(key));
+            if (AppVariables.SystemConfigValues.containsKey(key)) {
+                v = Integer.parseInt(AppVariables.SystemConfigValues.get(key));
             } else {
                 v = TableSystemConf.readInt(key, defaultValue);
-                AppVariables.systemConfigValues.put(key, v + "");
+                AppVariables.SystemConfigValues.put(key, v + "");
             }
             return v;
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class SystemConfig {
     }
 
     public static boolean setBoolean(String key, boolean value) {
-        AppVariables.systemConfigValues.put(key, value ? "true" : "false");
+        AppVariables.SystemConfigValues.put(key, value ? "true" : "false");
         if (TableSystemConf.writeBoolean(key, value) >= 0) {
             return true;
         } else {
@@ -72,11 +72,11 @@ public class SystemConfig {
     public static boolean getBoolean(String key, boolean defaultValue) {
         try {
             boolean v;
-            if (AppVariables.systemConfigValues.containsKey(key)) {
-                v = AppVariables.systemConfigValues.get(key).equals("true");
+            if (AppVariables.SystemConfigValues.containsKey(key)) {
+                v = AppVariables.SystemConfigValues.get(key).equals("true");
             } else {
                 v = TableSystemConf.readBoolean(key, defaultValue);
-                AppVariables.systemConfigValues.put(key, v ? "true" : "false");
+                AppVariables.SystemConfigValues.put(key, v ? "true" : "false");
             }
             return v;
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class SystemConfig {
 
     public static boolean deleteValue(String key) {
         if (TableSystemConf.delete(key)) {
-            AppVariables.systemConfigValues.remove(key);
+            AppVariables.SystemConfigValues.remove(key);
             return true;
         } else {
             return false;

@@ -43,7 +43,7 @@ public class MapOptions {
         try {
             mapType = UserConfig.getString(baseName + "MapType", "Gaode");
             mapStyle = UserConfig.getString(baseName + "MapStyle", "default");
-            language = UserConfig.getString(baseName + "Language", AppVariables.isChinese ? "zh_cn" : "en");
+            language = UserConfig.getString(baseName + "Language", AppVariables.IsChinese ? "zh_cn" : "en");
             markerSize = UserConfig.getInt(baseName + "MarkerSize", 24);
             textSize = UserConfig.getInt(baseName + "TextSize", 12);
             mapSize = UserConfig.getInt(baseName + "MapSize", 9);

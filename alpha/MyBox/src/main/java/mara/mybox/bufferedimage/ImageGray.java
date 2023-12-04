@@ -67,8 +67,8 @@ public class ImageGray extends PixelsOperation {
             int height = srcImage.getHeight();
             BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
             Graphics2D g = grayImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.drawImage(srcImage, 0, 0, null);
             g.dispose();

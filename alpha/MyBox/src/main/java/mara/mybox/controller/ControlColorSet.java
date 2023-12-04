@@ -152,7 +152,7 @@ public class ControlColorSet extends BaseController {
     public void showColorPalette() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(
-                    WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.currentBundle);
+                    WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.CurrentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
             controller.load(this, rect);

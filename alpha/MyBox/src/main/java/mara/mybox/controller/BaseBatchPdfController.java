@@ -91,7 +91,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.currentPage = currentParameters.fromPage;
             }
             try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.pdfMemUsage)) {
+                    currentParameters.password, AppVariables.PdfMemUsage)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();

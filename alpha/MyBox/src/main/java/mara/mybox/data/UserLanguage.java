@@ -2,6 +2,7 @@ package mara.mybox.data;
 
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -16,6 +17,7 @@ import mara.mybox.value.Languages;
 public class UserLanguage extends ResourceBundle {
 
     protected Map<String, String> items;
+    protected Locale locale;
 
     public UserLanguage(String name) throws Exception {
         File file = Languages.interfaceLanguageFile(name);
@@ -24,7 +26,13 @@ public class UserLanguage extends ResourceBundle {
             throw new Exception();
         } else {
             items = ConfigTools.readValues(file);
+            locale = new Locale.Builder().setLanguage(name).build();
         }
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
     }
 
     public UserLanguage(Map<String, String> items) {

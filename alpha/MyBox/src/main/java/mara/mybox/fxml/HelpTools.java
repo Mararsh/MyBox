@@ -35,7 +35,7 @@ public class HelpTools {
 
     public static void readMe(BaseController controller) {
         try {
-            File htmlFile = makeReadMe(Languages.getLangName());
+            File htmlFile = makeReadMe(Languages.preferredEmbedLang());
             if (htmlFile == null) {
                 return;
             }
@@ -191,7 +191,7 @@ public class HelpTools {
 
     public static File aboutData2D() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.preferredEmbedLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_data2d_" + lang + ".html",
                     "doc", "mybox_about_data2d_" + lang + ".html");
             return file;
@@ -203,7 +203,7 @@ public class HelpTools {
 
     public static File aboutGroupingRows() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.preferredEmbedLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_grouping_" + lang + ".html",
                     "doc", "mybox_about_grouping_" + lang + ".html");
             return file;
@@ -215,7 +215,7 @@ public class HelpTools {
 
     public static File aboutRowExpression() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.preferredEmbedLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_row_expression_" + lang + ".html",
                     "doc", "mybox_about_row_expression_" + lang + ".html");
             return file;
@@ -227,7 +227,7 @@ public class HelpTools {
 
     public static File aboutTreeInformation() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.preferredEmbedLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_tree_" + lang + ".html",
                     "doc", "mybox_about_tree_" + lang + ".html");
             return file;
@@ -243,7 +243,7 @@ public class HelpTools {
 
             @Override
             protected boolean handle() {
-                htmFile = imageStories(this, false, Languages.getLangName());
+                htmFile = imageStories(this, false, Languages.preferredEmbedLang());
                 return htmFile != null && htmFile.exists();
             }
 

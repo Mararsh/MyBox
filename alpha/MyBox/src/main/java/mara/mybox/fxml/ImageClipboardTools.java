@@ -8,9 +8,9 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.data.ImageClipboard;
 import static mara.mybox.fxml.ImageClipboardMonitor.DefaultInterval;
-import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.value.AppVariables.ImageClipMonitor;
 
 /**
  * @Author Mara
@@ -24,18 +24,18 @@ public class ImageClipboardTools {
         monitor
      */
     public static void stopImageClipboardMonitor() {
-        if (imageClipboardMonitor != null) {
-            imageClipboardMonitor.stop();
-            imageClipboardMonitor = null;
+        if (ImageClipMonitor != null) {
+            ImageClipMonitor.stop();
+            ImageClipMonitor = null;
         }
     }
 
     public static void startImageClipboardMonitor(int interval, ImageAttributes attributes, String filePrefix) {
-        if (imageClipboardMonitor != null) {
-            imageClipboardMonitor.stop();
-            imageClipboardMonitor = null;
+        if (ImageClipMonitor != null) {
+            ImageClipMonitor.stop();
+            ImageClipMonitor = null;
         }
-        imageClipboardMonitor = new ImageClipboardMonitor().start(interval, attributes, filePrefix);
+        ImageClipMonitor = new ImageClipboardMonitor().start(interval, attributes, filePrefix);
     }
 
     public static int getMonitorInterval() {
@@ -55,7 +55,7 @@ public class ImageClipboardTools {
     }
 
     public static boolean isMonitoring() {
-        return imageClipboardMonitor != null;
+        return ImageClipMonitor != null;
     }
 
     public static int getWidth() {

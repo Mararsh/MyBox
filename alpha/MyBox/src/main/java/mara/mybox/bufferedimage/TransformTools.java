@@ -32,8 +32,8 @@ public class TransformTools {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
-        if (AppVariables.imageRenderHints != null) {
-            g.addRenderingHints(AppVariables.imageRenderHints);
+        if (AppVariables.ImageHints != null) {
+            g.addRenderingHints(AppVariables.ImageHints);
         }
         Color bgColor = Colors.TRANSPARENT;
         g.setBackground(bgColor);
@@ -57,8 +57,8 @@ public class TransformTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             Color bgColor = Colors.TRANSPARENT;
             g.setBackground(bgColor);

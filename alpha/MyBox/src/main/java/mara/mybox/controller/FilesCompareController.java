@@ -184,7 +184,7 @@ public class FilesCompareController extends BaseController {
     public void dmHelp() {
         try {
             String link;
-            switch (Languages.getLangName()) {
+            switch (Languages.preferredEmbedLang()) {
                 case "zh":
                     link = "https://baike.baidu.com/item/%E6%95%B0%E5%AD%97%E6%91%98%E8%A6%81/4069118";
                     break;

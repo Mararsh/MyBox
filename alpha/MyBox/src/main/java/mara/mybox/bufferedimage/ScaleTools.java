@@ -20,8 +20,8 @@ public class ScaleTools {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(width, height, imageType);
         Graphics2D g = target.createGraphics();
-        if (AppVariables.imageRenderHints != null) {
-            g.addRenderingHints(AppVariables.imageRenderHints);
+        if (AppVariables.ImageHints != null) {
+            g.addRenderingHints(AppVariables.ImageHints);
         }
         g.setBackground(bgColor);
         g.drawImage(source, 0, 0, width, height, null);
@@ -131,8 +131,8 @@ public class ScaleTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(targetW, targetH, imageType);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setBackground(Colors.TRANSPARENT);
             g.drawImage(source, (targetW - finalW) / 2, (targetH - finalH) / 2, finalW, finalH, null);

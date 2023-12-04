@@ -20,11 +20,11 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.errorNotify;
 import static mara.mybox.value.AppVariables.isTesting;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.value.AppVariables.ErrorNotify;
 
 /**
  * @Author Mara
@@ -152,7 +152,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
     @FXML
     @Override
     public void startAction() {
-        errorNotify.removeListener(errorListener);
+        ErrorNotify.removeListener(errorListener);
         caseNotify.removeListener(caseListener);
         if (startButton.getUserData() != null) {
             stopCases();
@@ -172,14 +172,14 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
         canceled = false;
         AppVariables.isTesting = true;
         currentIndex = 0;
-        errorNotify.addListener(errorListener);
+        ErrorNotify.addListener(errorListener);
         caseNotify.addListener(caseListener);
         caseNotify();
     }
 
     public void stopCases() {
         canceled = true;
-        errorNotify.removeListener(errorListener);
+        ErrorNotify.removeListener(errorListener);
         caseNotify.removeListener(caseListener);
         currentIndex = -1;
         currentCase = null;

@@ -46,7 +46,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
 
             @Override
             protected boolean handle() {
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
                     if (stripper == null) {
                         stripper = new PDFTextStripper();
                     }

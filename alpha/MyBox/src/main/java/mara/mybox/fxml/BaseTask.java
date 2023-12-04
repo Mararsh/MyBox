@@ -64,8 +64,13 @@ public class BaseTask<P> extends Task<P> {
         super.succeeded();
         taskQuit();
         Platform.runLater(() -> {
-            if (!isCancelled() && ok) {
+            if (isCancelled()) {
+                return;
+            }
+            if (ok) {
                 whenSucceeded();
+            } else {
+                whenFailed();
             }
             finalAction();
         });

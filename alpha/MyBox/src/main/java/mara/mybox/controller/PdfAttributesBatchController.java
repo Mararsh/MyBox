@@ -366,7 +366,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             String filePassword = rowInfo.getUserPassword();
             File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(srcFile, tmpFile);
-            try (PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.pdfMemUsage)) {
+            try (PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.PdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {
                     docInfo.setAuthor(authorInput.getText());

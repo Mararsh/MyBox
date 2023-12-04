@@ -72,8 +72,8 @@ public class ChromaticityDiagram {
 //            MyBoxLog.console(width + " " + height);
             image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             g = image.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             if (bgColor != null) {
                 g.setColor(bgColor);

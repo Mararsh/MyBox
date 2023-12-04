@@ -411,7 +411,7 @@ public class ImagesPlayController extends BaseImagesListController {
             return;
         }
         try {
-            pdfDoc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage);
+            pdfDoc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage);
             pdfPassword = password;
         } catch (InvalidPasswordException e) {
             try {
@@ -433,7 +433,7 @@ public class ImagesPlayController extends BaseImagesListController {
                     sourceFile.wait();
                 }
                 try {
-                    pdfDoc = PDDocument.load(sourceFile, pdfPassword, AppVariables.pdfMemUsage);
+                    pdfDoc = PDDocument.load(sourceFile, pdfPassword, AppVariables.PdfMemUsage);
                 } catch (Exception ee) {
                     error = ee.toString();
                     sourceFile = null;

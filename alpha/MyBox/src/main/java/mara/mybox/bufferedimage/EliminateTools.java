@@ -29,8 +29,8 @@ public class EliminateTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage linesImage = new BufferedImage(width, height, imageType);
             Graphics2D linesg = linesImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                linesg.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                linesg.addRenderingHints(AppVariables.ImageHints);
             }
             linesg.setBackground(Color.WHITE);
             linesg.setColor(Color.BLACK);
@@ -73,8 +73,8 @@ public class EliminateTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D gt = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                gt.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                gt.addRenderingHints(AppVariables.ImageHints);
             }
             gt.drawImage(source, 0, 0, width, height, null);
             gt.dispose();

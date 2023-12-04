@@ -541,7 +541,7 @@ public class ControlImagesSave extends BaseController {
             @Override
             protected boolean handle() {
                 File tmpFile = FileTmpTools.getTempFile();
-                try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+                try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
                     PDDocumentInformation info = new PDDocumentInformation();
                     info.setCreationDate(Calendar.getInstance());
                     info.setModificationDate(Calendar.getInstance());

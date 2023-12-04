@@ -72,8 +72,8 @@ public class PptToImagesController extends BaseBatchFileController {
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = slideImage.createGraphics();
-                if (AppVariables.imageRenderHints != null) {
-                    g.addRenderingHints(AppVariables.imageRenderHints);
+                if (AppVariables.ImageHints != null) {
+                    g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
                 BufferedImage targetImage = ImageConvertTools.convertColorSpace(slideImage, formatController.attributes);

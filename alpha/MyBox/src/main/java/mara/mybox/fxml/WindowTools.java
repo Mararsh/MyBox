@@ -41,7 +41,7 @@ public class WindowTools {
     public static final Image AppIcon = new Image("img/MyBox.png");
 
     public static BaseController initScene(Stage stage, String newFxml, StageStyle stageStyle) {
-        return initScene(stage, newFxml, AppVariables.currentBundle, stageStyle);
+        return initScene(stage, newFxml, AppVariables.CurrentBundle, stageStyle);
     }
 
     public static BaseController initScene(Stage stage, String newFxml, ResourceBundle bundle, StageStyle stageStyle) {
@@ -127,7 +127,7 @@ public class WindowTools {
 
             WindowsListController.refresh();
 
-            Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
+            Platform.setImplicitExit(AppVariables.ScheduledTasks == null || AppVariables.ScheduledTasks.isEmpty());
 
             return controller;
         } catch (Exception e) {
@@ -173,7 +173,7 @@ public class WindowTools {
             if (url == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(url, AppVariables.currentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(url, AppVariables.CurrentBundle);
             Pane pane = fxmlLoader.load();
             try {
                 pane.getStylesheets().add(WindowTools.class.getResource(UserConfig.getStyle()).toExternalForm());
@@ -193,7 +193,7 @@ public class WindowTools {
 
     public static FXMLLoader newFxml(String fxml) {
         try {
-            return new FXMLLoader(WindowTools.class.getResource(fxml), AppVariables.currentBundle);
+            return new FXMLLoader(WindowTools.class.getResource(fxml), AppVariables.CurrentBundle);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -239,7 +239,7 @@ public class WindowTools {
     }
 
     public static BaseController openStage(Window parent, String newFxml) {
-        return openStage(parent, newFxml, AppVariables.currentBundle, false, Modality.NONE, null);
+        return openStage(parent, newFxml, AppVariables.CurrentBundle, false, Modality.NONE, null);
     }
 
     public static BaseController openStage(String fxml, ResourceBundle bundle) {
@@ -251,11 +251,11 @@ public class WindowTools {
     }
 
     public static BaseController openChildStage(Window parent, String newFxml, boolean isModal) {
-        return openStage(parent, newFxml, AppVariables.currentBundle, true, isModal ? Modality.WINDOW_MODAL : Modality.NONE, null);
+        return openStage(parent, newFxml, AppVariables.CurrentBundle, true, isModal ? Modality.WINDOW_MODAL : Modality.NONE, null);
     }
 
     public static BaseController handling(Window parent, String newFxml) {
-        return openStage(parent, newFxml, AppVariables.currentBundle, true, Modality.WINDOW_MODAL, StageStyle.DECORATED);
+        return openStage(parent, newFxml, AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, StageStyle.DECORATED);
     }
 
     public static BaseController openScene(Window parent, String newFxml, StageStyle stageStyle) {
@@ -350,10 +350,10 @@ public class WindowTools {
             return false;
         }
         List<String> keys = new ArrayList<>();
-        keys.addAll(AppVariables.userConfigValues.keySet());
+        keys.addAll(AppVariables.UserConfigValues.keySet());
         for (String key : keys) {
             if (key.startsWith("Interface_")) {
-                AppVariables.userConfigValues.remove(key);
+                AppVariables.UserConfigValues.remove(key);
             }
         }
         return true;
@@ -432,34 +432,34 @@ public class WindowTools {
             ImageClipboardTools.stopImageClipboardMonitor();
             TextClipboardTools.stopTextClipboardMonitor();
 
-            if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
+            if (AppVariables.ScheduledTasks != null && !AppVariables.ScheduledTasks.isEmpty()) {
                 if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
-                    for (String key : AppVariables.scheduledTasks.keySet()) {
-                        ScheduledFuture future = AppVariables.scheduledTasks.get(key);
+                    for (String key : AppVariables.ScheduledTasks.keySet()) {
+                        ScheduledFuture future = AppVariables.ScheduledTasks.get(key);
                         future.cancel(true);
                     }
-                    AppVariables.scheduledTasks = null;
-                    if (AppVariables.executorService != null) {
-                        AppVariables.executorService.shutdownNow();
-                        AppVariables.executorService = null;
+                    AppVariables.ScheduledTasks = null;
+                    if (AppVariables.ExecutorService != null) {
+                        AppVariables.ExecutorService.shutdownNow();
+                        AppVariables.ExecutorService = null;
                     }
                 }
             } else {
-                if (AppVariables.scheduledTasks != null) {
-                    AppVariables.scheduledTasks = null;
+                if (AppVariables.ScheduledTasks != null) {
+                    AppVariables.ScheduledTasks = null;
                 }
-                if (AppVariables.executorService != null) {
-                    AppVariables.executorService.shutdownNow();
-                    AppVariables.executorService = null;
+                if (AppVariables.ExecutorService != null) {
+                    AppVariables.ExecutorService.shutdownNow();
+                    AppVariables.ExecutorService = null;
                 }
             }
 
-            if (AppVariables.exitTimer != null) {
-                AppVariables.exitTimer.cancel();
-                AppVariables.exitTimer = null;
+            if (AppVariables.ExitTimer != null) {
+                AppVariables.ExitTimer.cancel();
+                AppVariables.ExitTimer = null;
             }
 
-            if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
+            if (AppVariables.ScheduledTasks == null || AppVariables.ScheduledTasks.isEmpty()) {
                 MyBoxLog.info("Exit now. Bye!");
                 if (DerbyBase.status == DerbyStatus.Embedded) {
                     MyBoxLog.info("Shut down Derby...");

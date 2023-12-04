@@ -23,10 +23,10 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.value.AppVariables.ImageClipMonitor;
 
 /**
  * @Author Mara
@@ -148,8 +148,8 @@ public class ImageInSystemClipboardController extends BaseImageController {
             formatController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    if (imageClipboardMonitor != null) {
-                        imageClipboardMonitor.setAttributes(formatController.getAttributes());
+                    if (ImageClipMonitor != null) {
+                        ImageClipMonitor.setAttributes(formatController.getAttributes());
                     }
                 }
             });
@@ -191,12 +191,12 @@ public class ImageInSystemClipboardController extends BaseImageController {
 
     public void startMonitor() {
         try {
-            if (imageClipboardMonitor != null) {
-                imageClipboardMonitor.cancel();
-                imageClipboardMonitor = null;
+            if (ImageClipMonitor != null) {
+                ImageClipMonitor.cancel();
+                ImageClipMonitor = null;
             }
             checkTargetPath();
-            imageClipboardMonitor = new ImageClipboardMonitor()
+            ImageClipMonitor = new ImageClipboardMonitor()
                     .start(ImageClipboardTools.getMonitorInterval(), formatController.getAttributes(), filePrefix);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -214,8 +214,8 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     filePrefix = targetPath.getAbsolutePath() + File.separator
                             + targetPrefixInput.getText().trim() + "-";
                 }
-                if (imageClipboardMonitor != null) {
-                    filesLabel.setText(message("FilesSaved") + ": " + imageClipboardMonitor.getSavedNumber());
+                if (ImageClipMonitor != null) {
+                    filesLabel.setText(message("FilesSaved") + ": " + ImageClipMonitor.getSavedNumber());
                 }
             } else {
                 filePrefix = null;
@@ -223,8 +223,8 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     filesLabel.setText(message("ImageNotSaveDueInvalidPath"));
                 }
             }
-            if (imageClipboardMonitor != null) {
-                imageClipboardMonitor.setFilePrefix(filePrefix);
+            if (ImageClipMonitor != null) {
+                ImageClipMonitor.setFilePrefix(filePrefix);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -271,10 +271,10 @@ public class ImageInSystemClipboardController extends BaseImageController {
     }
 
     public void updateNumbers() {
-        if (imageClipboardMonitor != null) {
-            numberLabel.setText(message("Read") + ": " + imageClipboardMonitor.getRecordNumber() + "   "
-                    + message("Saved") + ": " + imageClipboardMonitor.getSavedNumber() + "   "
-                    + message("Copied") + ": " + imageClipboardMonitor.getCopiedNumber());
+        if (ImageClipMonitor != null) {
+            numberLabel.setText(message("Read") + ": " + ImageClipMonitor.getRecordNumber() + "   "
+                    + message("Saved") + ": " + ImageClipMonitor.getSavedNumber() + "   "
+                    + message("Copied") + ": " + ImageClipMonitor.getCopiedNumber());
         } else {
             numberLabel.setText("");
         }

@@ -191,8 +191,8 @@ public class CombineTools {
         try {
             BufferedImage target = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             g.setColor(bgColor);

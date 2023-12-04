@@ -289,8 +289,8 @@ public class AlphaTools {
             int startY = offsetY >= 0 ? offsetY : 0;
             BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setColor(Colors.TRANSPARENT);
             g.fillRect(0, 0, width, height);

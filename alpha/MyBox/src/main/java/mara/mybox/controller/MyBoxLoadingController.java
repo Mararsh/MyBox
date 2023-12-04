@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -31,6 +30,7 @@ import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -60,7 +60,7 @@ public class MyBoxLoadingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            lang = Locale.getDefault().getLanguage().toLowerCase();
+            lang = Languages.embedLangName();
             infoLabel.requestFocus();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -158,8 +158,8 @@ public class MyBoxLoadingController implements Initializable {
                         }
 
                         String inFile = null;
-                        if (AppVariables.appArgs != null) {
-                            for (String arg : AppVariables.appArgs) {
+                        if (AppVariables.AppArgs != null) {
+                            for (String arg : AppVariables.AppArgs) {
                                 if (MyBox.InternalRestartFlag.equals(arg) || arg.startsWith("config=")) {
                                     continue;
                                 }

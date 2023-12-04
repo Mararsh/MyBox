@@ -85,8 +85,8 @@ public class ImageBinary extends PixelsOperation {
             int height = srcImage.getHeight();
             BufferedImage binImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
             Graphics2D g = binImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.drawImage(srcImage, 0, 0, null);
             g.dispose();

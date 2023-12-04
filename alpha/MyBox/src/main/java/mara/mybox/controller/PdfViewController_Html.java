@@ -167,7 +167,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                 subPath.mkdirs();
                 domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
                 domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
                     PDFDomTree parser = new PDFDomTree(domConfig);
                     parser.setStartPage(frameIndex + 1);
                     parser.setEndPage(frameIndex + 1);

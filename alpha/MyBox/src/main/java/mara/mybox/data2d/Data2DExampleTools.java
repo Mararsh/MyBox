@@ -38,7 +38,7 @@ public class Data2DExampleTools {
     public static List<MenuItem> examplesMenu(ControlData2D controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
-            String lang = Languages.getLangName();
+            String lang = Languages.preferredEmbedLang();
 
             items.add(myData(lang, controller));
 

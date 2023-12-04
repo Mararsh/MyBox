@@ -424,7 +424,7 @@ public class SettingsController extends BaseController {
     }
 
     protected void checkLanguage() {
-        if (AppVariables.currentBundle == Languages.BundleZhCN) {
+        if (AppVariables.CurrentBundle == Languages.BundleZhCN) {
             chineseRadio.setSelected(true);
         } else {
             englishRadio.setSelected(true);

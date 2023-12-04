@@ -30,11 +30,11 @@ import mara.mybox.controller.LoadingController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
-import static mara.mybox.value.AppVariables.imageRenderHints;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import thridparty.image4j.ICODecoder;
+import static mara.mybox.value.AppVariables.ImageHints;
 
 /**
  * @Author Mara
@@ -155,8 +155,8 @@ public class ImageFileReaders {
                 int requiredWidth = (int) imageInfo.getRequiredWidth();
                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
-                } else if (imageRenderHints != null) {
-                    bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
+                } else if (ImageHints != null) {
+                    bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, ImageHints);
                 }
                 return bufferedImage;
             } catch (Exception e) {

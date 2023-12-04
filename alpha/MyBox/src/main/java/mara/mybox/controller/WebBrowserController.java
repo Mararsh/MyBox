@@ -275,7 +275,7 @@ public class WebBrowserController extends BaseController {
     protected WebAddressController newTab(int index, boolean focus) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(WindowTools.class.getResource(
-                    Fxmls.WebAddressFxml), AppVariables.currentBundle);
+                    Fxmls.WebAddressFxml), AppVariables.CurrentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
             tab.setContent(pane);

@@ -43,7 +43,7 @@ public class PaletteTools {
 
             MenuItem menu;
 
-            String lang = Languages.getLangName();
+            String lang = Languages.preferredEmbedLang();
 
             menu = new MenuItem(defaultPaletteName(lang));
             menu.setOnAction((ActionEvent e) -> {
@@ -148,7 +148,7 @@ public class PaletteTools {
             @Override
             protected boolean handle() {
                 List<ColorData> colors;
-                String lang = Languages.getLangName();
+                String lang = Languages.preferredEmbedLang();
                 if (defaultPaletteName(lang).equals(paletteName)) {
                     colors = defaultColors(lang);
 
@@ -314,10 +314,10 @@ public class PaletteTools {
     public static List<ColorData> greyScales(String lang) {
         try {
             List<ColorData> colors = new ArrayList<>();
-            for (int v = 100; v >= 0; v--) {
-                Color color = Color.gray(v / 100d);
+            for (int v = 255; v >= 0; v--) {
+                Color color = Color.gray(v / 255d);
                 ColorData data = new ColorData(color).calculate();
-                data.setColorName(message(lang, "Brightness") + ":" + Math.round(color.getBrightness() * 100));
+                data.setColorName(message(lang, "Gray") + ":" + Math.round(color.getRed() * 255));
                 colors.add(data);
             }
             return colors;

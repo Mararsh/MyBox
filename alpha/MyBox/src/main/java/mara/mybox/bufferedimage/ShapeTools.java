@@ -55,8 +55,8 @@ public class ShapeTools {
             Color backgroundColor = Color.RED;
             BufferedImage shapeImage = new BufferedImage(width, height, imageType);
             Graphics2D g = shapeImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setStroke(stroke(style));
             g.setBackground(backgroundColor);
@@ -105,8 +105,8 @@ public class ShapeTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage linesImage = new BufferedImage(width, height, imageType);
             Graphics2D linesg = linesImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                linesg.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                linesg.addRenderingHints(AppVariables.ImageHints);
             }
             linesg.setStroke(stroke(style));
             linesg.setBackground(Color.WHITE);

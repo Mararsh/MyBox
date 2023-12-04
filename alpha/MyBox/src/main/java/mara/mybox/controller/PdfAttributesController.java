@@ -251,7 +251,7 @@ public class PdfAttributesController extends BaseController {
                 ok = false;
                 pop = false;
                 setInfo(message("LoadingFileInfo"));
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
                     pdfInfo.setUserPassword(password);
                     pdfInfo.readInfo(this, doc);
                     doc.close();
@@ -479,7 +479,7 @@ public class PdfAttributesController extends BaseController {
             }
             File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(file, tmpFile);
-            try (PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.PdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
                 docInfo.setTitle(info.getTitle());

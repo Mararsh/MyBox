@@ -81,7 +81,7 @@ public class AlarmClockController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            AppVariables.alarmClockController = this;
+            AppVariables.AlarmClockController = this;
             miao = FxFileTools.getInternalFile("/sound/guaiMiao3.mp3", "sound", "guaiMiao3.mp3");
 
             alertClockTableController.setAlarmClockController(this);

@@ -53,6 +53,10 @@ public class SingletonTask<Void> extends BaseTask<Void> {
 
     @Override
     protected void whenSucceeded() {
+        if (isCancelled()) {
+            setInfo(message("Cancelled"));
+            return;
+        }
         if (controller != null) {
             controller.popSuccessful();
         }

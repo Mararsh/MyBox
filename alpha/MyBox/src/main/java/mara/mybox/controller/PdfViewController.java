@@ -339,7 +339,7 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     protected Image readPageImage() {
-        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             BufferedImage bufferedImage = renderer.renderImageWithDPI(frameIndex, dpi,
                     transparentBackgroundCheck.isSelected() ? ImageType.ARGB : ImageType.RGB);
@@ -383,7 +383,7 @@ public class PdfViewController extends PdfViewController_Html {
 
             @Override
             protected boolean handle() {
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
                     PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
                     if (outline != null) {
                         outlineRoot = new TreeItem<>(message("Bookmarks"));
@@ -455,7 +455,7 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     protected boolean loadThumbs(List<Integer> missed) {
-        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             for (Integer index : missed) {
                 if (thumbTask == null || thumbTask.isCancelled()) {

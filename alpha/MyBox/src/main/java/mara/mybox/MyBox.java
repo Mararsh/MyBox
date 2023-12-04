@@ -26,10 +26,10 @@ public class MyBox {
     // https://stackoverflow.com/questions/33549820/javafx-not-calling-mainstring-args-method/33549932#33549932
     public static void main(String[] args) {
         if (args == null) {
-            AppVariables.appArgs = null;
+            AppVariables.AppArgs = null;
         } else {
-            AppVariables.appArgs = new String[args.length];
-            System.arraycopy(args, 0, AppVariables.appArgs, 0, args.length);
+            AppVariables.AppArgs = new String[args.length];
+            System.arraycopy(args, 0, AppVariables.AppArgs, 0, args.length);
         }
 
         initBaseValues();
@@ -38,8 +38,8 @@ public class MyBox {
 
     public static boolean initBaseValues() {
         MyBoxLog.console("Checking configuration parameters...");
-        if (AppVariables.appArgs != null) {
-            for (String arg : AppVariables.appArgs) {
+        if (AppVariables.AppArgs != null) {
+            for (String arg : AppVariables.AppArgs) {
                 if (arg.startsWith("config=")) {
                     String config = arg.substring("config=".length());
                     File configFile = new File(config);
@@ -96,14 +96,14 @@ public class MyBox {
 
         } else {
             initEnv();
-            Application.launch(MainApp.class, AppVariables.appArgs);
+            Application.launch(MainApp.class, AppVariables.AppArgs);
         }
     }
 
     public static boolean internalRestart() {
-        return AppVariables.appArgs != null
-                && AppVariables.appArgs.length > 0
-                && InternalRestartFlag.equals(AppVariables.appArgs[0]);
+        return AppVariables.AppArgs != null
+                && AppVariables.AppArgs.length > 0
+                && InternalRestartFlag.equals(AppVariables.AppArgs[0]);
     }
 
     public static boolean setJVMmemory() {
@@ -115,10 +115,10 @@ public class MyBox {
         if (JVMmemory.equals("-Xms" + jvmM + "m")) {
             return false;
         }
-        if (AppVariables.appArgs == null || AppVariables.appArgs.length == 0) {
+        if (AppVariables.AppArgs == null || AppVariables.AppArgs.length == 0) {
             return true;
         }
-        for (String s : AppVariables.appArgs) {
+        for (String s : AppVariables.AppArgs) {
             if (s.startsWith("-Xms")) {
                 return false;
             }
@@ -197,8 +197,8 @@ public class MyBox {
             commands.add(jar.getAbsolutePath());
 
             commands.add(InternalRestartFlag);
-            if (AppVariables.appArgs != null) {
-                for (String arg : AppVariables.appArgs) {
+            if (AppVariables.AppArgs != null) {
+                for (String arg : AppVariables.AppArgs) {
                     if (arg != null) {
                         commands.add(arg);
                     }
@@ -238,8 +238,8 @@ public class MyBox {
             commands.add(MyBox.class.getName());
 
             commands.add(InternalRestartFlag);
-            if (AppVariables.appArgs != null) {
-                for (String arg : AppVariables.appArgs) {
+            if (AppVariables.AppArgs != null) {
+                for (String arg : AppVariables.AppArgs) {
                     if (arg != null) {
                         commands.add(arg);
                     }

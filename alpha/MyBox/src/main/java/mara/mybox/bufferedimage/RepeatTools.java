@@ -29,8 +29,8 @@ public class RepeatTools {
             int totalHeight = height + stepy * (repeatV - 1) + margin * 2;
             BufferedImage target = new BufferedImage(totalWidth, totalHeight, imageType);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             g.setColor(bgColor);
@@ -63,8 +63,8 @@ public class RepeatTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(canvasWidth, canvasHeight, imageType);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             g.setColor(bgColor);

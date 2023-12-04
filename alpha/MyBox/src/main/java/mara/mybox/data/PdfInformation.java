@@ -51,7 +51,7 @@ public class PdfInformation extends FileInformation {
         try {
             this.userPassword = password;
             if (doc == null) {
-                doc = PDDocument.load(file, password, AppVariables.pdfMemUsage);
+                doc = PDDocument.load(file, password, AppVariables.PdfMemUsage);
             }
             infoLoaded = false;
         } catch (Exception e) {
@@ -176,7 +176,7 @@ public class PdfInformation extends FileInformation {
         if (task != null) {
             task.setInfo(message("LoadingFileInfo"));
         }
-        try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.PdfMemUsage)) {
             info.readInfo(task, doc);
             doc.close();
             return true;
@@ -199,7 +199,7 @@ public class PdfInformation extends FileInformation {
                 synchronized (info) {
                     info.wait();
                 }
-                try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.pdfMemUsage)) {
+                try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.PdfMemUsage)) {
                     info.readInfo(task, doc);
                     doc.close();
                     return true;

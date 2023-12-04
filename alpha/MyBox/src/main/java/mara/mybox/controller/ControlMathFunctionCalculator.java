@@ -157,7 +157,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                     tab.setClosable(false);
                     dataTabPane.getTabs().add(tab);
                     FXMLLoader fxmlLoader = new FXMLLoader(WindowTools.class.getResource(
-                            Fxmls.ControlDataSplitFxml), AppVariables.currentBundle);
+                            Fxmls.ControlDataSplitFxml), AppVariables.CurrentBundle);
                     Pane pane = fxmlLoader.load();
                     tab.setContent(pane);
                     refreshStyle(pane);

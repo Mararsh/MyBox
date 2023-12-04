@@ -188,7 +188,7 @@ public class InfoNode extends BaseData {
         if (null == category) {
             return null;
         } else {
-            String lang = Languages.getLangName();
+            String lang = Languages.preferredEmbedLang();
             return getInternalFile("/data/examples/" + category + "_Examples_" + lang + ".txt",
                     "data", category + "_Examples_" + lang + ".txt", true);
         }

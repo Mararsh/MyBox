@@ -201,8 +201,8 @@ public class PptViewController extends BaseFileImagesViewController {
                     int height = ppt.getPageSize().height;
                     BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D g = slideImage.createGraphics();
-                    if (AppVariables.imageRenderHints != null) {
-                        g.addRenderingHints(AppVariables.imageRenderHints);
+                    if (AppVariables.ImageHints != null) {
+                        g.addRenderingHints(AppVariables.ImageHints);
                     }
                     slide.draw(g);
                     if (dpi != 72) {
@@ -265,8 +265,8 @@ public class PptViewController extends BaseFileImagesViewController {
                 Slide slide = slides.get(index);
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = slideImage.createGraphics();
-                if (AppVariables.imageRenderHints != null) {
-                    g.addRenderingHints(AppVariables.imageRenderHints);
+                if (AppVariables.ImageHints != null) {
+                    g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
                 if (slideImage.getWidth() > ThumbWidth) {

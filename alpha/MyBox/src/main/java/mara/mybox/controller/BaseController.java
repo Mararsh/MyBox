@@ -53,7 +53,7 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
                 mainMenuController.parentFxml = myFxml;
                 mainMenuController.parentController = this;
             }
-            AppVariables.alarmClockController = null;
+            AppVariables.AlarmClockController = null;
             isPop = false;
 
         } catch (Exception e) {

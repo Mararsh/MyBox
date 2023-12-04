@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import mara.mybox.data.UserLanguage;
-import static mara.mybox.value.AppVariables.currentBundle;
+import static mara.mybox.value.AppVariables.CurrentBundle;
+import static mara.mybox.value.AppVariables.CurrentLangName;
+import static mara.mybox.value.AppVariables.IsChinese;
 
 /**
  * @Author Mara
@@ -31,31 +33,71 @@ public class Languages {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        UserConfig.setString("language", lang);
-        AppVariables.currentBundle = getBundle(lang);
-        AppVariables.isChinese = lang.equals("zh") || lang.startsWith("zh_");
-    }
-
-    public static String readLangName() {
-        String lang = UserConfig.getString("language", Locale.getDefault().getLanguage());
-        lang = lang != null ? lang.toLowerCase() : Locale.getDefault().getLanguage().toLowerCase();
-        AppVariables.isChinese = lang.equals("zh") || lang.startsWith("zh_");
-        return lang;
+        CurrentBundle = getBundle(lang);
+        try {
+            CurrentLangName = CurrentBundle.getLocale().getLanguage();
+            UserConfig.setString("language", CurrentLangName);
+        } catch (Exception e) {
+        }
+        IsChinese = CurrentBundle == BundleZhCN;
     }
 
     public static boolean isChinese() {
-        return AppVariables.isChinese;
+        return IsChinese;
     }
 
     public static String getLangName() {
-        return AppVariables.isChinese ? "zh" : "en";
+        if (CurrentLangName == null) {
+            String defaultLang = Locale.getDefault().getLanguage();
+            String lang = null;
+            try {
+                lang = UserConfig.getString("language", defaultLang);
+            } catch (Exception e) {
+            }
+            if (lang != null) {
+                CurrentLangName = lang.toLowerCase();
+            } else {
+                CurrentLangName = defaultLang.toLowerCase();
+                try {
+                    UserConfig.setString("language", CurrentLangName);
+                } catch (Exception e) {
+                }
+            }
+            IsChinese = CurrentLangName.equals("zh")
+                    || CurrentLangName.startsWith("zh_");
+        }
+        return CurrentLangName;
+    }
+
+    public static String embedLangName() {
+        String lang = "en";
+        try {
+            lang = Locale.getDefault().getLanguage().toLowerCase();
+            if (!lang.equals("zh") && !lang.startsWith("zh_")) {
+                lang = "en";
+            }
+        } catch (Exception e) {
+        }
+        return lang;
+    }
+
+    public static String preferredEmbedLang() {
+        String lang = CurrentLangName;
+        try {
+            if (!lang.equals("zh") && !lang.startsWith("zh_")) {
+                lang = "en";
+            }
+        } catch (Exception e) {
+            lang = "en";
+        }
+        return lang;
     }
 
     public static ResourceBundle getBundle() {
-        if (currentBundle == null) {
-            currentBundle = getBundle(readLangName());
+        if (CurrentBundle == null) {
+            CurrentBundle = getBundle(getLangName());
         }
-        return currentBundle;
+        return CurrentBundle;
     }
 
     public static ResourceBundle getBundle(String language) {
@@ -63,7 +105,24 @@ public class Languages {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        ResourceBundle bundle;
+        ResourceBundle bundle = tryBundle(lang);
+        if (bundle == null) {
+            lang = embedLangName();
+            if ("zh".equals(lang)) {
+                bundle = BundleZhCN;
+            } else {
+                bundle = BundleEn;
+            }
+        }
+        return bundle;
+    }
+
+    private static ResourceBundle tryBundle(String language) {
+        String lang = language;
+        if (lang == null) {
+            return null;
+        }
+        ResourceBundle bundle = null;
         if (lang.equals("en") || lang.startsWith("en_")) {
             bundle = BundleEn;
         } else if (lang.equals("zh") || lang.startsWith("zh_")) {
@@ -74,21 +133,15 @@ public class Languages {
                 try {
                     bundle = new UserLanguage(lang);
                 } catch (Exception e) {
-                    bundle = null;
                 }
-            } else {
-                bundle = null;
-            }
-            if (bundle == null) {
-                bundle = BundleEn;
             }
         }
         return bundle;
     }
 
     public static ResourceBundle refreshBundle() {
-        currentBundle = getBundle(readLangName());
-        return currentBundle;
+        CurrentBundle = getBundle(getLangName());
+        return CurrentBundle;
     }
 
     public static String message(String language, String msg) {
@@ -157,7 +210,20 @@ public class Languages {
     }
 
     public static Locale locale() {
-        return isChinese() ? Languages.LocaleZhCN : Languages.LocaleEn;
+        String lang = CurrentLangName;
+        if (lang == null) {
+            return Languages.LocaleEn;
+        } else if (lang.equals("en") || lang.startsWith("en_")) {
+            return Languages.LocaleEn;
+        } else if (lang.equals("zh") || lang.startsWith("zh_")) {
+            return Languages.LocaleZhCN;
+        } else {
+            try {
+                return new Locale.Builder().setLanguage(lang).build();
+            } catch (Exception e) {
+                return Languages.LocaleEn;
+            }
+        }
     }
 
     public static boolean match(String matchTo, String s) {

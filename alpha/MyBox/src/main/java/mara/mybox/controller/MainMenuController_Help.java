@@ -18,7 +18,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void Overview(ActionEvent event) {
-        String lang = Languages.getLangName();
+        String lang = Languages.preferredEmbedLang();
         File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Overview-" + lang + ".pdf",
                 "doc", "MyBox-Overview-" + lang + ".pdf");
         if (file != null && file.exists()) {
@@ -48,7 +48,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void InterfaceTips(ActionEvent event) {
-        openHtml(HelpTools.makeInterfaceTips(Languages.getLangName()));
+        openHtml(HelpTools.makeInterfaceTips(Languages.preferredEmbedLang()));
     }
 
     @FXML
@@ -93,7 +93,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void SomeLinks(ActionEvent event) {
-        openHtml(HelpTools.usefulLinks(Languages.getLangName()));
+        openHtml(HelpTools.usefulLinks(Languages.preferredEmbedLang()));
     }
 
 }

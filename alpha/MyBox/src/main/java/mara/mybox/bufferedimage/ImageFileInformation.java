@@ -117,7 +117,7 @@ public class ImageFileInformation extends FileInformation {
         String format = "png";
         fileInfo.setImageFormat(format);
         fileInfo.setPassword(password);
-        try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(file, password, AppVariables.PdfMemUsage)) {
             int num = doc.getNumberOfPages();
             fileInfo.setNumberOfImages(num);
             List<ImageInformation> imagesInfo = new ArrayList<>();

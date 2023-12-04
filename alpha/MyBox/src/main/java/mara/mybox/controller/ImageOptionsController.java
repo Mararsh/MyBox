@@ -23,7 +23,7 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.imageRenderHints;
+import static mara.mybox.value.AppVariables.ImageHints;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.ImageRenderHints;
 import static mara.mybox.value.Languages.message;
@@ -387,20 +387,20 @@ public class ImageOptionsController extends BaseChildController {
         if (ImageRenderHints.applyHints()) {
             writeHints();
         } else {
-            imageRenderHints = null;
+            ImageHints = null;
         }
     }
 
     public synchronized void applyHints() {
         try {
-            if (imageRenderHints == null) {
+            if (ImageHints == null) {
                 return;
             }
             isSettingValues = true;
 
             renderCheck.setSelected(ImageRenderHints.applyHints());
 
-            Object render = imageRenderHints.get(RenderingHints.KEY_RENDERING);
+            Object render = ImageHints.get(RenderingHints.KEY_RENDERING);
             if (RenderingHints.VALUE_RENDER_QUALITY.equals(render)) {
                 renderQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_RENDER_SPEED.equals(render)) {
@@ -409,7 +409,7 @@ public class ImageOptionsController extends BaseChildController {
                 renderDefaultRadio.setSelected(true);
             }
 
-            Object crender = imageRenderHints.get(RenderingHints.KEY_COLOR_RENDERING);
+            Object crender = ImageHints.get(RenderingHints.KEY_COLOR_RENDERING);
             if (RenderingHints.VALUE_COLOR_RENDER_QUALITY.equals(crender)) {
                 colorRenderQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_COLOR_RENDER_SPEED.equals(crender)) {
@@ -418,7 +418,7 @@ public class ImageOptionsController extends BaseChildController {
                 colorRenderDefaultRadio.setSelected(true);
             }
 
-            Object pinter = imageRenderHints.get(RenderingHints.KEY_INTERPOLATION);
+            Object pinter = ImageHints.get(RenderingHints.KEY_INTERPOLATION);
             if (RenderingHints.VALUE_INTERPOLATION_BILINEAR.equals(pinter)) {
                 pInter4Radio.setSelected(true);
             } else if (RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(pinter)) {
@@ -427,7 +427,7 @@ public class ImageOptionsController extends BaseChildController {
                 pInter9Radio.setSelected(true);
             }
 
-            Object ainter = imageRenderHints.get(RenderingHints.KEY_ALPHA_INTERPOLATION);
+            Object ainter = ImageHints.get(RenderingHints.KEY_ALPHA_INTERPOLATION);
             if (RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY.equals(ainter)) {
                 aInterQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED.equals(ainter)) {
@@ -436,7 +436,7 @@ public class ImageOptionsController extends BaseChildController {
                 aInterDefaultRadio.setSelected(true);
             }
 
-            Object anti = imageRenderHints.get(RenderingHints.KEY_ANTIALIASING);
+            Object anti = ImageHints.get(RenderingHints.KEY_ANTIALIASING);
             if (RenderingHints.VALUE_ANTIALIAS_ON.equals(anti)) {
                 antiQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_ANTIALIAS_OFF.equals(anti)) {
@@ -445,7 +445,7 @@ public class ImageOptionsController extends BaseChildController {
                 antiDefaultRadio.setSelected(true);
             }
 
-            Object tanti = imageRenderHints.get(RenderingHints.KEY_TEXT_ANTIALIASING);
+            Object tanti = ImageHints.get(RenderingHints.KEY_TEXT_ANTIALIASING);
             if (RenderingHints.VALUE_TEXT_ANTIALIAS_ON.equals(tanti)) {
                 tantiOnRadio.setSelected(true);
             } else if (RenderingHints.VALUE_TEXT_ANTIALIAS_OFF.equals(tanti)) {
@@ -464,7 +464,7 @@ public class ImageOptionsController extends BaseChildController {
                 tantiDefaultRadio.setSelected(true);
             }
 
-            Object fontfm = imageRenderHints.get(RenderingHints.KEY_FRACTIONALMETRICS);
+            Object fontfm = ImageHints.get(RenderingHints.KEY_FRACTIONALMETRICS);
             if (RenderingHints.VALUE_FRACTIONALMETRICS_ON.equals(fontfm)) {
                 fmOnRadio.setSelected(true);
             } else if (RenderingHints.VALUE_FRACTIONALMETRICS_OFF.equals(fontfm)) {
@@ -473,7 +473,7 @@ public class ImageOptionsController extends BaseChildController {
                 fmDefaultRadio.setSelected(true);
             }
 
-            Object stroke = imageRenderHints.get(RenderingHints.KEY_STROKE_CONTROL);
+            Object stroke = ImageHints.get(RenderingHints.KEY_STROKE_CONTROL);
             if (RenderingHints.VALUE_STROKE_NORMALIZE.equals(stroke)) {
                 strokeNormalizeRadio.setSelected(true);
             } else if (RenderingHints.VALUE_STROKE_PURE.equals(stroke)) {
@@ -482,7 +482,7 @@ public class ImageOptionsController extends BaseChildController {
                 strokeDefaultRadio.setSelected(true);
             }
 
-            Object dither = imageRenderHints.get(RenderingHints.KEY_DITHERING);
+            Object dither = ImageHints.get(RenderingHints.KEY_DITHERING);
             if (RenderingHints.VALUE_DITHER_ENABLE.equals(dither)) {
                 ditherOnRadio.setSelected(true);
             } else if (RenderingHints.VALUE_DITHER_DISABLE.equals(dither)) {
@@ -500,99 +500,99 @@ public class ImageOptionsController extends BaseChildController {
     public Map<RenderingHints.Key, Object> writeHints() {
         try {
             if (isSettingValues) {
-                return imageRenderHints;
+                return ImageHints;
             }
             if (!ImageRenderHints.applyHints()) {
-                imageRenderHints = null;
+                ImageHints = null;
                 return null;
             }
-            imageRenderHints = new HashMap<>();
+            ImageHints = new HashMap<>();
 
             if (renderQualityRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                ImageHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             } else if (renderSpeedRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+                ImageHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
             }
 
             if (colorRenderQualityRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+                ImageHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
             } else if (colorRenderSpeedRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+                ImageHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_DEFAULT);
             }
 
             if (pInter4Radio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                ImageHints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             } else if (pInter1Radio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                ImageHints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                ImageHints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             }
 
             if (aInterQualityRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+                ImageHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
             } else if (aInterSpeedRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+                ImageHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
             }
 
             if (antiQualityRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                ImageHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             } else if (antiSpeedRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+                ImageHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
             }
 
             if (tantiOnRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             } else if (tantiOffRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
             } else if (tantiGaspRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
             } else if (tantiLcdHrgbRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
             } else if (tantiLcdHbgrRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR);
             } else if (tantiLcdVrgbOnRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB);
             } else if (tantiLcdVbgrRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
             }
 
             if (fmOnRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                ImageHints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             } else if (fmOffRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+                ImageHints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
             }
 
             if (strokeNormalizeRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+                ImageHints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
             } else if (strokePureRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+                ImageHints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
             }
 
             if (ditherOnRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+                ImageHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
             } else if (ditherOffRadio.isSelected()) {
-                imageRenderHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+                ImageHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
             } else {
-                imageRenderHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DEFAULT);
+                ImageHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DEFAULT);
             }
 
             ImageRenderHints.saveImageRenderHints();
 
-            return imageRenderHints;
+            return ImageHints;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

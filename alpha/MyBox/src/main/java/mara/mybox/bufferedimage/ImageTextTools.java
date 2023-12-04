@@ -38,8 +38,8 @@ public class ImageTextTools {
             Font font = optionsController.font();
             BufferedImage shapeImage = new BufferedImage(width, height, imageType);
             Graphics2D g = shapeImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             FontMetrics metrics = g.getFontMetrics(font);
             optionsController.countValues(g, metrics, width, height);

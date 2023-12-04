@@ -152,8 +152,8 @@ public class BarcodeTools {
             }
             BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.drawImage(source, 0, 0, width, height, null);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));

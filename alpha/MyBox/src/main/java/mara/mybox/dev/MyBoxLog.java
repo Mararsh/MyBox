@@ -9,8 +9,8 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.errorNotify;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.AppVariables.ErrorNotify;
 
 /**
  * @Author Mara
@@ -279,7 +279,7 @@ public class MyBoxLog extends BaseData {
                 new TableMyBoxLog().writeData(myboxLog);
             }
             if (type == LogType.Error) {
-                errorNotify.set(!errorNotify.get());
+                ErrorNotify.set(!ErrorNotify.get());
             }
             LastMyBoxLog = myboxLog;
             LastRecordTime = new Date().getTime();

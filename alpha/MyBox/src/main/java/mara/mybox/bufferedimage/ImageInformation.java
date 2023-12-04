@@ -21,7 +21,6 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.imageRenderHints;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -30,6 +29,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import static mara.mybox.value.AppVariables.ImageHints;
 
 /**
  * @Author Mara
@@ -287,7 +287,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPDF(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try (PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), imageInfo.getPassword(), AppVariables.pdfMemUsage)) {
+        try (PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), imageInfo.getPassword(), AppVariables.PdfMemUsage)) {
             bufferedImage = readPDF(null, new PDFRenderer(pdfDoc), ImageType.RGB, imageInfo, width);
             pdfDoc.close();
         } catch (Exception e) {
@@ -349,8 +349,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     return null;
                 }
             }
-            if (imageRenderHints != null) {
-                bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
+            if (ImageHints != null) {
+                bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, ImageHints);
                 if (task != null && task.isCancelled()) {
                     return null;
                 }
@@ -388,8 +388,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             Slide slide = slides.get(imageInfo.getIndex());
             bufferedImage = new BufferedImage(pptWidth, pptHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bufferedImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             if (task != null && task.isCancelled()) {
                 return null;

@@ -69,7 +69,7 @@ public class PptToPdfController extends BaseBatchFileController {
             return message("Skip");
         }
         File tmpFile = FileTmpTools.getTempFile();
-        try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage);
+        try ( PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
                  SlideShow ppt = SlideShowFactory.create(srcFile)) {
             PDDocumentInformation info = new PDDocumentInformation();
             info.setCreationDate(Calendar.getInstance());
@@ -89,8 +89,8 @@ public class PptToPdfController extends BaseBatchFileController {
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = slideImage.createGraphics();
-                if (AppVariables.imageRenderHints != null) {
-                    g.addRenderingHints(AppVariables.imageRenderHints);
+                if (AppVariables.ImageHints != null) {
+                    g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
                 if (task == null || task.isCancelled()) {

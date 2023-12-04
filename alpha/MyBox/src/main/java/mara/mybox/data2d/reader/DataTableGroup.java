@@ -640,7 +640,7 @@ public class DataTableGroup {
                                 } else {
                                     v = (v / 100) + 1;
                                 }
-                                if (AppVariables.isChinese) {
+                                if (AppVariables.IsChinese) {
                                     parameterValue = (isBC ? "公元前" : "") + v + "世纪";
                                 } else {
                                     parameterValue = v + "th century" + (isBC ? " BC" : "");
@@ -667,7 +667,7 @@ public class DataTableGroup {
                                         format = "y-MM-dd HH:mm:ss";
                                         break;
                                 }
-                                if (AppVariables.isChinese) {
+                                if (AppVariables.IsChinese) {
                                     parameterValue = new SimpleDateFormat((isBC ? "G" : "") + format, Languages.LocaleZhCN)
                                             .format(timeValue);
                                 } else {
