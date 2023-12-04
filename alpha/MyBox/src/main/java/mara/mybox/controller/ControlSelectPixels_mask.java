@@ -83,7 +83,6 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
 
                 }
 
-//                showLeftPane();
             }
 
             return scope;
@@ -169,27 +168,27 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Color:
                     tabPane.getTabs().setAll(colorsTab, matchTab);
                     opBox.getChildren().setAll(pickColorBox);
-                    pickColorCheck.setSelected(true);
                     showLeftPane();
                     break;
 
                 case Outline:
                     tabPane.getTabs().setAll(pixTab);
+                    showLeftPane();
                     break;
 
             }
-            refreshStyle(tabPane);
-            refreshStyle(opBox);
+
+            pickColorCheck.setSelected(type == ScopeType.Color);
+            handleTransparentCheck.setVisible(type != ScopeType.Outline);
 
             if (selectedTab != null && tabPane.getTabs().contains(selectedTab)) {
                 tabPane.getSelectionModel().select(selectedTab);
             }
 
-            if (type != ScopeType.Color) {
-                pickColorCheck.setSelected(false);
-            }
-
             matchController.setDistanceValue(scope);
+
+            refreshStyle(tabPane);
+            refreshStyle(opBox);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -220,7 +219,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
     @Override
     public synchronized void showScope() {
         if (scope.getScopeType() == ImageScope.ScopeType.Outline) {
-            loadOutlineSource(scope.getOutlineSource());
+            indicateOutline();
             return;
         }
         if (pickScopeValues() == null) {

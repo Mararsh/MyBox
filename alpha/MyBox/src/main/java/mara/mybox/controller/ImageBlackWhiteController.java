@@ -156,8 +156,8 @@ public class ImageBlackWhiteController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageBlackWhiteFxml, false);
+            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageBlackWhiteFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

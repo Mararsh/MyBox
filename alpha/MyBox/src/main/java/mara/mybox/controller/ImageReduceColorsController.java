@@ -146,8 +146,8 @@ public class ImageReduceColorsController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageReduceColorsFxml, false);
+            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageReduceColorsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

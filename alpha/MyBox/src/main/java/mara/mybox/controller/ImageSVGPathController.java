@@ -25,7 +25,7 @@ public class ImageSVGPathController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "SVGPath";
+            operation = message("SVGPath");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -76,8 +76,8 @@ public class ImageSVGPathController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageSVGPathController controller = (ImageSVGPathController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageSVGPathFxml, false);
+            ImageSVGPathController controller = (ImageSVGPathController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageSVGPathFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

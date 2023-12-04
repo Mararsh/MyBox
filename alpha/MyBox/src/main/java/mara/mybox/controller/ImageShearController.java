@@ -32,7 +32,7 @@ public class ImageShearController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
-            operation = "Shear";
+            operation = message("Shear");
 
             shearX = UserConfig.getFloat("ImageShearX", 0.5f);
             xSelector.getItems().addAll(Arrays.asList(
@@ -91,8 +91,8 @@ public class ImageShearController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageShearController controller = (ImageShearController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageShearFxml, false);
+            ImageShearController controller = (ImageShearController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageShearFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

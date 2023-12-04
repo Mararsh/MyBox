@@ -58,47 +58,47 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ImageEditorController extends BaseImageController {
-
+    
     protected TableImageEditHistory tableImageEditHistory;
     protected String imageHistoriesRootPath;
     protected File imageHistoriesPath;
     protected int historyIndex, hisSize;
-
+    
     @FXML
     protected Button historyButton, viewImageButton;
-
+    
     public ImageEditorController() {
         baseTitle = message("EditImage");
         TipsLabelKey = "ImageEditTips";
     }
-
+    
     @Override
     public void initValues() {
         try {
             super.initValues();
-
+            
             tableImageEditHistory = new TableImageEditHistory();
             imageHistoriesRootPath = AppPaths.getImageHisPath();
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             redoButton.setDisable(true);
             undoButton.setDisable(true);
             recoverButton.setDisable(true);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @Override
     public void setControlsStyle() {
         try {
@@ -108,11 +108,11 @@ public class ImageEditorController extends BaseImageController {
             MyBoxLog.debug(e);
         }
     }
-
+    
     @Override
     public boolean afterImageLoaded() {
         try {
-
+            
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
@@ -123,16 +123,16 @@ public class ImageEditorController extends BaseImageController {
             imageChanged = false;
             historyButton.setDisable(sourceFile == null);
             updateLabel(message("Loaded"));
-
+            
             recordImageHistory("Load", null, null, image);
-
+            
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
         }
     }
-
+    
     public boolean saveAsTmp() {
         if (image == null) {
             return false;
@@ -142,7 +142,7 @@ public class ImageEditorController extends BaseImageController {
         }
         File tmpFile = FileTmpTools.generateFile("png");
         task = new SingletonCurrentTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage((Image) image, null);
@@ -151,7 +151,7 @@ public class ImageEditorController extends BaseImageController {
                 }
                 return ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile.getAbsolutePath());
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 sourceFileChanged(tmpFile);
@@ -160,15 +160,15 @@ public class ImageEditorController extends BaseImageController {
         start(task);
         return true;
     }
-
+    
     public void updateImage(String operation, Image newImage, long cost) {
         updateImage(operation, null, null, newImage, cost);
     }
-
+    
     public void updateImage(String operation, String value, ImageScope opScope, Image newImage, long cost) {
         try {
             recordImageHistory(operation, value, opScope, newImage);
-            String info = operation == null ? "" : message(operation);
+            String info = operation == null ? "" : operation;
             if (value != null && !value.isBlank()) {
                 info += ": " + value;
             }
@@ -183,18 +183,18 @@ public class ImageEditorController extends BaseImageController {
             MyBoxLog.debug(e);
         }
     }
-
+    
     public void updateLabel(String info) {
         imageLabel.setText(info);
     }
-
+    
     protected void setHistoryIndex(int index) {
         historyIndex = index;
         undoButton.setDisable(historyIndex < 0 || historyIndex >= hisSize - 1);
         redoButton.setDisable(historyIndex <= 0);
 //        MyBoxLog.console(historyIndex + "/" + hisSize);
     }
-
+    
     protected void recordImageHistory(String op, String info, ImageScope scope, Image hisImage) {
         if (sourceFile == null || !UserConfig.getBoolean("ImageHistoriesRecord", true)) {
             hisSize = 0;
@@ -211,7 +211,7 @@ public class ImageEditorController extends BaseImageController {
         SingletonTask recordTask = new SingletonTask<Void>(this) {
             private File currentFile;
             private ImageEditHistory his;
-
+            
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -233,7 +233,7 @@ public class ImageEditorController extends BaseImageController {
                 }
                 return true;
             }
-
+            
             private boolean writeRecord(Connection conn) {
                 try {
                     BufferedImage bufferedImage = FxImageTools.toBufferedImage(hisImage);
@@ -261,7 +261,7 @@ public class ImageEditorController extends BaseImageController {
                             .setHistoryFile(hisFile)
                             .setThumbnailFile(thumbFile)
                             .setThumbnail(SwingFXUtils.toFXImage(thumb, null))
-                            .setOpType(message(op))
+                            .setOpType(op)
                             .setObjectType(info)
                             .setOperationTime(new Date());
                     if (scope != null) {
@@ -279,18 +279,18 @@ public class ImageEditorController extends BaseImageController {
                     return false;
                 }
             }
-
+            
             private String makeHisName() {
                 String prefix = FileNameTools.prefix(currentFile.getName());
                 if (framesNumber > 1) {
                     prefix += "-frame" + frameIndex;
                 }
                 String name = imageHistoriesPath.getAbsolutePath() + File.separator
-                        + prefix + "_" + (new Date().getTime()) + "_" + op;
+                        + prefix + "_" + (new Date().getTime()) + "_" + FileNameTools.filter(op);
                 name += "_" + new Random().nextInt(1000);
                 return name;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (his != null) {
@@ -300,16 +300,16 @@ public class ImageEditorController extends BaseImageController {
                     ImageHistoriesController.updateList(currentFile);
                 }
             }
-
+            
             @Override
             protected void whenFailed() {
                 MyBoxLog.console(error);
             }
-
+            
         };
         start(recordTask, false);
     }
-
+    
     protected void loadImageHistory(int index) {
         if (sourceFile == null) {
             popError(message("InvalidData"));
@@ -321,9 +321,9 @@ public class ImageEditorController extends BaseImageController {
         task = new SingletonCurrentTask<Void>(this) {
             private Image hisImage;
             private ImageEditHistory his;
-
+            
             @Override
-
+            
             protected boolean handle() {
                 hisSize = 0;
                 his = null;
@@ -350,7 +350,7 @@ public class ImageEditorController extends BaseImageController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (hisImage == null) {
@@ -363,156 +363,154 @@ public class ImageEditorController extends BaseImageController {
                     setHistoryIndex(index);
                 }
             }
-
+            
         };
         start(task, message("loadImageHistory"));
     }
-
+    
     @Override
     public void setImageChanged(boolean imageChanged) {
         super.setImageChanged(imageChanged);
         recoverButton.setDisable(!imageChanged);
     }
-
+    
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-
-            if (!undoButton.isDisabled()) {
-                menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
-                        StyleTools.getIconImageView("iconUndo.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    undoAction();
-                });
-                items.add(menu);
-            }
-
-            if (!redoButton.isDisabled()) {
-                menu = new MenuItem(message("Redo") + "    Ctrl+Y " + message("Or") + " Alt+Y",
-                        StyleTools.getIconImageView("iconRedo.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    redoAction();
-                });
-                items.add(menu);
-            }
-
-            if (!recoverButton.isDisabled()) {
-                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
-                        StyleTools.getIconImageView("iconRedo.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    recoverAction();
-                });
-                items.add(menu);
-            }
-
-            menu = new MenuItem(message("EditHistories"), StyleTools.getIconImageView("iconHistory.png"));
+            
+            menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
+                    StyleTools.getIconImageView("iconUndo.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                undoAction();
+            });
+            menu.setDisable(undoButton.isDisabled());
+            items.add(menu);
+            
+            menu = new MenuItem(message("Redo") + "    Ctrl+Y " + message("Or") + " Alt+Y",
+                    StyleTools.getIconImageView("iconRedo.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                redoAction();
+            });
+            menu.setDisable(redoButton.isDisabled());
+            items.add(menu);
+            
+            menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                    StyleTools.getIconImageView("iconRedo.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                recoverAction();
+            });
+            menu.setDisable(recoverButton.isDisabled());
+            items.add(menu);
+            
+            menu = new MenuItem(message("EditHistories") + "    Ctrl+H " + message("Or") + " Alt+H",
+                    StyleTools.getIconImageView("iconHistory.png"));
             menu.setOnAction((ActionEvent event) -> {
                 showHistories();
             });
             items.add(menu);
             items.add(new SeparatorMenuItem());
-
+            
             menu = new MenuItem(message("Crop"), StyleTools.getIconImageView("iconCrop.png"));
             menu.setOnAction((ActionEvent event) -> {
                 cropAction();
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Margins"), StyleTools.getIconImageView("iconRectangle.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageMarginsController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Size"), StyleTools.getIconImageView("iconExpand.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSizeController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Round"), StyleTools.getIconImageView("iconRound.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageRoundController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEraserController.open(this);
             });
             items.add(menu);
-
+            
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     @FXML
     public void popColorsMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "ColorsMenuPopWhenMouseHovering", true)) {
             showColorsMenu(event);
         }
     }
-
+    
     @FXML
     public void showColorsMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
-
+            
             MenuItem menu = new MenuItem(message("ReplaceColor"), StyleTools.getIconImageView("iconPalette.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageReplaceColorController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("BlendColor"), StyleTools.getIconImageView("iconCross.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageBlendColorController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("AdjustColor"), StyleTools.getIconImageView("iconColorWheel.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageAdjustColorController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("BlackOrWhite"), StyleTools.getIconImageView("iconBlackWhite.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageBlackWhiteController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Grey"), StyleTools.getIconImageView("iconGrey.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageGreyController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Sepia"), StyleTools.getIconImageView("iconSepia.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSepiaController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("ReduceColors"), StyleTools.getIconImageView("iconReduceColors.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageReduceColorsController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Thresholding"), StyleTools.getIconImageView("iconThresholding.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageThresholdingController.open(this);
             });
             items.add(menu);
-
+            
             items.add(new SeparatorMenuItem());
-
+            
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean(baseName + "ColorsMenuPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -522,20 +520,20 @@ public class ImageEditorController extends BaseImageController {
                 }
             });
             items.add(popItem);
-
+            
             popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     public void popPixelsMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "PixelsMenuPopWhenMouseHovering", true)) {
             showPixelsMenu(event);
         }
     }
-
+    
     @FXML
     public void showPixelsMenu(Event fevent) {
         try {
@@ -545,51 +543,51 @@ public class ImageEditorController extends BaseImageController {
                 ImageMosaicController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("FrostedGlass"), StyleTools.getIconImageView("iconFrosted.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageGlassController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Smooth"), StyleTools.getIconImageView("iconSmooth.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSmoothController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Sharpen"), StyleTools.getIconImageView("iconSharpen.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSharpenController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Contrast"), StyleTools.getIconImageView("iconGrey.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageContrastController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("EdgeDetection"), StyleTools.getIconImageView("iconEdgeDetection.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEdgeController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Emboss"), StyleTools.getIconImageView("iconEmboss.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEmbossController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Convolution"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageConvolutionController.open(this);
             });
             items.add(menu);
-
+            
             items.add(new SeparatorMenuItem());
-
+            
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean(baseName + "PixelsMenuPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -599,70 +597,70 @@ public class ImageEditorController extends BaseImageController {
                 }
             });
             items.add(popItem);
-
+            
             popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     public void popTransformMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "TransformMenuPopWhenMouseHovering", true)) {
             showTransformMenu(event);
         }
     }
-
+    
     @FXML
     public void showTransformMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
-
+            
             MenuItem menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 rotateRight();
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
             menu.setOnAction((ActionEvent event) -> {
                 rotateLeft();
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
             menu.setOnAction((ActionEvent event) -> {
                 turnOver();
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Rotate"), StyleTools.getIconImageView("iconReplace.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageRotateController.open(this);
             });
             items.add(menu);
             items.add(new SeparatorMenuItem());
-
+            
             menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageShearController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("MirrorHorizontal"), StyleTools.getIconImageView("iconHorizontal.png"));
             menu.setOnAction((ActionEvent event) -> {
                 horizontalAction();
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("MirrorVertical"), StyleTools.getIconImageView("iconVertical.png"));
             menu.setOnAction((ActionEvent event) -> {
                 verticalAction();
             });
             items.add(menu);
-
+            
             items.add(new SeparatorMenuItem());
-
+            
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean(baseName + "TransformMenuPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -672,106 +670,106 @@ public class ImageEditorController extends BaseImageController {
                 }
             });
             items.add(popItem);
-
+            
             popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     public void popPasteMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "PasteMenuPopWhenMouseHovering", true)) {
             showPasteMenu(event);
         }
     }
-
+    
     @FXML
     public void showPasteMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
-
+            
             MenuItem menu = new MenuItem(message("Image") + "    Ctrl+V " + message("Or") + " Alt+V",
                     StyleTools.getIconImageView("iconDefault.png"));
             menu.setOnAction((ActionEvent event) -> {
                 pasteAction();
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Graffiti"), StyleTools.getIconImageView("iconPolylines.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImagePolylinesController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Text"), StyleTools.getIconImageView("iconBinary.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageTextController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("StraightLine"), StyleTools.getIconImageView("iconLine.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageLineController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageRectangleController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageCircleController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Ellipse"), StyleTools.getIconImageView("iconEllipse.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEllipseController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Polyline"), StyleTools.getIconImageView("iconPolyline.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImagePolylineController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("Polygon"), StyleTools.getIconImageView("iconStar.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImagePolygonController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("ArcCurve"), StyleTools.getIconImageView("iconArc.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageArcController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("QuadraticCurve"), StyleTools.getIconImageView("iconQuadratic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageQuadraticController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("CubicCurve"), StyleTools.getIconImageView("iconCubic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageCubicController.open(this);
             });
             items.add(menu);
-
+            
             menu = new MenuItem(message("SVGPath"), StyleTools.getIconImageView("iconSVG.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSVGPathController.open(this);
             });
             items.add(menu);
-
+            
             items.add(new SeparatorMenuItem());
-
+            
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean(baseName + "PasteMenuPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -781,13 +779,13 @@ public class ImageEditorController extends BaseImageController {
                 }
             });
             items.add(popItem);
-
+            
             popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     @Override
     public void createAction() {
@@ -806,7 +804,7 @@ public class ImageEditorController extends BaseImageController {
             }
         });
     }
-
+    
     public void create(Image canvas) {
         if (canvas == null) {
             return;
@@ -816,7 +814,7 @@ public class ImageEditorController extends BaseImageController {
         imageView.setImage(canvas);
         saveAction();
     }
-
+    
     @FXML
     @Override
     public void undoAction() {
@@ -825,7 +823,7 @@ public class ImageEditorController extends BaseImageController {
         }
         loadImageHistory(historyIndex + 1);
     }
-
+    
     @FXML
     @Override
     public void redoAction() {
@@ -834,7 +832,7 @@ public class ImageEditorController extends BaseImageController {
         }
         loadImageHistory(historyIndex - 1);
     }
-
+    
     @FXML
     @Override
     public void recoverAction() {
@@ -845,18 +843,18 @@ public class ImageEditorController extends BaseImageController {
         setImageChanged(false);
         popInformation(message("Recovered"));
     }
-
+    
     @FXML
     public void showHistories() {
         ImageHistoriesController.open(this);
     }
-
+    
     @FXML
     @Override
     public void cropAction() {
         ImageCropController.open(this);
     }
-
+    
     @FXML
     @Override
     public void pasteAction() {
@@ -866,16 +864,16 @@ public class ImageEditorController extends BaseImageController {
             ImagePasteController.open(this);
         }
     }
-
+    
     @FXML
     public void horizontalAction() {
         if (task != null) {
             task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
-
+            
             private Image newImage;
-
+            
             @Override
             protected boolean handle() {
                 newImage = TransformTools.horizontalImage(imageView.getImage());
@@ -884,26 +882,26 @@ public class ImageEditorController extends BaseImageController {
                 }
                 return newImage != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
                 updateImage("MirrorHorizontal", newImage, cost);
             }
-
+            
         };
         start(task);
     }
-
+    
     @FXML
     public void verticalAction() {
         if (task != null) {
             task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
-
+            
             private Image newImage;
-
+            
             @Override
             protected boolean handle() {
                 newImage = TransformTools.verticalImage(imageView.getImage());
@@ -912,21 +910,21 @@ public class ImageEditorController extends BaseImageController {
                 }
                 return newImage != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
                 updateImage("MirrorVertical", newImage, cost);
             }
-
+            
         };
         start(task);
     }
-
+    
     public void applyKernel(ConvolutionKernel kernel) {
         // #####
     }
-
+    
     @Override
     protected void popContextMenu(double x, double y) {
         if (imageView == null || imageView.getImage() == null) {
@@ -934,7 +932,7 @@ public class ImageEditorController extends BaseImageController {
         }
         MenuImageEditController.editMenu(this, x, y);
     }
-
+    
     @Override
     public boolean checkBeforeNextAction() {
         if (imageView.getImage() == null || !imageChanged) {
@@ -952,7 +950,7 @@ public class ImageEditorController extends BaseImageController {
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
-
+        
         Optional<ButtonType> result = alert.showAndWait();
         if (result == null || !result.isPresent()) {
             return false;
@@ -969,15 +967,15 @@ public class ImageEditorController extends BaseImageController {
         } else {
             return false;
         }
-
+        
     }
-
+    
     @Override
     public boolean controlAltR() {
         recoverAction();
         return true;
     }
-
+    
     @Override
     public boolean controlAltX() {
         if (targetIsTextInput()) {
@@ -986,7 +984,7 @@ public class ImageEditorController extends BaseImageController {
         cropAction();
         return true;
     }
-
+    
     @Override
     public boolean controlAltZ() {
         if (targetIsTextInput()) {
@@ -995,7 +993,7 @@ public class ImageEditorController extends BaseImageController {
         undoAction();
         return true;
     }
-
+    
     @Override
     public boolean controlAltY() {
         if (targetIsTextInput()) {
@@ -1004,7 +1002,7 @@ public class ImageEditorController extends BaseImageController {
         redoAction();
         return false;
     }
-
+    
     @Override
     public boolean controlAltH() {
         showHistories();
@@ -1026,7 +1024,7 @@ public class ImageEditorController extends BaseImageController {
             return null;
         }
     }
-
+    
     public static ImageEditorController openImage(Image image) {
         ImageEditorController controller = open();
         if (controller != null) {
@@ -1034,7 +1032,7 @@ public class ImageEditorController extends BaseImageController {
         }
         return controller;
     }
-
+    
     public static ImageEditorController openFile(File file) {
         ImageEditorController controller = open();
         if (controller != null) {
@@ -1042,7 +1040,7 @@ public class ImageEditorController extends BaseImageController {
         }
         return controller;
     }
-
+    
     public static ImageEditorController openImageInfo(ImageInformation imageInfo) {
         ImageEditorController controller = open();
         if (controller != null) {
@@ -1050,7 +1048,7 @@ public class ImageEditorController extends BaseImageController {
         }
         return controller;
     }
-
+    
     public static ImageEditorController open(File file, ImageInformation imageInfo) {
         ImageEditorController controller = open();
         if (controller != null) {
@@ -1058,5 +1056,5 @@ public class ImageEditorController extends BaseImageController {
         }
         return controller;
     }
-
+    
 }

@@ -472,8 +472,8 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
      */
     public static ImageHistoriesController open(ImageEditorController parent) {
         try {
-            ImageHistoriesController controller = (ImageHistoriesController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageHistoriesFxml, false);
+            ImageHistoriesController controller = (ImageHistoriesController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageHistoriesFxml);
             controller.setParameters(parent);
             controller.requestMouse();
             return controller;

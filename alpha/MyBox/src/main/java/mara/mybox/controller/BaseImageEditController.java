@@ -169,44 +169,6 @@ public class BaseImageEditController extends BaseShapeController {
 
     @FXML
     @Override
-    public void goAction() {
-        if (goButton == null || goButton.isDisabled()) {
-            return;
-        }
-        if (isSettingValues || !checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        reset();
-        task = new SingletonCurrentTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                handledImage = null;
-                opInfo = null;
-                handleImage();
-                if (task == null || isCancelled()) {
-                    return false;
-                }
-                return handledImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (isCancelled()) {
-                    return;
-                }
-                loadImage(handledImage);
-            }
-
-        };
-        start(task);
-    }
-
-    @FXML
-    @Override
     public void undoAction() {
         editor.undoAction();
     }

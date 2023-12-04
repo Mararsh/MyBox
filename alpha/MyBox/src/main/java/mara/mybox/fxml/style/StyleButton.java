@@ -13,11 +13,11 @@ public class StyleButton {
         if (id == null || id.isEmpty()) {
             return null;
         }
-        StyleData data = startsWith(id);
+        StyleData data = match(id);
         if (data != null) {
             return data;
         }
-        return match(id);
+        return startsWith(id);
     }
 
     public static StyleData startsWith(String id) {

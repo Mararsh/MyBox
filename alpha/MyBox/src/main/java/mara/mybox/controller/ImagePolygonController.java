@@ -25,7 +25,7 @@ public class ImagePolygonController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Polygon";
+            operation = message("Polygon");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -90,8 +90,8 @@ public class ImagePolygonController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImagePolygonController controller = (ImagePolygonController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImagePolygonFxml, false);
+            ImagePolygonController controller = (ImagePolygonController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImagePolygonFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

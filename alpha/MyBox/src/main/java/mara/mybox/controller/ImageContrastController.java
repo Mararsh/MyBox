@@ -258,8 +258,8 @@ public class ImageContrastController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageContrastController controller = (ImageContrastController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageContrastFxml, false);
+            ImageContrastController controller = (ImageContrastController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageContrastFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

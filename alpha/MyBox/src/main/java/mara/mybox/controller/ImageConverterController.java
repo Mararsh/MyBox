@@ -211,7 +211,8 @@ public class ImageConverterController extends BaseChildController {
         static methods
      */
     public static ImageConverterController open(BaseImageController parent) {
-        ImageConverterController controller = (ImageConverterController) WindowTools.openStage(Fxmls.ImageConverterFxml);
+        ImageConverterController controller = (ImageConverterController) WindowTools.branch(
+                parent.getMyWindow(), Fxmls.ImageConverterFxml);
         if (controller != null) {
             controller.setParameters(parent);
             controller.requestMouse();

@@ -25,7 +25,7 @@ public class ImageCircleController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Circle";
+            operation = message("Circle");
             circleController.setParameters(this);
 
             anchorCheck.setSelected(true);
@@ -66,8 +66,8 @@ public class ImageCircleController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageCircleController controller = (ImageCircleController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageCircleFxml, false);
+            ImageCircleController controller = (ImageCircleController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageCircleFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

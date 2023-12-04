@@ -186,8 +186,8 @@ public class ImageConvolutionController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageConvolutionFxml, false);
+            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageConvolutionFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

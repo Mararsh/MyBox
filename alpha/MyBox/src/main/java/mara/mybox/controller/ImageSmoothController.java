@@ -120,8 +120,8 @@ public class ImageSmoothController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSmoothController controller = (ImageSmoothController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageSmoothFxml, false);
+            ImageSmoothController controller = (ImageSmoothController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageSmoothFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

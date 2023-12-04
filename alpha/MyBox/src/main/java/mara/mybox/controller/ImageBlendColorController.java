@@ -83,8 +83,8 @@ public class ImageBlendColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageBlendColorController controller = (ImageBlendColorController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageBlendColorFxml, false);
+            ImageBlendColorController controller = (ImageBlendColorController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageBlendColorFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

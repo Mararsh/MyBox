@@ -171,8 +171,8 @@ public class ImageThresholdingController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageThresholdingController controller = (ImageThresholdingController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageThresholdingFxml, false);
+            ImageThresholdingController controller = (ImageThresholdingController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageThresholdingFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

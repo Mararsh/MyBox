@@ -493,11 +493,16 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     public boolean makeMoreParameters() {
         try {
             List<File> files = pickSourceFiles(isPreview, true);
+            isSettingValues = true;
+            tableView.refresh();
+            isSettingValues = false;
+
             if (files == null || files.isEmpty()) {
                 popError(message("NoData"));
                 actualParameters = null;
                 return false;
             }
+
             sourceFiles.clear();
             sourceFiles.addAll(files);
 

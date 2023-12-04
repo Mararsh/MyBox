@@ -25,7 +25,7 @@ public class ImagePolylinesController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Graffiti";
+            operation = message("Graffiti");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -88,8 +88,8 @@ public class ImagePolylinesController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImagePolylinesController controller = (ImagePolylinesController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImagePolylinesFxml, false);
+            ImagePolylinesController controller = (ImagePolylinesController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImagePolylinesFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

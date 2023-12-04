@@ -329,8 +329,8 @@ public class ImagePasteController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImagePasteController controller = (ImagePasteController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImagePasteFxml, false);
+            ImagePasteController controller = (ImagePasteController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImagePasteFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

@@ -160,20 +160,11 @@ License:    Apache License Version 2.0
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Margins" VBox.vgrow="ALWAYS" />
                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                            <children>
-                              <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                              <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconGo.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="refreshButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                          <Image url="@../buttons/Red/iconPreview.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>

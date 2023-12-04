@@ -37,7 +37,7 @@ public class ImageRoundController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
-            operation = "Round";
+            operation = message("Round");
 
             colorController.init(this, baseName + "Color");
             roundSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -113,8 +113,8 @@ public class ImageRoundController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRoundController controller = (ImageRoundController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageRoundFxml, false);
+            ImageRoundController controller = (ImageRoundController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageRoundFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

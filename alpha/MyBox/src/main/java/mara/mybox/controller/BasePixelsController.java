@@ -152,8 +152,8 @@ public abstract class BasePixelsController extends BaseChildController {
                     if (closeAfterCheck.isSelected()) {
                         close();
                     }
-                    afterHandle();
                 }
+                afterHandle();
             }
         };
         start(task);

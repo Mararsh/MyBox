@@ -31,7 +31,7 @@ public class ImageEraserController extends ImagePolylinesController {
     protected void initMore() {
         try {
             super.initMore();
-            operation = "Eraser";
+            operation = message("Eraser");
 
             shapeStyle = new ShapeStyle(baseName);
             shapeStyle.setStrokeColor(Color.WHITE)
@@ -64,7 +64,7 @@ public class ImageEraserController extends ImagePolylinesController {
             popError(message("InvalidParameter") + ": " + message("Width"));
             return false;
         }
-        shapeStyle.setStrokeWidth(v);
+        shapeStyle.setStrokeWidth(v).save();
         return true;
     }
 
@@ -81,8 +81,8 @@ public class ImageEraserController extends ImagePolylinesController {
             if (parent == null) {
                 return null;
             }
-            ImageEraserController controller = (ImageEraserController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageEraserFxml, false);
+            ImageEraserController controller = (ImageEraserController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageEraserFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

@@ -65,6 +65,8 @@ public class ImageMarginsController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            operation = message("Margins");
+
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -307,8 +309,8 @@ public class ImageMarginsController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageMarginsController controller = (ImageMarginsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageMarginsFxml, false);
+            ImageMarginsController controller = (ImageMarginsController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageMarginsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

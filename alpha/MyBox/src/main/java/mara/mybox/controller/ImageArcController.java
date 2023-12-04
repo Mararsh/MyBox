@@ -25,7 +25,7 @@ public class ImageArcController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Arc";
+            operation = message("Arc");
             arcController.setParameters(this);
 
             anchorCheck.setSelected(true);
@@ -67,8 +67,8 @@ public class ImageArcController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageArcController controller = (ImageArcController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageArcFxml, false);
+            ImageArcController controller = (ImageArcController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageArcFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

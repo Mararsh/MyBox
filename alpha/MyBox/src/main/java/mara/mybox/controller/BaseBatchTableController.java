@@ -504,20 +504,18 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (index < 0) {
-                    currentIndex = -1;
-                    tableView.refresh();
-                    return;
-                }
                 FileInformation d = fileInformation(index);
                 if (d == null) {
                     return;
                 }
+                isSettingValues = true;
                 currentIndex = index;
+                d.setHandled(null);
                 tableData.set(index, tableData.get(index));
+                isSettingValues = false;
+                tableView.scrollTo(index);
             }
         });
-
     }
 
     public void markFileHandled(int index, String message) {
@@ -528,12 +526,14 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 if (d == null) {
                     return;
                 }
-                d.setHandled(message);
+                isSettingValues = true;
                 currentIndex = -1;
-                tableView.refresh();
+                d.setHandled(message);
+                tableData.set(index, tableData.get(index));
+                isSettingValues = false;
+                tableView.scrollTo(index);
             }
         });
-
     }
 
     public void markFileHandled(int index) {
@@ -565,13 +565,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         }
         backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
-            private boolean canceled;
-
             @Override
             protected boolean handle() {
                 for (int i = 0; i < tableData.size(); ++i) {
                     if (backgroundTask == null || isCancelled()) {
-                        canceled = true;
                         return false;
                     }
                     FileInformation info = fileInformation(i);
@@ -581,7 +578,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                     if (info.getFile().isDirectory()) {
                         info.countDirectorySize(backgroundTask, countDirectories(), reset);
                         if (backgroundTask == null || isCancelled()) {
-                            canceled = true;
                             return false;
                         }
                     }
@@ -593,13 +589,19 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
             @Override
             protected void whenSucceeded() {
+                if (isCancelled()) {
+                    return;
+                }
+                isSettingValues = true;
                 tableView.refresh();
+                isSettingValues = false;
+                updateTableLabel();
+            }
+
+            @Override
+            protected void whenCanceled() {
                 if (tableLabel != null) {
-                    if (canceled) {
-                        tableLabel.setText("");
-                    } else {
-                        updateTableLabel();
-                    }
+                    tableLabel.setText("");
                 }
             }
 

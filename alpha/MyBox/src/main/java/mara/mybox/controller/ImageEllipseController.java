@@ -25,7 +25,7 @@ public class ImageEllipseController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "Ellipse";
+            operation = message("Ellipse");
             ellipseController.setParameters(this);
 
             anchorCheck.setSelected(true);
@@ -66,8 +66,8 @@ public class ImageEllipseController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageEllipseController controller = (ImageEllipseController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageEllipseFxml, false);
+            ImageEllipseController controller = (ImageEllipseController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageEllipseFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

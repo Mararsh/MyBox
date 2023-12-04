@@ -95,8 +95,8 @@ public class ImageEdgeController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageEdgeController controller = (ImageEdgeController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageEdgeFxml, false);
+            ImageEdgeController controller = (ImageEdgeController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageEdgeFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

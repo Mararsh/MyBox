@@ -127,8 +127,8 @@ public class ImageTextController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageTextController controller = (ImageTextController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageTextFxml, false);
+            ImageTextController controller = (ImageTextController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageTextFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

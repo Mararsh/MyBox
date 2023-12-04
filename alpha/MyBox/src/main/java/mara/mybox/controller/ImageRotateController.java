@@ -33,7 +33,7 @@ public class ImageRotateController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
-            operation = "Rotate";
+            operation = message("Rotate");
 
             angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -107,8 +107,8 @@ public class ImageRotateController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRotateController controller = (ImageRotateController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageRotateFxml, false);
+            ImageRotateController controller = (ImageRotateController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageRotateFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

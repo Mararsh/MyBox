@@ -57,13 +57,13 @@ public class ImageSizeController extends BaseImageEditController {
     protected Label commentsLabel;
 
     public ImageSizeController() {
-        baseTitle = message("Scale");
+        baseTitle = message("Size");
     }
 
     @Override
     protected void initMore() {
         try {
-            operation = "Scale";
+            operation = message("Size");
 
             scaleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -388,8 +388,8 @@ public class ImageSizeController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageSizeController controller = (ImageSizeController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageSizeFxml, false);
+            ImageSizeController controller = (ImageSizeController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageSizeFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

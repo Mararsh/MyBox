@@ -254,6 +254,24 @@ public class WindowTools {
         return openStage(parent, newFxml, AppVariables.CurrentBundle, true, isModal ? Modality.WINDOW_MODAL : Modality.NONE, null);
     }
 
+    public static BaseController branch(Window parent, String newFxml) {
+        try {
+            BaseController c = openStage(parent, newFxml);
+            if (parent != null) {
+                parent.setOnHiding(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        c.close();
+                    }
+                });
+            }
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static BaseController handling(Window parent, String newFxml) {
         return openStage(parent, newFxml, AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, StageStyle.DECORATED);
     }

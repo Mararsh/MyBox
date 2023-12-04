@@ -108,8 +108,8 @@ public class ImageSepiaController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSepiaController controller = (ImageSepiaController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageSepiaFxml, false);
+            ImageSepiaController controller = (ImageSepiaController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageSepiaFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

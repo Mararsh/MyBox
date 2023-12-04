@@ -140,8 +140,8 @@ public class ImageCopyController extends ImageSelectPixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageCopyController controller = (ImageCopyController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageCopyFxml, false);
+            ImageCopyController controller = (ImageCopyController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageCopyFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

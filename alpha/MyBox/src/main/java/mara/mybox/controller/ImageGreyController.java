@@ -42,8 +42,8 @@ public class ImageGreyController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageGreyController controller = (ImageGreyController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageGreyFxml, false);
+            ImageGreyController controller = (ImageGreyController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageGreyFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

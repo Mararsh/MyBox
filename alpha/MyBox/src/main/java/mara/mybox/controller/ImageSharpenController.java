@@ -70,8 +70,8 @@ public class ImageSharpenController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSharpenController controller = (ImageSharpenController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageSharpenFxml, false);
+            ImageSharpenController controller = (ImageSharpenController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageSharpenFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

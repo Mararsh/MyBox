@@ -249,7 +249,7 @@ public class FileBrowseController extends BaseController {
                 return null;
             }
             FileBrowseController controller
-                    = (FileBrowseController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.FileBrowseFxml, false);
+                    = (FileBrowseController) WindowTools.branch(parent.getMyStage(), Fxmls.FileBrowseFxml);
             if (controller != null) {
                 controller.setParameter(parent);
             }

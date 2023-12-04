@@ -25,7 +25,7 @@ public class ImageCubicController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = "CubicCurve";
+            operation = message("CubicCurve");
             cubicController.setParameters(this);
 
             anchorCheck.setSelected(true);
@@ -67,8 +67,8 @@ public class ImageCubicController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageCubicController controller = (ImageCubicController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageCubicFxml, false);
+            ImageCubicController controller = (ImageCubicController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageCubicFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

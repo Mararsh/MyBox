@@ -143,8 +143,8 @@ public class ImageEmbossController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageEmbossController controller = (ImageEmbossController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageEmbossFxml, false);
+            ImageEmbossController controller = (ImageEmbossController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageEmbossFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

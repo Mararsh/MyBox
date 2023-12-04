@@ -105,8 +105,8 @@ public class ImageMosaicController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageMosaicController controller = (ImageMosaicController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageMosaicFxml, false);
+            ImageMosaicController controller = (ImageMosaicController) WindowTools.branch(
+                    parent.getMyWindow(), Fxmls.ImageMosaicFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {
