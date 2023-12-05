@@ -67,7 +67,8 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     protected ControlColorMatch matchController;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeExcludeCheck,
-            handleTransparentCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck;
+            handleTransparentCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
+            clearDataWhenLoadImageCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;

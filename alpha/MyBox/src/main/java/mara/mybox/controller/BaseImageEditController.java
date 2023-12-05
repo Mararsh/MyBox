@@ -19,6 +19,7 @@ public class BaseImageEditController extends BaseShapeController {
     protected ImageEditorController editor;
     protected String operation, opInfo;
     protected Image handledImage;
+    protected boolean needFixSize;
 
     @FXML
     protected CheckBox closeAfterCheck;
@@ -35,6 +36,7 @@ public class BaseImageEditController extends BaseShapeController {
                 return;
             }
             editor = parent;
+            needFixSize = true;
 
             editor.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -95,6 +97,14 @@ public class BaseImageEditController extends BaseShapeController {
         loadImage(srcImage());
     }
 
+    @Override
+    public void fitView() {
+        if (needFixSize) {
+            paneSize();
+            needFixSize = false;
+        }
+    }
+
     protected boolean checkOptions() {
         if (editor == null || !editor.isShowing()) {
             close();
@@ -106,14 +116,6 @@ public class BaseImageEditController extends BaseShapeController {
     @FXML
     @Override
     public void okAction() {
-        if (goButton != null && !goButton.isDisabled()) {
-            editor.updateImage(operation, currentImage(), -1);
-            if (closeAfterCheck.isSelected()) {
-                close();
-            }
-            return;
-        }
-
         action(false);
     }
 

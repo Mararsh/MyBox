@@ -25,6 +25,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleData.StyleColor;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Colors.color;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -43,11 +44,9 @@ public class PaletteTools {
 
             MenuItem menu;
 
-            String lang = Languages.preferredEmbedLang();
-
-            menu = new MenuItem(defaultPaletteName(lang));
+            menu = new MenuItem(defaultPaletteName(AppVariables.CurrentLangName));
             menu.setOnAction((ActionEvent e) -> {
-                importPalette(parent, defaultPaletteName(lang));
+                importPalette(parent, defaultPaletteName(AppVariables.CurrentLangName));
             });
             menus.add(menu);
 
@@ -148,9 +147,9 @@ public class PaletteTools {
             @Override
             protected boolean handle() {
                 List<ColorData> colors;
-                String lang = Languages.preferredEmbedLang();
-                if (defaultPaletteName(lang).equals(paletteName)) {
-                    colors = defaultColors(lang);
+                String fileLang = Languages.embedFileLang();
+                if (defaultPaletteName(AppVariables.CurrentLangName).equals(paletteName)) {
+                    colors = defaultColors(AppVariables.CurrentLangName);
 
                 } else if (message("WebCommonColors").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv",
@@ -185,35 +184,35 @@ public class PaletteTools {
                     }
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
-                    File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + lang + ".csv",
-                            "data", "ColorsRYB12_" + lang + ".csv", true);
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + fileLang + ".csv",
+                            "data", "ColorsRYB12_" + fileLang + ".csv", true);
                     colors = ColorDataTools.readCSV(file, true);
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
-                    colors = artHuesWheel(lang, 1);
+                    colors = artHuesWheel(AppVariables.CurrentLangName, 1);
 
                 } else if ((message("OpticalHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
-                    colors = opticalHuesWheel(lang, 30);
+                    colors = opticalHuesWheel(AppVariables.CurrentLangName, 30);
 
                 } else if ((message("OpticalHuesWheel") + "-" + message("Colors24")).equals(paletteName)) {
-                    colors = opticalHuesWheel(lang, 15);
+                    colors = opticalHuesWheel(AppVariables.CurrentLangName, 15);
 
                 } else if ((message("OpticalHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
-                    colors = opticalHuesWheel(lang, 1);
+                    colors = opticalHuesWheel(AppVariables.CurrentLangName, 1);
 
                 } else if ((message("GrayScale")).equals(paletteName)) {
-                    colors = greyScales(lang);
+                    colors = greyScales(AppVariables.CurrentLangName);
 
                 } else {
-                    File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
-                            "data", "ColorsRYB24_" + lang + ".csv", true);
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + fileLang + ".csv",
+                            "data", "ColorsRYB24_" + fileLang + ".csv", true);
                     colors = ColorDataTools.readCSV(file, true);
 
                 }
                 if (colors == null || colors.isEmpty()) {
                     return false;
                 }
-                colors.addAll(speicalColors(lang));
+                colors.addAll(speicalColors(AppVariables.CurrentLangName));
                 try (Connection conn = DerbyBase.getConnection()) {
                     ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, paletteName);
                     if (palette == null) {
@@ -314,7 +313,7 @@ public class PaletteTools {
     public static List<ColorData> greyScales(String lang) {
         try {
             List<ColorData> colors = new ArrayList<>();
-            for (int v = 255; v >= 0; v--) {
+            for (int v = 0; v < 256; v++) {
                 Color color = Color.gray(v / 255d);
                 ColorData data = new ColorData(color).calculate();
                 data.setColorName(message(lang, "Gray") + ":" + Math.round(color.getRed() * 255));

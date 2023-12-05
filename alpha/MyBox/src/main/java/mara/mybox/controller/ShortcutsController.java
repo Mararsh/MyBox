@@ -146,7 +146,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "O", message(lang, "SelectNone"), "ALT+O", "iconSelectNone.png"));
             tableData.add(new ShortCut("CTRL", "U", message(lang, "Preview"), "F3 / ALT+U", "iconPreview.png"));
             tableData.add(new ShortCut("CTRL", "L", message(lang, "Clear"), "ALT+L", "iconClear.png"));
-            tableData.add(new ShortCut("CTRL", "W", message(lang, "Withdraw"), "ALT+W", "iconUndo.png"));
+            tableData.add(new ShortCut("CTRL", "W", message(lang, "WithdrawLastItem"), "ALT+W", "iconWithdraw.png"));
             tableData.add(new ShortCut("CTRL", "P", message(lang, "Pop"), "F4 / ALT+P", "iconPop.png"));
             tableData.add(new ShortCut("CTRL", "Q", message(lang, "Query"), "ALT+Q", "iconQuery.png"));
             tableData.add(new ShortCut("CTRL", "K", message(lang, "PickColor"), "ALT+K", "iconPickColor.png"));

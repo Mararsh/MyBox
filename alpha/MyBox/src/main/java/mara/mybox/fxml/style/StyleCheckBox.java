@@ -57,6 +57,8 @@ public class StyleCheckBox {
             case "sourceWithNamesCheck":
             case "targetWithNamesCheck":
                 return new StyleData(id, message("FirstLineAsNamesComments"), "", "");
+            case "clearDataWhenLoadImageCheck":
+                return new StyleData(id, message("ClearDataWhenLoadImage"), "", "iconClear.png");
         }
         return null;
     }

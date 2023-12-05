@@ -757,9 +757,9 @@ public class StyleButton {
         if (id.startsWith("withdraw")) {
             switch (id) {
                 case "withdrawButton":
-                    return new StyleData(id, message("Withdraw"), "CTRL+W / ALT+W", "iconUndo.png");
+                    return new StyleData(id, message("WithdrawLastItem"), "CTRL+W / ALT+W", "iconWithdraw.png");
                 default:
-                    return new StyleData(id, message("Withdraw"), "", "iconUndo.png");
+                    return new StyleData(id, message("WithdrawLastItem"), "", "iconWithdraw.png");
             }
         }
         if (id.startsWith("onTop")) {

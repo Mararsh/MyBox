@@ -261,7 +261,9 @@ public class WindowTools {
                 parent.setOnHiding(new EventHandler<WindowEvent>() {
                     @Override
                     public void handle(WindowEvent event) {
-                        c.close();
+                        if (c != null) {
+                            c.close();
+                        }
                     }
                 });
             }
@@ -273,16 +275,16 @@ public class WindowTools {
     }
 
     public static BaseController handling(Window parent, String newFxml) {
-        return openStage(parent, newFxml, AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, StageStyle.DECORATED);
+        return openStage(parent, newFxml, AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);
     }
 
-    public static BaseController openScene(Window parent, String newFxml, StageStyle stageStyle) {
+    public static BaseController openScene(Window parent, String fxml) {
         try {
             Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
             newStage.initModality(Modality.NONE);
             newStage.initStyle(StageStyle.DECORATED);
             newStage.initOwner(null);
-            BaseController controller = initScene(newStage, newFxml, stageStyle);
+            BaseController controller = initScene(newStage, fxml, StageStyle.DECORATED);
             if (controller != null) {
                 closeWindow(parent);
             }
@@ -291,10 +293,6 @@ public class WindowTools {
             MyBoxLog.error(e.toString());
             return null;
         }
-    }
-
-    public static BaseController openScene(Window parent, String fxml) {
-        return openScene(parent, fxml, null);
     }
 
     public static void reloadAll() {

@@ -500,7 +500,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
                 }
                 try {
                     ImageHistoriesController controller = (ImageHistoriesController) object;
-                    if (!file.equals(controller.sourceFile)) {
+                    if (!controller.isShowing() || !file.equals(controller.sourceFile)) {
                         continue;
                     }
                     controller.refreshAction();

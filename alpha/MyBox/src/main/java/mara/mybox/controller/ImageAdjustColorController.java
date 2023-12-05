@@ -48,8 +48,10 @@ public class ImageAdjustColorController extends BasePixelsController {
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             operation = message("AdjustColor");
-            opInfo = message(optionsController.colorActionType.name()) + ": "
-                    + optionsController.colorValue;
+            opInfo = message(optionsController.colorActionType.name());
+            if (optionsController.needValue()) {
+                opInfo += ": " + optionsController.colorValue;
+            }
             PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, inScope,
                     optionsController.colorOperationType,

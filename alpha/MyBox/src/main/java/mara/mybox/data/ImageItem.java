@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
 import javax.imageio.ImageIO;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -126,7 +126,7 @@ public class ImageItem {
         static
      */
     public static List<ImageItem> predefined() {
-        return predefined(Languages.getLangName());
+        return predefined(AppVariables.CurrentLangName);
     }
 
     public static List<ImageItem> predefined(String lang) {
@@ -171,7 +171,7 @@ public class ImageItem {
                     "Random", "Recover", "Refresh", "Repeat",
                     "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Shape", "Style",
                     "SVG", "Tips", "Tree", "Typesetting",
-                    "Undo", "Verify", "View", "Window"));
+                    "Undo", "Verify", "View", "Window", "Withdraw"));
             for (String name : icons) {
                 item = new ImageItem()
                         .setName("icon" + name + ".png")

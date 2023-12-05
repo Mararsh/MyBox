@@ -45,6 +45,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlSelectPixels extends ControlSelectPixels_Save {
 
+    protected boolean needFixSize;
+
     public ControlSelectPixels() {
         TipsLabelKey = "ScopeTips";
     }
@@ -82,6 +84,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
             popShapeMenu = true;
             supportPath = false;
             shapeStyle = null;
+            needFixSize = true;
             showNotify = new SimpleBooleanProperty(false);
 
             scopeTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -144,6 +147,16 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                         }
                     } catch (Exception e) {
                         ValidationTools.setEditorBadStyle(opacitySelector);
+                    }
+                }
+            });
+
+            clearDataWhenLoadImageCheck.setSelected(UserConfig.getBoolean(baseName + "ClearData", true));
+            clearDataWhenLoadImageCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    if (!isSettingValues) {
+                        UserConfig.setBoolean(baseName + "ClearData", clearDataWhenLoadImageCheck.isSelected());
                     }
                 }
             });
@@ -322,10 +335,29 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
     @Override
     public boolean afterImageLoaded() {
         if (super.afterImageLoaded()) {
+            if (clearDataWhenLoadImageCheck.isSelected()) {
+
+                pointsController.isSettingValues = true;
+                pointsController.tableData.clear();
+                pointsController.isSettingValues = false;
+
+                isSettingValues = true;
+                colorsList.getItems().clear();
+                isSettingValues = false;
+            }
+
             applyScope();
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void fitView() {
+        if (needFixSize) {
+            paneSize();
+            needFixSize = false;
         }
     }
 

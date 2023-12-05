@@ -29,7 +29,7 @@
                 </Button>
             </children>
         </FlowPane>
-      <ListView fx:id="modeList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+      <ListView fx:id="modeList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
         <FlowPane fx:id="opacityPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
             <children>
                 <Label text="%Opacity">

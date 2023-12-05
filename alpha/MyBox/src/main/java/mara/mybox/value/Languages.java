@@ -70,27 +70,25 @@ public class Languages {
     }
 
     public static String embedLangName() {
-        String lang = "en";
         try {
-            lang = Locale.getDefault().getLanguage().toLowerCase();
-            if (!lang.equals("zh") && !lang.startsWith("zh_")) {
-                lang = "en";
+            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            if (lang.equals("zh") || lang.startsWith("zh_")) {
+                return "zh";
             }
         } catch (Exception e) {
         }
-        return lang;
+        return "en";
     }
 
-    public static String preferredEmbedLang() {
-        String lang = CurrentLangName;
+    public static String embedFileLang() {
         try {
-            if (!lang.equals("zh") && !lang.startsWith("zh_")) {
-                lang = "en";
+            String lang = CurrentLangName;
+            if (lang.equals("zh") || lang.startsWith("zh_")) {
+                return "zh";
             }
         } catch (Exception e) {
-            lang = "en";
         }
-        return lang;
+        return "en";
     }
 
     public static ResourceBundle getBundle() {

@@ -56,7 +56,7 @@ public class BaseImageController extends BaseImageController_Actions {
             loadWidth = defaultLoadWidth = -1;
             frameIndex = framesNumber = 0;
             sizeChangeAware = 1;
-            zoomStep = xZoomStep = yZoomStep = 40;
+            zoomStep = xZoomStep = yZoomStep = 20;
             if (maskPane != null) {
                 if (borderLine == null) {
                     borderLine = new Rectangle();

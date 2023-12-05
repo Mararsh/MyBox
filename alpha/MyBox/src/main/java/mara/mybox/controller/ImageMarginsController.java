@@ -76,6 +76,10 @@ public class ImageMarginsController extends BaseImageEditController {
 
             colorSetController.init(this, baseName + "Color");
 
+            margin = UserConfig.getInt(baseName + "MarginsWidth", 20);
+            if (margin <= 0) {
+                margin = 20;
+            }
             widthSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {

@@ -114,7 +114,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Matting:
                     tabPane.getTabs().setAll(areaTab, matchTab);
                     areaBox.getChildren().setAll(eightNeighborCheck, pointsBox);
-                    opBox.getChildren().setAll(shapeButton, withdrawButton);
+                    opBox.getChildren().setAll(shapeButton, withdrawButton, clearDataWhenLoadImageCheck);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     addPointCheck.setSelected(true);
@@ -160,14 +160,14 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Polygon:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(pointsBox);
-                    opBox.getChildren().setAll(shapeButton, withdrawButton, pickColorBox, addPointCheck);
+                    opBox.getChildren().setAll(shapeButton, withdrawButton, pickColorBox, addPointCheck, clearDataWhenLoadImageCheck);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     break;
 
                 case Color:
                     tabPane.getTabs().setAll(colorsTab, matchTab);
-                    opBox.getChildren().setAll(pickColorBox);
+                    opBox.getChildren().setAll(pickColorBox, clearDataWhenLoadImageCheck);
                     showLeftPane();
                     break;
 
@@ -217,7 +217,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
     }
 
     @Override
-    public synchronized void showScope() {
+    public void showScope() {
         if (scope.getScopeType() == ImageScope.ScopeType.Outline) {
             indicateOutline();
             return;

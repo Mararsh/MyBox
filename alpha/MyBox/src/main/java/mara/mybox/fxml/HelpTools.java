@@ -35,7 +35,7 @@ public class HelpTools {
 
     public static void readMe(BaseController controller) {
         try {
-            File htmlFile = makeReadMe(Languages.preferredEmbedLang());
+            File htmlFile = makeReadMe(Languages.embedFileLang());
             if (htmlFile == null) {
                 return;
             }
@@ -46,11 +46,11 @@ public class HelpTools {
         }
     }
 
-    public static File makeReadMe(String lang) {
+    public static File makeReadMe(String fileLang) {
         try {
-            File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme_" + lang + ".html");
-            File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
-                    "doc", "README-" + lang + ".md", true);
+            File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme_" + fileLang + ".html");
+            File mdFile = FxFileTools.getInternalFile("/doc/" + fileLang + "/README.md",
+                    "doc", "README-" + fileLang + ".md", true);
             String html = MarkdownTools.md2html(MarkdownTools.htmlOptions(), mdFile, HtmlStyles.DefaultStyle);
             if (html == null) {
                 return null;
@@ -191,7 +191,7 @@ public class HelpTools {
 
     public static File aboutData2D() {
         try {
-            String lang = Languages.preferredEmbedLang();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_data2d_" + lang + ".html",
                     "doc", "mybox_about_data2d_" + lang + ".html");
             return file;
@@ -203,7 +203,7 @@ public class HelpTools {
 
     public static File aboutGroupingRows() {
         try {
-            String lang = Languages.preferredEmbedLang();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_grouping_" + lang + ".html",
                     "doc", "mybox_about_grouping_" + lang + ".html");
             return file;
@@ -215,7 +215,7 @@ public class HelpTools {
 
     public static File aboutRowExpression() {
         try {
-            String lang = Languages.preferredEmbedLang();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_row_expression_" + lang + ".html",
                     "doc", "mybox_about_row_expression_" + lang + ".html");
             return file;
@@ -227,7 +227,7 @@ public class HelpTools {
 
     public static File aboutTreeInformation() {
         try {
-            String lang = Languages.preferredEmbedLang();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_tree_" + lang + ".html",
                     "doc", "mybox_about_tree_" + lang + ".html");
             return file;
@@ -243,7 +243,7 @@ public class HelpTools {
 
             @Override
             protected boolean handle() {
-                htmFile = imageStories(this, false, Languages.preferredEmbedLang());
+                htmFile = imageStories(this, false, AppVariables.CurrentLangName);
                 return htmFile != null && htmFile.exists();
             }
 

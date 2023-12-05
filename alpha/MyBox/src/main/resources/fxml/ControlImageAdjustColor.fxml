@@ -163,7 +163,7 @@ License:    Apache License Version 2.0
             </FlowPane>
          </children>
       </VBox>
-              <FlowPane hgap="5.0" prefWrapLength="80.0" vgap="5.0">
+              <FlowPane fx:id="valuePane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                   <children>
                       <ComboBox fx:id="valueSelector" editable="true" prefWidth="100.0" />
                       <Label fx:id="colorUnit" />

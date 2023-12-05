@@ -49,9 +49,9 @@
                                     </image>
                                 </ImageView>
                             </graphic>
-                     <toggleGroup>
+                            <toggleGroup>
                                 <ToggleGroup fx:id="typeGroup" />
-                     </toggleGroup>
+                            </toggleGroup>
                         </RadioButton>
                         <RadioButton fx:id="polylineRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                             <graphic>
@@ -136,7 +136,7 @@
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="106.0" spacing="5.0">
-               <children>
+                    <children>
                         <RadioButton fx:id="lineRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
@@ -155,63 +155,63 @@
                                 </ImageView>
                             </graphic>
                         </RadioButton>
-               </children>
+                    </children>
                 </HBox>
             </children>
         </VBox>
         <FlowPane fx:id="opPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
             <children>
-            <Button fx:id="operationsButton" mnemonicParsing="false" onAction="#showShapeMenu" onMouseEntered="#popShapeMenu">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconOperation.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-                <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
+                <Button fx:id="operationsButton" mnemonicParsing="false" onAction="#showShapeMenu" onMouseEntered="#popShapeMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconUndo.png" />
+                                <Image url="@../buttons/Red/iconOperation.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-            <CheckBox fx:id="anchorCheck" mnemonicParsing="false">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconAnchor.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-            <CheckBox fx:id="popAnchorMenuCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconMenu.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-            <CheckBox fx:id="addPointCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconNewItem.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
+                <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconWithdraw.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <CheckBox fx:id="anchorCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconAnchor.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="popAnchorMenuCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMenu.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="addPointCheck" layoutX="92.0" layoutY="14.0" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconNewItem.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
             </children>
         </FlowPane>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
                 <Tab fx:id="shapeTab" text="%Shape">
-               <content>
+                    <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                             <children>
                                 <fx:include fx:id="parameters" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlShapeParameters.fxml" VBox.vgrow="ALWAYS" />
@@ -220,7 +220,7 @@
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                         </VBox>
-               </content>
+                    </content>
                 </Tab>
                 <Tab fx:id="styleTab" text="%Style">
                     <content>

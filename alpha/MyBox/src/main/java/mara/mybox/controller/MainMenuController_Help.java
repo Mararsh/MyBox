@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -18,7 +19,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void Overview(ActionEvent event) {
-        String lang = Languages.preferredEmbedLang();
+        String lang = Languages.embedFileLang();
         File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Overview-" + lang + ".pdf",
                 "doc", "MyBox-Overview-" + lang + ".pdf");
         if (file != null && file.exists()) {
@@ -48,7 +49,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void InterfaceTips(ActionEvent event) {
-        openHtml(HelpTools.makeInterfaceTips(Languages.preferredEmbedLang()));
+        openHtml(HelpTools.makeInterfaceTips(AppVariables.CurrentLangName));
     }
 
     @FXML
@@ -93,7 +94,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void SomeLinks(ActionEvent event) {
-        openHtml(HelpTools.usefulLinks(Languages.preferredEmbedLang()));
+        openHtml(HelpTools.usefulLinks(AppVariables.CurrentLangName));
     }
 
 }

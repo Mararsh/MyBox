@@ -152,7 +152,6 @@ public class BaseShapeEditController extends BaseImageEditController {
             }
             initStroke();
             initShape();
-            fitSize();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

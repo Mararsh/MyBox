@@ -40,7 +40,7 @@ public class ControlImageAdjustColor extends BaseController {
     @FXML
     protected Label colorUnit;
     @FXML
-    protected FlowPane opPane;
+    protected FlowPane opPane, valuePane;
 
     @Override
     public void initControls() {
@@ -195,13 +195,15 @@ public class ControlImageAdjustColor extends BaseController {
                 colorActionType = ColorActionType.Invert;
             }
 
+            valuePane.setVisible(needValue());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     private boolean checkValue() {
-        if (isSettingValues) {
+        if (isSettingValues || !needValue()) {
             return true;
         }
         int v = max + 1;
@@ -217,6 +219,12 @@ public class ControlImageAdjustColor extends BaseController {
             ValidationTools.setEditorBadStyle(valueSelector);
             return false;
         }
+    }
+
+    public boolean needValue() {
+        return setRadio.isSelected()
+                || plusRadio.isSelected()
+                || minusRadio.isSelected();
     }
 
     public OperationType getColorOperationType() {

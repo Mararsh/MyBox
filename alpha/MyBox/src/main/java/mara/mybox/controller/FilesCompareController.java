@@ -26,7 +26,6 @@ import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MessageDigestTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -184,7 +183,7 @@ public class FilesCompareController extends BaseController {
     public void dmHelp() {
         try {
             String link;
-            switch (Languages.preferredEmbedLang()) {
+            switch (AppVariables.CurrentLangName) {
                 case "zh":
                     link = "https://baike.baidu.com/item/%E6%95%B0%E5%AD%97%E6%91%98%E8%A6%81/4069118";
                     break;

@@ -227,7 +227,7 @@ public class ControlImagesBlend extends BaseController {
         }
         if (overlay == null) {
             overlay = FxImageTools.createImage(
-                    (int) (baseImage.getWidth() * 3 / 4), (int) (baseImage.getHeight() * 3 / 4),
+                    (int) (baseImage.getWidth()), (int) (baseImage.getHeight()),
                     color);
         }
         demo(baseImage, overlay);
