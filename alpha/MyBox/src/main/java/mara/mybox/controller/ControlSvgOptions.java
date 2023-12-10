@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
@@ -202,12 +203,15 @@ public class ControlSvgOptions extends BaseController {
         loadDoc(doc, focusedNode);
     }
 
-    public Document toSVG(boolean bgColor) {
+    public Document toSVG(FxTask task, boolean bgColor) {
         try {
             if (doc == null) {
                 return null;
             }
-            Document svgDoc = SvgTools.focus(doc, focusedNode, bgOpacity);
+            Document svgDoc = SvgTools.focus(task, doc, focusedNode, bgOpacity);
+            if (svgDoc == null || (task != null && !task.isWorking())) {
+                return null;
+            }
             Element svgNode = XmlTools.findName(svgDoc, "svg", 0);
             if (width > 0) {
                 svgNode.setAttribute("width", width + "");
@@ -237,16 +241,16 @@ public class ControlSvgOptions extends BaseController {
         }
     }
 
-    public String toXML() {
-        return XmlTools.transform(toSVG(true));
+    public String toXML(FxTask task) {
+        return XmlTools.transform(toSVG(task, true));
     }
 
-    public File toImage() {
-        return SvgTools.docToImage(this, toSVG(true), width, height, viewBox);
+    public File toImage(FxTask task) {
+        return SvgTools.docToImage(task, this, toSVG(task, true), width, height, viewBox);
     }
 
     public File toPDF() {
-        return SvgTools.docToPDF(this, toSVG(true), width, height, viewBox);
+        return SvgTools.docToPDF(task, this, toSVG(task, true), width, height, viewBox);
     }
 
 }

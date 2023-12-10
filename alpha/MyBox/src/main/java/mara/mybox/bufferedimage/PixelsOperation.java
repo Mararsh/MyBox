@@ -9,6 +9,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Colors;
 
 /**
@@ -34,6 +35,8 @@ public abstract class PixelsOperation {
     protected Color[] thisLine, nextLine;
     protected int thisLineY;
     protected int imageWidth, imageHeight;
+
+    protected FxTask task;
 
     public enum OperationType {
         Smooth, Denoise, Blur, Sharpen, Clarity, Emboss, EdgeDetect,
@@ -85,7 +88,7 @@ public abstract class PixelsOperation {
 
     public Image operateFxImage() {
         BufferedImage target = operate();
-        if (target == null) {
+        if (target == null || taskInvalid()) {
             return null;
         }
         return SwingFXUtils.toFXImage(target, null);
@@ -109,7 +112,13 @@ public abstract class PixelsOperation {
             Color newColor;
             int pixel;
             for (int y = 0; y < image.getHeight(); y++) {
+                if (taskInvalid()) {
+                    return null;
+                }
                 for (int x = 0; x < image.getWidth(); x++) {
+                    if (taskInvalid()) {
+                        return null;
+                    }
                     pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
                     if (pixel == 0 && skipTransparent) {
@@ -164,11 +173,17 @@ public abstract class PixelsOperation {
             if (excluded) {
                 for (int y = 0; y < imageHeight; y++) {
                     for (int x = 0; x < imageWidth; x++) {
+                        if (taskInvalid()) {
+                            return null;
+                        }
                         operatePixel(target, x, y);
                     }
                 }
             } else {
                 target = image.getSubimage(0, 0, imageWidth, imageHeight);
+            }
+            if (taskInvalid()) {
+                return null;
             }
             List<IntPoint> points = scope.getPoints();
             if (points == null || points.isEmpty()) {
@@ -180,6 +195,9 @@ public abstract class PixelsOperation {
             boolean eightNeighbor = scope.isEightNeighbor();
             int x, y;
             for (IntPoint point : points) {
+                if (taskInvalid()) {
+                    return null;
+                }
                 x = point.getX();
                 y = point.getY();
                 if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight) {
@@ -188,6 +206,9 @@ public abstract class PixelsOperation {
                 Color startColor = new Color(image.getRGB(x, y), true);
                 queue.add(point);
                 while (!queue.isEmpty()) {
+                    if (taskInvalid()) {
+                        return null;
+                    }
                     IntPoint p = queue.remove();
                     x = p.getX();
                     y = p.getY();
@@ -329,6 +350,10 @@ public abstract class PixelsOperation {
     // SubClass should implement this
     protected Color operateColor(Color color) {
         return color;
+    }
+
+    public boolean taskInvalid() {
+        return task != null && !task.isWorking();
     }
 
     /*
@@ -541,6 +566,15 @@ public abstract class PixelsOperation {
 
     public PixelsOperation setExcludeScope(boolean excludeScope) {
         this.excludeScope = excludeScope;
+        return this;
+    }
+
+    public FxTask getTask() {
+        return task;
+    }
+
+    public PixelsOperation setTask(FxTask task) {
+        this.task = task;
         return this;
     }
 

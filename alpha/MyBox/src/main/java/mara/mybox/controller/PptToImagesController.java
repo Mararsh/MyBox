@@ -61,13 +61,13 @@ public class PptToImagesController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        try ( SlideShow ppt = SlideShowFactory.create(srcFile)) {
+        try (SlideShow ppt = SlideShowFactory.create(srcFile)) {
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;
             int index = 0;
             for (Slide slide : slides) {
-                if (task == null || task.isCancelled()) {
+                if (task == null || !task.isWorking()) {
                     return message("Cancelled");
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -76,13 +76,15 @@ public class PptToImagesController extends BaseBatchFileController {
                     g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
-                BufferedImage targetImage = ImageConvertTools.convertColorSpace(slideImage, formatController.attributes);
-                if (task == null || task.isCancelled()) {
+                BufferedImage targetImage = ImageConvertTools.convertColorSpace(task,
+                        slideImage, formatController.attributes);
+                if (task == null || !task.isWorking()) {
                     return message("Cancelled");
                 }
                 if (targetImage != null) {
                     targetFile = makeTargetFile(srcFile, ++index, targetPath);
-                    if (ImageFileWriters.writeImageFile(targetImage, formatController.attributes, targetFile.getAbsolutePath())) {
+                    if (ImageFileWriters.writeImageFile(task,
+                            targetImage, formatController.attributes, targetFile.getAbsolutePath())) {
                         targetFileGenerated(targetFile);
                     }
                 }

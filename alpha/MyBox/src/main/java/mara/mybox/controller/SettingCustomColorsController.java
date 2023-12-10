@@ -73,7 +73,7 @@ public class SettingCustomColorsController extends BaseChildController {
 
     public void updateView() {
         try {
-            Image image = StyleTools.makeImage("iconAdd.png", darkColor, lightColor);
+            Image image = StyleTools.makeImage(null, "iconAdd.png", darkColor, lightColor);
             if (image != null) {
                 exampleView.setImage(image);
             }

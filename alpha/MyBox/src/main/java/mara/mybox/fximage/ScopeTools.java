@@ -7,6 +7,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -15,7 +16,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ScopeTools {
 
-    public static Image selectedScope(Image srcImage, ImageScope scope, Color bgColor,
+    public static Image selectedScope(FxTask task, Image srcImage, ImageScope scope, Color bgColor,
             boolean cutMargins, boolean exclude, boolean ignoreTransparent) {
         try {
             if (scope == null) {
@@ -25,10 +26,11 @@ public class ScopeTools {
                         PixelsOperation.OperationType.SelectPixels)
                         .setColorPara1(bgColor)
                         .setExcludeScope(exclude)
-                        .setSkipTransparent(ignoreTransparent);
+                        .setSkipTransparent(ignoreTransparent)
+                        .setTask(task);
                 Image scopeImage = pixelsOperation.operateFxImage();
                 if (cutMargins) {
-                    return MarginTools.cutMarginsByColor(scopeImage,
+                    return MarginTools.cutMarginsByColor(task, scopeImage,
                             ColorConvertTools.converColor(bgColor),
                             0, true, true, true, true);
                 } else {
@@ -41,14 +43,15 @@ public class ScopeTools {
         }
     }
 
-    public static Image maskScope(Image srcImage, ImageScope scope,
+    public static Image maskScope(FxTask task, Image srcImage, ImageScope scope,
             boolean exclude, boolean ignoreTransparent) {
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     srcImage, scope,
                     PixelsOperation.OperationType.ShowScope)
                     .setExcludeScope(exclude)
-                    .setSkipTransparent(ignoreTransparent);
+                    .setSkipTransparent(ignoreTransparent)
+                    .setTask(task);
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
             MyBoxLog.debug(e);

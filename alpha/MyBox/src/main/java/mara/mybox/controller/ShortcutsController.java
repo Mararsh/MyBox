@@ -19,10 +19,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import static mara.mybox.fxml.HelpTools.imageStories;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleData;
@@ -248,7 +248,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
     }
 
     public void makeDocuments(String lang) {
-        task = new SingletonTask<Void>(this) {
+        task = new FxTask<Void>(this) {
             private File path;
 
             @Override
@@ -264,7 +264,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
 
                     baseTitle = message(lang, "Shortcuts");
                     makeList(lang);
-                    StringTable table = makeStringTable();
+                    StringTable table = makeStringTable(this);
                     String html = HtmlWriteTools.html(baseTitle, HtmlStyles.DefaultStyle, table.body());
                     file = new File(path, "mybox_shortcuts_" + lang + ".html");
                     file = TextFileTools.writeFile(file, html);
@@ -285,27 +285,27 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     boolean isZh = "zh".equals(lang);
                     file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
                             "data", "ColorsArtPaints.csv", isZh);
-                    List<ColorData> colors = ColorDataTools.readCSV(file, true);
+                    List<ColorData> colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtPaints"), "art_paints");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv",
                             "data", "ColorsWeb.csv", isZh);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "WebCommonColors"), "web");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsChinese.csv",
                             "data", "ColorsChinese.csv", isZh);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ChineseTraditionalColors"), "chinese");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsJapanese.csv",
                             "data", "ColorsJapanese.csv", isZh);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "JapaneseTraditionalColors"), "japanese");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsColorhexa.csv",
                             "data", "ColorsColorhexa.csv", isZh);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "HexaColors"), "colorhexa");
 
                     colors = new ArrayList<>();
@@ -320,12 +320,12 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + lang + ".csv",
                             "data", "ColorsRYB12_" + lang + ".csv", isZh);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtHuesWheel") + "-" + message(lang, "Colors12"), "ryb12");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
                             "data", "ColorsRYB24_" + lang + ".csv", isZh);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtHuesWheel") + "-" + message(" + lang + ", "Colors24"), "ryb24");
 
                     colors = PaletteTools.artHuesWheel(lang, 1);
@@ -352,6 +352,9 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
 
             protected void colorsDoc(String lang, List<ColorData> colors, String title, String name) {
                 try {
+                    if (colors == null || colors.isEmpty()) {
+                        return;
+                    }
                     List<String> columns = new ArrayList<>();
                     columns.addAll(Arrays.asList(message(lang, "Name"), message(lang, "Color"),
                             "HSBA", message(lang, "RGBInvertColor"), message(lang, "RGBInvertColor") + "-" + message(lang, "Value"),
@@ -377,9 +380,15 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
 
             protected void makeDoc(String lang, List<ColorData> colors, List<String> columns, String title, String name) {
                 try {
+                    if (colors == null || colors.isEmpty()) {
+                        return;
+                    }
                     colors.addAll(PaletteTools.speicalColors(lang));
                     StringTable table = new StringTable(columns, title);
                     for (ColorData c : colors) {
+                        if (!isWorking()) {
+                            return;
+                        }
                         if (c.needConvert()) {
                             c.convert();
                         }

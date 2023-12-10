@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -20,6 +21,7 @@ public class ListKMeans<T> {
     protected int k = 1, maxIteration = 10000, loopCount;
     protected long cost;
     protected Map<T, T> dataMap;
+    protected FxTask task;
 
     public ListKMeans() {
     }
@@ -42,6 +44,9 @@ public class ListKMeans<T> {
             }
             Random random = new Random();
             while (centers.size() < k) {
+                if (task != null && !task.isWorking()) {
+                    return;
+                }
                 int index = random.nextInt(dataSize);
                 T d = data.get(index);
                 if (!centers.contains(d)) {
@@ -95,14 +100,23 @@ public class ListKMeans<T> {
         try {
 //            MyBoxLog.console("data: " + data.size() + " k:" + k + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
             while (true) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 for (int i = 0; i < k; ++i) {
                     clusters[i] = new ArrayList<>();
                 }
                 for (int i = 0; i < dataSize; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     T p = data.get(i);
                     double min = Double.MAX_VALUE;
                     int index = 0;
                     for (int j = 0; j < centers.size(); ++j) {
+                        if (task != null && !task.isWorking()) {
+                            return false;
+                        }
                         T center = centers.get(j);
                         double distance = distance(center, p);
                         if (distance < min) {
@@ -114,6 +128,9 @@ public class ListKMeans<T> {
                 }
                 boolean centerchange = false;
                 for (int i = 0; i < k; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     T newCenter = calculateCenters(clusters[i]);
                     T oldCenter = centers.get(i);
                     if (!equal(newCenter, oldCenter)) {
@@ -141,9 +158,15 @@ public class ListKMeans<T> {
         }
         dataMap = new HashMap<>();
         for (int i = 0; i < clusters.length; ++i) {
+            if (task != null && !task.isWorking()) {
+                return false;
+            }
             List<Integer> cluster = clusters[i];
             T centerData = centers.get(i);
             for (Integer index : cluster) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 dataMap.put(data.get(index), centerData);
             }
         }
@@ -220,6 +243,15 @@ public class ListKMeans<T> {
 
     public void setDataMap(Map<T, T> dataMap) {
         this.dataMap = dataMap;
+    }
+
+    public FxTask getTask() {
+        return task;
+    }
+
+    public ListKMeans setTask(FxTask task) {
+        this.task = task;
+        return this;
     }
 
 }

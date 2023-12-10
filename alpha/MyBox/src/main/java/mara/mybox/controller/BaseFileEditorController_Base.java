@@ -18,6 +18,7 @@ import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.LongRange;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -36,6 +37,7 @@ public abstract class BaseFileEditorController_Base extends BaseFileController {
     protected String lineBreakValue;
     protected Timer autoSaveTimer;
     protected LongRange linesRange, objectsRange;
+    protected FxTask pairTask;
 
     protected enum Action {
         OpenFile, LoadPage, FindReplace, FindFirst, FindNext, FindPrevious, FindLast, Replace, ReplaceAll,

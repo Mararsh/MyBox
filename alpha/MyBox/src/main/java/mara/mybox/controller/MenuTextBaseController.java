@@ -14,7 +14,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 
@@ -150,7 +150,7 @@ public class MenuTextBaseController extends MenuController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

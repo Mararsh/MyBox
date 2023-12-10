@@ -15,6 +15,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -23,11 +24,12 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class MarginTools {
 
-    public static Image cutTransparentMargins(Image image) {
-        return cutMarginsByColor(image, Color.TRANSPARENT, 10, true, true, true, true);
+    public static Image cutTransparentMargins(FxTask task, Image image) {
+        return cutMarginsByColor(task, image, Color.TRANSPARENT, 10, true, true, true, true);
     }
 
-    public static Image cutMarginsByWidth(Image image, int MarginWidth, boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
+    public static Image cutMarginsByWidth(FxTask task, Image image,
+            int MarginWidth, boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             int imageWidth = (int) image.getWidth();
             int imageHeight = (int) image.getHeight();
@@ -47,14 +49,14 @@ public class MarginTools {
             if (cutRight) {
                 right -= MarginWidth;
             }
-            return CropTools.cropOutsideFx(image, left, top, right, bottom);
+            return CropTools.cropOutsideFx(task, image, left, top, right, bottom);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static Image cutMarginsByColor(Image image, Color mColor, int colorDistance,
+    public static Image cutMarginsByColor(FxTask task, Image image, Color mColor, int colorDistance,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             int width = (int) image.getWidth();
@@ -67,8 +69,14 @@ public class MarginTools {
             int distance2 = colorDistance * colorDistance;
             if (cutTop) {
                 for (int j = 0; j < height; ++j) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     boolean notMatch = false;
                     for (int i = 0; i < width; ++i) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (!FxColorTools.isColorMatchSquare(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -86,8 +94,14 @@ public class MarginTools {
             }
             if (cutBottom) {
                 for (int j = height - 1; j >= 0; --j) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     boolean notMatch = false;
                     for (int i = 0; i < width; ++i) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (!FxColorTools.isColorMatchSquare(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -105,8 +119,14 @@ public class MarginTools {
             }
             if (cutLeft) {
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     boolean notMatch = false;
                     for (int j = 0; j < height; ++j) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (!FxColorTools.isColorMatchSquare(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -124,8 +144,14 @@ public class MarginTools {
             }
             if (cutRight) {
                 for (int i = width - 1; i >= 0; --i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     boolean notMatch = false;
                     for (int j = 0; j < height; ++j) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (!FxColorTools.isColorMatchSquare(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -142,14 +168,14 @@ public class MarginTools {
                 return null;
             }
             //            MyBoxLog.debug(left + " " + top + " " + right + " " + bottom);
-            return CropTools.cropOutsideFx(image, left, top, right, bottom);
+            return CropTools.cropOutsideFx(task, image, left, top, right, bottom);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static Image dragMarginsFx(Image image, Color color, DoubleRectangle rect) {
+    public static Image dragMarginsFx(FxTask task, Image image, Color color, DoubleRectangle rect) {
         try {
             if (image == null || rect == null) {
                 return image;
@@ -166,7 +192,13 @@ public class MarginTools {
             int ix;
             int iy;
             for (int j = 0; j < rheight; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < rwidth; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     ix = i + rx;
                     iy = j + ry;
                     if (ix >= 0 && ix < iwidth && iy >= 0 && iy < iheight) {
@@ -183,20 +215,20 @@ public class MarginTools {
         }
     }
 
-    public static Image addMarginsFx(Image image, Color color, int MarginWidth,
+    public static Image addMarginsFx(FxTask task, Image image, Color color, int MarginWidth,
             boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         if (image == null || MarginWidth <= 0) {
             return image;
         }
 
-        return addMarginsFx(image, color,
+        return addMarginsFx(task, image, color,
                 addTop ? MarginWidth : -1,
                 addBottom ? MarginWidth : -1,
                 addLeft ? MarginWidth : -1,
                 addRight ? MarginWidth : -1);
     }
 
-    public static Image addMarginsFx(Image image, Color color,
+    public static Image addMarginsFx(FxTask task, Image image, Color color,
             int top, int bottom, int left, int right) {
         try {
             if (image == null) {
@@ -233,28 +265,52 @@ public class MarginTools {
 //            MyBoxLog.debug(x1 + "  " + y1);
             if (left > 0) {
                 for (int x = 0; x < left; x++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int y = 0; y < totalHegiht; y++) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
             if (right > 0) {
                 for (int x = totalWidth - 1; x > totalWidth - right - 1; x--) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int y = 0; y < totalHegiht; y++) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
             if (top > 0) {
                 for (int y = 0; y < top; y++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int x = 0; x < totalWidth; x++) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
             if (bottom > 0) {
                 for (int y = totalHegiht - 1; y > totalHegiht - bottom - 1; y--) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int x = 0; x < totalWidth; x++) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         pixelWriter.setColor(x, y, color);
                     }
                 }
@@ -314,23 +370,32 @@ public class MarginTools {
         }
     }
 
-    public static Image blurMarginsNoAlpha(Image image, int blurWidth,
+    public static Image blurMarginsNoAlpha(FxTask task, Image image, int blurWidth,
             boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         if (image == null || blurWidth <= 0) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.MarginTools.blurMarginsNoAlpha(source, blurWidth, blurTop, blurBottom, blurLeft, blurRight);
+        BufferedImage target = mara.mybox.bufferedimage.MarginTools.blurMarginsNoAlpha(task, source,
+                blurWidth, blurTop, blurBottom, blurLeft, blurRight);
+        if (target == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
-    public static Image blurMarginsAlpha(Image image, int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
+    public static Image blurMarginsAlpha(FxTask task, Image image,
+            int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         if (image == null || blurWidth <= 0) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.MarginTools.blurMarginsAlpha(source, blurWidth, blurTop, blurBottom, blurLeft, blurRight);
+        BufferedImage target = mara.mybox.bufferedimage.MarginTools.blurMarginsAlpha(task, source,
+                blurWidth, blurTop, blurBottom, blurLeft, blurRight);
+        if (target == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

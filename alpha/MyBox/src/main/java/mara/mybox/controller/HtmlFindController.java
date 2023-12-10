@@ -19,7 +19,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -190,7 +190,7 @@ public class HtmlFindController extends WebAddressController {
         TableStringValues.add("HtmlFindHistories", string);
         reset();
         isQuerying = true;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private StringBuilder results;
 

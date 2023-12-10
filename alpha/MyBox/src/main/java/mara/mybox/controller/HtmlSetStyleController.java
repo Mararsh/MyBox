@@ -56,7 +56,9 @@ public class HtmlSetStyleController extends BaseBatchHtmlController {
 
     @Override
     public String covertHtml(File srcFile, Charset charset) {
-        return HtmlWriteTools.setStyle(srcFile, charset, css, ignoreCheck.isSelected());
+        return HtmlWriteTools.setStyle(task, srcFile,
+                charset, css, ignoreCheck.isSelected());
+
     }
 
 }

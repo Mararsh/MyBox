@@ -12,11 +12,6 @@ import mara.mybox.value.Fxmls;
 public abstract class MainMenuController_Image extends MainMenuController_Document {
 
     @FXML
-    protected void openImageManufacture(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureFxml);
-    }
-
-    @FXML
     protected void openImageEditor(ActionEvent event) {
         loadScene(Fxmls.ImageEditorFxml);
     }

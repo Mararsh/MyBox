@@ -139,6 +139,7 @@ public class Fxmls {
     public static final String ImageRotateFxml = "/fxml/ImageRotate.fxml";
     public static final String ImageShearFxml = "/fxml/ImageShear.fxml";
     public static final String ImageRoundFxml = "/fxml/ImageRound.fxml";
+    public static final String ImageShadowFxml = "/fxml/ImageShadow.fxml";
     public static final String ImageEraserFxml = "/fxml/ImageEraser.fxml";
     public static final String ImageSmoothFxml = "/fxml/ImageSmooth.fxml";
     public static final String ImageSharpenFxml = "/fxml/ImageSharpen.fxml";
@@ -168,26 +169,6 @@ public class Fxmls {
     public static final String ImageTextBatchFxml = "/fxml/ImageTextBatch.fxml";
     public static final String ImageSharpenBatchFxml = "/fxml/ImageSharpenBatch.fxml";
 
-    public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
-    public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
-    public static final String ImageManufactureCopyFxml = "/fxml/ImageManufactureCopy.fxml";
-    public static final String ImageManufactureClipboardFxml = "/fxml/ImageManufactureClipboard.fxml";
-    public static final String ImageManufacturePaletteFxml = "/fxml/ImageManufacturePalette.fxml";
-    public static final String ImageManufactureHistoriesFxml = "/fxml/ImageManufactureHistories.fxml";
-    public static final String ImageManufactureScopeSavedFxml = "/fxml/ImageManufactureScopeSaved.fxml";
-    public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
-    public static final String ImageManufactureScaleFxml = "/fxml/ImageManufactureScale.fxml";
-    public static final String ImageManufactureCropFxml = "/fxml/ImageManufactureCrop.fxml";
-    public static final String ImageManufactureColorFxml = "/fxml/ImageManufactureColor.fxml";
-    public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
-    public static final String ImageManufactureEnhancementFxml = "/fxml/ImageManufactureEnhancement.fxml";
-    public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
-    public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
-    public static final String ImageManufactureShapeFxml = "/fxml/ImageManufactureShape.fxml";
-    public static final String ImageManufactureEliminateFxml = "/fxml/ImageManufactureEliminate.fxml";
-    public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
-    public static final String ImageManufactureTransformFxml = "/fxml/ImageManufactureTransform.fxml";
-    public static final String ImageManufactureMarginsFxml = "/fxml/ImageManufactureMargins.fxml";
     public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
     public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
     public static final String ImageManufactureBatchPasteFxml = "/fxml/ImageManufactureBatchPaste.fxml";

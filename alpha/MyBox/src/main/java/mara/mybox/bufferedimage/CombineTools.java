@@ -10,6 +10,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -19,7 +20,7 @@ import mara.mybox.value.AppVariables;
  */
 public class CombineTools {
 
-    public static Image combineSingleRow(ImageCombine imageCombine, List<ImageInformation> images,
+    public static Image combineSingleRow(FxTask task, ImageCombine imageCombine, List<ImageInformation> images,
             boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
@@ -34,6 +35,9 @@ public class CombineTools {
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                 for (ImageInformation imageInfo : images) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageHeight = (int) imageInfo.getPickedHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
@@ -41,6 +45,9 @@ public class CombineTools {
                 }
             } else if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation imageInfo : images) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageHeight = (int) imageInfo.getPickedHeight();
                     if (imageHeight < minHeight) {
                         minHeight = imageHeight;
@@ -54,6 +61,9 @@ public class CombineTools {
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
             for (int i = 0; i < images.size(); i++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 ImageInformation imageInfo = images.get(i);
                 imageWidth = (int) imageInfo.getPickedWidth();
                 imageHeight = (int) imageInfo.getPickedHeight();
@@ -87,7 +97,7 @@ public class CombineTools {
                 totalWidth += imageCombine.getMarginsValue();
                 totalHeight += 2 * imageCombine.getMarginsValue();
             }
-            Image newImage = combineImages(images, (int) totalWidth, (int) totalHeight,
+            Image newImage = combineImages(task, images, (int) totalWidth, (int) totalHeight,
                     FxColorTools.toAwtColor(imageCombine.getBgColor()), xs, ys, widths, heights,
                     imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
                     careTotal && (sizeType == ImageCombine.CombineSizeType.TotalWidth),
@@ -99,7 +109,7 @@ public class CombineTools {
         }
     }
 
-    public static Image combineSingleColumn(ImageCombine imageCombine,
+    public static Image combineSingleColumn(FxTask task, ImageCombine imageCombine,
             List<ImageInformation> imageInfos, boolean isPart, boolean careTotal) {
         if (imageCombine == null || imageInfos == null) {
             return null;
@@ -114,6 +124,9 @@ public class CombineTools {
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                 for (ImageInformation imageInfo : imageInfos) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageWidth = (int) imageInfo.getPickedWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
@@ -121,6 +134,9 @@ public class CombineTools {
                 }
             } else if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation imageInfo : imageInfos) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageWidth = (int) imageInfo.getPickedWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
@@ -134,6 +150,9 @@ public class CombineTools {
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
             for (ImageInformation imageInfo : imageInfos) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 imageWidth = (int) imageInfo.getPickedWidth();
                 imageHeight = (int) imageInfo.getPickedHeight();
                 if (sizeType == ImageCombine.CombineSizeType.KeepSize
@@ -170,7 +189,7 @@ public class CombineTools {
                 totalWidth += 2 * imageCombine.getMarginsValue();
                 totalHeight += imageCombine.getMarginsValue();
             }
-            Image newImage = combineImages(imageInfos, (int) totalWidth, (int) totalHeight,
+            Image newImage = combineImages(task, imageInfos, (int) totalWidth, (int) totalHeight,
                     FxColorTools.toAwtColor(imageCombine.getBgColor()), xs, ys,
                     widths, heights, imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
                     careTotal && (sizeType == ImageCombine.CombineSizeType.TotalWidth),
@@ -182,7 +201,7 @@ public class CombineTools {
         }
     }
 
-    public static Image combineImages(List<ImageInformation> imageInfos, int totalWidth, int totalHeight, Color bgColor,
+    public static Image combineImages(FxTask task, List<ImageInformation> imageInfos, int totalWidth, int totalHeight, Color bgColor,
             List<Integer> xs, List<Integer> ys, List<Integer> widths, List<Integer> heights,
             int trueTotalWidth, int trueTotalHeight, boolean isTotalWidth, boolean isTotalHeight) {
         if (imageInfos == null || xs == null || ys == null || widths == null || heights == null) {
@@ -198,8 +217,14 @@ public class CombineTools {
             g.setColor(bgColor);
             g.fillRect(0, 0, totalWidth, totalHeight);
             for (int i = 0; i < imageInfos.size(); ++i) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 ImageInformation imageInfo = imageInfos.get(i);
-                Image image = imageInfo.loadImage();
+                Image image = imageInfo.loadImage(task);
+                if (image == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
                 BufferedImage source = SwingFXUtils.fromFXImage(image, null);
                 g.drawImage(source, xs.get(i), ys.get(i), widths.get(i), heights.get(i), null);
             }
@@ -207,6 +232,9 @@ public class CombineTools {
                 target = ScaleTools.scaleImageBySize(target, trueTotalWidth, (trueTotalWidth * totalHeight) / totalWidth);
             } else if (isTotalHeight) {
                 target = ScaleTools.scaleImageBySize(target, (trueTotalHeight * totalWidth) / totalHeight, trueTotalHeight);
+            }
+            if (target == null || (task != null && !task.isWorking())) {
+                return null;
             }
             Image newImage = SwingFXUtils.toFXImage(target, null);
             return newImage;

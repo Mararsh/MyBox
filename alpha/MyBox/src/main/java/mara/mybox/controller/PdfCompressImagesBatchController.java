@@ -174,7 +174,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
                         .setIntPara1(threshold)
                         .setIsDithering(ditherCheck.isSelected());
                 BufferedImage newImage = imageBinary.operate();
-                newImage = ImageBinary.byteBinary(newImage);
+                newImage = ImageBinary.byteBinary(task, newImage);
                 newObject = CCITTFactory.createFromImage(doc, newImage);
 
             } else if (pdfFormat == PdfImageFormat.Jpeg) {

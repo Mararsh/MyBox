@@ -96,7 +96,7 @@ public class ImageRotateController extends BaseImageEditController {
     @Override
     protected void handleImage() {
         opInfo = currentAngle + "";
-        handledImage = TransformTools.rotateImage(imageView.getImage(), currentAngle);
+        handledImage = TransformTools.rotateImage(task, currentImage(), currentAngle);
     }
 
     /*

@@ -35,7 +35,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -450,7 +450,7 @@ public class ControlData2D extends BaseController {
                 targetData.setFile(file);
             }
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -493,7 +493,7 @@ public class ControlData2D extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

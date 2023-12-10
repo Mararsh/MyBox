@@ -25,8 +25,8 @@ import mara.mybox.data.FileNode;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
 import mara.mybox.tools.FloatTools;
@@ -206,7 +206,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -243,7 +243,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     /*
         sftp
      */
-    public boolean connect(SingletonTask<Void> task) {
+    public boolean connect(FxTask<Void> task) {
         try {
             disconnect();
             if (currentConnection == null) {

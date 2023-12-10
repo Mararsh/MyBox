@@ -36,8 +36,8 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.TransformTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -141,7 +141,7 @@ public class ImageEditorController extends BaseImageController {
             task.cancel();
         }
         File tmpFile = FileTmpTools.generateFile("png");
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -149,7 +149,8 @@ public class ImageEditorController extends BaseImageController {
                 if (bufferedImage == null || task == null || isCancelled()) {
                     return false;
                 }
-                return ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile.getAbsolutePath());
+                return ImageFileWriters.writeImageFile(this,
+                        bufferedImage, "png", tmpFile.getAbsolutePath());
             }
 
             @Override
@@ -200,7 +201,7 @@ public class ImageEditorController extends BaseImageController {
             return;
         }
 
-        SingletonTask recordTask = new SingletonTask<Void>(this) {
+        FxTask recordTask = new FxTask<Void>(this) {
             private File currentFile;
             private ImageEditHistory his;
 
@@ -237,7 +238,8 @@ public class ImageEditorController extends BaseImageController {
                         hisname = makeHisName();
                     }
                     File hisFile = new File(hisname + ".png");
-                    if (!ImageFileWriters.writeImageFile(bufferedImage, "png", hisFile.getAbsolutePath())) {
+                    if (!ImageFileWriters.writeImageFile(this,
+                            bufferedImage, "png", hisFile.getAbsolutePath())) {
                         return false;
                     }
                     if (isCancelled()) {
@@ -245,7 +247,10 @@ public class ImageEditorController extends BaseImageController {
                     }
                     File thumbFile = new File(hisname + "_thumbnail.png");
                     BufferedImage thumb = ScaleTools.scaleImageWidthKeep(bufferedImage, AppVariables.thumbnailWidth);
-                    if (!ImageFileWriters.writeImageFile(thumb, "png", thumbFile.getAbsolutePath())) {
+                    if (thumb == null || !isWorking()) {
+                        return false;
+                    }
+                    if (!ImageFileWriters.writeImageFile(this, thumb, "png", thumbFile.getAbsolutePath())) {
                         return false;
                     }
                     his = ImageEditHistory.create()
@@ -310,7 +315,7 @@ public class ImageEditorController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image hisImage;
             private ImageEditHistory his;
 
@@ -333,7 +338,7 @@ public class ImageEditorController extends BaseImageController {
                                 vindex = hisSize - 1;
                             }
                             his = records.get(vindex);
-                            hisImage = his.historyImage();
+                            hisImage = his.historyImage(this);
                         }
                     }
                     return true;
@@ -419,6 +424,12 @@ public class ImageEditorController extends BaseImageController {
             menu = new MenuItem(message("Round"), StyleTools.getIconImageView("iconRound.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageRoundController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Shadow"), StyleTools.getIconImageView("iconRound.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageShadowController.open(this);
             });
             items.add(menu);
 
@@ -862,13 +873,13 @@ public class ImageEditorController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image newImage;
 
             @Override
             protected boolean handle() {
-                newImage = TransformTools.horizontalImage(imageView.getImage());
+                newImage = TransformTools.horizontalImage(this, imageView.getImage());
                 if (task == null || isCancelled()) {
                     return false;
                 }
@@ -890,13 +901,13 @@ public class ImageEditorController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image newImage;
 
             @Override
             protected boolean handle() {
-                newImage = TransformTools.verticalImage(imageView.getImage());
+                newImage = TransformTools.verticalImage(this, imageView.getImage());
                 if (task == null || isCancelled()) {
                     return false;
                 }

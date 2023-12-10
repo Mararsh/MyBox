@@ -31,7 +31,7 @@ import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.controller.MyBoxLanguagesController.LanguageItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -308,7 +308,7 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<LanguageItem> items;
 
             @Override
@@ -386,7 +386,7 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

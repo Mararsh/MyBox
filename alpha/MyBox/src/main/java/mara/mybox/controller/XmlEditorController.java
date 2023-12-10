@@ -20,9 +20,9 @@ import javafx.stage.Stage;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -138,7 +138,31 @@ public class XmlEditorController extends BaseFileController {
             }
         }
         super.sourceFileChanged(file);
-        writePanes(TextFileTools.readTexts(file));
+
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String xml;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    xml = TextFileTools.readTexts(this, file);
+                    return xml != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                writePanes(xml);
+            }
+
+        };
+        start(task);
     }
 
     public boolean writePanes(String xml) {
@@ -210,7 +234,7 @@ public class XmlEditorController extends BaseFileController {
         if (targetFile == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String xml;
 
             @Override
@@ -298,7 +322,7 @@ public class XmlEditorController extends BaseFileController {
         if (file == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 String xml = current();
@@ -475,7 +499,7 @@ public class XmlEditorController extends BaseFileController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             String xml;
 
             @Override

@@ -2,10 +2,9 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
-import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageConvolution;
-import mara.mybox.value.AppVariables;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
 
@@ -95,9 +94,12 @@ public class ImageManufactureBatchEnhancementController extends BaseImageEditBat
             if (null != optionsController.enhanceType) {
                 switch (optionsController.enhanceType) {
                     case Contrast:
-                        ImageContrast imageContrast = new ImageContrast(source, optionsController.contrastAlgorithm);
-                        imageContrast.setIntPara1(optionsController.intPara1);
-                        imageContrast.setIntPara2(optionsController.intPara2);
+                        ImageContrast imageContrast = new ImageContrast()
+                                .setAlgorithm(optionsController.contrastAlgorithm);
+                        imageContrast.setImage(source)
+                                .setIntPara1(optionsController.intPara1)
+                                .setIntPara2(optionsController.intPara2)
+                                .setTask(task);
                         target = imageContrast.operate();
                         break;
                     case Convolution:
@@ -106,8 +108,10 @@ public class ImageManufactureBatchEnhancementController extends BaseImageEditBat
                         if (optionsController.kernel == null) {
                             return null;
                         }
-                        imageConvolution = ImageConvolution.create().
-                                setImage(source).setKernel(optionsController.kernel);
+                        imageConvolution = ImageConvolution.create()
+                                .setKernel(optionsController.kernel);
+                        imageConvolution.setImage(source)
+                                .setTask(task);
                         target = imageConvolution.operate();
                         break;
                     default:

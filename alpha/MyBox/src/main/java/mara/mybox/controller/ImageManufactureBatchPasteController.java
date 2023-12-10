@@ -204,9 +204,9 @@ public class ImageManufactureBatchPasteController extends BaseImageEditBatchCont
         if (blend == null) {
             return false;
         }
-        clipSource = ImageFileReaders.readImage(sourceFile);
+        clipSource = ImageFileReaders.readImage(task, sourceFile);
         if (clipSource != null) {
-            clipSource = TransformTools.rotateImage(clipSource, rotateAngle);
+            clipSource = TransformTools.rotateImage(task, clipSource, rotateAngle);
         }
         return clipSource != null;
     }
@@ -217,15 +217,18 @@ public class ImageManufactureBatchPasteController extends BaseImageEditBatchCont
             BufferedImage bgImage = source;
             if (enlargeCheck.isSelected()) {
                 if (clipSource.getWidth() > bgImage.getWidth()) {
-                    bgImage = MarginTools.addMargins(bgImage,
+                    bgImage = MarginTools.addMargins(task, bgImage,
                             Colors.TRANSPARENT, clipSource.getWidth() - bgImage.getWidth() + 1,
                             false, false, false, true);
                 }
                 if (clipSource.getHeight() > bgImage.getHeight()) {
-                    bgImage = MarginTools.addMargins(bgImage,
+                    bgImage = MarginTools.addMargins(task, bgImage,
                             Colors.TRANSPARENT, clipSource.getHeight() - bgImage.getHeight() + 1,
                             false, true, false, false);
                 }
+            }
+            if (bgImage == null) {
+                return null;
             }
 
             int x, y;
@@ -256,7 +259,7 @@ public class ImageManufactureBatchPasteController extends BaseImageEditBatchCont
             } else {
                 return null;
             }
-            BufferedImage target = PixelsBlend.blend(clipSource, bgImage, x, y, blend);
+            BufferedImage target = PixelsBlend.blend(task, clipSource, bgImage, x, y, blend);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

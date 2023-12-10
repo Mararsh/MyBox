@@ -33,8 +33,11 @@ public class DataFileCSVReader extends Data2DReader {
             return;
         }
         readerCSV.checkForLoad();
-        File validFile = FileTools.removeBOM(sourceFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
+        File validFile = FileTools.removeBOM(task, sourceFile);
+        if (validFile == null || readerStopped()) {
+            return;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
             operator.handleData();

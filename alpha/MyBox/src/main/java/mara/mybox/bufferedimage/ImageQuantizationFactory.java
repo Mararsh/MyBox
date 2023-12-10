@@ -22,12 +22,12 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageQuantizationFactory {
-
+    
     public static ImageQuantization create(Image image, ImageScope scope,
             ControlImageQuantization quantizationController, boolean recordCount) {
         return create(SwingFXUtils.fromFXImage(image, null), scope, quantizationController, recordCount);
     }
-
+    
     public static ImageQuantization create(BufferedImage image, ImageScope scope,
             ControlImageQuantization quantizationController, boolean recordCount) {
         return create(image, scope, quantizationController.getAlgorithm(),
@@ -43,7 +43,7 @@ public class ImageQuantizationFactory {
                 quantizationController.getQuanDitherCheck().isSelected(),
                 quantizationController.getFirstColorCheck().isSelected());
     }
-
+    
     public static ImageQuantization create(BufferedImage image, ImageScope scope,
             QuantizationAlgorithm algorithm, int quantizationSize,
             int regionSize, int weight1, int weight2, int weight3,
@@ -83,16 +83,16 @@ public class ImageQuantizationFactory {
             return null;
         }
     }
-
+    
     public static class RGBUniformQuantization extends ImageQuantization {
-
+        
         protected int redMod, redOffset, greenMod, greenOffset, blueMod, blueOffset;
         protected int redSize, greenSize, blueSize;
-
+        
         public static RGBUniformQuantization create() {
             return new RGBUniformQuantization();
         }
-
+        
         @Override
         public RGBUniformQuantization buildPalette() {
             try {
@@ -104,15 +104,15 @@ public class ImageQuantizationFactory {
                 greenWegiht = greenWegiht / sum;
                 blueWegiht = blueWegiht / sum;
                 float x = (float) Math.cbrt(regionSize / (redWegiht * greenWegiht * blueWegiht));
-
+                
                 float redValue = redWegiht * x;
                 redMod = (int) (256 / redValue);
                 redSize = (int) (256 / redMod) + 1;
-
+                
                 float greenValue = greenWegiht * x;
                 greenMod = (int) (256 / greenValue);
                 greenSize = (int) (256 / greenMod) + 1;
-
+                
                 float blueValue = blueWegiht * x;
                 blueMod = (int) (256 / blueValue);
                 blueSize = (int) (256 / blueMod) + 1;
@@ -125,7 +125,7 @@ public class ImageQuantizationFactory {
                     MyBoxLog.error(message("InvalidParameters"));
                     return this;
                 }
-
+                
                 if (firstColor) {
                     palette = new Color[redSize][greenSize][blueSize];
                 } else {
@@ -133,7 +133,7 @@ public class ImageQuantizationFactory {
                     greenOffset = greenMod / 2;
                     blueOffset = blueMod / 2;
                 }
-
+                
                 if (recordCount) {
                     counts = new HashMap<>();
                 }
@@ -142,7 +142,7 @@ public class ImageQuantizationFactory {
             }
             return this;
         }
-
+        
         @Override
         public Color operateColor(Color color) {
             try {
@@ -163,20 +163,20 @@ public class ImageQuantizationFactory {
                     } else {
                         mappedColor = palette[indexRed][indexGreen][indexBlue];
                     }
-
+                    
                 } else {
                     red = red - (red % redMod) + redOffset;
                     red = Math.min(Math.max(red, 0), 255);
-
+                    
                     green = green - (green % greenMod) + greenOffset;
                     green = Math.min(Math.max(green, 0), 255);
-
+                    
                     blue = blue - (blue % blueMod) + blueOffset;
                     blue = Math.min(Math.max(blue, 0), 255);
-
+                    
                     mappedColor = new Color(red, green, blue);
                 }
-
+                
                 countColor(mappedColor);
                 return mappedColor;
             } catch (Exception e) {
@@ -185,17 +185,17 @@ public class ImageQuantizationFactory {
             }
         }
     }
-
+    
     public static class HSBUniformQuantization extends ImageQuantization {
-
+        
         protected int hueMod, saturationMod, brightnessMod,
                 hueOffset, saturationOffset, brightnessOffset;
         protected int hueSize, saturationSize, brightnessSize;
-
+        
         public static HSBUniformQuantization create() throws Exception {
             return new HSBUniformQuantization();
         }
-
+        
         @Override
         public HSBUniformQuantization buildPalette() {
             try {
@@ -207,15 +207,15 @@ public class ImageQuantizationFactory {
                 saturationWegiht = saturationWegiht / sum;
                 brightnessWegiht = brightnessWegiht / sum;
                 float x = (float) Math.cbrt(regionSize / (hueWegiht * saturationWegiht * brightnessWegiht));
-
+                
                 float hueValue = hueWegiht * x;
                 hueMod = (int) (360 / hueValue);
                 hueSize = (int) (360 / hueMod) + 1;
-
+                
                 float saturationValue = saturationWegiht * x;
                 saturationMod = (int) (100 / saturationValue);
                 saturationSize = (int) (100 / saturationMod) + 1;
-
+                
                 float brightnessValue = brightnessWegiht * x;
                 brightnessMod = (int) (100 / brightnessValue);
                 brightnessSize = (int) (100 / brightnessMod) + 1;
@@ -228,7 +228,7 @@ public class ImageQuantizationFactory {
                     MyBoxLog.error(message("InvalidParameters"));
                     return this;
                 }
-
+                
                 if (firstColor) {
                     palette = new Color[hueSize][saturationSize][brightnessSize];
                 } else {
@@ -236,7 +236,7 @@ public class ImageQuantizationFactory {
                     saturationOffset = saturationMod / 2;
                     brightnessOffset = brightnessMod / 2;
                 }
-
+                
                 if (recordCount) {
                     counts = new HashMap<>();
                 }
@@ -245,7 +245,7 @@ public class ImageQuantizationFactory {
             }
             return this;
         }
-
+        
         @Override
         public Color operateColor(Color color) {
             try {
@@ -255,7 +255,7 @@ public class ImageQuantizationFactory {
                 Color mappedColor;
                 float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
                 float h, s, b;
-
+                
                 int hue = (int) (hsb[0] * 360);
                 int saturation = (int) (hsb[1] * 100);
                 int brightness = (int) (hsb[2] * 100);
@@ -269,19 +269,19 @@ public class ImageQuantizationFactory {
                     } else {
                         mappedColor = palette[indexHue][indexSaturation][indexBrightness];
                     }
-
+                    
                 } else {
                     hue = hue - (hue % hueMod) + hueOffset;
                     h = Math.min(Math.max(hue / 360.0f, 0.0f), 1.0f);
-
+                    
                     saturation = saturation - (saturation % saturationMod) + saturationOffset;
                     s = Math.min(Math.max(saturation / 100.0f, 0.0f), 1.0f);
-
+                    
                     brightness = brightness - (brightness % brightnessMod) + brightnessOffset;
                     b = Math.min(Math.max(brightness / 100.0f, 0.0f), 1.0f);
                     mappedColor = Color.getHSBColor(h, s, b);
                 }
-
+                
                 countColor(mappedColor);
                 return mappedColor;
             } catch (Exception e) {
@@ -290,12 +290,12 @@ public class ImageQuantizationFactory {
             }
         }
     }
-
+    
     public static class RegionQuantization extends ImageQuantization {
-
+        
         protected RGBUniformQuantization rgbPalette;
         protected boolean large;
-
+        
         @Override
         public RegionQuantization buildPalette() {
             try {
@@ -306,7 +306,8 @@ public class ImageQuantizationFactory {
                             .setFirstColor(firstColor)
                             .setRecordCount(recordCount)
                             .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
-                            .setIsDithering(isDithering);
+                            .setIsDithering(isDithering)
+                            .setTask(task);
                     rgbPalette.buildPalette();
                 }
             } catch (Exception e) {
@@ -314,7 +315,7 @@ public class ImageQuantizationFactory {
             }
             return this;
         }
-
+        
         @Override
         public Color operateColor(Color color) {
             if (color.getRGB() == 0) {
@@ -324,7 +325,7 @@ public class ImageQuantizationFactory {
             handleRegionColor(color, regionColor);
             return regionColor;
         }
-
+        
         public Color map(Color color) {
             if (color.getRGB() == 0) {
                 return color;
@@ -337,28 +338,28 @@ public class ImageQuantizationFactory {
             }
             return regionColor;
         }
-
+        
         public void handleRegionColor(Color color, Color regionColor) {
-
+            
         }
-
+        
     }
-
+    
     public static class PopularityRegionQuantization extends RegionQuantization {
-
+        
         protected Map<Color, PopularityRegion> regionsMap;
-
+        
         public static PopularityRegionQuantization create() {
             return new PopularityRegionQuantization();
         }
-
+        
         @Override
         public RegionQuantization buildPalette() {
             super.buildPalette();
             regionsMap = new HashMap<>();
             return this;
         }
-
+        
         @Override
         public void handleRegionColor(Color color, Color regionColor) {
             PopularityRegion region = regionsMap.get(regionColor);
@@ -377,7 +378,7 @@ public class ImageQuantizationFactory {
                 region.pixelsCount += 1;
             }
         }
-
+        
         public List<PopularityRegion> getRegions(int quantizationSize) {
             List<PopularityRegion> regions = new ArrayList<>();
             regions.addAll(regionsMap.values());
@@ -406,18 +407,18 @@ public class ImageQuantizationFactory {
             regionsMap.clear();
             return regions;
         }
-
+        
     }
-
+    
     public static class PopularityQuantization extends ImageQuantization {
-
+        
         protected PopularityRegionQuantization regionQuantization;
         protected List<PopularityRegion> regions;
-
+        
         public static PopularityQuantization create() {
             return new PopularityQuantization();
         }
-
+        
         @Override
         public PopularityQuantization buildPalette() {
             try {
@@ -428,10 +429,11 @@ public class ImageQuantizationFactory {
                         .setRecordCount(false)
                         .setImage(image).setScope(scope).
                         setOperationType(PixelsOperation.OperationType.Quantization).
-                        setIsDithering(isDithering);
+                        setIsDithering(isDithering)
+                        .setTask(task);
                 regionQuantization.buildPalette().operate();
                 regions = regionQuantization.getRegions(quantizationSize);
-
+                
                 if (recordCount) {
                     counts = new HashMap<>();
                 }
@@ -440,7 +442,7 @@ public class ImageQuantizationFactory {
             }
             return this;
         }
-
+        
         @Override
         public Color operateColor(Color color) {
             if (color.getRGB() == 0) {
@@ -471,41 +473,41 @@ public class ImageQuantizationFactory {
             countColor(mappedColor);
             return mappedColor;
         }
-
+        
     }
-
+    
     public static class KMeansRegionQuantization extends RegionQuantization {
-
+        
         protected List<Color> regionColors;
-
+        
         public static KMeansRegionQuantization create() {
             return new KMeansRegionQuantization();
         }
-
+        
         @Override
         public RegionQuantization buildPalette() {
             super.buildPalette();
             regionColors = new ArrayList<>();
             return this;
         }
-
+        
         @Override
         public void handleRegionColor(Color color, Color regionColor) {
             if (!regionColors.contains(regionColor)) {
                 regionColors.add(regionColor);
             }
         }
-
+        
     }
-
+    
     public static class KMeansClusteringQuantization extends ImageQuantization {
-
+        
         protected ImageRGBKMeans kmeans;
-
+        
         public static KMeansClusteringQuantization create() throws Exception {
             return new KMeansClusteringQuantization();
         }
-
+        
         @Override
         public KMeansClusteringQuantization buildPalette() {
             kmeans = imageKMeans();
@@ -514,7 +516,7 @@ public class ImageQuantizationFactory {
             }
             return this;
         }
-
+        
         @Override
         public Color operateColor(Color color) {
             if (color.getRGB() == 0) {
@@ -531,16 +533,16 @@ public class ImageQuantizationFactory {
         public ImageRGBKMeans getKmeans() {
             return kmeans;
         }
-
+        
         public void setKmeans(ImageRGBKMeans kmeans) {
             this.kmeans = kmeans;
         }
-
+        
     }
 
     // https://www.researchgate.net/publication/220502178_On_spatial_quantization_of_color_images
     public static class Spatialquantization {
-
+        
     }
 
     // https://www.codeproject.com/Tips/1046574/OctTree-Based-Nearest-Color-Search
@@ -548,7 +550,7 @@ public class ImageQuantizationFactory {
         // Declare a root node to contain all of the source colors.
 
         private Node rootNode;
-
+        
         public ColorFinder(Color[] colors) {
             // Create the root node.
             rootNode = new Node(0, colors);
@@ -557,13 +559,13 @@ public class ImageQuantizationFactory {
                 rootNode.AddColor(i);
             }
         }
-
+        
         public int GetNearestColorIndex(Color color) {
             return rootNode.GetNearestColorIndex(color)[0];
         }
-
+        
         private class Node {
-
+            
             private int level;
             private Color[] colors;
             private final Node[] children = new Node[8];
@@ -572,7 +574,7 @@ public class ImageQuantizationFactory {
             private final int[][] Distance = new int[256][256];
             // Cached bit masks.
             private final int[] Mask = {128, 64, 32, 16, 8, 4, 2, 1};
-
+            
             public Node() {
                 // precalculate every possible distance
                 for (int i = 0; i < 256; ++i) {
@@ -581,12 +583,12 @@ public class ImageQuantizationFactory {
                     }
                 }
             }
-
+            
             public Node(int level, Color[] colors) {
                 this.level = level;
                 this.colors = colors;
             }
-
+            
             public void AddColor(int colorIndex) {
                 if (level == 7) {
                     // LEAF MODE.
@@ -604,7 +606,7 @@ public class ImageQuantizationFactory {
                     children[index].AddColor(colorIndex);
                 }
             }
-
+            
             public int colorIndex(Color color, int level) {
                 // Take 1 bit from each averageColor channel
                 // to return a 3-bit value ranging from 0 to 7.
@@ -614,17 +616,17 @@ public class ImageQuantizationFactory {
                         | ((color.getGreen() & Mask[level]) << 1 >> shift)
                         | ((color.getBlue() & Mask[level]) << 2 >> shift));
             }
-
+            
             public int distance(int b1, int b2) {
                 return Distance[b1][b2];
             }
-
+            
             public int distance(Color c1, Color c2) {
                 return distance(c1.getRed(), c2.getRed())
                         + distance(c1.getGreen(), c2.getGreen())
                         + distance(c1.getBlue(), c2.getBlue());
             }
-
+            
             public int[] GetNearestColorIndex(Color color) {
                 int[] ret = new int[2];
                 ret[0] = -1;
@@ -655,17 +657,17 @@ public class ImageQuantizationFactory {
                 }
                 return ret;
             }
-
+            
         }
-
+        
     }
-
+    
     public static class Octree {
-
+        
         private OctreeNode rootNode;
-
+        
         public Octree(BufferedImage image, int colorsNumber) {
-
+            
             rootNode = new OctreeNode();
             rootNode.afterSetParam();
             for (int i = 0; i < image.getWidth(); ++i) {
@@ -678,9 +680,9 @@ public class ImageQuantizationFactory {
                 }
             }
         }
-
+        
         public static class OctreeNode {
-
+            
             protected int level = 0;
             protected OctreeNode parent;
             protected OctreeNode[] children = new OctreeNode[8];
@@ -690,14 +692,14 @@ public class ImageQuantizationFactory {
             protected int blueAccum = 0;
             protected int piexlsCount = 0;
             protected Map<Integer, List<OctreeNode>> levelMapping;
-
+            
             public void addColor(int colorValue, int number) {
                 if (level != 0 || this.parent != null) {
                     throw new UnsupportedOperationException();
                 }
-
+                
                 int speed = 7 + 1 - number;
-
+                
                 int r = colorValue >> 16 & 0xFF;
                 int g = colorValue >> 8 & 0xFF;
                 int b = colorValue & 0xFF;
@@ -713,7 +715,7 @@ public class ImageQuantizationFactory {
                         this.levelMapping.get(child.getLevel()).add(child);
                         proNode.setChild(item, child);
                     }
-
+                    
                     if (i == speed) {
                         child.setIsLeaf(true);
                     }
@@ -723,17 +725,17 @@ public class ImageQuantizationFactory {
                     }
                     proNode = child;
                 }
-
+                
             }
-
+            
             public OctreeNode getChild(int index) {
                 return children[index];
             }
-
+            
             public void setChild(int index, OctreeNode node) {
                 children[index] = node;
             }
-
+            
             public OctreeNode getDepestNode() {
                 for (int i = 7; i > 0; --i) {
                     List<OctreeNode> levelList = this.levelMapping.get(i);
@@ -743,7 +745,7 @@ public class ImageQuantizationFactory {
                 }
                 return null;
             }
-
+            
             public int getLeafNum() {
                 if (isLeaf) {
                     return 1;
@@ -756,7 +758,7 @@ public class ImageQuantizationFactory {
                 }
                 return i;
             }
-
+            
             public void afterSetParam() {
                 if (this.getParent() == null && this.level == 0) {
                     levelMapping = new HashMap<>();
@@ -765,7 +767,7 @@ public class ImageQuantizationFactory {
                     }
                 }
             }
-
+            
             public void setPixel(int r, int g, int b) {
                 this.redAccum += r;
                 this.greenAccum += g;
@@ -779,79 +781,79 @@ public class ImageQuantizationFactory {
             public int getLevel() {
                 return level;
             }
-
+            
             public void setLevel(int level) {
                 this.level = level;
             }
-
+            
             public OctreeNode getParent() {
                 return parent;
             }
-
+            
             public void setParent(OctreeNode parent) {
                 this.parent = parent;
             }
-
+            
             public OctreeNode[] getChildren() {
                 return children;
             }
-
+            
             public void setChildren(OctreeNode[] children) {
                 this.children = children;
             }
-
+            
             public boolean isIsLeaf() {
                 return isLeaf;
             }
-
+            
             public void setIsLeaf(boolean isLeaf) {
                 this.isLeaf = isLeaf;
             }
-
+            
             public int getRedAccum() {
                 return redAccum;
             }
-
+            
             public void setRedAccum(int redAccum) {
                 this.redAccum = redAccum;
             }
-
+            
             public int getGreenAccum() {
                 return greenAccum;
             }
-
+            
             public void setGreenAccum(int greenAccum) {
                 this.greenAccum = greenAccum;
             }
-
+            
             public int getBlueAccum() {
                 return blueAccum;
             }
-
+            
             public void setBlueAccum(int blueAccum) {
                 this.blueAccum = blueAccum;
             }
-
+            
             public int getPiexlsCount() {
                 return piexlsCount;
             }
-
+            
             public void setPiexlsCount(int piexlsCount) {
                 if (!isLeaf) {
                     throw new UnsupportedOperationException();
                 }
                 this.piexlsCount = piexlsCount;
             }
-
+            
             public Map<Integer, List<OctreeNode>> getLevelMapping() {
                 return levelMapping;
             }
-
+            
             public void setLevelMapping(Map<Integer, List<OctreeNode>> levelMapping) {
                 this.levelMapping = levelMapping;
             }
-
+            
         }
     }
-
+    
 }

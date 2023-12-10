@@ -71,8 +71,11 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         } else {
             fileCharset = csvReadController.charset;
         }
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
+        File validFile = FileTools.removeBOM(task, srcFile);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, fileCharset,
                 CsvTools.csvFormat(csvReadController.getDelimiterName(), true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
@@ -103,8 +106,11 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         } else {
             fileCharset = csvReadController.charset;
         }
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
+        File validFile = FileTools.removeBOM(task, srcFile);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, fileCharset,
                 CsvTools.csvFormat(csvReadController.getDelimiterName(), false))) {
             List<String> names = null;
             for (CSVRecord record : parser) {

@@ -3,7 +3,7 @@ package mara.mybox.data2d;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -17,7 +17,7 @@ public class DataFilter {
     private String sourceScript, filledScript;
     public long passedNumber, maxPassed;
     public boolean reversed, passed;
-    public SingletonTask task;
+    public FxTask task;
     public ExpressionCalculator calculator;
 
     public DataFilter() {
@@ -43,7 +43,7 @@ public class DataFilter {
         passed = false;
     }
 
-    public void start(SingletonTask task, Data2D data2D) {
+    public void start(FxTask task, Data2D data2D) {
         resetNumber();
         this.task = task;
         calculator.reset();
@@ -163,11 +163,11 @@ public class DataFilter {
     /*
         get/set
      */
-    public SingletonTask getTask() {
+    public FxTask getTask() {
         return task;
     }
 
-    public DataFilter setTask(SingletonTask task) {
+    public DataFilter setTask(FxTask task) {
         this.task = task;
         return this;
     }

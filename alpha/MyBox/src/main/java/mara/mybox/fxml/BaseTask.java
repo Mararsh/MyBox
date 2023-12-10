@@ -3,7 +3,6 @@ package mara.mybox.fxml;
 import java.util.Date;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.Node;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -18,7 +17,6 @@ public class BaseTask<P> extends Task<P> {
     protected long cost;
     protected boolean ok, quit;
     protected String error;
-    protected Node disableNode;
 
     public BaseTask() {
         error = null;
@@ -49,9 +47,6 @@ public class BaseTask<P> extends Task<P> {
 
     protected boolean initValues() {
         startTime = new Date();
-        if (disableNode != null) {
-            disableNode.setDisable(true);
-        }
         return true;
     }
 
@@ -118,9 +113,6 @@ public class BaseTask<P> extends Task<P> {
     }
 
     protected void finalAction() {
-        if (disableNode != null) {
-            disableNode.setDisable(false);
-        }
     }
 
     public String duration() {
@@ -188,14 +180,6 @@ public class BaseTask<P> extends Task<P> {
 
     public void setQuit(boolean quit) {
         this.quit = quit;
-    }
-
-    public Node getDisableNode() {
-        return disableNode;
-    }
-
-    public void setDisableNode(Node disableNode) {
-        this.disableNode = disableNode;
     }
 
 }

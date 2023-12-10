@@ -45,14 +45,14 @@ public class SvgFromImageBatchController extends BaseBatchFileController {
             if (target == null) {
                 return message("Skip");
             }
-            BufferedImage image = ImageFileReaders.readImage(srcFile);
+            BufferedImage image = ImageFileReaders.readImage(task, srcFile);
             if (image == null) {
                 return message("InvalidData");
             }
-            File svgFile = SvgTools.imageToSvgFile(this, srcFile,
+            File svgFile = SvgTools.imageToSvgFile(task, this, srcFile,
                     optionsController.myboxRadio.isSelected() ? optionsController.quantizationController : null,
                     optionsController.options);
-            if (svgFile.exists() && FileTools.rename(svgFile, target, true)) {
+            if (svgFile != null && svgFile.exists() && FileTools.rename(svgFile, target, true)) {
                 targetFileGenerated(target);
                 return message("Successful");
             } else {

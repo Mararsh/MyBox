@@ -23,21 +23,21 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ImageReplaceColorController extends BasePixelsController {
-
+    
     @FXML
     protected CheckBox hueCheck, saturationCheck, brightnessCheck;
     @FXML
     protected ControlColorSet colorController;
-
+    
     public ImageReplaceColorController() {
         baseTitle = message("ReplaceColor");
     }
-
+    
     @Override
     protected void initMore() {
         try {
             colorController.init(this, baseName + "NewColor", Color.PINK);
-
+            
             hueCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceHue", true));
             hueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -45,7 +45,7 @@ public class ImageReplaceColorController extends BasePixelsController {
                     UserConfig.setBoolean(baseName + "ReplaceHue", hueCheck.isSelected());
                 }
             });
-
+            
             saturationCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceSaturation", false));
             saturationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -53,7 +53,7 @@ public class ImageReplaceColorController extends BasePixelsController {
                     UserConfig.setBoolean(baseName + "ReplaceSaturation", saturationCheck.isSelected());
                 }
             });
-
+            
             brightnessCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceBrightness", false));
             brightnessCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -61,13 +61,13 @@ public class ImageReplaceColorController extends BasePixelsController {
                     UserConfig.setBoolean(baseName + "ReplaceBrightness", brightnessCheck.isSelected());
                 }
             });
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
+        
     }
-
+    
     @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
@@ -78,7 +78,8 @@ public class ImageReplaceColorController extends BasePixelsController {
                     .setBoolPara2(saturationCheck.isSelected())
                     .setBoolPara3(brightnessCheck.isSelected())
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             operation = message("ReplaceColor");
             opInfo = colorController.css();
             return pixelsOperation.operateFxImage();
@@ -87,7 +88,7 @@ public class ImageReplaceColorController extends BasePixelsController {
             return null;
         }
     }
-
+    
     @Override
     protected void makeDemoFiles(List<String> files, Image inImage) {
         try {
@@ -95,7 +96,8 @@ public class ImageReplaceColorController extends BasePixelsController {
                     inImage, scope(), PixelsOperation.OperationType.Color)
                     .setColorPara1(colorController.awtColor())
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(demoTask);
             String prefix = message("ReplaceColor") + "_" + colorController.css();
             ImageDemoTools.replaceColor(demoTask, files, pixelsOperation, prefix);
         } catch (Exception e) {
@@ -120,5 +122,5 @@ public class ImageReplaceColorController extends BasePixelsController {
             return null;
         }
     }
-
+    
 }

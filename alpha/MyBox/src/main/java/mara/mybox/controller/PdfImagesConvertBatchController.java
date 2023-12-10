@@ -12,9 +12,9 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -160,12 +160,12 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
             PDImageXObject newObject = null;
             BufferedImage targetImage;
             if ("ico".equals(format) || "icon".equals(format)) {
-                targetImage = ImageConvertTools.convertToIcon(sourceImage, attributes);
+                targetImage = ImageConvertTools.convertToIcon(task, sourceImage, attributes);
             } else {
-                targetImage = ImageConvertTools.convertColorSpace(sourceImage, attributes);
+                targetImage = ImageConvertTools.convertColorSpace(task, sourceImage, attributes);
             }
             if (targetImage != null) {
-                newObject = PdfTools.imageObject(doc, format, targetImage);
+                newObject = PdfTools.imageObject(task, doc, format, targetImage);
             }
             return newObject;
         } catch (Exception e) {

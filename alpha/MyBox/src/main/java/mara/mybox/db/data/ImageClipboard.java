@@ -13,6 +13,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
@@ -50,13 +51,13 @@ public class ImageClipboard extends BaseData {
         init();
     }
 
-    public Image loadImage() {
-        image = loadImage(this);
+    public Image loadImage(FxTask task) {
+        image = loadImage(task, this);
         return image;
     }
 
-    public Image loadThumb() {
-        thumbnail = loadThumb(this);
+    public Image loadThumb(FxTask task) {
+        thumbnail = loadThumb(task, this);
         return thumbnail;
     }
 
@@ -175,7 +176,7 @@ public class ImageClipboard extends BaseData {
         return (short) value.ordinal();
     }
 
-    public static ImageClipboard create(BufferedImage image, ImageSource source) {
+    public static ImageClipboard create(FxTask task, BufferedImage image, ImageSource source) {
         try {
             if (image == null) {
                 return null;
@@ -188,15 +189,21 @@ public class ImageClipboard extends BaseData {
                         + (new Date().getTime()) + "_" + new Random().nextInt(1000);
                 imageFile = prefix + ".png";
             }
-            if (!ImageFileWriters.writeImageFile(image, "png", imageFile)) {
+            if (!ImageFileWriters.writeImageFile(task, image, "png", imageFile)) {
+                return null;
+            }
+            if (task != null && !task.isWorking()) {
                 return null;
             }
             String thumbFile = prefix + "_thumbnail.png";
             BufferedImage thumbnail = ScaleTools.scaleImageWidthKeep(image, AppVariables.thumbnailWidth);
-            if (thumbnail == null) {
+            if (thumbnail == null || (task != null && !task.isWorking())) {
                 return null;
             }
-            if (!ImageFileWriters.writeImageFile(thumbnail, "png", thumbFile)) {
+            if (!ImageFileWriters.writeImageFile(task, thumbnail, "png", thumbFile)) {
+                return null;
+            }
+            if (task != null && !task.isWorking()) {
                 return null;
             }
             ImageClipboard clip = ImageClipboard.create()
@@ -213,41 +220,44 @@ public class ImageClipboard extends BaseData {
         }
     }
 
-    public static ImageClipboard create(Image image, ImageSource source) {
+    public static ImageClipboard create(FxTask task, Image image, ImageSource source) {
         try {
             if (image == null) {
                 return null;
             }
-            return create(SwingFXUtils.fromFXImage(image, null), source);
+            return create(task, SwingFXUtils.fromFXImage(image, null), source);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public static ImageClipboard add(Image image, ImageSource source) {
+    public static ImageClipboard add(FxTask task, Image image, ImageSource source) {
         try {
-            return add(SwingFXUtils.fromFXImage(image, null), source);
+            return add(task, SwingFXUtils.fromFXImage(image, null), source);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public static ImageClipboard add(File file) {
+    public static ImageClipboard add(FxTask task, File file) {
         try {
-            BufferedImage bufferImage = ImageFileReaders.readImage(file);
-            return add(bufferImage, ImageSource.File);
+            BufferedImage bufferImage = ImageFileReaders.readImage(task, file);
+            if (bufferImage == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return add(task, bufferImage, ImageSource.File);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public static ImageClipboard add(BufferedImage image, ImageSource source) {
+    public static ImageClipboard add(FxTask task, BufferedImage image, ImageSource source) {
         try {
-            ImageClipboard clip = ImageClipboard.create(image, source);
-            if (clip == null) {
+            ImageClipboard clip = ImageClipboard.create(task, image, source);
+            if (clip == null || (task != null && !task.isWorking())) {
                 return null;
             }
             new TableImageClipboard().insertData(clip);
@@ -259,7 +269,7 @@ public class ImageClipboard extends BaseData {
         }
     }
 
-    public static Image loadImage(ImageClipboard clip) {
+    public static Image loadImage(FxTask task, ImageClipboard clip) {
         try {
             if (clip == null) {
                 return null;
@@ -271,8 +281,8 @@ public class ImageClipboard extends BaseData {
             if (imageFile == null || !imageFile.exists()) {
                 return clip.getThumbnail();
             }
-            BufferedImage bfImage = ImageFileReaders.readImage(imageFile);
-            if (bfImage == null) {
+            BufferedImage bfImage = ImageFileReaders.readImage(task, imageFile);
+            if (bfImage == null || (task != null && !task.isWorking())) {
                 return null;
             }
             Image image = SwingFXUtils.toFXImage(bfImage, null);
@@ -283,7 +293,7 @@ public class ImageClipboard extends BaseData {
         }
     }
 
-    public static Image loadThumb(ImageClipboard clip) {
+    public static Image loadThumb(FxTask task, ImageClipboard clip) {
         try {
             if (clip == null) {
                 return null;
@@ -295,8 +305,8 @@ public class ImageClipboard extends BaseData {
             if (thumbFile == null || !thumbFile.exists()) {
                 return clip.getImage();
             }
-            BufferedImage bfImage = ImageFileReaders.readImage(thumbFile);
-            if (bfImage == null) {
+            BufferedImage bfImage = ImageFileReaders.readImage(task, thumbFile);
+            if (bfImage == null || (task != null && !task.isWorking())) {
                 return null;
             }
             Image thumb = SwingFXUtils.toFXImage(bfImage, null);

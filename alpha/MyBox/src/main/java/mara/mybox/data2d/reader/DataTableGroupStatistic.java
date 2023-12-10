@@ -20,7 +20,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.tools.FileTmpTools.generateFile;
@@ -49,7 +49,7 @@ public class DataTableGroupStatistic {
     protected long groupid, chartRowsCount, statisticRowsCount;
     protected PreparedStatement statisticInsert;
 
-    protected SingletonTask task;
+    protected FxTask task;
     protected boolean countChart, ok;
 
     protected File chartFile;
@@ -371,7 +371,7 @@ public class DataTableGroupStatistic {
         return this;
     }
 
-    public DataTableGroupStatistic setTask(SingletonTask task) {
+    public DataTableGroupStatistic setTask(FxTask task) {
         this.task = task;
         return this;
     }

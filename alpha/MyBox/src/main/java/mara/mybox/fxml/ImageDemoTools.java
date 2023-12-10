@@ -17,20 +17,22 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageDemoTools {
 
-    public static void replaceColor(SingletonTask task, List<String> files,
+    public static void replaceColor(FxTask task, List<String> files,
             PixelsOperation pixelsOperation, String prefix) {
         if (task == null || pixelsOperation == null || prefix == null || files == null) {
             return;
         }
         try {
             BufferedImage bufferedImage = pixelsOperation
-                    .setBoolPara1(true).setBoolPara2(false).setBoolPara3(false).operate();
-            if (task == null || !task.isWorking()) {
+                    .setBoolPara1(true).setBoolPara2(false).setBoolPara3(false)
+                    .setTask(task)
+                    .operate();
+            if (!task.isWorking()) {
                 return;
             }
             String tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Hue"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
-                if (task == null || !task.isWorking()) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
+                if (!task.isWorking()) {
                     return;
                 }
                 files.add(tmpFile);
@@ -39,12 +41,12 @@ public class ImageDemoTools {
 
             bufferedImage = pixelsOperation
                     .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false).operate();
-            if (task == null || !task.isWorking()) {
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Saturation"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
-                if (task == null || !task.isWorking()) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
+                if (!task.isWorking()) {
                     return;
                 }
                 files.add(tmpFile);
@@ -52,13 +54,15 @@ public class ImageDemoTools {
             }
 
             bufferedImage = pixelsOperation
-                    .setBoolPara1(false).setBoolPara2(false).setBoolPara3(true).operate();
-            if (task == null || !task.isWorking()) {
+                    .setBoolPara1(false).setBoolPara2(false).setBoolPara3(true)
+                    .setTask(task)
+                    .operate();
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Brightness"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
-                if (task == null || !task.isWorking()) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
+                if (!task.isWorking()) {
                     return;
                 }
                 files.add(tmpFile);
@@ -66,13 +70,15 @@ public class ImageDemoTools {
             }
 
             bufferedImage = pixelsOperation
-                    .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false).operate();
-            if (task == null || !task.isWorking()) {
+                    .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false)
+                    .setTask(task)
+                    .operate();
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("All"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
-                if (task == null || !task.isWorking()) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
+                if (!task.isWorking()) {
                     return;
                 }
                 files.add(tmpFile);
@@ -87,7 +93,7 @@ public class ImageDemoTools {
         }
     }
 
-    public static void sharpen(SingletonTask task, List<String> files, ImageConvolution convolution) {
+    public static void sharpen(FxTask task, List<String> files, ImageConvolution convolution) {
         if (task == null || convolution == null || files == null) {
             return;
         }
@@ -96,14 +102,15 @@ public class ImageDemoTools {
 
             BufferedImage bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(1))
+                    .setTask(task)
                     .operate();
-            if (task == null || !task.isWorking()) {
+            if (!task.isWorking()) {
                 return;
             }
             String tmpFile = FileTmpTools.generateFile(prefix + "_" + message("UnsharpMasking") + "_1", "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                if (task == null || !task.isWorking()) {
+                if (!task.isWorking()) {
                     return;
                 }
                 task.setInfo(tmpFile);
@@ -111,14 +118,15 @@ public class ImageDemoTools {
 
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
+                    .setTask(task)
                     .operate();
-            if (task == null || !task.isWorking()) {
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("UnsharpMasking") + "_2", "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                if (task == null || !task.isWorking()) {
+                if (!task.isWorking()) {
                     return;
                 }
                 task.setInfo(tmpFile);
@@ -126,14 +134,15 @@ public class ImageDemoTools {
 
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
+                    .setTask(task)
                     .operate();
-            if (task == null || !task.isWorking()) {
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("UnsharpMasking") + "_3", "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                if (task == null || !task.isWorking()) {
+                if (!task.isWorking()) {
                     return;
                 }
                 task.setInfo(tmpFile);
@@ -141,14 +150,15 @@ public class ImageDemoTools {
 
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
+                    .setTask(task)
                     .operate();
-            if (task == null || !task.isWorking()) {
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("UnsharpMasking") + "_4", "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                if (task == null || !task.isWorking()) {
+                if (!task.isWorking()) {
                     return;
                 }
                 task.setInfo(tmpFile);
@@ -156,14 +166,15 @@ public class ImageDemoTools {
 
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.MakeSharpenEightNeighborLaplace())
+                    .setTask(task)
                     .operate();
-            if (task == null || !task.isWorking()) {
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("EightNeighborLaplace"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                if (task == null || !task.isWorking()) {
+                if (!task.isWorking()) {
                     return;
                 }
                 task.setInfo(tmpFile);
@@ -171,14 +182,15 @@ public class ImageDemoTools {
 
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.MakeSharpenFourNeighborLaplace())
+                    .setTask(task)
                     .operate();
-            if (task == null || !task.isWorking()) {
+            if (!task.isWorking()) {
                 return;
             }
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("FourNeighborLaplace"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
-                if (task == null || !task.isWorking()) {
+                if (!task.isWorking()) {
                     return;
                 }
                 task.setInfo(tmpFile);

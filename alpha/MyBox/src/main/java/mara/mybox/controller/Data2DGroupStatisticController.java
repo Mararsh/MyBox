@@ -23,8 +23,8 @@ import mara.mybox.data2d.reader.DataTableGroupStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonBackgroundTask;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxBackgroundTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -176,7 +176,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         for (StatisticType t : calculation.types) {
             valuesDisplayPane.getChildren().add(new CheckBox(message(t.name())));
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private DataTableGroup group;
             private DataTableGroupStatistic statistic;
@@ -249,7 +249,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             backgroundTask.cancel();
             backgroundTask = null;
         }
-        backgroundTask = new SingletonBackgroundTask<Void>(this) {
+        backgroundTask = new FxBackgroundTask<Void>(this) {
 
             @Override
             protected boolean handle() {

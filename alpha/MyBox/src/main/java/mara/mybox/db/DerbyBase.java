@@ -676,7 +676,7 @@ public class DerbyBase {
     public static boolean initTableValues() {
         try (Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
             if (TableGeographyCode.China(conn) == null) {
-                GeographyCodeTools.importPredefined(conn);
+                GeographyCodeTools.importPredefined(null, conn);
             }
             return true;
         } catch (Exception e) {

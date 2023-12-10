@@ -8,7 +8,7 @@ import javafx.scene.control.Tab;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
@@ -100,7 +100,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -157,7 +157,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
 
     @Override
     public void handleAllTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private long count;
 

@@ -6,7 +6,7 @@ import java.util.List;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppPaths;
@@ -38,7 +38,7 @@ public class DataClipboard extends DataFileCSV {
         return new File(AppPaths.getDataClipboardPath() + File.separator + DateTools.nowFileString() + ".csv");
     }
 
-    public static DataClipboard create(SingletonTask task, String dname,
+    public static DataClipboard create(FxTask task, String dname,
             List<Data2DColumn> cols, List<List<String>> data) {
         if (cols == null || data == null || data.isEmpty()) {
             return null;
@@ -56,7 +56,7 @@ public class DataClipboard extends DataFileCSV {
         }
     }
 
-    public static DataClipboard create(SingletonTask task, Data2D sourceData, File dFile) {
+    public static DataClipboard create(FxTask task, Data2D sourceData, File dFile) {
         if (dFile == null || sourceData == null) {
             return null;
         }

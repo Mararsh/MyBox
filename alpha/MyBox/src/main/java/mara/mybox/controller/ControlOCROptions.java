@@ -31,7 +31,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -501,16 +501,16 @@ public class ControlOCROptions extends BaseController {
         words = null;
     }
 
-    public boolean imageOCR(SingletonTask task, Image image, boolean allData) {
+    public boolean imageOCR(FxTask task, Image image, boolean allData) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        bufferedImage = AlphaTools.removeAlpha(bufferedImage);
+        bufferedImage = AlphaTools.removeAlpha(task, bufferedImage);
         return bufferedImageOCR(task, bufferedImage, allData);
     }
 
-    public boolean bufferedImageOCR(SingletonTask task, BufferedImage bufferedImage, boolean allData) {
+    public boolean bufferedImageOCR(FxTask task, BufferedImage bufferedImage, boolean allData) {
         try {
             clearResults();
-            if (task == null || bufferedImage == null) {
+            if (bufferedImage == null || (task != null && !task.isWorking())) {
                 return false;
             }
             Tesseract instance = tesseract();
@@ -527,13 +527,18 @@ public class ControlOCROptions extends BaseController {
             instance.createDocumentsWithResults​(bufferedImage, tmp,
                     tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
             File txtFile = new File(tmp + ".txt");
-            texts = TextFileTools.readTexts(txtFile);
+            texts = TextFileTools.readTexts(task, txtFile);
             FileDeleteTools.delete(txtFile);
-
+            if (texts == null || (task != null && !task.isWorking())) {
+                return false;
+            }
             if (allData) {
                 File htmlFile = new File(tmp + ".hocr");
-                html = TextFileTools.readTexts(htmlFile);
+                html = TextFileTools.readTexts(task, htmlFile);
                 FileDeleteTools.delete(htmlFile);
+                if (html == null || (task != null && !task.isWorking())) {
+                    return false;
+                }
 
                 if (wordLevel >= 0) {
                     words = instance.getWords(bufferedImage, wordLevel);

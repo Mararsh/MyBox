@@ -16,7 +16,7 @@ import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -255,7 +255,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -441,7 +441,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         groupDataController.loadNull();
         group = null;
         framesNumber = -1;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

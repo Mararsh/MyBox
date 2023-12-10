@@ -44,7 +44,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
     @Override
     protected void editNode(InfoNode node) {
         if (node != null) {
-            scope = ImageScopeTools.fromXML(node.getInfo());
+            scope = ImageScopeTools.fromXML(null, myController, node.getInfo());
         } else {
             scope = null;
         }
@@ -53,7 +53,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
         }
         valuesController.loadScope(scope);
         nodeChanged(false);
-        updateTitle(node);
+        updateEditorTitle(node);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
         if (scope == null) {
             scope = new ImageScope();
         }
-        ImageScope srcScope = ImageScopeTools.fromXML(node.getInfo());
+        ImageScope srcScope = ImageScopeTools.fromXML(null, myController, node.getInfo());
         if (srcScope == null) {
             valuesController.loadScope(scope);
             nodeChanged(true);

@@ -12,7 +12,7 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -510,7 +510,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return isEmpty;
     }
 
-    public boolean equalOrDescendant(SingletonTask<Void> task, Connection conn, InfoNode node1, InfoNode node2) {
+    public boolean equalOrDescendant(FxTask<Void> task, Connection conn, InfoNode node1, InfoNode node2) {
         if (conn == null || node1 == null || node2 == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));

@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.fxml.FXML;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.value.Fxmls;
@@ -29,24 +29,39 @@ public class SvgFromImageController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        try {
-            if (!optionsController.pickValues()) {
-                return;
+        if (!optionsController.pickValues()) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private File svgFile;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    svgFile = SvgTools.imageToSvgFile(this, myController, sourceFile,
+                            optionsController.myboxRadio.isSelected()
+                            ? optionsController.quantizationController : null,
+                            optionsController.options);
+                    return svgFile != null && svgFile.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
-            File svgFile = SvgTools.imageToSvgFile(this, sourceFile,
-                    optionsController.myboxRadio.isSelected() ? optionsController.quantizationController : null,
-                    optionsController.options);
-            if (svgFile != null && svgFile.exists()) {
+
+            @Override
+            protected void whenSucceeded() {
                 SvgEditorController.open(svgFile);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }
-            } else {
-                popError(message("Failed"));
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+
+        };
+        start(task);
     }
 
     /*

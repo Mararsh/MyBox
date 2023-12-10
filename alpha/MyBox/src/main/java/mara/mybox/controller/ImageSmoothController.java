@@ -102,7 +102,8 @@ public class ImageSmoothController extends BasePixelsController {
                     .setScope(inScope)
                     .setKernel(kernel)
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             operation = message("Smooth");
             opInfo = message("Intensity") + ": " + intensity;
             return convolution.operateFxImage();

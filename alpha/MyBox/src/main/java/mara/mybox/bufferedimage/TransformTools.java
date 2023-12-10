@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
@@ -14,7 +15,7 @@ import mara.mybox.value.Colors;
  */
 public class TransformTools {
 
-    public static BufferedImage rotateImage(BufferedImage source, int inAngle) {
+    public static BufferedImage rotateImage(FxTask task, BufferedImage source, int inAngle) {
         int angle = inAngle % 360;
         if (angle == 0) {
             return source;
@@ -38,14 +39,20 @@ public class TransformTools {
         Color bgColor = Colors.TRANSPARENT;
         g.setBackground(bgColor);
         g.translate((newWidth - width) / 2, (newHeight - height) / 2);
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
         g.rotate(radians, width / 2, height / 2);
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
         g.drawImage(source, null, null);
         g.dispose();
-        target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
+        target = MarginTools.cutMargins(task, target, bgColor, true, true, true, true);
         return target;
     }
 
-    public static BufferedImage shearImage(BufferedImage source, float shearX, float shearY) {
+    public static BufferedImage shearImage(FxTask task, BufferedImage source, float shearX, float shearY) {
         try {
             int scale = Math.round(Math.abs(Math.max(shearX, shearY)));
             if (scale <= 1) {
@@ -65,10 +72,19 @@ public class TransformTools {
             if (shearX < 0) {
                 g.translate(width / 2, 0);
             }
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.shear(shearX, shearY);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.drawImage(source, 0, 0, null);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.dispose();
-            target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
+            target = MarginTools.cutMargins(task, target, bgColor, true, true, true, true);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -76,16 +92,22 @@ public class TransformTools {
         }
     }
 
-    public static BufferedImage horizontalMirrorImage(BufferedImage source) {
+    public static BufferedImage horizontalMirrorImage(FxTask task, BufferedImage source) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 int l = 0;
                 int r = width - 1;
                 while (l < r) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pl = source.getRGB(l, j);
                     int pr = source.getRGB(r, j);
                     target.setRGB(l, j, pr);
@@ -101,16 +123,22 @@ public class TransformTools {
         }
     }
 
-    public static BufferedImage verticalMirrorImage(BufferedImage source) {
+    public static BufferedImage verticalMirrorImage(FxTask task, BufferedImage source) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int i = 0; i < width; ++i) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 int t = 0;
                 int b = height - 1;
                 while (t < b) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pt = source.getRGB(i, t);
                     int pb = source.getRGB(i, b);
                     target.setRGB(i, t, pb);

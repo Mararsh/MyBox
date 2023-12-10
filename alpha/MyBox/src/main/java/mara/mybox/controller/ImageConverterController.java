@@ -11,7 +11,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -137,7 +137,7 @@ public class ImageConverterController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -161,20 +161,23 @@ public class ImageConverterController extends BaseChildController {
                         && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
                 if (formatController != null) {
                     if (multipleFrames) {
-                        error = ImageFileWriters.writeFrame(srcFile,
-                                imageController.frameIndex, bufferedImage, targetFile, formatController.attributes);
+                        error = ImageFileWriters.writeFrame(this, srcFile,
+                                imageController.frameIndex, bufferedImage,
+                                targetFile, formatController.attributes);
                         return error == null;
                     } else {
-                        BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
-                        return ImageFileWriters.writeImageFile(converted, formatController.attributes, targetFile.getAbsolutePath());
+                        BufferedImage converted = ImageConvertTools.convertColorSpace(this,
+                                bufferedImage, formatController.attributes);
+                        return ImageFileWriters.writeImageFile(this, converted,
+                                formatController.attributes, targetFile.getAbsolutePath());
                     }
                 } else {
                     if (multipleFrames) {
-                        error = ImageFileWriters.writeFrame(srcFile,
+                        error = ImageFileWriters.writeFrame(this, srcFile,
                                 imageController.frameIndex, bufferedImage, targetFile, null);
                         return error == null;
                     } else {
-                        return ImageFileWriters.writeImageFile(bufferedImage, targetFile);
+                        return ImageFileWriters.writeImageFile(this, bufferedImage, targetFile);
                     }
                 }
             }

@@ -9,8 +9,8 @@ import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 
@@ -26,7 +26,7 @@ public abstract class BasePixelsController extends BaseChildController {
     protected String operation, opInfo;
     protected Image handledImage;
     protected ImageScope scope;
-    protected SingletonTask demoTask;
+    protected FxTask demoTask;
 
     @FXML
     protected ControlSelectPixels scopeController;
@@ -127,7 +127,7 @@ public abstract class BasePixelsController extends BaseChildController {
             task.cancel();
         }
         reset();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private ImageScope scope;
 
             @Override
@@ -135,7 +135,7 @@ public abstract class BasePixelsController extends BaseChildController {
                 try {
                     scope = scope();
                     handledImage = handleImage(srcImage(), scope);
-                    return handledImage != null;
+                    return !isCancelled() && handledImage != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -175,14 +175,14 @@ public abstract class BasePixelsController extends BaseChildController {
         if (demoTask != null) {
             demoTask.cancel();
         }
-        demoTask = new SingletonTask<Void>(this) {
+        demoTask = new FxTask<Void>(this) {
             private List<String> files;
 
             @Override
             protected boolean handle() {
                 try {
                     Image demoImage = ScaleTools.demoImage(srcImage());
-                    if (demoImage == null || demoTask == null || !demoTask.isWorking()) {
+                    if (demoImage == null || !isWorking()) {
                         return false;
                     }
                     files = new ArrayList<>();

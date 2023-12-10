@@ -50,7 +50,10 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
                 return Languages.message("Skip");
             }
 
-            String html = TextFileTools.readTexts(srcFile);
+            String html = TextFileTools.readTexts(task, srcFile);
+            if (html == null || (task != null && !task.isWorking())) {
+                return message("Canceled");
+            }
             String md = mdConverter.convert(html);
             TextFileTools.writeFile(target, md, Charset.forName("utf-8"));
             if (target.exists() && target.length() > 0) {

@@ -51,7 +51,8 @@ public class HelpTools {
             File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme_" + fileLang + ".html");
             File mdFile = FxFileTools.getInternalFile("/doc/" + fileLang + "/README.md",
                     "doc", "README-" + fileLang + ".md", true);
-            String html = MarkdownTools.md2html(MarkdownTools.htmlOptions(), mdFile, HtmlStyles.DefaultStyle);
+            String html = MarkdownTools.md2html(null,
+                    MarkdownTools.htmlOptions(), mdFile, HtmlStyles.DefaultStyle);
             if (html == null) {
                 return null;
             }
@@ -238,7 +239,7 @@ public class HelpTools {
     }
 
     public static void imageStories(BaseController controller) {
-        SingletonTask task = new SingletonTask<Void>(controller) {
+        FxTask task = new FxTask<Void>(controller) {
             private File htmFile;
 
             @Override
@@ -256,7 +257,7 @@ public class HelpTools {
         controller.start(task);
     }
 
-    public static File imageStories(SingletonTask task, boolean isRemote, String lang) {
+    public static File imageStories(FxTask task, boolean isRemote, String lang) {
         try {
             StringTable table = new StringTable(null, message(lang, "StoriesOfImages"));
             List<ImageItem> predefinedItems = ImageItem.predefined(lang);

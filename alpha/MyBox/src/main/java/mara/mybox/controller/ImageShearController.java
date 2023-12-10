@@ -80,7 +80,7 @@ public class ImageShearController extends BaseImageEditController {
 
     @Override
     protected void handleImage() {
-        handledImage = TransformTools.shearImage(imageView.getImage(), shearX, shearY);
+        handledImage = TransformTools.shearImage(task, imageView.getImage(), shearX, shearY);
     }
 
     /*

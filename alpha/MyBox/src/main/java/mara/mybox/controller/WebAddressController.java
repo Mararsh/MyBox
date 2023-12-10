@@ -18,8 +18,8 @@ import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
@@ -99,7 +99,7 @@ public class WebAddressController extends BaseWebViewController {
         if (address == null || address.isBlank()) {
             return;
         }
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private String title;
             private ImageView tabImage = null;
@@ -117,11 +117,11 @@ public class WebAddressController extends BaseWebViewController {
                     his.setIcon("");
                     if (failedAddress == null || !failedAddress.contains(address)) {
                         try {
-                            File iconFile = IconTools.readIcon(address, true);
+                            File iconFile = IconTools.readIcon(this, address, true);
                             if (iconFile != null && iconFile.exists()) {
                                 his.setIcon(iconFile.getAbsolutePath());
                                 if (addressTab != null) {
-                                    BufferedImage image = ImageFileReaders.readImage(iconFile);
+                                    BufferedImage image = ImageFileReaders.readImage(this, iconFile);
                                     if (image != null) {
                                         tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
                                     }

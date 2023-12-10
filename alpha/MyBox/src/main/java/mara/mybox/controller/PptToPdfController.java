@@ -9,9 +9,9 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -69,8 +69,8 @@ public class PptToPdfController extends BaseBatchFileController {
             return message("Skip");
         }
         File tmpFile = FileTmpTools.getTempFile();
-        try ( PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
-                 SlideShow ppt = SlideShowFactory.create(srcFile)) {
+        try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
+                SlideShow ppt = SlideShowFactory.create(srcFile)) {
             PDDocumentInformation info = new PDDocumentInformation();
             info.setCreationDate(Calendar.getInstance());
             info.setModificationDate(Calendar.getInstance());
@@ -96,7 +96,8 @@ public class PptToPdfController extends BaseBatchFileController {
                 if (task == null || task.isCancelled()) {
                     return message("Cancelled");
                 }
-                PdfTools.writePage(document, "png", slideImage, ++count, total, pdfOptionsController);
+                PdfTools.writePage(task,
+                        document, "png", slideImage, ++count, total, pdfOptionsController);
             }
             PDPage page = document.getPage(0);
             PDPageXYZDestination dest = new PDPageXYZDestination();

@@ -123,7 +123,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImagesBrowser"), Fxmls.ImagesBrowserFxml));
             cases.add(new TestCase(index++, message("ImageAnalyse"), Fxmls.ImageAnalyseFxml));
             cases.add(new TestCase(index++, message("ImagesPlay"), Fxmls.ImagesPlayFxml));
-            cases.add(new TestCase(index++, message("ImageManufacture"), Fxmls.ImageManufactureFxml));
+            cases.add(new TestCase(index++, message("ImageEditor"), Fxmls.ImageEditorFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Size"), Fxmls.ImageManufactureBatchSizeFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Crop"), Fxmls.ImageCropBatchFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Paste"), Fxmls.ImageManufactureBatchPasteFxml));
@@ -137,7 +137,6 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Shadow"), Fxmls.ImageManufactureBatchShadowFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Transform"), Fxmls.ImageManufactureBatchTransformFxml));
             cases.add(new TestCase(index++, message("ImageManufacture") + "-" + message("Margins"), Fxmls.ImageManufactureBatchMarginsFxml));
-            cases.add(new TestCase(index++, message("ImagesEditor"), Fxmls.ImagesEditorFxml));
             cases.add(new TestCase(index++, message("ImagesSplice"), Fxmls.ImagesSpliceFxml));
             cases.add(new TestCase(index++, message("ImageAlphaAdd"), Fxmls.ImageAlphaAddBatchFxml));
             cases.add(new TestCase(index++, message("ImageSplit"), Fxmls.ImageSplitFxml));

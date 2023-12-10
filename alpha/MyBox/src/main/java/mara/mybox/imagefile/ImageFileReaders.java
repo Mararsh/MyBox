@@ -28,13 +28,13 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.color.ColorBase;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
+import static mara.mybox.value.AppVariables.ImageHints;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import thridparty.image4j.ICODecoder;
-import static mara.mybox.value.AppVariables.ImageHints;
 
 /**
  * @Author Mara
@@ -87,39 +87,40 @@ public class ImageFileReaders {
         }
     }
 
-    public static BufferedImage readImage(File file) {
+    public static BufferedImage readImage(FxTask task, File file) {
         ImageInformation readInfo = new ImageInformation(file);
-        return readFrame(readInfo);
+        return readFrame(task, readInfo);
     }
 
-    public static BufferedImage readImage(File file, int width) {
+    public static BufferedImage readImage(FxTask task, File file, int width) {
         ImageInformation imageInfo = new ImageInformation(file);
         imageInfo.setRequiredWidth(width);
-        return readFrame(imageInfo);
+        return readFrame(task, imageInfo);
     }
 
-    public static BufferedImage readFrame(File file, int index) {
+    public static BufferedImage readFrame(FxTask task, File file, int index) {
         ImageInformation imageInfo = new ImageInformation(file);
         imageInfo.setIndex(index);
-        return readFrame(imageInfo);
+        return readFrame(task, imageInfo);
     }
 
-    public static BufferedImage readFrame(ImageInformation imageInfo) {
+    public static BufferedImage readFrame(FxTask task, ImageInformation imageInfo) {
         if (imageInfo == null || imageInfo.getFile() == null) {
             return null;
         }
         String format = imageInfo.getImageFormat();
         if ("ico".equals(format) || "icon".equals(format)) {
-            return readIcon(imageInfo);
+            return readIcon(task, imageInfo);
         }
         BufferedImage bufferedImage = null;
-        try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(imageInfo.getFile())))) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(
+                new BufferedInputStream(new FileInputStream(imageInfo.getFile())))) {
             ImageReader reader = getReader(iis, format);
             if (reader == null) {
                 return null;
             }
             reader.setInput(iis, true, true);
-            bufferedImage = readFrame(reader, imageInfo);
+            bufferedImage = readFrame(task, reader, imageInfo);
             reader.dispose();
         } catch (Exception e) {
             imageInfo.setError(e.toString());
@@ -127,7 +128,7 @@ public class ImageFileReaders {
         return bufferedImage;
     }
 
-    public static BufferedImage readFrame(ImageReader reader, ImageInformation imageInfo) {
+    public static BufferedImage readFrame(FxTask task, ImageReader reader, ImageInformation imageInfo) {
         if (reader == null || imageInfo == null) {
             return null;
         }
@@ -142,7 +143,7 @@ public class ImageFileReaders {
             if (xscale != 1 || yscale != 1) {
                 param.setSourceSubsampling(xscale, yscale, 0, 0);
             } else {
-                ImageInformation.checkMem(imageInfo);
+                ImageInformation.checkMem(task, imageInfo);
                 int sampleScale = imageInfo.getSampleScale();
                 if (sampleScale > 1) {
                     param.setSourceSubsampling(sampleScale, sampleScale, 0, 0);
@@ -151,6 +152,9 @@ public class ImageFileReaders {
             BufferedImage bufferedImage;
             try {
                 bufferedImage = reader.read(imageInfo.getIndex(), param);
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 imageInfo.setImageType(bufferedImage.getType());
                 int requiredWidth = (int) imageInfo.getRequiredWidth();
                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
@@ -160,7 +164,7 @@ public class ImageFileReaders {
                 }
                 return bufferedImage;
             } catch (Exception e) {
-                return readBrokenImage(e, imageInfo);
+                return readBrokenImage(task, e, imageInfo);
             }
         } catch (Exception e) {
             imageInfo.setError(e.toString());
@@ -168,13 +172,13 @@ public class ImageFileReaders {
         }
     }
 
-    public static ImageInformation makeInfo(File file, int width) {
+    public static ImageInformation makeInfo(FxTask task, File file, int width) {
         ImageInformation readInfo = new ImageInformation(file);
         readInfo.setRequiredWidth(width);
-        return makeInfo(readInfo, false);
+        return makeInfo(task, readInfo, false);
     }
 
-    public static ImageInformation makeInfo(ImageInformation readInfo, boolean onlyInformation) {
+    public static ImageInformation makeInfo(FxTask task, ImageInformation readInfo, boolean onlyInformation) {
         try {
             if (readInfo == null) {
                 return null;
@@ -184,20 +188,19 @@ public class ImageFileReaders {
             File file = readInfo.getFile();
             int index = readInfo.getIndex();
             int requiredWidth = (int) readInfo.getRequiredWidth();
-            SingletonTask task = readInfo.getTask();
             LoadingController loading = task != null ? task.getLoading() : null;
             String format = readInfo.getImageFormat();
             if ("ico".equals(format) || "icon".equals(format)) {
                 if (fileInfo == null) {
                     fileInfo = new ImageFileInformation(file);
-                    ImageFileReaders.readImageFileMetaData(null, fileInfo);
+                    ImageFileReaders.readImageFileMetaData(task, null, fileInfo);
                 }
                 int size = fileInfo.getNumberOfImages();
                 if (size > 0 && index < size) {
                     imageInfo = fileInfo.getImagesInformation().get(index);
                     if (!onlyInformation) {
                         imageInfo.setRequiredWidth(requiredWidth);
-                        BufferedImage bufferedImage = readIcon(imageInfo);
+                        BufferedImage bufferedImage = readIcon(task, imageInfo);
                         imageInfo.loadBufferedImage(bufferedImage);
                     }
                 }
@@ -210,7 +213,7 @@ public class ImageFileReaders {
                         if (loading != null) {
                             loading.setInfo(message("Reading") + ": " + message("MetaData"));
                         }
-                        ImageFileReaders.readImageFileMetaData(reader, fileInfo);
+                        ImageFileReaders.readImageFileMetaData(task, reader, fileInfo);
                         int size = fileInfo.getNumberOfImages();
                         if (size > 0 && index < size) {
                             imageInfo = fileInfo.getImagesInformation().get(index);
@@ -218,9 +221,8 @@ public class ImageFileReaders {
                                 if (loading != null) {
                                     loading.setInfo(message("Reading") + ": Image " + index + " / " + size);
                                 }
-                                imageInfo.setTask(task);
                                 imageInfo.setRequiredWidth(requiredWidth);
-                                BufferedImage bufferedImage = readFrame(reader, imageInfo);
+                                BufferedImage bufferedImage = readFrame(task, reader, imageInfo);
                                 imageInfo.loadBufferedImage(bufferedImage);
                             }
                         }
@@ -258,10 +260,13 @@ public class ImageFileReaders {
         }
     }
 
-    public static BufferedImage readIcon(ImageInformation imageInfo) {
+    public static BufferedImage readIcon(FxTask task, ImageInformation imageInfo) {
         try {
             BufferedImage bufferedImage = readIcon(imageInfo.getFile(), imageInfo.getIndex());
-            return adjust(imageInfo, bufferedImage);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            return adjust(task, imageInfo, bufferedImage);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
             return null;
@@ -269,7 +274,7 @@ public class ImageFileReaders {
     }
 
     // call this only when region and scale is not handled when create bufferedImage
-    public static BufferedImage adjust(ImageInformation imageInfo, BufferedImage bufferedImage) {
+    public static BufferedImage adjust(FxTask task, ImageInformation imageInfo, BufferedImage bufferedImage) {
         try {
             int requiredWidth = (int) imageInfo.getRequiredWidth();
             int bmWidth = bufferedImage.getWidth();
@@ -284,10 +289,10 @@ public class ImageFileReaders {
                 }
             } else {
                 if (xscale != 1 || yscale != 1) {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
+                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(task, bufferedImage,
                             imageInfo.getRegion(), xscale, yscale);
                 } else {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage,
+                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(task, bufferedImage,
                             imageInfo.getRegion(), requiredWidth);
                 }
             }
@@ -302,7 +307,7 @@ public class ImageFileReaders {
     /*
         Broken image
      */
-    public static BufferedImage readBrokenImage(Exception e, ImageInformation imageInfo) {
+    public static BufferedImage readBrokenImage(FxTask task, Exception e, ImageInformation imageInfo) {
         BufferedImage image = null;
         try {
             File file = imageInfo.getFile();
@@ -314,14 +319,14 @@ public class ImageFileReaders {
                 case "gif":
                     // Read Gif with JDK api normally. When broken, use DhyanB's API.
                     // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
-                    image = ImageGifFile.readBrokenGifFile(imageInfo);
+                    image = ImageGifFile.readBrokenGifFile(task, imageInfo);
 //                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
 //                        image = ImageGifFile.readBrokenGifFile(imageInfo);
 //                    }
                     break;
                 case "jpg":
                 case "jpeg":
-                    image = ImageJpgFile.readBrokenJpgFile(imageInfo);
+                    image = ImageJpgFile.readBrokenJpgFile(task, imageInfo);
 //                    if (e.toString().contains("Unsupported Image Type")) {
 //                        image = ImageJpgFile.readBrokenJpgFile(imageInfo);
 //                    }
@@ -338,26 +343,27 @@ public class ImageFileReaders {
     /*
         Meta data
      */
-    public static ImageFileInformation readImageFileMetaData(String fileName) {
-        return readImageFileMetaData(new File(fileName));
+    public static ImageFileInformation readImageFileMetaData(FxTask task, String fileName) {
+        return readImageFileMetaData(task, new File(fileName));
     }
 
-    public static ImageFileInformation readImageFileMetaData(File file) {
+    public static ImageFileInformation readImageFileMetaData(FxTask task, File file) {
         if (file == null || !file.exists() || !file.isFile()) {
             return null;
         }
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String format = fileInfo.getImageFormat();
         if ("ico".equals(format) || "icon".equals(format)) {
-            fileInfo = ImageFileInformation.readIconFile(file);
+            fileInfo = ImageFileInformation.readIconFile(task, file);
         } else {
-            try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(
+                    new BufferedInputStream(new FileInputStream(file)))) {
                 ImageReader reader = getReader(iis, format);
                 if (reader == null) {
                     return null;
                 }
                 reader.setInput(iis, false, false);
-                readImageFileMetaData(reader, fileInfo);
+                readImageFileMetaData(task, reader, fileInfo);
                 reader.dispose();
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
@@ -366,10 +372,11 @@ public class ImageFileReaders {
         return fileInfo;
     }
 
-    public static void readImageFileMetaData(ImageReader reader, ImageFileInformation fileInfo) {
+    public static boolean readImageFileMetaData(FxTask task,
+            ImageReader reader, ImageFileInformation fileInfo) {
         try {
             if (fileInfo == null) {
-                return;
+                return false;
             }
             String targetFormat = fileInfo.getImageFormat();
             File file = fileInfo.getFile();
@@ -383,12 +390,12 @@ public class ImageFileReaders {
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
                 imageInfo.setFileSize(fileInfo.getFileSize());
                 imageInfo.setIndex(0);
-                ImageInformation.checkMem(imageInfo);
+                ImageInformation.checkMem(task, imageInfo);
                 List<ImageInformation> imagesInfo = new ArrayList<>();
                 imagesInfo.add(imageInfo);
                 fileInfo.setImagesInformation(imagesInfo);
                 fileInfo.setImageInformation(imageInfo);
-                return;
+                return true;
             }
             String format = reader.getFormatName().toLowerCase();
             fileInfo.setImageFormat(format);
@@ -397,6 +404,9 @@ public class ImageFileReaders {
             List<ImageInformation> imagesInfo = new ArrayList<>();
             ImageInformation imageInfo;
             for (int i = 0; i < num; ++i) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);
@@ -449,34 +459,40 @@ public class ImageFileReaders {
                     MyBoxLog.console(e.toString());
                 }
                 try {
-                    readImageMetaData(format, imageInfo, reader.getImageMetadata(i));
+                    readImageMetaData(task, format, imageInfo, reader.getImageMetadata(i));
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());
                 }
-                ImageInformation.checkMem(imageInfo);
+                ImageInformation.checkMem(task, imageInfo);
                 imagesInfo.add(imageInfo);
             }
             fileInfo.setImagesInformation(imagesInfo);
             if (!imagesInfo.isEmpty()) {
                 fileInfo.setImageInformation(imagesInfo.get(0));
             }
+            return !(task != null && !task.isWorking());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
-    public static void readImageMetaData(String format, ImageInformation imageInfo, IIOMetadata iioMetaData) {
+    public static boolean readImageMetaData(FxTask task, String format,
+            ImageInformation imageInfo, IIOMetadata iioMetaData) {
         try {
             if (imageInfo == null || iioMetaData == null) {
-                return;
+                return false;
             }
             StringBuilder metaDataXml = new StringBuilder();
             String[] formatNames = iioMetaData.getMetadataFormatNames();
             Map<String, Map<String, List<Map<String, Object>>>> metaData = new HashMap<>();
             for (String formatName : formatNames) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 Map<String, List<Map<String, Object>>> formatMetaData = new HashMap<>();
                 IIOMetadataNode tree = (IIOMetadataNode) iioMetaData.getAsTree(formatName);
-                readImageMetaData(formatMetaData, metaDataXml, tree, 2);
+                readImageMetaData(task, formatMetaData, metaDataXml, tree, 2);
                 metaData.put(formatName, formatMetaData);
             }
             imageInfo.setMetaData(metaData);
@@ -505,13 +521,14 @@ public class ImageFileReaders {
 
             }
 //            MyBoxLog.debug(metaData);
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
-    public static void readImageMetaData(Map<String, List<Map<String, Object>>> formatMetaData,
+    public static boolean readImageMetaData(FxTask task, Map<String, List<Map<String, Object>>> formatMetaData,
             StringBuilder metaDataXml, IIOMetadataNode node, int level) {
         try {
             String lineSeparator = System.getProperty("line.separator");
@@ -525,6 +542,9 @@ public class ImageFileReaders {
             if (map != null && map.getLength() > 0) {
                 int length = map.getLength();
                 for (int i = 0; i < length; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     Node attr = map.item(i);
                     String name = attr.getNodeName();
                     String value = attr.getNodeValue();
@@ -534,7 +554,7 @@ public class ImageFileReaders {
                     metaDataXml.append(" ").append(name).append("=\"").append(value).append("\"");
                     if (isTiff && "ICC Profile".equals(value)) {
                         metaDataXml.append(" value=\"skip...\"/>").append(lineSeparator);
-                        return;
+                        return true;
                     }
                 }
             }
@@ -556,19 +576,24 @@ public class ImageFileReaders {
             IIOMetadataNode child = (IIOMetadataNode) node.getFirstChild();
             if (child == null) {
                 metaDataXml.append("/>").append(lineSeparator);
-                return;
+                return true;
             }
             metaDataXml.append(">").append(lineSeparator);
             while (child != null) {
-                readImageMetaData(formatMetaData, metaDataXml, child, level + 1);
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
+                readImageMetaData(task, formatMetaData, metaDataXml, child, level + 1);
                 child = (IIOMetadataNode) child.getNextSibling();
             }
             for (int i = 0; i < level; ++i) {
                 metaDataXml.append("    ");
             }
             metaDataXml.append("</").append(node.getNodeName()).append(">").append(lineSeparator);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return false;
         }
     }
 

@@ -41,7 +41,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
@@ -479,7 +479,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (file == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 if ("all".equals(type)) {
@@ -532,7 +532,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonCurrentTask<Void>(this) {
+                    task = new FxSingletonTask<Void>(this) {
 
                         private List<ColorData> data;
 
@@ -678,7 +678,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int deletedCount = 0;
 
@@ -723,7 +723,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

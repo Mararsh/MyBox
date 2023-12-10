@@ -20,7 +20,7 @@ import javafx.scene.image.ImageView;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -135,7 +135,7 @@ public class PptViewController extends BaseFileImagesViewController {
         if (sourceFile == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 setTotalPages(0);
@@ -187,7 +187,7 @@ public class PptViewController extends BaseFileImagesViewController {
         if (sourceFile == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String slideTexts, notes, master, comments;
 
             @Override

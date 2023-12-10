@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -14,7 +15,7 @@ import mara.mybox.value.AppVariables;
  */
 public class RepeatTools {
 
-    public static BufferedImage repeat(BufferedImage source,
+    public static BufferedImage repeat(FxTask task, BufferedImage source,
             int repeatH, int repeatV, int interval, int margin, Color bgColor) {
         try {
             if (source == null || repeatH <= 0 || repeatV <= 0) {
@@ -38,8 +39,14 @@ public class RepeatTools {
 
             int x, y = margin;
             for (int v = 0; v < repeatV; ++v) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 x = margin;
                 for (int h = 0; h < repeatH; ++h) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     g.drawImage(source, x, y, width, height, null);
                     x += stepx;
                 }
@@ -52,7 +59,7 @@ public class RepeatTools {
         }
     }
 
-    public static BufferedImage tile(BufferedImage source,
+    public static BufferedImage tile(FxTask task, BufferedImage source,
             int canvasWidth, int canvasHeight, int interval, int margin, Color bgColor) {
         try {
             if (source == null || canvasWidth <= 0 || canvasHeight <= 0) {
@@ -74,7 +81,13 @@ public class RepeatTools {
             int stepx = width + interval;
             int stepy = height + interval;
             for (int v = margin; v < canvasHeight - height - margin; v += stepy) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int h = margin; h < canvasWidth - width - margin; h += stepx) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     g.drawImage(source, h, v, width, height, null);
                     x = h + stepx;
                     y = v + stepy;
@@ -82,20 +95,35 @@ public class RepeatTools {
             }
             int leftWidth = canvasWidth - margin - x;
             if (leftWidth > 0) {
-                BufferedImage cropped = CropTools.cropOutside(source, 0, 0, leftWidth, height);
+                BufferedImage cropped = CropTools.cropOutside(task, source, 0, 0, leftWidth, height);
+                if (cropped == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
                 for (int v = margin; v < canvasHeight - height - margin; v += stepy) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     g.drawImage(cropped, x, v, leftWidth, height, null);
                 }
             }
             int leftHeight = canvasHeight - margin - y;
             if (leftHeight > 0) {
-                BufferedImage cropped = CropTools.cropOutside(source, 0, 0, width, leftHeight);
+                BufferedImage cropped = CropTools.cropOutside(task, source, 0, 0, width, leftHeight);
+                if (cropped == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
                 for (int h = margin; h < canvasWidth - width - margin; h += stepx) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     g.drawImage(cropped, h, y, width, leftHeight, null);
                 }
             }
             if (leftWidth > 0 && leftHeight > 0) {
-                BufferedImage cropped = CropTools.cropOutside(source, 0, 0, leftWidth, leftHeight);
+                BufferedImage cropped = CropTools.cropOutside(task, source, 0, 0, leftWidth, leftHeight);
+                if (cropped == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
                 g.drawImage(cropped, x, y, leftWidth, leftHeight, null);
             }
 

@@ -27,7 +27,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -581,7 +581,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         totalFilesHandled = totalItemsHandled = 0;
         tableController.markFileHandling(-1);
         updateInterface("Started");
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

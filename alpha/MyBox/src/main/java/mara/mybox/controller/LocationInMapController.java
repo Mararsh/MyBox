@@ -20,7 +20,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
@@ -157,7 +157,7 @@ public class LocationInMapController extends GeographyCodeMapController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -220,7 +220,7 @@ public class LocationInMapController extends GeographyCodeMapController {
         if (geographyCode == null) {
             return;
         }
-        GeographyCode code = GeographyCodeTools.encode(geographyCode);
+        GeographyCode code = GeographyCodeTools.encode(null, geographyCode);
         if (code != null) {
             geographyCode = code;
         } else {

@@ -31,6 +31,7 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
@@ -49,7 +50,7 @@ public class ImageJpgFile {
         return new JPEGImageWriteParam(null).getCompressionTypes();
     }
 
-    public static BufferedImage readBrokenJpgFile(ImageInformation imageInfo) {
+    public static BufferedImage readBrokenJpgFile(FxTask task, ImageInformation imageInfo) {
         if (imageInfo == null) {
             return null;
         }
@@ -70,7 +71,10 @@ public class ImageJpgFile {
             reader.setInput(iis);
 
             ImageFileInformation fileInfo = new ImageFileInformation(file);
-            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
+            ImageFileReaders.readImageFileMetaData(task, reader, fileInfo);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             ImageInformation fileImageInfo = fileInfo.getImagesInformation().get(imageInfo.getIndex());
 
             imageInfo.setWidth(fileImageInfo.getWidth());
@@ -79,8 +83,10 @@ public class ImageJpgFile {
             imageInfo.setColorChannels(fileImageInfo.getColorChannels());
             imageInfo.setNativeAttribute("Adobe", fileImageInfo.getNativeAttribute("Adobe"));
 
-            BufferedImage bufferedImage = readBrokenJpgFile(reader, imageInfo);
-
+            BufferedImage bufferedImage = readBrokenJpgFile(task, reader, imageInfo);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             int requiredWidth = (int) imageInfo.getRequiredWidth();
             if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
                 bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
@@ -92,7 +98,7 @@ public class ImageJpgFile {
         }
     }
 
-    private static BufferedImage readBrokenJpgFile(ImageReader reader, ImageInformation imageInfo) {
+    private static BufferedImage readBrokenJpgFile(FxTask task, ImageReader reader, ImageInformation imageInfo) {
         if (reader == null || imageInfo == null || imageInfo.getColorChannels() != 4) {
             return null;
         }
@@ -108,18 +114,27 @@ public class ImageJpgFile {
             if (xscale != 1 || yscale != 1) {
                 param.setSourceSubsampling(xscale, yscale, 0, 0);
             } else {
-                ImageInformation.checkMem(imageInfo);
+                ImageInformation.checkMem(task, imageInfo);
                 int sampleScale = imageInfo.getSampleScale();
                 if (sampleScale > 1) {
                     param.setSourceSubsampling(sampleScale, sampleScale, 0, 0);
                 }
             }
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             WritableRaster srcRaster = (WritableRaster) reader.readRaster(imageInfo.getIndex(), param);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             boolean isAdobe = (boolean) imageInfo.getNativeAttribute("Adobe");
             if ("YCCK".equals(imageInfo.getColorSpace())) {
-                ImageConvertTools.ycck2cmyk(srcRaster, isAdobe);
+                ImageConvertTools.ycck2cmyk(task, srcRaster, isAdobe);
             } else if (isAdobe) {
-                ImageConvertTools.invertPixelValue(srcRaster);
+                ImageConvertTools.invertPixelValue(task, srcRaster);
+            }
+            if (task != null && !task.isWorking()) {
+                return null;
             }
             bufferedImage = new BufferedImage(srcRaster.getWidth(), srcRaster.getHeight(), BufferedImage.TYPE_INT_RGB);
             WritableRaster rgbRaster = bufferedImage.getRaster();
@@ -131,6 +146,9 @@ public class ImageJpgFile {
             }
             ColorSpace rgbCS = bufferedImage.getColorModel().getColorSpace();
             ColorConvertOp cmykToRgb = new ColorConvertOp(cmykCS, rgbCS, null);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             cmykToRgb.filter(srcRaster, rgbRaster);
 
         } catch (Exception ex) {

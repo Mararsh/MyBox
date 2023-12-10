@@ -27,7 +27,7 @@ import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -42,8 +42,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageEnhancementOptions extends BaseController {
 
-    protected ImageManufactureController editor;
-    protected ImageManufactureEnhancementController enhancementController;
     protected OperationType enhanceType;
     protected int intPara1, intPara2, intPara3;
     protected List<ConvolutionKernel> kernels;
@@ -123,63 +121,64 @@ public class ControlImageEnhancementOptions extends BaseController {
         if (parentController == null) {
             return;
         }
-        if (parentController instanceof ImageManufactureEnhancementController) {
-            enhancementController = (ImageManufactureEnhancementController) parentController;
-            editor = enhancementController.editor;
-            commentsLabel = enhancementController.commentsLabel;
-            okButton = enhancementController.okButton;
-        } else {
-            enhancementController = null;
-        }
+        // ##############
+//        if (parentController instanceof ImageManufactureEnhancementController) {
+//            enhancementController = (ImageManufactureEnhancementController) parentController;
+//            editor = enhancementController.editor;
+//            commentsLabel = enhancementController.commentsLabel;
+//            okButton = enhancementController.okButton;
+//        } else {
+//            enhancementController = null;
+//        }
     }
 
     protected void checkEnhanceType() {
         try {
-            if (editor != null) {
-                editor.resetImagePane();
-            }
-            clearValues();
-            if (okButton != null && enhancementGroup.getSelectedToggle() == null) {
-                okButton.setDisable(true);
-                return;
-            }
-            RadioButton selected = (RadioButton) enhancementGroup.getSelectedToggle();
-            if (ContrastRadio.equals(selected)) {
-                if (editor != null) {
-                    commentsLabel.setText(Languages.message("ManufactureWholeImage"));
-                    editor.imageTab();
-                }
-                enhanceType = OperationType.Contrast;
-                makeContrastBox();
-                if (enhancementController != null) {
-                    enhancementController.scopeCheck.setDisable(true);
-                }
-
-            } else {
-                if (enhancementController != null) {
-                    enhancementController.scopeCheck.setDisable(false);
-                }
-                if (editor != null) {
-                    commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
-//                    if (!editor.scopeController.scopeWhole()) {
-//                        editor.scopeTab();
-//                    }
-                }
-
-                if (smoothRadio.equals(selected)) {
-                    enhanceType = OperationType.Smooth;
-                    makeSmoothBox();
-
-                } else if (SharpenRadio.equals(selected)) {
-                    enhanceType = OperationType.Sharpen;
-                    makeSharpenBox();
-
-                } else if (ConvolutionRadio.equals(selected)) {
-                    enhanceType = OperationType.Convolution;
-                    makeConvolutionBox();
-
-                }
-            }
+//            if (editor != null) {
+//                editor.resetImagePane();
+//            }
+//            clearValues();
+//            if (okButton != null && enhancementGroup.getSelectedToggle() == null) {
+//                okButton.setDisable(true);
+//                return;
+//            }
+//            RadioButton selected = (RadioButton) enhancementGroup.getSelectedToggle();
+//            if (ContrastRadio.equals(selected)) {
+//                if (editor != null) {
+//                    commentsLabel.setText(Languages.message("ManufactureWholeImage"));
+//                    editor.imageTab();
+//                }
+//                enhanceType = OperationType.Contrast;
+//                makeContrastBox();
+//                if (enhancementController != null) {
+//                    enhancementController.scopeCheck.setDisable(true);
+//                }
+//
+//            } else {
+//                if (enhancementController != null) {
+//                    enhancementController.scopeCheck.setDisable(false);
+//                }
+//                if (editor != null) {
+//                    commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
+////                    if (!editor.scopeController.scopeWhole()) {
+////                        editor.scopeTab();
+////                    }
+//                }
+//
+//                if (smoothRadio.equals(selected)) {
+//                    enhanceType = OperationType.Smooth;
+//                    makeSmoothBox();
+//
+//                } else if (SharpenRadio.equals(selected)) {
+//                    enhanceType = OperationType.Sharpen;
+//                    makeSharpenBox();
+//
+//                } else if (ConvolutionRadio.equals(selected)) {
+//                    enhanceType = OperationType.Convolution;
+//                    makeConvolutionBox();
+//
+//                }
+//            }
 
             refreshStyle(setBox);
 
@@ -317,7 +316,7 @@ public class ControlImageEnhancementOptions extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 if (kernels == null) {

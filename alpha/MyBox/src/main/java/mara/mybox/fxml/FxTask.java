@@ -1,5 +1,6 @@
 package mara.mybox.fxml;
 
+import javafx.scene.Node;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.dev.MyBoxLog;
@@ -10,16 +11,28 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-12-18
  * @License Apache License Version 2.0
  */
-public class SingletonTask<Void> extends BaseTask<Void> {
+public class FxTask<Void> extends BaseTask<Void> {
 
     protected BaseController controller;
     protected LoadingController loading;
+    protected Node disableNode;
 
-    public SingletonTask() {
+    public FxTask() {
     }
 
-    public SingletonTask(BaseController controller) {
+    public FxTask(BaseController controller) {
         this.controller = controller;
+    }
+
+    @Override
+    protected boolean initValues() {
+        if (!super.initValues()) {
+            return false;
+        }
+        if (disableNode != null) {
+            disableNode.setDisable(true);
+        }
+        return true;
     }
 
     public void setInfo(String info) {
@@ -95,6 +108,9 @@ public class SingletonTask<Void> extends BaseTask<Void> {
         super.finalAction();
         controller = null;
         loading = null;
+        if (disableNode != null) {
+            disableNode.setDisable(false);
+        }
     }
 
     /*
@@ -114,6 +130,14 @@ public class SingletonTask<Void> extends BaseTask<Void> {
 
     public void setLoading(LoadingController loading) {
         this.loading = loading;
+    }
+
+    public Node getDisableNode() {
+        return disableNode;
+    }
+
+    public void setDisableNode(Node disableNode) {
+        this.disableNode = disableNode;
     }
 
 }

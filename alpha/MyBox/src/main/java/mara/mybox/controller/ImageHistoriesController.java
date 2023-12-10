@@ -29,9 +29,9 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -242,7 +242,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<ImageEditHistory> list;
 
             @Override
@@ -274,13 +274,14 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
                     File thumbfile = his.getThumbnailFile();
                     if (thumbfile == null || !thumbfile.exists()) {
                         String thumbname = FileNameTools.append(his.getHistoryFile().getAbsolutePath(), "_thumbnail");
-                        thumb = ImageFileReaders.readImage(his.getHistoryFile(), AppVariables.thumbnailWidth);
+                        thumb = ImageFileReaders.readImage(this,
+                                his.getHistoryFile(), AppVariables.thumbnailWidth);
                         if (thumb != null) {
                             his.setThumbnailFile(new File(thumbname));
                             tableImageEditHistory.updateData(conn, his);
                         }
                     } else {
-                        thumb = ImageFileReaders.readImage(thumbfile);
+                        thumb = ImageFileReaders.readImage(this, thumbfile);
                     }
                     if (thumb != null) {
                         his.setThumbnail(SwingFXUtils.toFXImage(thumb, null));
@@ -320,7 +321,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private int deletedCount = 0;
 
             @Override
@@ -363,7 +364,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private long deletedCount = 0;
 
@@ -427,10 +428,32 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
             popError(message("SelectToHandle"));
             return;
         }
-        Image hisImage = selected.historyImage();
-        if (hisImage != null) {
-            ImagePopController.openImage(myController, hisImage);
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private Image hisImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    hisImage = selected.historyImage(this);
+                    return hisImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (hisImage != null) {
+                    ImagePopController.openImage(myController, hisImage);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -442,7 +465,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
 
     @FXML
     public void hisPath() {
-        SingletonTask pathtask = new SingletonCurrentTask<Void>(this) {
+        FxTask pathtask = new FxSingletonTask<Void>(this) {
             File path;
 
             @Override

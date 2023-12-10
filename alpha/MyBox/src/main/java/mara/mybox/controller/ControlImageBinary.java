@@ -1,10 +1,7 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -17,6 +14,7 @@ import javafx.scene.image.ImageView;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageBinary.BinaryAlgorithm;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -30,7 +28,6 @@ public class ControlImageBinary extends BaseController {
 
     protected ImageView imageView;
     protected int threshold;
-    protected SimpleBooleanProperty notify;
 
     @FXML
     protected ToggleGroup binaryGroup;
@@ -43,14 +40,6 @@ public class ControlImageBinary extends BaseController {
     @FXML
     protected CheckBox ditherCheck;
 
-    public ControlImageBinary() {
-        notify = new SimpleBooleanProperty(false);
-    }
-
-    public void notifyChange() {
-        notify.set(!notify.get());
-    }
-
     public void setParameters(ImageView imageView) {
         this.imageView = imageView;
         try {
@@ -60,7 +49,6 @@ public class ControlImageBinary extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
                     checkThreshold();
-                    notifyChange();
                 }
             });
 
@@ -73,7 +61,6 @@ public class ControlImageBinary extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> vv, String ov, String nv) {
                     checkThreshold();
-                    notifyChange();
                 }
             });
             NodeStyleTools.setTooltip(thresholdInput, new Tooltip(message("BWThresholdComments")));
@@ -83,7 +70,6 @@ public class ControlImageBinary extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> vv, Boolean ov, Boolean nv) {
                     UserConfig.setBoolean(baseName + "Dither", nv);
-                    notifyChange();
                 }
             });
 
@@ -95,71 +81,73 @@ public class ControlImageBinary extends BaseController {
 
     }
 
-    public void checkThreshold() {
+    public boolean checkThreshold() {
+        if (!thresholdRadio.isSelected()) {
+            thresholdInput.setStyle(null);
+            thresholdInput.setEditable(false);
+            return true;
+        }
         try {
-            if (!thresholdRadio.isSelected()) {
-                thresholdInput.setStyle(null);
-                thresholdInput.setEditable(false);
-                return;
-            }
             thresholdInput.setEditable(true);
             int v = Integer.parseInt(thresholdInput.getText());
             if (v >= 0 && v <= 255) {
                 threshold = v;
                 thresholdInput.setStyle(null);
                 UserConfig.setInt(baseName + "Threadhold", threshold);
-            } else {
-                thresholdInput.setStyle(UserConfig.badStyle());
+                return true;
             }
         } catch (Exception e) {
-            thresholdInput.setStyle(UserConfig.badStyle());
         }
+        popError(message("InvalidParamter") + ": " + message("Threadhold"));
+        thresholdInput.setStyle(UserConfig.badStyle());
+        return false;
     }
 
     @FXML
     public void calculateAction() {
-        try {
-            if (imageView == null || imageView.getImage() == null) {
-                popError(message("NoData"));
-                return;
+        if (imageView == null || imageView.getImage() == null) {
+            popError(message("NoData"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            int v;
+
+            @Override
+            protected boolean handle() {
+                v = ImageBinary.threshold(this, imageView.getImage());
+                return true;
             }
-            int v = ImageBinary.calculateThreshold(imageView.getImage());
-            thresholdInput.setText(v + "");
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+
+            @Override
+            protected void whenSucceeded() {
+                if (isCancelled() || v < 0) {
+                    return;
+                }
+                thresholdInput.setText(v + "");
+            }
+
+        };
+        start(task);
     }
 
-    public BinaryAlgorithm algorithm() {
+    public ImageBinary pickValues() {
+        if (!checkThreshold()) {
+            return null;
+        }
+        ImageBinary imageBinary = new ImageBinary();
+        imageBinary.setIntPara1(threshold)
+                .setIsDithering(ditherCheck.isSelected());
         if (otsuRadio.isSelected()) {
-            return BinaryAlgorithm.OTSU;
+            imageBinary.setAlgorithm(BinaryAlgorithm.OTSU);
         } else if (thresholdRadio.isSelected()) {
-            return BinaryAlgorithm.Threshold;
+            imageBinary.setAlgorithm(BinaryAlgorithm.Threshold);
         } else {
-            return BinaryAlgorithm.Default;
+            imageBinary.setAlgorithm(BinaryAlgorithm.Default);
         }
-    }
-
-    public int threshold(BufferedImage image) {
-        if (otsuRadio.isSelected() && image != null) {
-            return ImageBinary.calculateThreshold(image);
-        } else if (thresholdRadio.isSelected()) {
-            return threshold;
-        } else {
-            return -1;
-        }
-    }
-
-    public int threshold() {
-        if (imageView != null && imageView.getImage() != null) {
-            return threshold(SwingFXUtils.fromFXImage(imageView.getImage(), null));
-        } else {
-            return threshold(null);
-        }
-    }
-
-    public boolean dither() {
-        return ditherCheck.isSelected();
+        return imageBinary;
     }
 
 }

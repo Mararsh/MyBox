@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DDefinitionController;
 import mara.mybox.controller.DatabaseSqlController;
-import mara.mybox.controller.HtmlTableController;
 import mara.mybox.controller.ImageMaterialController;
 import mara.mybox.controller.ImageScopeController;
 import mara.mybox.controller.InfoTreeManageController;
@@ -28,6 +28,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.value.Languages;
@@ -497,14 +498,8 @@ public class InfoNode extends BaseData {
         }
     }
 
-    public static void view(InfoNode node, String title) {
-        String html = InfoNode.nodeHtml(node, title);
-        if (html != null && !html.isBlank()) {
-            HtmlTableController.open(title, html);
-        }
-    }
-
-    public static String nodeHtml(InfoNode node, String title) {
+    public static String nodeHtml(FxTask task, BaseController controller,
+            InfoNode node, String title) {
         if (node == null) {
             return null;
         }
@@ -527,11 +522,12 @@ public class InfoNode extends BaseData {
         row.addAll(Arrays.asList(message("UpdateTime"), DateTools.datetimeToString(node.getUpdateTime())));
         table.add(row);
 
-        return table.div() + "<BR>"
-                + infoHtml(node.getCategory(), node.getInfo(), true, false);
+        return table.div() + "<BR>" + infoHtml(task, controller,
+                node.getCategory(), node.getInfo(), true, false);
     }
 
-    public static String infoHtml(String category, String s, boolean showIcon, boolean singleNotIn) {
+    public static String infoHtml(FxTask task, BaseController controller,
+            String category, String s, boolean showIcon, boolean singleNotIn) {
         if (s == null || s.isBlank()) {
             return "";
         }
@@ -549,7 +545,7 @@ public class InfoNode extends BaseData {
                         String icon = values.get("Icon");
                         if (showIcon && icon != null && !icon.isBlank()) {
                             try {
-                                String base64 = FxImageTools.base64(new File(icon), "png");
+                                String base64 = FxImageTools.base64(null, new File(icon), "png");
                                 if (base64 != null) {
                                     html += "<img src=\"data:image/png;base64," + base64 + "\" width=" + 40 + " >";
                                 }
@@ -562,14 +558,14 @@ public class InfoNode extends BaseData {
                 break;
             }
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(s);
+                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
                     html = Data2DTools.definitionToHtml(csv);
                 }
                 break;
             }
             case InfoNode.ImageScope: {
-                ImageScope scope = ImageScopeTools.fromXML(s);
+                ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
                 if (scope != null) {
                     html = ImageScopeTools.toHtml(scope);
                 }
@@ -634,14 +630,15 @@ public class InfoNode extends BaseData {
         return xml;
     }
 
-    public static String infoJson(String category, String s, String prefix) {
+    public static String infoJson(FxTask task, BaseController controller,
+            String category, String s, String prefix) {
         if (s == null || s.isBlank()) {
             return "";
         }
         String json = "";
         switch (category) {
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(s);
+                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
                     json = prefix + ",\n"
                             + Data2DTools.definitionToJSON(csv, true, prefix);
@@ -649,7 +646,7 @@ public class InfoNode extends BaseData {
                 break;
             }
             case InfoNode.ImageScope: {
-                ImageScope scope = ImageScopeTools.fromXML(s);
+                ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
                 if (scope != null) {
                     json = prefix + ",\n"
                             + ImageScopeTools.toJSON(scope, prefix);

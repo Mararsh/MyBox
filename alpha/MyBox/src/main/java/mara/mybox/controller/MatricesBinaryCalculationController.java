@@ -17,7 +17,7 @@ import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
@@ -205,7 +205,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             task.cancel();
         }
         resultLabel.setText("");
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

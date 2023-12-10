@@ -102,7 +102,7 @@ public class ImageRoundController extends BaseImageEditController {
     protected void handleImage() {
         Color c = colorController.color();
         opInfo = round + " " + c;
-        handledImage = FxImageTools.setRound(srcImage(), round, c);
+        handledImage = FxImageTools.setRound(task, srcImage(), round, c);
     }
 
     /*

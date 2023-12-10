@@ -18,7 +18,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
@@ -108,7 +108,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<P> data;
 
             @Override
@@ -416,7 +416,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int deletedCount = 0;
 
@@ -472,7 +472,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             long deletedCount = 0;
 
             @Override

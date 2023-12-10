@@ -7,6 +7,7 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
@@ -112,20 +113,52 @@ public class TextEditorController extends BaseFileEditorController {
                 || !splitPane.getItems().contains(rightPane)) {
             return;
         }
-        isSettingValues = true;
-        pairArea.deselect();
-        final String text = mainArea.getText();
-        if (!text.isEmpty()) {
-            IndexRange hexRange = TextTools.hexIndex(text, sourceInformation.getCharset(),
-                    sourceInformation.getLineBreakValue(), mainArea.getSelection());
-            int bomLen = 0;
-            if (sourceInformation.isWithBom()) {
-                bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
-            }
-            pairArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
-            pairArea.setScrollTop(mainArea.getScrollTop());
+        if (pairTask != null) {
+            pairTask.cancel();
         }
-        isSettingValues = false;
+        pairTask = new FxTask<Void>(this) {
+            private IndexRange hexRange;
+            private int bomLen;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    hexRange = null;
+                    final String text = mainArea.getText();
+                    if (!text.isEmpty()) {
+                        hexRange = TextTools.hexIndex(this, text, sourceInformation.getCharset(),
+                                sourceInformation.getLineBreakValue(), mainArea.getSelection());
+                        bomLen = 0;
+                        if (sourceInformation.isWithBom()) {
+                            bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
+                        }
+                    }
+                    return hexRange != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                isSettingValues = true;
+                pairArea.deselect();
+                pairArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
+                pairArea.setScrollTop(mainArea.getScrollTop());
+                isSettingValues = false;
+            }
+
+            @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+        };
+        start(pairTask);
     }
 
     @FXML

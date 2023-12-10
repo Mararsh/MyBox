@@ -17,7 +17,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
@@ -125,7 +125,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             processStartTime = new Date();
             totalFilesHandled = 0;
             updateInterface("Started");
-            task = new SingletonCurrentTask<Void>(this) {
+            task = new FxSingletonTask<Void>(this) {
 
                 @Override
                 public Void call() {
@@ -207,14 +207,18 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                     }
                 }
                 try {
-                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(task, info);
                     if (bufferedImage == null) {
                         continue;
+                    }
+                    if (task == null || task.isCancelled()) {
+                        showLogs(message("TaskCancelled"));
+                        return null;
                     }
                     BufferedImage fitImage = ScaleTools.fitSize(bufferedImage,
                             ffmpegOptionsController.width, ffmpegOptionsController.height);
                     File tmpFile = FileTmpTools.getTempFile(".png");
-                    if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
+                    if (ImageFileWriters.writeImageFile(task, fitImage, tmpFile) && tmpFile.exists()) {
                         lastFile = tmpFile;
                         s.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
                         s.append("duration  ").append(info.getDuration() / 1000.00f).append("\n");

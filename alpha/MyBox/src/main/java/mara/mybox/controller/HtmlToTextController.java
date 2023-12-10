@@ -7,6 +7,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -32,8 +33,17 @@ public class HtmlToTextController extends BaseBatchFileController {
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String text = HtmlWriteTools.htmlToText(TextFileTools.readTexts(srcFile));
-
+            String text = TextFileTools.readTexts(task, srcFile);
+            if (task != null && !task.isWorking()) {
+                return message("Canceled");
+            }
+            if (text == null) {
+                return message("Failed");
+            }
+            text = HtmlWriteTools.htmlToText(text);
+            if (text == null) {
+                return message("Failed");
+            }
             TextFileTools.writeFile(target, text, Charset.forName("utf-8"));
             targetFileGenerated(target);
             return Languages.message("Successful");

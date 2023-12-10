@@ -40,7 +40,8 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
@@ -413,7 +414,7 @@ public class ControlImagesSave extends BaseController {
         }
     }
 
-    protected BufferedImage image(int index) {
+    protected BufferedImage image(FxTask task, int index) {
         try {
             if (imageInfos == null || index < 0 || index >= imageInfos.size()) {
                 return null;
@@ -422,7 +423,7 @@ public class ControlImagesSave extends BaseController {
             if (info == null) {
                 return null;
             }
-            Image image = info.loadThumbnail(savedWidth);
+            Image image = info.loadThumbnail(task, savedWidth);
             if (image == null) {
                 return null;
             }
@@ -458,7 +459,7 @@ public class ControlImagesSave extends BaseController {
             parentController.popError(message("InvalidParameters"));
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             List<String> fileNames;
 
             @Override
@@ -470,7 +471,7 @@ public class ControlImagesSave extends BaseController {
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        BufferedImage bufferedImage = image(i);
+                        BufferedImage bufferedImage = image(this, i);
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -478,8 +479,10 @@ public class ControlImagesSave extends BaseController {
                             continue;
                         }
                         String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
-                        BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
-                        ImageFileWriters.writeImageFile(converted, formatController.attributes, filename);
+                        BufferedImage converted = ImageConvertTools.convertColorSpace(this,
+                                bufferedImage, formatController.attributes);
+                        ImageFileWriters.writeImageFile(this,
+                                converted, formatController.attributes, filename);
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -536,7 +539,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -555,12 +558,14 @@ public class ControlImagesSave extends BaseController {
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        BufferedImage bufferedImage = image(i);
+                        BufferedImage bufferedImage = image(this, i);
                         if (task == null || isCancelled()) {
                             return false;
                         }
                         String sourceFormat = imageInfos.get(i).getImageFormat();
-                        PdfTools.writePage(document, sourceFormat, bufferedImage, ++count, imageInfos.size(), pdfOptionsController);
+                        PdfTools.writePage(this,
+                                document, sourceFormat, bufferedImage, ++count,
+                                imageInfos.size(), pdfOptionsController);
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -606,7 +611,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -621,7 +626,7 @@ public class ControlImagesSave extends BaseController {
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        BufferedImage bufferedImage = image(i);
+                        BufferedImage bufferedImage = image(this, i);
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -663,7 +668,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -680,7 +685,7 @@ public class ControlImagesSave extends BaseController {
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        BufferedImage bufferedImage = image(i);
+                        BufferedImage bufferedImage = image(this, i);
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -722,7 +727,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -734,11 +739,14 @@ public class ControlImagesSave extends BaseController {
                             return false;
                         }
                         ppt.setPageSize(new java.awt.Dimension(pptWidth, pptHeight));
-                        BufferedImage image = ImageConvertTools.convertToPNG(image(i));
+                        BufferedImage image = ImageConvertTools.convertToPNG(image(this, i));
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        HSLFPictureShape shape = MicrosoftDocumentTools.imageShape(ppt, image, "png");
+                        HSLFPictureShape shape = MicrosoftDocumentTools.imageShape(this, ppt, image, "png");
+                        if (shape == null || !isWorking()) {
+                            return false;
+                        }
                         shape.setAnchor(new java.awt.Rectangle(pptMargin, pptMargin, image.getWidth(), image.getHeight()));
                         HSLFSlide slide = ppt.createSlide();
                         slide.addShape(shape);

@@ -64,7 +64,8 @@ public class ImageBlendColorController extends BasePixelsController {
                     PixelsOperation.OperationType.Blend)
                     .setColorPara1(colorController.awtColor())
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             ((PixelsOperationFactory.BlendColor) pixelsOperation)
                     .setBlender(blend);
             return pixelsOperation.operateFxImage();

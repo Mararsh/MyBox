@@ -27,8 +27,8 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -138,7 +138,7 @@ public class ColorPalettePopupController extends BaseChildController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             protected List<ColorData> colors;
 
@@ -275,7 +275,7 @@ public class ColorPalettePopupController extends BaseChildController {
             popError(message("InvalidParameters") + ": " + message("Color"));
             return;
         }
-        SingletonTask addTask = new SingletonTask<Void>(this) {
+        FxTask addTask = new FxTask<Void>(this) {
             @Override
             protected boolean handle() {
                 return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData) != null;

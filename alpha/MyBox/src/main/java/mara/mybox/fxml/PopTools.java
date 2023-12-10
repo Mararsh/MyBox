@@ -252,17 +252,17 @@ public class PopTools {
     }
 
     public static void showError(BaseController controller, String error) {
-        if (controller != null) {
-            if (controller instanceof BaseLogs) {
-                ((BaseLogs) controller).updateLogs(error, true, true);
-            } else {
-                Platform.runLater(() -> {
-                    controller.alertError(error);
-                    MyBoxLog.debug(error);
-                });
-            }
-        } else {
+        if (controller == null) {
             MyBoxLog.error(error);
+        } else if (controller instanceof BaseLogs) {
+            ((BaseLogs) controller).updateLogs(error, true, true);
+        } else if (controller.getTask() != null) {
+            controller.getTask().setError(error);
+        } else {
+            Platform.runLater(() -> {
+                controller.alertError(error);
+//                MyBoxLog.debug(error);
+            });
         }
     }
 

@@ -18,7 +18,7 @@ import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -141,7 +141,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String texts;
             private List<CertificateEntry> entires;
             private CertificateEntry selectCert;
@@ -245,7 +245,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String result;
 
             @Override
@@ -331,7 +331,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -375,7 +375,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

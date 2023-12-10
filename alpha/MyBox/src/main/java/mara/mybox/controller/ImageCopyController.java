@@ -11,7 +11,7 @@ import javafx.scene.image.Image;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -84,21 +84,21 @@ public class ImageCopyController extends ImageSelectPixelsController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image scopedImage;
 
             @Override
             protected boolean handle() {
                 try {
-                    scopedImage = scopeController.selectedScope(
+                    scopedImage = scopeController.selectedScope(this,
                             bgColorController.awtColor(),
                             marginsCheck.isSelected());
                     if (scopedImage == null || task == null || isCancelled()) {
                         return false;
                     }
                     if (myboxRadio.isSelected()) {
-                        return ImageClipboard.add(scopedImage,
+                        return ImageClipboard.add(this, scopedImage,
                                 ImageClipboard.ImageSource.Copy) != null;
                     } else {
                         return true;

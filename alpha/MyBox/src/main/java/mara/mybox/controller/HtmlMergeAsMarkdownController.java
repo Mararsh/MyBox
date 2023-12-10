@@ -70,7 +70,10 @@ public class HtmlMergeAsMarkdownController extends FilesMergeController {
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
-            String html = TextFileTools.readTexts(file);
+            String html = TextFileTools.readTexts(task, file);
+            if (html == null || (task != null && !task.isWorking())) {
+                return message("Canceled");
+            }
             String md = mdConverter.convert(html);
             writer.write(md + "\n");
             return message("Successful");

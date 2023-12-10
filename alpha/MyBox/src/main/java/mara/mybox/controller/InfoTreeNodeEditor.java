@@ -15,9 +15,9 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -100,14 +100,14 @@ public class InfoTreeNodeEditor extends BaseController {
     }
 
     protected void editNode(InfoNode node) {
-        updateTitle(node);
+        updateEditorTitle(node);
         editInfo(node);
         attributesController.editNode(node);
         showEditorPane();
         nodeChanged(false);
     }
 
-    protected void updateTitle(InfoNode node) {
+    protected void updateEditorTitle(InfoNode node) {
         if (node != null) {
             manager.setTitle(manager.baseTitle + ": "
                     + node.getNodeid() + " - " + node.getTitle());
@@ -212,7 +212,7 @@ public class InfoTreeNodeEditor extends BaseController {
         if (file == null) {
             return;
         }
-        SingletonTask saveAsTask = new SingletonTask<Void>(this) {
+        FxTask saveAsTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -249,13 +249,13 @@ public class InfoTreeNodeEditor extends BaseController {
             task.cancel();
         }
         valueInput.clear();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             String codes;
 
             @Override
             protected boolean handle() {
-                codes = TextFileTools.readTexts(file);
+                codes = TextFileTools.readTexts(this, file);
                 return codes != null;
             }
 

@@ -510,7 +510,7 @@ public class ControlImageText extends BaseController {
             }
             textWidth = charWidthMax;
         }
-        if (parentController instanceof ImageManufactureTextController) {
+        if (parentController instanceof ImageEditorController) {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {

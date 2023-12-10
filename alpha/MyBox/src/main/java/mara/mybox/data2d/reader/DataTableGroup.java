@@ -29,7 +29,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -56,7 +56,7 @@ public class DataTableGroup {
     protected short scale;
     protected long max;
     protected TargetType targetType;
-    protected SingletonTask task;
+    protected FxTask task;
     protected boolean includeRowNumber, ok;
     protected List<Integer> sourcePickIndice;
 
@@ -1389,7 +1389,7 @@ public class DataTableGroup {
         return this;
     }
 
-    public DataTableGroup setTask(SingletonTask task) {
+    public DataTableGroup setTask(FxTask task) {
         this.task = task;
         return this;
     }

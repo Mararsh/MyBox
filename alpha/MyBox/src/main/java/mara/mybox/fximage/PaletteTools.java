@@ -22,7 +22,7 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.value.AppVariables;
@@ -143,7 +143,7 @@ public class PaletteTools {
         if (parent.getTask() != null) {
             parent.getTask().cancel();
         }
-        SingletonTask task = new SingletonTask<Void>(parent) {
+        FxTask task = new FxTask<Void>(parent) {
             @Override
             protected boolean handle() {
                 List<ColorData> colors;
@@ -154,27 +154,27 @@ public class PaletteTools {
                 } else if (message("WebCommonColors").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv",
                             "data", "ColorsWeb.csv", true);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
 
                 } else if (message("ArtPaints").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
                             "data", "ColorsArtPaints.csv", true);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
 
                 } else if (message("ChineseTraditionalColors").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsChinese.csv",
                             "data", "ColorsChinese.csv", true);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
 
                 } else if (message("JapaneseTraditionalColors").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsJapanese.csv",
                             "data", "ColorsJapanese.csv", true);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
 
                 } else if (message("HexaColors").equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsColorhexa.csv",
                             "data", "ColorsColorhexa.csv", true);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
 
                 } else if (message("MyBoxColors").equals(paletteName)) {
                     colors = new ArrayList<>();
@@ -186,7 +186,7 @@ public class PaletteTools {
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + fileLang + ".csv",
                             "data", "ColorsRYB12_" + fileLang + ".csv", true);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
                     colors = artHuesWheel(AppVariables.CurrentLangName, 1);
@@ -206,7 +206,7 @@ public class PaletteTools {
                 } else {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + fileLang + ".csv",
                             "data", "ColorsRYB24_" + fileLang + ".csv", true);
-                    colors = ColorDataTools.readCSV(file, true);
+                    colors = ColorDataTools.readCSV(this, file, true);
 
                 }
                 if (colors == null || colors.isEmpty()) {
@@ -243,12 +243,12 @@ public class PaletteTools {
                 || file == null || !file.exists()) {
             return;
         }
-        SingletonTask task = new SingletonTask<Void>(parent) {
+        FxTask task = new FxTask<Void>(parent) {
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    List<ColorData> colors = ColorDataTools.readCSV(file, reOrder);
+                    List<ColorData> colors = ColorDataTools.readCSV(this, file, reOrder);
                     if (colors == null || colors.isEmpty()) {
                         return false;
                     }

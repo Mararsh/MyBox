@@ -90,7 +90,8 @@ public class ImageSepiaController extends BasePixelsController {
                     PixelsOperation.OperationType.Sepia)
                     .setIntPara1(intensity)
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             operation = message("Sepia");
             opInfo = message("Intensity") + ": " + intensity;
             return pixelsOperation.operateFxImage();

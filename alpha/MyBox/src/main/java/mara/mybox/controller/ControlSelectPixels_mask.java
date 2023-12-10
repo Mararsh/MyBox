@@ -16,7 +16,7 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -228,13 +228,13 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image maskImage;
 
             @Override
             protected boolean handle() {
                 try {
-                    maskImage = maskImage();
+                    maskImage = maskImage(this);
                     if (task == null || isCancelled()) {
                         return false;
                     }

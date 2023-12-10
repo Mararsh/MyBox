@@ -18,7 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.DateTools;
@@ -141,7 +141,7 @@ public class Base64Controller extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private long bytesLen;
             private String results;
@@ -169,7 +169,11 @@ public class Base64Controller extends BaseController {
 
                     } else if (base64FileRadio.isSelected()) {
                         Base64.Decoder decoder = Base64.getDecoder();
-                        byte[] bytes = decoder.decode(TextFileTools.readTexts(sourceFile));
+                        String s = TextFileTools.readTexts(this, sourceFile);
+                        if (s == null || !task.isWorking()) {
+                            return false;
+                        }
+                        byte[] bytes = decoder.decode(s);
                         bytesLen = bytes.length;
                         results = new String(bytes, charset);
                     }
@@ -228,7 +232,7 @@ public class Base64Controller extends BaseController {
         if (file == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private long bytesLen;
 
             @Override
@@ -270,7 +274,11 @@ public class Base64Controller extends BaseController {
 
                     } else if (base64FileRadio.isSelected()) {
                         Base64.Decoder decoder = Base64.getDecoder();
-                        byte[] bytes = decoder.decode(TextFileTools.readTexts(sourceFile));
+                        String s = TextFileTools.readTexts(this, sourceFile);
+                        if (s == null || !task.isWorking()) {
+                            return false;
+                        }
+                        byte[] bytes = decoder.decode(s);
                         bytesLen = bytes.length;
                         if (ByteFileTools.writeFile(file, bytes) != null) {
                             recordFileWritten(file);

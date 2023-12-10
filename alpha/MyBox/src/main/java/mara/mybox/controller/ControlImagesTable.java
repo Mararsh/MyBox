@@ -253,7 +253,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @Override
     protected ImageInformation create(File file) {
-        ImageFileInformation finfo = ImageFileInformation.create(file);
+        ImageFileInformation finfo = ImageFileInformation.create(task, file);
         return finfo != null ? finfo.getImageInformation() : null;
     }
 
@@ -269,7 +269,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                     return infos;
                 }
                 task.setInfo(file.getAbsolutePath());
-                ImageFileInformation finfo = ImageFileInformation.create(file);
+                ImageFileInformation finfo = ImageFileInformation.create(task, file);
                 if (finfo != null) {
                     infos.addAll(finfo.getImagesInformation());
 

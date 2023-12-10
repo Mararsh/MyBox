@@ -20,8 +20,8 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
@@ -43,7 +43,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
     protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, // 0-based
             sizeChangeAware, zoomStep, xZoomStep, yZoomStep;
     protected LoadingController loadingController;
-    protected SingletonTask loadTask;
+    protected FxTask loadTask;
     protected double mouseX, mouseY;
     protected ColorsPickingController paletteController;
 
@@ -245,7 +245,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
                     imageLabel.setText(StringTools.replaceLineBreak(loadInfo));
                 }
                 if (imageInformation != null && imageInformation.isIsSampled()) {
-                    finalInfo += "\n-------\n" + imageInformation.sampleInformation(image);
+                    finalInfo += "\n-------\n" + imageInformation.sampleInformation(null, image);
                 }
                 imageInfoLabel.setText(finalInfo);
             } else if (imageLabel != null) {

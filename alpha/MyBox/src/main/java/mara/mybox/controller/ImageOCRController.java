@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,14 +26,14 @@ import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.Word;
 
@@ -80,7 +79,7 @@ public class ImageOCRController extends BaseImageController {
     protected Tab ocrOptionsTab;
 
     public ImageOCRController() {
-        baseTitle = Languages.message("ImageOCR");
+        baseTitle = message("ImageOCR");
     }
 
     @Override
@@ -245,7 +244,7 @@ public class ImageOCRController extends BaseImageController {
         ocrOptionsController.setLanguages();
         File dataPath = ocrOptionsController.dataPathController.file();
         if (!dataPath.exists()) {
-            popError(Languages.message("InvalidParameters"));
+            popError(message("InvalidParameters"));
             ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
             return;
         }
@@ -263,12 +262,11 @@ public class ImageOCRController extends BaseImageController {
         if (!ocrOptionsController.checkCommandPamameters(true, false)) {
             return;
         }
-        loading = handling();
-        new Thread() {
-            private String outputs = "";
+        task = new FxSingletonTask<Void>(this) {
+            private String outputs = "", texts, html;
 
             @Override
-            public void run() {
+            protected boolean handle() {
                 try {
                     Image selected = preprocessController.imageView.getImage();
                     if (selected == null) {
@@ -276,14 +274,14 @@ public class ImageOCRController extends BaseImageController {
                     }
                     File imageFile = FileTmpTools.getTempFile(".png");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
-                    bufferedImage = AlphaTools.removeAlpha(bufferedImage);
-                    ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile.getAbsolutePath());
+                    bufferedImage = AlphaTools.removeAlpha(this, bufferedImage);
+                    ImageFileWriters.writeImageFile(this, bufferedImage, "png", imageFile.getAbsolutePath());
                     String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
-                    process = process = ocrOptionsController.process(imageFile, fileBase);
+                    process = ocrOptionsController.process(imageFile, fileBase);
                     if (process == null) {
-                        return;
+                        return false;
                     }
-                    long startTime = new Date().getTime();
+                    startTime = new Date();
                     try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
@@ -294,18 +292,17 @@ public class ImageOCRController extends BaseImageController {
                     }
                     process.waitFor();
 
-                    String texts;
                     File txtFile = new File(fileBase + ".txt");
                     if (txtFile.exists()) {
-                        texts = TextFileTools.readTexts(txtFile);
+                        texts = TextFileTools.readTexts(this, txtFile);
                         FileDeleteTools.delete(txtFile);
                     } else {
                         texts = null;
                     }
-                    String html;
+
                     File htmlFile = new File(fileBase + ".hocr");
                     if (htmlFile.exists()) {
-                        html = TextFileTools.readTexts(htmlFile);
+                        html = TextFileTools.readTexts(this, htmlFile);
                         FileDeleteTools.delete(htmlFile);
                     } else {
                         html = null;
@@ -314,46 +311,36 @@ public class ImageOCRController extends BaseImageController {
                         process.destroy();
                         process = null;
                     }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (loading != null) {
-                                loading.closeStage();
-                                loading = null;
-                            }
-                            if (texts != null) {
-                                textArea.setText(texts);
-                                resultLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
-                                        texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime)));
-                                tabPane.getSelectionModel().select(resultsTab);
-                                ocrTabPane.getSelectionModel().select(txtTab);
-                            } else {
-                                if (outputs != null && !outputs.isBlank()) {
-                                    alertError(outputs);
-                                } else {
-                                    popFailed();
-                                }
-                            }
-                            if (html != null) {
-                                htmlController.loadHtml(html);
-                            }
-                        }
-                    });
-
+                    return true;
                 } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (loading != null) {
-                                loading.closeStage();
-                                loading = null;
-                            }
-                        }
-                    });
+                    error = e.toString();
+                    return false;
                 }
             }
-        }.start();
+
+            @Override
+            protected void whenSucceeded() {
+                if (texts != null) {
+                    textArea.setText(texts);
+                    String i = MessageFormat.format(message("OCRresults"),
+                            texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime()));
+                    resultLabel.setText(i);
+                    tabPane.getSelectionModel().select(resultsTab);
+                    ocrTabPane.getSelectionModel().select(txtTab);
+                } else {
+                    if (outputs != null && !outputs.isBlank()) {
+                        alertError(outputs);
+                    } else {
+                        popFailed();
+                    }
+                }
+                if (html != null) {
+                    htmlController.loadHtml(html);
+                }
+            }
+
+        };
+        start(task);
     }
 
     protected void embedded() {
@@ -364,7 +351,7 @@ public class ImageOCRController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -384,10 +371,10 @@ public class ImageOCRController extends BaseImageController {
             @Override
             protected void whenSucceeded() {
                 if (ocrOptionsController.texts.length() == 0) {
-                    popWarn(Languages.message("OCRMissComments"));
+                    popWarn(message("OCRMissComments"));
                 }
                 textArea.setText(ocrOptionsController.texts);
-                resultLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
+                resultLabel.setText(MessageFormat.format(message("OCRresults"),
                         ocrOptionsController.texts.length(), DateTools.datetimeMsDuration(cost)));
                 tabPane.getSelectionModel().select(resultsTab);
                 ocrTabPane.getSelectionModel().select(txtTab);
@@ -396,11 +383,11 @@ public class ImageOCRController extends BaseImageController {
 
                 if (ocrOptionsController.rectangles != null) {
                     List<String> names = new ArrayList<>();
-                    names.addAll(Arrays.asList(Languages.message("Index"),
-                            Languages.message("CoordinateX"), Languages.message("CoordinateY"),
-                            Languages.message("Width"), Languages.message("Height")
+                    names.addAll(Arrays.asList(message("Index"),
+                            message("CoordinateX"), message("CoordinateY"),
+                            message("Width"), message("Height")
                     ));
-                    regionsTableController.initTable(Languages.message(""), names);
+                    regionsTableController.initTable(message(""), names);
                     for (int i = 0; i < ocrOptionsController.rectangles.size(); ++i) {
                         Rectangle rect = ocrOptionsController.rectangles.get(i);
                         List<String> data = new ArrayList<>();
@@ -416,12 +403,12 @@ public class ImageOCRController extends BaseImageController {
 
                 if (ocrOptionsController.words != null) {
                     List<String> names = new ArrayList<>();
-                    names.addAll(Arrays.asList(Languages.message("Index"),
-                            Languages.message("Contents"), Languages.message("Confidence"),
-                            Languages.message("CoordinateX"), Languages.message("CoordinateY"),
-                            Languages.message("Width"), Languages.message("Height")
+                    names.addAll(Arrays.asList(message("Index"),
+                            message("Contents"), message("Confidence"),
+                            message("CoordinateX"), message("CoordinateY"),
+                            message("Width"), message("Height")
                     ));
-                    wordsTableController.initTable(Languages.message(""), names);
+                    wordsTableController.initTable(message(""), names);
                     for (int i = 0; i < ocrOptionsController.words.size(); ++i) {
                         Word word = ocrOptionsController.words.get(i);
                         Rectangle rect = word.getBoundingBox();

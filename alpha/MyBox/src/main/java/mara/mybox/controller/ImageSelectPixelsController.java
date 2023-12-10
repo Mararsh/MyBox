@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -41,12 +41,12 @@ public class ImageSelectPixelsController extends BasePixelsController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    handledImage = scopeController.selectedScope(
+                    handledImage = scopeController.selectedScope(this,
                             bgColorController.awtColor(), true);
                     return handledImage != null;
                 } catch (Exception e) {

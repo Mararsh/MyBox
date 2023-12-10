@@ -4,7 +4,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -86,7 +86,7 @@ public abstract class ControlSelectPixels_Colors extends ControlSelectPixels_Are
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 return tableColor.writeColors(colors, false) != null;

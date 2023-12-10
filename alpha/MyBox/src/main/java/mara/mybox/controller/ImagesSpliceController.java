@@ -28,7 +28,8 @@ import mara.mybox.bufferedimage.ImageCombine.ArrayType;
 import mara.mybox.bufferedimage.ImageCombine.CombineSizeType;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -427,15 +428,15 @@ public class ImagesSpliceController extends BaseImageController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
-                    image = CombineTools.combineSingleColumn(imageCombine, tableData, false, true);
+                    image = CombineTools.combineSingleColumn(this, imageCombine, tableData, false, true);
                 } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
-                    image = CombineTools.combineSingleRow(imageCombine, tableData, false, true);
+                    image = CombineTools.combineSingleRow(this, imageCombine, tableData, false, true);
                 } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
-                    image = combineImagesColumns(tableData);
+                    image = combineImagesColumns(this, tableData);
                 } else {
                     image = null;
                 }
@@ -455,7 +456,7 @@ public class ImagesSpliceController extends BaseImageController {
         start(task);
     }
 
-    private Image combineImagesColumns(List<ImageInformation> imageInfos) {
+    private Image combineImagesColumns(FxTask task, List<ImageInformation> imageInfos) {
         if (imageInfos == null || imageInfos.isEmpty() || imageCombine.getColumnsValue() <= 0) {
             return null;
         }
@@ -463,18 +464,27 @@ public class ImagesSpliceController extends BaseImageController {
             List<ImageInformation> rowImages = new ArrayList<>();
             List<ImageInformation> rows = new ArrayList<>();
             for (ImageInformation imageInfo : imageInfos) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 rowImages.add(imageInfo);
                 if (rowImages.size() == imageCombine.getColumnsValue()) {
-                    Image rowImage = CombineTools.combineSingleRow(imageCombine, rowImages, true, false);
+                    Image rowImage = CombineTools.combineSingleRow(task, imageCombine, rowImages, true, false);
+                    if (rowImage == null || (task != null && !task.isWorking())) {
+                        return null;
+                    }
                     rows.add(new ImageInformation(rowImage));
                     rowImages = new ArrayList<>();
                 }
             }
             if (!rowImages.isEmpty()) {
-                Image rowImage = CombineTools.combineSingleRow(imageCombine, rowImages, true, false);
+                Image rowImage = CombineTools.combineSingleRow(task, imageCombine, rowImages, true, false);
+                if (rowImage == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
                 rows.add(new ImageInformation(rowImage));
             }
-            Image newImage = CombineTools.combineSingleColumn(imageCombine, rows, false, true);
+            Image newImage = CombineTools.combineSingleColumn(task, imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
             MyBoxLog.error(e);

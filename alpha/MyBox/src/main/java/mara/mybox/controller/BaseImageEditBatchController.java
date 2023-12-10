@@ -15,8 +15,8 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -34,7 +34,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
 
     protected ImageAttributes attributes;
     protected String errorString;
-    protected SingletonTask demoTask;
+    protected FxTask demoTask;
 
     @FXML
     protected ControlImageFormat formatController;
@@ -96,7 +96,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             if (target == null) {
                 return Languages.message("Skip");
             }
-            BufferedImage sourceImage = ImageFileReaders.readImage(srcFile);
+            BufferedImage sourceImage = ImageFileReaders.readImage(task, srcFile);
             BufferedImage targetImage = handleImage(sourceImage);
             if (targetImage == null) {
                 if (errorString != null) {
@@ -105,7 +105,8 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                     return Languages.message("Failed");
                 }
             }
-            ImageFileWriters.writeImageFile(targetImage, attributes, target.getAbsolutePath());
+            ImageFileWriters.writeImageFile(task,
+                    targetImage, attributes, target.getAbsolutePath());
 
             targetFileGenerated(target);
             if (browseButton != null) {
@@ -123,7 +124,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
         if (demoTask != null) {
             demoTask.cancel();
         }
-        demoTask = new SingletonCurrentTask<Void>(this) {
+        demoTask = new FxSingletonTask<Void>(this) {
             private List<String> files;
 
             @Override
@@ -132,7 +133,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                     BufferedImage demoImage = null;
                     List<File> sources = pickSourceFiles(true, false);
                     if (sources != null && !sources.isEmpty()) {
-                        demoImage = ImageFileReaders.readImage(sources.get(0));
+                        demoImage = ImageFileReaders.readImage(this, sources.get(0));
                         if (demoTask == null || !demoTask.isWorking()) {
                             return false;
                         }
@@ -141,7 +142,8 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                         }
                     }
                     if (demoImage == null) {
-                        demoImage = SwingFXUtils.fromFXImage(new Image("img/" + "cover" + AppValues.AppYear + "g9.png"), null);
+                        demoImage = SwingFXUtils.fromFXImage(
+                                new Image("img/" + "cover" + AppValues.AppYear + "g9.png"), null);
                     }
                     if (demoImage == null || demoTask == null || !demoTask.isWorking()) {
                         return false;

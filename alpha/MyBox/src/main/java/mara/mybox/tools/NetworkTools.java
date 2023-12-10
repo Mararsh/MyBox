@@ -12,6 +12,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 
 /**
@@ -127,12 +128,12 @@ public class NetworkTools {
         }
     }
 
-    public static String host2ipv4(String host) {
+    public static String host2ipv4(FxTask task, String host) {
         try {
             if (host == null) {
                 return null;
             }
-            String ip = host2ipv4ByIpaddress(host);
+            String ip = host2ipv4ByIpaddress(task, host);
             if (ip != null && !ip.isBlank()) {
                 return ip;
             }
@@ -145,7 +146,7 @@ public class NetworkTools {
     }
 
     // https://fastly.net.ipaddress.com/github.global.ssl.fastly.net
-    public static String host2ipv4ByIpaddress(String host) {
+    public static String host2ipv4ByIpaddress(FxTask task, String host) {
         try {
             if (host == null) {
                 return null;
@@ -156,7 +157,7 @@ public class NetworkTools {
             }
             String domain = nodes[nodes.length - 2] + "." + nodes[nodes.length - 1];
             String address = "https://" + domain + ".ipaddress.com/" + (nodes.length == 2 ? "" : host);
-            String data = HtmlReadTools.url2html(address);
+            String data = HtmlReadTools.url2html(task, address);
             if (data == null) {
                 return null;
             }

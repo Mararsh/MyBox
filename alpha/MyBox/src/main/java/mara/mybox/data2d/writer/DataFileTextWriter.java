@@ -9,9 +9,9 @@ import java.util.List;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -37,11 +37,14 @@ public class DataFileTextWriter extends Data2DWriter {
             return;
         }
         File tmpFile = FileTmpTools.getTempFile();
-        File validFile = FileTools.removeBOM(sourceFile);
+        File validFile = FileTools.removeBOM(task, sourceFile);
+        if (validFile == null || writerStopped()) {
+            return;
+        }
         rowIndex = 0;
         count = 0;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceText.getCharset()));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceText.getCharset(), false))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceText.getCharset()));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceText.getCharset(), false))) {
             textReader = reader;
             textWriter = writer;
             failed = !handleRows();
@@ -74,7 +77,7 @@ public class DataFileTextWriter extends Data2DWriter {
             List<String> names = data2D.columnNames();
             if (data2D.isHasHeader() && names != null) {
                 sourceText.readValidLine(textReader);
-                TextFileTools.writeLine(textWriter, names, delimiter);
+                TextFileTools.writeLine(task, textWriter, names, delimiter);
             }
             if (isClearData()) {
                 count = data2D.getDataSize();
@@ -105,7 +108,7 @@ public class DataFileTextWriter extends Data2DWriter {
             if (writerStopped() || targetRow == null) {
                 return;
             }
-            TextFileTools.writeLine(textWriter, targetRow, delimiter);
+            TextFileTools.writeLine(task, textWriter, targetRow, delimiter);
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {

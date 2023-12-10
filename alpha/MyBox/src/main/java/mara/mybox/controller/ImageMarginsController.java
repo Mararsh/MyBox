@@ -274,31 +274,31 @@ public class ImageMarginsController extends BaseImageEditController {
     @Override
     protected void handleImage() {
         if (dragRadio.isSelected()) {
-            handledImage = MarginTools.dragMarginsFx(currentImage(),
+            handledImage = MarginTools.dragMarginsFx(task, currentImage(),
                     (Color) colorSetController.rect.getFill(), maskRectangleData);
 
         } else if (addRadio.isSelected()) {
-            handledImage = MarginTools.addMarginsFx(currentImage(),
+            handledImage = MarginTools.addMarginsFx(task, currentImage(),
                     (Color) colorSetController.rect.getFill(), margin,
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
             opInfo = margin + "";
 
         } else if (blurRadio.isSelected()) {
-            handledImage = MarginTools.blurMarginsAlpha(currentImage(), margin,
+            handledImage = MarginTools.blurMarginsAlpha(task, currentImage(), margin,
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
             opInfo = margin + "";
 
         } else if (cutColorRadio.isSelected()) {
-            handledImage = MarginTools.cutMarginsByColor(currentImage(),
+            handledImage = MarginTools.cutMarginsByColor(task, currentImage(),
                     (Color) colorSetController.rect.getFill(), distance,
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
             opInfo = distance + "";
 
         } else if (cutWidthRadio.isSelected()) {
-            handledImage = MarginTools.cutMarginsByWidth(currentImage(), margin,
+            handledImage = MarginTools.cutMarginsByWidth(task, currentImage(), margin,
                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
             opInfo = margin + "";

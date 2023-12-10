@@ -32,7 +32,7 @@ import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -45,7 +45,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseController_Attributes {
 
     protected BaseController parentController, myController;
-    protected SingletonTask<Void> task, backgroundTask;
+    protected FxTask<Void> task, backgroundTask;
     protected int SourceFileType = -1, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
@@ -372,11 +372,11 @@ public abstract class BaseController_Attributes {
     /*
         task
      */
-    public SingletonTask<Void> getTask() {
+    public FxTask<Void> getTask() {
         return task;
     }
 
-    public void setTask(SingletonTask<Void> task) {
+    public void setTask(FxTask<Void> task) {
         this.task = task;
     }
 
@@ -384,11 +384,11 @@ public abstract class BaseController_Attributes {
 
     }
 
-    public SingletonTask<Void> getBackgroundTask() {
+    public FxTask<Void> getBackgroundTask() {
         return backgroundTask;
     }
 
-    public void setBackgroundTask(SingletonTask<Void> backgroundTask) {
+    public void setBackgroundTask(FxTask<Void> backgroundTask) {
         this.backgroundTask = backgroundTask;
     }
 

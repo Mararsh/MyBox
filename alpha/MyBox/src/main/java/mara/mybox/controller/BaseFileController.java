@@ -14,7 +14,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
@@ -52,7 +52,7 @@ public abstract class BaseFileController extends BaseController {
         }
     }
 
-    public FileBackup addBackup(SingletonTask inTask, File file) {
+    public FileBackup addBackup(FxTask inTask, File file) {
         if (file == null || !file.exists()) {
             return null;
         }

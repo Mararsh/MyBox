@@ -16,7 +16,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
@@ -240,7 +240,7 @@ public class BytesEditorController extends BaseFileEditorController {
             return;
         }
         sourceInformation.setCharset(Charset.forName(c));
-        SingletonTask pairTask = new SingletonTask<Void>(this) {
+        FxTask pairTask = new FxTask<Void>(this) {
 
             private String pairText;
 

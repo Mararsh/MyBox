@@ -10,6 +10,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -58,7 +59,15 @@ public class TextToHtmlController extends BaseBatchFileController {
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String body = HtmlWriteTools.stringToHtml(TextFileTools.readTexts(srcFile));
+            String texts = TextFileTools.readTexts(task, srcFile);
+            if (texts == null) {
+                if (task == null || !task.isWorking()) {
+                    return message("Canceled");
+                } else {
+                    return message("Failed");
+                }
+            }
+            String body = HtmlWriteTools.stringToHtml(texts);
             String filePrefix = FileNameTools.prefix(target.getName());
             String html = "<!DOCTYPE html><html>\n"
                     + headArea.getText().replace("####title####", filePrefix) + "\n"

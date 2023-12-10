@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.bufferedimage.ImageScope.ColorScopeType;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
+import mara.mybox.controller.BaseController;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePolygon;
@@ -19,6 +20,7 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -274,13 +276,13 @@ public class ImageScopeTools {
     /*
        make scope from
      */
-    public static ImageScope fromXML(String s) {
+    public static ImageScope fromXML(FxTask task, BaseController controller, String s) {
         try {
             if (s == null || s.isBlank()) {
                 return null;
             }
-            Element e = XmlTools.toElement(null, s);
-            if (e == null) {
+            Element e = XmlTools.toElement(task, controller, s);
+            if (e == null || (task != null && !task.isWorking())) {
                 return null;
             }
             String tag = e.getTagName();
@@ -293,6 +295,9 @@ public class ImageScopeTools {
             }
             ImageScope scope = new ImageScope();
             for (int dIndex = 0; dIndex < children.getLength(); dIndex++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 Node child = children.item(dIndex);
                 if (!(child instanceof Element)) {
                     continue;
@@ -615,14 +620,15 @@ public class ImageScopeTools {
         }
     }
 
-    public static boolean decodeOutline(ImageScope scope) {
+    public static boolean decodeOutline(FxTask task, ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
-        return decodeOutline(scope.getScopeType(), scope.getOutlineName(), scope);
+        return decodeOutline(task, scope.getScopeType(), scope.getOutlineName(), scope);
     }
 
-    public static boolean decodeOutline(ImageScope.ScopeType type, String outline, ImageScope scope) {
+    public static boolean decodeOutline(FxTask task, ImageScope.ScopeType type,
+            String outline, ImageScope scope) {
         if (type == null || outline == null || scope == null) {
             return false;
         }
@@ -631,7 +637,10 @@ public class ImageScopeTools {
         }
         try {
             scope.setOutlineName(outline);
-            BufferedImage image = ImageFileReaders.readImage(new File(outline));
+            BufferedImage image = ImageFileReaders.readImage(task, new File(outline));
+            if (task != null && !task.isWorking()) {
+                return false;
+            }
             scope.setOutlineSource(image);
             return image != null;
         } catch (Exception e) {
@@ -810,7 +819,7 @@ public class ImageScopeTools {
         }
     }
 
-    public static String encodeOutline(ImageScope scope) {
+    public static String encodeOutline(FxTask task, ImageScope scope) {
         if (scope == null || scope.getScopeType() == null
                 || scope.getScopeType() != ImageScope.ScopeType.Outline
                 || scope.getOutline() == null) {
@@ -823,7 +832,7 @@ public class ImageScopeTools {
             while (new File(filename).exists()) {
                 filename = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
             }
-            if (ImageFileWriters.writeImageFile(scope.getOutlineSource(), "png", filename)) {
+            if (ImageFileWriters.writeImageFile(task, scope.getOutlineSource(), "png", filename)) {
                 s = filename;
             }
             scope.setOutlineName(filename);

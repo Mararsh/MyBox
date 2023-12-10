@@ -1,14 +1,9 @@
 package mara.mybox.fxml.cell;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -41,29 +36,18 @@ public class TableImageFileCell<T> extends TableCell<T, String>
                 super.updateItem(item, empty);
                 setText(null);
                 setGraphic(null);
-                if (!empty && item != null) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                File file = new File(item);
-                                BufferedImage image = ImageFileReaders.readImage(file, thumbWidth);
-                                if (image != null) {
-                                    Platform.runLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            imageview.setImage(SwingFXUtils.toFXImage(image, null));
-                                            setGraphic(imageview);
-                                        }
-                                    });
-                                }
-                            } catch (Exception e) {
-                            }
-                        }
-                    }.start();
+                if (empty || item == null) {
+                    return;
                 }
+                ImageFileCellTask task = new ImageFileCellTask()
+                        .setCell(this).setView(imageview)
+                        .setFilename(item).setThumbWidth(thumbWidth);
+                Thread thread = new Thread(task);
+                thread.setDaemon(false);
+                thread.start();
             }
         };
         return cell;
     }
+
 }

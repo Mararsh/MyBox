@@ -12,7 +12,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -68,9 +68,9 @@ public class ControlFileBackup extends BaseController {
         totalLabel.setText("");
     }
     
-    public void addBackup(SingletonTask task, File file) {
+    public void addBackup(FxTask task, File file) {
         sourceFile = file;
-        SingletonTask backTask = new SingletonTask<Void>(this) {
+        FxTask backTask = new FxTask<Void>(this) {
             private int total;
             private FileBackup backup;
             

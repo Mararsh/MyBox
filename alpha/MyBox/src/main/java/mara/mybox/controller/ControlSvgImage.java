@@ -1,8 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import mara.mybox.dev.MyBoxLog;
+import javafx.scene.image.Image;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.SvgTools;
 import org.w3c.dom.Document;
@@ -18,33 +19,77 @@ public class ControlSvgImage extends BaseShapeController {
     protected ControlSvgShape svgShapeControl;
 
     public void loadDoc(Document doc, Element node) {
-        try {
-            doc = SvgTools.focus(doc, node, 0.5f);
-//            doc = SvgTools.removeSize(doc);
-            File tmpFile = SvgTools.docToImage(this, doc, -1, -1, null);
-            if (tmpFile != null && tmpFile.exists()) {
-                loadImage(FxImageTools.readImage(tmpFile));
-                FileDeleteTools.delete(tmpFile);
-            } else {
-                loadImage(null);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private Image image;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    Document fdoc = SvgTools.focus(task, doc, node, 0.5f);
+                    if (fdoc == null || !task.isWorking()) {
+                        return false;
+                    }
+//            doc = SvgTools.removeSize(doc);
+                    File tmpFile = SvgTools.docToImage(this, myController, fdoc, -1, -1, null);
+                    if (tmpFile == null || !task.isWorking()) {
+                        return false;
+                    }
+                    if (tmpFile.exists()) {
+                        image = FxImageTools.readImage(this, tmpFile);
+                        FileDeleteTools.delete(tmpFile);
+                    } else {
+                        image = null;
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(image);
+            }
+
+        };
+        start(task);
+
     }
 
     public void loadBackGround() {
-        try {
-            File tmpFile = svgShapeControl.optionsController.toImage();
-            if (tmpFile != null && tmpFile.exists()) {
-                loadImage(FxImageTools.readImage(tmpFile));
-                FileDeleteTools.delete(tmpFile);
-            } else {
-                loadImage(null);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private Image image;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    image = null;
+                    File tmpFile = svgShapeControl.optionsController.toImage(this);
+                    if (tmpFile != null && tmpFile.exists()) {
+                        image = FxImageTools.readImage(this, tmpFile);
+                        FileDeleteTools.delete(tmpFile);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(image);
+            }
+
+        };
+        start(task);
     }
 
 }

@@ -26,7 +26,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
@@ -532,7 +532,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private DataFileCSV data;
 
@@ -559,7 +559,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<List<String>> rows;
             private List<Data2DColumn> columns;
@@ -608,7 +608,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private File chartFile;
 

@@ -6,6 +6,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -46,8 +47,17 @@ public class HtmlToPdfController extends BaseBatchFileController {
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String html = TextFileTools.readTexts(srcFile);
-            String result = optionsController.html2pdf(html, target);
+            String html = TextFileTools.readTexts(task, srcFile);
+            if (task != null && !task.isWorking()) {
+                return message("Canceled");
+            }
+            if (html == null) {
+                return message("Failed");
+            }
+            String result = optionsController.html2pdf(task, html, target);
+            if (task != null && !task.isWorking()) {
+                return message("Canceled");
+            }
             if (Languages.message("Successful").equals(result)) {
                 targetFileGenerated(target);
             }

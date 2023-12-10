@@ -22,7 +22,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageBlackWhiteController extends BasePixelsController {
 
-    protected int threshold;
+    protected ImageBinary imageBinary;
 
     @FXML
     protected ControlImageBinary binaryController;
@@ -44,17 +44,29 @@ public class ImageBlackWhiteController extends BasePixelsController {
     }
 
     @Override
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        imageBinary = binaryController.pickValues();
+        if (imageBinary == null) {
+            return false;
+        }
+        operation = message("BlackOrWhite");
+        if (imageBinary.getAlgorithm() != ImageBinary.BinaryAlgorithm.Default) {
+            opInfo = message("Threshold") + ": " + imageBinary.getIntPara1();
+        }
+        return true;
+    }
+
+    @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            operation = message("BlackOrWhite");
-            opInfo = message("Threshold") + ": " + threshold;
-            threshold = binaryController.threshold();
-            ImageBinary imageBinary = new ImageBinary(inImage);
-            imageBinary.setScope(inScope)
-                    .setIntPara1(threshold)
-                    .setIsDithering(binaryController.dither())
+            imageBinary.setImage(inImage)
+                    .setScope(inScope)
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             return imageBinary.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
@@ -65,31 +77,37 @@ public class ImageBlackWhiteController extends BasePixelsController {
     @Override
     protected void makeDemoFiles(List<String> files, Image demoImage) {
         try {
-            ImageBinary imageBinary = new ImageBinary(demoImage);
-            imageBinary.setScope(scope())
+            ImageBinary binary = new ImageBinary(demoImage);
+            binary.setScope(scope())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent());
             String prefix = message("BlackOrWhite");
 
-            BufferedImage bufferedImage = imageBinary
-                    .setIntPara1(-1)
+            BufferedImage bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Default)
                     .setIsDithering(true)
                     .operate();
             String tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Default")
                     + "_" + message("Dithering"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
             }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
 
-            bufferedImage = imageBinary
-                    .setIntPara1(-1)
+            bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Default)
                     .setIsDithering(false)
                     .operate();
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Default"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
             }
 
             List<Integer> inputs = new ArrayList<>();
@@ -99,46 +117,60 @@ public class ImageBlackWhiteController extends BasePixelsController {
                 inputs.add(input);
             }
             for (int v : inputs) {
-                bufferedImage = imageBinary
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                bufferedImage = binary
+                        .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
                         .setIntPara1(v)
                         .setIsDithering(true)
+                        .setTask(demoTask)
                         .operate();
-                tmpFile = FileTmpTools.generateFile(prefix + "_" + v
+                tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Threshold") + v
                         + "_" + message("Dithering"), "png").getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                     files.add(tmpFile);
                     demoTask.setInfo(tmpFile);
                 }
 
-                bufferedImage = imageBinary
+                bufferedImage = binary
+                        .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
                         .setIntPara1(v)
                         .setIsDithering(false)
+                        .setTask(demoTask)
                         .operate();
-                tmpFile = FileTmpTools.generateFile(prefix + "_" + v, "png").getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+                tmpFile = FileTmpTools.generateFile(prefix + "_" + message("Threshold") + v, "png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                     files.add(tmpFile);
                     demoTask.setInfo(tmpFile);
                 }
             }
 
-            int otsu = ImageBinary.calculateThreshold(srcImage());
-            bufferedImage = imageBinary
+            int otsu = ImageBinary.threshold(demoTask, srcImage());
+            bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
                     .setIntPara1(otsu)
                     .setIsDithering(true)
+                    .setTask(demoTask)
                     .operate();
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("OTSU")
                     + otsu + "_" + message("Dithering"), "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
             }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
 
-            bufferedImage = imageBinary
+            bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
                     .setIntPara1(otsu)
                     .setIsDithering(false)
+                    .setTask(demoTask)
                     .operate();
             tmpFile = FileTmpTools.generateFile(prefix + "_" + message("OTSU") + otsu, "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile)) {
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
             }

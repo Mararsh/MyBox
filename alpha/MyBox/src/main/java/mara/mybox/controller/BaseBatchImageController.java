@@ -4,7 +4,7 @@ import java.io.File;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 
 /**
  * @Author Mara
@@ -32,11 +32,12 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
         }
         sourceFile = file;
         imageInformation = null;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             public Void call() {
-                ImageFileInformation imageFileInformation = ImageFileInformation.create(file);
+                ImageFileInformation imageFileInformation
+                        = ImageFileInformation.create(this, file);
                 if (imageFileInformation == null
                         || imageFileInformation.getImageInformation() == null) {
                     return null;

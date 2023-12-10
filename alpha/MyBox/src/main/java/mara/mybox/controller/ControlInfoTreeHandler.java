@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -56,16 +58,43 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
     @FXML
     @Override
     public void viewAction() {
-        viewNode(selectedItem());
+        InfoNode item = selectedItem();
+        if (item == null) {
+            popError(message("SelectToHanlde"));
+            return;
+        }
+        viewNode(item);
     }
 
-    protected void viewNode(InfoNode node) {
+    public void viewNode(InfoNode node) {
         if (node == null) {
             return;
         }
-        String html = InfoNode.nodeHtml(node, null);
-        viewController.loadContents(html);
-        selectedNode = node;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = InfoNode.nodeHtml(this, myController, node, null);
+                    return html != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                viewController.loadContents(html);
+                selectedNode = node;
+            }
+
+        };
+        start(task);
     }
 
 }

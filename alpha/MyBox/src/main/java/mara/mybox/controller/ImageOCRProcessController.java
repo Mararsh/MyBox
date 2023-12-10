@@ -27,7 +27,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
@@ -180,7 +180,7 @@ public class ImageOCRProcessController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image changedImage;
 
             @Override
@@ -213,7 +213,7 @@ public class ImageOCRProcessController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image ocrImage;
 
             @Override
@@ -283,7 +283,7 @@ public class ImageOCRProcessController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image ocrImage;
 
             @Override
@@ -305,27 +305,30 @@ public class ImageOCRProcessController extends BaseImageController {
                         ocrImage = pixelsOperation.operateFxImage();
 
                     } else if (message("GrayHistogramEqualization").equals(algorithm)) {
-                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                ContrastAlgorithm.Gray_Histogram_Equalization);
-                        ocrImage = imageContrast.operateFxImage();
+                        ImageContrast imageContrast = new ImageContrast()
+                                .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Equalization);
+                        ocrImage = imageContrast.setImage(imageView.getImage())
+                                .setTask(this).operateFxImage();
 
                     } else if (message("GrayHistogramStretching").equals(algorithm)) {
-                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
-                        imageContrast.setIntPara1(50);
-                        imageContrast.setIntPara2(50);
-                        ocrImage = imageContrast.operateFxImage();
+                        ImageContrast imageContrast = new ImageContrast()
+                                .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Stretching);
+                        ocrImage = imageContrast.setImage(imageView.getImage())
+                                .setIntPara1(50).setIntPara2(50)
+                                .setTask(this).operateFxImage();
 
                     } else if (message("GrayHistogramShifting").equals(algorithm)) {
-                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
-                        imageContrast.setIntPara1(10);
-                        ocrImage = imageContrast.operateFxImage();
+                        ImageContrast imageContrast = new ImageContrast()
+                                .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Shifting);
+                        ocrImage = imageContrast.setImage(imageView.getImage())
+                                .setIntPara1(10)
+                                .setTask(this).operateFxImage();
 
                     } else if (message("HSBHistogramEqualization").equals(algorithm)) {
-                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
-                        ocrImage = imageContrast.operateFxImage();
+                        ImageContrast imageContrast = new ImageContrast()
+                                .setAlgorithm(ContrastAlgorithm.HSB_Histogram_Equalization);
+                        ocrImage = imageContrast.setImage(imageView.getImage())
+                                .setTask(this).operateFxImage();
 
                     } else if (message("UnsharpMasking").equals(algorithm)) {
                         ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
@@ -396,7 +399,7 @@ public class ImageOCRProcessController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<String> files;
 
             @Override
@@ -413,7 +416,7 @@ public class ImageOCRProcessController extends BaseImageController {
                     BufferedImage bufferedImage = imageConvolution.operateImage();
                     String tmpFile = FileTmpTools.generateFile(message("EdgeDetection")
                             + "-" + message("EightNeighborLaplaceInvert"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
@@ -424,46 +427,45 @@ public class ImageOCRProcessController extends BaseImageController {
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = FileTmpTools.generateFile(message("EdgeDetection")
                             + "-" + message("EightNeighborLaplace"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
 
-                    ImageContrast imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.HSB_Histogram_Equalization);
-                    bufferedImage = imageContrast.operateImage();
+                    ImageContrast imageContrast = new ImageContrast()
+                            .setAlgorithm(ContrastAlgorithm.HSB_Histogram_Equalization);
+                    bufferedImage = imageContrast.setImage(image).setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("HSBHistogramEqualization"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
 
-                    imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.Gray_Histogram_Equalization);
-                    bufferedImage = imageContrast.operateImage();
+                    imageContrast = new ImageContrast()
+                            .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Equalization);
+                    bufferedImage = imageContrast.setImage(image).setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramEqualization"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
 
-                    imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.Gray_Histogram_Stretching);
-                    imageContrast.setIntPara1(100);
-                    imageContrast.setIntPara2(100);
-                    bufferedImage = imageContrast.operateImage();
+                    imageContrast = new ImageContrast()
+                            .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Stretching);
+                    bufferedImage = imageContrast.setImage(image).setTask(this)
+                            .setIntPara1(100).setIntPara2(100).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramStretching"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
 
-                    imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.Gray_Histogram_Shifting);
-                    imageContrast.setIntPara1(40);
-                    bufferedImage = imageContrast.operateImage();
+                    imageContrast = new ImageContrast()
+                            .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Shifting);
+                    bufferedImage = imageContrast.setImage(image).setTask(this)
+                            .setIntPara1(40).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramShifting"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
@@ -471,9 +473,9 @@ public class ImageOCRProcessController extends BaseImageController {
                     kernel = ConvolutionKernel.makeUnsharpMasking(3);
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
+                    bufferedImage = imageConvolution.setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("UnsharpMasking"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
@@ -481,10 +483,10 @@ public class ImageOCRProcessController extends BaseImageController {
                     kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
+                    bufferedImage = imageConvolution.setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("Enhancement")
                             + "-" + message("FourNeighborLaplace"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
@@ -492,10 +494,10 @@ public class ImageOCRProcessController extends BaseImageController {
                     kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
+                    bufferedImage = imageConvolution.setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("Enhancement")
                             + "-" + message("EightNeighborLaplace"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
@@ -503,9 +505,9 @@ public class ImageOCRProcessController extends BaseImageController {
                     kernel = ConvolutionKernel.makeGaussBlur(3);
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
+                    bufferedImage = imageConvolution.setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("GaussianBlur"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
@@ -513,18 +515,18 @@ public class ImageOCRProcessController extends BaseImageController {
                     kernel = ConvolutionKernel.makeAverageBlur(2);
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
+                    bufferedImage = imageConvolution.setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("AverageBlur"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
 
                     PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(imageView.getImage(),
                             null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                    bufferedImage = pixelsOperation.operateImage();
+                    bufferedImage = pixelsOperation.setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("Invert"), "png").getAbsolutePath();
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile);
                     }
@@ -562,14 +564,14 @@ public class ImageOCRProcessController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image ocrImage;
 
             @Override
             protected boolean handle() {
                 try {
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                    bufferedImage = TransformTools.rotateImage(bufferedImage, rotate);
+                    bufferedImage = TransformTools.rotateImage(this, bufferedImage, rotate);
                     ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
                     return ocrImage != null;
                 } catch (Exception e) {

@@ -27,9 +27,9 @@ import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
@@ -148,7 +148,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
             task.cancel();
         }
         clearTree();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private TreeItem<InfoNode> rootItem;
 
             @Override
@@ -487,7 +487,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private InfoNode newNode;
 
             @Override
@@ -510,10 +510,10 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     protected void popNode(TreeItem<InfoNode> item) {
-        if (item == null) {
+        if (item == null || infoController == null) {
             return;
         }
-        InfoNode.view(item.getValue(), message("HierarchyNumber") + ": " + hierarchyNumber(item));
+        infoController.popNode(item.getValue());
     }
 
     @Override
@@ -524,7 +524,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

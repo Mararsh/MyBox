@@ -151,12 +151,6 @@ public class ColorConvertTools {
         return rgb2grayValue(c.getRed(), c.getGreen(), c.getBlue());
     }
 
-    public static int grayPixel2grayValue(int pixel) {
-        Color c = pixel2rgb(pixel);
-        return c.getRed();
-    }
-
-
     /*
         others
      */

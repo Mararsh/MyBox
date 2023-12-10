@@ -34,7 +34,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -287,7 +287,31 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!super.loadFile(file)) {
             return false;
         }
-        return writePanes(TextFileTools.readTexts(file));
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = TextFileTools.readTexts(this, file);
+                    return html != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                writePanes(html);
+            }
+
+        };
+        start(task);
+        return true;
     }
 
     @Override
@@ -295,7 +319,31 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!super.loadAddress(address)) {
             return false;
         }
-        return writePanes(HtmlReadTools.url2html(address));
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = HtmlReadTools.url2html(this, address);
+                    return html != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                writePanes(html);
+            }
+
+        };
+        start(task);
+        return true;
     }
 
     @Override
@@ -374,7 +422,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             popError(message("NoData"));
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {

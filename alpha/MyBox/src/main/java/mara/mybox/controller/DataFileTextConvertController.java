@@ -69,8 +69,11 @@ public class DataFileTextConvertController extends BaseDataConvertController {
             sourceCharset = TextFileTools.charset(srcFile);
         }
         List<String> names = null;
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
+        File validFile = FileTools.removeBOM(task, srcFile);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (task == null || task.isCancelled()) {

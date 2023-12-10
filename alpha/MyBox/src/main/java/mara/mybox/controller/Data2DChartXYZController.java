@@ -13,7 +13,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -228,7 +228,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

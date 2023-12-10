@@ -8,7 +8,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -59,7 +59,7 @@ public class RunCommandController extends HtmlPopController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

@@ -8,6 +8,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FloatMatrixTools;
 
 /**
@@ -81,7 +82,7 @@ public class ImageConvolution extends PixelsOperation {
             return image;
         }
         if (scope == null || scope.getScopeType() == null) {
-            return applyConvolution(image, kernel);
+            return applyConvolution(task, image, kernel);
 
         }
         return super.operateImage();
@@ -118,7 +119,13 @@ public class ImageConvolution extends PixelsOperation {
             int red = 0, green = 0, blue = 0, opacity = 0;
             int convolveX, convolveY;
             for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
+                if (taskInvalid()) {
+                    return null;
+                }
                 for (int matrixX = 0; matrixX < matrixWidth; matrixX++) {
+                    if (taskInvalid()) {
+                        return null;
+                    }
                     convolveX = x - radiusX + matrixX;
                     convolveY = y - radiusY + matrixY;
                     if (convolveX < 0 || convolveX > maxX || convolveY < 0 || convolveY > maxY) {
@@ -160,16 +167,23 @@ public class ImageConvolution extends PixelsOperation {
 
     }
 
-    public static BufferedImage applyConvolution(BufferedImage source, ConvolutionKernel convolutionKernel) {
+    public static BufferedImage applyConvolution(FxTask task, BufferedImage source,
+            ConvolutionKernel convolutionKernel) {
         BufferedImage clearedSource;
         int type = convolutionKernel.getType();
         if (type == ConvolutionKernel.Convolution_Type.EDGE_DETECTION
                 || type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            clearedSource = AlphaTools.removeAlpha(source);
+            clearedSource = AlphaTools.removeAlpha(task, source);
         } else {
             clearedSource = source;
         }
-        float[] k = FloatMatrixTools.matrix2Array(convolutionKernel.getMatrix());
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
+        float[] k = FloatMatrixTools.matrix2Array(task, convolutionKernel.getMatrix());
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
         if (k == null) {
             return clearedSource;
         }
@@ -183,19 +197,25 @@ public class ImageConvolution extends PixelsOperation {
             imageOp = new ConvolveOp(kernel, ConvolveOp.EDGE_ZERO_FILL, null);
         }
         BufferedImage target = applyConvolveOp(clearedSource, imageOp);
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
         if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
                     OperationType.RGB, ColorActionType.Increase);
-            pixelsOperation.setIntPara1(128);
+            pixelsOperation.setIntPara1(128).setTask(task);
             target = pixelsOperation.operate();
         }
         if (convolutionKernel.isInvert()) {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
-                    OperationType.RGB, ColorActionType.Invert);
+                    OperationType.RGB, ColorActionType.Invert).setTask(task);
             target = pixelsOperation.operate();
         }
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
         if (convolutionKernel.isGray()) {
-            target = ImageGray.byteGray(target);
+            target = ImageGray.byteGray(task, target);
         }
         return target;
     }

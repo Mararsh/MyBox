@@ -51,8 +51,15 @@ public class WordToPdfController extends BaseBatchFileController {
             if (target == null) {
                 return message("Skip");
             }
-            String html = MicrosoftDocumentTools.word2Html(srcFile, charset);
-            String result = optionsController.html2pdf(html, target);
+            String html = MicrosoftDocumentTools.word2Html(task, srcFile, charset);
+            if (html == null) {
+                if (task == null || !task.isWorking()) {
+                    return message("Canceled");
+                } else {
+                    return message("Failed");
+                }
+            }
+            String result = optionsController.html2pdf(task, html, target);
             if (message("Successful").equals(result)) {
                 targetFileGenerated(target);
             }

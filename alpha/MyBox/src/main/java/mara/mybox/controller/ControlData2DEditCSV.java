@@ -12,7 +12,7 @@ import javafx.scene.control.TextArea;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -117,7 +117,7 @@ public class ControlData2DEditCSV extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String text;
 
             @Override
@@ -185,7 +185,7 @@ public class ControlData2DEditCSV extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<List<String>> rows;
 
             @Override

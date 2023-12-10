@@ -134,7 +134,7 @@ public class CIEDataTools {
     public static List<CIEData> read(File file) {
         try {
             List<CIEData> data = new ArrayList<>();
-            File validFile = FileTools.removeBOM(file);
+            File validFile = FileTools.removeBOM(null, file);
             try (final BufferedReader reader = new BufferedReader(new FileReader(validFile))) {
                 String line;
                 while ((line = reader.readLine()) != null) {

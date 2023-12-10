@@ -24,8 +24,8 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableDurationCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -126,7 +126,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     protected void loadMediaInfo(MediaInformation info) {
-        SingletonTask infoTask = new SingletonTask<Void>(this) {
+        FxTask infoTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -461,7 +461,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             task.cancel();
         }
         tableData.clear();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             List<File> miaos;
 

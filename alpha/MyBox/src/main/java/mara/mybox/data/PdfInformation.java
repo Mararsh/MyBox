@@ -7,7 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -71,7 +71,7 @@ public class PdfInformation extends FileInformation {
         }
     }
 
-    public void loadInformation(SingletonTask task) {
+    public void loadInformation(FxTask task) {
         try {
             if (doc == null) {
                 return;
@@ -134,7 +134,7 @@ public class PdfInformation extends FileInformation {
         }
     }
 
-    public void loadInfo(SingletonTask task, String password) {
+    public void loadInfo(FxTask task, String password) {
         try {
             openDocument(password);
             if (doc == null) {
@@ -147,7 +147,7 @@ public class PdfInformation extends FileInformation {
         }
     }
 
-    public void readInfo(SingletonTask task, PDDocument doc) {
+    public void readInfo(FxTask task, PDDocument doc) {
         this.doc = doc;
         loadInformation(task);
     }
@@ -169,7 +169,7 @@ public class PdfInformation extends FileInformation {
         }
     }
 
-    public static boolean readPDF(SingletonTask task, PdfInformation info) {
+    public static boolean readPDF(FxTask task, PdfInformation info) {
         if (info == null) {
             return false;
         }

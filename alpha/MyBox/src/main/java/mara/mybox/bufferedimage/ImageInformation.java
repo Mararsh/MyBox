@@ -16,11 +16,12 @@ import mara.mybox.controller.LoadingController;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.ImageHints;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -29,7 +30,6 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
-import static mara.mybox.value.AppVariables.ImageHints;
 
 /**
  * @Author Mara
@@ -53,7 +53,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
     protected DoubleRectangle region;
-    protected SingletonTask task;
 
     public ImageInformation() {
         initImage();
@@ -123,22 +122,22 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public Image loadImage() {
+    public Image loadImage(FxTask task) {
         if (region != null) {
-            return readRegion(this, -1);
+            return readRegion(task, this, -1);
         }
         if (image == null || image.getWidth() != width) {
-            image = readImage(this);
+            image = readImage(task, this);
         }
         return image;
     }
 
-    public Image loadThumbnail(int thumbWidth) {
+    public Image loadThumbnail(FxTask task, int thumbWidth) {
         if (region != null) {
-            thumbnail = readRegion(this, thumbWidth);
+            thumbnail = readRegion(task, this, thumbWidth);
         }
         if (thumbnail == null || (int) (thumbnail.getWidth()) != thumbWidth) {
-            thumbnail = readImage(this, thumbWidth);
+            thumbnail = readImage(task, this, thumbWidth);
         }
         if (image == null && thumbnail != null && (int) (thumbnail.getWidth()) == width) {
             image = thumbnail;
@@ -146,8 +145,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return thumbnail;
     }
 
-    public Image loadThumbnail() {
-        return loadThumbnail(AppVariables.thumbnailWidth);
+    public Image loadThumbnail(FxTask task) {
+        return loadThumbnail(task, AppVariables.thumbnailWidth);
     }
 
     public void loadBufferedImage(BufferedImage bufferedImage) {
@@ -170,7 +169,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public String sampleInformation(Image image) {
+    public String sampleInformation(FxTask task, Image image) {
         int sampledWidth, sampledHeight, sampledSize;
         if (image != null) {
             sampledWidth = (int) image.getWidth();
@@ -179,7 +178,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             if (width <= 0) {
                 width = 512;
             }
-            checkMem(this);
+            checkMem(task, this);
             sampledWidth = (int) maxWidth;
             sampledHeight = (int) (maxWidth * height / width);
         }
@@ -211,19 +210,19 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public static Image readImage(ImageInformation imageInfo) {
+    public static Image readImage(FxTask task, ImageInformation imageInfo) {
         if (imageInfo == null) {
             return null;
         }
-        return readImage(imageInfo, -1);
+        return readImage(task, imageInfo, -1);
     }
 
-    public static Image readImage(ImageInformation imageInfo, int requiredWidth) {
+    public static Image readImage(FxTask task, ImageInformation imageInfo, int requiredWidth) {
         if (imageInfo == null) {
             return null;
         }
         if (imageInfo.getRegion() != null) {
-            return readRegion(imageInfo, requiredWidth);
+            return readRegion(task, imageInfo, requiredWidth);
         }
         imageInfo.setIsSampled(false);
         imageInfo.setIsScaled(false);
@@ -264,7 +263,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     bufferedImage = readPPT(imageInfo, targetWidth);
                 } else {
                     imageInfo.setRequiredWidth(requiredWidth);
-                    bufferedImage = ImageFileReaders.readFrame(imageInfo);
+                    bufferedImage = ImageFileReaders.readFrame(task, imageInfo);
                 }
                 if (bufferedImage != null) {
                     targetImage = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -296,7 +295,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage readPDF(SingletonTask<Void> task, PDFRenderer renderer, ImageType imageType,
+    public static BufferedImage readPDF(FxTask task, PDFRenderer renderer, ImageType imageType,
             ImageInformation imageInfo, int targetWidth) {
         if (renderer == null || imageInfo == null) {
             return null;
@@ -324,7 +323,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage scaleImage(SingletonTask<Void> task, BufferedImage inImage,
+    public static BufferedImage scaleImage(FxTask task, BufferedImage inImage,
             ImageInformation imageInfo, int targetWidth) {
         if (imageInfo == null) {
             return null;
@@ -338,7 +337,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setImageType(bufferedImage.getType());
             DoubleRectangle region = imageInfo.getRegion();
             if (region != null) {
-                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, region);
+                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(task, inImage, region);
                 if (task != null && task.isCancelled()) {
                     return null;
                 }
@@ -376,7 +375,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage readPPT(SingletonTask<Void> task, SlideShow ppt, ImageInformation imageInfo, int targetWidth) {
+    public static BufferedImage readPPT(FxTask task, SlideShow ppt, ImageInformation imageInfo, int targetWidth) {
         if (ppt == null || imageInfo == null) {
             return null;
         }
@@ -408,7 +407,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage readImage(SingletonTask<Void> task, ImageReader reader, ImageInformation imageInfo, int targetWidth) {
+    public static BufferedImage readImage(FxTask task,
+            ImageReader reader, ImageInformation imageInfo, int targetWidth) {
         if (reader == null || imageInfo == null) {
             return null;
         }
@@ -416,7 +416,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         try {
             imageInfo.setThumbnail(null);
             imageInfo.setRequiredWidth(targetWidth);
-            bufferedImage = ImageFileReaders.readFrame(reader, imageInfo);
+            bufferedImage = ImageFileReaders.readFrame(task, reader, imageInfo);
             if (bufferedImage != null) {
                 imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
             }
@@ -429,13 +429,13 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static Image readRegion(ImageInformation imageInfo, int requireWidth) {
+    public static Image readRegion(FxTask task, ImageInformation imageInfo, int requireWidth) {
         if (imageInfo == null) {
             return null;
         }
         DoubleRectangle region = imageInfo.getRegion();
         if (region == null) {
-            return readImage(imageInfo, requireWidth);
+            return readImage(task, imageInfo, requireWidth);
         }
         Image regionImage = imageInfo.getRegionImage();
         try {
@@ -448,13 +448,13 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setRequiredWidth(targetWidth);
             Image image = imageInfo.getImage();
             if (image != null && (int) image.getWidth() == infoWidth) {
-                regionImage = CropTools.cropOutsideFx(image, region);
+                regionImage = CropTools.cropOutsideFx(task, image, region);
                 regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, targetWidth);
             }
             if (regionImage == null) {
                 Image thumb = imageInfo.getThumbnail();
                 if (thumb != null && (int) thumb.getWidth() == infoWidth) {
-                    regionImage = CropTools.cropOutsideFx(thumb, region);
+                    regionImage = CropTools.cropOutsideFx(task, thumb, region);
                     regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, targetWidth);
                 }
             }
@@ -468,7 +468,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
                         bufferedImage = readPPT(imageInfo, targetWidth);
                     } else {
-                        bufferedImage = ImageFileReaders.readFrame(imageInfo);
+                        bufferedImage = ImageFileReaders.readFrame(task, imageInfo);
                     }
                     if (bufferedImage != null) {
                         regionImage = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -482,8 +482,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return regionImage;
     }
 
-    public static BufferedImage readBufferedImage(ImageInformation info) {
-        Image image = readImage(info);
+    public static BufferedImage readBufferedImage(FxTask task, ImageInformation info) {
+        Image image = readImage(task, info);
         if (image != null) {
             return SwingFXUtils.fromFXImage(image, null);
         } else {
@@ -491,7 +491,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public static boolean checkMem(ImageInformation imageInfo) {
+    public static boolean checkMem(FxTask task, ImageInformation imageInfo) {
         if (imageInfo == null) {
             return false;
         }
@@ -512,7 +512,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 imageInfo.setBytesSize(bytesSize);
                 imageInfo.setRequiredMem(requiredMem);
 
-                SingletonTask task = imageInfo.getTask();
                 LoadingController loading = task != null ? task.getLoading() : null;
                 if (availableMem < requiredMem) {
                     int scale = (int) Math.ceil(1d * requiredMem / availableMem);
@@ -641,8 +640,9 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         this.imageType = imageType;
     }
 
-    public void setWidth(double width) {
+    public ImageInformation setWidth(double width) {
         this.width = width;
+        return this;
     }
 
     public void setHeight(double height) {
@@ -1518,14 +1518,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public void setDpi(int dpi) {
         this.dpi = dpi;
-    }
-
-    public SingletonTask getTask() {
-        return task;
-    }
-
-    public void setTask(SingletonTask task) {
-        this.task = task;
     }
 
 }

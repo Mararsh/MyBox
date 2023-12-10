@@ -22,7 +22,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
@@ -86,7 +86,7 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
             clearTree();
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             TreeItem<JsonTreeNode> root;
 

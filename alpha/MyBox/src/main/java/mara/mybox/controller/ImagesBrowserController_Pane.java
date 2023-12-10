@@ -28,7 +28,7 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.tools.DateTools;
@@ -147,7 +147,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         }
         makeGridBox();
         tableData.clear();
-        backgroundTask = new SingletonBackgroundTask<Void>(this) {
+        backgroundTask = new FxBackgroundTask<Void>(this) {
 
             private List<Integer> mfList;
 
@@ -161,7 +161,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                         }
                         ImageView iView = imageViewList.get(i);
                         File file = imageFileList.get(i);
-                        ImageInformation imageInfo = loadInfo(file);
+                        ImageInformation imageInfo = loadInfo(this, file);
                         if (imageInfo == null) {
                             continue;
                         }
@@ -320,7 +320,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 backgroundTask.cancel();
                 backgroundTask = null;
             }
-            backgroundTask = new SingletonBackgroundTask<Void>(this) {
+            backgroundTask = new FxBackgroundTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -330,7 +330,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                                 break;
                             }
                             File file = imageFileList.get(i);
-                            ImageInformation imageInfo = loadInfo(file);
+                            ImageInformation imageInfo = loadInfo(this, file);
                             if (imageInfo != null) {
                                 tableData.add(imageInfo);
                             }

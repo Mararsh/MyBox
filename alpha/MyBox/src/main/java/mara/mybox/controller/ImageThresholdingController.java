@@ -153,7 +153,8 @@ public class ImageThresholdingController extends BasePixelsController {
                     .setIntPara3(small)
                     .setIsDithering(false)
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             operation = message("Thresholding");
             opInfo = message("Threshold") + ": " + threshold;
             return pixelsOperation.operateFxImage();

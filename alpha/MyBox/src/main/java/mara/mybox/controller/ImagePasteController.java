@@ -23,8 +23,8 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -175,13 +175,13 @@ public class ImagePasteController extends BaseImageEditController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
                     if (angle != 0) {
-                        currentClip = TransformTools.rotateImage(clipSource, angle);
+                        currentClip = TransformTools.rotateImage(this, clipSource, angle);
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -195,7 +195,7 @@ public class ImagePasteController extends BaseImageEditController {
                     }
                     bgImage = editor.imageView.getImage();
                     if (enlargeCheck.isSelected()) {
-                        bgImage = MarginTools.addMarginsFx(bgImage,
+                        bgImage = MarginTools.addMarginsFx(this, bgImage,
                                 Color.TRANSPARENT,
                                 0 - (int) maskRectangleData.getY(),
                                 (int) (maskRectangleData.getMaxY() - bgImage.getHeight()),
@@ -208,7 +208,10 @@ public class ImagePasteController extends BaseImageEditController {
                             maskRectangleData.setY(0);
                         }
                     }
-                    blendedImage = FxImageTools.blend(finalClip, bgImage,
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    blendedImage = FxImageTools.blend(this, finalClip, bgImage,
                             (int) maskRectangleData.getX(),
                             (int) maskRectangleData.getY(),
                             blend);
@@ -268,13 +271,13 @@ public class ImagePasteController extends BaseImageEditController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image clip;
 
             @Override
             protected boolean handle() {
-                clip = FxImageTools.readImage(file);
+                clip = FxImageTools.readImage(this, file);
                 return clip != null;
             }
 

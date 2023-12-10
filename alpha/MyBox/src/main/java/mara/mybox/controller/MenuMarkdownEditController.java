@@ -22,7 +22,7 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.UrlTools;
@@ -472,13 +472,13 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             return;
         }
         popInformation(message("WaitAndHandling"));
-        SingletonTask pdftask = new SingletonTask<Void>(this) {
+        FxTask pdftask = new FxTask<Void>(this) {
 
             private File pdf;
 
             @Override
             protected boolean handle() {
-                pdf = PdfTools.md2pdf(text);
+                pdf = PdfTools.md2pdf(this, text);
                 return pdf != null && pdf.exists();
             }
 

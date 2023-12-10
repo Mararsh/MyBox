@@ -20,7 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
@@ -37,7 +37,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
     protected ObservableList<FFmpegFormat> formatsData;
     protected ObservableList<FFmpegCodec> codecsData;
     protected ObservableList<FFmpegFilter> filtersData;
-    protected SingletonTask formatsTask, codecsTask, filtersTask;
+    protected FxTask formatsTask, codecsTask, filtersTask;
 
     @FXML
     protected Tab queryTab;
@@ -222,7 +222,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (formatsTask != null) {
             formatsTask.cancel();
         }
-        formatsTask = new SingletonTask<Void>(this) {
+        formatsTask = new FxTask<Void>(this) {
             private StringBuilder version;
 
             @Override
@@ -309,7 +309,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (codecsTask != null) {
             codecsTask.cancel();
         }
-        codecsTask = new SingletonTask<Void>(this) {
+        codecsTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -393,7 +393,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (filtersTask != null) {
             filtersTask.cancel();
         }
-        filtersTask = new SingletonTask<Void>(this) {
+        filtersTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -477,7 +477,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (queryTask != null) {
             queryTask.cancel();
         }
-        queryTask = new SingletonTask<Void>(this) {
+        queryTask = new FxTask<Void>(this) {
             private String output;
 
             @Override

@@ -25,7 +25,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-12-18
  * @License Apache License Version 2.0
  */
-public class DownloadTask<Void> extends BaseTask<Void> {
+public class DownloadTask<Void> extends FxTask<Void> {
 
     protected String address;
     protected URL url;

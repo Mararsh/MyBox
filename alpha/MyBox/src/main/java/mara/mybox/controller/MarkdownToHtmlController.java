@@ -99,7 +99,15 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
             if (target == null) {
                 return message("Skip");
             }
-            Node document = htmlParser.parse(TextFileTools.readTexts(srcFile));
+            String md = TextFileTools.readTexts(task, srcFile);
+            if (md == null) {
+                if (task == null || !task.isWorking()) {
+                    return message("Canceled");
+                } else {
+                    return message("Failed");
+                }
+            }
+            Node document = htmlParser.parse(md);
             String html = htmlRender.render(document);
             String style = UserConfig.getString(baseName + "HtmlStyle", null);
             html = HtmlWriteTools.html(null, style, html);

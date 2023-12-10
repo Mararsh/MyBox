@@ -26,7 +26,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppValues;
@@ -240,7 +240,7 @@ public class ControlImagesBlend extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<File> files;
 
             @Override
@@ -260,13 +260,13 @@ public class ControlImagesBlend extends BaseController {
                             .setBaseAbove(baseAboveCheck.isSelected())
                             .setBaseTransparentAs(baseTransparentAs)
                             .setOverlayTransparentAs(overlayTransparentAs);
-                    BufferedImage blended = PixelsBlend.blend(overlayBI, baseBI, x, y, blender);
+                    BufferedImage blended = PixelsBlend.blend(this, overlayBI, baseBI, x, y, blender);
                     if (task == null || isCancelled()) {
                         return true;
                     }
                     File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator
                             + message("NormalMode") + "-" + message("Opacity") + "-" + copacity + "f.png");
-                    if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                    if (ImageFileWriters.writeImageFile(this, blended, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile.getAbsolutePath());
                     }
@@ -281,13 +281,13 @@ public class ControlImagesBlend extends BaseController {
                                 .setBaseAbove(baseAboveCheck.isSelected())
                                 .setBaseTransparentAs(baseTransparentAs)
                                 .setOverlayTransparentAs(overlayTransparentAs);
-                        blended = PixelsBlend.blend(overlayBI, baseBI, x, y, blender);
+                        blended = PixelsBlend.blend(this, overlayBI, baseBI, x, y, blender);
                         if (task == null || isCancelled()) {
                             return true;
                         }
                         tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
                                 + message("Opacity") + "-" + opacity + "f.png");
-                        if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                        if (ImageFileWriters.writeImageFile(this, blended, tmpFile)) {
                             files.add(tmpFile);
                             task.setInfo(tmpFile.getAbsolutePath());
                         }

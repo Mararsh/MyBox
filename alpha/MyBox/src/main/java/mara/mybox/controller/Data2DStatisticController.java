@@ -14,7 +14,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -183,7 +183,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     public void handleAllByColumnsTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -239,7 +239,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     public void handleAllByAllTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

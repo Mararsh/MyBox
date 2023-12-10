@@ -18,8 +18,8 @@ import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.imagefile.ImageFileReaders.getReader;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import thridparty.image4j.ICODecoder;
 
@@ -149,7 +149,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                     if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                         break;
                     }
-                    frame = ImageFileReaders.readBrokenImage(e, imageInfo.setIndex(i));
+                    frame = ImageFileReaders.readBrokenImage(task, e, imageInfo.setIndex(i));
                 }
                 if (frame != null) {
                     handleImage(frame, duration);
@@ -171,7 +171,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             BufferedImage fitImage = ScaleTools.fitSize(image,
                     ffmpegOptionsController.width, ffmpegOptionsController.height);
             File tmpFile = FileTmpTools.getTempFile(".png");
-            if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
+            if (ImageFileWriters.writeImageFile(task, fitImage, tmpFile) && tmpFile.exists()) {
                 lastFile = tmpFile;
                 imageFileString.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
                 imageFileString.append("duration  ").append(duration / 1000.00f).append("\n");

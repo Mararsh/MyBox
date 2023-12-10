@@ -13,7 +13,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -30,7 +30,7 @@ public class DescriptiveStatistic {
     public InvalidAs invalidAs;
 
     protected BaseData2DHandleController handleController;
-    protected SingletonTask<Void> task;
+    protected FxTask<Void> task;
     protected Data2D data2D;
     protected Map<StatisticType, List<String>> statisticRows;
     protected List<List<String>> outputData;
@@ -507,11 +507,11 @@ public class DescriptiveStatistic {
         return this;
     }
 
-    public SingletonTask<Void> getTask() {
+    public FxTask<Void> getTask() {
         return task;
     }
 
-    public DescriptiveStatistic setTask(SingletonTask<Void> task) {
+    public DescriptiveStatistic setTask(FxTask<Void> task) {
         this.task = task;
         return this;
     }

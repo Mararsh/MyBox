@@ -65,7 +65,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageCheckBoxCell;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -216,7 +216,7 @@ public class GameEliminationController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<ImageItem> items;
             private String defaultSelected;

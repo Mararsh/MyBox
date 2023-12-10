@@ -22,7 +22,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -665,7 +665,7 @@ public class BarcodeCreatorController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private BufferedImage bufferedImage;
 
             @Override
@@ -674,7 +674,7 @@ public class BarcodeCreatorController extends BaseImageController {
                     AbstractBarcodeBean bean = null;
                     switch (codeType) {
                         case QR_Code:
-                            bufferedImage = BarcodeTools.QR(codeInput.getText(),
+                            bufferedImage = BarcodeTools.QR(this, codeInput.getText(),
                                     qrErrorCorrectionLevel, qrWidth, qrHeight, qrMargin,
                                     sourceFile);
                             return bufferedImage != null;
@@ -797,7 +797,7 @@ public class BarcodeCreatorController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -807,7 +807,8 @@ public class BarcodeCreatorController extends BaseImageController {
                 if (bufferedImage == null || task == null || isCancelled()) {
                     return false;
                 }
-                if (!ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath())) {
+                if (!ImageFileWriters.writeImageFile(this,
+                        bufferedImage, format, file.getAbsolutePath())) {
                     return false;
                 }
                 recordFileWritten(file);

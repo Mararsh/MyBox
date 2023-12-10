@@ -221,7 +221,7 @@ public class HtmlSnapController extends WebAddressController {
             Image snapshot = webView.snapshot(snapParameters, null);
             Image cropped;
             if (snapTotalHeight < snapHeight + snapStep) { // last snap
-                cropped = CropTools.cropOutsideFx(snapshot, 0,
+                cropped = CropTools.cropOutsideFx(null, snapshot, 0,
                         (int) ((snapStep + snapHeight - snapTotalHeight) * snapScale),
                         (int) snapshot.getWidth(), (int) snapshot.getHeight());
             } else {
@@ -233,7 +233,8 @@ public class HtmlSnapController extends WebAddressController {
             snapFileHeight += cropped.getHeight();
             snapHeight += snapStep;
             File tmpfile = FileTmpTools.getTempFile(".png");
-            ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(cropped, null), "png", tmpfile.getAbsolutePath());
+            ImageFileWriters.writeImageFile(null,
+                    SwingFXUtils.fromFXImage(cropped, null), "png", tmpfile.getAbsolutePath());
             snaps.add(tmpfile);
             if (isCanceled()) {
                 return;

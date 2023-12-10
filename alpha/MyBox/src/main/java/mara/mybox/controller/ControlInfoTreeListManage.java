@@ -26,9 +26,9 @@ import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
@@ -448,7 +448,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private TreeItem<InfoNode> rootItem;
 
@@ -509,7 +509,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private InfoNode updatedNode;
 
             @Override
@@ -599,7 +599,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
         if (nodeValue == null) {
             return;
         }
-        SingletonTask infoTask = new SingletonTask<Void>(this) {
+        FxTask infoTask = new FxTask<Void>(this) {
             private File file;
 
             @Override
@@ -643,7 +643,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
                             + message("Values") + "</INPUT>\n"
                             + "</DIV>\n<HR>\n");
                     try (Connection conn = DerbyBase.getConnection()) {
-                        treeView(writer, conn, nodeValue, 4, "");
+                        treeView(this, writer, conn, nodeValue, 4, "");
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -667,7 +667,8 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
         start(infoTask, false);
     }
 
-    protected void treeView(BufferedWriter writer, Connection conn, InfoNode node, int indent, String serialNumber) {
+    protected void treeView(FxTask infoTask, BufferedWriter writer, Connection conn,
+            InfoNode node, int indent, String serialNumber) {
         try {
             if (conn == null || node == null) {
                 return;
@@ -689,6 +690,9 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
                 String spaceTag = "&nbsp;".repeat(2);
                 writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
                 for (InfoNodeTag nodeTag : tags) {
+                    if (infoTask != null && !infoTask.isWorking()) {
+                        return;
+                    }
                     Color color = nodeTag.getTag().getColor();
                     if (color == null) {
                         color = FxColorTools.randomColor();
@@ -702,7 +706,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
                 writer.write(indentTag + "</SPAN>\n");
             }
             writer.write(indentNode + "</DIV>\n");
-            String infoDisplay = InfoNode.infoHtml(category, node.getInfo(), true, true);
+            String infoDisplay = InfoNode.infoHtml(infoTask, myController, category, node.getInfo(), true, true);
             if (infoDisplay != null && !infoDisplay.isBlank()) {
                 writer.write(indentNode + "<DIV class=\"nodeValue\">"
                         + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
@@ -713,9 +717,12 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
             if (children != null && !children.isEmpty()) {
                 writer.write(indentNode + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
                 for (int i = 0; i < children.size(); i++) {
+                    if (infoTask != null && !infoTask.isWorking()) {
+                        return;
+                    }
                     InfoNode child = children.get(i);
                     String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
-                    treeView(writer, conn, child, indent + 4, ps + (i + 1));
+                    treeView(infoTask, writer, conn, child, indent + 4, ps + (i + 1));
                 }
                 writer.write(indentNode + "</DIV>\n");
             }

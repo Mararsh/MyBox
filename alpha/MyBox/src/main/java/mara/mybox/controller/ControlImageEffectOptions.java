@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageEffectOptions extends BaseController {
 
-    protected ImageManufactureController editor;
+    protected ImageEditorController editor;
     protected OperationType effectType;
     protected int intPara1, intPara2, intPara3;
     protected ConvolutionKernel kernel;
@@ -92,13 +92,13 @@ public class ControlImageEffectOptions extends BaseController {
         if (parentController == null) {
             return;
         }
-        if (parentController instanceof ImageManufactureEffectsController) {
-            ImageManufactureEffectsController pController = (ImageManufactureEffectsController) parentController;
-            editor = pController.editor;
-            okButton = pController.okButton;
-            paletteAddButton = pController.paletteAddButton;
-            htmlButton = pController.htmlButton;
-            binaryController.setParameters(pController.imageView);
+        if (parentController instanceof ImageEditorController) { // ##########
+//            ImageEditorController pController = (ImageEditorController) parentController;
+//            editor = pController.editor;
+//            okButton = pController.okButton;
+//            paletteAddButton = pController.paletteAddButton;
+//            htmlButton = pController.htmlButton;
+//            binaryController.setParameters(pController.imageView);
         } else {
             binaryController.setParameters(null);
         }
@@ -107,7 +107,7 @@ public class ControlImageEffectOptions extends BaseController {
     protected void checkEffectType() {
         try {
             if (editor != null) {
-                editor.resetImagePane();
+//                editor.resetImagePane();  // ##########
 //                if (!editor.scopeController.scopeWhole()) {
 //                    editor.scopeTab();
 //                }

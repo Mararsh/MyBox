@@ -15,8 +15,8 @@ import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ShadowTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -172,7 +172,8 @@ public class ImageManufactureBatchShadowController extends BaseImageEditBatchCon
             }
             Color color = (Color) colorSetController.rect.getFill();
             BufferedImage target;
-            target = ShadowTools.addShadowAlpha(source, value, FxColorTools.toAwtColor(color));
+            target = ShadowTools.addShadowAlpha(task,
+                    source, value, FxColorTools.toAwtColor(color));
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

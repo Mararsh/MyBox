@@ -8,13 +8,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -200,7 +198,10 @@ public class ImageContrastController extends BaseImageEditController {
     protected void handleImage() {
 
         try {
-            ImageContrast imageContrast = new ImageContrast(imageView.getImage(), contrastAlgorithm);
+            ImageContrast imageContrast = new ImageContrast()
+                    .setAlgorithm(contrastAlgorithm);
+            imageContrast.setImage(imageView.getImage())
+                    .setTask(task);
             if (contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Stretching) {
                 imageContrast.setIntPara1(left).setIntPara2(right);
                 opInfo = left + "-" + right;
@@ -209,46 +210,11 @@ public class ImageContrastController extends BaseImageEditController {
                 imageContrast.setIntPara1(offset);
                 opInfo = offset + "";
             }
-
             handledImage = imageContrast.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
         }
     }
-
-    @FXML
-    protected void demo() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        reset();
-        task = new SingletonCurrentTask<Void>(this) {
-            private Image demoImage = null;
-
-            @Override
-            protected boolean handle() {
-                try {
-//                    demoImage = ScaleTools.demoImage(srcImage());
-//                    demoImage = handleImage(demoImage, scope());
-                    return demoImage != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                ImagePopController.openImage(myController, demoImage);
-            }
-
-        };
-        start(task);
-    }
-
 
     /*
         static methods

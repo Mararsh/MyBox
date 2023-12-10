@@ -22,7 +22,7 @@ import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
 import static mara.mybox.value.Languages.message;
@@ -189,7 +189,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
         if (name == null || name.isBlank()) {
             return;
         }
-        SingletonTask tagTask = new SingletonTask<Void>(this) {
+        FxTask tagTask = new FxTask<Void>(this) {
             private Tag tag = null;
 
             @Override
@@ -218,7 +218,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
         if (isSettingValues) {
             return;
         }
-        SingletonTask saveTask = new SingletonTask<Void>(this) {
+        FxTask saveTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -277,7 +277,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
         if (isSettingValues) {
             return;
         }
-        SingletonTask saveTask = new SingletonTask<Void>(this) {
+        FxTask saveTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {

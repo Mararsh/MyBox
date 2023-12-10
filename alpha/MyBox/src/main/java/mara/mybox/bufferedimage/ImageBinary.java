@@ -7,6 +7,7 @@ import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 
@@ -17,23 +18,30 @@ import mara.mybox.value.AppVariables;
  */
 public class ImageBinary extends PixelsOperation {
 
-    protected boolean grayed, calculate;
+    protected BinaryAlgorithm algorithm;
+    private BufferedImage defaultBinary;
+    private int threashold, blackInt;
 
     public static enum BinaryAlgorithm {
         OTSU, Threshold, Default
     }
 
     public ImageBinary() {
+        MyBoxLog.console("s");
         init();
     }
 
     final public void init() {
+        MyBoxLog.console("init");
         intPara1 = -1;
-        grayed = calculate == false;
+        defaultBinary = null;
         operationType = OperationType.BlackOrWhite;
+        algorithm = BinaryAlgorithm.Default;
+        blackInt = Color.BLACK.getRGB();
     }
 
     public ImageBinary(Image image) {
+        MyBoxLog.console("i");
         init();
         this.image = SwingFXUtils.fromFXImage(image, null);
     }
@@ -44,51 +52,52 @@ public class ImageBinary extends PixelsOperation {
                 || operationType != OperationType.BlackOrWhite) {
             return image;
         }
-        grayed = false;
-        if (scope == null || scope.isWhole()) {
-            if (!isDithering && !calculate && intPara1 < 0 && !excludeScope && !skipTransparent) {
-                return byteBinary(image);
-            }
-            image = ImageGray.byteGray(image);
-            grayed = true;
+        threashold = -1;
+        if (algorithm == BinaryAlgorithm.OTSU) {
+            threashold = threshold(task, image);
+        } else if (algorithm == BinaryAlgorithm.Threshold) {
+            threashold = intPara1;
         }
-        if (intPara1 < 0) {
-            if (grayed) {
-                intPara1 = OTSU(image);
-            } else {
-                intPara1 = calculateThreshold(image);
-            }
+        if (threashold <= 0) {
+            algorithm = BinaryAlgorithm.Default;
+            defaultBinary = byteBinary(task, image);
         }
         return operateImage();
     }
 
     @Override
     protected Color operateColor(Color color) {
-        int gray;
-        if (grayed) {
-            gray = color.getRed();
-        } else {
-            gray = ColorConvertTools.color2grayValue(color);
-        }
         Color newColor;
-        if (gray < intPara1) {
-            newColor = Color.BLACK;
+        if (algorithm == BinaryAlgorithm.Default) {
+            if (blackInt == defaultBinary.getRGB(currentX, currentY)) {
+                newColor = Color.BLACK;
+            } else {
+                newColor = Color.WHITE;
+            }
         } else {
-            newColor = Color.WHITE;
+            if (ColorConvertTools.color2grayValue(color) < threashold) {
+                newColor = Color.BLACK;
+            } else {
+                newColor = Color.WHITE;
+            }
         }
         return newColor;
     }
 
-    public static BufferedImage byteBinary(BufferedImage srcImage) {
+    /*
+        static
+     */
+    public static BufferedImage byteBinary(FxTask task, BufferedImage srcImage) {
         try {
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
+            BufferedImage naImage = AlphaTools.removeAlpha(task, srcImage, Color.WHITE);
             BufferedImage binImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
             Graphics2D g = binImage.createGraphics();
             if (AppVariables.ImageHints != null) {
                 g.addRenderingHints(AppVariables.ImageHints);
             }
-            g.drawImage(srcImage, 0, 0, null);
+            g.drawImage(naImage, 0, 0, null);
             g.dispose();
             return binImage;
         } catch (Exception e) {
@@ -97,22 +106,35 @@ public class ImageBinary extends PixelsOperation {
         }
     }
 
-    public static BufferedImage intBinary(BufferedImage image) {
+    public static BufferedImage intBinary(FxTask task, BufferedImage image) {
         try {
             int width = image.getWidth();
             int height = image.getHeight();
-            BufferedImage greyImage = ImageGray.intGray(image);
-            int threshold = OTSU(greyImage);
+            int threshold = threshold(task, image);
+            if (threshold < 0) {
+                return null;
+            }
             int WHITE = Color.WHITE.getRGB();
             int BLACK = Color.BLACK.getRGB();
             BufferedImage binImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             for (int y = 0; y < height; y++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int x = 0; x < width; x++) {
-                    int grey = new Color(greyImage.getRGB(x, y)).getRed();
-                    if (grey > threshold) {
-                        binImage.setRGB(x, y, WHITE);
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
+                    int p = image.getRGB(x, y);
+                    if (p == 0) {
+                        binImage.setRGB(x, y, 0);
                     } else {
-                        binImage.setRGB(x, y, BLACK);
+                        int grey = ColorConvertTools.pixel2grayValue(p);
+                        if (grey > threshold) {
+                            binImage.setRGB(x, y, WHITE);
+                        } else {
+                            binImage.setRGB(x, y, BLACK);
+                        }
                     }
                 }
             }
@@ -123,10 +145,10 @@ public class ImageBinary extends PixelsOperation {
         }
     }
 
-    public static Image binary(Image image) {
+    public static Image binary(FxTask task, Image image) {
         try {
             BufferedImage bm = SwingFXUtils.fromFXImage(image, null);
-            bm = byteBinary(bm);
+            bm = byteBinary(task, bm);
             return SwingFXUtils.toFXImage(bm, null);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -137,23 +159,38 @@ public class ImageBinary extends PixelsOperation {
     //  OTSU algorithm: ICV=PA∗(MA−M)2+PB∗(MB−M)2
     // https://blog.csdn.net/taoyanbian1022/article/details/9030825
     // https://blog.csdn.net/liyuanbhu/article/details/49387483
-    public static int OTSU(BufferedImage grayImage) {
+    public static int threshold(FxTask task, BufferedImage image) {
         try {
-            int width = grayImage.getWidth();
-            int height = grayImage.getHeight();
-
+            if (image == null) {
+                return -1;
+            }
+            int width = image.getWidth();
+            int height = image.getHeight();
             int[] grayNumber = new int[256];
+            float pixelTotal = 0;
             for (int i = 0; i < width; ++i) {
+                if (task != null && !task.isWorking()) {
+                    return -1;
+                }
                 for (int j = 0; j < height; ++j) {
-//                    int r = 0xFF & grayImage.getRGB(i, j);
-                    int gray = ColorConvertTools.grayPixel2grayValue(grayImage.getRGB(i, j));
+                    if (task != null && !task.isWorking()) {
+                        return -1;
+                    }
+                    int p = image.getRGB(i, j);
+                    if (p == 0) {
+                        continue;
+                    }
+                    pixelTotal++;
+                    int gray = ColorConvertTools.pixel2grayValue(p);
                     grayNumber[gray]++;
                 }
             }
 
-            float pixelTotal = width * height;
             float[] grayRadio = new float[256];
             for (int i = 0; i < 256; ++i) {
+                if (task != null && !task.isWorking()) {
+                    return -1;
+                }
                 grayRadio[i] = grayNumber[i] / pixelTotal;
             }
 
@@ -161,11 +198,17 @@ public class ImageBinary extends PixelsOperation {
             float backgoundAverage, foregroundAverage, imageAverage, delta, deltaMax = 0;
             int threshold = 0;
             for (int gray = 0; gray < 256; gray++) {
+                if (task != null && !task.isWorking()) {
+                    return -1;
+                }
                 backgroundNumber = 0;
                 foregroundNumber = 0;
                 backgoundValue = 0;
                 foregroundValue = 0;
                 for (int i = 0; i < 256; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return -1;
+                    }
                     if (i <= gray) {
                         backgroundNumber += grayRadio[i];
                         backgoundValue += i * grayRadio[i];
@@ -196,51 +239,39 @@ public class ImageBinary extends PixelsOperation {
         }
     }
 
-    public static int calculateThreshold(File file) {
+    public static int threshold(FxTask task, File file) {
         try {
-            BufferedImage bufferImage = ImageFileReaders.readImage(file);
-            return OTSU(ImageGray.byteGray(bufferImage));
+            BufferedImage bufferImage = ImageFileReaders.readImage(task, file);
+            return threshold(task, bufferImage);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return -1;
         }
     }
 
-    public static int calculateThreshold(BufferedImage image) {
+    public static int threshold(FxTask task, Image image) {
         try {
-            BufferedImage grayImage = ImageGray.byteGray(image);
-            return OTSU(grayImage);
+            return threshold(task, SwingFXUtils.fromFXImage(image, null));
         } catch (Exception e) {
             MyBoxLog.error(e);
             return -1;
         }
     }
 
-    public static int calculateThreshold(Image image) {
-        try {
-            BufferedImage bm = SwingFXUtils.fromFXImage(image, null);
-            return calculateThreshold(bm);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return -1;
-        }
+    /*
+        get/set
+     */
+    public BinaryAlgorithm getAlgorithm() {
+        return algorithm;
     }
 
-    public boolean isGrayed() {
-        return grayed;
-    }
-
-    public void setGrayed(boolean grayed) {
-        this.grayed = grayed;
-    }
-
-    public boolean isCalculate() {
-        return calculate;
-    }
-
-    public ImageBinary setCalculate(boolean calculate) {
-        this.calculate = calculate;
+    public ImageBinary setAlgorithm(BinaryAlgorithm algorithm) {
+        this.algorithm = algorithm;
         return this;
+    }
+
+    public int getThreashold() {
+        return threashold;
     }
 
 }

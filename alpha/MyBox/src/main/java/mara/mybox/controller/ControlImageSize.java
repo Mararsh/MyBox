@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -371,7 +371,7 @@ public class ControlImageSize extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image newImage;
 

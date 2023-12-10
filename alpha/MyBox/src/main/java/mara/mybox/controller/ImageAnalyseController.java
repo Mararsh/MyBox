@@ -35,7 +35,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -157,7 +157,7 @@ public class ImageAnalyseController extends BaseImageController {
         alphaBarchart.getData().clear();
         dominantController.clear();
         updateStageTitle(sourceFile);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private BufferedImage bufferedImage;
 
             @Override
@@ -169,7 +169,7 @@ public class ImageAnalyseController extends BaseImageController {
                     }
                     task.setInfo(message("CalculatingImageComponents"));
                     ImageStatistic imageStatistic = ImageStatistic.create(bufferedImage);
-                    data = imageStatistic.analyze();
+                    data = imageStatistic.analyze(this);
                     nonTransparent = imageStatistic.getNonTransparent();
                     return data != null;
                 } catch (Exception e) {
@@ -725,7 +725,7 @@ public class ImageAnalyseController extends BaseImageController {
 
             dataPane.getSelectionModel().select(currentTab);
 
-            task = new SingletonCurrentTask<Void>(this) {
+            task = new FxSingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -744,7 +744,7 @@ public class ImageAnalyseController extends BaseImageController {
                             s.append("<h3  class=\"center\">").append(sourceFile).append("</h3>\n");
                         }
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "image.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "image.jpg");
                         String imageName = subPath + "/image.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\"></div>\n");
                         if (task == null || isCancelled()) {
@@ -755,7 +755,7 @@ public class ImageAnalyseController extends BaseImageController {
                         s.append("<h2  class=\"center\">").append(message("Summary")).append("</h2>\n");
                         s.append(colorsViewHml);
                         bufferedImage = SwingFXUtils.fromFXImage(colorsBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "colorsBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "colorsBarchartImage.jpg");
                         imageName = subPath + "/colorsBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -765,7 +765,7 @@ public class ImageAnalyseController extends BaseImageController {
                         s.append("\n<h2  class=\"center\">").append(message("DominantColors")).append("</h2>\n");
                         s.append(dominantViewHml);
                         bufferedImage = SwingFXUtils.fromFXImage(dominantPieSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "dominantPieImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "dominantPieImage.jpg");
                         imageName = subPath + "/dominantPieImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -774,7 +774,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(greyHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(greyBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "greyBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "greyBarchartImage.jpg");
                         imageName = subPath + "/greyBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -783,7 +783,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(redHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(redBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "redBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "redBarchartImage.jpg");
                         imageName = subPath + "/redBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -792,7 +792,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(greenHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(greenBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "greenBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "greenBarchartImage.jpg");
                         imageName = subPath + "/greenBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -801,7 +801,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(blueHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(blueBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "blueBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "blueBarchartImage.jpg");
                         imageName = subPath + "/blueBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -810,7 +810,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(hueHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(hueBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "hueBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "hueBarchartImage.jpg");
                         imageName = subPath + "/hueBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -819,7 +819,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(saturationHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(saturationBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "saturationBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "saturationBarchartImage.jpg");
                         imageName = subPath + "/saturationBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -828,7 +828,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(brightnessHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(brightnessBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "brightnessBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "brightnessBarchartImage.jpg");
                         imageName = subPath + "/brightnessBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -837,7 +837,7 @@ public class ImageAnalyseController extends BaseImageController {
 
                         s.append(alphaHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(alphaBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "alphaBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "alphaBarchartImage.jpg");
                         imageName = subPath + "/alphaBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {

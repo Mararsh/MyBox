@@ -25,7 +25,7 @@ import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -178,7 +178,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image areaImage;
 
@@ -205,13 +205,14 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image areaImage;
 
             @Override
             protected boolean handle() {
                 areaImage = imageToHandle();
-                return ImageClipboard.add(areaImage, ImageClipboard.ImageSource.Copy) != null;
+                return ImageClipboard.add(this,
+                        areaImage, ImageClipboard.ImageSource.Copy) != null;
             }
 
             @Override
@@ -326,13 +327,13 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             return;
         }
         currentAngle = rotateAngle;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image newImage;
 
             @Override
             protected boolean handle() {
-                newImage = TransformTools.rotateImage(imageView.getImage(), rotateAngle);
+                newImage = TransformTools.rotateImage(this, imageView.getImage(), rotateAngle);
                 return newImage != null;
             }
 
@@ -494,7 +495,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
         }
 
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image savedImage;
             private boolean needBackup = false;
@@ -513,15 +514,17 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
                 String format = FileNameTools.suffix(targetFile.getName());
                 if (framesNumber > 1) {
-                    error = ImageFileWriters.writeFrame(targetFile, frameIndex, bufferedImage, targetFile, null);
+                    error = ImageFileWriters.writeFrame(this,
+                            targetFile, frameIndex, bufferedImage, targetFile, null);
                     ok = error == null;
                 } else {
-                    ok = ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
+                    ok = ImageFileWriters.writeImageFile(this,
+                            bufferedImage, format, targetFile.getAbsolutePath());
                 }
                 if (!ok || task == null || isCancelled()) {
                     return false;
                 }
-                ImageFileInformation finfo = ImageFileInformation.create(targetFile);
+                ImageFileInformation finfo = ImageFileInformation.create(this, targetFile);
                 if (finfo == null || finfo.getImageInformation() == null) {
                     return false;
                 }
@@ -573,7 +576,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -589,10 +592,11 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     return false;
                 }
                 if (srcFile != null && framesNumber > 1) {
-                    error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, newfile, null);
+                    error = ImageFileWriters.writeFrame(this,
+                            srcFile, frameIndex, bufferedImage, newfile, null);
                     return error == null;
                 } else {
-                    return ImageFileWriters.writeImageFile(bufferedImage, newfile);
+                    return ImageFileWriters.writeImageFile(this, bufferedImage, newfile);
                 }
             }
 

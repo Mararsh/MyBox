@@ -22,13 +22,13 @@ import static mara.mybox.value.Languages.message;
  */
 // http://web.cs.wpi.edu/~matt/courses/cs563/talks/color_quant/CQindex.html
 public class ImageQuantization extends PixelsOperation {
-
+    
     public static enum QuantizationAlgorithm {
         RGBUniformQuantization, HSBUniformQuantization,
         PopularityQuantization, KMeansClustering
 //        MedianCutQuantization, ANN
     }
-
+    
     protected QuantizationAlgorithm algorithm;
     protected int quantizationSize, regionSize, weight1, weight2, weight3, intValue;
     protected boolean recordCount, firstColor;
@@ -36,15 +36,15 @@ public class ImageQuantization extends PixelsOperation {
     protected List<ColorCount> sortedCounts;
     protected long totalCount;
     protected Color[][][] palette;
-
+    
     public ImageQuantization() {
         operationType = PixelsOperation.OperationType.Quantization;
     }
-
+    
     public ImageQuantization buildPalette() {
         return this;
     }
-
+    
     public void countColor(Color mappedColor) {
         if (recordCount) {
             if (counts == null) {
@@ -57,18 +57,18 @@ public class ImageQuantization extends PixelsOperation {
             }
         }
     }
-
+    
     public static class ColorCount {
-
+        
         public Color color;
         public long count;
-
+        
         public ColorCount(Color color, long count) {
             this.color = color;
             this.count = count;
         }
     }
-
+    
     public List<ColorCount> sortCounts() {
         totalCount = 0;
         if (counts == null) {
@@ -76,6 +76,9 @@ public class ImageQuantization extends PixelsOperation {
         }
         sortedCounts = new ArrayList<>();
         for (Color color : counts.keySet()) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             sortedCounts.add(new ColorCount(color, counts.get(color)));
             totalCount += counts.get(color);
         }
@@ -94,7 +97,7 @@ public class ImageQuantization extends PixelsOperation {
         });
         return sortedCounts;
     }
-
+    
     public StringTable countTable(String name) {
         try {
             sortedCounts = sortCounts();
@@ -114,6 +117,9 @@ public class ImageQuantization extends PixelsOperation {
             StringTable table = new StringTable(names, title);
             int id = 1;
             for (ColorCount count : sortedCounts) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 List<String> row = new ArrayList<>();
                 javafx.scene.paint.Color color = ColorConvertTools.converColor(count.color);
                 int red = (int) Math.round(color.getRed() * 255);
@@ -137,12 +143,12 @@ public class ImageQuantization extends PixelsOperation {
             return null;
         }
     }
-
+    
     @Override
     public Color operateColor(Color color) {
         return color;
     }
-
+    
     public ImageRGBKMeans imageKMeans() {
         try {
             ImageQuantizationFactory.KMeansRegionQuantization regionQuantization
@@ -153,10 +159,11 @@ public class ImageQuantization extends PixelsOperation {
                     .setRecordCount(true)
                     .setImage(image).setScope(scope).
                     setOperationType(PixelsOperation.OperationType.Quantization).
-                    setIsDithering(isDithering);
+                    setIsDithering(isDithering)
+                    .setTask(task);
             regionQuantization.buildPalette().operate();
             ImageRGBKMeans kmeans = ImageRGBKMeans.create();
-            kmeans.setK(quantizationSize);
+            kmeans.setK(quantizationSize).setTask(task);
             if (kmeans.init(regionQuantization).run()) {
                 kmeans.makeMap();
                 return kmeans;
@@ -166,9 +173,9 @@ public class ImageQuantization extends PixelsOperation {
         }
         return null;
     }
-
+    
     public class PopularityRegion {
-
+        
         protected long redAccum, greenAccum, blueAccum, pixelsCount;
         protected Color regionColor, averageColor;
     }
@@ -179,118 +186,118 @@ public class ImageQuantization extends PixelsOperation {
     public QuantizationAlgorithm getAlgorithm() {
         return algorithm;
     }
-
+    
     public ImageQuantization setAlgorithm(QuantizationAlgorithm algorithm) {
         this.algorithm = algorithm;
         return this;
     }
-
+    
     public int getQuantizationSize() {
         return quantizationSize;
     }
-
+    
     public ImageQuantization setQuantizationSize(int quantizationSize) {
         this.quantizationSize = quantizationSize;
         return this;
     }
-
+    
     public int getWeight1() {
         return weight1;
     }
-
+    
     public ImageQuantization setWeight1(int weight1) {
         this.weight1 = weight1;
         return this;
     }
-
+    
     public int getWeight2() {
         return weight2;
     }
-
+    
     public ImageQuantization setWeight2(int weight2) {
         this.weight2 = weight2;
         return this;
     }
-
+    
     public int getWeight3() {
         return weight3;
     }
-
+    
     public ImageQuantization setWeight3(int weight3) {
         this.weight3 = weight3;
         return this;
     }
-
+    
     public boolean isRecordCount() {
         return recordCount;
     }
-
+    
     public ImageQuantization setRecordCount(boolean recordCount) {
         this.recordCount = recordCount;
         return this;
     }
-
+    
     public Map<Color, Long> getCounts() {
         return counts;
     }
-
+    
     public ImageQuantization setCounts(Map<Color, Long> counts) {
         this.counts = counts;
         return this;
     }
-
+    
     public List<ColorCount> getSortedCounts() {
         return sortedCounts;
     }
-
+    
     public ImageQuantization setSortedCounts(List<ColorCount> sortedCounts) {
         this.sortedCounts = sortedCounts;
         return this;
     }
-
+    
     public long getTotalCount() {
         return totalCount;
     }
-
+    
     public ImageQuantization setTotalCount(long totalCount) {
         this.totalCount = totalCount;
         return this;
     }
-
+    
     public int getIntValue() {
         return intValue;
     }
-
+    
     public ImageQuantization setIntValue(int intValue) {
         this.intValue = intValue;
         return this;
     }
-
+    
     public int getRegionSize() {
         return regionSize;
     }
-
+    
     public ImageQuantization setRegionSize(int regionSize) {
         this.regionSize = regionSize;
         return this;
     }
-
+    
     public boolean isFirstColor() {
         return firstColor;
     }
-
+    
     public ImageQuantization setFirstColor(boolean firstColor) {
         this.firstColor = firstColor;
         return this;
     }
-
+    
     public Color[][][] getPalette() {
         return palette;
     }
-
+    
     public ImageQuantization setPalette(Color[][][] palette) {
         this.palette = palette;
         return this;
     }
-
+    
 }

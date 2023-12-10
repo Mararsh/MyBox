@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -40,7 +40,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
         if (textsTask != null) {
             textsTask.cancel();
         }
-        textsTask = new SingletonTask<Void>(this) {
+        textsTask = new FxTask<Void>(this) {
 
             protected String texts;
 

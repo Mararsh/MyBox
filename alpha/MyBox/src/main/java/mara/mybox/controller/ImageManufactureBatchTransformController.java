@@ -168,16 +168,16 @@ public class ImageManufactureBatchTransformController extends BaseImageEditBatch
         try {
             BufferedImage target = null;
             if (transformType == TransformType.Shear) {
-                target = TransformTools.shearImage(source, shearX, 0);
+                target = TransformTools.shearImage(task, source, shearX, 0);
 
             } else if (transformType == TransformType.VerticalMirror) {
-                target = TransformTools.verticalMirrorImage(source);
+                target = TransformTools.verticalMirrorImage(task, source);
 
             } else if (transformType == TransformType.HorizontalMirror) {
-                target = TransformTools.horizontalMirrorImage(source);
+                target = TransformTools.horizontalMirrorImage(task, source);
 
             } else if (transformType == TransformType.Rotate) {
-                target = TransformTools.rotateImage(source, rotateAngle);
+                target = TransformTools.rotateImage(task, source, rotateAngle);
             }
 
             return target;

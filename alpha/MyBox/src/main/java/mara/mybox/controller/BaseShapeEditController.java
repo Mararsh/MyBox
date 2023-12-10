@@ -8,7 +8,7 @@ import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ShapeTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 
 /**
  * @Author Mara
@@ -116,7 +116,7 @@ public class BaseShapeEditController extends BaseImageEditController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image newImage;
 
@@ -170,7 +170,7 @@ public class BaseShapeEditController extends BaseImageEditController {
     }
 
     protected Image handleShape() {
-        return ShapeTools.drawShape(srcImage(), shapeData, shapeStyle, blender);
+        return ShapeTools.drawShape(task, srcImage(), shapeData, shapeStyle, blender);
     }
 
     @FXML

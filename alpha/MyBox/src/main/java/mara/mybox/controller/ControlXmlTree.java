@@ -15,7 +15,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.XmlTools;
@@ -70,13 +70,16 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             clearTree();
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             TreeItem<XmlTreeNode> root;
 
             @Override
             protected boolean handle() {
                 try {
-                    doc = XmlTools.textToDoc(myController, xml);
+                    doc = XmlTools.textToDoc(this, myController, xml);
+                    if (doc == null || !isWorking()) {
+                        return false;
+                    }
                     root = makeTreeItem(new XmlTreeNode(doc));
                     return true;
                 } catch (Exception e) {
@@ -105,7 +108,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             clearTree();
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             TreeItem<XmlTreeNode> root;
 
@@ -353,30 +356,53 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
     }
 
     public void paste(String text, TreeItem<XmlTreeNode> treeItem) {
-        try {
-            if (treeItem == null || text == null || text.isBlank()) {
-                popError(message("NoData"));
-                return;
-            }
-            Element element = XmlTools.toElement(this, text);
-            if (element == null) {
-                return;
-            }
-            Node newNode = doc.importNode(element, true);
-            if (newNode == null) {
-                popError(message("InvalidFormat"));
-                return;
-            }
-            treeItem.getValue().getNode().appendChild(newNode);
-
-            TreeItem<XmlTreeNode> newItem = addTreeItem(treeItem, -1, new XmlTreeNode(newNode));
-
-            focusItem(newItem);
-            xmlEditor.domChanged(true);
-            xmlEditor.popInformation(message("CreatedSuccessfully"));
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (treeItem == null || text == null || text.isBlank()) {
+            popError(message("NoData"));
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+
+            Node newNode;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    Element element = XmlTools.toElement(this, myController, text);
+                    if (element == null || !isWorking()) {
+                        return false;
+                    }
+                    newNode = doc.importNode(element, true);
+                    if (newNode == null) {
+                        error = message("InvalidFormat");
+                        return false;
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                try {
+                    treeItem.getValue().getNode().appendChild(newNode);
+
+                    TreeItem<XmlTreeNode> newItem = addTreeItem(treeItem, -1, new XmlTreeNode(newNode));
+
+                    focusItem(newItem);
+                    xmlEditor.domChanged(true);
+                    xmlEditor.popInformation(message("CreatedSuccessfully"));
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+
+        };
+        start(task);
     }
 
     public void xml(TreeItem<XmlTreeNode> treeItem) {

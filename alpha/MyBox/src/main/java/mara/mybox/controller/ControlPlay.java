@@ -329,7 +329,8 @@ public class ControlPlay extends BaseController {
             }
             Image snapshot = snapNode.snapshot(snapParameters, null);
             File tmpfile = FileTmpTools.getTempFile(".png");
-            ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(snapshot, null), "png", tmpfile.getAbsolutePath());
+            ImageFileWriters.writeImageFile(null,
+                    SwingFXUtils.fromFXImage(snapshot, null), "png", tmpfile.getAbsolutePath());
             snaps.add(tmpfile);
             synchronized (snapNode) {
                 snapNode.notifyAll();

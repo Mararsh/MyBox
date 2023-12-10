@@ -11,7 +11,7 @@ import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -75,7 +75,7 @@ public class ImageTextController extends BaseImageEditController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image newImage;
 

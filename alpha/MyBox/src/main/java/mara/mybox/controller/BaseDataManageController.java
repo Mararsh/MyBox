@@ -21,7 +21,7 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -699,7 +699,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int deletedCount = 0;
 
@@ -748,7 +748,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private int count = 0;
 
             @Override

@@ -6,6 +6,7 @@ import java.util.Date;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.value.Languages.message;
 
@@ -92,12 +93,12 @@ public class ImageEditHistory extends BaseData {
         return historyFile != null && historyFile.exists() ? historyFile.getName() : null;
     }
 
-    public Image historyImage() {
+    public Image historyImage(FxTask task) {
         try {
             if (!historyFile.exists()) {
                 return null;
             }
-            BufferedImage bufferedImage = ImageFileReaders.readImage(historyFile);
+            BufferedImage bufferedImage = ImageFileReaders.readImage(task, historyFile);
             if (bufferedImage != null) {
                 return SwingFXUtils.toFXImage(bufferedImage, null);
             }

@@ -46,7 +46,7 @@ import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
-import mara.mybox.fxml.BaseTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
@@ -1082,7 +1082,7 @@ public class WeiboSnapRunController extends BaseController {
         if (filename == null || contents == null) {
             return;
         }
-        BaseTask<Void> saveHtmlTask = new BaseTask<Void>() {
+        FxTask<Void> saveHtmlTask = new FxTask<Void>() {
 
             @Override
             protected boolean handle() {
@@ -1107,7 +1107,7 @@ public class WeiboSnapRunController extends BaseController {
         if (address == null) {
             return;
         }
-        BaseTask<Void> savePicturesTask = new BaseTask<Void>() {
+        FxTask<Void> savePicturesTask = new FxTask<Void>() {
             @Override
             protected boolean handle() {
                 try {
@@ -1288,7 +1288,7 @@ public class WeiboSnapRunController extends BaseController {
                 // Final format is determined when write PDF file.
                 String filename = pdfFilename + "-Image" + imageFiles.size() + ".png";
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
-                ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
+                ImageFileWriters.writeImageFile(task, bufferedImage, "png", filename);
                 imageFiles.add(filename);
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -1316,16 +1316,16 @@ public class WeiboSnapRunController extends BaseController {
                     int y1 = snapHeight - pageHeight + 100;
 //                                            MyBoxLog.debug(pageHeight + " " + snapHeight + " " + windowHeight + " " + y1);
                     String filename = imageFiles.get(imageFiles.size() - 1);
-                    Image lastSnap = CropTools.cropOutsideFx(snapshot, 0, y1 * snapScale,
+                    Image lastSnap = CropTools.cropOutsideFx(task, snapshot, 0, y1 * snapScale,
                             (int) snapshot.getWidth(), (int) snapshot.getHeight());
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(lastSnap, null);
                     FileDeleteTools.delete(new File(filename));
-                    ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
+                    ImageFileWriters.writeImageFile(task, bufferedImage, "png", filename);
                 }
 
                 File currentPdf = new File(pdfFilename);
                 loadingController.addLine(Languages.message("Generateing") + ": " + currentPdf.getAbsolutePath());
-                Boolean isOK = PdfTools.imagesFiles2Pdf(imageFiles, currentPdf, parameters, true);
+                Boolean isOK = PdfTools.imagesFiles2Pdf(task, imageFiles, currentPdf, parameters, true);
                 for (String file : imageFiles) {
                     FileDeleteTools.delete(file);
                 }
@@ -1359,7 +1359,7 @@ public class WeiboSnapRunController extends BaseController {
         if (path == null || !path.exists() || !path.isDirectory()) {
             return;
         }
-        BaseTask<Void> clearTask = new BaseTask<Void>() {
+        FxTask<Void> clearTask = new FxTask<Void>() {
             @Override
             protected boolean handle() {
                 try {
@@ -1382,7 +1382,7 @@ public class WeiboSnapRunController extends BaseController {
     }
 
     protected void mergeMonthPdf(final File path, final String month, final int pageCount) {
-        BaseTask<Void> mergeTask = new BaseTask<Void>() {
+        FxTask<Void> mergeTask = new FxTask<Void>() {
             @Override
             protected boolean handle() {
                 try {

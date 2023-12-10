@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -52,7 +52,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (loadTask != null && !loadTask.isQuit()) {
             return;
         }
-        loadTask = new SingletonTask<Void>(this) {
+        loadTask = new FxTask<Void>(this) {
             private ImageInformation loadedInfo;
 
             @Override
@@ -70,8 +70,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadedInfo = new ImageInformation(file);
                 loadedInfo.setIndex(frame);
                 loadedInfo.setRequiredWidth(width);
-                loadedInfo.setTask(this);
-                loadedInfo = ImageFileReaders.makeInfo(loadedInfo, onlyInformation);
+                loadedInfo = ImageFileReaders.makeInfo(this, loadedInfo, onlyInformation);
                 if (loadedInfo == null) {
                     return false;
                 }
@@ -120,13 +119,13 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
-        loadTask = new SingletonTask<Void>(this) {
+        loadTask = new FxTask<Void>(this) {
 
             private Image thumbLoaded;
 
             @Override
             protected boolean handle() {
-                thumbLoaded = info.loadThumbnail(loadWidth);
+                thumbLoaded = info.loadThumbnail(this, loadWidth);
                 return thumbLoaded != null;
             }
 
@@ -172,11 +171,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (loadTask != null && !loadTask.isQuit()) {
             return;
         }
-        loadTask = new SingletonTask<Void>(this) {
+        loadTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                image = info.loadThumbnail(loadWidth);
+                image = info.loadThumbnail(this, loadWidth);
                 return image != null;
             }
 

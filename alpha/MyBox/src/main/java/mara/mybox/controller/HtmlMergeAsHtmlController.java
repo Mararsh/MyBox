@@ -105,7 +105,11 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
-            String body = HtmlReadTools.body(TextFileTools.readTexts(file), false);
+            String texts = TextFileTools.readTexts(task, file);
+            if (texts == null || (task != null && !task.isWorking())) {
+                return message("Canceled");
+            }
+            String body = HtmlReadTools.body(texts, false);
             writer.write(body + "\n");
             return message("Successful");
         } catch (Exception e) {

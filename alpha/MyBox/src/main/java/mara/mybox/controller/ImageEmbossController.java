@@ -125,7 +125,8 @@ public class ImageEmbossController extends BasePixelsController {
                     .setScope(inScope)
                     .setKernel(kernel)
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             operation = kernel.getName();
             opInfo = message("Grey") + ": " + kernel.isGray();
             return convolution.operateFxImage();

@@ -23,9 +23,10 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
 
@@ -42,7 +43,7 @@ public class ImageGifFile {
         try {
 //            ImageReaderSpi readerSpi = new GIFImageReaderSpi();
 //            GIFImageReader gifReader = (GIFImageReader) readerSpi.createReaderInstance();
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
                 reader.setInput(iis, false);
                 GIFImageMetadata metadata = (GIFImageMetadata) reader.getImageMetadata(0);
@@ -58,11 +59,14 @@ public class ImageGifFile {
 
     // https://stackoverflow.com/questions/22259714/arrayindexoutofboundsexception-4096-while-reading-gif-file
     // https://github.com/DhyanB/Open-Imaging
-    public static BufferedImage readBrokenGifFile(ImageInformation imageInfo) {
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(imageInfo.getFile()))) {
+    public static BufferedImage readBrokenGifFile(FxTask task, ImageInformation imageInfo) {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(imageInfo.getFile()))) {
             GifImage gif = GifDecoder.read(in);
             BufferedImage bufferedImage = gif.getFrame(imageInfo.getIndex());
-            return ImageFileReaders.adjust(imageInfo, bufferedImage);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            return ImageFileReaders.adjust(task, imageInfo, bufferedImage);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             imageInfo.setError(e.toString());
@@ -123,7 +127,7 @@ public class ImageGifFile {
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
@@ -178,7 +182,7 @@ public class ImageGifFile {
     // https://programtalk.com/python-examples/com.sun.media.imageioimpl.plugins.gif.GIFImageWriterSpi/
     // https://www.jianshu.com/p/df52f1511cf8
     // http://giflib.sourceforge.net/whatsinagif/index.html
-    public static String writeImages(List<ImageInformation> imagesInfo,
+    public static String writeImages(FxTask task, List<ImageInformation> imagesInfo,
             File outFile, boolean loop, boolean keepSize, int width) {
         try {
             if (imagesInfo == null || imagesInfo.isEmpty() || outFile == null) {
@@ -190,11 +194,14 @@ public class ImageGifFile {
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
                 gifWriter.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
-                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(task, info);
 //                    bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
                     if (bufferedImage != null) {
                         if (!keepSize) {
@@ -218,7 +225,8 @@ public class ImageGifFile {
         }
     }
 
-    public static String writeImageFiles(List<File> srcFiles, File outFile, int duration, boolean deleteSource) {
+    public static String writeImageFiles(FxTask task, List<File> srcFiles,
+            File outFile, int duration, boolean deleteSource) {
         try {
             if (srcFiles == null || srcFiles.isEmpty() || outFile == null) {
                 return "InvalidParameters";
@@ -228,12 +236,15 @@ public class ImageGifFile {
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
 
                 gifWriter.prepareWriteSequence(null);
                 for (File file : srcFiles) {
-                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
+                    BufferedImage bufferedImage = ImageFileReaders.readImage(task, file);
                     if (bufferedImage != null) {
 //                        bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
                         getParaMeta(duration, true, param, metaData);
@@ -260,7 +271,7 @@ public class ImageGifFile {
         }
     }
 
-    public static String writeImages(List<BufferedImage> images, File outFile, int duration) {
+    public static String writeImages(FxTask task, List<BufferedImage> images, File outFile, int duration) {
         try {
             if (images == null || images.isEmpty() || outFile == null) {
                 return "InvalidParameters";
@@ -270,10 +281,13 @@ public class ImageGifFile {
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
                 gifWriter.prepareWriteSequence(null);
                 for (BufferedImage bufferedImage : images) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     if (bufferedImage != null) {
 //                        bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
                         getParaMeta(duration, true, param, metaData);
@@ -306,13 +320,13 @@ public class ImageGifFile {
                 if (javax_imageio_gif_stream.containsKey("LogicalScreenDescriptor")) {
                     Map<String, Object> LogicalScreenDescriptor = javax_imageio_gif_stream.get("LogicalScreenDescriptor").get(0);
                     if (LogicalScreenDescriptor.containsKey("logicalScreenWidth")) {
-                        info.setNativeAttribute("logicalScreenWidth", Integer.parseInt((String) LogicalScreenDescriptor.get("logicalScreenWidth")));
+                        info.setNativeAttribute("logicalScreenWidth", Integer.valueOf((String) LogicalScreenDescriptor.get("logicalScreenWidth")));
                     }
                     if (LogicalScreenDescriptor.containsKey("logicalScreenHeight")) {
-                        info.setNativeAttribute("logicalScreenHeight", Integer.parseInt((String) LogicalScreenDescriptor.get("logicalScreenHeight")));
+                        info.setNativeAttribute("logicalScreenHeight", Integer.valueOf((String) LogicalScreenDescriptor.get("logicalScreenHeight")));
                     }
                     if (LogicalScreenDescriptor.containsKey("colorResolution")) {
-                        info.setNativeAttribute("colorResolution", Integer.parseInt((String) LogicalScreenDescriptor.get("colorResolution")));
+                        info.setNativeAttribute("colorResolution", Integer.valueOf((String) LogicalScreenDescriptor.get("colorResolution")));
                     }
                     if (LogicalScreenDescriptor.containsKey("pixelAspectRatio")) {
                         int v = Integer.parseInt((String) LogicalScreenDescriptor.get("pixelAspectRatio"));
@@ -326,10 +340,10 @@ public class ImageGifFile {
                 if (javax_imageio_gif_stream.containsKey("GlobalColorTable")) {
                     Map<String, Object> GlobalColorTable = javax_imageio_gif_stream.get("GlobalColorTable").get(0);
                     if (GlobalColorTable.containsKey("sizeOfGlobalColorTable")) {
-                        info.setNativeAttribute("sizeOfGlobalColorTable", Integer.parseInt((String) GlobalColorTable.get("sizeOfGlobalColorTable")));
+                        info.setNativeAttribute("sizeOfGlobalColorTable", Integer.valueOf((String) GlobalColorTable.get("sizeOfGlobalColorTable")));
                     }
                     if (GlobalColorTable.containsKey("backgroundColorIndex")) {
-                        info.setNativeAttribute("backgroundColorIndex", Integer.parseInt((String) GlobalColorTable.get("backgroundColorIndex")));
+                        info.setNativeAttribute("backgroundColorIndex", Integer.valueOf((String) GlobalColorTable.get("backgroundColorIndex")));
                     }
                     if (GlobalColorTable.containsKey("sortFlag")) {
                         info.setNativeAttribute("sortFlag", (String) GlobalColorTable.get("sortFlag"));

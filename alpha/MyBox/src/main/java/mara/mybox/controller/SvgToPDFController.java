@@ -7,6 +7,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
+import org.w3c.dom.Document;
 
 /**
  * @Author Mara
@@ -42,15 +43,26 @@ public class SvgToPDFController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        svgOptionsController.checkValues(XmlTools.fileToDoc(this, srcFile));
-        File tmpFile = SvgTools.fileToPDF(this, srcFile,
+        Document doc = XmlTools.fileToDoc(task, this, srcFile);
+        if (doc == null) {
+            if (task != null && !task.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
+        }
+        svgOptionsController.checkValues(doc);
+        File tmpFile = SvgTools.fileToPDF(task, this, srcFile,
                 svgOptionsController.width,
                 svgOptionsController.height,
                 svgOptionsController.area);
         if (tmpFile == null || !tmpFile.exists()) {
-            return message("Failed");
+            if (task != null && !task.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
         }
-
         if (FileTools.rename(tmpFile, target, true)) {
             targetFileGenerated(target);
             return message("Successful");

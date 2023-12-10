@@ -23,8 +23,8 @@ import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -353,7 +353,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -484,7 +484,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public TmpTable tmpTable(String dname, List<Integer> colIndices, boolean needRowNumber) {
         try {
-            SingletonTask data2DTask = data2D.getTask();
+            FxTask data2DTask = data2D.getTask();
             Data2D tmp2D = data2D.cloneAll();
             tmp2D.startTask(data2DTask, filterController.filter);
             if (data2DTask != null) {

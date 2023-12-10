@@ -29,7 +29,8 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -66,6 +67,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected ImageInputStream imageInputStream;
     protected ImageReader imageReader;
     protected Thread frameThread;
+    protected FxSingletonTask frameTask;
 
     @FXML
     protected TitledPane viewPane;
@@ -226,7 +228,7 @@ public class ImagesPlayController extends BaseImagesListController {
         }
         sourceFile = file;
         fileFormat = format;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -268,7 +270,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (loading != null) {
                 loading.setInfo(message("Loading") + " " + message("MetaData"));
             }
-            ImageFileReaders.readImageFileMetaData(imageReader, fileInfo);
+            ImageFileReaders.readImageFileMetaData(task, imageReader, fileInfo);
             imageInfos.addAll(fileInfo.getImagesInformation());
             if (imageInfos == null) {
                 imageReader.dispose();
@@ -318,7 +320,7 @@ public class ImagesPlayController extends BaseImagesListController {
             return false;
         }
         try {
-            ImageFileInformation finfo = ImageFileInformation.readIconFile(sourceFile);
+            ImageFileInformation finfo = ImageFileInformation.readIconFile(task, sourceFile);
             imageInfos.addAll(finfo.getImagesInformation());
         } catch (Exception e) {
             if (task != null) {
@@ -554,51 +556,6 @@ public class ImagesPlayController extends BaseImagesListController {
         }
     }
 
-    protected Image thumb(ImageInformation info) {
-        try {
-            if (info == null) {
-                return null;
-            }
-            double imageWidth = info.getWidth();
-            double targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
-            Image thumb = info.getThumbnail();
-            if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
-                return thumb;
-            }
-            info.setThumbnail(null);
-            if (fileFormat == null) {
-                info.loadThumbnail(loadWidth);
-            } else if (fileFormat.equalsIgnoreCase("pdf")) {
-                if (pdfRenderer == null) {
-                    openPDF(pdfPassword);
-                }
-                if (pdfRenderer == null) {
-                    return null;
-                }
-                ImageInformation.readPDF(null, pdfRenderer, pdfImageType, info, loadWidth);
-
-            } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
-                if (ppt == null) {
-                    openPPT();
-                }
-                ImageInformation.readPPT(null, ppt, info, loadWidth);
-
-            } else if (sourceFile != null) {
-                if (imageReader == null) {
-                    openImageFile();
-                }
-                ImageInformation.readImage(null, imageReader, info, loadWidth);
-
-            } else {
-                info.loadThumbnail(loadWidth);
-            }
-            return info.getThumbnail();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     @Override
     public File sourceFile() {
         if (fileFormat == null || fileFormat.equalsIgnoreCase("pdf")
@@ -639,40 +596,104 @@ public class ImagesPlayController extends BaseImagesListController {
     }
 
     public void displayFrame(int index) {
+        if (frameTask != null) {
+            frameTask.cancel();
+        }
+        if (imageInfos == null) {
+            playController.clear();
+        }
         try {
-            if (imageInfos == null) {
-                playController.clear();
-                return;
-            }
             imageInformation = imageInfos.get(index);
             frameIndex = index;
-            image = thumb(imageInformation);
-            if (image == null) {
-//                playController.pause();
-                return;
-            }
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    imageView.setImage(image);
-                    refinePane();
-                    updateLabelsTitle();
-                    playController.refreshList();
-                }
-            });
-
-            imageInformation.setThumbnail(null); // release memory
-//            if (playController.stopped.get()) {
-//                return;
-//            }
-//            int next = playController.nextIndex();
-//            if (next >= 0 && index < imageInfos.size()) {
-//                thumb(imageInfos.get(next));
-//            }
-
         } catch (Exception e) {
-            playController.pauseAction();
+            return;
+        }
+        frameTask = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    image = thumb(this, imageInformation);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (image == null) {
+                    return;
+                }
+                imageView.setImage(image);
+                refinePane();
+                updateLabelsTitle();
+                playController.refreshList();
+
+                imageInformation.setThumbnail(null); // release memory
+//                if (image == null) {
+//                playController.pause();
+//                }
+//                if (playController.stopped.get()) {
+//                    return;
+//                }
+//                int next = playController.nextIndex();
+//                if (next >= 0 && index < imageInfos.size()) {
+//                    thumb(imageInfos.get(next));
+//                }
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+        };
+        start(frameTask, false);
+    }
+
+    protected Image thumb(FxTask thumbTask, ImageInformation info) {
+        try {
+            if (info == null) {
+                return null;
+            }
+            double imageWidth = info.getWidth();
+            double targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
+            Image thumb = info.getThumbnail();
+            if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
+                return thumb;
+            }
+            info.setThumbnail(null);
+            if (fileFormat == null) {
+                info.loadThumbnail(thumbTask, loadWidth);
+            } else if (fileFormat.equalsIgnoreCase("pdf")) {
+                if (pdfRenderer == null) {
+                    openPDF(pdfPassword);
+                }
+                if (pdfRenderer == null) {
+                    return null;
+                }
+                ImageInformation.readPDF(thumbTask, pdfRenderer, pdfImageType, info, loadWidth);
+
+            } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
+                if (ppt == null) {
+                    openPPT();
+                }
+                ImageInformation.readPPT(thumbTask, ppt, info, loadWidth);
+
+            } else if (sourceFile != null) {
+                if (imageReader == null) {
+                    openImageFile();
+                }
+                ImageInformation.readImage(thumbTask, imageReader, info, loadWidth);
+
+            } else {
+                info.loadThumbnail(thumbTask, loadWidth);
+            }
+            return info.getThumbnail();
+        } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 

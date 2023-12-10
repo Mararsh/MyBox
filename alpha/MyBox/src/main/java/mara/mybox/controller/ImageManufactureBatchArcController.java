@@ -15,8 +15,8 @@ import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -168,7 +168,7 @@ public class ImageManufactureBatchArcController extends BaseImageEditBatchContro
             if (isPercent) {
                 value = source.getWidth() * percent / 100;
             }
-            BufferedImage target = BufferedImageTools.setRound(source, value,
+            BufferedImage target = BufferedImageTools.setRound(task, source, value,
                     FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()));
             return target;
         } catch (Exception e) {

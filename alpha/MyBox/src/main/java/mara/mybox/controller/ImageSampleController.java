@@ -23,7 +23,6 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2018-12-03
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageSampleController extends BaseShapeController {
@@ -267,9 +266,9 @@ public class ImageSampleController extends BaseShapeController {
                     .setRegion(x1, y1, x2, y2)
                     .setXscale(widthScale).setYscale(heightScale)
                     .setImageFormat(imageInformation.getImageFormat());
-            return ImageFileReaders.readFrame(info);
+            return ImageFileReaders.readFrame(task, info);
         } else if (image != null) {
-            return CropTools.sample(SwingFXUtils.fromFXImage(image, null),
+            return CropTools.sample(task, SwingFXUtils.fromFXImage(image, null),
                     (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
         } else {
             return null;

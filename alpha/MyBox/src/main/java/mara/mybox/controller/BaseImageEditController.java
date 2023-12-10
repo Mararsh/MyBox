@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -125,7 +125,7 @@ public class BaseImageEditController extends BaseShapeController {
         action(true);
     }
 
-    protected synchronized void action(boolean isPreview) {
+    protected void action(boolean isPreview) {
         if (isSettingValues || !checkOptions()) {
             return;
         }
@@ -133,17 +133,14 @@ public class BaseImageEditController extends BaseShapeController {
             task.cancel();
         }
         reset();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 handledImage = null;
                 opInfo = null;
                 handleImage();
-                if (task == null || isCancelled()) {
-                    return false;
-                }
-                return handledImage != null;
+                return !isCancelled() && handledImage != null;
             }
 
             @Override

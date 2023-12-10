@@ -14,7 +14,7 @@ import javafx.scene.control.TreeItem;
 import mara.mybox.data.FileInformation.FileType;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
@@ -39,7 +39,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int filesSelected = 0, filesTotal = 0, filesRundancy = 0;
             private long sizeSelected = 0, sizeTotal = 0, sizeRedundant = 0, fileSize = 0;
@@ -103,7 +103,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private TreeItem<FileNode> rootItem;
 
@@ -232,7 +232,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private int deleted;
 
             @Override

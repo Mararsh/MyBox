@@ -71,7 +71,7 @@ public class ImageMosaic extends PixelsOperation {
 
     @Override
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
-        int newColor = EliminateTools.mosaic(image, imageWidth, imageHeight, x, y, type, intensity);
+        int newColor = ShapeTools.mosaic(image, imageWidth, imageHeight, x, y, type, intensity);
         target.setRGB(x, y, newColor);
         return new Color(newColor, true);
     }

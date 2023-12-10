@@ -13,6 +13,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Colors;
 import static mara.mybox.value.Languages.message;
@@ -101,7 +102,7 @@ public class ImageScope extends BaseData {
         return scopeType == null || scopeType == ScopeType.Whole;
     }
 
-    public void decode() {
+    public void decode(FxTask task) {
         if (colorData != null) {
             ImageScopeTools.decodeColorData(this);
         }
@@ -109,14 +110,14 @@ public class ImageScope extends BaseData {
             ImageScopeTools.decodeAreaData(this);
         }
         if (outlineName != null) {
-            ImageScopeTools.decodeOutline(this);
+            ImageScopeTools.decodeOutline(task, this);
         }
     }
 
-    public void encode() {
+    public void encode(FxTask task) {
         ImageScopeTools.encodeColorData(this);
         ImageScopeTools.encodeAreaData(this);
-        ImageScopeTools.encodeOutline(this);
+        ImageScopeTools.encodeOutline(task, this);
     }
 
     public void addPoint(IntPoint point) {

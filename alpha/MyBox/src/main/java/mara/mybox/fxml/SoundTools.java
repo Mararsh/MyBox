@@ -73,7 +73,7 @@ public class SoundTools {
     }
 
     public static void playClip(File file) {
-        BaseTask miaoTask = new BaseTask<Void>() {
+        FxTask miaoTask = new FxTask<Void>() {
             @Override
             protected boolean handle() {
                 try {

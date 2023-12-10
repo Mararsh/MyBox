@@ -14,7 +14,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
 import static mara.mybox.fxml.WindowTools.taskError;
@@ -213,7 +213,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         return count;
     }
 
-    public long clearBackups(SingletonTask task, String filename) {
+    public long clearBackups(FxTask task, String filename) {
         long count = 0;
         if (filename == null) {
             return count;
@@ -228,7 +228,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         }
     }
 
-    public long clearBackups(SingletonTask task, Connection conn, List<String> files) {
+    public long clearBackups(FxTask task, Connection conn, List<String> files) {
         long count = 0;
         if (conn == null || files == null || files.isEmpty()) {
             return count;

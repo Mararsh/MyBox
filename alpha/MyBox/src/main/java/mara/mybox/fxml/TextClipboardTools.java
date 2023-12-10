@@ -14,9 +14,9 @@ import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.TextClipboardMonitor.DefaultInterval;
 import mara.mybox.tools.TextFileTools;
+import static mara.mybox.value.AppVariables.TextClipMonitor;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.AppVariables.TextClipMonitor;
 
 /**
  * @Author Mara
@@ -158,7 +158,7 @@ public class TextClipboardTools {
                     controller.popError(message("NoData"));
                     return;
                 }
-                copyToSystemClipboard(controller, TextFileTools.readTexts(file));
+                copyToSystemClipboard(controller, TextFileTools.readTexts(null, file));
             }
         });
     }

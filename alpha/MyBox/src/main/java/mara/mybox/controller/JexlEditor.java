@@ -20,7 +20,7 @@ import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
@@ -46,7 +46,7 @@ public class JexlEditor extends JShellEditor {
     @Override
     public synchronized void resetJShell() {
         reset();
-        resetTask = new SingletonTask<Void>(this) {
+        resetTask = new FxTask<Void>(this) {
 
             private String paths;
 

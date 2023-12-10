@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Colors;
 
 /**
@@ -14,7 +15,7 @@ import mara.mybox.value.Colors;
  */
 public class CropTools {
 
-    public static BufferedImage cropInside(BufferedImage source, DoubleRectangle rect, Color bgColor) {
+    public static BufferedImage cropInside(FxTask task, BufferedImage source, DoubleRectangle rect, Color bgColor) {
         try {
             if (rect == null || rect.isEmpty()) {
                 return source;
@@ -25,7 +26,13 @@ public class CropTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             int bgPixel = bgColor.getRGB();
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     if (DoubleShape.contains(rect, i, j)) {
                         target.setRGB(i, j, bgPixel);
                     } else {
@@ -40,7 +47,7 @@ public class CropTools {
         }
     }
 
-    public static BufferedImage cropOutside(BufferedImage source, DoubleRectangle rect, Color bgColor) {
+    public static BufferedImage cropOutside(FxTask task, BufferedImage source, DoubleRectangle rect, Color bgColor) {
         try {
             if (source == null || rect == null || rect.isEmpty()) {
                 return source;
@@ -60,7 +67,13 @@ public class CropTools {
             BufferedImage target = new BufferedImage(w, h, imageType);
             int bgPixel = bgColor.getRGB();
             for (int y = 0; y < h; y++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int x = 0; x < w; x++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     if (rect.contains(x1 + x, y1 + y)) {
                         target.setRGB(x, y, source.getRGB(x1 + x, y1 + y));
                     } else {
@@ -75,22 +88,25 @@ public class CropTools {
         }
     }
 
-    public static BufferedImage cropOutside(BufferedImage source, DoubleRectangle rect) {
-        return cropOutside(source, rect, Colors.TRANSPARENT);
+    public static BufferedImage cropOutside(FxTask task, BufferedImage source, DoubleRectangle rect) {
+        return cropOutside(task, source, rect, Colors.TRANSPARENT);
     }
 
-    public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2) {
-        return cropOutside(source, DoubleRectangle.xy12(x1, y1, x2, y2), Colors.TRANSPARENT);
+    public static BufferedImage cropOutside(FxTask task, BufferedImage source, double x1, double y1, double x2, double y2) {
+        return cropOutside(task, source, DoubleRectangle.xy12(x1, y1, x2, y2), Colors.TRANSPARENT);
     }
 
-    public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int xscale, int yscale) {
+    public static BufferedImage sample(FxTask task, BufferedImage source, DoubleRectangle rectangle, int xscale, int yscale) {
         try {
             if (rectangle == null) {
                 return ScaleTools.scaleImageByScale(source, xscale, yscale);
             }
             int realXScale = xscale > 0 ? xscale : 1;
             int realYScale = yscale > 0 ? yscale : 1;
-            BufferedImage bufferedImage = cropOutside(source, rectangle);
+            BufferedImage bufferedImage = cropOutside(task, source, rectangle);
+            if (bufferedImage == null) {
+                return null;
+            }
             int width = bufferedImage.getWidth() / realXScale;
             int height = bufferedImage.getHeight() / realYScale;
             bufferedImage = ScaleTools.scaleImageBySize(bufferedImage, width, height);
@@ -101,12 +117,15 @@ public class CropTools {
         }
     }
 
-    public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int width) {
+    public static BufferedImage sample(FxTask task, BufferedImage source, DoubleRectangle rectangle, int width) {
         try {
             if (rectangle == null) {
                 return ScaleTools.scaleImageWidthKeep(source, width);
             }
-            BufferedImage bufferedImage = cropOutside(source, rectangle);
+            BufferedImage bufferedImage = cropOutside(task, source, rectangle);
+            if (bufferedImage == null) {
+                return null;
+            }
             bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
             return bufferedImage;
         } catch (Exception e) {
@@ -115,11 +134,11 @@ public class CropTools {
         }
     }
 
-    public static BufferedImage sample(BufferedImage source, int x1, int y1, int x2, int y2, int xscale, int yscale) {
+    public static BufferedImage sample(FxTask task, BufferedImage source, int x1, int y1, int x2, int y2, int xscale, int yscale) {
         if (x1 >= x2 || y1 >= y2 || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0) {
             return null;
         }
-        return sample(source, DoubleRectangle.xy12(x1, y1, x2, y2), xscale, yscale);
+        return sample(task, source, DoubleRectangle.xy12(x1, y1, x2, y2), xscale, yscale);
     }
 
 }

@@ -37,10 +37,10 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonBackgroundTask;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxBackgroundTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableComboBoxCell;
 import mara.mybox.fxml.cell.TableDataBooleanDisplayCell;
@@ -230,7 +230,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         } else {
             resetStatus();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -278,7 +278,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (file == null || file.exists()) {
             return true;
         }
-        SingletonTask nullTask = new SingletonTask<Void>(this) {
+        FxTask nullTask = new FxTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -398,7 +398,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Data2D targetData;
 
             @Override
@@ -469,7 +469,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (dataTable == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Data2D targetData;
 
             @Override
@@ -610,7 +610,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Data2DDefinition def;
 
             @Override
@@ -668,7 +668,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                 popError(message("NoData"));
                 return;
             }
-            String text = TextTools.dataText(data, ",", names, null);
+            String text = TextTools.rowsText(null, data, ",", names, null);
             TextClipboardTools.copyToSystemClipboard(this, text);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -693,7 +693,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                 popError(message("NoData"));
                 return;
             }
-            SingletonTask copyTask = new SingletonTask<Void>(this) {
+            FxTask copyTask = new FxTask<Void>(this) {
 
                 private DataClipboard clip;
 
@@ -901,7 +901,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
         if (data2D.getColsNumber() != data2D.getColumns().size()
                 || data2D.getRowsNumber() != data2D.getDataSize()) {
-            SingletonTask updateTask = new SingletonTask<Void>(this) {
+            FxTask updateTask = new FxTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -944,7 +944,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (saveButton != null) {
             saveButton.setDisable(true);
         }
-        backgroundTask = new SingletonBackgroundTask<Void>(this) {
+        backgroundTask = new FxBackgroundTask<Void>(this) {
 
             @Override
             protected boolean handle() {

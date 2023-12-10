@@ -31,7 +31,7 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -159,7 +159,7 @@ public class ControlColorPaletteSelector extends BaseController {
         } else {
             palettesList.getItems().clear();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<ColorPaletteName> palettes;
             private String lang;
 
@@ -215,7 +215,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private ColorPaletteName newPalatte;
 
             @Override
@@ -380,7 +380,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (!PopTools.askSure(getTitle(), selected.getName(), message("DeletePalette"))) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -405,7 +405,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (!PopTools.askSure(getTitle(), message("DeleteAllPalettes"))) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -438,7 +438,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -479,7 +479,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private ColorPaletteName newPalatte;
 
             @Override

@@ -8,8 +8,8 @@ import java.util.Iterator;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -40,11 +40,14 @@ public class DataFileCSVWriter extends Data2DWriter {
         File tmpFile = FileTmpTools.getTempFile();
         Charset charset = sourceCSV.getCharset();
         CSVFormat format = sourceCSV.cvsFormat();
-        File validFile = FileTools.removeBOM(sourceFile);
+        File validFile = FileTools.removeBOM(task, sourceFile);
+        if (validFile == null || writerStopped()) {
+            return;
+        }
         rowIndex = 0;
         count = 0;
-        try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
-                 CSVPrinter printer = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
+        try (CSVParser parser = CSVParser.parse(validFile, charset, format);
+                CSVPrinter printer = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
             csvParser = parser;
             csvPrinter = printer;
             iterator = parser.iterator();

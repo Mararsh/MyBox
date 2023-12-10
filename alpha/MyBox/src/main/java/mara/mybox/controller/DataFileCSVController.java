@@ -16,7 +16,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
@@ -115,7 +115,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private File filePath;
             private LinkedHashMap<File, Boolean> files;
@@ -124,7 +124,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             @Override
             protected boolean handle() {
                 filePath = new File(FileTmpTools.generatePath("csv"));
-                files = DataFileCSV.save(filePath, "tmp", tables);
+                files = DataFileCSV.save(this, filePath, "tmp", tables);
                 count = files != null ? files.size() : 0;
                 return count > 0;
             }

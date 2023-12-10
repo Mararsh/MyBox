@@ -24,7 +24,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.fxml.style.StyleTools;
@@ -133,7 +133,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     public void loadList() {
         if (manageController instanceof MyBoxTablesController) {
-            task = new SingletonCurrentTask<Void>(this) {
+            task = new FxSingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -159,7 +159,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             start(task);
 
         } else if (manageController instanceof DataTablesController) {
-            task = new SingletonCurrentTask<Void>(this) {
+            task = new FxSingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

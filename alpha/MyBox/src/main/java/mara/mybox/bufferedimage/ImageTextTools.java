@@ -15,7 +15,7 @@ import mara.mybox.controller.ControlImageText;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -25,7 +25,7 @@ import mara.mybox.value.AppVariables;
  */
 public class ImageTextTools {
 
-    public static BufferedImage addText(SingletonTask task,
+    public static BufferedImage addText(FxTask task,
             BufferedImage sourceImage, ControlImageText optionsController) {
         try {
             String text = optionsController.text();
@@ -44,7 +44,7 @@ public class ImageTextTools {
             FontMetrics metrics = g.getFontMetrics(font);
             optionsController.countValues(g, metrics, width, height);
             PixelsBlend blend = optionsController.getBlend();
-            if (blend == null || task == null || !task.isWorking()) {
+            if (blend == null || (task != null && !task.isWorking())) {
                 return null;
             }
             int textBaseX = optionsController.getBaseX();
@@ -61,7 +61,7 @@ public class ImageTextTools {
 
             if (optionsController.showBorders()) {
                 ShapeStyle style = optionsController.getBorderStyle();
-                if (style == null || task == null || !task.isWorking()) {
+                if (style == null || (task != null && !task.isWorking())) {
                     return null;
                 }
                 g.setStroke(stroke(style));
@@ -73,7 +73,7 @@ public class ImageTextTools {
                         optionsController.getTextHeight() + 2 * m);
                 border.setRound(optionsController.getBordersArc());
                 Shape shape = border.getShape();
-                if (style == null || task == null || !task.isWorking()) {
+                if (style == null || (task != null && !task.isWorking())) {
                     return null;
                 }
                 if (optionsController.bordersFilled()) {
@@ -85,7 +85,7 @@ public class ImageTextTools {
                     g.draw(shape);
                 }
             }
-            if (blend == null || task == null || !task.isWorking()) {
+            if (blend == null || (task != null && !task.isWorking())) {
                 return null;
             }
 
@@ -99,7 +99,7 @@ public class ImageTextTools {
             drawText(g, optionsController, text, 0);
             g.dispose();
 
-            if (blend == null || task == null || !task.isWorking()) {
+            if (blend == null || (task != null && !task.isWorking())) {
                 return null;
             }
             BufferedImage target = new BufferedImage(width, height, imageType);
@@ -112,7 +112,13 @@ public class ImageTextTools {
             int realBorderPixel = optionsController.bordersStrokeColor().getRGB();
             int realFillPixel = optionsController.bordersFillColor().getRGB();
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int srcPixel = sourceImage.getRGB(i, j);
                     int shapePixel = shapeImage.getRGB(i, j);
                     if (shapePixel == textPixel) {

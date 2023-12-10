@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -40,7 +40,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
 
     @Override
     public synchronized void handleRowsTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             List<List<String>> data;
 
@@ -103,7 +103,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                 return;
             }
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private long count;
 

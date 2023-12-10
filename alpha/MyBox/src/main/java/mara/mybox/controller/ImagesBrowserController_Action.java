@@ -16,7 +16,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
@@ -255,7 +255,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int handled = 0;
             private boolean hasMultipleFrames = false;
@@ -264,6 +264,9 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             protected boolean handle() {
                 if (indexs == null || indexs.isEmpty()) {
                     for (int i = 0; i < tableData.size(); ++i) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         ImageInformation info = tableData.get(i);
                         if (info.isIsMultipleFrames()) {
                             hasMultipleFrames = true;
@@ -274,15 +277,21 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                             continue;
                         }
                         if (displayMode == DisplayMode.ImagesGrid) {
-                            newInfo.loadThumbnail(thumbWidth);
+                            newInfo.loadThumbnail(this, thumbWidth);
                         } else if (displayMode == DisplayMode.ThumbnailsList) {
-                            newInfo.loadThumbnail();
+                            newInfo.loadThumbnail(this);
+                        }
+                        if (!isWorking()) {
+                            return false;
                         }
                         tableData.set(i, newInfo);
                         handled++;
                     }
                 } else {
                     for (int i = 0; i < indexs.size(); ++i) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         int index = indexs.get(i);
                         ImageInformation info = tableData.get(index);
                         if (info.isIsMultipleFrames()) {
@@ -294,9 +303,12 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                             continue;
                         }
                         if (displayMode == DisplayMode.ImagesGrid) {
-                            newInfo.loadThumbnail(thumbWidth);
+                            newInfo.loadThumbnail(this, thumbWidth);
                         } else if (displayMode == DisplayMode.ThumbnailsList) {
-                            newInfo.loadThumbnail();
+                            newInfo.loadThumbnail(this);
+                        }
+                        if (!isWorking()) {
+                            return false;
                         }
                         tableData.set(index, newInfo);
                         handled++;
@@ -311,10 +323,16 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 }
                 try {
                     File file = info.getImageFileInformation().getFile();
-                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
-                    bufferedImage = TransformTools.rotateImage(bufferedImage, rotateAngle);
-                    ImageFileWriters.writeImageFile(bufferedImage, file);
-                    ImageInformation newInfo = loadInfo(file);
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(this, info);
+                    if (bufferedImage == null || !isWorking()) {
+                        return null;
+                    }
+                    bufferedImage = TransformTools.rotateImage(this, bufferedImage, rotateAngle);
+                    if (bufferedImage == null || !isWorking()) {
+                        return null;
+                    }
+                    ImageFileWriters.writeImageFile(this, bufferedImage, file);
+                    ImageInformation newInfo = loadInfo(this, file);
                     return newInfo;
                 } catch (Exception e) {
                     MyBoxLog.debug(e);

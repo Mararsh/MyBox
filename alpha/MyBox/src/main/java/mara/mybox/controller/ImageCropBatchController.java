@@ -259,7 +259,7 @@ public class ImageCropBatchController extends BaseImageEditBatchController {
                 errorString = message("BeyondSize");
                 return null;
             }
-            return CropTools.cropOutside(source, x1, y1, x2, y2);
+            return CropTools.cropOutside(task, source, x1, y1, x2, y2);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

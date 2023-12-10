@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.MessageDigestTools;
 import mara.mybox.value.AppVariables;
@@ -77,12 +78,15 @@ public class BufferedImageTools {
     }
 
     // https://stackoverflow.com/questions/24038524/how-to-get-byte-from-javafx-imageview
-    public static byte[] bytes(BufferedImage srcImage, String format) {
+    public static byte[] bytes(FxTask task, BufferedImage srcImage, String format) {
         byte[] bytes = null;
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
             BufferedImage tmpImage = srcImage;
             if (!FileExtensions.AlphaImages.contains(format)) {
-                tmpImage = AlphaTools.removeAlpha(srcImage);
+                tmpImage = AlphaTools.removeAlpha(task, srcImage);
+                if (tmpImage == null) {
+                    return null;
+                }
             }
             ImageIO.write(tmpImage, format, stream);
             bytes = stream.toByteArray();
@@ -92,13 +96,13 @@ public class BufferedImageTools {
         return bytes;
     }
 
-    public static String base64(BufferedImage image, String format) {
+    public static String base64(FxTask task, BufferedImage image, String format) {
         try {
             if (image == null || format == null) {
                 return null;
             }
             Base64.Encoder encoder = Base64.getEncoder();
-            byte[] bytes = bytes(image, format);
+            byte[] bytes = bytes(task, image, format);
             if (bytes == null) {
                 return null;
             }
@@ -109,29 +113,37 @@ public class BufferedImageTools {
         }
     }
 
-    public static String base64(File file, String format) {
+    public static String base64(FxTask task, File file, String format) {
         try {
             if (file == null) {
                 return null;
             }
-            return base64(ImageFileReaders.readImage(file), format == null ? "jpg" : format);
+            return base64(task, ImageFileReaders.readImage(task, file), format == null ? "jpg" : format);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static boolean sameByMD5(BufferedImage imageA, BufferedImage imageB) {
+    public static boolean sameByMD5(FxTask task, BufferedImage imageA, BufferedImage imageB) {
         if (imageA == null || imageB == null
                 || imageA.getWidth() != imageB.getWidth()
                 || imageA.getHeight() != imageB.getHeight()) {
             return false;
         }
-        return Arrays.equals(MessageDigestTools.MD5(imageA), MessageDigestTools.MD5(imageB));
+        byte[] bA = MessageDigestTools.MD5(task, imageA);
+        if (bA == null || (task != null && !task.isWorking())) {
+            return false;
+        }
+        byte[] bB = MessageDigestTools.MD5(task, imageB);
+        if (bB == null || (task != null && !task.isWorking())) {
+            return false;
+        }
+        return Arrays.equals(bA, bB);
     }
 
     // This way may be quicker than comparing digests
-    public static boolean same(BufferedImage imageA, BufferedImage imageB) {
+    public static boolean same(FxTask task, BufferedImage imageA, BufferedImage imageB) {
         try {
             if (imageA == null || imageB == null
                     || imageA.getWidth() != imageB.getWidth()
@@ -140,24 +152,42 @@ public class BufferedImageTools {
             }
             int width = imageA.getWidth(), height = imageA.getHeight();
             for (int y = 0; y < height / 2; y++) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 for (int x = 0; x < width / 2; x++) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
                         return false;
                     }
                 }
                 for (int x = width - 1; x >= width / 2; x--) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
                         return false;
                     }
                 }
             }
             for (int y = height - 1; y >= height / 2; y--) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 for (int x = 0; x < width / 2; x++) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
                         return false;
                     }
                 }
                 for (int x = width - 1; x >= width / 2; x--) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
                         return false;
                     }
@@ -170,14 +200,20 @@ public class BufferedImageTools {
     }
 
     // This way may be  quicker than comparing digests
-    public static boolean sameImage(BufferedImage imageA, BufferedImage imageB) {
+    public static boolean sameImage(FxTask task, BufferedImage imageA, BufferedImage imageB) {
         if (imageA == null || imageB == null
                 || imageA.getWidth() != imageB.getWidth()
                 || imageA.getHeight() != imageB.getHeight()) {
             return false;
         }
         for (int y = 0; y < imageA.getHeight(); y++) {
+            if (task != null && !task.isWorking()) {
+                return false;
+            }
             for (int x = 0; x < imageA.getWidth(); x++) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 if (imageA.getRGB(x, y) != imageB.getRGB(x, y)) {
                     return false;
                 }
@@ -186,7 +222,7 @@ public class BufferedImageTools {
         return true;
     }
 
-    public static BufferedImage setRound(BufferedImage source, int round, Color bgColor) {
+    public static BufferedImage setRound(FxTask task, BufferedImage source, int round, Color bgColor) {
         int width = source.getWidth();
         int height = source.getHeight();
         int imageType = BufferedImage.TYPE_INT_ARGB;
@@ -198,7 +234,13 @@ public class BufferedImageTools {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         g.setColor(bgColor);
         g.fillRect(0, 0, width, height);
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
         g.setClip(new RoundRectangle2D.Double(0, 0, width, height, round, round));
+        if (task != null && !task.isWorking()) {
+            return null;
+        }
         g.drawImage(source, 0, 0, null);
         g.dispose();
         return target;

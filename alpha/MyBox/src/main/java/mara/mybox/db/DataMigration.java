@@ -665,7 +665,7 @@ public class DataMigration {
                 String name = s.getAbsolutePath();
                 if (s.isFile() && name.endsWith(".ico")) {
                     File t = new File(name.substring(0, name.lastIndexOf(".")) + ".png");
-                    ImageConvertTools.convertColorSpace(s, attributes, t);
+                    ImageConvertTools.convertColorSpace(null, s, attributes, t);
                     if (t.exists()) {
                         FileDeleteTools.delete(s);
                     }
@@ -1463,12 +1463,12 @@ public class DataMigration {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-        GeographyCodeTools.importPredefined(conn);
+        GeographyCodeTools.importPredefined(null, conn);
         try (PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
             conn.setAutoCommit(false);
             int count = 0;
             for (GeographyCode code : codes) {
-                Map<String, Object> ret = GeographyCodeTools.encode(conn, geoInsert,
+                Map<String, Object> ret = GeographyCodeTools.encode(null, conn, geoInsert,
                         code.getLevel(), code.getLongitude(), code.getLatitude(), null,
                         code.getCountryName(), code.getProvinceName(), code.getCityName(),
                         code.getCountyName(), code.getTownName(), code.getVillageName(),

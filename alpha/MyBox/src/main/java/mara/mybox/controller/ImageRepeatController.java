@@ -19,7 +19,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.RepeatTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -233,7 +233,7 @@ public class ImageRepeatController extends BaseShapeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             Image repeatImage;
 
             @Override
@@ -245,10 +245,10 @@ public class ImageRepeatController extends BaseShapeController {
                 }
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(srcImage, null);
                 if (repeatRadio.isSelected()) {
-                    bufferedImage = RepeatTools.repeat(bufferedImage,
+                    bufferedImage = RepeatTools.repeat(this, bufferedImage,
                             repeatH, repeatV, interval, margin, colorSetController.awtColor());
                 } else {
-                    bufferedImage = RepeatTools.tile(bufferedImage,
+                    bufferedImage = RepeatTools.tile(this, bufferedImage,
                             canvasWidth, canvasHeight, interval, margin, colorSetController.awtColor());
                 }
                 if (bufferedImage == null) {

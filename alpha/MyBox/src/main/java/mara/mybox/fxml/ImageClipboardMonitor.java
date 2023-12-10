@@ -100,7 +100,7 @@ public class ImageClipboardMonitor extends Timer {
                             return;
                         }
                         clip = clipboard.getImage();
-                        if (clip == null || FxImageTools.sameImage(lastImage, clip)) {
+                        if (clip == null || FxImageTools.sameImage(null, lastImage, clip)) {
                             return;
                         }
                         lastImage = clip;
@@ -174,8 +174,8 @@ public class ImageClipboardMonitor extends Timer {
                 if (width > 0) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
                 }
-                BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, attributes);
-                ImageFileWriters.writeImageFile(converted, attributes, fname);
+                BufferedImage converted = ImageConvertTools.convertColorSpace(null, bufferedImage, attributes);
+                ImageFileWriters.writeImageFile(null, converted, attributes, fname);
                 savedNumber++;
                 if (controller != null) {
                     Platform.runLater(() -> {
@@ -206,7 +206,8 @@ public class ImageClipboardMonitor extends Timer {
                     if (tableImageClipboard == null) {
                         tableImageClipboard = new TableImageClipboard();
                     }
-                    tableImageClipboard.insertData(conn, ImageClipboard.create(bufferedImage, ImageSource.SystemClipBoard));
+                    tableImageClipboard.insertData(conn,
+                            ImageClipboard.create(null, bufferedImage, ImageSource.SystemClipBoard));
                     conn.commit();
                     ImageInMyBoxClipboardController.updateClipboards();
                     copiedNumber++;

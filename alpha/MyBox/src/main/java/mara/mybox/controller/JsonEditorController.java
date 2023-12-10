@@ -28,7 +28,7 @@ import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
@@ -143,7 +143,30 @@ public class JsonEditorController extends BaseFileController {
         }
 
         super.sourceFileChanged(file);
-        writePanes(TextFileTools.readTexts(file));
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String json;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    json = TextFileTools.readTexts(this, file);
+                    return json != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                writePanes(json);
+            }
+
+        };
+        start(task);
     }
 
     public boolean writePanes(String json) {
@@ -208,7 +231,7 @@ public class JsonEditorController extends BaseFileController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -298,7 +321,7 @@ public class JsonEditorController extends BaseFileController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 File tmpFile = TextFileTools.writeFile(json);

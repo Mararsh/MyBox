@@ -44,7 +44,7 @@ public class FunctionsList {
             if (withLink) {
                 goImageFile = AppVariables.MyboxDataPath + "/icons/iconGo.png";
                 BufferedImage srcImage = SwingFXUtils.fromFXImage(StyleTools.getIconImage("iconGo.png"), null);
-                ImageFileWriters.writeImageFile(srcImage, "png", goImageFile);
+                ImageFileWriters.writeImageFile(null, srcImage, "png", goImageFile);
                 goImageFile = new File(goImageFile).toURI().toString();
             }
             List<String> names = new ArrayList<>();

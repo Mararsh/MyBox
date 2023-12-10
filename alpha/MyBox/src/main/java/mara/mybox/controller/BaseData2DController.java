@@ -30,7 +30,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.CsvTools;
 import static mara.mybox.value.Languages.message;
@@ -48,7 +48,7 @@ public abstract class BaseData2DController extends BaseFileController {
     protected Data2D.Type type;
     protected TableData2DDefinition tableData2DDefinition;
     protected Data2D data2D;
-    protected SingletonTask parseTask;
+    protected FxTask parseTask;
 
     @FXML
     protected ControlData2DList listController;
@@ -297,7 +297,7 @@ public abstract class BaseData2DController extends BaseFileController {
         if (parseTask != null && !parseTask.isQuit()) {
             return;
         }
-        parseTask = new SingletonTask<Void>(this) {
+        parseTask = new FxTask<Void>(this) {
 
             DataTable dataTable;
 

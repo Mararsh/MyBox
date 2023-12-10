@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import org.krysalis.barcode4j.ChecksumMode;
@@ -89,7 +90,7 @@ public class BarcodeTools {
         return 2.0;
     }
 
-    public static BufferedImage QR(String code,
+    public static BufferedImage QR(FxTask task, String code,
             ErrorCorrectionLevel qrErrorCorrectionLevel,
             int qrWidth, int qrHeight, int qrMargin, File picFile) {
         try {
@@ -104,7 +105,7 @@ public class BarcodeTools {
 
             BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
             if (picFile != null) {
-                BufferedImage pic = ImageFileReaders.readImage(picFile);
+                BufferedImage pic = ImageFileReaders.readImage(task, picFile);
                 if (pic != null) {
                     double ratio = 2;
                     switch (qrErrorCorrectionLevel) {

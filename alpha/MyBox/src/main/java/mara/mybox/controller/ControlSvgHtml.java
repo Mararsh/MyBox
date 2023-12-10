@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
@@ -54,17 +55,33 @@ public class ControlSvgHtml extends ControlSvgOptions {
     }
 
     public void drawSVG() {
-        try {
-            if (doc == null) {
-                currentXML = null;
-                webEngine.loadContent("");
-                return;
-            }
-            currentXML = toXML();
-            webEngine.loadContent(currentXML);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (doc == null) {
+            currentXML = null;
+            webEngine.loadContent("");
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                try {
+                    currentXML = toXML(this);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                webEngine.loadContent(currentXML);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -77,6 +94,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
     }
 
     @FXML
+    @Override
     public void systemMethod() {
         if (currentXML == null || currentXML.isBlank()) {
             popError(message("NoData"));
@@ -97,14 +115,35 @@ public class ControlSvgHtml extends ControlSvgOptions {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = SvgTools.textToPDF(this, currentXML, width, height, viewBox);
-        if (tmpFile != null && tmpFile.exists()) {
-            if (tmpFile.length() > 0) {
-                PdfViewController.open(tmpFile);
-            } else {
-                FileDeleteTools.delete(tmpFile);
-            }
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private File tmpFile;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    tmpFile = SvgTools.textToPDF(this,
+                            myController, currentXML, width, height, viewBox);
+                    return tmpFile != null && tmpFile.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (tmpFile.length() > 0) {
+                    PdfViewController.open(tmpFile);
+                } else {
+                    FileDeleteTools.delete(tmpFile);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -113,14 +152,35 @@ public class ControlSvgHtml extends ControlSvgOptions {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = SvgTools.textToImage(this, currentXML, width, height, viewBox);
-        if (tmpFile != null && tmpFile.exists()) {
-            if (tmpFile.length() > 0) {
-                ImageEditorController.openFile(tmpFile);
-            } else {
-                FileDeleteTools.delete(tmpFile);
-            }
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private File tmpFile;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    tmpFile = SvgTools.textToImage(this,
+                            myController, currentXML, width, height, viewBox);
+                    return tmpFile != null && tmpFile.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (tmpFile.length() > 0) {
+                    ImageEditorController.openFile(tmpFile);
+                } else {
+                    FileDeleteTools.delete(tmpFile);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML

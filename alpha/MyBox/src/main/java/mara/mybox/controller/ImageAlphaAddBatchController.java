@@ -155,15 +155,21 @@ public class ImageAlphaAddBatchController extends BaseImageEditBatchController {
         if (!super.makeMoreParameters()) {
             return false;
         }
-        if (!useOpacityValue) {
-            alphaImage = ImageFileReaders.readImage(sourceFile);
-        }
         if (tifRadio.isSelected()) {
             targetFileSuffix = "tif";
         } else {
             targetFileSuffix = "png";
         }
         attributes = new ImageAttributes(targetFileSuffix);
+        return true;
+    }
+
+    @Override
+    public boolean beforeHandleFiles() {
+        if (!useOpacityValue) {
+            alphaImage = ImageFileReaders.readImage(task, sourceFile);
+            return alphaImage != null;
+        }
         return true;
     }
 
@@ -176,9 +182,9 @@ public class ImageAlphaAddBatchController extends BaseImageEditBatchController {
             }
             BufferedImage target;
             if (useOpacityValue) {
-                target = AlphaTools.addAlpha(source, opacityValue, blendMode == AlphaBlendMode.Plus);
+                target = AlphaTools.addAlpha(task, source, opacityValue, blendMode == AlphaBlendMode.Plus);
             } else {
-                target = AlphaTools.addAlpha(source, alphaImage, blendMode == AlphaBlendMode.Plus);
+                target = AlphaTools.addAlpha(task, source, alphaImage, blendMode == AlphaBlendMode.Plus);
             }
             return target;
         } catch (Exception e) {

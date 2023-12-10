@@ -21,7 +21,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MessageDigestTools;
@@ -316,7 +316,7 @@ public class FilesCompareController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private byte[] digest1, digest2;
             private boolean same;
@@ -324,8 +324,14 @@ public class FilesCompareController extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    digest1 = MessageDigestTools.messageDigest(file1, algorithm);
-                    digest2 = MessageDigestTools.messageDigest(file2, algorithm);
+                    digest1 = MessageDigestTools.messageDigest(this, file1, algorithm);
+                    if (digest1 == null || !isWorking()) {
+                        return false;
+                    }
+                    digest2 = MessageDigestTools.messageDigest(this, file2, algorithm);
+                    if (digest2 == null || !isWorking()) {
+                        return false;
+                    }
                     same = Arrays.equals(digest1, digest2);
                     return true;
                 } catch (Exception e) {

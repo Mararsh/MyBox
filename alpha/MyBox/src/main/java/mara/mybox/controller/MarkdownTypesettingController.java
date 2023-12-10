@@ -58,9 +58,17 @@ public class MarkdownTypesettingController extends BaseBatchFileController {
             if (target == null) {
                 return message("Skip");
             }
-            Node document = htmlParser.parse(TextFileTools.readTexts(srcFile));
+            String md = TextFileTools.readTexts(task, srcFile);
+            if (md == null) {
+                if (task == null || !task.isWorking()) {
+                    return message("Canceled");
+                } else {
+                    return message("Failed");
+                }
+            }
+            Node document = htmlParser.parse(md);
             String html = htmlRenderer.render(document);
-            String md = mdConverter.convert(html);
+            md = mdConverter.convert(html);
             TextFileTools.writeFile(target, md, Charset.forName("utf-8"));
             if (target.exists() && target.length() > 0) {
                 targetFileGenerated(target);

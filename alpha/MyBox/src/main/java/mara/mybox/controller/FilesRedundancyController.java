@@ -190,7 +190,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             if (f.getFileSize() > big) {
                 showStatus(MessageFormat.format(message("CalculatingDigest"), f.getFile().getAbsolutePath()), f);
             }
-            f.setData(ByteTools.bytesToHex(MessageDigestTools.MD5(f.getFile())));
+            f.setData(ByteTools.bytesToHex(MessageDigestTools.MD5(task, f.getFile())));
         }
         Collections.sort(files, new Comparator<FileNode>() {
             @Override

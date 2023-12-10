@@ -14,7 +14,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
 import static mara.mybox.fxml.WindowTools.taskError;
@@ -195,7 +195,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         return count;
     }
 
-    public long clearHistories(SingletonTask task, File srcFile) {
+    public long clearHistories(FxTask task, File srcFile) {
         long count = 0;
         if (srcFile == null) {
             return count;
@@ -210,7 +210,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         }
     }
 
-    public long clearHistories(SingletonTask task, Connection conn, List<String> files) {
+    public long clearHistories(FxTask task, Connection conn, List<String> files) {
         long count = 0;
         if (conn == null || files == null || files.isEmpty()) {
             return count;

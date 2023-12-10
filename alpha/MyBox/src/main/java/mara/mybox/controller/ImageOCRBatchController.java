@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -259,7 +258,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
 
     public BufferedImage preprocess(File srcFile) {
         try {
-            lastImage = ImageFileReaders.readImage(srcFile);
+            lastImage = ImageFileReaders.readImage(task, srcFile);
             if (lastImage == null) {
                 return null;
             }
@@ -272,7 +271,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             }
 
             if (rotate != 0) {
-                lastImage = TransformTools.rotateImage(lastImage, rotate);
+                lastImage = TransformTools.rotateImage(task, lastImage, rotate);
             }
             if (scale > 0 && scale != 1) {
                 lastImage = ScaleTools.scaleImageByScale(lastImage, scale);
@@ -281,69 +280,71 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             String algorithm = algorithmSelector.getValue();
             if (algorithm == null || algorithm.trim().isEmpty()) {
             } else if (message("GrayHistogramEqualization").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
+                imageContrast.setImage(lastImage).setTask(task);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("GrayHistogramStretching").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
-                imageContrast.setIntPara1(100);
-                imageContrast.setIntPara2(100);
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
+                imageContrast.setImage(lastImage).setTask(task).
+                        setIntPara1(100).setIntPara2(100);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("GrayHistogramShifting").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
-                imageContrast.setIntPara1(80);
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
+                imageContrast.setImage(lastImage).setIntPara1(80).setTask(task);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("HSBHistogramEqualization").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
+                imageContrast.setImage(lastImage).setTask(task);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("UnsharpMasking").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(task).operateImage();
 
             } else if ((message("Enhancement") + "-" + "FourNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(task).operateImage();
 
             } else if ((message("Enhancement") + "-" + "EightNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(task).operateImage();
 
             } else if (message("GaussianBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(task).operateImage();
 
             } else if (message("AverageBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(task).operateImage();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(task).operateImage();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(task).operateImage();
             }
 
             if (deskewCheck.isSelected()) {
@@ -358,7 +359,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (invertCheck.isSelected()) {
                 PixelsOperation pixelsOperation = PixelsOperationFactory.create(lastImage,
                         null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                lastImage = pixelsOperation.operateImage();
+                lastImage = pixelsOperation.setTask(task).operateImage();
             }
             return lastImage;
         } catch (Exception e) {
@@ -547,17 +548,14 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterHandleFiles() {
         if (textFiles != null && textFiles.size() > 1 && mergeCheck.isSelected()) {
             File mFile = new File(FileNameTools.append(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
-            if (TextFileTools.mergeTextFiles(textFiles, mFile)) {
-                popInformation(MessageFormat.format(message("FilesGenerated"), mFile.getAbsolutePath()));
+            if (TextFileTools.mergeTextFiles(task, textFiles, mFile)) {
                 targetFileGenerated(mFile);
             }
         }
         OCRinstance = null;
-        super.afterTask();
-
     }
 
 }

@@ -23,7 +23,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
@@ -370,11 +370,11 @@ public class WebBrowserController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                File tmpFile = HtmlReadTools.download(address);
+                File tmpFile = HtmlReadTools.download(this, address);
                 return FileTools.rename(tmpFile, dnFile);
             }
 

@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
@@ -67,7 +67,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             popError(message("WrongSourceCodesPath"));
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<File> icons = null;
 
             @Override
@@ -144,16 +144,20 @@ public class MyBoxIconsController extends BaseBatchFileController {
             BufferedImage srcImage = ImageIO.read(file);
 
             for (StyleColor style : StyleColor.values()) {
+                if (task == null || task.isCancelled()) {
+                    return message("Canceled");
+                }
                 if (style == StyleColor.Red || style == StyleColor.Customize) {
                     continue;
                 }
-                BufferedImage image = StyleTools.makeIcon(srcImage, color(style, true), color(style, false));
+                BufferedImage image = StyleTools.makeIcon(task, srcImage, color(style, true), color(style, false));
                 if (image == null) {
                     continue;
                 }
                 String tname = resourcePath + StyleTools.ButtonsSourcePath + style.name() + "/" + filename;
-                ImageFileWriters.writeImageFile(image, "png", tname);
-                targetFileGenerated(new File(tname));
+                if (ImageFileWriters.writeImageFile(task, image, "png", tname)) {
+                    targetFileGenerated(new File(tname));
+                }
             }
             return message("Successful");
         } catch (Exception e) {

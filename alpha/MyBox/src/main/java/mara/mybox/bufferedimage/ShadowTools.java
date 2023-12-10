@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
@@ -16,15 +17,15 @@ import mara.mybox.value.Colors;
  */
 public class ShadowTools {
 
-    public static BufferedImage addShadow(BufferedImage source, int shadowWidth, Color shadowColor) {
+    public static BufferedImage addShadow(FxTask task, BufferedImage source, int shadowWidth, Color shadowColor) {
         if (AlphaTools.hasAlpha(source)) {
-            return addShadowAlpha(source, shadowWidth, shadowColor);
+            return addShadowAlpha(task, source, shadowWidth, shadowColor);
         } else {
-            return addShadowNoAlpha(source, shadowWidth, shadowColor);
+            return addShadowNoAlpha(task, source, shadowWidth, shadowColor);
         }
     }
 
-    public static BufferedImage addShadowAlpha(BufferedImage source, int shadowWidth, Color shadowColor) {
+    public static BufferedImage addShadowAlpha(FxTask task, BufferedImage source, int shadowWidth, Color shadowColor) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -38,7 +39,13 @@ public class ShadowTools {
             float jOpacity;
             float opocity;
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         shadowImage.setRGB(i, j, 0);
@@ -64,6 +71,9 @@ public class ShadowTools {
                     shadowImage.setRGB(i, j, newColor.getRGB());
                 }
             }
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
             if (AppVariables.ImageHints != null) {
@@ -72,9 +82,18 @@ public class ShadowTools {
             Color bgColor = Colors.TRANSPARENT;
             g.setColor(bgColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.drawImage(shadowImage, shadowWidth, shadowWidth, null);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.drawImage(source, 0, 0, null);
             g.dispose();
             return target;
@@ -84,7 +103,7 @@ public class ShadowTools {
         }
     }
 
-    public static BufferedImage addShadowNoAlpha(BufferedImage source, int shadowWidth, Color shadowColor) {
+    public static BufferedImage addShadowNoAlpha(FxTask task, BufferedImage source, int shadowWidth, Color shadowColor) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -99,7 +118,13 @@ public class ShadowTools {
             Color newColor;
             Color alphaColor = ColorConvertTools.alphaColor();
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         shadowImage.setRGB(i, j, alphaColor.getRGB());
@@ -125,6 +150,9 @@ public class ShadowTools {
                     shadowImage.setRGB(i, j, newColor.getRGB());
                 }
             }
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
             if (AppVariables.ImageHints != null) {
@@ -132,9 +160,15 @@ public class ShadowTools {
             }
             g.setColor(alphaColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             g.drawImage(shadowImage, shadowWidth, shadowWidth, null);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.drawImage(source, 0, 0, null);
             g.dispose();
             return target;

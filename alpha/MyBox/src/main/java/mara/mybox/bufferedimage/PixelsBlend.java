@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -122,7 +123,7 @@ public abstract class PixelsBlend {
         alpha = (int) (foreColor.getAlpha() * w + backColor.getAlpha() * (1.0f - w));
     }
 
-    public BufferedImage blend(BufferedImage overlay, BufferedImage baseImage, int x, int y) {
+    public BufferedImage blend(FxTask task, BufferedImage overlay, BufferedImage baseImage, int x, int y) {
         try {
             if (overlay == null || baseImage == null) {
                 return null;
@@ -130,8 +131,16 @@ public abstract class PixelsBlend {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             DoubleRectangle rect = DoubleRectangle.xywh(x, y, overlay.getWidth(), overlay.getHeight());
             BufferedImage target = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), imageType);
-            for (int j = 0; j < baseImage.getHeight(); ++j) {
-                for (int i = 0; i < baseImage.getWidth(); ++i) {
+            int height = baseImage.getHeight();
+            int width = baseImage.getWidth();
+            for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int basePixel = baseImage.getRGB(i, j);
                     if (DoubleShape.contains(rect, i, j)) {
                         int overlayPixel = overlay.getRGB(i - x, j - y);
@@ -186,7 +195,7 @@ public abstract class PixelsBlend {
         return (int) (A * w + B * (1.0f - w));
     }
 
-    public static BufferedImage blend(BufferedImage overlay, BufferedImage baseImage,
+    public static BufferedImage blend(FxTask task, BufferedImage overlay, BufferedImage baseImage,
             int x, int y, PixelsBlend blender) {
         try {
             if (overlay == null || baseImage == null || blender == null) {
@@ -196,7 +205,13 @@ public abstract class PixelsBlend {
             DoubleRectangle rect = DoubleRectangle.xywh(x, y, overlay.getWidth(), overlay.getHeight());
             BufferedImage target = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), imageType);
             for (int j = 0; j < baseImage.getHeight(); ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < baseImage.getWidth(); ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int basePixel = baseImage.getRGB(i, j);
                     if (DoubleShape.contains(rect, i, j)) {
                         int overlayPixel = overlay.getRGB(i - x, j - y);

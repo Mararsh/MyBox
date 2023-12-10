@@ -91,7 +91,7 @@ public class HtmlSetEquivController extends BaseBatchHtmlController {
 
     @Override
     public String covertHtml(File srcFile, Charset charset) {
-        return HtmlWriteTools.setEquiv(srcFile, charset, key, value);
+        return HtmlWriteTools.setEquiv(task, srcFile, charset, key, value);
     }
 
 }

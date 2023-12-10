@@ -8,9 +8,9 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.data.ImageClipboard;
 import static mara.mybox.fxml.ImageClipboardMonitor.DefaultInterval;
+import static mara.mybox.value.AppVariables.ImageClipMonitor;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.AppVariables.ImageClipMonitor;
 
 /**
  * @Author Mara
@@ -124,7 +124,7 @@ public class ImageClipboardTools {
         if (controller == null || image == null) {
             return;
         }
-        if (ImageClipboard.add(image, source) != null) {
+        if (ImageClipboard.add(null, image, source) != null) {
             controller.popInformation(message("CopiedInMyBoxClipBoard"));
         } else {
             controller.popFailed();

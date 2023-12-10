@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Languages;
 
@@ -85,7 +85,7 @@ public class SecurityCertificatesAddController extends BaseChildController {
         }
         final String alias = result.get().trim();
 
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -142,7 +142,7 @@ public class SecurityCertificatesAddController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String result;
 
             @Override

@@ -15,6 +15,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.MainExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
@@ -172,7 +173,7 @@ public class MicrosoftDocumentTools {
             for (int i = 0; i < columns.size(); i++) {
                 sheet.autoSizeColumn(i);
             }
-            try ( OutputStream fileOut = new FileOutputStream(file)) {
+            try (OutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
             }
             return true;
@@ -208,7 +209,7 @@ public class MicrosoftDocumentTools {
                     cell.setCellValue(values.get(j));
                 }
             }
-            try ( OutputStream fileOut = new FileOutputStream(file)) {
+            try (OutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
             }
             return true;
@@ -221,7 +222,7 @@ public class MicrosoftDocumentTools {
 
     public static Document word97ToDoc(File srcFile) {
         Document doc = null;
-        try ( HWPFDocument wordDocument = new HWPFDocument(new FileInputStream(srcFile))) {
+        try (HWPFDocument wordDocument = new HWPFDocument(new FileInputStream(srcFile))) {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             WordToHtmlConverter converter = new WordToHtmlConverter(doc);
             converter.processDocument(wordDocument);
@@ -275,19 +276,19 @@ public class MicrosoftDocumentTools {
         }
     }
 
-    public static String word2Html(File srcFile, Charset charset) {
+    public static String word2Html(FxTask task, File srcFile, Charset charset) {
         try {
             File htmlFile = word2HtmlFile(srcFile, charset);
-            return TextFileTools.readTexts(htmlFile, charset);
+            return TextFileTools.readTexts(task, htmlFile, charset);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static HSLFPictureShape imageShape(HSLFSlideShow ppt, BufferedImage image, String format) {
+    public static HSLFPictureShape imageShape(FxTask task, HSLFSlideShow ppt, BufferedImage image, String format) {
         try {
-            byte[] bytes = ByteTools.imageToBytes(image, format);
+            byte[] bytes = ByteTools.imageToBytes(task, image, format);
             PictureType type;
             if ("png".equalsIgnoreCase(format)) {
                 type = PictureType.PNG;
@@ -313,7 +314,7 @@ public class MicrosoftDocumentTools {
 
     public static String extractText(File srcFile) {
         String text = null;
-        try ( POITextExtractor extractor = ExtractorFactory.createExtractor(srcFile)) {
+        try (POITextExtractor extractor = ExtractorFactory.createExtractor(srcFile)) {
             text = extractor.getText();
         } catch (Exception e) {
             MyBoxLog.error(e);

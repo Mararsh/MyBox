@@ -1,13 +1,10 @@
 package mara.mybox.fxml.cell;
 
-import javafx.application.Platform;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -21,6 +18,7 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
     public TableCell<T, ImageInformation> call(TableColumn<T, ImageInformation> param) {
         final ImageView imageview = new ImageView();
         imageview.setPreserveRatio(true);
+
         TableCell<T, ImageInformation> cell = new TableCell<T, ImageInformation>() {
             @Override
             public void updateItem(ImageInformation item, boolean empty) {
@@ -30,25 +28,11 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
                 if (empty || item == null) {
                     return;
                 }
-                new Thread() {
-                    @Override
-                    public void run() {
-                        int width = item.getWidth() > AppVariables.thumbnailWidth
-                                ? AppVariables.thumbnailWidth : (int) item.getWidth();
-                        Image image = item.loadThumbnail(width);
-                        if (image != null) {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    imageview.setImage(image);
-                                    imageview.setRotate(item.getThumbnailRotation());
-                                    imageview.setFitWidth(width);
-                                    setGraphic(imageview);
-                                }
-                            });
-                        }
-                    }
-                }.start();
+                ImageInfoCellTask task = new ImageInfoCellTask()
+                        .setCell(this).setView(imageview).setItem(item);
+                Thread thread = new Thread(task);
+                thread.setDaemon(false);
+                thread.start();
             }
         };
         return cell;

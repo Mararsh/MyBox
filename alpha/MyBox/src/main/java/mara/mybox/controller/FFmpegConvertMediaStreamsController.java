@@ -5,7 +5,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 
@@ -32,7 +32,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
         processStartTime = new Date();
         totalFilesHandled = 0;
         updateInterface("Started");
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             public Void call() {

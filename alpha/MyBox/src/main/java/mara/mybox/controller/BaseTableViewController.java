@@ -27,9 +27,9 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -515,7 +515,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             popError(message("NoData"));
             return;
         }
-        SingletonTask dataTask = new SingletonTask<Void>(this) {
+        FxTask dataTask = new FxTask<Void>(this) {
             private List<String> names;
             private List<List<String>> data;
 
@@ -571,12 +571,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
             popError(message("NoData"));
             return;
         }
-        SingletonTask htmlTask = new SingletonTask<Void>(this) {
+        FxTask htmlTask = new FxTask<Void>(this) {
             private StringTable table;
 
             @Override
             protected boolean handle() {
-                table = makeStringTable();
+                table = makeStringTable(this);
                 return table != null;
             }
 
@@ -588,7 +588,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         start(htmlTask, false, message("LoadingTableData"));
     }
 
-    protected StringTable makeStringTable() {
+    protected StringTable makeStringTable(FxTask task) {
         try {
             List<String> names = new ArrayList<>();
             int rowsSelectionColumnIndex = -1;
@@ -622,7 +622,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                             width = (int) image.getWidth();
                         }
                         if (image != null) {
-                            String base64 = FxImageTools.base64(image, "png");
+                            String base64 = FxImageTools.base64(task, image, "png");
                             if (base64 != null) {
                                 s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
                             }

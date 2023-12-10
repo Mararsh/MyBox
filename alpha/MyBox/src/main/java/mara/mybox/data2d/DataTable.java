@@ -22,7 +22,7 @@ import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
@@ -399,11 +399,11 @@ public class DataTable extends Data2D {
         return tableData2DDefinition.deleteUserTable(conn, name);
     }
 
-    public DataFileCSV query(String dname, SingletonTask task, String query, String rowNumberName) {
+    public DataFileCSV query(String dname, FxTask task, String query, String rowNumberName) {
         return query(dname, task, query, rowNumberName, scale, InvalidAs.Blank);
     }
 
-    public DataFileCSV query(String dname, SingletonTask task, String query, String rowNumberName,
+    public DataFileCSV query(String dname, FxTask task, String query, String rowNumberName,
             int dscale, InvalidAs invalidAs) {
         if (query == null || query.isBlank()) {
             return null;

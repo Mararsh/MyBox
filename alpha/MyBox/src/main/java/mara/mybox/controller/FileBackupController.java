@@ -1,46 +1,38 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
-import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.FileBackup;
 import static mara.mybox.db.data.FileBackup.Default_Max_Backups;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.FxBackgroundTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonBackgroundTask;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.fxml.cell.TableImageFileCell;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppPaths;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -56,7 +48,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
     protected int maxBackups;
 
     @FXML
-    protected TableColumn<FileBackup, File> backupColumn;
+    protected TableColumn<FileBackup, String> backupColumn;
     @FXML
     protected TableColumn<FileBackup, Long> sizeColumn;
     @FXML
@@ -86,53 +78,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("recordTime"));
             timeColumn.setCellFactory(new TableDateCell());
 
-            backupColumn.setCellValueFactory(new PropertyValueFactory<>("backup"));
-            backupColumn.setCellFactory(new Callback<TableColumn<FileBackup, File>, TableCell<FileBackup, File>>() {
-                @Override
-                public TableCell<FileBackup, File> call(TableColumn<FileBackup, File> param) {
-
-                    TableCell<FileBackup, File> cell = new TableCell<FileBackup, File>() {
-                        private final ImageView view;
-
-                        {
-                            setContentDisplay(ContentDisplay.LEFT);
-                            view = new ImageView();
-                            view.setPreserveRatio(true);
-                        }
-
-                        @Override
-                        public void updateItem(File item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (empty || item == null) {
-                                setText(null);
-                                setGraphic(null);
-                                return;
-                            }
-                            setText(item.getName());
-                            if (parentController instanceof BaseImageController) {
-                                new Thread() {
-                                    @Override
-                                    public void run() {
-                                        int width = AppVariables.thumbnailWidth;
-                                        BufferedImage bufferedImage = ImageFileReaders.readImage(item, width);
-                                        if (bufferedImage != null) {
-                                            Platform.runLater(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    view.setFitWidth(width);
-                                                    view.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
-                                                    setGraphic(view);
-                                                }
-                                            });
-                                        }
-                                    }
-                                }.start();
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
+            backupColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -149,6 +95,9 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
             baseName = parent.baseName;
             sourceFile = parentController.sourceFile;
             tableFileBackup = new TableFileBackup();
+            if (parentController instanceof BaseImageController) {
+                backupColumn.setCellFactory(new TableImageFileCell());
+            }
 
             fileLabel.setText(sourceFile.getAbsolutePath());
             setTitle(baseTitle + " - " + sourceFile.getAbsolutePath());
@@ -226,7 +175,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonBackgroundTask<Void>(this) {
+        task = new FxBackgroundTask<Void>(this) {
             private List<FileBackup> list;
 
             @Override
@@ -270,7 +219,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private int deletedCount = 0;
 
             @Override
@@ -312,7 +261,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private long deletedCount = 0;
 
@@ -375,7 +324,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -416,7 +365,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
 
     @FXML
     public void openPath() {
-        SingletonTask pathtask = new SingletonCurrentTask<Void>(this) {
+        FxTask pathtask = new FxSingletonTask<Void>(this) {
             File path;
 
             @Override

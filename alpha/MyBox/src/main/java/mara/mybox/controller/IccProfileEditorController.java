@@ -46,7 +46,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
@@ -709,7 +709,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             inputName = message("File") + ": " + name;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private File file;
             private IccProfile p;
@@ -786,7 +786,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
         resetMarkLabel(headerBox);
         inputsValid = true;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private String xml;
 
@@ -1052,7 +1052,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1643,7 +1643,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private String display, bytes;
 
@@ -1767,7 +1767,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1846,7 +1846,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1962,7 +1962,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.scene.paint.Color;
+import mara.mybox.controller.BaseController;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -162,12 +164,12 @@ public class Data2DTools {
         return columns;
     }
 
-    public static DataFileCSV definitionFromXML(String s) {
+    public static DataFileCSV definitionFromXML(FxTask task, BaseController controller, String s) {
         try {
             if (s == null || s.isBlank()) {
                 return null;
             }
-            Element e = XmlTools.toElement(null, s);
+            Element e = XmlTools.toElement(task, controller, s);
             if (e == null) {
                 return null;
             }

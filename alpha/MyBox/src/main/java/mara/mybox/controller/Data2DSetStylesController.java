@@ -13,7 +13,7 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -364,7 +364,7 @@ public class Data2DSetStylesController extends BaseController {
         if (!pickValues()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {

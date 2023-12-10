@@ -12,6 +12,7 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -61,7 +62,11 @@ public class HtmlSetCharsetController extends BaseBatchHtmlController {
 
     @Override
     public String covertHtml(File srcFile, Charset charset) {
-        return HtmlWriteTools.setCharset(TextFileTools.readTexts(srcFile), charset);
+        String html = TextFileTools.readTexts(task, srcFile);
+        if (html == null || (task != null && !task.isWorking())) {
+            return message("Canceled");
+        }
+        return HtmlWriteTools.setCharset(task, html, charset);
     }
 
 }

@@ -158,7 +158,10 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         if (file == null || !file.exists()) {
             return -1;
         }
-        File validFile = FileTools.removeBOM(file);
+        File validFile = FileTools.removeBOM(task, file);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return -1;
+        }
         try (Connection conn = DerbyBase.getConnection();
                 BufferedReader reader = new BufferedReader(new FileReader(validFile, TextFileTools.charset(validFile)))) {
             conn.setAutoCommit(false);
@@ -190,6 +193,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             Date time;
             long parentid, baseTime = new Date().getTime();
             while (line != null) {
+                if (task != null && !task.isWorking()) {
+                    return -1;
+                }
                 parentid = getParent(conn, line);
                 if (parentid < -1) {
                     break;
@@ -200,6 +206,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 }
                 if (line.isBlank()) {
                     while ((line = reader.readLine()) != null && line.isBlank()) {
+                        if (task != null && !task.isWorking()) {
+                            return -1;
+                        }
                     }
                     continue;
                 }
@@ -226,6 +235,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     value = line;
                     if (value != null && !line.isBlank()) {
                         while ((line = reader.readLine()) != null && !line.isBlank()) {
+                            if (task != null && !task.isWorking()) {
+                                return -1;
+                            }
                             value += System.lineSeparator() + line;
                         }
                         if (isWebFavorite) {
@@ -236,7 +248,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                             }
                             if (more == null || more.isBlank()) {
                                 try {
-                                    File iconFile = IconTools.readIcon(value, downIcon);
+                                    File iconFile = IconTools.readIcon(task, value, downIcon);
                                     if (iconFile != null && iconFile.exists()) {
                                         more = iconFile.getAbsolutePath();
                                     }
@@ -256,6 +268,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     count++;
                 }
                 while ((line = reader.readLine()) != null && line.isBlank()) {
+                    if (task != null && !task.isWorking()) {
+                        return -1;
+                    }
                 }
             }
             conn.commit();
@@ -316,7 +331,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     }
                     if (info != null && !info.isBlank() && isWebFavorite) {
                         try {
-                            File iconFile = IconTools.readIcon(info, downIcon);
+                            File iconFile = IconTools.readIcon(task, info, downIcon);
                             if (iconFile != null && iconFile.exists()) {
                                 info += InfoNode.ValueSeparater + "\n" + iconFile.getAbsolutePath();
                             }

@@ -23,8 +23,8 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -47,7 +47,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfViewController extends PdfViewController_Html {
 
     protected SimpleBooleanProperty infoLoaded;
-    protected SingletonTask outlineTask;
+    protected FxTask outlineTask;
 
     @FXML
     protected CheckBox transparentBackgroundCheck, bookmarksCheck,
@@ -300,7 +300,7 @@ public class PdfViewController extends PdfViewController_Html {
         pageSelector.getItems().clear();
         isSettingValues = false;
         pageLabel.setText("");
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -378,7 +378,7 @@ public class PdfViewController extends PdfViewController_Html {
             return;
         }
         outlineTree.setRoot(null);
-        outlineTask = new SingletonTask<Void>(this) {
+        outlineTask = new FxTask<Void>(this) {
             private TreeItem outlineRoot;
 
             @Override

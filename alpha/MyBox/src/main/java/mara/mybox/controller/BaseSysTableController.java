@@ -10,7 +10,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -125,7 +125,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -156,7 +156,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

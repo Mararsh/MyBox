@@ -12,7 +12,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class Data2D_Filter extends Data2D_Data {
 
-    public void startTask(SingletonTask task, DataFilter filter) {
+    public void startTask(FxTask task, DataFilter filter) {
         this.task = task;
         this.filter = filter;
         startFilter();

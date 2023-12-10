@@ -47,12 +47,18 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             int mod = data.size() / k;
             for (int i = 0; i < dataSize; i = i + mod) {
+                if (task != null && !task.isWorking()) {
+                    return;
+                }
                 centers.add(data.get(i));
                 if (centers.size() == k) {
                     return;
                 }
             }
             while (centers.size() < k) {
+                if (task != null && !task.isWorking()) {
+                    return;
+                }
                 int index = new Random().nextInt(dataSize);
                 Color d = data.get(index);
                 if (!centers.contains(d)) {
@@ -108,6 +114,9 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             long maxCount = 0;
             Color centerColor = null;
             for (Integer index : cluster) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 Color regionColor = data.get(index);
                 Long colorCount = regionQuantization.rgbPalette.counts.get(regionColor);
                 if (colorCount != null && colorCount > maxCount) {
@@ -134,6 +143,9 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                 mappedColor = regionColor;
                 int minDistance = Integer.MAX_VALUE;
                 for (int i = 0; i < centers.size(); ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     Color centerColor = centers.get(i);
                     int distance = ColorMatchTools.calculateColorDistanceSquare(regionColor, centerColor);
                     if (distance < minDistance) {

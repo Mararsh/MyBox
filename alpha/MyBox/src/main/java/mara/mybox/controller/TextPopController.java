@@ -11,7 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -102,14 +102,14 @@ public class TextPopController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private String texts;
 
             @Override
             protected boolean handle() {
                 try {
-                    texts = TextFileTools.readTexts(new File(filename));
+                    texts = TextFileTools.readTexts(this, new File(filename));
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -191,7 +191,7 @@ public class TextPopController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {

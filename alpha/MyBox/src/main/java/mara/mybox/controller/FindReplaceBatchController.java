@@ -109,7 +109,7 @@ public abstract class FindReplaceBatchController extends BaseBatchFileController
             if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {
                 return null;
             }
-            fileInfo.setLineBreak(TextTools.checkLineBreak(file));
+            fileInfo.setLineBreak(TextTools.checkLineBreak(task, file));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
         }
         fileInfo.setPagesNumber(2);

@@ -30,12 +30,12 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ImageColorsBatchController extends BaseImageEditBatchController {
-
+    
     private int colorValue, valueMax;
     private OperationType colorOperationType;
     private ColorActionType colorActionType;
     private PixelsBlend blend;
-
+    
     @FXML
     protected ToggleGroup colorGroup, opGroup;
     @FXML
@@ -61,31 +61,31 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
     protected FlowPane replacePane;
     @FXML
     protected ControlImagesBlend blendController;
-
+    
     public ImageColorsBatchController() {
         baseTitle = message("ImageManufactureBatchColor");
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
-
+    
     @Override
     public void initOptionsSection() {
         try {
             super.initOptionsSection();
-
+            
             colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -93,7 +93,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 }
             });
             checkOperationType();
-
+            
             colorInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -101,9 +101,9 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 }
             });
             checkColorInput();
-
+            
             colorSetController.init(this, baseName + "ValueColor", Color.RED);
-
+            
             hueCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceHue", false));
             hueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -111,7 +111,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                     UserConfig.setBoolean(baseName + "ReplaceHue", hueCheck.isSelected());
                 }
             });
-
+            
             saturationCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceSaturation", false));
             saturationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -119,7 +119,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                     UserConfig.setBoolean(baseName + "ReplaceSaturation", saturationCheck.isSelected());
                 }
             });
-
+            
             brightnessCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceBrightness", false));
             brightnessCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -127,9 +127,9 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                     UserConfig.setBoolean(baseName + "ReplaceBrightness", brightnessCheck.isSelected());
                 }
             });
-
+            
             blendController.setParameters(this);
-
+            
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -137,25 +137,25 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 }
             });
             checkColorActionType();
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     private void checkOperationType() {
         setBox.getChildren().clear();
-
+        
         if (colorColorRadio.isSelected()) {
             colorOperationType = OperationType.Color;
             setBox.getChildren().addAll(colorBox, replacePane);
             ignoreTransparentCheck.setVisible(true);
-
+            
         } else if (colorBlendRadio.isSelected()) {
             colorOperationType = OperationType.Blend;
             setBox.getChildren().addAll(colorBox, blendBox);
             ignoreTransparentCheck.setVisible(false);
-
+            
         } else {
             setBox.getChildren().addAll(valueBox);
             colorSetRadio.setDisable(false);
@@ -166,7 +166,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
             colorSetRadio.setSelected(true);
             valueMax = 255;
             ignoreTransparentCheck.setVisible(true);
-
+            
             if (colorRGBRadio.isSelected()) {
                 colorOperationType = OperationType.RGB;
                 if (colorInput.getText().trim().isEmpty()) {
@@ -175,7 +175,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 colorSetRadio.setDisable(true);
                 colorFilterRadio.setDisable(true);
                 colorInvertRadio.setSelected(true);
-
+                
             } else if (colorBrightnessRadio.isSelected()) {
                 colorOperationType = OperationType.Brightness;
                 if (colorInput.getText().trim().isEmpty()) {
@@ -184,7 +184,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 colorFilterRadio.setDisable(true);
                 colorInvertRadio.setDisable(true);
                 valueMax = 100;
-
+                
             } else if (colorSaturationRadio.isSelected()) {
                 colorOperationType = OperationType.Saturation;
                 if (colorInput.getText().trim().isEmpty()) {
@@ -193,7 +193,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 colorFilterRadio.setDisable(true);
                 colorInvertRadio.setDisable(true);
                 valueMax = 100;
-
+                
             } else if (colorHueRadio.isSelected()) {
                 colorOperationType = OperationType.Hue;
                 valueMax = 360;
@@ -203,49 +203,49 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 colorFilterRadio.setDisable(true);
                 colorInvertRadio.setDisable(true);
                 valueMax = 360;
-
+                
             } else if (colorRedRadio.isSelected()) {
                 colorOperationType = OperationType.Red;
                 valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
-
+                
             } else if (colorGreenRadio.isSelected()) {
                 colorOperationType = OperationType.Green;
                 valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
-
+                
             } else if (colorBlueRadio.isSelected()) {
                 colorOperationType = OperationType.Blue;
                 valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
-
+                
             } else if (colorYellowRadio.isSelected()) {
                 colorOperationType = OperationType.Yellow;
                 valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
-
+                
             } else if (colorCyanRadio.isSelected()) {
                 colorOperationType = OperationType.Cyan;
                 valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
-
+                
             } else if (colorMagentaRadio.isSelected()) {
                 colorOperationType = OperationType.Magenta;
                 valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
-
+                
             } else if (colorOpacityRadio.isSelected()) {
                 colorOperationType = OperationType.Opacity;
                 valueMax = 255;
@@ -254,17 +254,17 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
                 }
                 colorInvertRadio.setDisable(true);
                 colorFilterRadio.setDisable(true);
-
+                
             }
-
+            
             colorUnit.setText("0-" + valueMax);
-
+            
         }
-
+        
         refreshStyle(setBox);
-
+        
     }
-
+    
     private void checkColorInput() {
         try {
             colorValue = Integer.parseInt(colorInput.getText());
@@ -277,7 +277,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
             colorInput.setStyle(UserConfig.badStyle());
         }
     }
-
+    
     private void checkColorActionType() {
         if (colorSetRadio.isSelected()) {
             colorActionType = ColorActionType.Set;
@@ -293,7 +293,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
             colorActionType = ColorActionType.Set;
         }
     }
-
+    
     @Override
     public boolean makeMoreParameters() {
         if (formatController != null) {
@@ -308,7 +308,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
         }
         return super.makeMoreParameters();
     }
-
+    
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         if (null == colorOperationType || colorActionType == null) {
@@ -316,8 +316,9 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
         }
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(source, null,
-                    colorOperationType, colorActionType);
-            pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    colorOperationType, colorActionType)
+                    .setSkipTransparent(ignoreTransparentCheck.isSelected())
+                    .setTask(task);
             switch (colorOperationType) {
                 case Color:
                     pixelsOperation.setColorPara1(colorSetController.awtColor())
@@ -354,7 +355,7 @@ public class ImageColorsBatchController extends BaseImageEditBatchController {
             MyBoxLog.error(e);
             return null;
         }
-
+        
     }
-
+    
 }

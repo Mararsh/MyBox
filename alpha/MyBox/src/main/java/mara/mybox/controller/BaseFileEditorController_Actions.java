@@ -8,8 +8,8 @@ import javafx.geometry.Point2D;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -76,7 +76,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             return;
         }
         sourceInformation.setFile(file);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -110,7 +110,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -163,7 +163,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         }
         targetInformation.setLineBreak(lineBreak);
         targetInformation.setLineBreakValue(TextTools.lineBreakValue(lineBreak));
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -228,7 +228,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonCurrentTask<Void>(this) {
+                task = new FxSingletonTask<Void>(this) {
 
                     String text;
 
@@ -271,7 +271,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonCurrentTask<Void>(this) {
+                task = new FxSingletonTask<Void>(this) {
 
                     String text;
 
@@ -324,7 +324,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonCurrentTask<Void>(this) {
+                task = new FxSingletonTask<Void>(this) {
 
                     String text;
 
@@ -379,7 +379,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonCurrentTask<Void>(this) {
+                task = new FxSingletonTask<Void>(this) {
 
                     String text;
 
@@ -415,7 +415,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 && !checkBeforeNextAction()) {
             return;
         }
-        SingletonTask filterTask = new SingletonTask<Void>(this) {
+        FxTask filterTask = new FxTask<Void>(this) {
 
             private File filteredFile;
             private String finalCondition;
@@ -430,7 +430,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     filterInfo = FileEditInformation.create(editType, tmpfile);
                     filterConditionsString = "";
                     if (editType != Edit_Type.Bytes) {
-                        filterInfo.setLineBreak(TextTools.checkLineBreak(tmpfile));
+                        filterInfo.setLineBreak(TextTools.checkLineBreak(this, tmpfile));
                         filterInfo.setLineBreakValue(TextTools.lineBreakValue(filterInfo.getLineBreak()));
                     } else {
                         filterInfo.setLineBreak(sourceInformation.getLineBreak());

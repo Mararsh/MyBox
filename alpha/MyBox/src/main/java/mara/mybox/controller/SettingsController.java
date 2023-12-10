@@ -36,8 +36,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
@@ -710,7 +710,7 @@ public class SettingsController extends BaseController {
                     return;
                 }
                 popInformation(message("CopyingFilesFromTo"));
-                if (FileCopyTools.copyWholeDirectory(new File(oldPath), new File(newPath), null, false)) {
+                if (FileCopyTools.copyWholeDirectory(null, new File(oldPath), new File(newPath), null, false)) {
                     File lckFile = new File(newPath + File.separator
                             + "mybox_derby" + File.separator + "db.lck");
                     if (lckFile.exists()) {
@@ -798,7 +798,7 @@ public class SettingsController extends BaseController {
         }
         DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
         ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String ret;
 
             @Override

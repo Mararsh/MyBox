@@ -617,7 +617,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 writer.write("</H4>\n");
             }
             writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
-            String infoHtml = InfoNode.infoHtml(node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
+            String infoHtml = InfoNode.infoHtml(task, this, node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
             if (infoHtml != null && !infoHtml.isBlank()) {
                 writer.write(indent + indent + indent + infoHtml + "\n");
             }
@@ -711,7 +711,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                         .append("\"").append(message("Tags")).append("\": ")
                         .append(JsonTools.encode(t));
             }
-            String infoJson = InfoNode.infoJson(node.getCategory(), node.getInfo(), indent + indent);
+            String infoJson = InfoNode.infoJson(task, this, node.getCategory(), node.getInfo(), indent + indent);
             if (infoJson != null && !infoJson.isBlank()) {
                 s.append(infoJson);
             }

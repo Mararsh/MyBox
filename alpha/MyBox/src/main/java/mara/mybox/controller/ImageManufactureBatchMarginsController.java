@@ -31,7 +31,6 @@ import mara.mybox.value.UserConfig;
 public class ImageManufactureBatchMarginsController extends BaseImageEditBatchController {
 
     protected int width, distance;
-    private ImageManufactureMarginsController.OperationType opType;
 
     @FXML
     protected ToggleGroup opGroup;
@@ -48,7 +47,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageEditBatchCo
     @FXML
     protected TextField distanceInput;
     @FXML
-    protected RadioButton blurMarginsRadio;
+    protected RadioButton dragRadio, addRadio, blurRadio, cutColorRadio, cutWidthRadio;
 
     public ImageManufactureBatchMarginsController() {
         baseTitle = Languages.message("ImageManufactureBatchMargins");
@@ -126,27 +125,22 @@ public class ImageManufactureBatchMarginsController extends BaseImageEditBatchCo
     private void checkOperationType() {
         setPane.getChildren().clear();
 
-        RadioButton selected = (RadioButton) opGroup.getSelectedToggle();
-        if (Languages.message("AddMargins").equals(selected.getText())) {
-            opType = ImageManufactureMarginsController.OperationType.AddMargins;
+        if (addRadio.isSelected()) {
             setPane.getChildren().addAll(colorBox, widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
-        } else if (Languages.message("CutMarginsByWidth").equals(selected.getText())) {
-            opType = ImageManufactureMarginsController.OperationType.CutMarginsByWidth;
+        } else if (cutWidthRadio.isSelected()) {
             setPane.getChildren().addAll(widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
-        } else if (Languages.message("CutMarginsByColor").equals(selected.getText())) {
-            opType = ImageManufactureMarginsController.OperationType.CutMarginsByColor;
+        } else if (cutColorRadio.isSelected()) {
             setPane.getChildren().addAll(colorBox, distanceBox);
             marginWidthBox.getEditor().setStyle(null);
             checkColor();
 
-        } else if (Languages.message("BlurMargins").equals(selected.getText())) {
-            opType = ImageManufactureMarginsController.OperationType.BlurMargins;
+        } else if (blurRadio.isSelected()) {
             setPane.getChildren().addAll(widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
@@ -189,33 +183,30 @@ public class ImageManufactureBatchMarginsController extends BaseImageEditBatchCo
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
-            BufferedImage target;
-            switch (opType) {
-                case CutMarginsByWidth:
-                    target = MarginTools.cutMargins(source,
-                            FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()),
-                            marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                            marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                    break;
-                case CutMarginsByColor:
-                    target = MarginTools.cutMargins(source,
-                            width,
-                            marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                            marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                    break;
-                case AddMargins:
-                    target = MarginTools.addMargins(source,
-                            FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()), width,
-                            marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                            marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                    break;
-                case BlurMargins:
-                    target = MarginTools.blurMarginsAlpha(source,
-                            width, marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                            marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                    break;
-                default:
-                    return null;
+            BufferedImage target = null;
+            if (addRadio.isSelected()) {
+                target = MarginTools.addMargins(task, source,
+                        FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()), width,
+                        marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                        marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+
+            } else if (cutWidthRadio.isSelected()) {
+                target = MarginTools.cutMargins(task, source,
+                        FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()),
+                        marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                        marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+
+            } else if (cutColorRadio.isSelected()) {
+                target = MarginTools.cutMargins(task, source,
+                        width,
+                        marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                        marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+
+            } else if (blurRadio.isSelected()) {
+                target = MarginTools.blurMarginsAlpha(task, source,
+                        width, marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                        marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+
             }
 
             return target;

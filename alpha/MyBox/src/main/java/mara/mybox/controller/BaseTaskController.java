@@ -14,7 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -118,7 +118,7 @@ public class BaseTaskController extends BaseLogs {
     }
 
     public void startTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

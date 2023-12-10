@@ -22,8 +22,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -37,7 +37,7 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
 
     protected final int ThumbWidth = 200;
     protected int percent;
-    protected SingletonTask thumbTask;
+    protected FxTask thumbTask;
     protected LoadingController loading;
     protected Process process;
 
@@ -375,7 +375,7 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         if (task != null && !task.isQuit()) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image image;
 
@@ -437,7 +437,7 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         if (missed.isEmpty()) {
             return;
         }
-        thumbTask = new SingletonTask<Void>(this) {
+        thumbTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {

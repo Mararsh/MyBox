@@ -25,6 +25,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
@@ -751,17 +752,34 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     @FXML
     public void goXml() {
-        try {
-            Element e = XmlTools.toElement(this, xmlArea.getText());
-            updateXmlCount();
-            if (e == null) {
-                return;
-            }
-            element = (Element) doc.importNode(e, true);
-            loadElement(element);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                try {
+                    Element e = XmlTools.toElement(this, myController, xmlArea.getText());
+                    if (e == null || !isWorking()) {
+                        return false;
+                    }
+                    element = (Element) doc.importNode(e, true);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                updateXmlCount();
+                loadElement(element);
+            }
+
+        };
+        start(task);
+
     }
 
     @FXML

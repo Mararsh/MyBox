@@ -23,13 +23,13 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
+import static mara.mybox.tools.FileTmpTools.getTempFile;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.tools.TextTools.delimiterValue;
-import static mara.mybox.tools.FileTmpTools.getTempFile;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -170,7 +170,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             dataSize = reader.getRowIndex();
         }
         rowsNumber = dataSize;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             tableData2DDefinition.updateData(conn, this);
         } catch (Exception e) {
             if (backgroundTask != null) {
@@ -209,10 +209,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
             return;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles)) {
+        try (PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles)) {
             statement.setLong(1, d2did);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Data2DStyle style = tableData2DStyle.readData(results);
                     if (style != null) {
@@ -296,7 +296,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return dataSize;
     }
 
-    public String encodeCSV(SingletonTask task, String delimiterName,
+    public String encodeCSV(FxTask task, String delimiterName,
             boolean displayRowNames, boolean displayColNames, boolean formatValues) {
         if (!isColumnsValid() || delimiterName == null) {
             return "";
@@ -308,7 +308,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (tmpFile == null || !tmpFile.exists()) {
                 return "";
             }
-            String page = TextFileTools.readTexts(tmpFile, Charset.forName("UTF-8"));
+            String page = TextFileTools.readTexts(task, tmpFile, Charset.forName("UTF-8"));
             FileDeleteTools.delete(tmpFile);
             return page;
         } catch (Exception e) {
@@ -317,7 +317,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public List<List<String>> decodeCSV(SingletonTask task, String text, String delimiterName, boolean hasHeader) {
+    public List<List<String>> decodeCSV(FxTask task, String text, String delimiterName, boolean hasHeader) {
         if (text == null || delimiterName == null) {
             return null;
         }
@@ -328,7 +328,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (tmpFile == null || !tmpFile.exists()) {
                 return null;
             }
-            try ( CSVParser parser = CsvTools.csvParser(tmpFile, delimiterValue(delimiterName), hasHeader)) {
+            try (CSVParser parser = CsvTools.csvParser(tmpFile, delimiterValue(delimiterName), hasHeader)) {
                 if (hasHeader) {
                     data.add(parser.getHeaderNames());
                 }
@@ -367,7 +367,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public boolean saveAttributes() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return saveAttributes(conn, (Data2D) this, columns);
         } catch (Exception e) {
             if (task != null) {
@@ -379,7 +379,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public static boolean saveAttributes(Data2D source, Data2D target) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             target.cloneAttributes(source);
             if (!saveAttributes(conn, target, source.getColumns())) {
                 return false;
@@ -398,7 +398,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         if (d == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return saveAttributes(conn, d, cols);
         } catch (Exception e) {
             if (d.getTask() != null) {

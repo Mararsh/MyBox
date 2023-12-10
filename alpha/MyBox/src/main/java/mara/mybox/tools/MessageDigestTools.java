@@ -14,6 +14,7 @@ import java.security.Provider;
 import java.security.Security;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 
 /**
@@ -26,24 +27,24 @@ public class MessageDigestTools {
         return messageDigest(bytes, "SHA-256");
     }
 
-    public static byte[] SHA256(File file) {
-        return messageDigest(file, "SHA-256");
+    public static byte[] SHA256(FxTask task, File file) {
+        return messageDigest(task, file, "SHA-256");
     }
 
-    public static byte[] SHA256(BufferedImage image) {
-        return messageDigest(BufferedImageTools.bytes(image, "png"), "SHA-256");
+    public static byte[] SHA256(FxTask task, BufferedImage image) {
+        return messageDigest(BufferedImageTools.bytes(task, image, "png"), "SHA-256");
     }
 
     public static byte[] SHA1(byte[] bytes) {
         return messageDigest(bytes, "SHA-1");
     }
 
-    public static byte[] SHA1(File file) {
-        return messageDigest(file, "SHA-1");
+    public static byte[] SHA1(FxTask task, File file) {
+        return messageDigest(task, file, "SHA-1");
     }
 
-    public static byte[] SHA1(BufferedImage image) {
-        return messageDigest(BufferedImageTools.bytes(image, "png"), "SHA-1");
+    public static byte[] SHA1(FxTask task, BufferedImage image) {
+        return messageDigest(BufferedImageTools.bytes(task, image, "png"), "SHA-1");
     }
 
     public static void SignatureAlgorithms() {
@@ -64,17 +65,20 @@ public class MessageDigestTools {
         return messageDigest(bytes, "MD5");
     }
 
-    public static byte[] MD5(File file) {
-        return messageDigest(file, "MD5");
+    public static byte[] MD5(FxTask task, File file) {
+        return messageDigest(task, file, "MD5");
     }
 
-    public static byte[] MD5(BufferedImage image) {
-        return messageDigest(BufferedImageTools.bytes(image, "png"), "MD5");
+    public static byte[] MD5(FxTask task, BufferedImage image) {
+        return messageDigest(BufferedImageTools.bytes(task, image, "png"), "MD5");
     }
 
     // https://docs.oracle.com/javase/10/docs/specs/security/standard-names.html#messagedigest-algorithms
     public static byte[] messageDigest(byte[] bytes, String algorithm) {
         try {
+            if (bytes == null || algorithm == null) {
+                return null;
+            }
             MessageDigest md = MessageDigest.getInstance(algorithm);
             byte[] digest = md.digest(bytes);
             return digest;
@@ -84,13 +88,16 @@ public class MessageDigestTools {
         }
     }
 
-    public static byte[] messageDigest(File file, String algorithm) {
+    public static byte[] messageDigest(FxTask task, File file, String algorithm) {
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
             try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[AppValues.IOBufferLength];
                 int len;
                 while ((len = in.read(buf)) > 0) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     md.update(buf, 0, len);
                 }
             }

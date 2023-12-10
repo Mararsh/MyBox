@@ -29,8 +29,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -378,7 +378,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(myController) {
+        task = new FxSingletonTask<Void>(myController) {
 
             @Override
             protected boolean handle() {
@@ -457,8 +457,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             controller.parentController = myController;
 
             if (task != null) {
-                if (task instanceof SingletonTask) {
-                    SingletonTask sTask = (SingletonTask) task;
+                if (task instanceof FxTask) {
+                    FxTask sTask = (FxTask) task;
                     sTask.setController(myController);
                     sTask.setSelf(sTask);
                     sTask.setLoading(controller);
@@ -498,8 +498,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         LoadingController controller = null;
         if (handling) {
             controller = handling(task, info);
-        } else if (task instanceof SingletonTask) {
-            SingletonTask sTask = (SingletonTask) task;
+        } else if (task instanceof FxTask) {
+            FxTask sTask = (FxTask) task;
             sTask.setController(myController);
             sTask.setSelf(sTask);
             sTask.setLoading(controller);
@@ -511,8 +511,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public void start(Task<?> task, Node node) {
-        if (task instanceof SingletonTask) {
-            SingletonTask sTask = (SingletonTask) task;
+        if (task instanceof FxTask) {
+            FxTask sTask = (FxTask) task;
             sTask.setController(myController);
             sTask.setSelf(sTask);
             if (node != null) {

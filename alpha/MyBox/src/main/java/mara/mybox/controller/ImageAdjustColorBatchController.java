@@ -16,33 +16,33 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageAdjustColorBatchController extends BaseImageEditBatchController {
-
+    
     protected OperationType colorOperationType;
     protected ColorActionType colorActionType;
     protected int colorValue;
-
+    
     @FXML
     protected ControlImageAdjustColor optionsController;
-
+    
     public ImageAdjustColorBatchController() {
         baseTitle = message("AdjustColor") + " - " + message("Batch");
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
-
+    
     @Override
     public boolean makeMoreParameters() {
         colorOperationType = optionsController.colorOperationType;
@@ -50,7 +50,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
         colorValue = optionsController.colorValue;
         return super.makeMoreParameters();
     }
-
+    
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         if (null == colorOperationType || colorActionType == null) {
@@ -58,8 +58,9 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
         }
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(source, null,
-                    colorOperationType, colorActionType);
-            pixelsOperation.setSkipTransparent(!handleTransparentCheck.isSelected());
+                    colorOperationType, colorActionType)
+                    .setSkipTransparent(!handleTransparentCheck.isSelected())
+                    .setTask(task);
             switch (colorOperationType) {
                 case Hue:
                     pixelsOperation.setFloatPara1(colorValue / 360.0f);
@@ -85,7 +86,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
             MyBoxLog.error(e);
             return null;
         }
-
+        
     }
-
+    
 }

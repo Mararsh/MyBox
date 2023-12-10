@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
@@ -14,7 +15,7 @@ import mara.mybox.value.Colors;
  */
 public class MarginTools {
 
-    public static BufferedImage blurMarginsAlpha(BufferedImage source, int blurWidth,
+    public static BufferedImage blurMarginsAlpha(FxTask task, BufferedImage source, int blurWidth,
             boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         try {
             int width = source.getWidth();
@@ -26,7 +27,13 @@ public class MarginTools {
             float opocity;
             Color newColor;
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, 0);
@@ -69,7 +76,7 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage cutMargins(BufferedImage source, Color cutColor,
+    public static BufferedImage cutMargins(FxTask task, BufferedImage source, Color cutColor,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             if (cutColor.getRGB() == Colors.TRANSPARENT.getRGB() && !AlphaTools.hasAlpha(source)) {
@@ -83,7 +90,13 @@ public class MarginTools {
                 top = -1;
                 toploop:
                 for (int j = 0; j < height; ++j) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int i = 0; i < width; ++i) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (source.getRGB(i, j) != cutValue) {
                             top = j;
                             break toploop;
@@ -100,7 +113,13 @@ public class MarginTools {
                 bottom = -1;
                 bottomploop:
                 for (int j = height - 1; j >= 0; --j) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int i = 0; i < width; ++i) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (source.getRGB(i, j) != cutValue) {
                             bottom = j + 1;
                             break bottomploop;
@@ -117,7 +136,13 @@ public class MarginTools {
                 left = -1;
                 leftloop:
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int j = 0; j < height; ++j) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (source.getRGB(i, j) != cutValue) {
                             left = i;
                             break leftloop;
@@ -134,7 +159,13 @@ public class MarginTools {
                 right = -1;
                 rightloop:
                 for (int i = width - 1; i >= 0; --i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     for (int j = 0; j < height; ++j) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (source.getRGB(i, j) != cutValue) {
                             right = i + 1;
                             break rightloop;
@@ -147,7 +178,7 @@ public class MarginTools {
             } else {
                 right = width;
             }
-            BufferedImage target = CropTools.cropOutside(source, left, top, right, bottom);
+            BufferedImage target = CropTools.cropOutside(task, source, left, top, right, bottom);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -155,7 +186,7 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage cutMargins(BufferedImage source, int MarginWidth,
+    public static BufferedImage cutMargins(FxTask task, BufferedImage source, int MarginWidth,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             if (source == null || MarginWidth <= 0) {
@@ -182,14 +213,14 @@ public class MarginTools {
             if (cutBottom) {
                 y2 = height - MarginWidth;
             }
-            return CropTools.cropOutside(source, x1, y1, x2, y2);
+            return CropTools.cropOutside(task, source, x1, y1, x2, y2);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static BufferedImage blurMarginsNoAlpha(BufferedImage source, int blurWidth,
+    public static BufferedImage blurMarginsNoAlpha(FxTask task, BufferedImage source, int blurWidth,
             boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         try {
             int width = source.getWidth();
@@ -201,7 +232,13 @@ public class MarginTools {
             float opocity;
             Color alphaColor = ColorConvertTools.alphaColor();
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, alphaColor.getRGB());
@@ -242,7 +279,7 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage addMargins(BufferedImage source, Color addColor, int MarginWidth,
+    public static BufferedImage addMargins(FxTask task, BufferedImage source, Color addColor, int MarginWidth,
             boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         try {
             if (source == null || MarginWidth <= 0) {
@@ -279,6 +316,9 @@ public class MarginTools {
             }
             g.setColor(addColor);
             g.fillRect(0, 0, totalWidth, totalHegiht);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             g.drawImage(source, x, y, width, height, null);
             g.dispose();
             return target;

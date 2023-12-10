@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -46,7 +46,7 @@ public class InfoTreeNodeMoveController extends BaseInfoTreeHandleController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             InfoNode updatedNode;
 

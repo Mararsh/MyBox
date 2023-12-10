@@ -58,7 +58,7 @@ import mara.mybox.data.Link.FilenameType;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -506,7 +506,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String title;
 
             @Override
@@ -516,9 +516,9 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                     if (url == null) {
                         return false;
                     }
-                    File urlFile = HtmlReadTools.download(address);
-                    String html = TextFileTools.readTexts(urlFile);
-                    if (html == null) {
+                    File urlFile = HtmlReadTools.download(this, address);
+                    String html = TextFileTools.readTexts(this, urlFile);
+                    if (html == null || !isWorking()) {
                         return false;
                     }
                     title = HtmlReadTools.title(html);
@@ -560,14 +560,14 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<Link> links;
 
             @Override
             protected boolean handle() {
                 File path = new File(downloadPath.getAbsolutePath() + File.separator + subPath);
-                links = HtmlReadTools.links(addressLink, path, nameType);
+                links = HtmlReadTools.links(this, addressLink, path, nameType);
                 return links != null;
             }
 
@@ -1146,13 +1146,13 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                 link.setFile(file.getAbsolutePath());
 
                 updateLogs(message("Downloading") + ": " + url + " --> " + file);
-                File tmpFile = HtmlReadTools.download(url.toString());
+                File tmpFile = HtmlReadTools.download(null, url.toString());
                 if (tmpFile != null && tmpFile.exists()) {
                     FileTools.rename(tmpFile, file);
                     link.setDlTime(new Date());
                     updateLogs(message("Downloaded") + ": " + url + " --> " + file);
                     if (utf8Check.isSelected()) {
-                        String utf8 = HtmlWriteTools.toUTF8(file);
+                        String utf8 = HtmlWriteTools.toUTF8(null, file);
                         if (utf8 == null) {
                             updateLogs(message("Failed") + ": " + file);
                         } else if (!"NeedNot".equals(utf8)) {
@@ -1332,7 +1332,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                 if (stopped) {
                     return;
                 }
-                HtmlWriteTools.relinkPage(file, completedLinks, completedAddresses);
+                HtmlWriteTools.relinkPage(null, file, completedLinks, completedAddresses);
                 updateLogs(message("HtmlLinksRewritten") + ": " + file);
             }
         }
@@ -1373,7 +1373,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                     return;
                 }
                 try {
-                    String html = TextFileTools.readTexts(file);
+                    String html = TextFileTools.readTexts(null, file);
                     String body = HtmlReadTools.body(html, true);
                     htmlBuilder.append(body);
                 } catch (Exception e) {

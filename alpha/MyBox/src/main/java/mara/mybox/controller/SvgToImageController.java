@@ -10,6 +10,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
+import org.w3c.dom.Document;
 
 /**
  * @Author Mara
@@ -61,15 +62,27 @@ public class SvgToImageController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        svgOptionsController.checkValues(XmlTools.fileToDoc(this, srcFile));
-        File tmpFile = SvgTools.fileToImage(this, srcFile,
+        Document doc = XmlTools.fileToDoc(task, this, srcFile);
+        if (doc == null) {
+            if (task != null && !task.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
+        }
+        svgOptionsController.checkValues(doc);
+        File tmpFile = SvgTools.fileToImage(task, this, srcFile,
                 svgOptionsController.width,
                 svgOptionsController.height,
                 svgOptionsController.area);
         if (tmpFile == null || !tmpFile.exists()) {
-            return message("Failed");
+            if (task != null && !task.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
         }
-        if (ImageConvertTools.convertColorSpace(tmpFile, attributes, target)) {
+        if (ImageConvertTools.convertColorSpace(task, tmpFile, attributes, target)) {
             targetFileGenerated(target);
             return message("Successful");
         } else {

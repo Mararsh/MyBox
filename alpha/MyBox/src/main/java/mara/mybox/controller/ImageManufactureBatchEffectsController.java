@@ -65,54 +65,51 @@ public class ImageManufactureBatchEffectsController extends BaseImageEditBatchCo
                         optionsController.kernel.setGray(optionsController.valueCheck.isSelected());
                         imageConvolution = ImageConvolution.create().
                                 setImage(source).setKernel(optionsController.kernel);
-                        target = imageConvolution.operate();
+                        target = imageConvolution.setTask(task).operate();
                         break;
                     case Emboss:
                         optionsController.kernel = ConvolutionKernel.makeEmbossKernel(
                                 optionsController.intPara1, optionsController.intPara2, optionsController.valueCheck.isSelected());
                         imageConvolution = ImageConvolution.create().
                                 setImage(source).setKernel(optionsController.kernel);
-                        target = imageConvolution.operate();
+                        target = imageConvolution.setTask(task).operate();
                         break;
                     case Thresholding:
-                        pixelsOperation = PixelsOperationFactory.create(AlphaTools.removeAlpha(source), null, optionsController.effectType);
+                        pixelsOperation = PixelsOperationFactory.create(
+                                AlphaTools.removeAlpha(task, source), null, optionsController.effectType);
                         pixelsOperation.setIntPara1(optionsController.intPara1);
                         pixelsOperation.setIntPara2(optionsController.intPara2);
                         pixelsOperation.setIntPara3(optionsController.intPara3);
-                        target = pixelsOperation.operate();
+                        target = pixelsOperation.setTask(task).operate();
                         break;
                     case Quantization:
                         ImageQuantization quantization = ImageQuantizationFactory.create(
                                 source, null, optionsController.quantizationController, false);
-                        target = quantization.operate();
+                        target = quantization.setTask(task).operate();
                         break;
                     case Gray:
-                        target = ImageGray.byteGray(source);
+                        target = ImageGray.byteGray(task, source);
                         break;
                     case BlackOrWhite:
-                        int threshold = optionsController.binaryController.threshold(source);
-                        ImageBinary imageBinary = new ImageBinary();
-                        imageBinary.setImage(source)
-                                .setIntPara1(threshold)
-                                .setIsDithering(optionsController.binaryController.dither());
-                        target = imageBinary.operate();
+                        ImageBinary imageBinary = optionsController.binaryController.pickValues();
+                        imageBinary.setImage(source);
+                        target = imageBinary.setTask(task).operate();
                         break;
                     case Sepia:
                         pixelsOperation = PixelsOperationFactory.create(source, null, optionsController.effectType);
                         pixelsOperation.setIntPara1(optionsController.intPara1);
-                        target = pixelsOperation.operate();
+                        target = pixelsOperation.setTask(task).operate();
                         break;
                     case Mosaic: {
                         ImageMosaic mosaic = ImageMosaic.create(source, null,
                                 ImageMosaic.MosaicType.Mosaic, optionsController.intPara1);
-                        target = mosaic.operate();
+                        target = mosaic.setTask(task).operate();
                     }
                     break;
                     case FrostedGlass: {
-                        ImageMosaic mosaic
-                                = ImageMosaic.create(source, null,
-                                        ImageMosaic.MosaicType.FrostedGlass, optionsController.intPara1);
-                        target = mosaic.operate();
+                        ImageMosaic mosaic = ImageMosaic.create(source, null,
+                                ImageMosaic.MosaicType.FrostedGlass, optionsController.intPara1);
+                        target = mosaic.setTask(task).operate();
                     }
                     break;
                     default:

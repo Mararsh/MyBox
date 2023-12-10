@@ -104,8 +104,11 @@ public class DataFileTextMergeController extends FilesMergeController {
             sourceCharset = TextFileTools.charset(srcFile);
         }
         String result;
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
+        File validFile = FileTools.removeBOM(task, srcFile);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (task == null || task.isCancelled()) {
@@ -125,13 +128,13 @@ public class DataFileTextMergeController extends FilesMergeController {
                         }
                     }
                     if (targetWithName) {
-                        TextFileTools.writeLine(writer, headers, targetDelimiter);
+                        TextFileTools.writeLine(task, writer, headers, targetDelimiter);
                     }
                     if (sourceWithName) {
                         continue;
                     }
                 }
-                TextFileTools.writeLine(writer, rowData, targetDelimiter);
+                TextFileTools.writeLine(task, writer, rowData, targetDelimiter);
             }
             result = Languages.message("Handled") + ": " + srcFile;
         } catch (Exception e) {
@@ -145,7 +148,7 @@ public class DataFileTextMergeController extends FilesMergeController {
         try {
             writer.flush();
             writer.close();
-            try ( Connection conn = DerbyBase.getConnection()) {
+            try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
                 Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.Texts, targetFile);
                 if (def == null) {

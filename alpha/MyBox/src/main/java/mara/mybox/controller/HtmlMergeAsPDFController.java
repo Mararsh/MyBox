@@ -86,7 +86,11 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            String body = HtmlReadTools.body(TextFileTools.readTexts(srcFile), false);
+            String html = TextFileTools.readTexts(task, srcFile);
+            if (html == null || (task != null && !task.isWorking())) {
+                return message("Canceled");
+            }
+            String body = HtmlReadTools.body(html, false);
             mergedHtml.append(body);
             return message("Successful");
         } catch (Exception e) {
@@ -99,7 +103,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
     public void afterHandleFiles() {
         try {
             mergedHtml.append("    </body>\n</html>\n");
-            String result = optionsController.html2pdf(mergedHtml.toString(), targetFile);
+            String result = optionsController.html2pdf(task, mergedHtml.toString(), targetFile);
             if (!message("Successful").equals(result)) {
                 updateLogs(result, true, true);
                 return;

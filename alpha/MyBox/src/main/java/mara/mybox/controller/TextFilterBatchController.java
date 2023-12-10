@@ -66,7 +66,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
                 return Languages.message("Skip");
             }
             TextEditInformation fileInfo = new TextEditInformation(srcFile);
-            fileInfo.setLineBreak(TextTools.checkLineBreak(srcFile));
+            fileInfo.setLineBreak(TextTools.checkLineBreak(task, srcFile));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
             fileInfo.checkCharset();
 

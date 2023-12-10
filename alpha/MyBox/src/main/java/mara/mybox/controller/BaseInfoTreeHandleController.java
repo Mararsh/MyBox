@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -48,7 +48,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
         return false;
     }
 
-    public boolean checkOptions(SingletonTask<Void> task, Connection conn,
+    public boolean checkOptions(FxTask<Void> task, Connection conn,
             List<InfoNode> sourceNodes, InfoNode targetNode) {
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             displayError(message("NoData"));

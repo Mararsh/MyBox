@@ -46,11 +46,11 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
@@ -988,15 +988,15 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private Image image = null;
 
             @Override
             protected boolean handle() {
                 try {
-                    File imageFile = HtmlReadTools.url2image(address, name);
-                    BufferedImage bi = ImageFileReaders.readImage(imageFile);
+                    File imageFile = HtmlReadTools.url2image(this, address, name);
+                    BufferedImage bi = ImageFileReaders.readImage(this, imageFile);
                     if (bi == null) {
                         return false;
                     }
@@ -1537,7 +1537,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private StringTable table;
 
@@ -1607,7 +1607,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private StringTable table;
 
@@ -1679,7 +1679,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private String toc;
 
@@ -1708,7 +1708,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private String texts;
 
@@ -1737,7 +1737,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private List<StringTable> tables;
 
@@ -1792,7 +1792,7 @@ public class ControlWebView extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 File tmpFile = HtmlWriteTools.writeHtml(html);

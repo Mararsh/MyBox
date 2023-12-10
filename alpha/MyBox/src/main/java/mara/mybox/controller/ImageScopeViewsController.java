@@ -7,7 +7,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -101,13 +101,13 @@ public class ImageScopeViewsController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image selectedScope;
 
             @Override
             protected boolean handle() {
                 try {
-                    selectedScope = handler.scopeController.scopeImage();
+                    selectedScope = handler.scopeController.scopeImage(this);
                     return true;
                 } catch (Exception e) {
                     MyBoxLog.error(e);

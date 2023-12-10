@@ -22,6 +22,7 @@ import javafx.stage.FileChooser;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.UserConfig;
@@ -252,15 +253,15 @@ public abstract class ImagesBrowserController_Load extends BaseImageController {
         }
     }
 
-    protected ImageInformation loadInfo(File file) {
+    protected ImageInformation loadInfo(FxTask task, File file) {
         if (displayMode == ImagesBrowserController_Load.DisplayMode.FilesList) {
-            ImageFileInformation finfo = ImageFileInformation.create(file);
+            ImageFileInformation finfo = ImageFileInformation.create(task, file);
             if (finfo == null) {
                 return null;
             }
             return finfo.getImageInformation();
         } else {
-            return ImageFileReaders.makeInfo(file, thumbWidth);
+            return ImageFileReaders.makeInfo(task, file, thumbWidth);
         }
     }
 

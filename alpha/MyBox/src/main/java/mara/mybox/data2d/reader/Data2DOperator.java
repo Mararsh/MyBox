@@ -4,7 +4,7 @@ import java.util.List;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import org.apache.commons.csv.CSVPrinter;
 
 /**
@@ -16,7 +16,7 @@ public abstract class Data2DOperator {
 
     protected Data2DReader reader;
     protected Data2D data2D;
-    protected SingletonTask task;
+    protected FxTask task;
     protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
     protected boolean includeRowNumber, formatValues;
@@ -68,7 +68,7 @@ public abstract class Data2DOperator {
     /*
         set
      */
-    public Data2DOperator setTask(SingletonTask task) {
+    public Data2DOperator setTask(FxTask task) {
         this.task = task;
         return this;
     }

@@ -11,7 +11,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.jsoup.Jsoup;
 
 /**
@@ -27,7 +27,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     protected CheckBox deleteCheck;
 
     public HtmlMergeAsTextController() {
-        baseTitle = Languages.message("HtmlMergeAsText");
+        baseTitle = message("HtmlMergeAsText");
     }
 
     @Override
@@ -44,12 +44,16 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            String text = Jsoup.parse(TextFileTools.readTexts(srcFile)).wholeText();
+            String html = TextFileTools.readTexts(task, srcFile);
+            if (html == null || (task != null && !task.isWorking())) {
+                return message("Canceled");
+            }
+            String text = Jsoup.parse(html).wholeText();
             writer.write(text + "\n");
-            return Languages.message("Successful");
+            return message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

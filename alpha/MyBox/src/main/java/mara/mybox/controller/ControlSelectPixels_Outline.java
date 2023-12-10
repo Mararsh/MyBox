@@ -19,7 +19,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -34,7 +34,7 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
 
     public void outlineExamples() {
         try {
-            SingletonCurrentTask outlinesTask = new SingletonCurrentTask<Void>(this) {
+            FxSingletonTask outlinesTask = new FxSingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -90,14 +90,14 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image outlineImage;
 
             @Override
             protected boolean handle() {
                 try {
-                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+                    BufferedImage bufferedImage = ImageFileReaders.readImage(this, file);
                     outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
                     return outlineImage != null;
                 } catch (Exception e) {
@@ -149,7 +149,7 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private BufferedImage[] outline;
             private Image outlineImage;
 
@@ -157,7 +157,8 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
             protected boolean handle() {
                 try {
                     Image bgImage = srcImage();
-                    outline = AlphaTools.outline(scope.getOutlineSource(),
+                    outline = AlphaTools.outline(this,
+                            scope.getOutlineSource(),
                             maskRectangleData,
                             (int) bgImage.getWidth(),
                             (int) bgImage.getHeight(),

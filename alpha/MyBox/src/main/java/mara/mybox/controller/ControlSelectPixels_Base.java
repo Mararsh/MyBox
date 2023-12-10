@@ -29,6 +29,7 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -105,25 +106,24 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
         return ColorConvertTools.converColor(maskColor);
     }
 
-    public Image scopeImage() {
-        return selectedScope(maskColor, false);
+    public Image scopeImage(FxTask task) {
+        return selectedScope(task, maskColor, false);
     }
 
-    public Image selectedScope(java.awt.Color bgColor, boolean cutMargins) {
+    public Image selectedScope(FxTask task, java.awt.Color bgColor, boolean cutMargins) {
         if (pickScopeValues() == null) {
             return null;
         }
-        return ScopeTools.selectedScope(srcImage(), scope,
+        return ScopeTools.selectedScope(task,
+                srcImage(), scope,
                 bgColor, cutMargins,
                 scopeExcludeCheck.isSelected(),
                 !handleTransparentCheck.isSelected());
     }
 
-    public Image maskImage() {
-        if (pickScopeValues() == null) {
-            return null;
-        }
-        return ScopeTools.maskScope(srcImage(), scope,
+    public Image maskImage(FxTask task) {
+        return ScopeTools.maskScope(task,
+                srcImage(), scope,
                 scopeExcludeCheck.isSelected(),
                 !handleTransparentCheck.isSelected());
     }

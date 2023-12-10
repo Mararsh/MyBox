@@ -206,7 +206,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
                 return message("Skip");
             }
             sourceInformation.setFile(srcFile);
-            sourceInformation.setLineBreak(TextTools.checkLineBreak(srcFile));
+            sourceInformation.setLineBreak(TextTools.checkLineBreak(task, srcFile));
             sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
             if (sourceEncodingAutoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInformation);
@@ -224,7 +224,8 @@ public class TextFilesConvertController extends BaseBatchFileController {
                 targetInformation.setLineBreakValue(sourceInformation.getLineBreakValue());
             }
 
-            List<File> files = TextTools.convert(sourceInformation, targetInformation, maxLines);
+            List<File> files = TextTools.convert(task,
+                    sourceInformation, targetInformation, maxLines);
             if (files != null && !files.isEmpty()) {
                 targetFileGenerated(files);
                 return message("Successful");

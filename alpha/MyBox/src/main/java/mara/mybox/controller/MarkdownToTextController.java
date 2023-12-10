@@ -14,6 +14,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -60,7 +61,14 @@ public class MarkdownToTextController extends BaseBatchFileController {
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String md = TextFileTools.readTexts(srcFile);
+            String md = TextFileTools.readTexts(task, srcFile);
+            if (md == null) {
+                if (task == null || !task.isWorking()) {
+                    return message("Canceled");
+                } else {
+                    return message("Failed");
+                }
+            }
             Node document = textParser.parse(md);
             String text = textCollectingVisitor.collectAndGetText(document);
 

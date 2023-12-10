@@ -10,7 +10,7 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -21,7 +21,7 @@ import mara.mybox.value.Languages;
 public class ImageAlphaExtractBatchController extends BaseImageEditBatchController {
 
     public ImageAlphaExtractBatchController() {
-        baseTitle = Languages.message("ImageAlphaExtract");
+        baseTitle = message("ImageAlphaExtract");
 
         operationType = VisitHistory.OperationType.Alpha;
 
@@ -49,27 +49,46 @@ public class ImageAlphaExtractBatchController extends BaseImageEditBatchControll
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
 
-            BufferedImage source = ImageFileReaders.readImage(srcFile);
-            BufferedImage[] targets = AlphaTools.extractAlpha(source);
+            BufferedImage source = ImageFileReaders.readImage(task, srcFile);
+            if (source == null) {
+                if (task.isWorking()) {
+                    return message("Failed");
+                } else {
+                    return message("Canceled");
+                }
+            }
+            BufferedImage[] targets = AlphaTools.extractAlpha(task, source);
             if (targets == null) {
-                return Languages.message("Failed");
+                if (task.isWorking()) {
+                    return message("Failed");
+                } else {
+                    return message("Canceled");
+                }
             }
             String prefix = target.getParent() + File.separator + FileNameTools.prefix(target.getName());
             String noAlphaFileName = prefix + "_noAlpha." + targetFileSuffix;
-            ImageFileWriters.writeImageFile(targets[0], attributes, noAlphaFileName);
-            targetFileGenerated(new File(noAlphaFileName));
-
+            if (ImageFileWriters.writeImageFile(task, targets[0], attributes, noAlphaFileName)) {
+                targetFileGenerated(new File(noAlphaFileName));
+            } else if (task.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
             String alphaFileName = prefix + "_alpha.png";
-            ImageFileWriters.writeImageFile(targets[1], "png", alphaFileName);
-            targetFileGenerated(new File(alphaFileName));
-
-            return Languages.message("Successful");
+            if (ImageFileWriters.writeImageFile(task, targets[1], "png", alphaFileName)) {
+                targetFileGenerated(new File(alphaFileName));
+            } else if (task.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
+            return message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

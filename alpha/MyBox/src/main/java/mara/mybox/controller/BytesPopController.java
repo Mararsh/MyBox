@@ -7,7 +7,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.ByteTools;
@@ -65,7 +65,7 @@ public class BytesPopController extends TextPopController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {

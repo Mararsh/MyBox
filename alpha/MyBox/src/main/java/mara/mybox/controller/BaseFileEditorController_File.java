@@ -8,8 +8,8 @@ import javafx.fxml.FXML;
 import mara.mybox.data.FileEditInformation;
 import static mara.mybox.data.FileEditInformation.defaultCharset;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonBackgroundTask;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxBackgroundTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -43,7 +43,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         }
         initPage(file);
         bottomLabel.setText(message("CheckingEncoding"));
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -51,7 +51,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                     return false;
                 }
                 if (!sourceInformation.isCharsetDetermined()) {
-                    sourceInformation.setLineBreak(TextTools.checkLineBreak(sourceFile));
+                    sourceInformation.setLineBreak(TextTools.checkLineBreak(this, sourceFile));
                     sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
                     return sourceInformation.checkCharset();
                 } else {
@@ -215,7 +215,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             backgroundTask.cancel();
             backgroundTask = null;
         }
-        backgroundTask = new SingletonBackgroundTask<Void>(this) {
+        backgroundTask = new FxBackgroundTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -240,7 +240,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             return;
         }
         bottomLabel.setText(message("ReadingFile"));
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private String text;
 

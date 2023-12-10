@@ -38,7 +38,8 @@ public class ImageSharpenController extends BasePixelsController {
                     .setScope(inScope)
                     .setKernel(kernel)
                     .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent());
+                    .setSkipTransparent(skipTransparent())
+                    .setTask(task);
             operation = message("Sharpen");
             opInfo = message("Intensity") + ": " + sharpenController.intensity;
             return convolution.operateFxImage();

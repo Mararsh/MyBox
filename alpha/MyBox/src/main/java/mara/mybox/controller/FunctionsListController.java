@@ -10,7 +10,7 @@ import javafx.scene.web.WebEvent;
 import mara.mybox.data.FunctionsList;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -42,7 +42,7 @@ public class FunctionsListController extends ControlWebView {
 
             goImageFile = AppVariables.MyboxDataPath + "/icons/iconGo.png";
             BufferedImage srcImage = SwingFXUtils.fromFXImage(StyleTools.getIconImage("iconGo.png"), null);
-            ImageFileWriters.writeImageFile(srcImage, "png", goImageFile);
+            ImageFileWriters.writeImageFile(null, srcImage, "png", goImageFile);
 
             goImageFile = new File(goImageFile).toURI().toString();
 
@@ -83,7 +83,7 @@ public class FunctionsListController extends ControlWebView {
     }
 
     public void makeDocuments(String lang) {
-        task = new SingletonTask<Void>(this) {
+        task = new FxTask<Void>(this) {
             private File path;
 
             @Override

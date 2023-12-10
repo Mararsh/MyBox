@@ -19,6 +19,7 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
 import static mara.mybox.data2d.DataFileText.CommentsMarker;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import thridparty.EncodingDetect;
 
@@ -110,7 +111,7 @@ public class TextTools {
             }
             String setName;
             info.setWithBom(false);
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()))) {
                 byte[] header = new byte[4];
                 int bufLen;
                 if ((bufLen = inputStream.read(header, 0, 4)) > 0) {
@@ -188,24 +189,27 @@ public class TextTools {
         return null;
     }
 
-    public static String readText(File file) {
-        return readText(new TextEditInformation(file));
+    public static String readText(FxTask task, File file) {
+        return readText(task, new TextEditInformation(file));
     }
 
-    public static String readText(FileEditInformation info) {
+    public static String readText(FxTask task, FileEditInformation info) {
         try {
             if (info == null || info.getFile() == null) {
                 return null;
             }
             StringBuilder text = new StringBuilder();
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()));
-                     InputStreamReader reader = new InputStreamReader(inputStream, info.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()));
+                    InputStreamReader reader = new InputStreamReader(inputStream, info.getCharset())) {
                 if (info.isWithBom()) {
                     inputStream.skip(bomSize(info.getCharset().name()));
                 }
                 char[] buf = new char[512];
                 int len;
                 while ((len = reader.read(buf)) > 0) {
+                    if (task != null && !task.isWorking()) {
+                        return text.toString();
+                    }
                     text.append(buf, 0, len);
                 }
             }
@@ -217,8 +221,8 @@ public class TextTools {
     }
 
     public static boolean writeText(FileEditInformation info, String text) {
-        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
-                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
+                OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
             if (info.isWithBom()) {
                 byte[] bytes = bomBytes(info.getCharset().name());
                 outputStream.write(bytes);
@@ -232,7 +236,7 @@ public class TextTools {
         }
     }
 
-    public static boolean convertCharset(FileEditInformation source, FileEditInformation target) {
+    public static boolean convertCharset(FxTask task, FileEditInformation source, FileEditInformation target) {
         try {
             if (source == null || source.getFile() == null
                     || source.getCharset() == null
@@ -240,10 +244,10 @@ public class TextTools {
                     || target.getCharset() == null) {
                 return false;
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
-                     InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                 if (source.isWithBom()) {
                     inputStream.skip(bomSize(source.getCharset().name()));
                 }
@@ -254,6 +258,9 @@ public class TextTools {
                 char[] buf = new char[512];
                 int count;
                 while ((count = reader.read(buf)) > 0) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     String text = new String(buf, 0, count);
                     writer.write(text);
                 }
@@ -265,7 +272,7 @@ public class TextTools {
         }
     }
 
-    public static boolean convertLineBreak(FileEditInformation source, FileEditInformation target) {
+    public static boolean convertLineBreak(FxTask task, FileEditInformation source, FileEditInformation target) {
         try {
             if (source == null || source.getFile() == null
                     || source.getCharset() == null
@@ -281,13 +288,16 @@ public class TextTools {
             if (source.getLineBreak() == target.getLineBreak()) {
                 return FileCopyTools.copyFile(source.getFile(), target.getFile(), true, true);
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
-                     InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                 char[] buf = new char[4096];
                 int count;
                 while ((count = reader.read(buf)) > 0) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     String text = new String(buf, 0, count);
                     text = text.replaceAll(sourceLineBreak, taregtLineBreak);
                     writer.write(text);
@@ -325,7 +335,7 @@ public class TextTools {
         }
     }
 
-    public static List<File> convert(FileEditInformation source, FileEditInformation target, int maxLines) {
+    public static List<File> convert(FxTask task, FileEditInformation source, FileEditInformation target, int maxLines) {
         try {
             if (source == null || source.getFile() == null
                     || source.getCharset() == null
@@ -339,29 +349,35 @@ public class TextTools {
                 return null;
             }
             List<File> files = new ArrayList<>();
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
-                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, source.getCharset()))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, source.getCharset()))) {
                 if (source.isWithBom()) {
                     inputStream.skip(bomSize(source.getCharset().name()));
                 }
                 if (maxLines > 0) {
                     int fileIndex = 0;
                     while (true) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         int linesNumber = 0;
                         String line = null;
                         File file = new File(FileNameTools.append(target.getFile().getAbsolutePath(), "-" + (++fileIndex)));
-                        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                                OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                             if (target.isWithBom()) {
                                 byte[] bytes = bomBytes(target.getCharset().name());
                                 outputStream.write(bytes);
                             }
                             while ((line = bufferedReader.readLine()) != null) {
+                                if (task != null && !task.isWorking()) {
+                                    return null;
+                                }
                                 if (linesNumber++ > 0) {
                                     writer.write(taregtLineBreak + line);
                                 } else {
                                     writer.write(line);
-                                };
+                                }
                                 if (linesNumber >= maxLines) {
                                     break;
                                 }
@@ -379,8 +395,8 @@ public class TextTools {
                     }
                 } else {
                     File file = target.getFile();
-                    try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                             OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                    try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                            OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                         if (target.isWithBom()) {
                             byte[] bytes = bomBytes(target.getCharset().name());
                             outputStream.write(bytes);
@@ -390,6 +406,9 @@ public class TextTools {
                             writer.write(line);
                         }
                         while ((line = bufferedReader.readLine()) != null) {
+                            if (task != null && !task.isWorking()) {
+                                return null;
+                            }
                             writer.write(taregtLineBreak + line);
                         }
                     } catch (Exception e) {
@@ -411,7 +430,8 @@ public class TextTools {
         }
     }
 
-    public static IndexRange hexIndex(String text, Charset charset, String lineBreakValue, IndexRange textRange) {
+    public static IndexRange hexIndex(FxTask task,
+            String text, Charset charset, String lineBreakValue, IndexRange textRange) {
         int hIndex = 0;
         int hBegin = 0;
         int hEnd = 0;
@@ -444,14 +464,18 @@ public class TextTools {
         return new IndexRange(hBegin, hEnd);
     }
 
-    public static Line_Break checkLineBreak(File file) {
+    public static Line_Break checkLineBreak(FxTask task, File file) {
         if (file == null) {
             return Line_Break.LF;
         }
-        try ( InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)))) {
+        try (InputStreamReader reader = new InputStreamReader(
+                new BufferedInputStream(new FileInputStream(file)))) {
             int c;
             boolean cr = false;
             while ((c = reader.read()) > 0) {
+                if (task != null && !task.isWorking()) {
+                    return Line_Break.LF;
+                }
                 if ((char) c == '\r') {
                     cr = true;
                 } else if ((char) c == '\n') {
@@ -578,7 +602,7 @@ public class TextTools {
         return msg;
     }
 
-    public static String dataText(Object[][] data, String delimiterName,
+    public static String arrayText(FxTask task, Object[][] data, String delimiterName,
             List<String> colsNames, List<String> rowsNames) {
         if (data == null || data.length == 0 || delimiterName == null) {
             return "";
@@ -595,6 +619,9 @@ public class TextTools {
                 }
                 colEnd = colsNumber - 1;
                 for (int c = 0; c <= colEnd; c++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     s.append(colsNames.get(c));
                     if (c < colEnd) {
                         s.append(delimiter);
@@ -605,11 +632,17 @@ public class TextTools {
             Object v;
             int rowEnd = rowsNumber - 1;
             for (int i = 0; i <= rowEnd; i++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 if (rowsNames != null && !rowsNames.isEmpty()) {
                     s.append(rowsNames.get(i)).append(delimiter);
                 }
                 colEnd = colsNumber - 1;
                 for (int c = 0; c <= colEnd; c++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     v = data[i][c];
                     s.append(v == null ? "" : v);
                     if (c < colEnd) {
@@ -627,13 +660,13 @@ public class TextTools {
         }
     }
 
-    public static String dataText(List<List<String>> rows, String delimiterName) {
-        return dataText(toArray(rows), delimiterName, null, null);
+    public static String rowsText(FxTask task, List<List<String>> rows, String delimiterName) {
+        return arrayText(task, toArray(task, rows), delimiterName, null, null);
     }
 
-    public static String dataText(List<List<String>> rows, String delimiterName,
+    public static String rowsText(FxTask task, List<List<String>> rows, String delimiterName,
             List<String> colsNames, List<String> rowsNames) {
-        return dataText(toArray(rows), delimiterName, colsNames, rowsNames);
+        return arrayText(task, toArray(task, rows), delimiterName, colsNames, rowsNames);
     }
 
     public static boolean validLine(String line) {
@@ -708,7 +741,7 @@ public class TextTools {
         }
     }
 
-    public static String[][] toArray(List<List<String>> rows) {
+    public static String[][] toArray(FxTask task, List<List<String>> rows) {
         try {
             if (rows == null || rows.isEmpty()) {
                 return null;
@@ -735,7 +768,7 @@ public class TextTools {
         }
     }
 
-    public static List<List<String>> toList(String[][] array) {
+    public static List<List<String>> toList(FxTask task, String[][] array) {
         try {
             int rowsNumber = array.length;
             int colsNumber = array[0].length;
@@ -753,7 +786,7 @@ public class TextTools {
         }
     }
 
-    public static String vertical(String text, boolean leftToRight) {
+    public static String vertical(FxTask task, String text, boolean leftToRight) {
         try {
             if (text == null) {
                 return null;

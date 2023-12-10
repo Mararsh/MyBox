@@ -18,7 +18,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.value.AppPaths;
@@ -81,7 +81,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
                                 setText(null);
                                 return;
                             }
-                            imageview.setImage(item.loadThumb());
+                            imageview.setImage(item.loadThumb(null));
                             setGraphic(imageview);
                         }
                     };
@@ -122,13 +122,13 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private ImageClipboard clip;
 
             @Override
             protected boolean handle() {
-                clip = ImageClipboard.add(file);
+                clip = ImageClipboard.add(this, file);
                 return clip != null;
             }
 
@@ -153,7 +153,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
             task.cancel();
         }
         lastSystemClip = clip;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private ImageClipboard clipData;
 
@@ -168,7 +168,8 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
 //                        });
 //                        return false;
 //                    }
-                clipData = ImageClipboard.add(lastSystemClip, ImageClipboard.ImageSource.SystemClipBoard);
+                clipData = ImageClipboard.add(this,
+                        lastSystemClip, ImageClipboard.ImageSource.SystemClipBoard);
                 return clipData != null;
             }
 
@@ -190,7 +191,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<ImageClipboard> clips;
 
@@ -203,7 +204,8 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
                     }
                     Image image = item.readImage();
                     if (image != null) {
-                        ImageClipboard clip = ImageClipboard.create(image, ImageClipboard.ImageSource.Example);
+                        ImageClipboard clip = ImageClipboard.create(this,
+                                image, ImageClipboard.ImageSource.Example);
                         if (clip == null) {
                             continue;
                         }

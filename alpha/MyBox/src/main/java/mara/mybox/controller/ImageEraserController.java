@@ -70,7 +70,7 @@ public class ImageEraserController extends ImagePolylinesController {
 
     @Override
     protected Image handleShape() {
-        return ShapeTools.drawErase(srcImage(), maskPolylinesData, shapeStyle);
+        return ShapeTools.drawErase(task, srcImage(), maskPolylinesData, shapeStyle);
     }
 
     /*

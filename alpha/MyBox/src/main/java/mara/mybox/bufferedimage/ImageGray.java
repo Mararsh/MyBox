@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -44,33 +45,21 @@ public class ImageGray extends PixelsOperation {
     }
 
     @Override
-    public BufferedImage operate() {
-        if (image == null || operationType == null
-                || operationType != OperationType.Gray) {
-            return image;
-        }
-
-        if (scope == null || scope.getScopeType() == null) {
-            return byteGray(image);
-        }
-        return operateImage();
-    }
-
-    @Override
     protected Color operateColor(Color color) {
         return ColorConvertTools.color2gray(color);
     }
 
-    public static BufferedImage byteGray(BufferedImage srcImage) {
+    public static BufferedImage byteGray(FxTask task, BufferedImage srcImage) {
         try {
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
+            BufferedImage naImage = AlphaTools.removeAlpha(task, srcImage, Color.WHITE);
             BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
             Graphics2D g = grayImage.createGraphics();
             if (AppVariables.ImageHints != null) {
                 g.addRenderingHints(AppVariables.ImageHints);
             }
-            g.drawImage(srcImage, 0, 0, null);
+            g.drawImage(naImage, 0, 0, null);
             g.dispose();
             return grayImage;
         } catch (Exception e) {
@@ -79,15 +68,25 @@ public class ImageGray extends PixelsOperation {
         }
     }
 
-    public static BufferedImage intGray(BufferedImage image) {
+    public static BufferedImage intGray(FxTask task, BufferedImage image) {
         try {
             int width = image.getWidth();
             int height = image.getHeight();
             BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             for (int y = 0; y < height; y++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int x = 0; x < width; x++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int p = image.getRGB(x, y);
-                    grayImage.setRGB(x, y, ColorConvertTools.pixel2GrayPixel(p));
+                    if (p == 0) {
+                        grayImage.setRGB(x, y, 0);
+                    } else {
+                        grayImage.setRGB(x, y, ColorConvertTools.pixel2GrayPixel(p));
+                    }
                 }
             }
             return grayImage;
@@ -97,10 +96,13 @@ public class ImageGray extends PixelsOperation {
         }
     }
 
-    public static Image gray(Image image) {
+    public static Image gray(FxTask task, Image image) {
         try {
             BufferedImage bm = SwingFXUtils.fromFXImage(image, null);
-            bm = intGray(bm);
+            bm = intGray(task, bm);
+            if (bm == null || (task != null && !task.isWorking())) {
+                return null;
+            }
             return SwingFXUtils.toFXImage(bm, null);
         } catch (Exception e) {
             MyBoxLog.error(e);

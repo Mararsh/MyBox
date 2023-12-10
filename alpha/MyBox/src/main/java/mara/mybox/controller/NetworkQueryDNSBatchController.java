@@ -7,8 +7,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.SystemTools;
@@ -51,7 +51,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private StringBuilder s, f;
 
             @Override
@@ -62,12 +62,15 @@ public class NetworkQueryDNSBatchController extends BaseController {
                     f = new StringBuilder();
                     String host, ip;
                     for (String name : names) {
+                        if (isCancelled()) {
+                            return false;
+                        }
                         if (NetworkTools.isIPv4(name)) {
                             ip = name;
                             host = NetworkTools.ip2host(ip);
                         } else {
                             host = name;
-                            ip = NetworkTools.host2ipv4(host);
+                            ip = NetworkTools.host2ipv4(this, host);
                         }
                         if (host == null || host.isBlank() || ip == null || ip.isBlank()) {
                             f.append(name).append("\n");
@@ -79,6 +82,9 @@ public class NetworkQueryDNSBatchController extends BaseController {
                             if (loadingController != null) {
                                 loadingController.setInfo(host + "\t\t" + ip);
                             }
+                        }
+                        if (isCancelled()) {
+                            return false;
                         }
                         Platform.runLater(new Runnable() {
                             @Override

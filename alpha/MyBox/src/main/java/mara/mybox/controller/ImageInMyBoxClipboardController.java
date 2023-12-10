@@ -10,8 +10,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.ImageClipboard;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppPaths;
@@ -62,14 +62,14 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             Image image;
 
             @Override
             protected boolean handle() {
                 try {
-                    image = ImageClipboard.loadImage(clip);
+                    image = ImageClipboard.loadImage(this, clip);
                     return true;
                 } catch (Exception e) {
                     return false;
@@ -125,13 +125,13 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image selectedImage;
 
             @Override
             protected boolean handle() {
-                selectedImage = ImageClipboard.loadImage(clip);
+                selectedImage = ImageClipboard.loadImage(this, clip);
                 return selectedImage != null;
             }
 

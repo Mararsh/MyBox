@@ -165,18 +165,19 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
                     attributes.getDensity(), imageType);
             String targetFormat = attributes.getImageFormat();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-                if (ImageConvertTools.convertToIcon(pageImage, attributes, tFile)) {
+                if (ImageConvertTools.convertToIcon(task, pageImage, attributes, tFile)) {
                     targetFileGenerated(tFile);
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                BufferedImage targetImage = ImageConvertTools.convertColorSpace(pageImage, attributes);
+                BufferedImage targetImage
+                        = ImageConvertTools.convertColorSpace(task, pageImage, attributes);
                 if (targetImage == null) {
                     return 0;
                 }
-                if (!ImageFileWriters.writeImageFile(targetImage, attributes, tFile.getAbsolutePath())) {
+                if (!ImageFileWriters.writeImageFile(task, targetImage, attributes, tFile.getAbsolutePath())) {
                     return 0;
                 }
                 targetFileGenerated(tFile);

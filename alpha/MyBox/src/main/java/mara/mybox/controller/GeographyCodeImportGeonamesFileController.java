@@ -45,17 +45,20 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
     @Override
     public long importFile(File file) {
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0;
-        File validFile = FileTools.removeBOM(file);
-        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat("\t"))) {
+        File validFile = FileTools.removeBOM(task, file);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return -1;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat("\t"))) {
             GeographyCode code, countryCode = null, provinceCode = null, cityCode = null, countyCode = null;
             String lastCountry = null, lastProvince = null, lastCity = null, lastCounty = null;
             String sql;
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement insert = conn.prepareStatement(TableGeographyCode.Insert);
-                     PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
+            try (Connection conn = DerbyBase.getConnection();
+                    PreparedStatement insert = conn.prepareStatement(TableGeographyCode.Insert);
+                    PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
                 conn.setAutoCommit(false);
                 for (CSVRecord record : parser) {
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || !task.isWorking()) {
                         updateLogs("Canceled", true);
                         return importCount;
                     }

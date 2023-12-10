@@ -23,7 +23,7 @@ import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantiz
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FloatTools;
 import static mara.mybox.value.Languages.message;
@@ -88,7 +88,7 @@ public class ImageAnalyseDominantController extends BaseController {
             task.cancel();
         }
         clear();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private ImageQuantization quantization;
             private String html;
 

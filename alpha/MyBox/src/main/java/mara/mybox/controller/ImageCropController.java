@@ -95,19 +95,22 @@ public class ImageCropController extends BasePixelsController {
             operation = message("Crop");
             opInfo = null;
             Color bgColor = bgColorController.awtColor();
-            handledImage = ScopeTools.selectedScope(
+            handledImage = ScopeTools.selectedScope(task,
                     inImage, inScope, bgColor,
                     imageMarginsCheck.isSelected(),
                     excludeScope(), skipTransparent());
-            if (handledImage == null || task == null || task.isCancelled()) {
+            if (handledImage == null || task == null || task.isWorking()) {
                 return null;
             }
             if (copyClipboardCheck.isSelected()) {
-                cuttedClip = ScopeTools.selectedScope(
+                cuttedClip = ScopeTools.selectedScope(task,
                         inImage, inScope, bgColor,
                         clipMarginsCheck.isSelected(),
                         excludeScope(), skipTransparent());
-                ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);
+                if (cuttedClip == null || task == null || task.isWorking()) {
+                    return null;
+                }
+                ImageClipboard.add(task, cuttedClip, ImageClipboard.ImageSource.Crop);
             }
             return handledImage;
         } catch (Exception e) {

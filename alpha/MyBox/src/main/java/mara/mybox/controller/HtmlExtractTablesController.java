@@ -3,8 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlReadTools;
@@ -31,11 +31,12 @@ public class HtmlExtractTablesController extends BaseBatchFileController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            List<StringTable> tables = HtmlReadTools.Tables(TextFileTools.readTexts(srcFile), srcFile.getName());
+            List<StringTable> tables = HtmlReadTools.Tables(
+                    TextFileTools.readTexts(task, srcFile), srcFile.getName());
             if (tables == null || tables.isEmpty()) {
                 return message("NoData");
             }
-            LinkedHashMap<File, Boolean> files = DataFileCSV.save(targetPath, "", tables);
+            LinkedHashMap<File, Boolean> files = DataFileCSV.save(task, targetPath, "", tables);
             if (files == null) {
                 return message("NoData");
             }

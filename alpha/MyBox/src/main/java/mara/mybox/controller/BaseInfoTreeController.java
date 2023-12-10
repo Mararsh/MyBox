@@ -33,8 +33,9 @@ import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableTextTrimCell;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -252,7 +253,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
             conditionBox.applyCss();
             return;
         }
-        SingletonTask bookTask = new SingletonTask<Void>(this) {
+        FxTask bookTask = new FxTask<Void>(this) {
             private List<InfoNode> ancestor;
 
             @Override
@@ -325,7 +326,42 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     @FXML
     @Override
     public void viewAction() {
-        InfoNode.view(selectedItem(), null);
+        InfoNode item = selectedItem();
+        if (item == null) {
+            popError(message("SelectToHanlde"));
+            return;
+        }
+        popNode(item);
+    }
+
+    public void popNode(InfoNode item) {
+        if (item == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = InfoNode.nodeHtml(this, myController, item, null);
+                    return html != null && !html.isBlank();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                HtmlTableController.open(null, html);
+            }
+
+        };
+        start(task);
     }
 
     /*

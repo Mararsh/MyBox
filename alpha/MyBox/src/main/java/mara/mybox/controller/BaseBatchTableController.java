@@ -31,8 +31,8 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonBackgroundTask;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxBackgroundTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.fxml.cell.TableTimeCell;
@@ -429,7 +429,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<File> valids;
 
             @Override
@@ -563,7 +563,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             updateTableLabel();
             return;
         }
-        backgroundTask = new SingletonBackgroundTask<Void>(this) {
+        backgroundTask = new FxBackgroundTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -748,7 +748,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<P> infos;
 

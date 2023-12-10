@@ -47,8 +47,16 @@ public class TextToPdfController extends BaseBatchFileController {
             if (target == null) {
                 return message("Skip");
             }
-            String html = HtmlWriteTools.textToHtml(TextFileTools.readTexts(srcFile));
-            String result = optionsController.html2pdf(html, target);
+            String texts = TextFileTools.readTexts(task, srcFile);
+            if (texts == null) {
+                if (task == null || !task.isWorking()) {
+                    return message("Canceled");
+                } else {
+                    return message("Failed");
+                }
+            }
+            String html = HtmlWriteTools.textToHtml(texts);
+            String result = optionsController.html2pdf(task, html, target);
             if (message("Successful").equals(result)) {
                 targetFileGenerated(target);
             }

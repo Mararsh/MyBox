@@ -96,7 +96,10 @@ public class DataFileText extends DataFile {
         if (charset == null) {
             charset = Charset.forName("UTF-8");
         }
-        File validFile = FileTools.removeBOM(file);
+        File validFile = FileTools.removeBOM(task, file);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         try (BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
             String line1 = reader.readLine();
             while (line1 != null && !validLine(line1)) {
@@ -108,6 +111,10 @@ public class DataFileText extends DataFile {
             int[] count1 = new int[delimiters.length];
             int maxCount1 = 0, maxCountIndex1 = -1;
             for (int i = 0; i < delimiters.length; i++) {
+                if (task != null && !task.isWorking()) {
+                    reader.close();
+                    return null;
+                }
                 count1[i] = FindReplaceString.count(line1, delimiters[i]);
 //                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] > maxCount1) {
@@ -118,6 +125,10 @@ public class DataFileText extends DataFile {
 //            MyBoxLog.console(maxCount1);
             String line2 = reader.readLine();
             while (line2 != null && !validLine(line2)) {
+                if (task != null && !task.isWorking()) {
+                    reader.close();
+                    return null;
+                }
                 line2 = reader.readLine();
             }
             if (line2 == null) {
@@ -131,6 +142,10 @@ public class DataFileText extends DataFile {
             int[] count2 = new int[delimiters.length];
             int maxCount2 = 0, maxCountIndex2 = -1;
             for (int i = 0; i < delimiters.length; i++) {
+                if (task != null && !task.isWorking()) {
+                    reader.close();
+                    return null;
+                }
                 count2[i] = FindReplaceString.count(line2, delimiters[i]);
 //                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] == count2[i] && count2[i] > maxCount2) {
@@ -199,7 +214,10 @@ public class DataFileText extends DataFile {
         checkForLoad();
         boolean tHasHeader = targetTextFile.isHasHeader();
         if (file != null && file.exists() && file.length() > 0) {
-            File validFile = FileTools.removeBOM(file);
+            File validFile = FileTools.removeBOM(task, file);
+            if (validFile == null || (task != null && !task.isWorking())) {
+                return false;
+            }
             try (BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
                     BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
@@ -207,19 +225,19 @@ public class DataFileText extends DataFile {
                     readValidLine(reader);
                 }
                 if (tHasHeader && colsNames != null) {
-                    TextFileTools.writeLine(writer, colsNames, tDelimiter);
+                    TextFileTools.writeLine(task, writer, colsNames, tDelimiter);
                 } else {
                     targetTextFile.setHasHeader(false);
                 }
                 long rIndex = -1;
                 String line;
-                while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                while ((line = reader.readLine()) != null && task != null && task.isWorking()) {
                     List<String> row = parseFileLine(line);
                     if (row == null || row.isEmpty()) {
                         continue;
                     }
                     if (++rIndex < startRowOfCurrentPage || rIndex >= endRowOfCurrentPage) {
-                        TextFileTools.writeLine(writer, fileRow(row), tDelimiter);
+                        TextFileTools.writeLine(task, writer, fileRow(row), tDelimiter);
                     } else if (rIndex == startRowOfCurrentPage) {
                         writePageData(writer, tDelimiter);
                     }
@@ -239,7 +257,7 @@ public class DataFileText extends DataFile {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (tHasHeader && colsNames != null) {
-                    TextFileTools.writeLine(writer, colsNames, tDelimiter);
+                    TextFileTools.writeLine(task, writer, colsNames, tDelimiter);
                 } else {
                     targetTextFile.setHasHeader(false);
                 }
@@ -267,7 +285,7 @@ public class DataFileText extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                TextFileTools.writeLine(writer, tableRow(r, false, false), delimiter);
+                TextFileTools.writeLine(task, writer, tableRow(r, false, false), delimiter);
             }
             return true;
         } catch (Exception e) {
@@ -290,14 +308,14 @@ public class DataFileText extends DataFile {
             String fDelimiter = ",";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
                 if (cols != null && !cols.isEmpty()) {
-                    TextFileTools.writeLine(writer, cols, fDelimiter);
+                    TextFileTools.writeLine(task, writer, cols, fDelimiter);
                 }
                 if (data != null) {
                     for (int r = 0; r < data.size(); r++) {
                         if (task != null && task.isCancelled()) {
                             break;
                         }
-                        TextFileTools.writeLine(writer, data.get(r), fDelimiter);
+                        TextFileTools.writeLine(task, writer, data.get(r), fDelimiter);
                     }
                 }
             }

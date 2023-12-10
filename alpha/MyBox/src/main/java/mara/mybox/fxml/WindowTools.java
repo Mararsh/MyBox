@@ -498,14 +498,14 @@ public class WindowTools {
 
     }
 
-    public static void taskInfo(SingletonTask task, String info) {
+    public static void taskInfo(FxTask task, String info) {
         if (task != null) {
             task.setInfo(info);
         }
         MyBoxLog.console(info);
     }
 
-    public static void taskError(SingletonTask task, String error) {
+    public static void taskError(FxTask task, String error) {
         if (task != null) {
             task.setError(error);
         }
