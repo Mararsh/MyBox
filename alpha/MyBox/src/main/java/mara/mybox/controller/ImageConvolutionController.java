@@ -153,7 +153,6 @@ public class ImageConvolutionController extends BasePixelsController {
         if (task != null) {
             task.cancel();
         }
-        reset();
         task = new FxSingletonTask<Void>(this) {
             private Image demoImage = null;
 

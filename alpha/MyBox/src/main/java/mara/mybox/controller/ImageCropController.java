@@ -84,16 +84,11 @@ public class ImageCropController extends BasePixelsController {
     }
 
     @Override
-    public void reset() {
-        super.reset();
-        cuttedClip = null;
-    }
-
-    @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             operation = message("Crop");
             opInfo = null;
+            cuttedClip = null;
             Color bgColor = bgColorController.awtColor();
             handledImage = ScopeTools.selectedScope(task,
                     inImage, inScope, bgColor,

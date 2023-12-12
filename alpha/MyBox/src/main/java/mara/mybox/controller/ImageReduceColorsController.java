@@ -53,13 +53,16 @@ public class ImageReduceColorsController extends BasePixelsController {
     }
 
     @Override
-    public void reset() {
-        super.reset();
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            return false;
+        }
         quantizationColors = null;
         paletteAddButton.setVisible(false);
         htmlButton.setVisible(false);
         quanTable = null;
         optionsController.resultsLabel.setText("");
+        return true;
     }
 
     @Override

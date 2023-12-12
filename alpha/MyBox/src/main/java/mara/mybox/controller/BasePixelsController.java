@@ -2,8 +2,10 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageScope;
@@ -13,13 +15,14 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public abstract class BasePixelsController extends BaseChildController {
+public abstract class BasePixelsController extends BaseController {
 
     protected BaseImageController imageController;
     protected ImageEditorController editor;
@@ -30,9 +33,8 @@ public abstract class BasePixelsController extends BaseChildController {
 
     @FXML
     protected ControlSelectPixels scopeController;
-
     @FXML
-    protected Button demoButton;
+    protected CheckBox closeAfterCheck;
 
     protected void setParameters(BaseImageController parent) {
         try {
@@ -42,20 +44,27 @@ public abstract class BasePixelsController extends BaseChildController {
             this.imageController = parent;
             if (imageController instanceof ImageEditorController) {
                 editor = (ImageEditorController) imageController;
+
+                if (undoButton != null) {
+                    undoButton.disableProperty().bind(editor.undoButton.disableProperty());
+                }
+                if (recoverButton != null) {
+                    recoverButton.disableProperty().bind(editor.recoverButton.disableProperty());
+                }
+                if (saveButton != null) {
+                    saveButton.disableProperty().bind(editor.saveButton.disableProperty());
+                }
             }
             scopeController.setParameters(this);
 
-            if (undoButton != null) {
-                undoButton.disableProperty().bind(editor.undoButton.disableProperty());
-            }
-            if (recoverButton != null) {
-                recoverButton.disableProperty().bind(editor.recoverButton.disableProperty());
-            }
-            if (saveButton != null) {
-                saveButton.disableProperty().bind(editor.saveButton.disableProperty());
-            }
+            closeAfterCheck.setSelected(UserConfig.getBoolean(baseName + "CloseAfterHandle", false));
+            closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CloseAfterHandle", closeAfterCheck.isSelected());
+                }
+            });
 
-            reset();
             initMore();
 
             scopeController.loadImage();
@@ -77,12 +86,8 @@ public abstract class BasePixelsController extends BaseChildController {
         }
     }
 
-    public void reset() {
-        handledImage = null;
-    }
-
     protected Image srcImage() {
-        return scopeController.srcImage();
+        return imageController.imageView.getImage();
     }
 
     public ImageScope scope() {
@@ -124,7 +129,6 @@ public abstract class BasePixelsController extends BaseChildController {
         if (task != null) {
             task.cancel();
         }
-        reset();
         task = new FxSingletonTask<Void>(this) {
             private ImageScope scope;
 
@@ -145,11 +149,17 @@ public abstract class BasePixelsController extends BaseChildController {
                 if (isPreview) {
                     ImagePopController.openImage(myController, handledImage);
                 } else {
-                    editor.updateImage(operation, opInfo, scope, handledImage);
+                    if (editor != null) {
+                        editor.updateImage(operation, opInfo, scope, handledImage);
+                    } else {
+                        ImagePopController.openImage(myController, handledImage);
+                    }
                     if (closeAfterCheck.isSelected()) {
                         close();
-                        editor.popSuccessful();
+                        imageController.popSuccessful();
                     } else {
+                        getMyWindow().requestFocus();
+                        myStage.toFront();
                         popSuccessful();
                     }
                 }
@@ -232,6 +242,18 @@ public abstract class BasePixelsController extends BaseChildController {
     @Override
     public void saveAction() {
         editor.saveAction();
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
+    }
+
+    @Override
+    public boolean keyESC() {
+        close();
+        return false;
     }
 
     /*

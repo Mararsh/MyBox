@@ -321,6 +321,8 @@ public class ImagePasteController extends BaseImageEditController {
             close();
             editor.popSuccessful();
         } else {
+            getMyWindow().requestFocus();
+            myStage.toFront();
             popSuccessful();
         }
     }

@@ -31,11 +31,6 @@ public class BaseImageEditController extends BaseShapeController {
     @FXML
     protected CheckBox closeAfterCheck;
 
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
     protected void setParameters(ImageEditorController parent) {
         try {
             if (parent == null) {
@@ -52,13 +47,13 @@ public class BaseImageEditController extends BaseShapeController {
                 }
             });
 
+            closeAfterCheck.setSelected(UserConfig.getBoolean(baseName + "CloseAfterHandle", false));
             closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CloseAfterHandle", closeAfterCheck.isSelected());
                 }
             });
-            closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
 
             if (undoButton != null) {
                 undoButton.disableProperty().bind(editor.undoButton.disableProperty());
@@ -80,10 +75,6 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     protected void initMore() {
-    }
-
-    public void reset() {
-        handledImage = null;
     }
 
     protected Image srcImage() {
@@ -137,7 +128,6 @@ public class BaseImageEditController extends BaseShapeController {
         if (task != null) {
             task.cancel();
         }
-        reset();
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -159,6 +149,8 @@ public class BaseImageEditController extends BaseShapeController {
                         close();
                         editor.popSuccessful();
                     } else {
+                        getMyWindow().requestFocus();
+                        myStage.toFront();
                         popSuccessful();
                     }
                 }
@@ -241,7 +233,6 @@ public class BaseImageEditController extends BaseShapeController {
     @FXML
     @Override
     public void refreshAction() {
-        reset();
         loadImage();
     }
 

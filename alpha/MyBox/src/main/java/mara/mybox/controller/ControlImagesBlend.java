@@ -29,8 +29,8 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -75,9 +75,10 @@ public class ControlImagesBlend extends BaseController {
             this.parentController = parent;
             baseName = parentController.baseName + "_Blend";
 
-//            baseAboveCheck.setSelected(UserConfig.getBoolean(conn, baseName + "BaseAbove", false));
+            baseAboveCheck.setSelected(UserConfig.getBoolean(conn, baseName + "BaseAbove", false));
+
             String v = UserConfig.getString(conn, baseName + "BaseTransparentAs", "Transparent");
-            if ("Overlay".equals(v)) {
+            if ("Another".equals(v)) {
                 baseAsOverlayRadio.setSelected(true);
                 baseTransparentAs = TransparentAs.Another;
             } else if ("Blend".equals(v)) {
@@ -189,6 +190,8 @@ public class ControlImagesBlend extends BaseController {
             overlayTransparentAs();
             UserConfig.setString(conn, baseName + "OverlayTransparentAs", overlayTransparentAs.name());
 
+            UserConfig.setBoolean(conn, baseName + "BaseAbove", baseAboveCheck.isSelected());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -264,8 +267,9 @@ public class ControlImagesBlend extends BaseController {
                     if (task == null || isCancelled()) {
                         return true;
                     }
-                    File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator
-                            + message("NormalMode") + "-" + message("Opacity") + "-" + copacity + "f.png");
+
+                    File tmpFile = FileTmpTools.generateFile(message("NormalMode")
+                            + "-" + message("Opacity") + "-" + copacity + "f", "png");
                     if (ImageFileWriters.writeImageFile(this, blended, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile.getAbsolutePath());
@@ -285,8 +289,8 @@ public class ControlImagesBlend extends BaseController {
                         if (task == null || isCancelled()) {
                             return true;
                         }
-                        tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
-                                + message("Opacity") + "-" + opacity + "f.png");
+                        tmpFile = FileTmpTools.generateFile(name + "-"
+                                + message("Opacity") + "-" + opacity + "f", "png");
                         if (ImageFileWriters.writeImageFile(this, blended, tmpFile)) {
                             files.add(tmpFile);
                             task.setInfo(tmpFile.getAbsolutePath());

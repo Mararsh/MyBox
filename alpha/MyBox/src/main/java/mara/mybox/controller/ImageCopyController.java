@@ -10,8 +10,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -118,15 +118,18 @@ public class ImageCopyController extends ImageSelectPixelsController {
                         ImageInSystemClipboardController.oneOpen();
                     }
                 } else {
-                    popSuccessful();
                     if (openClipboardCheck.isSelected()) {
                         ImageInMyBoxClipboardController.oneOpen();
                     }
                 }
                 if (closeAfterCheck.isSelected()) {
                     close();
+                    editor.popSuccessful();
+                } else {
+                    getMyWindow().requestFocus();
+                    myStage.toFront();
+                    popSuccessful();
                 }
-
             }
         };
         start(task);
