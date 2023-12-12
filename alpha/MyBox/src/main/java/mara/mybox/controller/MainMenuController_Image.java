@@ -77,13 +77,13 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageManufactureBatchArc(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchArcFxml);
+    protected void openRoundBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageRoundBatchFxml);
     }
 
     @FXML
-    protected void openImageManufactureBatchShadow(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchShadowFxml);
+    protected void openShadowBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageShadowBatchFxml);
     }
 
     @FXML

@@ -188,14 +188,14 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageTextBatchFxml);
         });
 
-        MenuItem imageArcMenu = new MenuItem(message("Arc"));
-        imageArcMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchArcFxml);
+        MenuItem imageRoundMenu = new MenuItem(message("Round"));
+        imageRoundMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageRoundBatchFxml);
         });
 
         MenuItem imageShadowMenu = new MenuItem(message("Shadow"));
         imageShadowMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchShadowFxml);
+            loadScene(Fxmls.ImageShadowBatchFxml);
         });
 
         MenuItem imageTransformMenu = new MenuItem(message("Transform"));
@@ -237,7 +237,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
                 imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
                 imageSharpenMenu,
-                imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
+                imageTextMenu, imageRoundMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, new SeparatorMenuItem(),
                 imageOCRBatch);
         return manufactureBatchMenu;

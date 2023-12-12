@@ -10,7 +10,7 @@ import javafx.stage.Window;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.cell.TableImageFileCell;
+import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -40,7 +40,7 @@ public class WebFavoritesController extends InfoTreeManageController {
             super.initControls();
 
             iconColumn.setCellValueFactory(new PropertyValueFactory<>("icon"));
-            iconColumn.setCellFactory(new TableImageFileCell(20));
+            iconColumn.setCellFactory(new TableFileNameCell(20));
 
             goButton.disableProperty().bind(Bindings.isEmpty(editor.attributesController.nameInput.textProperty()));
 

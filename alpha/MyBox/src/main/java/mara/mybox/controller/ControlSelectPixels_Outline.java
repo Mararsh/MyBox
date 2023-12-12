@@ -18,8 +18,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -33,39 +33,34 @@ import mara.mybox.value.UserConfig;
 public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Colors {
 
     public void outlineExamples() {
-        try {
-            FxSingletonTask outlinesTask = new FxSingletonTask<Void>(this) {
+        FxSingletonTask outlinesTask = new FxSingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    for (ImageItem item : ImageItem.predefined()) {
-                        if (isCancelled()) {
-                            return true;
-                        }
-                        Image image = item.readImage();
-                        if (image != null) {
-                            Platform.runLater(() -> {
-                                isSettingValues = true;
-                                outlinesList.getItems().add(image);
-                                isSettingValues = false;
-                            });
-                            this.setInfo(item.getName());
-                        }
+            @Override
+            protected boolean handle() {
+                for (ImageItem item : ImageItem.predefined()) {
+                    if (isCancelled()) {
+                        return true;
                     }
-                    return true;
+                    Image image = item.readImage();
+                    if (image != null) {
+                        Platform.runLater(() -> {
+                            isSettingValues = true;
+                            outlinesList.getItems().add(image);
+                            isSettingValues = false;
+                        });
+                        this.setInfo(item.getName());
+                    }
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    outlinesList.getSelectionModel().select(0);
-                }
+            @Override
+            protected void whenSucceeded() {
+                outlinesList.getSelectionModel().select(0);
+            }
 
-            };
-            start(outlinesTask);
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+        };
+        start(outlinesTask);
     }
 
     @FXML

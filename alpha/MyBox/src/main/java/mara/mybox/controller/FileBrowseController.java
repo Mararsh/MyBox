@@ -19,7 +19,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
-import mara.mybox.fxml.cell.TableImageFileCell;
+import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileSortTools;
@@ -86,7 +86,7 @@ public class FileBrowseController extends BaseController {
         try {
             super.setControlsStyle();
 
-            NodeStyleTools.setTooltip(viewButton, new Tooltip(message("DoubleClick")));
+            NodeStyleTools.setTooltip(viewButton, new Tooltip(message("View") + "\n" + message("DoubleClick")));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -98,7 +98,7 @@ public class FileBrowseController extends BaseController {
             sortMode = FileSortMode.NameAsc;
 
             if (parentController instanceof BaseImageController) {
-                fileColumn.setCellFactory(new TableImageFileCell());
+                fileColumn.setCellFactory(new TableFileNameCell());
             }
 
             refreshAction();

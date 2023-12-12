@@ -14,11 +14,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.MarginTools;
@@ -232,15 +230,16 @@ public class ImageMarginsController extends BaseImageEditController {
     }
 
     @Override
-    public void paneClicked(MouseEvent event, DoublePoint p) {
+    public void maskShapeDataChanged() {
         if (!dragRadio.isSelected()
                 || maskRectangleData == null || image == null) {
             return;
         }
-        String info = message("CurrentSize") + ": " + (int) Math.round(image.getWidth())
-                + "x" + (int) Math.round(image.getHeight()) + "  "
-                + message("AfterChange") + ": " + (int) Math.round(maskRectangleData.getWidth())
-                + "x" + (int) Math.round(maskRectangleData.getHeight());
+        super.maskShapeDataChanged();
+        String info = message("CurrentSize") + ": " + (int) (image.getWidth())
+                + "x" + (int) (image.getHeight()) + "  "
+                + message("AfterChange") + ": " + (int) (maskRectangleData.getWidth())
+                + "x" + (int) (maskRectangleData.getHeight());
         commentsLabel.setText(info);
     }
 
@@ -251,7 +250,7 @@ public class ImageMarginsController extends BaseImageEditController {
         }
         maskRectangleData = DoubleRectangle.xywh(0, 0,
                 imageView.getImage().getWidth(), imageView.getImage().getHeight());
-        drawMaskRectangle();
+        maskShapeDataChanged();
     }
 
     @Override

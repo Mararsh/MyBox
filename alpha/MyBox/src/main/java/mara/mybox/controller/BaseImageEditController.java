@@ -1,12 +1,18 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -20,6 +26,7 @@ public class BaseImageEditController extends BaseShapeController {
     protected String operation, opInfo;
     protected Image handledImage;
     protected boolean needFixSize;
+    protected FxTask demoTask;
 
     @FXML
     protected CheckBox closeAfterCheck;
@@ -76,8 +83,6 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     public void reset() {
-        operation = null;
-        opInfo = null;
         handledImage = null;
     }
 
@@ -137,8 +142,6 @@ public class BaseImageEditController extends BaseShapeController {
 
             @Override
             protected boolean handle() {
-                handledImage = null;
-                opInfo = null;
                 handleImage();
                 return !isCancelled() && handledImage != null;
             }
@@ -151,10 +154,12 @@ public class BaseImageEditController extends BaseShapeController {
                 if (isPreview) {
                     ImagePopController.openImage(myController, handledImage);
                 } else {
-                    popSuccessful();
-                    editor.updateImage(operation, opInfo, null, handledImage, cost);
+                    editor.updateImage(operation, opInfo, null, handledImage);
                     if (closeAfterCheck.isSelected()) {
                         close();
+                        editor.popSuccessful();
+                    } else {
+                        popSuccessful();
                     }
                 }
             }
@@ -164,6 +169,55 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     protected void handleImage() {
+    }
+
+    @FXML
+    protected void demo() {
+        if (!checkOptions()) {
+            return;
+        }
+        if (demoTask != null) {
+            demoTask.cancel();
+        }
+        demoTask = new FxTask<Void>(this) {
+            private List<String> files;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    Image demoImage = ScaleTools.demoImage(srcImage());
+                    if (demoImage == null || !isWorking()) {
+                        return false;
+                    }
+                    files = new ArrayList<>();
+                    makeDemoFiles(files, demoImage);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (files != null && !files.isEmpty()) {
+                    ImagesBrowserController b
+                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                    b.loadFiles(files);
+                    b.setAlwaysOnTop();
+                }
+            }
+
+        };
+        start(demoTask);
+    }
+
+    protected void makeDemoFiles(List<String> files, Image demoImage) {
     }
 
     @FXML

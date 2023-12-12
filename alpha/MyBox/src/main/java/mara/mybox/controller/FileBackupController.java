@@ -13,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
@@ -29,7 +30,8 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
-import mara.mybox.fxml.cell.TableImageFileCell;
+import mara.mybox.fxml.cell.TableFileNameCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppPaths;
@@ -85,6 +87,17 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         }
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(viewButton, new Tooltip(message("View") + "\nCTRL+P / ALT+P"));
+            NodeStyleTools.setTooltip(useButton, new Tooltip(message("Use") + "\n" + message("DoubleClick")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
     public void setParameters(BaseController parent) {
         try {
             if (parent == null || parent.sourceFile == null) {
@@ -96,7 +109,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
             sourceFile = parentController.sourceFile;
             tableFileBackup = new TableFileBackup();
             if (parentController instanceof BaseImageController) {
-                backupColumn.setCellFactory(new TableImageFileCell());
+                backupColumn.setCellFactory(new TableFileNameCell());
             }
 
             fileLabel.setText(sourceFile.getAbsolutePath());
@@ -296,7 +309,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
             popError(message("SelectToHandle"));
             return;
         }
-        ControllerTools.openTarget(selected.getBackup().getAbsolutePath(), true);
+        ControllerTools.popTarget(this, selected.getBackup().getAbsolutePath(), true);
     }
 
     @FXML
@@ -350,6 +363,13 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
 
         };
         start(task);
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        viewAction();
+        return true;
     }
 
     @FXML

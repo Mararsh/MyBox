@@ -316,10 +316,12 @@ public class ImagePasteController extends BaseImageEditController {
     @FXML
     @Override
     public void okAction() {
-        popSuccessful();
-        editor.updateImage("Paste", currentImage(), -1);
+        editor.updateImage(message("Paste"), currentImage());
         if (closeAfterCheck.isSelected()) {
             close();
+            editor.popSuccessful();
+        } else {
+            popSuccessful();
         }
     }
 

@@ -29,9 +29,9 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -137,6 +137,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(viewButton, new Tooltip(message("View") + "\nCTRL+P / ALT+P"));
+            NodeStyleTools.setTooltip(useButton, new Tooltip(message("Use") + "\n" + message("DoubleClick")));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

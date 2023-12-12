@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageShadow">
+      <children>
+                <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                    <children>
+                        <Label minHeight="-Infinity" text="%ShadowColor" wrapText="true" />
+                        <fx:include fx:id="color" source="ControlColorSet.fxml" />
+                    </children>
+                </FlowPane>
+      <CheckBox fx:id="blurCheck" mnemonicParsing="false" selected="true" text="%Blur" />
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+                        <Label minHeight="-Infinity" text="%HorizontalOffset" wrapText="true" />
+            <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                              <RadioButton fx:id="wPerRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ImageWidthPercentage" wrapText="true">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="wGroup" />
+                     </toggleGroup>
+                              </RadioButton>
+                              <ComboBox fx:id="wPerSelector" editable="true" prefWidth="80.0" />
+                              <Label text="\%" />
+               </children>
+            </FlowPane>
+            <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                              <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%Pixels" toggleGroup="$wGroup" wrapText="true" />
+                              <ComboBox fx:id="wSelector" editable="true" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+      <VBox layoutX="10.0" layoutY="258.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label minHeight="-Infinity" text="%VerticalOffset" wrapText="true" />
+            <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                  <RadioButton fx:id="hPerRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ImageHeightPercentage" wrapText="true">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="hGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <ComboBox fx:id="hPerSelector" editable="true" prefWidth="80.0" />
+                  <Label text="\%" />
+               </children>
+            </FlowPane>
+            <FlowPane hgap="2.0" layoutX="15.0" layoutY="35.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                  <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%Pixels" toggleGroup="$hGroup" wrapText="true" />
+                  <ComboBox fx:id="hSelector" editable="true" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+      </children>
+  </VBox>

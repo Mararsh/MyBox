@@ -178,8 +178,8 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#imageReplaceColorBatch" text="%ReplaceColor" />
                                         <MenuItem mnemonicParsing="false" onAction="#imageSharpenBatch" text="%Sharpen" />
                                         <MenuItem mnemonicParsing="false" onAction="#imageTextBatch" text="%Text" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openRoundBatch" text="%Round" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openShadowBatch" text="%Shadow" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchTransform" text="%Transform" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchMargins" text="%Margins" />
                                         <SeparatorMenuItem mnemonicParsing="false" />

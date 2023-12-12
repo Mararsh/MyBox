@@ -13,6 +13,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.BufferedImageTools;
@@ -32,14 +33,15 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageSizeController extends BaseImageEditController {
 
-    protected double width, height;
+    protected int width, height, keepRatioType;
     protected float scale = 1.0f;
-    protected int keepRatioType;
 
     @FXML
     protected ToggleGroup scaleGroup, keepGroup;
     @FXML
     protected VBox typeBox, setBox, pixelBox, keepBox, ratioBox;
+    @FXML
+    protected FlowPane scalePane;
     @FXML
     protected ComboBox<String> scaleSelector;
     @FXML
@@ -132,12 +134,12 @@ public class ImageSizeController extends BaseImageEditController {
     @FXML
     public void originalSize() {
         isSettingValues = true;
-        widthInput.setText((int) Math.round(image.getWidth()) + "");
-        heightInput.setText((int) Math.round(image.getHeight()) + "");
+        widthInput.setText((int) image.getWidth() + "");
+        heightInput.setText((int) image.getHeight() + "");
         isSettingValues = false;
         checkScaleType();
-        String info = message("CurrentSize") + ": " + Math.round(image.getWidth())
-                + "x" + Math.round(image.getHeight());
+        String info = message("CurrentSize") + ": "
+                + (int) image.getWidth() + "x" + (int) image.getHeight();
         commentsLabel.setText(info);
     }
 
@@ -151,12 +153,12 @@ public class ImageSizeController extends BaseImageEditController {
             clearMask();
 
             if (dragRadio.isSelected()) {
-                setBox.getChildren().addAll(keepBox);
+                setBox.getChildren().addAll(keepBox, selectAllRectButton);
                 if (commentsLabel != null) {
                     commentsLabel.setText(message("DragSizeComments"));
                 }
-                width = image.getWidth();
-                height = image.getHeight();
+                width = (int) image.getWidth();
+                height = (int) image.getHeight();
                 maskRectangleData = DoubleRectangle.xywh(0, 0, width, height);
                 popItemMenu = false;
                 showAnchors = true;
@@ -167,7 +169,7 @@ public class ImageSizeController extends BaseImageEditController {
                 pickSize();
 
             } else if (scaleRadio.isSelected()) {
-                setBox.getChildren().addAll(scaleSelector);
+                setBox.getChildren().addAll(scalePane);
                 pickScale();
             }
 
@@ -183,8 +185,8 @@ public class ImageSizeController extends BaseImageEditController {
             return;
         }
         super.maskShapeDataChanged();
-        width = maskRectangleData.getWidth();
-        height = maskRectangleData.getHeight();
+        width = (int) maskRectangleData.getWidth();
+        height = (int) maskRectangleData.getHeight();
         if (keepRatioType != BufferedImageTools.KeepRatioType.None) {
             adjustRadio();
 
@@ -198,7 +200,7 @@ public class ImageSizeController extends BaseImageEditController {
             return false;
         }
         try {
-            double v = Double.parseDouble(widthInput.getText());
+            int v = Integer.parseInt(widthInput.getText());
             if (v > 0) {
                 width = v;
                 widthInput.setStyle(null);
@@ -213,7 +215,7 @@ public class ImageSizeController extends BaseImageEditController {
             return false;
         }
         try {
-            double v = Double.parseDouble(heightInput.getText());
+            int v = Integer.parseInt(heightInput.getText());
             if (v > 0) {
                 height = v;
                 heightInput.setStyle(null);
@@ -239,17 +241,18 @@ public class ImageSizeController extends BaseImageEditController {
             float f = Float.parseFloat(scaleSelector.getValue());
             if (f >= 0) {
                 scale = f;
-                width = Math.round(image.getWidth() * scale);
-                height = Math.round(image.getHeight() * scale);
+                width = (int) (image.getWidth() * scale);
+                height = (int) (image.getHeight() * scale);
                 widthInput.setText(width + "");
                 heightInput.setText(height + "");
                 ValidationTools.setEditorNormal(scaleSelector);
-
                 labelSize();
             } else {
+                popError(message("InvalidParameter") + ": " + message("ZoomScale"));
                 ValidationTools.setEditorBadStyle(scaleSelector);
             }
         } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("ZoomScale"));
             ValidationTools.setEditorBadStyle(scaleSelector);
         }
     }
@@ -259,7 +262,6 @@ public class ImageSizeController extends BaseImageEditController {
             if (isSettingValues || scaleRadio.isSelected() || image == null) {
                 return;
             }
-
             scale = 1;
             widthInput.setDisable(false);
             heightInput.setDisable(false);
@@ -294,7 +296,7 @@ public class ImageSizeController extends BaseImageEditController {
                 int[] wh = mara.mybox.bufferedimage.ScaleTools.scaleValues(
                         (int) image.getWidth(),
                         (int) image.getHeight(),
-                        (int) width, (int) height, keepRatioType);
+                        width, height, keepRatioType);
                 width = wh[0];
                 height = wh[1];
                 widthInput.setStyle(null);
@@ -306,8 +308,8 @@ public class ImageSizeController extends BaseImageEditController {
                 }
             }
             isSettingValues = true;
-            widthInput.setText((int) width + "");
-            heightInput.setText((int) height + "");
+            widthInput.setText(width + "");
+            heightInput.setText(height + "");
             isSettingValues = false;
             labelSize();
 
@@ -344,10 +346,8 @@ public class ImageSizeController extends BaseImageEditController {
     }
 
     protected void labelSize() {
-        String info = message("CurrentSize") + ": " + (int) Math.round(image.getWidth())
-                + "x" + (int) Math.round(image.getHeight()) + "  "
-                + message("AfterChange") + ": " + (int) Math.round(width)
-                + "x" + (int) Math.round(height) + "\n";
+        String info = message("CurrentSize") + ": " + (int) image.getWidth() + "x" + (int) image.getHeight() + "  "
+                + message("AfterChange") + ": " + width + "x" + height + "\n";
         commentsLabel.setText(info);
     }
 
@@ -358,25 +358,39 @@ public class ImageSizeController extends BaseImageEditController {
         }
         maskRectangleData = DoubleRectangle.xywh(0, 0,
                 imageView.getImage().getWidth(), imageView.getImage().getHeight());
-        drawMaskRectangle();
+        maskShapeDataChanged();
+    }
+
+    @Override
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        if (scaleRadio.isSelected()) {
+            if (scale > 0) {
+                return true;
+            } else {
+                popError(message("InvalidParameter") + ": " + message("ZoomScale"));
+                return false;
+            }
+        } else {
+            if (width > 0 && height > 0) {
+                return true;
+            } else {
+                popError(message("InvalidParameter") + ": " + message("Width"));
+                return false;
+            }
+        }
     }
 
     @Override
     protected void handleImage() {
         if (scaleRadio.isSelected()) {
-            if (scale <= 0) {
-                return;
-            }
-            opInfo = message("Times2") + " " + scale;
+            opInfo = message("ZoomScale") + ":" + scale;
             handledImage = ScaleTools.scaleImage(image, scale);
         } else {
-            if (width <= 0 || height <= 0) {
-                return;
-            }
-            handledImage = ScaleTools.scaleImage(image,
-                    (int) width, (int) height);
-            opInfo = (int) Math.round(handledImage.getWidth()) + "x"
-                    + (int) Math.round(handledImage.getHeight());
+            opInfo = message("Size") + ":" + width + "," + height;
+            handledImage = ScaleTools.scaleImage(image, width, height);
         }
     }
 

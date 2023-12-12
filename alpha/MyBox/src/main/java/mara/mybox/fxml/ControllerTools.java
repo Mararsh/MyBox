@@ -19,6 +19,7 @@ import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.PptViewController;
 import mara.mybox.controller.SvgEditorController;
 import mara.mybox.controller.TextEditorController;
+import mara.mybox.controller.TextPopController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.controller.WordViewController;
 import mara.mybox.controller.XmlEditorController;
@@ -118,9 +119,17 @@ public class ControllerTools {
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
             controller = HtmlPopController.openHtml(parent, filename);
         } else if ("md".equals(suffix)) {
-            controller = MarkdownPopController.openFile(parent, filename);
+            if (file.length() > 1024 * 1024 * 1024) {
+                controller = MarkdownEditorController.open(file);
+            } else {
+                controller = MarkdownPopController.openFile(parent, filename);
+            }
         } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {
-            controller = TextEditorController.open(file);
+            if (file.length() > 1024 * 1024 * 1024) {
+                controller = TextEditorController.open(file);
+            } else {
+                controller = TextPopController.openFile(parent, filename);
+            }
         } else if (mustOpen) {
             controller = openTarget(filename, mustOpen);
         }

@@ -98,7 +98,7 @@ public class ControlImageBinary extends BaseController {
             }
         } catch (Exception e) {
         }
-        popError(message("InvalidParamter") + ": " + message("Threadhold"));
+        popError(message("InvalidParameter") + ": " + message("Threadhold"));
         thresholdInput.setStyle(UserConfig.badStyle());
         return false;
     }

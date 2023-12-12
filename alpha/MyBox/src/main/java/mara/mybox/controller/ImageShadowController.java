@@ -1,20 +1,19 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.awt.image.BufferedImage;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -23,12 +22,12 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageShadowController extends BaseImageEditController {
 
-    protected int size;
+    protected int w, h;
+    protected Color color;
+    protected boolean blur;
 
     @FXML
-    protected ComboBox sizeSelector;
-    @FXML
-    protected ControlColorSet colorController;
+    protected ControlImageShadow shadowController;
 
     public ImageShadowController() {
         baseTitle = message("Shadow");
@@ -39,71 +38,78 @@ public class ImageShadowController extends BaseImageEditController {
         try {
             operation = message("Shadow");
 
-            colorController.init(this, baseName + "Color", Color.BLACK);
-
-            sizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
-                            size = v;
-                            UserConfig.setString("ImageShadowSize", newValue);
-                            ValidationTools.setEditorNormal(sizeSelector);
-                        } else {
-                            ValidationTools.setEditorBadStyle(sizeSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(sizeSelector);
-                    }
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
     }
 
     @Override
-    public boolean afterImageLoaded() {
-        try {
-            if (!super.afterImageLoaded() || image == null) {
-                return false;
-            }
-            size = UserConfig.getInt(baseName + "Size", 20);
-            if (size < 0) {
-                size = 0;
-            }
-            int width = (int) imageView.getImage().getWidth();
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
-                    width / 100 + "",
-                    width / 50 + "",
-                    width / 200 + "",
-                    width / 30 + "",
-                    "10", "5", "15", "3", "8", "1", "6", "20", "25"));
-            String v = size + "";
-            if (!values.contains(v)) {
-                values.add(0, v);
-            }
-            isSettingValues = true;
-            sizeSelector.getItems().setAll(values);
-            sizeSelector.setValue(v);
-            isSettingValues = false;
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+    protected boolean checkOptions() {
+        if (!super.checkOptions() || !shadowController.pickValues()) {
             return false;
         }
+        if (shadowController.wPercenatge()) {
+            w = (int) (srcImage().getWidth() * shadowController.wPer / 100);
+        } else {
+            w = shadowController.w;
+        }
+        if (shadowController.hPercenatge()) {
+            h = (int) (srcImage().getWidth() * shadowController.hPer / 100);
+        } else {
+            h = shadowController.h;
+        }
+        blur = shadowController.blur();
+        color = shadowController.color();
+        operation = message("Shadow");
+        opInfo = message("HorizontalOffset") + ":" + w + " "
+                + message("VerticalOffset") + ":" + h + " "
+                + message("Color") + ":" + color + " "
+                + message("Blur") + ":" + blur;
+        return true;
     }
 
     @Override
     protected void handleImage() {
-        Color c = colorController.color();
-        opInfo = size + " " + c;
-        handledImage = FxImageTools.addShadowAlpha(task, srcImage(), size, c);
+        handledImage = FxImageTools.addShadow(task, srcImage(), w, h, color, blur);
+    }
+
+    @Override
+    protected void makeDemoFiles(List<String> files, Image demoImage) {
+        try {
+            BufferedImage srcImage = SwingFXUtils.fromFXImage(demoImage, null);
+            int offsetX = Math.max(30, srcImage.getWidth() / 20);
+            int offsetY = Math.max(30, srcImage.getHeight() / 20);
+
+            makeDemoFile(files, srcImage, offsetX, offsetY, true);
+            makeDemoFile(files, srcImage, -offsetX, offsetY, true);
+            makeDemoFile(files, srcImage, offsetX, -offsetY, true);
+            makeDemoFile(files, srcImage, -offsetX, -offsetY, true);
+            makeDemoFile(files, srcImage, offsetX, offsetY, false);
+            makeDemoFile(files, srcImage, -offsetX, offsetY, false);
+            makeDemoFile(files, srcImage, offsetX, -offsetY, false);
+            makeDemoFile(files, srcImage, -offsetX, -offsetY, false);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void makeDemoFile(List<String> files, BufferedImage srcImage,
+            int offsetX, int offsetY, boolean blur) {
+        try {
+            BufferedImage bufferedImage = BufferedImageTools.addShadow(demoTask, srcImage,
+                    -offsetX, -offsetY, shadowController.awtColor(), blur);
+            String tmpFile = FileTmpTools.generateFile(message("Shadow") + "_" + color
+                    + "_x-" + offsetX + "_y-" + offsetY
+                    + (blur ? ("_" + message("Blur")) : ""),
+                    "png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*

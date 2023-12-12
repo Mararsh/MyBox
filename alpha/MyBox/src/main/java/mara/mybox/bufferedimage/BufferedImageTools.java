@@ -22,6 +22,7 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.MessageDigestTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Colors;
 import mara.mybox.value.FileExtensions;
 
 /**
@@ -30,6 +31,133 @@ import mara.mybox.value.FileExtensions;
  * @License Apache License Version 2.0
  */
 public class BufferedImageTools {
+
+    public static BufferedImage addShadow(FxTask task, BufferedImage source,
+            int shadowX, int shadowY, Color shadowColor, boolean isBlur) {
+        try {
+            if (source == null || shadowColor == null
+                    || (shadowX == 0 && shadowY == 0)) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            boolean blend = !AlphaTools.hasAlpha(source);
+            int imageType = blend ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+            BufferedImage shadowImage = new BufferedImage(width, height, imageType);
+            float iOpocity;
+            float jOpacity;
+            float opocity;
+            float shadowRed = shadowColor.getRed() / 255.0F;
+            float shadowGreen = shadowColor.getGreen() / 255.0F;
+            float shadowBlue = shadowColor.getBlue() / 255.0F;
+            Color newColor;
+            Color alphaColor = blend ? ColorConvertTools.alphaColor() : Colors.TRANSPARENT;
+            int alphaPixel = alphaColor.getRGB();
+            int offsetX = Math.abs(shadowX);
+            int offsetY = Math.abs(shadowY);
+            for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
+                    if (isBlur) {
+                        int pixel = source.getRGB(i, j);
+                        if (pixel == 0) {
+                            shadowImage.setRGB(i, j, alphaPixel);
+                            continue;
+                        }
+                        iOpocity = jOpacity = 1.0F;
+                        if (i < offsetX) {
+                            iOpocity = 1.0F * i / offsetX;
+                        } else if (i > width - offsetX) {
+                            iOpocity = 1.0F * (width - i) / offsetX;
+                        }
+                        if (j < offsetY) {
+                            jOpacity = 1.0F * j / offsetY;
+                        } else if (j > height - offsetY) {
+                            jOpacity = 1.0F * (height - j) / offsetY;
+                        }
+                        opocity = iOpocity * jOpacity;
+                        if (opocity == 1.0F) {
+                            newColor = shadowColor;
+                        } else if (blend) {
+                            newColor = ColorBlendTools.blendColor(shadowColor, opocity, alphaColor);
+                        } else {
+                            newColor = new Color(shadowRed, shadowGreen, shadowBlue, opocity);
+                        }
+                    } else {
+                        newColor = shadowColor;
+                    }
+                    shadowImage.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            BufferedImage target = new BufferedImage(width + offsetX, height + offsetY, imageType);
+            Graphics2D g = target.createGraphics();
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
+            }
+            g.setColor(alphaColor);
+            g.fillRect(0, 0, target.getWidth(), target.getHeight());
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            int x = shadowX > 0 ? 0 : -shadowX;
+            int y = shadowY > 0 ? 0 : -shadowY;
+            int sx = shadowX > 0 ? shadowX : 0;
+            int sy = shadowY > 0 ? shadowY : 0;
+            g.drawImage(shadowImage, sx, sy, null);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            g.drawImage(source, x, y, null);
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static BufferedImage setRound(FxTask task, BufferedImage source,
+            int roundX, int roundY, Color bgColor) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = BufferedImage.TYPE_INT_ARGB;
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
+            }
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            g.setColor(bgColor);
+            g.fillRect(0, 0, width, height);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            g.setClip(new RoundRectangle2D.Double(0, 0, width, height, roundX, roundY));
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            g.drawImage(source, 0, 0, null);
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 
     public static class Direction {
 
@@ -220,30 +348,6 @@ public class BufferedImageTools {
             }
         }
         return true;
-    }
-
-    public static BufferedImage setRound(FxTask task, BufferedImage source, int round, Color bgColor) {
-        int width = source.getWidth();
-        int height = source.getHeight();
-        int imageType = BufferedImage.TYPE_INT_ARGB;
-        BufferedImage target = new BufferedImage(width, height, imageType);
-        Graphics2D g = target.createGraphics();
-        if (AppVariables.ImageHints != null) {
-            g.addRenderingHints(AppVariables.ImageHints);
-        }
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        g.setColor(bgColor);
-        g.fillRect(0, 0, width, height);
-        if (task != null && !task.isWorking()) {
-            return null;
-        }
-        g.setClip(new RoundRectangle2D.Double(0, 0, width, height, round, round));
-        if (task != null && !task.isWorking()) {
-            return null;
-        }
-        g.drawImage(source, 0, 0, null);
-        g.dispose();
-        return target;
     }
 
     public static GraphicsConfiguration getGraphicsConfiguration() {

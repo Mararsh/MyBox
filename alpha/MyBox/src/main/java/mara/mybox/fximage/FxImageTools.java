@@ -24,7 +24,6 @@ import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
-import mara.mybox.bufferedimage.ShadowTools;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
@@ -227,32 +226,22 @@ public class FxImageTools {
         }
     }
 
-    public static Image setRound(FxTask task, Image image, int round, Color bgColor) {
-        if (image == null || round <= 0) {
+    public static Image setRound(FxTask task, Image image, int roundX, int roundY, Color bgColor) {
+        if (image == null || roundX <= 0 || roundY <= 0) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = BufferedImageTools.setRound(task, source, round, toAwtColor(bgColor));
+        BufferedImage target = BufferedImageTools.setRound(task, source, roundX, roundY, toAwtColor(bgColor));
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
-    public static Image addShadowAlpha(FxTask task, Image image, int shadow, Color color) {
-        if (image == null || shadow <= 0) {
+    public static Image addShadow(FxTask task, Image image, int offsetX, int offsetY, Color color, boolean isBlur) {
+        if (image == null || color == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ShadowTools.addShadowAlpha(task, source, shadow, toAwtColor(color));
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image addShadowNoAlpha(FxTask task, Image image, int shadow, Color color) {
-        if (image == null || shadow <= 0) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ShadowTools.addShadowNoAlpha(task, source, shadow, toAwtColor(color));
+        BufferedImage target = BufferedImageTools.addShadow(task, source, offsetX, offsetY, toAwtColor(color), isBlur);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

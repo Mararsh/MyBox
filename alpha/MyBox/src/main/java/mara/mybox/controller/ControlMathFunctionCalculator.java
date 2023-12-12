@@ -307,7 +307,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 calculateScale = v;
                 UserConfig.setInt(baseName + "CalculateScale", v);
             } else {
-                popError(message("InvalidParamter") + ": " + message("DecimalScale"));
+                popError(message("InvalidParameter") + ": " + message("DecimalScale"));
                 return;
             }
             expression = script();
@@ -516,7 +516,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             dataScale = v;
             UserConfig.setInt(baseName + "DataScale", v);
         } else {
-            popError(message("InvalidParamter") + ": " + message("DecimalScale"));
+            popError(message("InvalidParameter") + ": " + message("DecimalScale"));
             return false;
         }
         expression = script();

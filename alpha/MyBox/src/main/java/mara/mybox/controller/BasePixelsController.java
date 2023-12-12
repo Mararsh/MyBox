@@ -78,8 +78,6 @@ public abstract class BasePixelsController extends BaseChildController {
     }
 
     public void reset() {
-        operation = null;
-        opInfo = null;
         handledImage = null;
     }
 
@@ -147,10 +145,12 @@ public abstract class BasePixelsController extends BaseChildController {
                 if (isPreview) {
                     ImagePopController.openImage(myController, handledImage);
                 } else {
-                    popSuccessful();
-                    editor.updateImage(operation, opInfo, scope, handledImage, cost);
+                    editor.updateImage(operation, opInfo, scope, handledImage);
                     if (closeAfterCheck.isSelected()) {
                         close();
+                        editor.popSuccessful();
+                    } else {
+                        popSuccessful();
                     }
                 }
                 afterHandle();

@@ -162,22 +162,14 @@ public class ImageEditorController extends BaseImageController {
         return true;
     }
 
-    public void updateImage(String operation, Image newImage, long cost) {
-        updateImage(operation, null, null, newImage, cost);
+    public void updateImage(String operation, Image newImage) {
+        updateImage(operation, null, null, newImage);
     }
 
-    public void updateImage(String operation, String value, ImageScope opScope, Image newImage, long cost) {
+    public void updateImage(String operation, String value, ImageScope opScope, Image newImage) {
         try {
             recordImageHistory(operation, value, opScope, newImage);
-            String info = operation == null ? "" : operation;
-            if (value != null && !value.isBlank()) {
-                info += ": " + value;
-            }
-            if (cost > 0) {
-                info += "  " + message("Cost") + ": " + DateTools.datetimeMsDuration(cost);
-            }
             updateImage(newImage);
-            popInformation(info);
             notifyLoad();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -200,7 +192,6 @@ public class ImageEditorController extends BaseImageController {
         if (hisImage == null || op == null) {
             return;
         }
-
         FxTask recordTask = new FxTask<Void>(this) {
             private File currentFile;
             private ImageEditHistory his;
@@ -356,7 +347,7 @@ public class ImageEditorController extends BaseImageController {
                     String info = MessageFormat.format(message("CurrentImageSetAs"),
                             DateTools.datetimeToString(his.getOperationTime()) + " " + his.getDesc());
                     popInformation(info);
-                    updateImage("History", hisImage, cost);
+                    updateImage(message("History"), hisImage);
                     setHistoryIndex(index);
                 }
             }
@@ -427,7 +418,7 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Shadow"), StyleTools.getIconImageView("iconRound.png"));
+            menu = new MenuItem(message("Shadow"), StyleTools.getIconImageView("iconShadow.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageShadowController.open(this);
             });
@@ -842,7 +833,7 @@ public class ImageEditorController extends BaseImageController {
         if (imageView == null) {
             return;
         }
-        updateImage("Recover", image, -1);
+        updateImage(message("Recover"), image);
         setImageChanged(false);
         popInformation(message("Recovered"));
     }
@@ -889,7 +880,7 @@ public class ImageEditorController extends BaseImageController {
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
-                updateImage("MirrorHorizontal", newImage, cost);
+                updateImage(message("MirrorHorizontal"), newImage);
             }
 
         };
@@ -917,7 +908,7 @@ public class ImageEditorController extends BaseImageController {
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
-                updateImage("MirrorVertical", newImage, cost);
+                updateImage(message("MirrorVertical"), newImage);
             }
 
         };

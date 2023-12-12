@@ -168,14 +168,14 @@ public class Fxmls {
     public static final String ImageReplaceColorBatchFxml = "/fxml/ImageReplaceColorBatch.fxml";
     public static final String ImageTextBatchFxml = "/fxml/ImageTextBatch.fxml";
     public static final String ImageSharpenBatchFxml = "/fxml/ImageSharpenBatch.fxml";
+    public static final String ImageShadowBatchFxml = "/fxml/ImageShadowBatch.fxml";
+    public static final String ImageRoundBatchFxml = "/fxml/ImageRoundBatch.fxml";
 
     public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
     public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
     public static final String ImageManufactureBatchPasteFxml = "/fxml/ImageManufactureBatchPaste.fxml";
     public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
     public static final String ImageManufactureBatchEnhancementFxml = "/fxml/ImageManufactureBatchEnhancement.fxml";
-    public static final String ImageManufactureBatchArcFxml = "/fxml/ImageManufactureBatchArc.fxml";
-    public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
 
