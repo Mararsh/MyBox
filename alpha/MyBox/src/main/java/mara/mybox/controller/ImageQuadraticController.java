@@ -24,8 +24,8 @@ public class ImageQuadraticController extends BaseShapeEditController {
     protected void initMore() {
         try {
             super.initMore();
-
             operation = message("QuadraticCurve");
+
             quadraticController.setParameters(this);
 
             anchorCheck.setSelected(true);
@@ -67,8 +67,8 @@ public class ImageQuadraticController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageQuadraticController controller = (ImageQuadraticController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageQuadraticFxml);
+            ImageQuadraticController controller = (ImageQuadraticController) WindowTools.branchStage(
+                    parent, Fxmls.ImageQuadraticFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

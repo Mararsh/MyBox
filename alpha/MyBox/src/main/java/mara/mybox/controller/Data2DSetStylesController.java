@@ -414,8 +414,8 @@ public class Data2DSetStylesController extends BaseController {
      */
     public static Data2DSetStylesController open(ControlData2DLoad tableController) {
         try {
-            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSetStylesFxml, false);
+            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DSetStylesFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

@@ -36,6 +36,7 @@ public class ImageShadowController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            super.initMore();
             operation = message("Shadow");
 
         } catch (Exception e) {
@@ -60,7 +61,6 @@ public class ImageShadowController extends BaseImageEditController {
         }
         blur = shadowController.blur();
         color = shadowController.color();
-        operation = message("Shadow");
         opInfo = message("HorizontalOffset") + ":" + w + " "
                 + message("VerticalOffset") + ":" + h + " "
                 + message("Color") + ":" + color + " "
@@ -120,8 +120,8 @@ public class ImageShadowController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageShadowController controller = (ImageShadowController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageShadowFxml);
+            ImageShadowController controller = (ImageShadowController) WindowTools.branchStage(
+                    parent, Fxmls.ImageShadowFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

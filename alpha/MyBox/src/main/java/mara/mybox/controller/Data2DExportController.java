@@ -167,8 +167,8 @@ public class Data2DExportController extends BaseData2DHandleController {
      */
     public static Data2DExportController open(ControlData2DLoad tableController) {
         try {
-            Data2DExportController controller = (Data2DExportController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DExportFxml, false);
+            Data2DExportController controller = (Data2DExportController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DExportFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

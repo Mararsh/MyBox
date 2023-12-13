@@ -44,7 +44,7 @@ public class FindPopController extends MenuTextBaseController {
             }
             closeAll();
             FindPopController controller
-                    = (FindPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.FindPopFxml, false);
+                    = (FindPopController) WindowTools.branchStage(parent, Fxmls.FindPopFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

@@ -452,9 +452,9 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <HBox fx:id="opBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <Button fx:id="shapeButton" layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#showShapeMenu">
+                              <FlowPane fx:id="opPane" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                                <Button fx:id="shapeButton" mnemonicParsing="false" onAction="#showShapeMenu">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -463,6 +463,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                    <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconClear.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                                 <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -495,7 +504,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </CheckBox>
-                                    <CheckBox fx:id="clearDataWhenLoadImageCheck" layoutX="151.0" layoutY="14.0" mnemonicParsing="false" selected="true">
+                                    <CheckBox fx:id="clearDataWhenLoadImageCheck" mnemonicParsing="false" selected="true">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -504,8 +513,8 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </CheckBox>
-                                            </children>
-                                        </HBox>
+                                 </children>
+                              </FlowPane>
                                         <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -49,11 +49,6 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
     }
 
     @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
-    @Override
     public void initControls() {
         try {
             super.initControls();
@@ -265,8 +260,8 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
         static methods
      */
     public static XmlAddNodeController open(ControlXmlTree treeController, TreeItem<XmlTreeNode> item) {
-        XmlAddNodeController controller = (XmlAddNodeController) WindowTools.openChildStage(
-                treeController.getMyWindow(), Fxmls.XmlAddNodeFxml);
+        XmlAddNodeController controller = (XmlAddNodeController) WindowTools.childStage(
+                treeController, Fxmls.XmlAddNodeFxml);
         if (controller != null) {
             controller.setParameters(treeController, item);
             controller.requestMouse();

@@ -25,6 +25,9 @@ public class ImageSelectPixelsController extends BasePixelsController {
     @Override
     protected void initMore() {
         try {
+            super.initMore();
+            operation = message("SelectPixels");
+
             bgColorController.init(this, baseName + "BackgroundColor", Color.DARKGREEN);
 
         } catch (Exception e) {
@@ -81,8 +84,8 @@ public class ImageSelectPixelsController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSelectPixelsController controller = (ImageSelectPixelsController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageSelectPixelsFxml);
+            ImageSelectPixelsController controller = (ImageSelectPixelsController) WindowTools.branchStage(
+                    parent, Fxmls.ImageSelectPixelsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

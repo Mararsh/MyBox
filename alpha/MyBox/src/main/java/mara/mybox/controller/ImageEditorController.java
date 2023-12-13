@@ -162,15 +162,11 @@ public class ImageEditorController extends BaseImageController {
         return true;
     }
 
-    public void updateImage(String operation, Image newImage) {
-        updateImage(operation, null, null, newImage);
-    }
-
+    @Override
     public void updateImage(String operation, String value, ImageScope opScope, Image newImage) {
         try {
             recordImageHistory(operation, value, opScope, newImage);
             updateImage(newImage);
-            notifyLoad();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

@@ -30,9 +30,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -58,11 +58,16 @@ public abstract class BaseController_Attributes {
     protected Popup popup;
     protected ContextMenu popMenu;
     protected String error, targetFileSuffix;
-    protected boolean isSettingValues, isPop;
+    protected boolean isSettingValues;
     protected File sourceFile, sourcePath, targetPath, targetFile;
+    protected StageType stageType;
     protected SaveAsType saveAsType;
 
-    protected enum SaveAsType {
+    public static enum StageType {
+        Normal, Branch, Child, Pop, Popup, OneOpen
+    }
+
+    public static enum SaveAsType {
         Load, Open, Edit, None
     }
 
@@ -98,7 +103,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox topCheck, rightPaneCheck, leftPaneCheck;
+    protected CheckBox rightPaneCheck, leftPaneCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML
@@ -200,6 +205,24 @@ public abstract class BaseController_Attributes {
             }
         }
         return myStage;
+    }
+
+    public Window getStage() {
+        if (getMyWindow() instanceof Popup) {
+            return ((Popup) myWindow).getOwnerWindow();
+        } else {
+            return getMyStage();
+        }
+    }
+
+    public boolean isIndependantStage() {
+        return getMyStage() != null
+                && mainMenuController != null
+                && myStage.getOwner() == null
+                && stageType != StageType.Branch
+                && stageType != StageType.Child
+                && stageType != StageType.Pop
+                && stageType != StageType.Popup;
     }
 
     public boolean isPopup() {
@@ -357,16 +380,20 @@ public abstract class BaseController_Attributes {
         this.myWindow = myWindow;
     }
 
-    public boolean isIsPop() {
-        return isPop;
-    }
-
     public boolean isIsSettingValues() {
         return isSettingValues;
     }
 
     public String getInterfaceName() {
         return interfaceName;
+    }
+
+    public StageType getStageType() {
+        return stageType;
+    }
+
+    public void setStageType(StageType stageType) {
+        this.stageType = stageType;
     }
 
     /*

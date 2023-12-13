@@ -374,8 +374,8 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
      */
     public static Data2DChartSelfComparisonBarsController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartSelfComparisonBarsController controller = (Data2DChartSelfComparisonBarsController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartSelfComparisonBarsFxml, false);
+            Data2DChartSelfComparisonBarsController controller = (Data2DChartSelfComparisonBarsController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartSelfComparisonBarsFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

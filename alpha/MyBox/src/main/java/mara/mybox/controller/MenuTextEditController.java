@@ -389,8 +389,8 @@ public class MenuTextEditController extends MenuTextBaseController {
                     }
                 }
             }
-            MenuTextEditController controller = (MenuTextEditController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MenuTextEditFxml, false);
+            MenuTextEditController controller = (MenuTextEditController) WindowTools.branchStage(
+                    parent, Fxmls.MenuTextEditFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

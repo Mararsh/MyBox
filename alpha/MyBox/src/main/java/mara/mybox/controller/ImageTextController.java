@@ -33,12 +33,14 @@ public class ImageTextController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            super.initMore();
+            operation = message("Text");
+
             optionsController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
     }
 
     @FXML
@@ -127,8 +129,8 @@ public class ImageTextController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageTextController controller = (ImageTextController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageTextFxml);
+            ImageTextController controller = (ImageTextController) WindowTools.branchStage(
+                    parent, Fxmls.ImageTextFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

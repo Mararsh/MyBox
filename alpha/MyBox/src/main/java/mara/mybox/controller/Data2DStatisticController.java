@@ -314,8 +314,8 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
      */
     public static Data2DStatisticController open(ControlData2DLoad tableController) {
         try {
-            Data2DStatisticController controller = (Data2DStatisticController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DStatisticFxml, false);
+            Data2DStatisticController controller = (Data2DStatisticController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DStatisticFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

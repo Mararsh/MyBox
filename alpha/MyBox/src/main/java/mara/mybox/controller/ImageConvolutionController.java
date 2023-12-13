@@ -43,10 +43,7 @@ public class ImageConvolutionController extends BasePixelsController {
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
+            operation = message("Convolution");
 
             listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             listView.setCellFactory(new Callback<ListView<ConvolutionKernel>, ListCell<ConvolutionKernel>>() {
@@ -135,7 +132,6 @@ public class ImageConvolutionController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = message("Convolution");
             opInfo = kernel.getName();
             return convolution.operateFxImage();
         } catch (Exception e) {
@@ -143,40 +139,6 @@ public class ImageConvolutionController extends BasePixelsController {
             return null;
         }
     }
-
-    @FXML
-    @Override
-    protected void demo() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private Image demoImage = null;
-
-            @Override
-            protected boolean handle() {
-                try {
-//                    demoImage = ScaleTools.demoImage(srcImage());
-//                    demoImage = handleImage(demoImage, scope());
-                    return demoImage != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                ImagePopController.openImage(myController, demoImage);
-            }
-
-        };
-        start(task);
-    }
-
 
     /*
         static methods
@@ -186,8 +148,8 @@ public class ImageConvolutionController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageConvolutionFxml);
+            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.branchStage(
+                    parent, Fxmls.ImageConvolutionFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

@@ -36,10 +36,8 @@ public class ImageSepiaController extends BasePixelsController {
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
+            operation = message("Grey");
+
             intensity = UserConfig.getInt(baseName + "Intensity", 60);
             if (intensity <= 0 || intensity >= 255) {
                 intensity = 60;
@@ -92,7 +90,6 @@ public class ImageSepiaController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = message("Sepia");
             opInfo = message("Intensity") + ": " + intensity;
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
@@ -109,8 +106,8 @@ public class ImageSepiaController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSepiaController controller = (ImageSepiaController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageSepiaFxml);
+            ImageSepiaController controller = (ImageSepiaController) WindowTools.branchStage(
+                    parent, Fxmls.ImageSepiaFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

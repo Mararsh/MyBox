@@ -64,6 +64,9 @@ public class ImagePasteController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            super.initMore();
+            operation = message("Paste");
+
             rotateAngle = currentAngle = 0;
 
             enlargeCheck.setSelected(UserConfig.getBoolean(baseName + "EnlargerImageAsClip", true));
@@ -193,7 +196,7 @@ public class ImagePasteController extends BaseImageEditController {
                     if (task == null || isCancelled()) {
                         return false;
                     }
-                    bgImage = editor.imageView.getImage();
+                    bgImage = srcImage();
                     if (enlargeCheck.isSelected()) {
                         bgImage = MarginTools.addMarginsFx(this, bgImage,
                                 Color.TRANSPARENT,
@@ -316,15 +319,7 @@ public class ImagePasteController extends BaseImageEditController {
     @FXML
     @Override
     public void okAction() {
-        editor.updateImage(message("Paste"), currentImage());
-        if (closeAfterCheck.isSelected()) {
-            close();
-            editor.popSuccessful();
-        } else {
-            getMyWindow().requestFocus();
-            myStage.toFront();
-            popSuccessful();
-        }
+        passHandled(currentImage());
     }
 
 
@@ -336,8 +331,8 @@ public class ImagePasteController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImagePasteController controller = (ImagePasteController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImagePasteFxml);
+            ImagePasteController controller = (ImagePasteController) WindowTools.branchStage(
+                    parent, Fxmls.ImagePasteFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

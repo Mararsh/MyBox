@@ -94,8 +94,8 @@ public class DataManufactureSaveController extends BaseChildController {
      */
     public static DataManufactureSaveController open(ControlData2DLoad tableController) {
         try {
-            DataManufactureSaveController controller = (DataManufactureSaveController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.DataManufactureSaveFxml, true);
+            DataManufactureSaveController controller = (DataManufactureSaveController) WindowTools.childStage(
+                    tableController, Fxmls.DataManufactureSaveFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

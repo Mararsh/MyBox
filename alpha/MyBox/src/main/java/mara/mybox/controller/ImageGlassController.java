@@ -35,10 +35,8 @@ public class ImageGlassController extends BasePixelsController {
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
+            operation = message("FrostedGlass");
+
             intensity = UserConfig.getInt(baseName + "Intensity", 80);
             if (intensity <= 0) {
                 intensity = 80;
@@ -90,7 +88,6 @@ public class ImageGlassController extends BasePixelsController {
             mosaic.setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = message("FrostedGlass");
             opInfo = message("Intensity") + ": " + intensity;
             return mosaic.operateFxImage();
         } catch (Exception e) {
@@ -107,8 +104,8 @@ public class ImageGlassController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageGlassController controller = (ImageGlassController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageGlassFxml);
+            ImageGlassController controller = (ImageGlassController) WindowTools.branchStage(
+                    parent, Fxmls.ImageGlassFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

@@ -73,8 +73,8 @@ public class ColorPaletteSelectorController extends BaseChildController {
      */
     public static ColorPaletteSelectorController open(ColorPalettePopupController popupController) {
         try {
-            ColorPaletteSelectorController controller = (ColorPaletteSelectorController) WindowTools.openChildStage(
-                    popupController.getMyWindow(), Fxmls.ColorPaletteSelectorFxml, true);
+            ColorPaletteSelectorController controller = (ColorPaletteSelectorController) WindowTools.childStage(
+                    popupController, Fxmls.ColorPaletteSelectorFxml);
             controller.setParameter(popupController);
             return controller;
         } catch (Exception e) {

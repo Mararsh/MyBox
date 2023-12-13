@@ -31,7 +31,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -617,7 +616,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     @FXML
     protected void importExamples() {
         InfoTreeNodeImportController controller
-                = (InfoTreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeImportFxml);
+                = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
         controller.setCaller(infoController);
         controller.importExamples();
     }

@@ -2,7 +2,11 @@ package mara.mybox.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
+import mara.mybox.controller.BaseController_Attributes.StageType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.value.AppVariables;
@@ -53,11 +57,39 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
                 mainMenuController.parentFxml = myFxml;
                 mainMenuController.parentController = this;
             }
+
+            stageType = StageType.Normal;
+
             AppVariables.AlarmClockController = null;
-            isPop = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void setParent(BaseController parent, StageType stageType) {
+        this.parentController = parent;
+        this.stageType = stageType;
+        if (parent == null || stageType == null) {
+            return;
+        }
+        switch (stageType) {
+            case Branch: {
+                Window w = parent.getMyWindow();
+                if (w != null) {
+                    w.setOnHiding(new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent event) {
+                            closeStage();
+                        }
+                    });
+                }
+                break;
+            }
+            case Pop: {
+                getMyStage().setAlwaysOnTop(true);
+                break;
+            }
         }
     }
 

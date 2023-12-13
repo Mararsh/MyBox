@@ -75,11 +75,6 @@ public class JavaScriptController extends InfoTreeManageController {
     }
 
     @Override
-    public void setStageStatus() {
-        setAsNormal();
-    }
-
-    @Override
     public void itemClicked() {
     }
 
@@ -169,8 +164,8 @@ public class JavaScriptController extends InfoTreeManageController {
      */
     public static JavaScriptController open(ControlWebView controlWebView) {
         try {
-            JavaScriptController controller = (JavaScriptController) WindowTools.openChildStage(
-                    controlWebView.getMyWindow(), Fxmls.JavaScriptFxml, false);
+            JavaScriptController controller = (JavaScriptController) WindowTools.branchStage(
+                    controlWebView, Fxmls.JavaScriptFxml);
             controller.setParameters(controlWebView);
             controller.requestMouse();
             return controller;

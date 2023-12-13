@@ -102,7 +102,8 @@ public class InfoTreeNodesCopyController extends BaseInfoTreeHandleController {
             }
         }
         if (controller == null) {
-            controller = (InfoTreeNodesCopyController) WindowTools.openChildStage(manager.getMyWindow(), Fxmls.InfoTreeNodesCopyFxml);
+            controller = (InfoTreeNodesCopyController) WindowTools.childStage(
+                    manager, Fxmls.InfoTreeNodesCopyFxml);
         }
         if (controller != null) {
             controller.setParameters(manager);

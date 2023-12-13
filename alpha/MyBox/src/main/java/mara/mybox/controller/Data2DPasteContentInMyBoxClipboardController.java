@@ -32,11 +32,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     }
 
     @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
-    @Override
     public void initValues() {
         try {
             loadController = sourceController;
@@ -88,8 +83,8 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             }
             closeAll();
             Data2DPasteContentInMyBoxClipboardController controller
-                    = (Data2DPasteContentInMyBoxClipboardController) WindowTools.openChildStage(target.getMyStage(),
-                            Fxmls.Data2DPasteContentInMyBoxClipboardFxml, false);
+                    = (Data2DPasteContentInMyBoxClipboardController) WindowTools.branchStage(
+                            target, Fxmls.Data2DPasteContentInMyBoxClipboardFxml);
             controller.setParameters(target);
             controller.requestMouse();
             return controller;

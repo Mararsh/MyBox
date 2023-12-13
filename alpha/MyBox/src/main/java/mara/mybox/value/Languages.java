@@ -8,7 +8,6 @@ import java.util.ResourceBundle;
 import mara.mybox.data.UserLanguage;
 import static mara.mybox.value.AppVariables.CurrentBundle;
 import static mara.mybox.value.AppVariables.CurrentLangName;
-import static mara.mybox.value.AppVariables.IsChinese;
 
 /**
  * @Author Mara
@@ -39,11 +38,6 @@ public class Languages {
             UserConfig.setString("language", CurrentLangName);
         } catch (Exception e) {
         }
-        IsChinese = CurrentBundle == BundleZhCN;
-    }
-
-    public static boolean isChinese() {
-        return IsChinese;
     }
 
     public static String getLangName() {
@@ -63,8 +57,6 @@ public class Languages {
                 } catch (Exception e) {
                 }
             }
-            IsChinese = CurrentLangName.equals("zh")
-                    || CurrentLangName.startsWith("zh_");
         }
         return CurrentLangName;
     }
@@ -72,7 +64,7 @@ public class Languages {
     public static String embedLangName() {
         try {
             String lang = Locale.getDefault().getLanguage().toLowerCase();
-            if (lang.equals("zh") || lang.startsWith("zh_")) {
+            if (isChinese(lang)) {
                 return "zh";
             }
         } catch (Exception e) {
@@ -89,6 +81,17 @@ public class Languages {
         } catch (Exception e) {
         }
         return "en";
+    }
+
+    public static boolean isChinese() {
+        return isChinese(getLangName());
+    }
+
+    public static boolean isChinese(String lang) {
+        if (lang == null) {
+            return false;
+        }
+        return lang.equals("zh") || lang.startsWith("zh_");
     }
 
     public static ResourceBundle getBundle() {

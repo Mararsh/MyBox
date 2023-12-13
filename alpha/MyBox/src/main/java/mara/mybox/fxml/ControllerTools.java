@@ -23,11 +23,11 @@ import mara.mybox.controller.TextPopController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.controller.WordViewController;
 import mara.mybox.controller.XmlEditorController;
-import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.fxml.WindowTools.replaceStage;
 
 /**
  * @Author Mara
@@ -37,7 +37,7 @@ import mara.mybox.value.Fxmls;
 public class ControllerTools {
 
     public static BaseController openMyBox(Stage stage) {
-        return openScene(stage, Fxmls.MyboxFxml);
+        return replaceStage(stage, Fxmls.MyboxFxml);
     }
 
     public static BaseController openTarget(String filename) {

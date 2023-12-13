@@ -180,8 +180,8 @@ public class ImageShapeOptionsController extends ImageOptionsController {
             if (parent == null) {
                 return null;
             }
-            ImageShapeOptionsController controller = (ImageShapeOptionsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageShapeOptionsFxml, false);
+            ImageShapeOptionsController controller = (ImageShapeOptionsController) WindowTools.branchStage(
+                    parent, Fxmls.ImageShapeOptionsFxml);
             controller.setParameters(parent, withStroke);
             return controller;
         } catch (Exception e) {

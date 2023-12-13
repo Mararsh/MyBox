@@ -456,8 +456,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
      */
     public static Data2DSimpleLinearRegressionController open(ControlData2DLoad tableController) {
         try {
-            Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
+            Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DSimpleLinearRegressionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

@@ -167,8 +167,8 @@ public class TableAddRowsController extends BaseChildController {
      */
     public static TableAddRowsController open(BaseTablePagesController tableViewController) {
         try {
-            TableAddRowsController controller = (TableAddRowsController) WindowTools.openChildStage(
-                    tableViewController.getMyWindow(), Fxmls.TableAddRowsFxml, false);
+            TableAddRowsController controller = (TableAddRowsController) WindowTools.branchStage(
+                    tableViewController, Fxmls.TableAddRowsFxml);
             controller.setParameters(tableViewController);
             return controller;
         } catch (Exception e) {

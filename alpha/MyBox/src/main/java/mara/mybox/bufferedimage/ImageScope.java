@@ -44,7 +44,7 @@ public class ImageScope extends BaseData {
     protected BufferedImage outlineSource, outline;
 
     public static enum ScopeType {
-        Whole, Matting, Rectangle, Circle, Ellipse, Polygon, Color, Outline
+        Whole, Matting, Rectangle, Circle, Ellipse, Polygon, Colors, Outline
     }
 
     public static enum ColorScopeType {

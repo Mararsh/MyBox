@@ -39,10 +39,8 @@ public class ImageSmoothController extends BasePixelsController {
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
+            operation = message("Smooth");
+
             intensity = UserConfig.getInt(baseName + "Intensity", 10);
             if (intensity <= 0) {
                 intensity = 10;
@@ -104,7 +102,6 @@ public class ImageSmoothController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = message("Smooth");
             opInfo = message("Intensity") + ": " + intensity;
             return convolution.operateFxImage();
         } catch (Exception e) {
@@ -121,8 +118,8 @@ public class ImageSmoothController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSmoothController controller = (ImageSmoothController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageSmoothFxml);
+            ImageSmoothController controller = (ImageSmoothController) WindowTools.branchStage(
+                    parent, Fxmls.ImageSmoothFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

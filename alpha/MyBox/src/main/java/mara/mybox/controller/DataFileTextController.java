@@ -127,7 +127,7 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     public static DataFileTextController load(Window parent) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openScene(parent, Fxmls.DataFileTextFxml);
+        DataFileTextController controller = (DataFileTextController) WindowTools.replaceStage(parent, Fxmls.DataFileTextFxml);
         controller.createAction();
         controller.requestMouse();
         return controller;

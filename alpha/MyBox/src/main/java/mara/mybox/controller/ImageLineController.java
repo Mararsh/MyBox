@@ -24,8 +24,8 @@ public class ImageLineController extends BaseShapeEditController {
     protected void initMore() {
         try {
             super.initMore();
-
             operation = message("StraightLine");
+
             lineController.setParameters(this);
 
             anchorCheck.setSelected(true);
@@ -66,8 +66,8 @@ public class ImageLineController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageLineController controller = (ImageLineController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageLineFxml);
+            ImageLineController controller = (ImageLineController) WindowTools.branchStage(
+                    parent, Fxmls.ImageLineFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

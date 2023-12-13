@@ -156,8 +156,8 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             if (manageController == null) {
                 return null;
             }
-            RemotePathGetController controller = (RemotePathGetController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.RemotePathGetFxml, false);
+            RemotePathGetController controller = (RemotePathGetController) WindowTools.branchStage(
+                    manageController, Fxmls.RemotePathGetFxml);
             controller.setParameters(manageController);
             controller.requestMouse();
             return controller;

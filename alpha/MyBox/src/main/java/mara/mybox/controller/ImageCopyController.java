@@ -39,6 +39,7 @@ public class ImageCopyController extends ImageSelectPixelsController {
     protected void initMore() {
         try {
             super.initMore();
+            operation = message("Copy");
 
             String target = UserConfig.getString(baseName + "TargetType", "System");
             if ("MyBox".equals(target)) {
@@ -124,7 +125,7 @@ public class ImageCopyController extends ImageSelectPixelsController {
                 }
                 if (closeAfterCheck.isSelected()) {
                     close();
-                    editor.popSuccessful();
+                    imageController.popSuccessful();
                 } else {
                     getMyWindow().requestFocus();
                     myStage.toFront();
@@ -143,8 +144,8 @@ public class ImageCopyController extends ImageSelectPixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageCopyController controller = (ImageCopyController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageCopyFxml);
+            ImageCopyController controller = (ImageCopyController) WindowTools.branchStage(
+                    parent, Fxmls.ImageCopyFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

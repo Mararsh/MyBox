@@ -494,8 +494,8 @@ public class ShapePathSegmentEditController extends BaseInputController {
     public static ShapePathSegmentEditController open(ControlPath2D pathController,
             int index, DoublePathSegment segment) {
         try {
-            ShapePathSegmentEditController controller = (ShapePathSegmentEditController) WindowTools.openChildStage(
-                    pathController.getMyWindow(), Fxmls.ShapePathSegmentEditFxml, true);
+            ShapePathSegmentEditController controller = (ShapePathSegmentEditController) WindowTools.childStage(
+                    pathController, Fxmls.ShapePathSegmentEditFxml);
             controller.setParameters(pathController, index, segment);
             return controller;
         } catch (Exception e) {

@@ -80,8 +80,8 @@ public class ImageLoadWidthController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            ImageLoadWidthController controller = (ImageLoadWidthController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageLoadWidthFxml, true);
+            ImageLoadWidthController controller = (ImageLoadWidthController) WindowTools.childStage(
+                    parent, Fxmls.ImageLoadWidthFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

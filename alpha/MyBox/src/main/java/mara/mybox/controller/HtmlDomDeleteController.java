@@ -117,8 +117,8 @@ public class HtmlDomDeleteController extends BaseChildController {
         if (editor == null) {
             return null;
         }
-        HtmlDomDeleteController controller = (HtmlDomDeleteController) WindowTools.openChildStage(
-                editor.getMyWindow(), Fxmls.HtmlDomDeleteFxml);
+        HtmlDomDeleteController controller = (HtmlDomDeleteController) WindowTools.childStage(
+                editor, Fxmls.HtmlDomDeleteFxml);
         if (controller != null) {
             controller.setParamters(editor, sourceItem);
             controller.requestMouse();

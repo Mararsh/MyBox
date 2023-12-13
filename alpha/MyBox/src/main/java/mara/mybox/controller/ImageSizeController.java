@@ -65,6 +65,7 @@ public class ImageSizeController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            super.initMore();
             operation = message("Size");
 
             scaleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -326,7 +327,7 @@ public class ImageSizeController extends BaseImageEditController {
                 return;
             }
             PixelsCalculationController controller
-                    = (PixelsCalculationController) openChildStage(Fxmls.PixelsCalculatorFxml, true);
+                    = (PixelsCalculationController) childStage(Fxmls.PixelsCalculatorFxml);
             controller.setSource((int) image.getWidth(), (int) image.getHeight(), keepRatioType);
             controller.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -402,8 +403,8 @@ public class ImageSizeController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageSizeController controller = (ImageSizeController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageSizeFxml);
+            ImageSizeController controller = (ImageSizeController) WindowTools.branchStage(
+                    parent, Fxmls.ImageSizeFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

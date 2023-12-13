@@ -7,7 +7,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
-import static mara.mybox.bufferedimage.ImageScope.ScopeType.Color;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
@@ -19,6 +18,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Colors;
 
 /**
  * @Author Mara
@@ -76,7 +76,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     scope.setScopeType(ImageScope.ScopeType.Polygon);
 
                 } else if (scopeColorRadio.isSelected()) {
-                    scope.setScopeType(ImageScope.ScopeType.Color);
+                    scope.setScopeType(ImageScope.ScopeType.Colors);
 
                 } else if (scopeOutlineRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Outline);
@@ -97,7 +97,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
             tabPane.getTabs().clear();
             areaBox.getChildren().clear();
-            opBox.getChildren().clear();
+            opPane.getChildren().clear();
             if (srcImage() == null || scope == null) {
                 return;
             }
@@ -114,7 +114,8 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Matting:
                     tabPane.getTabs().setAll(areaTab, matchTab);
                     areaBox.getChildren().setAll(eightNeighborCheck, pointsBox);
-                    opBox.getChildren().setAll(shapeButton, withdrawButton, clearDataWhenLoadImageCheck);
+                    opPane.getChildren().setAll(shapeButton, clearButton, withdrawButton,
+                            clearDataWhenLoadImageCheck);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     addPointCheck.setSelected(true);
@@ -123,7 +124,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Rectangle:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
-                    opBox.getChildren().setAll(shapeButton, pickColorBox);
+                    opPane.getChildren().setAll(shapeButton, pickColorBox);
                     isSettingValues = true;
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskRectangleData.getY(), 2) + "");
@@ -136,7 +137,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Circle:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(circleBox, goScopeButton);
-                    opBox.getChildren().setAll(shapeButton, pickColorBox);
+                    opPane.getChildren().setAll(shapeButton, pickColorBox);
                     isSettingValues = true;
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
                     circleCenterYInput.setText(scale(maskCircleData.getCenterY(), 2) + "");
@@ -147,7 +148,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Ellipse:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
-                    opBox.getChildren().setAll(shapeButton, pickColorBox);
+                    opPane.getChildren().setAll(shapeButton, pickColorBox);
                     isSettingValues = true;
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
                     rectLeftTopYInput.setText(scale(maskEllipseData.getY(), 2) + "");
@@ -160,14 +161,16 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 case Polygon:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(pointsBox);
-                    opBox.getChildren().setAll(shapeButton, withdrawButton, pickColorBox, addPointCheck, clearDataWhenLoadImageCheck);
+                    opPane.getChildren().setAll(shapeButton, clearButton, withdrawButton,
+                            pickColorBox, addPointCheck, clearDataWhenLoadImageCheck);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     break;
 
-                case Color:
+                case Colors:
                     tabPane.getTabs().setAll(colorsTab, matchTab);
-                    opBox.getChildren().setAll(pickColorBox, clearDataWhenLoadImageCheck);
+                    opPane.getChildren().setAll(clearButton, pickColorBox,
+                            clearDataWhenLoadImageCheck);
                     showLeftPane();
                     break;
 
@@ -178,7 +181,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
 
             }
 
-            pickColorCheck.setSelected(type == ScopeType.Color);
+            pickColorCheck.setSelected(type == ScopeType.Colors);
             handleTransparentCheck.setVisible(type != ScopeType.Outline);
 
             if (selectedTab != null && tabPane.getTabs().contains(selectedTab)) {
@@ -188,7 +191,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             matchController.setDistanceValue(scope);
 
             refreshStyle(tabPane);
-            refreshStyle(opBox);
+            refreshStyle(opPane);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

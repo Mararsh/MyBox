@@ -101,7 +101,7 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
             colors.add(originalColor);
 
             ImageScope scope = new ImageScope()
-                    .setScopeType(ImageScope.ScopeType.Color)
+                    .setScopeType(ImageScope.ScopeType.Colors)
                     .setColors(colors)
                     .setColorExcluded(excludeCheck.isSelected());
             if (!matchController.pickValues(scope)) {

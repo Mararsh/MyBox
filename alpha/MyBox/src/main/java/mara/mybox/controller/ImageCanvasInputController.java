@@ -102,8 +102,8 @@ public class ImageCanvasInputController extends BaseInputController {
 
     public static ImageCanvasInputController open(BaseController parent, String title) {
         try {
-            ImageCanvasInputController controller = (ImageCanvasInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageCanvasInputFxml, true);
+            ImageCanvasInputController controller = (ImageCanvasInputController) WindowTools.childStage(
+                    parent, Fxmls.ImageCanvasInputFxml);
             controller.setParameters(parent, title);
             return controller;
         } catch (Exception e) {

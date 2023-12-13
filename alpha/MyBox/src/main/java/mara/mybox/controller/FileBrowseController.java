@@ -18,8 +18,8 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableFileNameCell;
+import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileSortTools;
@@ -199,8 +199,8 @@ public class FileBrowseController extends BaseController {
             if (parent == null) {
                 return null;
             }
-            FileBrowseController controller
-                    = (FileBrowseController) WindowTools.branch(parent.getMyStage(), Fxmls.FileBrowseFxml);
+            FileBrowseController controller = (FileBrowseController) WindowTools.branchStage(
+                    parent, Fxmls.FileBrowseFxml);
             if (controller != null) {
                 controller.setParameter(parent);
             }

@@ -320,8 +320,8 @@ public class ColorPalettePopupController extends BaseChildController {
      */
     public static ColorPalettePopupController open(BaseController parent, Rectangle rect) {
         try {
-            ColorPalettePopupController controller = (ColorPalettePopupController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ColorPalettePopupFxml, true);
+            ColorPalettePopupController controller = (ColorPalettePopupController) WindowTools.popupStage(
+                    parent, Fxmls.ColorPalettePopupFxml);
             controller.load(parent, rect);
             return controller;
         } catch (Exception e) {

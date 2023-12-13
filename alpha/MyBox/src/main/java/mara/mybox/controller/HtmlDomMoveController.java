@@ -120,8 +120,8 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
         if (editor == null) {
             return null;
         }
-        HtmlDomMoveController controller = (HtmlDomMoveController) WindowTools.openChildStage(
-                editor.getMyWindow(), Fxmls.HtmlDomMoveFxml);
+        HtmlDomMoveController controller = (HtmlDomMoveController) WindowTools.childStage(
+                editor, Fxmls.HtmlDomMoveFxml);
         if (controller != null) {
             controller.setParamters(editor, sourceItem);
             controller.requestMouse();

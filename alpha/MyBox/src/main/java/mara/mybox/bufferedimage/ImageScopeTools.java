@@ -62,7 +62,7 @@ public class ImageScopeTools {
             return ImageScope.ScopeType.Polygon;
         }
         if ("Color".equalsIgnoreCase(type)) {
-            return ImageScope.ScopeType.Color;
+            return ImageScope.ScopeType.Colors;
         }
         if ("Outline".equalsIgnoreCase(type)) {
             return ImageScope.ScopeType.Outline;
@@ -593,7 +593,7 @@ public class ImageScopeTools {
         }
         try {
             switch (type) {
-                case Color:
+                case Colors:
                 case Rectangle:
                 case Circle:
                 case Ellipse:
@@ -657,7 +657,7 @@ public class ImageScopeTools {
         String s = "";
         try {
             switch (scope.getScopeType()) {
-                case Color:
+                case Colors:
                 case Rectangle:
                 case Circle:
                 case Ellipse:

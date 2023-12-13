@@ -44,7 +44,7 @@ public class FindReplacePopController extends MenuTextBaseController {
             }
             closeAll();
             FindReplacePopController controller
-                    = (FindReplacePopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.FindReplacePopFxml, false);
+                    = (FindReplacePopController) WindowTools.branchStage(parent, Fxmls.FindReplacePopFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

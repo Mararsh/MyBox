@@ -487,8 +487,8 @@ public class MenuImageBaseController extends MenuController {
                     }
                 }
             }
-            MenuImageBaseController controller = (MenuImageBaseController) WindowTools.openChildStage(
-                    imageController.getMyWindow(), Fxmls.MenuImageBaseFxml, false);
+            MenuImageBaseController controller = (MenuImageBaseController) WindowTools.branchStage(
+                    imageController, Fxmls.MenuImageBaseFxml);
             controller.setParameters(imageController, x, y);
             return controller;
         } catch (Exception e) {

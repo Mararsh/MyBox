@@ -24,8 +24,8 @@ public class ImageRectangleController extends BaseShapeEditController {
     protected void initMore() {
         try {
             super.initMore();
-
             operation = message("Rectangle");
+
             rectController.setParameters(this);
 
             anchorCheck.setSelected(true);
@@ -67,8 +67,8 @@ public class ImageRectangleController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRectangleController controller = (ImageRectangleController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageRectangleFxml);
+            ImageRectangleController controller = (ImageRectangleController) WindowTools.branchStage(
+                    parent, Fxmls.ImageRectangleFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

@@ -57,8 +57,8 @@ public class Data2DAddRowsController extends TableAddRowsController {
      */
     public static Data2DAddRowsController open(ControlData2DEditTable tableViewController) {
         try {
-            Data2DAddRowsController controller = (Data2DAddRowsController) WindowTools.openChildStage(
-                    tableViewController.getMyWindow(), Fxmls.Data2DAddRowsFxml, false);
+            Data2DAddRowsController controller = (Data2DAddRowsController) WindowTools.branchStage(
+                    tableViewController, Fxmls.Data2DAddRowsFxml);
             controller.setParameters(tableViewController);
             return controller;
         } catch (Exception e) {

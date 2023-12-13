@@ -33,7 +33,7 @@ public class ImageScopeFactory {
             return new All(image);
         }
         switch (scopeType) {
-            case Color:
+            case Colors:
                 switch (colorScopeType) {
                     case AllColor:
                         return new All(image);
@@ -245,7 +245,7 @@ public class ImageScopeFactory {
 
         public AllColor(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.AllColor;
         }
 
@@ -264,7 +264,7 @@ public class ImageScopeFactory {
 
         public ColorDistance(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.Color;
         }
 
@@ -283,7 +283,7 @@ public class ImageScopeFactory {
 
         public RedDistance(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.Red;
         }
 
@@ -302,7 +302,7 @@ public class ImageScopeFactory {
 
         public GreenDistance(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.Green;
         }
 
@@ -321,7 +321,7 @@ public class ImageScopeFactory {
 
         public BlueDistance(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.Blue;
         }
 
@@ -340,7 +340,7 @@ public class ImageScopeFactory {
 
         public BrightnessDistance(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.Brightness;
         }
 
@@ -359,7 +359,7 @@ public class ImageScopeFactory {
 
         public SaturationDistance(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.Saturation;
         }
 
@@ -378,7 +378,7 @@ public class ImageScopeFactory {
 
         public HueDistance(Image image) {
             this.image = image;
-            this.scopeType = ImageScope.ScopeType.Color;
+            this.scopeType = ImageScope.ScopeType.Colors;
             this.colorScopeType = ImageScope.ColorScopeType.Hue;
         }
 

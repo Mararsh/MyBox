@@ -195,7 +195,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageEditBa
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         ImageScope scope = new ImageScope();
-        scope.setScopeType(ImageScope.ScopeType.Color);
+        scope.setScopeType(ImageScope.ScopeType.Colors);
         scope.setColorScopeType(ImageScope.ColorScopeType.Color);
         List<java.awt.Color> colors = new ArrayList();
         colors.add(originalColor);

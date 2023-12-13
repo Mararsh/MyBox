@@ -34,16 +34,22 @@ public class ImageThresholdingController extends BasePixelsController {
     }
 
     @Override
-    protected void initMore() {
+    public void setControlsStyle() {
         try {
-            super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
+            super.setControlsStyle();
             NodeStyleTools.setTooltip(thresholdInput, new Tooltip("0~255"));
             NodeStyleTools.setTooltip(smallInput, new Tooltip("0~255"));
             NodeStyleTools.setTooltip(bigInput, new Tooltip("0~255"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
+    protected void initMore() {
+        try {
+            super.initMore();
+            operation = message("Thresholding");
 
             threshold = UserConfig.getInt(baseName + "Threshold", 128);
             if (threshold < 0 || threshold > 255) {
@@ -155,7 +161,6 @@ public class ImageThresholdingController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = message("Thresholding");
             opInfo = message("Threshold") + ": " + threshold;
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
@@ -172,8 +177,8 @@ public class ImageThresholdingController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageThresholdingController controller = (ImageThresholdingController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageThresholdingFxml);
+            ImageThresholdingController controller = (ImageThresholdingController) WindowTools.branchStage(
+                    parent, Fxmls.ImageThresholdingFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

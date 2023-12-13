@@ -29,7 +29,6 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
@@ -536,7 +535,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
         }
         String chainName = chainName(item);
         InfoTreeNodeCopyController controller
-                = (InfoTreeNodeCopyController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeCopyFxml);
+                = (InfoTreeNodeCopyController) childStage(Fxmls.InfoTreeNodeCopyFxml);
         controller.setParameters(manager, item.getValue(), chainName);
     }
 
@@ -545,7 +544,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
             return;
         }
         String chainName = chainName(item);
-        InfoTreeNodeMoveController controller = (InfoTreeNodeMoveController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeMoveFxml);
+        InfoTreeNodeMoveController controller = (InfoTreeNodeMoveController) childStage(Fxmls.InfoTreeNodeMoveFxml);
         controller.setParameters(manager, item.getValue(), chainName);
     }
 
@@ -576,13 +575,13 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
 
     protected void exportNode(TreeItem<InfoNode> item) {
         InfoTreeNodeExportController exportController
-                = (InfoTreeNodeExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeExportFxml);
+                = (InfoTreeNodeExportController) childStage(Fxmls.InfoTreeNodeExportFxml);
         exportController.setParamters(infoController, item);
     }
 
     @FXML
     protected void importAction() {
-        InfoTreeNodeImportController controller = (InfoTreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.InfoTreeNodeImportFxml);
+        InfoTreeNodeImportController controller = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
         controller.setCaller(manager);
     }
 

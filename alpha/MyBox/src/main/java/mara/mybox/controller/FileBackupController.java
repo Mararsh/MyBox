@@ -29,8 +29,8 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
-import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableFileNameCell;
+import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
@@ -411,8 +411,8 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
      */
     public static FileBackupController load(BaseController parent) {
         try {
-            FileBackupController controller = (FileBackupController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.FileBackupFxml);
+            FileBackupController controller = (FileBackupController) WindowTools.branchStage(
+                    parent, Fxmls.FileBackupFxml);
             controller.setParameters(parent);
             controller.requestMouse();
             return controller;

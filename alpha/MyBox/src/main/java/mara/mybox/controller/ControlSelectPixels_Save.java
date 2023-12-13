@@ -69,7 +69,7 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
             case Matting:
                 scopeMattingRadio.setSelected(true);
                 break;
-            case Color:
+            case Colors:
                 scopeColorRadio.setSelected(true);
                 break;
             case Rectangle:
@@ -139,7 +139,7 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
             colorExcludedCheck.setSelected(scope.isColorExcluded());
             eightNeighborCheck.setSelected(scope.isEightNeighbor());
             switch (scope.getScopeType()) {
-                case Color:
+                case Colors:
                 case Rectangle:
                 case Circle:
                 case Ellipse:

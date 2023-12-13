@@ -20,6 +20,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -327,7 +328,7 @@ public class ControlImageSize extends BaseController {
                 return;
             }
             PixelsCalculationController controller
-                    = (PixelsCalculationController) openChildStage(Fxmls.PixelsCalculatorFxml, true);
+                    = (PixelsCalculationController) WindowTools.childStage(this, Fxmls.PixelsCalculatorFxml);
             controller.setSource((int) image.getWidth(), (int) image.getHeight(), keepRatioType);
             controller.notify.addListener(new ChangeListener<Boolean>() {
                 @Override

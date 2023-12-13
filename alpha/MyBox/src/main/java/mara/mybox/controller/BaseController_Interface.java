@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -28,9 +27,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Popup;
-import javafx.stage.Window;
-import javafx.util.Duration;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -192,20 +188,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         UserConfig.setString(interfaceName + "SaveAsType", saveAsType.name());
                     }
                 });
-            }
-
-            if (topCheck != null) {
-                topCheck.setSelected(UserConfig.getBoolean(interfaceName + "Top", true));
-                topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        if (!isSettingValues) {
-                            UserConfig.setBoolean(interfaceName + "Top", newValue);
-                        }
-                        checkAlwaysTop();
-                    }
-                });
-
             }
 
             dpi = UserConfig.getInt(interfaceName + "DPI", 96);
@@ -410,16 +392,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public String interfaceKeysPrefix() {
-        return "Interface_" + interfaceName + (isPop ? "_Pop" : "");
+        return "Interface_" + interfaceName;
     }
 
     public void setStageStatus() {
-        setAsNormal();
-    }
-
-    public void setAsNormal() {
         try {
-            isPop = false;
             if (AppVariables.recordWindowsSizeLocation) {
                 String prefix = interfaceKeysPrefix();
                 if (UserConfig.getBoolean(prefix + "FullScreen", false)) {
@@ -459,35 +436,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             } else {
                 myStage.sizeToScene();
                 myStage.centerOnScreen();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setAsPop(String name) {
-        try {
-            isPop = true;
-            this.interfaceName = name;
-
-            String prefix = interfaceKeysPrefix();
-            int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
-            int mh = UserConfig.getInt(prefix + "StageHeight", Math.min(500, (int) myStage.getHeight()));
-            int mx = UserConfig.getInt(prefix + "StageX", (int) myStage.getX());
-            int my = UserConfig.getInt(prefix + "StageY", (int) myStage.getY());
-            if (mw > minSize) {
-                myStage.setWidth(mw);
-                myStage.setHeight(mh);
-            }
-            if (mx >= 0 && my >= 0) {
-                myStage.setX(mx);
-                myStage.setY(my);
-            }
-            if (topCheck != null) {
-                topCheck.setVisible(true);
-                checkAlwaysTop();
-            } else {
-                myStage.setAlwaysOnTop(true);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -559,7 +507,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         getMyWindow().requestFocus();
                         getMyStage().setIconified(false);
                         myStage.toFront();
-                        checkAlwaysTop();
                     });
                 }
             }, 500);
@@ -581,24 +528,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             });
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    public void checkAlwaysTop() {
-        if (topCheck == null || !topCheck.isVisible() || topCheck.isDisabled()
-                || getMyStage() == null) {
-            return;
-        }
-        myStage.setAlwaysOnTop(topCheck.isSelected());
-        if (topCheck.isSelected()) {
-            popWarn(message("AlwaysTopWarning"));
-            FadeTransition fade = new FadeTransition(Duration.millis(300));
-            fade.setFromValue(1.0);
-            fade.setToValue(0f);
-            fade.setCycleCount(4);
-            fade.setAutoReverse(true);
-            fade.setNode(topCheck);
-            fade.play();
         }
     }
 
@@ -735,20 +664,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public Window getOwner() {
-        if (getMyWindow() instanceof Popup) {
-            return ((Popup) myWindow).getOwnerWindow();
-        } else {
-            return getMyStage();
-        }
-    }
-
     public BaseController loadScene(String newFxml) {
         try {
             if (!leavingScene()) {
                 return null;
             }
-            return WindowTools.openScene(getOwner(), newFxml);
+            return WindowTools.replaceStage(getStage(), newFxml);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -756,11 +677,15 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public BaseController openStage(String newFxml) {
-        return WindowTools.openStage(getOwner(), newFxml);
+        return WindowTools.openStage(getStage(), newFxml);
     }
 
-    public BaseController openChildStage(String newFxml, boolean isModal) {
-        return WindowTools.openChildStage(getOwner(), newFxml, isModal);
+    public BaseController childStage(String newFxml) {
+        return WindowTools.childStage(myController, newFxml);
+    }
+
+    public BaseController branchStage(String newFxml) {
+        return WindowTools.branchStage(myController, newFxml);
     }
 
     public void updateStageTitle(File file) {
@@ -786,8 +711,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (!checkBeforeNextAction(thisPane)) {
                 return false;
             }
-            if (!AppVariables.isTesting && getMyStage() != null && mainMenuController != null
-                    && !isPop && myStage.getOwner() == null) {
+            if (!AppVariables.isTesting && isIndependantStage()) {
                 VisitHistoryTools.visitMenu(baseTitle, myFxml);
             }
             leaveScene();

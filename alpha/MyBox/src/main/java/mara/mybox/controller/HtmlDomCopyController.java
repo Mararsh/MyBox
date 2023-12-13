@@ -188,8 +188,8 @@ public class HtmlDomCopyController extends BaseChildController {
         if (editor == null) {
             return null;
         }
-        HtmlDomCopyController controller = (HtmlDomCopyController) WindowTools.openChildStage(
-                editor.getMyWindow(), Fxmls.HtmlDomCopyFxml);
+        HtmlDomCopyController controller = (HtmlDomCopyController) WindowTools.childStage(
+                editor, Fxmls.HtmlDomCopyFxml);
         if (controller != null) {
             controller.setParamters(editor, sourceItem);
             controller.requestMouse();

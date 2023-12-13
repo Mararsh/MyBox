@@ -20,11 +20,11 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.ErrorNotify;
 import static mara.mybox.value.AppVariables.isTesting;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import static mara.mybox.value.AppVariables.ErrorNotify;
 
 /**
  * @Author Mara
@@ -269,8 +269,8 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
      */
     public static AutoTestingExecutionController open(AutoTestingCasesController parent, List<TestCase> testCases) {
         try {
-            AutoTestingExecutionController controller = (AutoTestingExecutionController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.AutoTestingExecutionFxml, false);
+            AutoTestingExecutionController controller = (AutoTestingExecutionController) WindowTools.branchStage(
+                    parent, Fxmls.AutoTestingExecutionFxml);
             controller.setParameters(parent, testCases);
             return controller;
         } catch (Exception e) {

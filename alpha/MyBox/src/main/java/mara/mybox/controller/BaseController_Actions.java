@@ -27,10 +27,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -449,12 +449,12 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     public LoadingController handling(Task<?> task, Modality block, String info) {
         try {
-            LoadingController controller = (LoadingController) WindowTools.handling(getMyWindow(), Fxmls.LoadingFxml);
+            LoadingController controller = (LoadingController) WindowTools.popupStage(
+                    myController, Fxmls.LoadingFxml);
             controller.init(task);
             if (info != null) {
                 controller.setInfo(info);
             }
-            controller.parentController = myController;
 
             if (task != null) {
                 if (task instanceof FxTask) {

@@ -20,14 +20,22 @@ public class ImageGreyController extends BasePixelsController {
     }
 
     @Override
+    protected void initMore() {
+        try {
+            super.initMore();
+            operation = message("Grey");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             ImageGray imageGray = new ImageGray(inImage, inScope);
             imageGray.setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = message("Grey");
-            opInfo = null;
             return imageGray.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
@@ -43,8 +51,8 @@ public class ImageGreyController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageGreyController controller = (ImageGreyController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageGreyFxml);
+            ImageGreyController controller = (ImageGreyController) WindowTools.branchStage(
+                    parent, Fxmls.ImageGreyFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

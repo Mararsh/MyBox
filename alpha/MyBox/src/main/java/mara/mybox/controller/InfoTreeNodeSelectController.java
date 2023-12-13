@@ -13,19 +13,19 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class InfoTreeNodeSelectController extends BaseInfoTreeHandleController {
-    
+
     protected SimpleBooleanProperty notify;
-    
+
     public InfoTreeNodeSelectController() {
         baseTitle = message("SelectNode");
     }
-    
+
     public void setParameters(String categroy) {
         this.manager = null;
         handlerController.setParameters(this, categroy);
         notify = new SimpleBooleanProperty();
     }
-    
+
     @FXML
     @Override
     public void okAction() {
@@ -36,21 +36,21 @@ public class InfoTreeNodeSelectController extends BaseInfoTreeHandleController {
         }
         notify.set(!notify.get());
     }
-    
+
     @FXML
     public void dataAction() {
         InfoTreeManageController c = InfoNode.openManager(handlerController.category);
         c.getMyStage().setAlwaysOnTop(true);
     }
-    
+
     public SimpleBooleanProperty getNotify() {
         return notify;
     }
-    
+
     public void setNotify(SimpleBooleanProperty notify) {
         this.notify = notify;
     }
-    
+
     @Override
     public void cleanPane() {
         try {
@@ -64,11 +64,11 @@ public class InfoTreeNodeSelectController extends BaseInfoTreeHandleController {
         static methods
      */
     public static InfoTreeNodeSelectController open(BaseController parent, String categroy) {
-        InfoTreeNodeSelectController controller = (InfoTreeNodeSelectController) WindowTools.openChildStage(
-                parent.getMyWindow(), Fxmls.InfoTreeNodeSelectFxml);
+        InfoTreeNodeSelectController controller = (InfoTreeNodeSelectController) WindowTools.childStage(
+                parent, Fxmls.InfoTreeNodeSelectFxml);
         controller.setParameters(categroy);
         controller.requestMouse();
         return controller;
     }
-    
+
 }

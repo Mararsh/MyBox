@@ -5,8 +5,8 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -149,8 +149,8 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
      */
     public static Data2DDeleteController open(ControlData2DLoad tableController) {
         try {
-            Data2DDeleteController controller = (Data2DDeleteController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DDeleteFxml, false);
+            Data2DDeleteController controller = (Data2DDeleteController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DDeleteFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

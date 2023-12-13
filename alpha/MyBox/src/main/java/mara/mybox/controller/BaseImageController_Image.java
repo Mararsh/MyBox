@@ -3,9 +3,11 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -106,7 +108,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
     }
 
     public void askSample(ImageInformation imageInfo) {
-        ImageTooLargeController controller = (ImageTooLargeController) openChildStage(Fxmls.ImageTooLargeFxml, true);
+        ImageTooLargeController controller = (ImageTooLargeController) WindowTools.childStage(this, Fxmls.ImageTooLargeFxml);
         controller.setParameters((BaseImageController) this, imageInfo);
     }
 
@@ -315,15 +317,23 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         fitSize();
     }
 
-    public void updateImage(Image image) {
+    public void updateImage(Image newImage) {
         try {
-            imageView.setImage(image);
+            imageView.setImage(newImage);
             refinePane();
-//            fitSize();
             setImageChanged(true);
+            notifyLoad();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public void updateImage(String operation, Image newImage) {
+        updateImage(newImage);
+    }
+
+    public void updateImage(String operation, String value, ImageScope opScope, Image newImage) {
+        updateImage(newImage);
     }
 
     protected void setLoadWidth(int width) {

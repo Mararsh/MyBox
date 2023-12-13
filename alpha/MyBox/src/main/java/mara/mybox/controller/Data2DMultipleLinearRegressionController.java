@@ -271,8 +271,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
      */
     public static Data2DMultipleLinearRegressionController open(ControlData2DLoad tableController) {
         try {
-            Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionFxml, false);
+            Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DMultipleLinearRegressionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

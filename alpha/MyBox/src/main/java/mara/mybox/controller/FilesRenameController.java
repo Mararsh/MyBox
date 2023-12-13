@@ -346,7 +346,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 return;
             }
             FilesRenameResultsController controller
-                    = (FilesRenameResultsController) WindowTools.openChildStage(getMyStage(), Fxmls.FilesRenameResultsFxml, false);
+                    = (FilesRenameResultsController) WindowTools.branchStage(this, Fxmls.FilesRenameResultsFxml);
             controller.handleFiles(names);
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -45,17 +45,18 @@ public class ImageContrastController extends BaseImageEditController {
     }
 
     @Override
+    public void setControlsStyle() {
+        super.setControlsStyle();
+        NodeStyleTools.setTooltip(leftInput, new Tooltip("0~255"));
+        NodeStyleTools.setTooltip(rightInput, new Tooltip("0~255"));
+        NodeStyleTools.setTooltip(offsetInput, new Tooltip("-255~255"));
+    }
+
+    @Override
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
-
-            NodeStyleTools.setTooltip(leftInput, new Tooltip("0~255"));
-            NodeStyleTools.setTooltip(rightInput, new Tooltip("0~255"));
-            NodeStyleTools.setTooltip(offsetInput, new Tooltip("-255~255"));
+            operation = message("Contrast");
 
             left = UserConfig.getInt(baseName + "LeftThreshold", 100);
             if (left < 0 || left > 255) {
@@ -196,7 +197,6 @@ public class ImageContrastController extends BaseImageEditController {
 
     @Override
     protected void handleImage() {
-
         try {
             ImageContrast imageContrast = new ImageContrast()
                     .setAlgorithm(contrastAlgorithm);
@@ -224,8 +224,8 @@ public class ImageContrastController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageContrastController controller = (ImageContrastController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageContrastFxml);
+            ImageContrastController controller = (ImageContrastController) WindowTools.branchStage(
+                    parent, Fxmls.ImageContrastFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

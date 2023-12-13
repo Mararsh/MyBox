@@ -935,7 +935,7 @@ public class SettingsController extends BaseController {
             }
         }
         if (controller == null) {
-            controller = (SettingsController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.SettingsFxml, false);
+            controller = (SettingsController) WindowTools.childStage(parent, Fxmls.SettingsFxml);
         }
         return controller;
     }

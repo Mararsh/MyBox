@@ -96,7 +96,8 @@ public class InfoTreeNodesMoveController extends BaseInfoTreeHandleController {
             }
         }
         if (controller == null) {
-            controller = (InfoTreeNodesMoveController) WindowTools.openChildStage(manager.getMyWindow(), Fxmls.InfoTreeNodesMoveFxml);
+            controller = (InfoTreeNodesMoveController) WindowTools.childStage(
+                    manager, Fxmls.InfoTreeNodesMoveFxml);
         }
         if (controller != null) {
             controller.setParameters(manager);

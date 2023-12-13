@@ -12,8 +12,8 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -229,8 +229,8 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
      */
     public static Data2DRowExpressionController open(ControlData2DLoad tableController) {
         try {
-            Data2DRowExpressionController controller = (Data2DRowExpressionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DRowExpressionFxml, false);
+            Data2DRowExpressionController controller = (Data2DRowExpressionController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DRowExpressionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

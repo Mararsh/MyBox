@@ -41,8 +41,8 @@ public class RemotePathDeleteController extends RemotePathHandleFilesController 
             if (manageController == null) {
                 return null;
             }
-            RemotePathDeleteController controller = (RemotePathDeleteController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.RemotePathDeleteFxml, false);
+            RemotePathDeleteController controller = (RemotePathDeleteController) WindowTools.branchStage(
+                    manageController, Fxmls.RemotePathDeleteFxml);
             controller.setParameters(manageController);
             controller.requestMouse();
             return controller;

@@ -59,7 +59,6 @@ public class ImagePopController extends BaseShapeController {
                 }
             });
 
-            setAsPop(baseName);
             fitSize();
 
         } catch (Exception e) {

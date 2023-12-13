@@ -103,7 +103,7 @@ public class MenuController extends BaseChildController {
                 if (parent != null && getMyStage() != null) {
                     myStage.setTitle(parent.getTitle());
                 }
-                setAsPop(name);
+
             }
 
             if (childWindowCheck != null) {
@@ -151,7 +151,7 @@ public class MenuController extends BaseChildController {
         if (titleLabel == null || id == null || id.isBlank()) {
             return;
         }
-        titleLabel.setText(message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
+        titleLabel.setText(message("Target") + ": " + id);
     }
 
     public void setTitleLabel(String s) {
@@ -249,8 +249,8 @@ public class MenuController extends BaseChildController {
                 return null;
             }
             if (UserConfig.getBoolean(name(parent, node) + "AsChildWindow", true)) {
-                MenuController controller = (MenuController) WindowTools.openChildStage(
-                        parent.getMyWindow(), Fxmls.MenuFxml, false);
+                MenuController controller = (MenuController) WindowTools.branchStage(
+                        parent, Fxmls.MenuFxml);
                 if (controller == null) {
                     return null;
                 }

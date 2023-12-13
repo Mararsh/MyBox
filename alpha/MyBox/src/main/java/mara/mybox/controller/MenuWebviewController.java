@@ -359,8 +359,8 @@ public class MenuWebviewController extends MenuController {
                     }
                 }
             }
-            MenuWebviewController controller = (MenuWebviewController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MenuWebviewFxml, false);
+            MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
+                    parent, Fxmls.MenuWebviewFxml);
             controller.setParameters(parent, element, x, y);
             return controller;
         } catch (Exception e) {

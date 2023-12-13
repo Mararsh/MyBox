@@ -158,8 +158,8 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
     public static Data2DCoordinatePickerController open(ControlData2DLoad dataControl, int rowIndex) {
         try {
             Data2DCoordinatePickerController controller
-                    = (Data2DCoordinatePickerController) WindowTools.openChildStage(dataControl.getMyWindow(),
-                            Fxmls.Data2DCoordinatePickerFxml, true);
+                    = (Data2DCoordinatePickerController) WindowTools.childStage(
+                            dataControl, Fxmls.Data2DCoordinatePickerFxml);
             controller.setParameters(dataControl, rowIndex);
             return controller;
         } catch (Exception e) {
@@ -171,8 +171,8 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
     public static Data2DCoordinatePickerController open(ControlData2DRowEdit editControl) {
         try {
             Data2DCoordinatePickerController controller
-                    = (Data2DCoordinatePickerController) WindowTools.openChildStage(editControl.getMyWindow(),
-                            Fxmls.Data2DCoordinatePickerFxml, true);
+                    = (Data2DCoordinatePickerController) WindowTools.childStage(
+                            editControl, Fxmls.Data2DCoordinatePickerFxml);
             controller.setParameters(editControl);
             return controller;
         } catch (Exception e) {

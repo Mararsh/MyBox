@@ -71,8 +71,8 @@ public class ShapeTranslateInputController extends BaseShapeTransformController 
 
     public static ShapeTranslateInputController open(BaseShapeController parent, DoubleShape shapeData, DoublePoint point) {
         try {
-            ShapeTranslateInputController controller = (ShapeTranslateInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ShapeTranslateInputFxml, true);
+            ShapeTranslateInputController controller = (ShapeTranslateInputController) WindowTools.childStage(
+                    parent, Fxmls.ShapeTranslateInputFxml);
             controller.setParameters(parent, shapeData, point);
             return controller;
         } catch (Exception e) {

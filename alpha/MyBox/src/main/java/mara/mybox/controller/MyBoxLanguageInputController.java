@@ -102,8 +102,8 @@ public class MyBoxLanguageInputController extends BaseChildController {
 
     public static MyBoxLanguageInputController open(MyBoxLanguagesController parent, LanguageItem item) {
         try {
-            MyBoxLanguageInputController controller = (MyBoxLanguageInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MyBoxLanguageInputFxml, true);
+            MyBoxLanguageInputController controller = (MyBoxLanguageInputController) WindowTools.childStage(
+                    parent, Fxmls.MyBoxLanguageInputFxml);
             controller.setParameters(parent, item);
             return controller;
         } catch (Exception e) {

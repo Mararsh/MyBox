@@ -63,6 +63,7 @@ public class ImageMarginsController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            super.initMore();
             operation = message("Margins");
 
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -312,8 +313,8 @@ public class ImageMarginsController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageMarginsController controller = (ImageMarginsController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageMarginsFxml);
+            ImageMarginsController controller = (ImageMarginsController) WindowTools.branchStage(
+                    parent, Fxmls.ImageMarginsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

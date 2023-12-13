@@ -41,8 +41,8 @@ public class Data2DChartGroupPieController extends Data2DChartPieController {
      */
     public static Data2DChartGroupPieController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartGroupPieController controller = (Data2DChartGroupPieController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartGroupPieFxml, false);
+            Data2DChartGroupPieController controller = (Data2DChartGroupPieController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartGroupPieFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

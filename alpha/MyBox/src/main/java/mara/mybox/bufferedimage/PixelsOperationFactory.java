@@ -218,7 +218,7 @@ public class PixelsOperationFactory {
         }
         try {
             ImageScope scope = new ImageScope();
-            scope.setScopeType(ImageScope.ScopeType.Color);
+            scope.setScopeType(ImageScope.ScopeType.Colors);
             scope.setColorScopeType(ImageScope.ColorScopeType.Color);
             scope.getColors().add(oldColor);
             scope.setColorDistance(distance);

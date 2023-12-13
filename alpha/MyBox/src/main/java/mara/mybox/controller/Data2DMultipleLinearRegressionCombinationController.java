@@ -218,8 +218,8 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
      */
     public static Data2DMultipleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
         try {
-            Data2DMultipleLinearRegressionCombinationController controller = (Data2DMultipleLinearRegressionCombinationController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionCombinationFxml, false);
+            Data2DMultipleLinearRegressionCombinationController controller = (Data2DMultipleLinearRegressionCombinationController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DMultipleLinearRegressionCombinationFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

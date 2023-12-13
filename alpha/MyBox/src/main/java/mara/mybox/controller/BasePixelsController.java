@@ -1,80 +1,29 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScaleTools;
-import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2019-9-2
  * @License Apache License Version 2.0
  */
-public abstract class BasePixelsController extends BaseController {
-
-    protected BaseImageController imageController;
-    protected ImageEditorController editor;
-    protected String operation, opInfo;
-    protected Image handledImage;
-    protected ImageScope scope;
-    protected FxTask demoTask;
+public abstract class BasePixelsController extends BaseImageEditController {
 
     @FXML
     protected ControlSelectPixels scopeController;
-    @FXML
-    protected CheckBox closeAfterCheck;
 
-    protected void setParameters(BaseImageController parent) {
-        try {
-            if (parent == null) {
-                close();
-            }
-            this.imageController = parent;
-            if (imageController instanceof ImageEditorController) {
-                editor = (ImageEditorController) imageController;
-
-                if (undoButton != null) {
-                    undoButton.disableProperty().bind(editor.undoButton.disableProperty());
-                }
-                if (recoverButton != null) {
-                    recoverButton.disableProperty().bind(editor.recoverButton.disableProperty());
-                }
-                if (saveButton != null) {
-                    saveButton.disableProperty().bind(editor.saveButton.disableProperty());
-                }
-            }
-            scopeController.setParameters(this);
-
-            closeAfterCheck.setSelected(UserConfig.getBoolean(baseName + "CloseAfterHandle", false));
-            closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "CloseAfterHandle", closeAfterCheck.isSelected());
-                }
-            });
-
-            initMore();
-
-            scopeController.loadImage();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    @Override
+    protected void initMore() {
+        scopeController.setParameters(this);
+        imageView = scopeController.imageView;
     }
 
-    protected void initMore() {
+    @Override
+    public void loadImage(Image inImage) {
+        scopeController.loadImage(inImage);
     }
 
     @Override
@@ -84,10 +33,6 @@ public abstract class BasePixelsController extends BaseController {
         } else {
             return true;
         }
-    }
-
-    protected Image srcImage() {
-        return imageController.imageView.getImage();
     }
 
     public ImageScope scope() {
@@ -102,176 +47,14 @@ public abstract class BasePixelsController extends BaseController {
         return !scopeController.handleTransparentCheck.isSelected();
     }
 
-    protected boolean checkOptions() {
-        if (imageController == null || !imageController.isShowing()) {
-            close();
-            return false;
-        }
-        return srcImage() != null;
-    }
-
-    @FXML
     @Override
-    public void okAction() {
-        action(false);
-    }
-
-    @FXML
-    @Override
-    public void previewAction() {
-        action(true);
-    }
-
-    public void action(boolean isPreview) {
-        if (!checkOptions()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private ImageScope scope;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    scope = scope();
-                    handledImage = handleImage(srcImage(), scope);
-                    return !isCancelled() && handledImage != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (isPreview) {
-                    ImagePopController.openImage(myController, handledImage);
-                } else {
-                    if (editor != null) {
-                        editor.updateImage(operation, opInfo, scope, handledImage);
-                    } else {
-                        ImagePopController.openImage(myController, handledImage);
-                    }
-                    if (closeAfterCheck.isSelected()) {
-                        close();
-                        imageController.popSuccessful();
-                    } else {
-                        getMyWindow().requestFocus();
-                        myStage.toFront();
-                        popSuccessful();
-                    }
-                }
-                afterHandle();
-            }
-        };
-        start(task);
+    protected void handleImage() {
+        scope = scope();
+        handledImage = handleImage(srcImage(), scope);
     }
 
     protected Image handleImage(Image inImage, ImageScope inScope) {
         return null;
-    }
-
-    protected void afterHandle() {
-
-    }
-
-    @FXML
-    protected void demo() {
-        if (!checkOptions()) {
-            return;
-        }
-        if (demoTask != null) {
-            demoTask.cancel();
-        }
-        demoTask = new FxTask<Void>(this) {
-            private List<String> files;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    Image demoImage = ScaleTools.demoImage(srcImage());
-                    if (demoImage == null || !isWorking()) {
-                        return false;
-                    }
-                    files = new ArrayList<>();
-                    makeDemoFiles(files, demoImage);
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                if (files != null && !files.isEmpty()) {
-                    ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                    b.loadFiles(files);
-                    b.setAlwaysOnTop();
-                }
-            }
-
-        };
-        start(demoTask);
-    }
-
-    protected void makeDemoFiles(List<String> files, Image demoImage) {
-    }
-
-    @FXML
-    @Override
-    public void undoAction() {
-        editor.undoAction();
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        editor.recoverAction();
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        editor.saveAction();
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
-    }
-
-    @Override
-    public boolean keyESC() {
-        close();
-        return false;
-    }
-
-    /*
-        static methods
-     */
-    public static BasePixelsController open(BaseImageController parent) {
-        try {
-            if (parent == null) {
-                return null;
-            }
-            BasePixelsController controller = (BasePixelsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageBlackWhiteFxml, false);
-            controller.setParameters(parent);
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
 }

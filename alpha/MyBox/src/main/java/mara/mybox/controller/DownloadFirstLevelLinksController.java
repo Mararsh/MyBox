@@ -57,8 +57,8 @@ import mara.mybox.data.Link;
 import mara.mybox.data.Link.FilenameType;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -545,7 +545,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             return;
         }
         DownloadFirstLevelLinksSetController controller
-                = (DownloadFirstLevelLinksSetController) openChildStage(Fxmls.DownloadFirstLevelLinksSetFxml, true);
+                = (DownloadFirstLevelLinksSetController) childStage(Fxmls.DownloadFirstLevelLinksSetFxml);
         controller.setValues(this, title);
     }
 

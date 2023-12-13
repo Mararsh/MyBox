@@ -37,11 +37,6 @@ public class RunSystemCommandController extends RunCommandController {
     }
 
     @Override
-    public void setStageStatus() {
-        setAsNormal();
-    }
-
-    @Override
     public void initControls() {
         try {
             super.initControls();

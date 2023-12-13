@@ -60,8 +60,8 @@ public class Data2DColumnEditController extends BaseChildController {
      */
     public static Data2DColumnEditController open(BaseData2DColumnsController columnsController, int index) {
         try {
-            Data2DColumnEditController controller = (Data2DColumnEditController) WindowTools.openChildStage(
-                    columnsController.getMyWindow(), Fxmls.Data2DColumnEditFxml, true);
+            Data2DColumnEditController controller = (Data2DColumnEditController) WindowTools.childStage(
+                    columnsController, Fxmls.Data2DColumnEditFxml);
             controller.setParameters(columnsController, index);
             return controller;
         } catch (Exception e) {

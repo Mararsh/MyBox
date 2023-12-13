@@ -19,11 +19,6 @@ public class ImageClipSelectController extends BaseImageClipController {
 
     protected ImagePasteController pasteController;
 
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
     protected void setParameters(ImagePasteController controller) {
         try {
             if (controller == null) {
@@ -110,8 +105,8 @@ public class ImageClipSelectController extends BaseImageClipController {
             if (parent == null) {
                 return null;
             }
-            ImageClipSelectController controller = (ImageClipSelectController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageClipSelectFxml, false);
+            ImageClipSelectController controller = (ImageClipSelectController) WindowTools.branchStage(
+                    parent, Fxmls.ImageClipSelectFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

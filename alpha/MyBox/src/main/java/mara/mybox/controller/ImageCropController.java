@@ -41,6 +41,7 @@ public class ImageCropController extends BasePixelsController {
     protected void initMore() {
         try {
             super.initMore();
+            operation = message("Crop");
 
             bgColorController.init(this, baseName + "BackgroundColor", javafx.scene.paint.Color.DARKGREEN);
 
@@ -89,9 +90,9 @@ public class ImageCropController extends BasePixelsController {
             operation = message("Crop");
             opInfo = null;
             cuttedClip = null;
-            Color bgColor = bgColorController.awtColor();
+            Color color = bgColorController.awtColor();
             handledImage = ScopeTools.selectedScope(task,
-                    inImage, inScope, bgColor,
+                    inImage, inScope, color,
                     imageMarginsCheck.isSelected(),
                     excludeScope(), skipTransparent());
             if (handledImage == null || task == null || task.isWorking()) {
@@ -99,7 +100,7 @@ public class ImageCropController extends BasePixelsController {
             }
             if (copyClipboardCheck.isSelected()) {
                 cuttedClip = ScopeTools.selectedScope(task,
-                        inImage, inScope, bgColor,
+                        inImage, inScope, color,
                         clipMarginsCheck.isSelected(),
                         excludeScope(), skipTransparent());
                 if (cuttedClip == null || task == null || task.isWorking()) {
@@ -130,8 +131,8 @@ public class ImageCropController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageCropController controller = (ImageCropController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageCropFxml);
+            ImageCropController controller = (ImageCropController) WindowTools.branchStage(
+                    parent, Fxmls.ImageCropFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

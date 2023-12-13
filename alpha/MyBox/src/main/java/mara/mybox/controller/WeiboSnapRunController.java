@@ -622,7 +622,7 @@ public class WeiboSnapRunController extends BaseController {
                 return true;
             }
 
-            loadingController = (WeiboSnapingInfoController) WindowTools.handling(getMyStage(), Fxmls.WeiboSnapingInfoFxml);
+            loadingController = (WeiboSnapingInfoController) WindowTools.popupStage(this, Fxmls.WeiboSnapingInfoFxml);
             loadingController.setParent(this);
 
             return true;

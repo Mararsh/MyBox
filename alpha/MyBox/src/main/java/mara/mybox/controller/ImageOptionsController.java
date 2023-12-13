@@ -612,8 +612,8 @@ public class ImageOptionsController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            ImageOptionsController controller = (ImageOptionsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageOptionsFxml, false);
+            ImageOptionsController controller = (ImageOptionsController) WindowTools.branchStage(
+                    parent, Fxmls.ImageOptionsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

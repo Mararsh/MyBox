@@ -38,6 +38,7 @@ public class ImageRoundController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            super.initMore();
             operation = message("Round");
 
         } catch (Exception e) {
@@ -109,8 +110,8 @@ public class ImageRoundController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRoundController controller = (ImageRoundController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageRoundFxml);
+            ImageRoundController controller = (ImageRoundController) WindowTools.branchStage(
+                    parent, Fxmls.ImageRoundFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

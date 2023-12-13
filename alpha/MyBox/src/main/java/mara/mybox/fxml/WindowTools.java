@@ -21,6 +21,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseController_Attributes.StageType;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.controller.ClearExpiredDataController;
 import mara.mybox.controller.WindowsListController;
@@ -40,6 +41,9 @@ public class WindowTools {
 
     public static final Image AppIcon = new Image("img/MyBox.png");
 
+    /*
+     * make stage
+     */
     public static BaseController initScene(Stage stage, String newFxml, StageStyle stageStyle) {
         return initScene(stage, newFxml, AppVariables.CurrentBundle, stageStyle);
     }
@@ -213,8 +217,29 @@ public class WindowTools {
         }
     }
 
+
+    /*
+     * open stage
+     */
     public static BaseController openStage(String fxml) {
         return initController(newFxml(fxml), newStage(), null);
+    }
+
+    public static BaseController replaceStage(Window parent, String fxml) {
+        try {
+            Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
+            newStage.initModality(Modality.NONE);
+            newStage.initStyle(StageStyle.DECORATED);
+            newStage.initOwner(null);
+            BaseController controller = initScene(newStage, fxml, StageStyle.DECORATED);
+            if (controller != null) {
+                closeWindow(parent);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     public static BaseController openStage(Window parent, String fxml, ResourceBundle bundle,
@@ -246,27 +271,20 @@ public class WindowTools {
         return openStage(null, fxml, bundle, false, Modality.NONE, null);
     }
 
-    public static BaseController openChildStage(Window parent, String newFxml) {
-        return openChildStage(parent, newFxml, true);
-    }
-
-    public static BaseController openChildStage(Window parent, String newFxml, boolean isModal) {
-        return openStage(parent, newFxml, AppVariables.CurrentBundle, true, isModal ? Modality.WINDOW_MODAL : Modality.NONE, null);
-    }
-
-    public static BaseController branch(Window parent, String newFxml) {
+    /*
+     * sub stage
+     */
+    public static BaseController childStage(BaseController parent, String newFxml) {
         try {
-            BaseController c = openStage(parent, newFxml);
-            if (parent != null) {
-                parent.setOnHiding(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent event) {
-                        if (c != null) {
-                            c.close();
-                        }
-                    }
-                });
+            if (parent == null) {
+                return null;
             }
+            BaseController c = openStage(parent.getMyWindow(), newFxml,
+                    AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Child);
             return c;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -274,27 +292,61 @@ public class WindowTools {
         }
     }
 
-    public static BaseController handling(Window parent, String newFxml) {
-        return openStage(parent, newFxml, AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);
-    }
-
-    public static BaseController openScene(Window parent, String fxml) {
+    public static BaseController branchStage(BaseController parent, String newFxml) {
         try {
-            Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
-            newStage.initModality(Modality.NONE);
-            newStage.initStyle(StageStyle.DECORATED);
-            newStage.initOwner(null);
-            BaseController controller = initScene(newStage, fxml, StageStyle.DECORATED);
-            if (controller != null) {
-                closeWindow(parent);
+            if (parent == null) {
+                return null;
             }
-            return controller;
+            BaseController c = openStage(parent.getMyWindow(), newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Branch);
+            return c;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
+    public static BaseController popStage(BaseController parent, String newFxml) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            BaseController c = openStage(parent.getMyWindow(), newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Pop);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController popupStage(BaseController parent, String newFxml) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            BaseController c = openStage(parent.getMyWindow(), newFxml,
+                    AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Popup);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    /*
+     * handle stage
+     */
     public static void reloadAll() {
         try {
             List<Window> windows = new ArrayList<>();
@@ -537,6 +589,22 @@ public class WindowTools {
             }
         } catch (Exception e) {
         }
+    }
+
+    public static BaseController getController(Window window) {
+        if (window == null) {
+            return null;
+        }
+        Object object = window.getUserData();
+        if (object != null) {
+            try {
+                if (object instanceof BaseController) {
+                    return (BaseController) object;
+                }
+            } catch (Exception e) {
+            }
+        }
+        return null;
     }
 
     public static BaseController find(String interfaceName) {

@@ -18,8 +18,15 @@ public abstract class BaseChildController extends BaseController {
     protected CheckBox closeAfterCheck;
 
     @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
+    public void initValues() {
+        try {
+            super.initValues();
+
+            stageType = StageType.Child;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

@@ -27,8 +27,8 @@ import javafx.stage.Stage;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
@@ -593,7 +593,7 @@ public class JsonEditorController extends BaseFileController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (isPop || !fileChanged) {
+        if (!isIndependantStage() || !fileChanged) {
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

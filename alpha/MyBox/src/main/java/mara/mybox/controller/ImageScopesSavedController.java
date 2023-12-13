@@ -93,7 +93,7 @@ public class ImageScopesSavedController extends BaseSysTableController<ImageScop
                                     case Polygon:
                                         icon = "iconStar.png";
                                         break;
-                                    case Color:
+                                    case Colors:
                                         icon = "iconColorWheel.png";
                                         break;
                                     case Matting:
@@ -234,8 +234,8 @@ public class ImageScopesSavedController extends BaseSysTableController<ImageScop
      */
     public static ImageScopesSavedController load(ControlSelectPixels scopeController) {
         try {
-            ImageScopesSavedController controller = (ImageScopesSavedController) WindowTools.openChildStage(
-                    scopeController.getMyWindow(), Fxmls.ImageScopeSavedFxml, false);
+            ImageScopesSavedController controller = (ImageScopesSavedController) WindowTools.branchStage(
+                    scopeController, Fxmls.ImageScopeSavedFxml);
             controller.setParameters(scopeController);
             controller.requestMouse();
             return controller;

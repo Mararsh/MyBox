@@ -46,8 +46,8 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
      */
     public static Data2DChartGroupXYController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartGroupXYController controller = (Data2DChartGroupXYController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartGroupXYFxml, false);
+            Data2DChartGroupXYController controller = (Data2DChartGroupXYController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartGroupXYFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

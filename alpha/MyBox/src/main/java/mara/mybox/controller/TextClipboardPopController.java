@@ -45,11 +45,6 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
     }
 
     @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
-    @Override
     public void textChanged(String nv) {
         super.textChanged(nv);
         pasteButton.setDisable(!inputEditable || copyToSystemClipboardButton.isDisable());
@@ -176,7 +171,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
             }
             closeAll();
             TextClipboardPopController controller
-                    = (TextClipboardPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.TextClipboardPopFxml, false);
+                    = (TextClipboardPopController) WindowTools.branchStage(parent, Fxmls.TextClipboardPopFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

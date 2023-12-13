@@ -44,10 +44,8 @@ public class ImageEmbossController extends BasePixelsController {
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
+            operation = message("Emboss");
+
             topRadio.setSelected(true);
 
             raduis = UserConfig.getInt(baseName + "Raduis", 3);
@@ -127,8 +125,7 @@ public class ImageEmbossController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = kernel.getName();
-            opInfo = message("Grey") + ": " + kernel.isGray();
+            opInfo = kernel.getName() + " " + message("Grey") + ": " + kernel.isGray();
             return convolution.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
@@ -144,8 +141,8 @@ public class ImageEmbossController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageEmbossController controller = (ImageEmbossController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageEmbossFxml);
+            ImageEmbossController controller = (ImageEmbossController) WindowTools.branchStage(
+                    parent, Fxmls.ImageEmbossFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

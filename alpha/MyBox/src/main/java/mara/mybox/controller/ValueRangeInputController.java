@@ -89,7 +89,7 @@ public class ValueRangeInputController extends BaseInputController {
             if (column.isTimeType()) {
                 v = DateTools.datetimeToString(DateTools.encodeDate(endInput.getText()).getTime());
             } else {
-                v = Double.parseDouble(endInput.getText());
+                v = Double.valueOf(endInput.getText());
             }
         } catch (Exception e) {
             popError(message("InvalidData") + ": " + message("End"));
@@ -117,8 +117,8 @@ public class ValueRangeInputController extends BaseInputController {
      */
     public static ValueRangeInputController open(BaseController parent, Data2DColumn column, ValueRange range) {
         try {
-            ValueRangeInputController controller = (ValueRangeInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ValueRangeInputFxml, false);
+            ValueRangeInputController controller = (ValueRangeInputController) WindowTools.branchStage(
+                    parent, Fxmls.ValueRangeInputFxml);
             controller.setParameters(parent, column, range);
             return controller;
         } catch (Exception e) {

@@ -81,8 +81,8 @@ public class ImageEraserController extends ImagePolylinesController {
             if (parent == null) {
                 return null;
             }
-            ImageEraserController controller = (ImageEraserController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageEraserFxml);
+            ImageEraserController controller = (ImageEraserController) WindowTools.branchStage(
+                    parent, Fxmls.ImageEraserFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

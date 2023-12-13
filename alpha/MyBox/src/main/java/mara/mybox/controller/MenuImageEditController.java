@@ -72,8 +72,8 @@ public class MenuImageEditController extends MenuImageViewController {
                         }
                     }
                 }
-                MenuImageEditController controller = (MenuImageEditController) WindowTools.openChildStage(
-                        editor.getMyWindow(), Fxmls.MenuImageEditFxml, false);
+                MenuImageEditController controller = (MenuImageEditController) WindowTools.branchStage(
+                        editor, Fxmls.MenuImageEditFxml);
                 controller.setParameters(editor, x, y);
                 return controller;
             } catch (Exception e) {

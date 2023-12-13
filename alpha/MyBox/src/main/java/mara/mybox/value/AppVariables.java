@@ -44,7 +44,7 @@ public class AppVariables {
     public static MemoryUsageSetting PdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static long maxDemoImage;
-    public static boolean IsChinese, isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
+    public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
@@ -61,7 +61,6 @@ public class AppVariables {
             SystemConfigValues.clear();
             CurrentLangName = Languages.getLangName();
             CurrentBundle = Languages.getBundle();
-            IsChinese = Languages.isChinese();
             UserConfig.getPdfMem();
             closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);

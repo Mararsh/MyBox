@@ -97,8 +97,8 @@ public class ShapeShearInputController extends BaseShapeTransformController {
 
     public static ShapeShearInputController open(BaseShapeController parent, DoubleShape shapeData) {
         try {
-            ShapeShearInputController controller = (ShapeShearInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ShapeShearInputFxml, true);
+            ShapeShearInputController controller = (ShapeShearInputController) WindowTools.childStage(
+                    parent, Fxmls.ShapeShearInputFxml);
             controller.setParameters(parent, shapeData);
             return controller;
         } catch (Exception e) {

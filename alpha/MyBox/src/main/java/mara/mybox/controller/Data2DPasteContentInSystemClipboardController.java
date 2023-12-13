@@ -57,8 +57,8 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
      */
     public static Data2DPasteContentInSystemClipboardController open(ControlData2DLoad parent, String text) {
         try {
-            Data2DPasteContentInSystemClipboardController controller = (Data2DPasteContentInSystemClipboardController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.Data2DPasteContentInSystemClipboardFxml, false);
+            Data2DPasteContentInSystemClipboardController controller = (Data2DPasteContentInSystemClipboardController) WindowTools.branchStage(
+                    parent, Fxmls.Data2DPasteContentInSystemClipboardFxml);
             controller.setParameters(parent, text);
             controller.requestMouse();
             return controller;

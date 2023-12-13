@@ -95,8 +95,8 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     public static Data2DLoadContentInSystemClipboardController open(ControlData2DLoad parent, String text) {
         try {
             Data2DLoadContentInSystemClipboardController controller
-                    = (Data2DLoadContentInSystemClipboardController) WindowTools.openChildStage(
-                            parent.getMyWindow(), Fxmls.Data2DLoadContentInSystemClipboardFxml, true);
+                    = (Data2DLoadContentInSystemClipboardController) WindowTools.childStage(
+                            parent, Fxmls.Data2DLoadContentInSystemClipboardFxml);
             controller.setParameters(parent, text);
             controller.requestMouse();
             return controller;

@@ -170,9 +170,8 @@ public class ColorsPickingController extends BaseChildController {
                 ((ColorsPickingController) object).close();
             }
         }
-        ColorsPickingController controller
-                = (ColorsPickingController) WindowTools.openChildStage(parent.getMyStage(),
-                        Fxmls.ColorsPickingFxml, false);
+        ColorsPickingController controller = (ColorsPickingController) WindowTools
+                .branchStage(parent, Fxmls.ColorsPickingFxml);
         controller.setParameters(parent);
         return controller;
     }

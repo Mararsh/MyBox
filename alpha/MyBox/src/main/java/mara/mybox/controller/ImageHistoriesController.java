@@ -78,6 +78,10 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
     @FXML
     protected Label fileLabel;
 
+    public ImageHistoriesController() {
+        baseTitle = message("EditHistories");
+    }
+
     @Override
     protected void initColumns() {
         try {
@@ -496,8 +500,8 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
      */
     public static ImageHistoriesController open(ImageEditorController parent) {
         try {
-            ImageHistoriesController controller = (ImageHistoriesController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageHistoriesFxml);
+            ImageHistoriesController controller = (ImageHistoriesController) WindowTools.branchStage(
+                    parent, Fxmls.ImageHistoriesFxml);
             controller.setParameters(parent);
             controller.requestMouse();
             return controller;

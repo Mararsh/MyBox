@@ -125,8 +125,8 @@ public class ImageFramesController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            ImageFramesController controller = (ImageFramesController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageFramesFxml, false);
+            ImageFramesController controller = (ImageFramesController) WindowTools.branchStage(
+                    parent, Fxmls.ImageFramesFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

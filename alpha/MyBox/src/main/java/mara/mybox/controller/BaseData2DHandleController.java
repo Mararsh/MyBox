@@ -16,11 +16,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import mara.mybox.data.DataSort;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -66,11 +66,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public BaseData2DHandleController() {
         baseTitle = message("Handle");
-    }
-
-    @Override
-    public void setStageStatus() {
-        setAsNormal();
     }
 
     @Override

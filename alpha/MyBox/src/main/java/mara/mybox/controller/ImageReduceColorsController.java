@@ -53,6 +53,16 @@ public class ImageReduceColorsController extends BasePixelsController {
     }
 
     @Override
+    protected void initMore() {
+        try {
+            super.initMore();
+            operation = message("ReduceColors");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     protected boolean checkOptions() {
         if (!super.checkOptions()) {
             return false;
@@ -97,8 +107,8 @@ public class ImageReduceColorsController extends BasePixelsController {
             return;
         }
         String name = null;
-        if (editor.sourceFile != null) {
-            name = editor.sourceFile.getName();
+        if (imageController.sourceFile != null) {
+            name = imageController.sourceFile.getName();
         }
         quanTable = quantization.countTable(name);
         if (quanTable != null) {
@@ -150,8 +160,8 @@ public class ImageReduceColorsController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageReduceColorsFxml);
+            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.branchStage(
+                    parent, Fxmls.ImageReduceColorsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

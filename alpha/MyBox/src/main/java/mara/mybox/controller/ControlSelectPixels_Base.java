@@ -13,6 +13,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -83,7 +84,9 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     @FXML
     protected Label scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
     @FXML
-    protected HBox opBox, pickColorBox;
+    protected FlowPane opPane;
+    @FXML
+    protected HBox pickColorBox;
 
     public Image srcImage() {
         if (imageController != null) {
@@ -169,7 +172,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
                     valid = pickColorValues();
                     break;
 
-                case Color:
+                case Colors:
                     valid = pickColorValues();
                     break;
 

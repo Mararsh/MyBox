@@ -271,8 +271,8 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
      */
     public static Data2DChartXYZController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartXYZController controller = (Data2DChartXYZController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartXYZFxml, false);
+            Data2DChartXYZController controller = (Data2DChartXYZController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartXYZFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

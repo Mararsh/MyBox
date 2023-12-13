@@ -103,8 +103,8 @@ public class SettingCustomColorsController extends BaseChildController {
 
     public static SettingCustomColorsController open(BaseController parent) {
         try {
-            SettingCustomColorsController controller = (SettingCustomColorsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.SettingCustomColorsFxml, true);
+            SettingCustomColorsController controller = (SettingCustomColorsController) WindowTools.childStage(
+                    parent, Fxmls.SettingCustomColorsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

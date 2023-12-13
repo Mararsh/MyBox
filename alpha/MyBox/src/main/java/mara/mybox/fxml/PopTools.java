@@ -49,6 +49,7 @@ import javafx.stage.WindowEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseController_Attributes;
 import mara.mybox.controller.BaseLogs;
 import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlStyleInputController;
@@ -224,7 +225,7 @@ public class PopTools {
             popup.setOnHiding((WindowEvent event) -> {
                 WindowTools.closeWindow(popup);
             });
-            controller.setParentController(parent);
+            controller.setParent(parent, BaseController_Attributes.StageType.Popup);
             controller.setMyWindow(popup);
             if (parent != null) {
                 parent.closePopup();

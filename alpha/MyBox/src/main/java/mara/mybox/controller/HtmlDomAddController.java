@@ -80,8 +80,8 @@ public class HtmlDomAddController extends BaseChildController {
         if (editor == null) {
             return null;
         }
-        HtmlDomAddController controller = (HtmlDomAddController) WindowTools.openChildStage(
-                editor.getMyWindow(), Fxmls.HtmlDomAddFxml);
+        HtmlDomAddController controller = (HtmlDomAddController) WindowTools.childStage(
+                editor, Fxmls.HtmlDomAddFxml);
         if (controller != null) {
             controller.setParamters(editor, targetItem);
             controller.requestMouse();

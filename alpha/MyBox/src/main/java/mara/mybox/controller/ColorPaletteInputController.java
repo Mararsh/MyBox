@@ -130,8 +130,8 @@ public class ColorPaletteInputController extends BaseChildController {
         static methods
      */
     public static ColorPaletteInputController open(ColorPalettePopupController palette) {
-        ColorPaletteInputController controller = (ColorPaletteInputController) WindowTools.openChildStage(
-                palette.parentController.getMyStage(), Fxmls.ColorPaletteInputFxml, false);
+        ColorPaletteInputController controller = (ColorPaletteInputController) WindowTools.branchStage(
+                palette.parentController, Fxmls.ColorPaletteInputFxml);
         controller.setParameters(palette);
         return controller;
     }

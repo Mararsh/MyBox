@@ -35,13 +35,14 @@ public class ImageBlendColorController extends BasePixelsController {
         try {
             super.initMore();
 
+            operation = message("BlendColor");
+
             colorController.init(this, baseName + "NewColor", Color.PINK);
 
             blendController.setParameters(this);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
     }
 
     @Override
@@ -51,23 +52,20 @@ public class ImageBlendColorController extends BasePixelsController {
             return false;
         }
         blend = blendController.pickValues();
+        opInfo = colorController.css();
         return blend != null;
     }
 
     @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            operation = message("BlendColor");
-            opInfo = colorController.css();
             PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
-                    editor.imageView.getImage(), inScope,
-                    PixelsOperation.OperationType.Blend)
+                    inImage, inScope, PixelsOperation.OperationType.Blend)
                     .setColorPara1(colorController.awtColor())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            ((PixelsOperationFactory.BlendColor) pixelsOperation)
-                    .setBlender(blend);
+            ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blend);
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
@@ -84,8 +82,8 @@ public class ImageBlendColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageBlendColorController controller = (ImageBlendColorController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageBlendColorFxml);
+            ImageBlendColorController controller = (ImageBlendColorController) WindowTools.branchStage(
+                    parent, Fxmls.ImageBlendColorFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

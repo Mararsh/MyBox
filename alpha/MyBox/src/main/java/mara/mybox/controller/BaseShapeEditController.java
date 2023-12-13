@@ -176,15 +176,7 @@ public class BaseShapeEditController extends BaseImageEditController {
     @FXML
     @Override
     public void okAction() {
-        editor.updateImage(operation, imageView.getImage());
-        if (closeAfterCheck.isSelected()) {
-            close();
-            editor.popSuccessful();
-        } else {
-            getMyWindow().requestFocus();
-            myStage.toFront();
-            popSuccessful();
-        }
+        passHandled(currentImage());
     }
 
     @FXML

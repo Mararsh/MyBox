@@ -132,8 +132,8 @@ public class ImageScopeViewsController extends BaseChildController {
             if (parent == null || !parent.isShowing()) {
                 return null;
             }
-            ImageScopeViewsController controller = (ImageScopeViewsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ImageScopeViewsFxml, false);
+            ImageScopeViewsController controller = (ImageScopeViewsController) WindowTools.branchStage(
+                    parent, Fxmls.ImageScopeViewsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

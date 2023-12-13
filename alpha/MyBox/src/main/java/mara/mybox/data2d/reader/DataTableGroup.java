@@ -16,7 +16,6 @@ import mara.mybox.controller.ControlData2DGroup;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.ValueRange;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
@@ -25,6 +24,7 @@ import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -33,7 +33,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
@@ -614,7 +613,7 @@ public class DataTableGroup {
             }
             try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 long timeValue, lastTimeValue = Long.MAX_VALUE;
-                boolean groupChanged;
+                boolean groupChanged, isChinese = Languages.isChinese();
                 long zeroYear = DateTools.zeroYear();
                 Calendar calendar = Calendar.getInstance();
                 conn.setAutoCommit(false);
@@ -640,7 +639,7 @@ public class DataTableGroup {
                                 } else {
                                     v = (v / 100) + 1;
                                 }
-                                if (AppVariables.IsChinese) {
+                                if (isChinese) {
                                     parameterValue = (isBC ? "公元前" : "") + v + "世纪";
                                 } else {
                                     parameterValue = v + "th century" + (isBC ? " BC" : "");
@@ -667,7 +666,7 @@ public class DataTableGroup {
                                         format = "y-MM-dd HH:mm:ss";
                                         break;
                                 }
-                                if (AppVariables.IsChinese) {
+                                if (isChinese) {
                                     parameterValue = new SimpleDateFormat((isBC ? "G" : "") + format, Languages.LocaleZhCN)
                                             .format(timeValue);
                                 } else {

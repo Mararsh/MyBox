@@ -7,8 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
@@ -513,8 +513,8 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
      */
     public static Data2DSetValuesController open(ControlData2DLoad tableController) {
         try {
-            Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSetValuesFxml, false);
+            Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DSetValuesFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

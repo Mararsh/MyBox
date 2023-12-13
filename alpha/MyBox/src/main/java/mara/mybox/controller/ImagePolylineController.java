@@ -24,7 +24,6 @@ public class ImagePolylineController extends BaseShapeEditController {
     protected void initMore() {
         try {
             super.initMore();
-
             operation = message("Polyline");
 
         } catch (Exception e) {
@@ -89,8 +88,8 @@ public class ImagePolylineController extends BaseShapeEditController {
             if (parent == null) {
                 return null;
             }
-            ImagePolylineController controller = (ImagePolylineController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImagePolylineFxml);
+            ImagePolylineController controller = (ImagePolylineController) WindowTools.branchStage(
+                    parent, Fxmls.ImagePolylineFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

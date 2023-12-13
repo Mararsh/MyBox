@@ -39,7 +39,7 @@ public abstract class ControlSelectPixels_Colors extends ControlSelectPixels_Are
             return false;
         }
         switch (scope.getScopeType()) {
-            case Color:
+            case Colors:
             case Rectangle:
             case Circle:
             case Ellipse:

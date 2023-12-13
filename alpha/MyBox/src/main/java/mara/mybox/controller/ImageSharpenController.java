@@ -27,6 +27,17 @@ public class ImageSharpenController extends BasePixelsController {
     }
 
     @Override
+    protected void initMore() {
+        try {
+            super.initMore();
+            operation = message("Sharpen");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
             ConvolutionKernel kernel = sharpenController.kernel();
@@ -34,13 +45,10 @@ public class ImageSharpenController extends BasePixelsController {
                 return null;
             }
             ImageConvolution convolution = ImageConvolution.create();
-            convolution.setImage(inImage)
-                    .setScope(inScope)
-                    .setKernel(kernel)
+            convolution.setImage(inImage).setScope(inScope).setKernel(kernel)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            operation = message("Sharpen");
             opInfo = message("Intensity") + ": " + sharpenController.intensity;
             return convolution.operateFxImage();
         } catch (Exception e) {
@@ -71,8 +79,8 @@ public class ImageSharpenController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSharpenController controller = (ImageSharpenController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageSharpenFxml);
+            ImageSharpenController controller = (ImageSharpenController) WindowTools.branchStage(
+                    parent, Fxmls.ImageSharpenFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

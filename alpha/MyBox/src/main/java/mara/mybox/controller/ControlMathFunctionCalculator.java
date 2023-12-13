@@ -18,15 +18,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
@@ -650,8 +650,8 @@ public class ControlMathFunctionCalculator extends BaseController {
      */
     public static ControlMathFunctionCalculator open(MathFunctionEditor editorController) {
         try {
-            ControlMathFunctionCalculator controller = (ControlMathFunctionCalculator) WindowTools.openChildStage(
-                    editorController.getMyWindow(), Fxmls.MathFunctionCalculatorFxml, false);
+            ControlMathFunctionCalculator controller = (ControlMathFunctionCalculator) WindowTools.branchStage(
+                    editorController, Fxmls.MathFunctionCalculatorFxml);
             controller.setParameters(editorController);
             controller.requestMouse();
             return controller;

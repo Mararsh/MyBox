@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
@@ -22,25 +23,26 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseImageEditController extends BaseShapeController {
 
-    protected ImageEditorController editor;
+    protected BaseImageController imageController;
     protected String operation, opInfo;
     protected Image handledImage;
+    protected ImageScope scope;
     protected boolean needFixSize;
     protected FxTask demoTask;
 
     @FXML
     protected CheckBox closeAfterCheck;
 
-    protected void setParameters(ImageEditorController parent) {
+    protected void setParameters(BaseImageController parent) {
         try {
             if (parent == null) {
                 close();
                 return;
             }
-            editor = parent;
+            imageController = parent;
             needFixSize = true;
 
-            editor.loadNotify.addListener(new ChangeListener<Boolean>() {
+            imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     loadImage();
@@ -56,14 +58,17 @@ public class BaseImageEditController extends BaseShapeController {
             });
 
             if (undoButton != null) {
-                undoButton.disableProperty().bind(editor.undoButton.disableProperty());
+                undoButton.disableProperty().bind(imageController.undoButton.disableProperty());
             }
             if (recoverButton != null) {
-                recoverButton.disableProperty().bind(editor.recoverButton.disableProperty());
+                recoverButton.disableProperty().bind(imageController.recoverButton.disableProperty());
             }
             if (saveButton != null) {
-                saveButton.disableProperty().bind(editor.saveButton.disableProperty());
+                saveButton.disableProperty().bind(imageController.saveButton.disableProperty());
             }
+
+            getMyWindow().requestFocus();
+            myStage.toFront();
 
             initMore();
 
@@ -77,20 +82,40 @@ public class BaseImageEditController extends BaseShapeController {
     protected void initMore() {
     }
 
-    protected Image srcImage() {
-        return editor.imageView.getImage();
-    }
-
-    protected Image currentImage() {
-        return imageView.getImage();
+    @FXML
+    @Override
+    public void refreshAction() {
+        loadImage();
     }
 
     protected void loadImage() {
-        if (editor == null || !editor.isShowing()) {
+        if (imageController == null || !imageController.isShowing()) {
             close();
             return;
         }
         loadImage(srcImage());
+    }
+
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded() || image == null) {
+                return false;
+            }
+            toFront();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    protected Image srcImage() {
+        return imageController.imageView.getImage();
+    }
+
+    protected Image currentImage() {
+        return imageView.getImage();
     }
 
     @Override
@@ -102,11 +127,11 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     protected boolean checkOptions() {
-        if (editor == null || !editor.isShowing()) {
+        if (imageController == null || !imageController.isShowing()) {
             close();
             return false;
         }
-        return true;
+        return srcImage() != null;
     }
 
     @FXML
@@ -144,16 +169,9 @@ public class BaseImageEditController extends BaseShapeController {
                 if (isPreview) {
                     ImagePopController.openImage(myController, handledImage);
                 } else {
-                    editor.updateImage(operation, opInfo, null, handledImage);
-                    if (closeAfterCheck.isSelected()) {
-                        close();
-                        editor.popSuccessful();
-                    } else {
-                        getMyWindow().requestFocus();
-                        myStage.toFront();
-                        popSuccessful();
-                    }
+                    passHandled(handledImage);
                 }
+                afterHandle();
             }
 
         };
@@ -161,6 +179,19 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     protected void handleImage() {
+    }
+
+    protected void passHandled(Image passImage) {
+        imageController.updateImage(operation, opInfo, scope, passImage);
+        if (closeAfterCheck.isSelected()) {
+            close();
+            imageController.popSuccessful();
+        } else {
+            toFront();
+        }
+    }
+
+    protected void afterHandle() {
     }
 
     @FXML
@@ -215,25 +246,19 @@ public class BaseImageEditController extends BaseShapeController {
     @FXML
     @Override
     public void undoAction() {
-        editor.undoAction();
+        imageController.undoAction();
     }
 
     @FXML
     @Override
     public void recoverAction() {
-        editor.recoverAction();
+        imageController.recoverAction();
     }
 
     @FXML
     @Override
     public void saveAction() {
-        editor.saveAction();
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        loadImage();
+        imageController.saveAction();
     }
 
     @FXML

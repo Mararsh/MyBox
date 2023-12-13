@@ -238,7 +238,7 @@ public class ImageManufactureBatchSizeController extends BaseImageEditBatchContr
         try {
             TextField xInput = null, yInput = null;
             PixelsCalculationController controller
-                    = (PixelsCalculationController) openChildStage(Fxmls.PixelsCalculatorFxml, true);
+                    = (PixelsCalculationController) childStage(Fxmls.PixelsCalculatorFxml);
             controller.setSourceNull();
             if (sizeType == SizeType.Custom) {
                 xInput = customWidthInput;

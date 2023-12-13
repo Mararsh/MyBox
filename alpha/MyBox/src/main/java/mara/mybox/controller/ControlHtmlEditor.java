@@ -1334,7 +1334,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (isPop || !fileChanged) {
+        if (!isIndependantStage() || !fileChanged) {
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

@@ -83,8 +83,8 @@ public class JsonAddFieldController extends ControlJsonNodeBase {
         static methods
      */
     public static JsonAddFieldController open(ControlJsonTree treeController, TreeItem<JsonTreeNode> item) {
-        JsonAddFieldController controller = (JsonAddFieldController) WindowTools.openChildStage(
-                treeController.getMyWindow(), Fxmls.JsonAddFieldFxml);
+        JsonAddFieldController controller = (JsonAddFieldController) WindowTools.childStage(
+                treeController, Fxmls.JsonAddFieldFxml);
         if (controller != null) {
             controller.setParameters(treeController, item);
             controller.requestMouse();

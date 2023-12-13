@@ -36,7 +36,9 @@ public class ImageBlackWhiteController extends BasePixelsController {
         try {
             super.initMore();
 
-            binaryController.setParameters(editor.imageView);
+            operation = message("BlackOrWhite");
+
+            binaryController.setParameters(imageController.imageView);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -52,7 +54,6 @@ public class ImageBlackWhiteController extends BasePixelsController {
         if (imageBinary == null) {
             return false;
         }
-        operation = message("BlackOrWhite");
         if (imageBinary.getAlgorithm() != ImageBinary.BinaryAlgorithm.Default) {
             opInfo = message("Threshold") + ": " + imageBinary.getIntPara1();
         }
@@ -188,8 +189,8 @@ public class ImageBlackWhiteController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageBlackWhiteFxml);
+            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.branchStage(
+                    parent, Fxmls.ImageBlackWhiteFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

@@ -77,8 +77,8 @@ public class RemotePathRenameController extends BaseController {
             if (manageController == null) {
                 return null;
             }
-            RemotePathRenameController controller = (RemotePathRenameController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.RemotePathRenameFxml, false);
+            RemotePathRenameController controller = (RemotePathRenameController) WindowTools.branchStage(
+                    manageController, Fxmls.RemotePathRenameFxml);
             controller.setParameters(manageController);
             controller.requestMouse();
             return controller;

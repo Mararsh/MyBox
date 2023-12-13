@@ -156,8 +156,8 @@ public class Data2DChartPieController extends BaseData2DChartController {
      */
     public static Data2DChartPieController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartPieController controller = (Data2DChartPieController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartPieFxml, false);
+            Data2DChartPieController controller = (Data2DChartPieController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartPieFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

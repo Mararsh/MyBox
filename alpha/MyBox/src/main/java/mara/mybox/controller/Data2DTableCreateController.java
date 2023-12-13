@@ -10,8 +10,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
@@ -169,8 +169,8 @@ public class Data2DTableCreateController extends BaseTaskController {
      */
     public static Data2DTableCreateController open(ControlData2DEditTable tableController) {
         try {
-            Data2DTableCreateController controller = (Data2DTableCreateController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DTableCreateFxml, true);
+            Data2DTableCreateController controller = (Data2DTableCreateController) WindowTools.childStage(
+                    tableController, Fxmls.Data2DTableCreateFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

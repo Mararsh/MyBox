@@ -45,9 +45,20 @@ public class ImageAdjustColorController extends BasePixelsController {
     }
 
     @Override
+    protected void initMore() {
+        try {
+            super.initMore();
+
+            operation = message("AdjustColor");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            operation = message("AdjustColor");
             opInfo = message(optionsController.colorActionType.name());
             if (optionsController.needValue()) {
                 opInfo += ": " + optionsController.colorValue;
@@ -234,8 +245,8 @@ public class ImageAdjustColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageAdjustColorController controller = (ImageAdjustColorController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageAdjustColorFxml);
+            ImageAdjustColorController controller = (ImageAdjustColorController) WindowTools.branchStage(
+                    parent, Fxmls.ImageAdjustColorFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

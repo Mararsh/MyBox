@@ -61,8 +61,8 @@ public class LineInputController extends BaseInputController {
     public static LineInputController open(BaseController parent,
             String title, List<DoublePoint> line) {
         try {
-            LineInputController controller = (LineInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.LineInputFxml, true);
+            LineInputController controller = (LineInputController) WindowTools.childStage(
+                    parent, Fxmls.LineInputFxml);
             controller.setParameters(parent, title, line);
             return controller;
         } catch (Exception e) {

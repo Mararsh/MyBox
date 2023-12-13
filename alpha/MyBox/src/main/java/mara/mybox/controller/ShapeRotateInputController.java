@@ -78,8 +78,8 @@ public class ShapeRotateInputController extends BaseShapeTransformController {
 
     public static ShapeRotateInputController open(BaseShapeController parent, DoubleShape shapeData, DoublePoint point) {
         try {
-            ShapeRotateInputController controller = (ShapeRotateInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ShapeRotateInputFxml, true);
+            ShapeRotateInputController controller = (ShapeRotateInputController) WindowTools.childStage(
+                    parent, Fxmls.ShapeRotateInputFxml);
             controller.setParameters(parent, shapeData, point);
             return controller;
         } catch (Exception e) {

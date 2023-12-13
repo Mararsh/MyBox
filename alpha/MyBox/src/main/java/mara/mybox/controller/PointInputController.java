@@ -73,8 +73,8 @@ public class PointInputController extends BaseInputController {
 
     public static PointInputController open(BaseController parent, String title, DoublePoint point) {
         try {
-            PointInputController controller = (PointInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.PointInputFxml, true);
+            PointInputController controller = (PointInputController) WindowTools.childStage(
+                    parent, Fxmls.PointInputFxml);
             controller.setParameters(parent, title, point);
             return controller;
         } catch (Exception e) {

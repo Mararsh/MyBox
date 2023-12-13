@@ -35,10 +35,8 @@ public class ImageMosaicController extends BasePixelsController {
     protected void initMore() {
         try {
             super.initMore();
-            if (editor == null) {
-                close();
-                return;
-            }
+            operation = message("Mosaic");
+
             intensity = UserConfig.getInt(baseName + "Intensity", 80);
             if (intensity <= 0) {
                 intensity = 80;
@@ -106,8 +104,8 @@ public class ImageMosaicController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageMosaicController controller = (ImageMosaicController) WindowTools.branch(
-                    parent.getMyWindow(), Fxmls.ImageMosaicFxml);
+            ImageMosaicController controller = (ImageMosaicController) WindowTools.branchStage(
+                    parent, Fxmls.ImageMosaicFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

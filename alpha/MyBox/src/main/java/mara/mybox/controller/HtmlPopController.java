@@ -81,8 +81,6 @@ public class HtmlPopController extends BaseWebViewController {
             });
             refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
 
-            setAsPop(baseName);
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

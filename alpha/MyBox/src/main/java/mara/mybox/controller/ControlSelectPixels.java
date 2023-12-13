@@ -22,7 +22,9 @@ import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Colors;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
@@ -439,6 +441,24 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
     public void refreshAction() {
         isSettingValues = false;
         showScope();
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        if (scope == null) {
+            return;
+        }
+        switch (scope.getScopeType()) {
+            case Matting:
+            case Polygon:
+                pointsController.clear();
+                break;
+
+            case Colors:
+                clearColors();
+                break;
+        }
     }
 
     @Override

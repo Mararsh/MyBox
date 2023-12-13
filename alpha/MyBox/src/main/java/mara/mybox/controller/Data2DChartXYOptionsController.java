@@ -235,19 +235,19 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             ));
             lineWidthSelector.getSelectionModel().select(lineWidth + "");
             lineWidthSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v >= 0) {
-                                chartMaker.setLineWidth(v);
-                                lineWidthSelector.getEditor().setStyle(null);
-                                chartController.redraw();
-                            } else {
-                                lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    });
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v >= 0) {
+                        chartMaker.setLineWidth(v);
+                        lineWidthSelector.getEditor().setStyle(null);
+                        chartController.redraw();
+                    } else {
+                        lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                } catch (Exception e) {
+                    lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
+                }
+            });
 
             int tickFontSize = options.getTickFontSize();
             tickFontSizeSelector.getItems().addAll(Arrays.asList(
@@ -654,8 +654,8 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             if (chartController == null) {
                 return null;
             }
-            Data2DChartXYOptionsController controller = (Data2DChartXYOptionsController) WindowTools.openChildStage(
-                    chartController.getMyWindow(), Fxmls.Data2DChartXYOptionsFxml, false);
+            Data2DChartXYOptionsController controller = (Data2DChartXYOptionsController) WindowTools.branchStage(
+                    chartController, Fxmls.Data2DChartXYOptionsFxml);
             controller.setParameters(chartController);
             return controller;
         } catch (Exception e) {

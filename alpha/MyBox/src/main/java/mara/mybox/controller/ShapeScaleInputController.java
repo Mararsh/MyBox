@@ -82,8 +82,8 @@ public class ShapeScaleInputController extends BaseShapeTransformController {
 
     public static ShapeScaleInputController open(BaseShapeController parent, DoubleShape shapeData) {
         try {
-            ShapeScaleInputController controller = (ShapeScaleInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ShapeScaleInputFxml, true);
+            ShapeScaleInputController controller = (ShapeScaleInputController) WindowTools.childStage(
+                    parent, Fxmls.ShapeScaleInputFxml);
             controller.setParameters(parent, shapeData);
             return controller;
         } catch (Exception e) {

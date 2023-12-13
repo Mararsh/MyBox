@@ -139,8 +139,8 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
             Data2DSimpleLinearRegressionController.open(regressController.tableController);
         } else {
             try {
-                Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
-                        regressController.parentController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
+                Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools
+                        .branchStage(regressController.parentController, Fxmls.Data2DSimpleLinearRegressionFxml);
                 controller.categoryColumnSelector.getItems().setAll(selected.get(2));
                 controller.categoryColumnSelector.getSelectionModel().select(0);
                 controller.valueColumnSelector.getItems().setAll(selected.get(1));

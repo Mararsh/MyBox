@@ -148,7 +148,8 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (isPop || fileChanged == null || !fileChanged.getValue()) {
+        if (!isIndependantStage()
+                || fileChanged == null || !fileChanged.getValue()) {
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
