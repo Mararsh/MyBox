@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController_Attributes.StageType;
 import mara.mybox.dev.MyBoxLog;
@@ -70,24 +69,30 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
     public void setParent(BaseController parent, StageType stageType) {
         this.parentController = parent;
         this.stageType = stageType;
-        if (parent == null || stageType == null) {
+        myStage = getMyStage();
+        if (stageType == null || myStage == null) {
             return;
         }
         switch (stageType) {
             case Branch: {
-                Window w = parent.getMyWindow();
-                if (w != null) {
-                    w.setOnHiding(new EventHandler<WindowEvent>() {
-                        @Override
-                        public void handle(WindowEvent event) {
-                            closeStage();
-                        }
-                    });
+                if (parent == null) {
+                    return;
                 }
+                parent.getMyWindow().setOnHiding(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        closeStage();
+                    }
+                });
+                parent.getMyStage().setFullScreen(false);
+                myStage.setAlwaysOnTop(true);
                 break;
             }
             case Pop: {
-                getMyStage().setAlwaysOnTop(true);
+                myStage.setAlwaysOnTop(true);
+                if (parent != null) {
+                    parent.getMyStage().setFullScreen(false);
+                }
                 break;
             }
         }

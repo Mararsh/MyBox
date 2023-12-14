@@ -71,7 +71,7 @@ public class BytesPopController extends TextPopController {
                 try {
                     File tmpFile = FileTmpTools.getTempFile();
                     tmpFile = ByteFileTools.writeFile(tmpFile, ByteTools.hexFormatToBytes(textArea.getText()));
-                    return FileTools.rename(tmpFile, file);
+                    return FileTools.override(tmpFile, file);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -96,7 +96,7 @@ public class BytesPopController extends TextPopController {
             if (textInput == null) {
                 return null;
             }
-            BytesPopController controller = (BytesPopController) WindowTools.openStage(Fxmls.BytesPopFxml);
+            BytesPopController controller = (BytesPopController) WindowTools.popStage(parent, Fxmls.BytesPopFxml);
             controller.setSourceInput(parent, textInput);
             return controller;
         } catch (Exception e) {

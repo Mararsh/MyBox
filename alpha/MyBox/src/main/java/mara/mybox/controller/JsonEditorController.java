@@ -242,7 +242,7 @@ public class JsonEditorController extends BaseFileController {
                     if (sourceFile != null && backupController.needBackup()) {
                         backupController.addBackup(task, sourceFile);
                     }
-                    return FileTools.rename(tmpFile, targetFile);
+                    return FileTools.override(tmpFile, targetFile);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -328,7 +328,7 @@ public class JsonEditorController extends BaseFileController {
                 if (tmpFile == null || !tmpFile.exists()) {
                     return false;
                 }
-                return FileTools.rename(tmpFile, file);
+                return FileTools.override(tmpFile, file);
             }
 
             @Override

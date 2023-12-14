@@ -515,6 +515,14 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
+    public void iconified() {
+        try {
+            getMyStage().setIconified(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void requestMouse() {
         try {
             if (getMyStage() == null || this instanceof MyBoxLogViewerController) {

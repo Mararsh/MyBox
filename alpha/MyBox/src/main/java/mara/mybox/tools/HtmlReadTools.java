@@ -234,7 +234,7 @@ public class HtmlReadTools {
                 return null;
             }
             File imageFile = new File(tmpFile.getAbsoluteFile() + "." + suffix);
-            if (FileTools.rename(tmpFile, imageFile)) {
+            if (FileTools.override(tmpFile, imageFile)) {
                 return imageFile;
             } else {
                 return null;

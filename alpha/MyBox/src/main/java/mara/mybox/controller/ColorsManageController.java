@@ -40,8 +40,8 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
@@ -841,7 +841,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (selected == null) {
             return false;
         }
-        HtmlPopController.openHtml(selected.html());
+        HtmlPopController.showHtml(this, selected.html());
         return true;
     }
 

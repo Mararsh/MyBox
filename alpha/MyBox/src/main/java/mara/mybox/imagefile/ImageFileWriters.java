@@ -184,7 +184,7 @@ public class ImageFileWriters {
                 return false;
             }
             File file = new File(targetFile);
-            return FileTools.rename(tmpFile, file);
+            return FileTools.override(tmpFile, file);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
@@ -336,7 +336,7 @@ public class ImageFileWriters {
             if (task != null && !task.isWorking()) {
                 return message("Cancelled");
             }
-            if (FileTools.rename(tmpFile, targetFile)) {
+            if (FileTools.override(tmpFile, targetFile)) {
                 return null;
             } else {
                 return "Failed";

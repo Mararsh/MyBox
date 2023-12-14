@@ -129,7 +129,7 @@ public class IconTools {
             if (suffix != null && !suffix.isBlank()) {
                 actualTarget = new File(FileNameTools.replaceSuffix(targetFile.getAbsolutePath(), suffix));
             }
-            FileTools.rename(iconFile, actualTarget);
+            FileTools.override(iconFile, actualTarget);
             return actualTarget;
         } catch (Exception e) {
 //            MyBoxLog.debug(e);

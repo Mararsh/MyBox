@@ -127,7 +127,7 @@ public class DataFileCSV extends DataFileText {
                 return false;
             }
         }
-        return FileTools.rename(tmpFile, tFile, false);
+        return FileTools.override(tmpFile, tFile);
     }
 
     public boolean writeHeader(CSVPrinter csvPrinter) {

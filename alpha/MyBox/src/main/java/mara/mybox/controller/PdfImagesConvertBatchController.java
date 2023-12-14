@@ -181,7 +181,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                 targetDoc.save(tmpFile);
                 targetDoc.close();
                 File tFile = new File(currentTargetFile);
-                if (FileTools.rename(tmpFile, tFile)) {
+                if (FileTools.override(tmpFile, tFile)) {
                     targetFileGenerated(tFile);
                 }
             }

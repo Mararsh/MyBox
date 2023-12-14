@@ -178,7 +178,7 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                     }
                 }
             }
-            if (FileTools.rename(tmpFile, targetFile)) {
+            if (FileTools.override(tmpFile, targetFile)) {
                 if (verboseCheck == null || verboseCheck.isSelected()) {
                     updateLogs(MessageFormat.format(Languages.message("FileCompressedSuccessfully"),
                             targetFile, FileTools.showFileSize(srcFile.length()),

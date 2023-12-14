@@ -420,7 +420,7 @@ public class Data2DTools {
                 csvPrinter.flush();
                 csvPrinter.close();
             }
-            if (!FileTools.rename(tmpFile, file, true)) {
+            if (!FileTools.override(tmpFile, file, true)) {
                 return null;
             }
             DataFileCSV csv = new DataFileCSV();
@@ -833,7 +833,7 @@ public class Data2DTools {
                 }
                 xssfBook.close();
             }
-            if (!FileTools.rename(tmpFile, file, true)) {
+            if (!FileTools.override(tmpFile, file, true)) {
                 return null;
             }
             DataFileExcel excel = new DataFileExcel();

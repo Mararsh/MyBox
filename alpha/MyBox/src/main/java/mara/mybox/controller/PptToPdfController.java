@@ -114,7 +114,7 @@ public class PptToPdfController extends BaseBatchFileController {
             updateLogs(e.toString());
             return e.toString();
         }
-        if (FileTools.rename(tmpFile, target)) {
+        if (FileTools.override(tmpFile, target)) {
             targetFileGenerated(target);
             return message("Successful");
         } else {

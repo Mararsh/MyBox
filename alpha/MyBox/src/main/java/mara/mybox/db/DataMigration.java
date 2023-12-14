@@ -1162,7 +1162,7 @@ public class DataMigration {
                         if (!file.isFile() || (name.endsWith(".properties") && name.startsWith("Messages_"))) {
                             continue;
                         }
-                        FileTools.rename(file, Languages.interfaceLanguageFile(name));
+                        FileTools.override(file, Languages.interfaceLanguageFile(name));
                     }
                 }
             }

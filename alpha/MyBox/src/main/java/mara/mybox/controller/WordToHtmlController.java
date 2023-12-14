@@ -35,7 +35,7 @@ public class WordToHtmlController extends BaseBatchFileController {
                 return message("Skip");
             }
             File tmpFile = MicrosoftDocumentTools.word2HtmlFile(srcFile, charset);
-            if (!FileTools.rename(tmpFile, target)) {
+            if (!FileTools.override(tmpFile, target)) {
                 return message("Failed");
             }
             targetFileGenerated(target);

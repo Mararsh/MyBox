@@ -330,7 +330,7 @@ public class BytesEditInformation extends FileEditInformation {
                 }
             }
             if (sourceInfo.getFile().equals(file)) {
-                FileTools.rename(targetFile, file);
+                FileTools.override(targetFile, file);
             }
             return true;
         } catch (Exception e) {

@@ -423,7 +423,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 pd.save(tmpFile);
                 pd.close();
             }
-            if (FileTools.rename(tmpFile, srcFile, true)) {
+            if (FileTools.override(tmpFile, srcFile, true)) {
                 return message("Successful");
             } else {
                 return message("Failed");

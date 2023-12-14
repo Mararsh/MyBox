@@ -1406,7 +1406,7 @@ public class WeiboSnapRunController extends BaseController {
                     File monthFile = new File(monthFileName);
                     FileDeleteTools.delete(monthFile);
                     if (files.size() == 1) {
-                        FileTools.rename(files.get(0), monthFile);
+                        FileTools.override(files.get(0), monthFile);
                         savedMonthPdfCount++;
                         savedPagePdfCount--;
                         pdfs.remove(month);

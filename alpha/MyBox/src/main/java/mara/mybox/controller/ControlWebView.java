@@ -1799,7 +1799,7 @@ public class ControlWebView extends BaseController {
                 if (tmpFile == null || !tmpFile.exists()) {
                     return false;
                 }
-                return FileTools.rename(tmpFile, file);
+                return FileTools.override(tmpFile, file);
             }
 
             @Override

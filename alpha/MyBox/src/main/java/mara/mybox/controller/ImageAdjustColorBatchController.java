@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.PixelsOperation;
@@ -8,6 +9,7 @@ import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -16,33 +18,33 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageAdjustColorBatchController extends BaseImageEditBatchController {
-    
+
     protected OperationType colorOperationType;
     protected ColorActionType colorActionType;
     protected int colorValue;
-    
+
     @FXML
     protected ControlImageAdjustColor optionsController;
-    
+
     public ImageAdjustColorBatchController() {
         baseTitle = message("AdjustColor") + " - " + message("Batch");
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
-    
+
     @Override
     public boolean makeMoreParameters() {
         colorOperationType = optionsController.colorOperationType;
@@ -50,7 +52,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
         colorValue = optionsController.colorValue;
         return super.makeMoreParameters();
     }
-    
+
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         if (null == colorOperationType || colorActionType == null) {
@@ -86,7 +88,11 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
             MyBoxLog.error(e);
             return null;
         }
-        
     }
-    
+
+    @Override
+    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
+        ImageDemoTools.adjustColor(demoTask, files, demoImage, null);
+    }
+
 }

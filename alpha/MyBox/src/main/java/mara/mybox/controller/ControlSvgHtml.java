@@ -198,7 +198,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
             popError(message("NoData"));
             return;
         }
-        HtmlPopController.openHtml(currentXML);
+        HtmlPopController.showHtml(this, currentXML);
     }
 
 }

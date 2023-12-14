@@ -109,7 +109,7 @@ public class ImageBmpFile {
                 out.flush();
             }
             writer.dispose();
-            return FileTools.rename(tmpFile, file);
+            return FileTools.override(tmpFile, file);
         } catch (Exception e) {
             try {
                 return ImageIO.write(image, attributes.getImageFormat(), file);

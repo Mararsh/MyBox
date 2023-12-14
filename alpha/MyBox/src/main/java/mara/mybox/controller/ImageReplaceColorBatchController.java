@@ -14,6 +14,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -127,8 +128,17 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
-        pixelsOperation.setImage(source);
-        return pixelsOperation.operate();
+        return pixelsOperation.setImage(source).setTask(task).operate();
+    }
+
+    @Override
+    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
+        try {
+            String prefix = message("ReplaceColor") + "_" + newColorSetController.css();
+            ImageDemoTools.replaceColor(demoTask, files, pixelsOperation, prefix);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

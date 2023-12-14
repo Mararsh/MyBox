@@ -148,7 +148,7 @@ public class FileSplitTools {
                 }
             }
             File actualFile = new File(newFilename);
-            if (FileTools.rename(tempFile, actualFile)) {
+            if (FileTools.override(tempFile, actualFile)) {
                 return actualFile;
             } else {
                 return null;

@@ -38,36 +38,40 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="optionsTab" text="%Options">
                             <content>
-                                <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                    <children>
-                              <fx:include fx:id="sharpen" source="ControlImageSharpen.fxml" />
-                              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                 <children>
-                                    <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconDemo.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                              <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconPreview.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                 </children>
-                              </FlowPane>
-                                    </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                                </VBox>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                           <content>
+                                      <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                          <children>
+                                    <fx:include fx:id="sharpen" source="ControlImageSharpen.fxml" />
+                                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                       <children>
+                                          <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconDemo.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                                    <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                                        <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                <image>
+                                                                    <Image url="@../buttons/Red/iconPreview.png" />
+                                                                </image>
+                                                            </ImageView>
+                                                        </graphic>
+                                                    </Button>
+                                       </children>
+                                    </FlowPane>
+                                          </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                                      </VBox>
+                           </content>
+                        </ScrollPane>
                             </content>
                         </Tab>
                         <Tab fx:id="targetTab" text="%TargetFiles">

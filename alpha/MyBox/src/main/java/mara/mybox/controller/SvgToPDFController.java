@@ -63,7 +63,7 @@ public class SvgToPDFController extends BaseBatchFileController {
                 return message("Canceled");
             }
         }
-        if (FileTools.rename(tmpFile, target, true)) {
+        if (FileTools.override(tmpFile, target, true)) {
             targetFileGenerated(target);
             return message("Successful");
         } else {

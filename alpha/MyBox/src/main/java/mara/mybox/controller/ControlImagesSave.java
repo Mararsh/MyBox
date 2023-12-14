@@ -585,7 +585,7 @@ public class ControlImagesSave extends BaseController {
                     document.save(tmpFile);
                     document.close();
 
-                    return FileTools.rename(tmpFile, targetFile);
+                    return FileTools.override(tmpFile, targetFile);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -645,7 +645,7 @@ public class ControlImagesSave extends BaseController {
                     error = e.toString();
                     return false;
                 }
-                return FileTools.rename(tmpFile, targetFile);
+                return FileTools.override(tmpFile, targetFile);
 
             }
 
@@ -704,7 +704,7 @@ public class ControlImagesSave extends BaseController {
                     error = e.toString();
                     return false;
                 }
-                return FileTools.rename(tmpFile, targetFile);
+                return FileTools.override(tmpFile, targetFile);
 
             }
 
@@ -761,7 +761,7 @@ public class ControlImagesSave extends BaseController {
                     MyBoxLog.error(e);
                     return false;
                 }
-                return FileTools.rename(tmpFile, targetFile);
+                return FileTools.override(tmpFile, targetFile);
             }
 
             @Override

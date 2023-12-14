@@ -375,7 +375,7 @@ public class WebBrowserController extends BaseController {
             @Override
             protected boolean handle() {
                 File tmpFile = HtmlReadTools.download(this, address);
-                return FileTools.rename(tmpFile, dnFile);
+                return FileTools.override(tmpFile, dnFile);
             }
 
             @Override

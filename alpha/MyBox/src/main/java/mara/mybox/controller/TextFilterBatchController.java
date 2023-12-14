@@ -78,7 +78,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
             if (filteredFile == null || !filteredFile.exists() || filteredFile.length() == 0) {
                 return Languages.message("NoData");
             }
-            if (FileTools.rename(filteredFile, target)) {
+            if (FileTools.override(filteredFile, target)) {
                 targetFileGenerated(target);
                 return Languages.message("Successful");
             } else {

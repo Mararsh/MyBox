@@ -59,7 +59,7 @@ public class DataFileCSVWriter extends Data2DWriter {
             if (failed) {
                 FileDeleteTools.delete(tmpFile);
             } else {
-                failed = !FileTools.rename(tmpFile, sourceFile, false);
+                failed = !FileTools.override(tmpFile, sourceFile);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

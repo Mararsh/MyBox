@@ -769,7 +769,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                         MyBoxLog.error(e.toString());
                         return false;
                     }
-                    if (FileTools.rename(tmpFile, file, true)) {
+                    if (FileTools.override(tmpFile, file, true)) {
                         recordFileWritten(file, VisitHistory.FileType.XML);
                         return true;
                     } else {
@@ -817,7 +817,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                         jsonWriter.flush();
                         jsonWriter.close();
                     }
-                    if (FileTools.rename(tmpFile, file, true)) {
+                    if (FileTools.override(tmpFile, file, true)) {
                         recordFileWritten(file, VisitHistory.FileType.JSON);
                         return true;
                     } else {

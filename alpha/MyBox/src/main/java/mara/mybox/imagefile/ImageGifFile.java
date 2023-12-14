@@ -218,7 +218,7 @@ public class ImageGifFile {
                 MyBoxLog.error(e.toString());
                 return e.toString();
             }
-            return FileTools.rename(tmpFile, outFile) ? "" : "Failed";
+            return FileTools.override(tmpFile, outFile) ? "" : "Failed";
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return e.toString();
@@ -255,7 +255,7 @@ public class ImageGifFile {
                 out.flush();
             }
             gifWriter.dispose();
-            if (!FileTools.rename(tmpFile, outFile)) {
+            if (!FileTools.override(tmpFile, outFile)) {
                 return "Failed";
             }
             if (deleteSource) {
@@ -298,7 +298,7 @@ public class ImageGifFile {
                 out.flush();
             }
             gifWriter.dispose();
-            return FileTools.rename(tmpFile, outFile) ? "" : "Failed";
+            return FileTools.override(tmpFile, outFile) ? "" : "Failed";
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return e.toString();

@@ -56,7 +56,7 @@ public class TextReplaceBatchController extends FindReplaceBatchController {
             int count = findReplace.getCount();
             if (count > 0) {
                 updateLogs(message("Count") + ": " + findReplace.getCount());
-                if (FileTools.rename(tmpFile, target)) {
+                if (FileTools.override(tmpFile, target)) {
                     targetFileGenerated(target);
                     return MessageFormat.format(message("ReplaceAllOk"), count);
                 } else {

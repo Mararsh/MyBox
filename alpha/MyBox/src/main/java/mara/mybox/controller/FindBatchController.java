@@ -152,7 +152,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
                 if (mergedFile != null && mergedFile.exists() && mergedCount > 0) {
                     mergedData = findReplace.initMatchesData(null);
                     File matchesFile = mergedData.getFile();
-                    if (FileTools.rename(mergedFile, matchesFile)) {
+                    if (FileTools.override(mergedFile, matchesFile)) {
                         mergedData.setRowsNumber(mergedCount);
                         targetFileGenerated(matchesFile);
                     }

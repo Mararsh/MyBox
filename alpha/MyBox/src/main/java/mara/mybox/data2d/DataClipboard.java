@@ -48,7 +48,7 @@ public class DataClipboard extends DataFileCSV {
             return null;
         }
         File dFile = newFile();
-        if (FileTools.rename(csvData.getFile(), dFile, true)) {
+        if (FileTools.override(csvData.getFile(), dFile, true)) {
             return create(task, csvData, dFile);
         } else {
             MyBoxLog.error("Failed");

@@ -52,7 +52,7 @@ public class SvgFromImageBatchController extends BaseBatchFileController {
             File svgFile = SvgTools.imageToSvgFile(task, this, srcFile,
                     optionsController.myboxRadio.isSelected() ? optionsController.quantizationController : null,
                     optionsController.options);
-            if (svgFile != null && svgFile.exists() && FileTools.rename(svgFile, target, true)) {
+            if (svgFile != null && svgFile.exists() && FileTools.override(svgFile, target, true)) {
                 targetFileGenerated(target);
                 return message("Successful");
             } else {

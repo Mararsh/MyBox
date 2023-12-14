@@ -163,7 +163,11 @@ public abstract class BaseController_Attributes {
     }
 
     public String getTitle() {
-        return getBaseTitle();
+        if (getMyStage() != null) {
+            return myStage.getTitle();
+        } else {
+            return getBaseTitle();
+        }
     }
 
     public void setTitle(String title) {

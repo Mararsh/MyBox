@@ -311,10 +311,9 @@ public class WindowTools {
 
     public static BaseController popStage(BaseController parent, String newFxml) {
         try {
-            if (parent == null) {
-                return null;
-            }
-            BaseController c = openStage(parent.getMyWindow(), newFxml);
+            BaseController c = parent != null
+                    ? openStage(parent.getMyWindow(), newFxml)
+                    : openStage(newFxml);
             if (c == null) {
                 return null;
             }

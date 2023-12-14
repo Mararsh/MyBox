@@ -420,9 +420,9 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                         IOUtils.copy(inputStream, compressOut);
                     }
                 }
-                FileTools.rename(tmpFile, targetFile);
+                FileTools.override(tmpFile, targetFile);
             } else {
-                FileTools.rename(archiveFile, targetFile);
+                FileTools.override(archiveFile, targetFile);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

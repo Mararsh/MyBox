@@ -81,10 +81,25 @@ public class FileTools {
     }
 
     public static boolean rename(File sourceFile, File targetFile) {
-        return rename(sourceFile, targetFile, false);
+        try {
+            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()
+                    || targetFile == null || targetFile.exists()
+                    || sourceFile.equals(targetFile)) {
+                return false;
+            }
+            FileUtils.moveFile(sourceFile, targetFile);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e, sourceFile + "    " + targetFile);
+            return false;
+        }
     }
 
-    public static boolean rename(File sourceFile, File targetFile, boolean noEmpty) {
+    public static boolean override(File sourceFile, File targetFile) {
+        return override(sourceFile, targetFile, false);
+    }
+
+    public static boolean override(File sourceFile, File targetFile, boolean noEmpty) {
         try {
             if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()
                     || targetFile == null || sourceFile.equals(targetFile)) {

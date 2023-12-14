@@ -194,7 +194,7 @@ public class TextPopController extends BaseChildController {
             protected boolean handle() {
                 try {
                     File tmpFile = TextFileTools.writeFile(textArea.getText());
-                    return FileTools.rename(tmpFile, file);
+                    return FileTools.override(tmpFile, file);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -233,7 +233,7 @@ public class TextPopController extends BaseChildController {
             if (textInput == null) {
                 return null;
             }
-            TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
+            TextPopController controller = (TextPopController) WindowTools.popStage(parent, Fxmls.TextPopFxml);
             controller.setSourceInput(parent, textInput);
             return controller;
         } catch (Exception e) {
@@ -247,7 +247,7 @@ public class TextPopController extends BaseChildController {
             if (filename == null) {
                 return null;
             }
-            TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
+            TextPopController controller = (TextPopController) WindowTools.popStage(parent, Fxmls.TextPopFxml);
             controller.setFile(parent, filename);
             return controller;
         } catch (Exception e) {
@@ -258,7 +258,7 @@ public class TextPopController extends BaseChildController {
 
     public static TextPopController loadText(String text) {
         try {
-            TextPopController controller = (TextPopController) WindowTools.openStage(Fxmls.TextPopFxml);
+            TextPopController controller = (TextPopController) WindowTools.popStage(null, Fxmls.TextPopFxml);
             controller.setText(text);
             return controller;
         } catch (Exception e) {

@@ -394,14 +394,14 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 return false;
             }
             File textFile = new File(actualPrefix + ".txt");
-            FileTools.rename(tmpTextFile, textFile);
+            FileTools.override(tmpTextFile, textFile);
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
             if (ocrOptionsController.htmlCheck.isSelected()) {
                 File hocrFile = new File(tmpPrefix + ".hocr");
                 File htmlFile = new File(actualPrefix + ".html");
-                if (FileTools.rename(hocrFile, htmlFile)) {
+                if (FileTools.override(hocrFile, htmlFile)) {
                     targetFileGenerated(htmlFile);
                 }
             }
@@ -409,7 +409,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.pdfCheck.isSelected()) {
                 File tmpPdfFile = new File(tmpPrefix + ".pdf");
                 File pdfFile = new File(actualPrefix + ".pdf");
-                if (FileTools.rename(tmpPdfFile, pdfFile)) {
+                if (FileTools.override(tmpPdfFile, pdfFile)) {
                     targetFileGenerated(pdfFile);
                 }
             }
@@ -505,14 +505,14 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 return false;
             }
             File textFile = new File(actualPrefix + ".txt");
-            FileTools.rename(tmpTextFile, textFile);
+            FileTools.override(tmpTextFile, textFile);
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
             if (ocrOptionsController.htmlCheck.isSelected()) {
                 File hocrFile = new File(tmpPrefix + ".hocr");
                 File htmlFile = new File(actualPrefix + ".html");
-                if (FileTools.rename(hocrFile, htmlFile)) {
+                if (FileTools.override(hocrFile, htmlFile)) {
                     targetFileGenerated(htmlFile);
                 }
             }
@@ -520,7 +520,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.pdfCheck.isSelected()) {
                 File tmpPdfFile = new File(tmpPrefix + ".pdf");
                 File pdfFile = new File(actualPrefix + ".pdf");
-                if (FileTools.rename(tmpPdfFile, pdfFile)) {
+                if (FileTools.override(tmpPdfFile, pdfFile)) {
                     targetFileGenerated(pdfFile);
                 }
             }

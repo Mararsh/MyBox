@@ -301,7 +301,7 @@ public class ImageJpgFile {
                 out.flush();
             }
             writer.dispose();
-            return FileTools.rename(tmpFile, file);
+            return FileTools.override(tmpFile, file);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

@@ -514,7 +514,7 @@ public class PdfAttributesController extends BaseController {
                 doc.save(tmpFile);
                 doc.close();
             }
-            return FileTools.rename(tmpFile, file, true);
+            return FileTools.override(tmpFile, file, true);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;

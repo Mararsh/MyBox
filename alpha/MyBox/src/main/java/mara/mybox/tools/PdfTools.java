@@ -507,7 +507,7 @@ public class PdfTools {
                 document.save(tmpFile);
                 document.close();
             }
-            return FileTools.rename(tmpFile, targetFile);
+            return FileTools.override(tmpFile, targetFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

@@ -67,7 +67,7 @@ public class MarkdownPopController extends TextPopController {
             protected boolean handle() {
                 try {
                     File tmpFile = TextFileTools.writeFile(textArea.getText());
-                    return FileTools.rename(tmpFile, file);
+                    return FileTools.override(tmpFile, file);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -92,7 +92,7 @@ public class MarkdownPopController extends TextPopController {
             if (textInput == null) {
                 return null;
             }
-            MarkdownPopController controller = (MarkdownPopController) WindowTools.openStage(Fxmls.MarkdownPopFxml);
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.popStage(parent, Fxmls.MarkdownPopFxml);
             controller.setSourceInput(parent, textInput);
             return controller;
         } catch (Exception e) {
@@ -106,7 +106,7 @@ public class MarkdownPopController extends TextPopController {
             if (filename == null) {
                 return null;
             }
-            MarkdownPopController controller = (MarkdownPopController) WindowTools.openStage(Fxmls.MarkdownPopFxml);
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.popStage(parent, Fxmls.MarkdownPopFxml);
             controller.setFile(parent, filename);
             return controller;
         } catch (Exception e) {

@@ -115,7 +115,7 @@ public class CertificateTools {
             } catch (Exception e) {
                 return e.toString();
             }
-            FileTools.rename(tmpFile, cacerts);
+            FileTools.override(tmpFile, cacerts);
             return null;
         } catch (Exception e) {
             return e.toString();
@@ -281,7 +281,7 @@ public class CertificateTools {
             } catch (Exception e) {
                 return e.toString();
             }
-            FileTools.rename(tmpFile, cacerts);
+            FileTools.override(tmpFile, cacerts);
             return null;
         } catch (Exception e) {
             return e.toString();

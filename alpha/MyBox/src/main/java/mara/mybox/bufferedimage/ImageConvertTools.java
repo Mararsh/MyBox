@@ -250,7 +250,7 @@ public class ImageConvertTools {
                 reader.dispose();
             }
             writer.dispose();
-            return FileTools.rename(tmpFile, targetFile);
+            return FileTools.override(tmpFile, targetFile);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -425,7 +425,7 @@ public class ImageConvertTools {
             }
             writer.dispose();
 
-            return FileTools.rename(tmpFile, targetFile);
+            return FileTools.override(tmpFile, targetFile);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

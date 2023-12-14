@@ -468,7 +468,7 @@ public class FindReplaceBytesFile {
         if (tmpFile != null && tmpFile.exists()) {
             if (total > 0) {
                 findReplaceFile.backup(sourceFile);
-                return FileTools.rename(tmpFile, sourceFile);
+                return FileTools.override(tmpFile, sourceFile);
             } else {
                 return true;
             }
@@ -559,7 +559,7 @@ public class FindReplaceBytesFile {
         }
         DataFileCSV matchesData = findReplaceFile.initMatchesData(sourceFile);
         File matchesFile = matchesData.getFile();
-        if (!FileTools.rename(tmpFile, matchesFile)) {
+        if (!FileTools.override(tmpFile, matchesFile)) {
             return false;
         }
         matchesData.setRowsNumber(count);

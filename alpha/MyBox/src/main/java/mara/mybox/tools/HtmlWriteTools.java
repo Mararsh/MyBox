@@ -546,7 +546,7 @@ public class HtmlWriteTools {
             replaced += unchecked;
             File tmpFile = FileTmpTools.getTempFile();
             TextFileTools.writeFile(tmpFile, replaced, TextFileTools.charset(httpFile));
-            return FileTools.rename(tmpFile, httpFile);
+            return FileTools.override(tmpFile, httpFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

@@ -15,8 +15,8 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -121,6 +121,10 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
 
     @FXML
     public void demo() {
+        if (!makeActualParameters()) {
+            actualParameters = null;
+            return;
+        }
         if (demoTask != null) {
             demoTask.cancel();
         }
@@ -166,9 +170,8 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                            = (ImagesBrowserController) WindowTools.popStage(myController, Fxmls.ImagesBrowserFxml);
                     b.loadFiles(files);
-                    b.setAlwaysOnTop();
                 }
             }
 

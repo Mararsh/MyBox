@@ -108,7 +108,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
             if (fileWriter != null) {
                 fileWriter.close();
                 File tFile = new File(currentTargetFile);
-                if (FileTools.rename(tmpFile, tFile)) {
+                if (FileTools.override(tmpFile, tFile)) {
                     targetFileGenerated(tFile);
                 }
             }

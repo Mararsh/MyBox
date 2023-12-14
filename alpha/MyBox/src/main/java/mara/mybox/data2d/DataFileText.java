@@ -270,7 +270,7 @@ public class DataFileText extends DataFile {
                 return false;
             }
         }
-        return FileTools.rename(tmpFile, tFile, false);
+        return FileTools.override(tmpFile, tFile);
     }
 
     public boolean writePageData(BufferedWriter writer, String delimiter) {

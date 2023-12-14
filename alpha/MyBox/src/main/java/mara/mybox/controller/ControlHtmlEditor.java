@@ -433,7 +433,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                     if (sourceFile != null && backupController != null && backupController.needBackup()) {
                         backupController.addBackup(task, sourceFile);
                     }
-                    return FileTools.rename(tmpFile, targetFile);
+                    return FileTools.override(tmpFile, targetFile);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

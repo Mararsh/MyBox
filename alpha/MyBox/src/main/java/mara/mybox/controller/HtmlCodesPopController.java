@@ -130,7 +130,7 @@ public class HtmlCodesPopController extends TextPopController {
             protected boolean handle() {
                 try {
                     File tmpFile = HtmlWriteTools.writeHtml(textArea.getText());
-                    return FileTools.rename(tmpFile, file);
+                    return FileTools.override(tmpFile, file);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

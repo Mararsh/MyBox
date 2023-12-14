@@ -110,6 +110,11 @@ public class BaseImageEditController extends BaseShapeController {
         }
     }
 
+    @Override
+    public void updateStageTitle() {
+        setTitle(imageController.getTitle());
+    }
+
     protected Image srcImage() {
         return imageController.imageView.getImage();
     }
@@ -230,9 +235,8 @@ public class BaseImageEditController extends BaseShapeController {
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                            = (ImagesBrowserController) WindowTools.popStage(myController, Fxmls.ImagesBrowserFxml);
                     b.loadFiles(files);
-                    b.setAlwaysOnTop();
                 }
             }
 

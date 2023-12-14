@@ -303,7 +303,7 @@ public class ControlColorsPane extends BaseController {
 
         menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            HtmlPopController.openHtml(colorData.html());
+            HtmlPopController.showHtml(this, colorData.html());
         });
         items.add(menu);
 

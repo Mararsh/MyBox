@@ -1148,7 +1148,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                 updateLogs(message("Downloading") + ": " + url + " --> " + file);
                 File tmpFile = HtmlReadTools.download(null, url.toString());
                 if (tmpFile != null && tmpFile.exists()) {
-                    FileTools.rename(tmpFile, file);
+                    FileTools.override(tmpFile, file);
                     link.setDlTime(new Date());
                     updateLogs(message("Downloaded") + ": " + url + " --> " + file);
                     if (utf8Check.isSelected()) {

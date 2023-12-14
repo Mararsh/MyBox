@@ -18,6 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -37,11 +38,11 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="optionsTab" text="%Options">
                             <content>
-                                <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="444.0" prefViewportWidth="1634.0" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                           <content>
+                                      <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                          <children>
+                                                <VBox spacing="10.0">
                                                     <children>
                                           <fx:include fx:id="options" source="ControlImageAdjustColor.fxml" />
                                           <CheckBox fx:id="handleTransparentCheck" mnemonicParsing="false" text="%HandleTransparent" />
@@ -50,19 +51,32 @@ License:    Apache License Version 2.0
                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                     </padding>
                                                 </VBox>
-                                            </content>
-                                        </ScrollPane>
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
-                                            <graphic>
+                                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                       <children>
+                                          <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconPreview.png" />
-                                                    </image>
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconDemo.png" />
+                                                   </image>
                                                 </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </VBox>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconPreview.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </FlowPane>
+                                          </children>
+                                      </VBox>
+                           </content>
+                        </ScrollPane>
                             </content>
                         </Tab>
                         <Tab fx:id="targetTab" text="%TargetFiles">

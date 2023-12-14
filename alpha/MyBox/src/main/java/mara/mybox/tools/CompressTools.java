@@ -284,7 +284,7 @@ public class CompressTools {
         }
         if (targetFile == null) {
             return file;
-        } else if (FileTools.rename(file, targetFile)) {
+        } else if (FileTools.override(file, targetFile)) {
             return targetFile;
         } else {
             return null;
