@@ -15,15 +15,15 @@ import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2018-9-26
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchTransformController extends BaseImageEditBatchController {
+public class ImageTransformBatchController extends BaseImageEditBatchController {
 
     private int transformType, rotateAngle;
     private float shearX;
@@ -41,9 +41,8 @@ public class ImageManufactureBatchTransformController extends BaseImageEditBatch
         public static int Rotate = 3;
     }
 
-    public ImageManufactureBatchTransformController() {
-        baseTitle = Languages.message("ImageManufactureBatchTransform");
-
+    public ImageTransformBatchController() {
+        baseTitle = message("ImageBatch") + " - " + message("Transform");
     }
 
     @Override

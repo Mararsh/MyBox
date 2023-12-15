@@ -27,7 +27,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
     protected ControlImageAdjustColor optionsController;
 
     public ImageAdjustColorBatchController() {
-        baseTitle = message("AdjustColor") + " - " + message("Batch");
+        baseTitle = message("ImageBatch") + " - " + message("AdjustColor");
     }
 
     @Override

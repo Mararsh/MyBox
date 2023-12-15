@@ -6,12 +6,10 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -77,40 +75,12 @@ public class ImageShadowController extends BaseImageEditController {
     protected void makeDemoFiles(List<String> files, Image demoImage) {
         try {
             BufferedImage srcImage = SwingFXUtils.fromFXImage(demoImage, null);
-            int offsetX = Math.max(30, srcImage.getWidth() / 20);
-            int offsetY = Math.max(30, srcImage.getHeight() / 20);
-
-            makeDemoFile(files, srcImage, offsetX, offsetY, true);
-            makeDemoFile(files, srcImage, -offsetX, offsetY, true);
-            makeDemoFile(files, srcImage, offsetX, -offsetY, true);
-            makeDemoFile(files, srcImage, -offsetX, -offsetY, true);
-            makeDemoFile(files, srcImage, offsetX, offsetY, false);
-            makeDemoFile(files, srcImage, -offsetX, offsetY, false);
-            makeDemoFile(files, srcImage, offsetX, -offsetY, false);
-            makeDemoFile(files, srcImage, -offsetX, -offsetY, false);
-
+            ImageDemoTools.shadow(demoTask, files, srcImage, shadowController.awtColor());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    protected void makeDemoFile(List<String> files, BufferedImage srcImage,
-            int offsetX, int offsetY, boolean blur) {
-        try {
-            BufferedImage bufferedImage = BufferedImageTools.addShadow(demoTask, srcImage,
-                    -offsetX, -offsetY, shadowController.awtColor(), blur);
-            String tmpFile = FileTmpTools.generateFile(message("Shadow") + "_" + color
-                    + "_x-" + offsetX + "_y-" + offsetY
-                    + (blur ? ("_" + message("Blur")) : ""),
-                    "png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                demoTask.setInfo(tmpFile);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
 
     /*
         static methods

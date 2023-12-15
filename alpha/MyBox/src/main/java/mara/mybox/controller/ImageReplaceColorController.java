@@ -100,7 +100,7 @@ public class ImageReplaceColorController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(demoTask);
-            String prefix = message("ReplaceColor") + "_" + colorController.css();
+            String prefix = colorController.css();
             ImageDemoTools.replaceColor(demoTask, files, pixelsOperation, prefix);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

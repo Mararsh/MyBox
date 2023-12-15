@@ -158,6 +158,8 @@ public class Fxmls {
     public static final String ImageSVGPathFxml = "/fxml/ImageSVGPath.fxml";
     public static final String ImageTextFxml = "/fxml/ImageText.fxml";
 
+    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
+    public static final String ImageCanvasInputFxml = "/fxml/ImageCanvasInput.fxml";
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
     public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
@@ -166,21 +168,23 @@ public class Fxmls {
     public static final String ImageCropBatchFxml = "/fxml/ImageCropBatch.fxml";
     public static final String ImageAdjustColorBatchFxml = "/fxml/ImageAdjustColorBatch.fxml";
     public static final String ImageReplaceColorBatchFxml = "/fxml/ImageReplaceColorBatch.fxml";
+    public static final String ImageReduceColorsBatchFxml = "/fxml/ImageReduceColorsBatch.fxml";
+    public static final String ImageGreyBatchFxml = "/fxml/ImageGreyBatch.fxml";
+    public static final String ImageBlackWhiteBatchFxml = "/fxml/ImageBlackWhiteBatch.fxml";
+    public static final String ImageSepiaBatchFxml = "/fxml/ImageSepiaBatch.fxml";
+    public static final String ImageThresholdingBatchFxml = "/fxml/ImageThresholdingBatch.fxml";
     public static final String ImageTextBatchFxml = "/fxml/ImageTextBatch.fxml";
+    public static final String ImageEdgeBatchFxml = "/fxml/ImageEdgeBatch.fxml";
+    public static final String ImageEmbossBatchFxml = "/fxml/ImageEmbossBatch.fxml";
     public static final String ImageSharpenBatchFxml = "/fxml/ImageSharpenBatch.fxml";
     public static final String ImageShadowBatchFxml = "/fxml/ImageShadowBatch.fxml";
     public static final String ImageRoundBatchFxml = "/fxml/ImageRoundBatch.fxml";
-
-    public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
-    public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
-    public static final String ImageManufactureBatchPasteFxml = "/fxml/ImageManufactureBatchPaste.fxml";
-    public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
-    public static final String ImageManufactureBatchEnhancementFxml = "/fxml/ImageManufactureBatchEnhancement.fxml";
-    public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
-    public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
-
-    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
-    public static final String ImageCanvasInputFxml = "/fxml/ImageCanvasInput.fxml";
+    public static final String ImageMarginsBatchFxml = "/fxml/ImageMarginsBatch.fxml";
+    public static final String ImageSizeBatchFxml = "/fxml/ImageSizeBatch.fxml";
+    public static final String ImageTransformBatchFxml = "/fxml/ImageTransformBatch.fxml";
+    public static final String ImagePasteBatchFxml = "/fxml/ImagePasteBatch.fxml";
+    public static final String ImageMosaicBatchFxml = "/fxml/ImageMosaicBatch.fxml";
+    public static final String ImageGlassBatchFxml = "/fxml/ImageGlassBatch.fxml";
 
     public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
     public static final String SvgAddShapeFxml = "/fxml/SvgAddShape.fxml";

@@ -32,68 +32,103 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageManufactureBatchSize(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchSizeFxml);
+    protected void openImageSizeBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageSizeBatchFxml);
     }
 
     @FXML
-    protected void imageCropBatch(ActionEvent event) {
+    protected void openImageCropBatch(ActionEvent event) {
         loadScene(Fxmls.ImageCropBatchFxml);
     }
 
     @FXML
-    protected void openImageManufactureBatchPaste(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchPasteFxml);
+    protected void openImagePasteBatch(ActionEvent event) {
+        loadScene(Fxmls.ImagePasteBatchFxml);
     }
 
     @FXML
-    protected void imageAdjustColorBatch(ActionEvent event) {
+    protected void openImageAdjustColorBatch(ActionEvent event) {
         loadScene(Fxmls.ImageAdjustColorBatchFxml);
     }
 
     @FXML
-    protected void openImageManufactureBatchEffects(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchEffectsFxml);
+    protected void openImageReduceColorsBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageReduceColorsBatchFxml);
     }
 
     @FXML
-    protected void openImageManufactureBatchEnhancement(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchEnhancementFxml);
-    }
-
-    @FXML
-    protected void imageReplaceColorBatch(ActionEvent event) {
+    protected void openImageReplaceColorBatch(ActionEvent event) {
         loadScene(Fxmls.ImageReplaceColorBatchFxml);
     }
 
     @FXML
-    protected void imageSharpenBatch(ActionEvent event) {
+    protected void openImageGreyBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageGreyBatchFxml);
+    }
+
+    @FXML
+    protected void openImageBlackWhiteBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageBlackWhiteBatchFxml);
+    }
+
+    @FXML
+    protected void openImageSepiaBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageSepiaBatchFxml);
+    }
+
+    @FXML
+    protected void openImageThresholdingBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageThresholdingBatchFxml);
+    }
+
+    @FXML
+    protected void openImageMosaicBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageMosaicBatchFxml);
+    }
+
+    @FXML
+    protected void openImageGlassBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageGlassBatchFxml);
+    }
+
+    @FXML
+    protected void openImageEdgeBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageEdgeBatchFxml);
+    }
+
+    @FXML
+    protected void openImageEmbossBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageEmbossBatchFxml);
+    }
+
+    @FXML
+    protected void openImageSharpenBatch(ActionEvent event) {
         loadScene(Fxmls.ImageSharpenBatchFxml);
     }
 
     @FXML
-    protected void imageTextBatch(ActionEvent event) {
+    protected void openImageTextBatch(ActionEvent event) {
         loadScene(Fxmls.ImageTextBatchFxml);
     }
 
     @FXML
-    protected void openRoundBatch(ActionEvent event) {
+    protected void openImageRoundBatch(ActionEvent event) {
         loadScene(Fxmls.ImageRoundBatchFxml);
     }
 
     @FXML
-    protected void openShadowBatch(ActionEvent event) {
+    protected void openImageShadowBatch(ActionEvent event) {
         loadScene(Fxmls.ImageShadowBatchFxml);
     }
 
     @FXML
-    protected void openImageManufactureBatchTransform(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchTransformFxml);
+    protected void openImageTransformBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageTransformBatchFxml);
     }
 
     @FXML
-    protected void openImageManufactureBatchMargins(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureBatchMarginsFxml);
+    protected void openImageMarginsBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageMarginsBatchFxml);
     }
 
     @FXML

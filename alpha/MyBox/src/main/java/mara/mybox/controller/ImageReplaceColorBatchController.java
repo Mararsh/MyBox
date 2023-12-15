@@ -35,7 +35,7 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
     protected ControlColorSet originalColorSetController, newColorSetController;
 
     public ImageReplaceColorBatchController() {
-        baseTitle = message("ImageManufactureBatchReplaceColor");
+        baseTitle = message("ImageBatch") + " - " + message("ReplaceColor");
     }
 
     @Override
@@ -97,18 +97,29 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
                 popError(message("OriginalNewSameColor"));
                 return false;
             }
+
+            if (!pickOperation()) {
+                popError(message("InvalidParameter") + ": " + message("Distance"));
+                return false;
+            }
+            return super.makeMoreParameters();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    protected boolean pickOperation() {
+        try {
+            boolean ok;
             java.awt.Color originalColor = originalColorSetController.awtColor();
             List<java.awt.Color> colors = new ArrayList();
             colors.add(originalColor);
-
             ImageScope scope = new ImageScope()
                     .setScopeType(ImageScope.ScopeType.Colors)
                     .setColors(colors)
                     .setColorExcluded(excludeCheck.isSelected());
-            if (!matchController.pickValues(scope)) {
-                popError(message("InvalidParameter") + ": " + message("Distance"));
-                return false;
-            }
+            ok = matchController.pickValues(scope, 50);
 
             pixelsOperation = PixelsOperationFactory.create(null, scope,
                     PixelsOperation.OperationType.ReplaceColor,
@@ -119,7 +130,7 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
                     .setBoolPara1(hueCheck.isSelected())
                     .setBoolPara2(saturationCheck.isSelected())
                     .setBoolPara3(brightnessCheck.isSelected());
-            return super.makeMoreParameters();
+            return ok;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -134,8 +145,8 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
     @Override
     public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
         try {
-            String prefix = message("ReplaceColor") + "_" + newColorSetController.css();
-            ImageDemoTools.replaceColor(demoTask, files, pixelsOperation, prefix);
+            pickOperation();
+            ImageDemoTools.replaceColor(demoTask, files, pixelsOperation, newColorSetController.css());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

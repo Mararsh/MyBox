@@ -5,7 +5,7 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -19,8 +19,7 @@ public class ImageTextBatchController extends BaseImageEditBatchController {
     protected ControlImageText optionsController;
 
     public ImageTextBatchController() {
-        baseTitle = Languages.message("ImageManufactureBatchText");
-
+        baseTitle = message("ImageBatch") + " - " + message("Text");
     }
 
     @Override

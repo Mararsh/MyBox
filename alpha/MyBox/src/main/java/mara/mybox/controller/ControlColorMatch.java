@@ -145,7 +145,7 @@ public class ControlColorMatch extends BaseController {
         return squareRootCheck.isSelected() && colorRGBRadio.isSelected();
     }
 
-    protected boolean pickValues(ImageScope scope) {
+    protected boolean pickValues(ImageScope scope, int defaultDistance) {
         if (scope == null) {
             return false;
         }
@@ -174,7 +174,12 @@ public class ControlColorMatch extends BaseController {
                 scope.setColorScopeType(ImageScope.ColorScopeType.Brightness);
             }
 
-            v = Integer.parseInt(distanceSelector.getValue());
+            try {
+                v = Integer.parseInt(distanceSelector.getValue());
+            } catch (Exception e) {
+                v = defaultDistance;
+                valid = false;
+            }
             switch (scope.getColorScopeType()) {
                 case Hue:
                     if (v >= 0 && v <= 360) {

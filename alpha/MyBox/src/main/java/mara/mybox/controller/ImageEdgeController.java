@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
@@ -11,7 +9,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -20,13 +17,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageEdgeController extends BasePixelsController {
 
-    protected int threshold, small, big;
-
     @FXML
-    protected RadioButton eightLaplaceRadio, eightLaplaceExcludedRadio,
-            fourLaplaceRadio, fourLaplaceExcludedRadio;
-    @FXML
-    protected CheckBox greyCheck;
+    protected ControlImageEdge edgeController;
 
     public ImageEdgeController() {
         baseTitle = message("EdgeDetection");
@@ -37,38 +29,18 @@ public class ImageEdgeController extends BasePixelsController {
         try {
             super.initMore();
             operation = message("EdgeDetection");
-
-            greyCheck.setSelected(UserConfig.getBoolean(baseName + "Grey", true));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     @Override
-    protected boolean checkOptions() {
-        if (!super.checkOptions()) {
-            return false;
-        }
-        UserConfig.setBoolean(baseName + "Grey", greyCheck.isSelected());
-        return true;
-    }
-
-    @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            ConvolutionKernel kernel;
-            if (eightLaplaceRadio.isSelected()) {
-                kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
-            } else if (eightLaplaceExcludedRadio.isSelected()) {
-                kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert();
-            } else if (fourLaplaceRadio.isSelected()) {
-                kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplace();
-            } else if (fourLaplaceExcludedRadio.isSelected()) {
-                kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplaceInvert();
-            } else {
+            ConvolutionKernel kernel = edgeController.kernel();
+            if (kernel == null) {
                 return null;
             }
-            kernel.setGray(greyCheck.isSelected());
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(inImage)
                     .setScope(inScope)

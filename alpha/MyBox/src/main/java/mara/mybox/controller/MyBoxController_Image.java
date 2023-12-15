@@ -79,7 +79,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(EditImage,
-                imageManufactureMenu(), manufactureBatchMenu(),
+                imageManufactureMenu(), imageBatchMenu(),
                 imageScope, ImageAnalyse, ImagesPlay, imagesBrowser, svgMenu(), new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
@@ -142,10 +142,10 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
     }
 
-    private Menu manufactureBatchMenu() {
+    private Menu imageBatchMenu() {
         MenuItem imageSizeMenu = new MenuItem(message("Size"));
         imageSizeMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchSizeFxml);
+            loadScene(Fxmls.ImageSizeBatchFxml);
         });
 
         MenuItem imageCropMenu = new MenuItem(message("Crop"));
@@ -155,22 +155,12 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem imagePasteMenu = new MenuItem(message("Paste"));
         imagePasteMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchPasteFxml);
+            loadScene(Fxmls.ImagePasteBatchFxml);
         });
 
-        MenuItem imageColorMenu = new MenuItem(message("AdjustColor"));
-        imageColorMenu.setOnAction((ActionEvent event) -> {
+        MenuItem imageAdjustColorMenu = new MenuItem(message("AdjustColor"));
+        imageAdjustColorMenu.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImageAdjustColorBatchFxml);
-        });
-
-        MenuItem imageEffectsMenu = new MenuItem(message("Effects"));
-        imageEffectsMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchEffectsFxml);
-        });
-
-        MenuItem imageEnhancementMenu = new MenuItem(message("Enhancement"));
-        imageEnhancementMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchEnhancementFxml);
         });
 
         MenuItem imageReplaceColorMenu = new MenuItem(message("ReplaceColor"));
@@ -178,8 +168,43 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageReplaceColorBatchFxml);
         });
 
+        MenuItem imageReduceColorsMenu = new MenuItem(message("ReduceColors"));
+        imageReduceColorsMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageReduceColorsBatchFxml);
+        });
+
+        MenuItem imageGreyMenu = new MenuItem(message("Grey"));
+        imageGreyMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageGreyBatchFxml);
+        });
+
+        MenuItem imageBlackWhiteMenu = new MenuItem(message("BlackOrWhite"));
+        imageBlackWhiteMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageBlackWhiteBatchFxml);
+        });
+
+        MenuItem imageSepiaMenu = new MenuItem(message("Sepia"));
+        imageSepiaMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSepiaBatchFxml);
+        });
+
+        MenuItem imageThresholdingsMenu = new MenuItem(message("Thresholding"));
+        imageThresholdingsMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageThresholdingBatchFxml);
+        });
+
+        MenuItem imageEdgeMenu = new MenuItem(message("EdgeDetection"));
+        imageEdgeMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageEdgeBatchFxml);
+        });
+
+        MenuItem imageEmbossMenu = new MenuItem(message("Emboss"));
+        imageEmbossMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageEmbossBatchFxml);
+        });
+
         MenuItem imageSharpenMenu = new MenuItem(message("Sharpen"));
-        imageEnhancementMenu.setOnAction((ActionEvent event) -> {
+        imageSharpenMenu.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImageSharpenBatchFxml);
         });
 
@@ -200,12 +225,12 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem imageTransformMenu = new MenuItem(message("Transform"));
         imageTransformMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchTransformFxml);
+            loadScene(Fxmls.ImageTransformBatchFxml);
         });
 
         MenuItem imageMarginsMenu = new MenuItem(message("Margins"));
         imageMarginsMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageManufactureBatchMarginsFxml);
+            loadScene(Fxmls.ImageMarginsBatchFxml);
         });
 
         MenuItem imageAlphaAdd = new MenuItem(message("ImageAlphaAdd"));
@@ -233,14 +258,15 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageOCRBatchFxml);
         });
 
-        Menu manufactureBatchMenu = new Menu(message("ImageManufactureBatch"));
-        manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
-                imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
-                imageSharpenMenu,
+        Menu imageBatchMenu = new Menu(message("ImageBatch"));
+        imageBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
+                imageAdjustColorMenu, imageReplaceColorMenu, imageReduceColorsMenu,
+                imageGreyMenu, imageBlackWhiteMenu, imageSepiaMenu, imageThresholdingsMenu,
+                imageEdgeMenu, imageSharpenMenu,
                 imageTextMenu, imageRoundMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, new SeparatorMenuItem(),
                 imageOCRBatch);
-        return manufactureBatchMenu;
+        return imageBatchMenu;
 
     }
 

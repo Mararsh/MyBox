@@ -39,6 +39,9 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public static DoubleRectangle rect(Rectangle2D.Double rect2D) {
+        if (rect2D == null) {
+            return null;
+        }
         DoubleRectangle rect = new DoubleRectangle();
         rect.setX(rect2D.getX());
         rect.setY(rect2D.getY());
@@ -48,6 +51,9 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public static DoubleRectangle image(Image image) {
+        if (image == null) {
+            return null;
+        }
         DoubleRectangle rect = new DoubleRectangle();
         rect.setX(0);
         rect.setY(0);
@@ -57,6 +63,9 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public static DoubleRectangle image(BufferedImage image) {
+        if (image == null) {
+            return null;
+        }
         DoubleRectangle rect = new DoubleRectangle();
         rect.setX(0);
         rect.setY(0);

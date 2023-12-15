@@ -63,12 +63,12 @@ public class BufferedImageTools {
                     if (task != null && !task.isWorking()) {
                         return null;
                     }
+                    int pixel = source.getRGB(i, j);
+                    if (pixel == 0) {
+                        shadowImage.setRGB(i, j, alphaPixel);
+                        continue;
+                    }
                     if (isBlur) {
-                        int pixel = source.getRGB(i, j);
-                        if (pixel == 0) {
-                            shadowImage.setRGB(i, j, alphaPixel);
-                            continue;
-                        }
                         iOpocity = jOpacity = 1.0F;
                         if (i < offsetX) {
                             iOpocity = 1.0F * i / offsetX;
@@ -101,11 +101,6 @@ public class BufferedImageTools {
             Graphics2D g = target.createGraphics();
             if (AppVariables.ImageHints != null) {
                 g.addRenderingHints(AppVariables.ImageHints);
-            }
-            g.setColor(alphaColor);
-            g.fillRect(0, 0, target.getWidth(), target.getHeight());
-            if (task != null && !task.isWorking()) {
-                return null;
             }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));

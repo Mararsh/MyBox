@@ -15,17 +15,16 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageSharpenBatchController extends BaseImageEditBatchController {
-    
+
     protected ConvolutionKernel kernel;
-    
+
     @FXML
     protected ControlImageSharpen sharpenController;
-    
+
     public ImageSharpenBatchController() {
-        baseTitle = message("ImageManufactureBatchSharpen");
-        
+        baseTitle = message("ImageBatch") + " - " + message("Sharpen");
     }
-    
+
     @Override
     public boolean makeMoreParameters() {
         if (!super.makeMoreParameters()) {
@@ -34,7 +33,7 @@ public class ImageSharpenBatchController extends BaseImageEditBatchController {
         kernel = sharpenController.kernel();
         return kernel != null;
     }
-    
+
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
@@ -47,7 +46,7 @@ public class ImageSharpenBatchController extends BaseImageEditBatchController {
             return null;
         }
     }
-    
+
     @Override
     public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
         try {
@@ -58,5 +57,5 @@ public class ImageSharpenBatchController extends BaseImageEditBatchController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
 }

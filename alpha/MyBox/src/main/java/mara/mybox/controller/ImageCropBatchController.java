@@ -32,8 +32,7 @@ public class ImageCropBatchController extends BaseImageEditBatchController {
     protected TextField centerWidthInput, centerHeightInput, leftXInput, leftYInput, rightXInput, rightYInput;
 
     public ImageCropBatchController() {
-        baseTitle = message("ImageManufactureBatchCrop");
-
+        baseTitle = message("ImageBatch") + " - " + message("Crop");
     }
 
     @Override

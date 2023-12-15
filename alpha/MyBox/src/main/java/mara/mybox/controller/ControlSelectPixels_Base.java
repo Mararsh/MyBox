@@ -147,7 +147,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
                     for (DoublePoint p : pointsController.tableData) {
                         scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
                     }
-                    valid = matchController.pickValues(scope);
+                    valid = matchController.pickValues(scope, 50);
                     break;
 
                 case Rectangle:
@@ -228,7 +228,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
                     scope.addColor(ColorConvertTools.converColor(color));
                 }
             }
-            return matchController.pickValues(scope);
+            return matchController.pickValues(scope, 50);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

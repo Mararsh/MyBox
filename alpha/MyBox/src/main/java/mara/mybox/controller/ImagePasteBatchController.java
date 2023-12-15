@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-6-22
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchPasteController extends BaseImageEditBatchController {
+public class ImagePasteBatchController extends BaseImageEditBatchController {
 
     protected int margin, posX, posY;
     protected BufferedImage clipSource;
@@ -47,8 +47,8 @@ public class ImageManufactureBatchPasteController extends BaseImageEditBatchCont
     @FXML
     protected ControlImagesBlend blendController;
 
-    public ImageManufactureBatchPasteController() {
-        baseTitle = message("ImageManufactureBatchPaste");
+    public ImagePasteBatchController() {
+        baseTitle = message("ImageBatch") + " - " + message("Paste");
     }
 
     @Override

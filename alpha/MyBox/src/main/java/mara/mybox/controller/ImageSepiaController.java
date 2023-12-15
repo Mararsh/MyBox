@@ -5,19 +5,16 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,10 +23,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageSepiaController extends BasePixelsController {
 
-    protected int intensity;
+    protected PixelsOperation pixelsOperation;
 
     @FXML
-    protected ComboBox<String> intensitySelector;
+    protected ControlImageSepia sepiaController;
 
     public ImageSepiaController() {
         baseTitle = message("Sepia");
@@ -41,13 +38,6 @@ public class ImageSepiaController extends BasePixelsController {
             super.initMore();
             operation = message("Sepia");
 
-            intensity = UserConfig.getInt(baseName + "Intensity", 60);
-            if (intensity <= 0 || intensity >= 255) {
-                intensity = 60;
-            }
-            intensitySelector.getItems().addAll(Arrays.asList("60", "80", "20", "50", "10", "5", "100", "15", "20"));
-            intensitySelector.setValue(intensity + "");
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -58,34 +48,19 @@ public class ImageSepiaController extends BasePixelsController {
         if (!super.checkOptions()) {
             return false;
         }
-        int v;
-        try {
-            v = Integer.parseInt(intensitySelector.getValue());
-        } catch (Exception e) {
-            v = -1;
-        }
-        if (v > 0 && v < 255) {
-            intensity = v;
-            UserConfig.setInt(baseName + "Intensity", intensity);
-            ValidationTools.setEditorNormal(intensitySelector);
-            return true;
-        } else {
-            ValidationTools.setEditorBadStyle(intensitySelector);
-            popError(message("InvalidParameter") + ": " + message("Intensity"));
-            return false;
-        }
+        pixelsOperation = sepiaController.pickValues();
+        return pixelsOperation != null;
     }
 
     @Override
     protected Image handleImage(Image inImage, ImageScope inScope) {
         try {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
-                    inImage, inScope, PixelsOperation.OperationType.Sepia)
-                    .setIntPara1(intensity)
+            pixelsOperation.setImage(inImage)
+                    .setScope(inScope)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(task);
-            opInfo = message("Intensity") + ": " + intensity;
+            opInfo = message("Intensity") + ": " + sepiaController.intensity;
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());

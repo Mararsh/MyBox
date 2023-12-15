@@ -76,7 +76,7 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage cutMargins(FxTask task, BufferedImage source, Color cutColor,
+    public static BufferedImage cutMarginsByColor(FxTask task, BufferedImage source, Color cutColor,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             if (cutColor.getRGB() == Colors.TRANSPARENT.getRGB() && !AlphaTools.hasAlpha(source)) {
@@ -186,7 +186,7 @@ public class MarginTools {
         }
     }
 
-    public static BufferedImage cutMargins(FxTask task, BufferedImage source, int MarginWidth,
+    public static BufferedImage cutMarginsByWidth(FxTask task, BufferedImage source, int MarginWidth,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             if (source == null || MarginWidth <= 0) {

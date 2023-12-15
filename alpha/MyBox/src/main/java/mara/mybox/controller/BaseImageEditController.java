@@ -93,7 +93,10 @@ public class BaseImageEditController extends BaseShapeController {
             close();
             return;
         }
-        loadImage(srcImage());
+        loadImage(imageController.sourceFile,
+                imageController.imageInformation,
+                imageController.imageView.getImage(),
+                imageController.imageChanged);
     }
 
     @Override
@@ -108,11 +111,6 @@ public class BaseImageEditController extends BaseShapeController {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    @Override
-    public void updateStageTitle() {
-        setTitle(imageController.getTitle());
     }
 
     protected Image srcImage() {
@@ -179,6 +177,12 @@ public class BaseImageEditController extends BaseShapeController {
                 afterHandle();
             }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                finalHandle();
+            }
+
         };
         start(task);
     }
@@ -197,6 +201,9 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     protected void afterHandle() {
+    }
+
+    protected void finalHandle() {
     }
 
     @FXML

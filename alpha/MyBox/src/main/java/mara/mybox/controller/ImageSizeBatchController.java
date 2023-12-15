@@ -15,16 +15,15 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2018-9-21
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchSizeController extends BaseImageEditBatchController {
+public class ImageSizeBatchController extends BaseImageEditBatchController {
 
     protected float scale;
     protected int sizeType, customWidth, customHeight, keepWidth, keepHeight;
@@ -47,8 +46,8 @@ public class ImageManufactureBatchSizeController extends BaseImageEditBatchContr
 
     }
 
-    public ImageManufactureBatchSizeController() {
-        baseTitle = Languages.message("ImageManufactureBatchSize");
+    public ImageSizeBatchController() {
+        baseTitle = message("ImageBatch") + " - " + message("Size");
     }
 
     @Override

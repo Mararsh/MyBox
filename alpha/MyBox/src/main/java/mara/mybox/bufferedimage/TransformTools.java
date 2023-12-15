@@ -48,43 +48,35 @@ public class TransformTools {
         }
         g.drawImage(source, null, null);
         g.dispose();
-        target = MarginTools.cutMargins(task, target, bgColor, true, true, true, true);
+        target = MarginTools.cutMarginsByColor(task, target, bgColor, true, true, true, true);
         return target;
     }
 
     public static BufferedImage shearImage(FxTask task, BufferedImage source, float shearX, float shearY) {
         try {
-            int scale = Math.round(Math.abs(Math.max(shearX, shearY)));
-            if (scale <= 1) {
-                scale = 2;
-            }
-            scale = scale * scale;
-            int width = source.getWidth() * scale;
-            int height = source.getHeight() * scale;
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int newWidth = (int) (width + height * Math.abs(shearX) + 1) * 2;
+            int newHeight = (int) (width * Math.abs(shearY) + height + 1) * 2;
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            BufferedImage target = new BufferedImage(width, height, imageType);
+            BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
             Graphics2D g = target.createGraphics();
             if (AppVariables.ImageHints != null) {
                 g.addRenderingHints(AppVariables.ImageHints);
             }
             Color bgColor = Colors.TRANSPARENT;
             g.setBackground(bgColor);
-            if (shearX < 0) {
-                g.translate(width / 2, 0);
-            }
-            if (task != null && !task.isWorking()) {
-                return null;
-            }
+            g.translate(newWidth / 2, newHeight / 2);
             g.shear(shearX, shearY);
             if (task != null && !task.isWorking()) {
                 return null;
             }
-            g.drawImage(source, 0, 0, null);
+            g.drawImage(source, null, null);
             if (task != null && !task.isWorking()) {
                 return null;
             }
             g.dispose();
-            target = MarginTools.cutMargins(task, target, bgColor, true, true, true, true);
+            target = MarginTools.cutMarginsByColor(task, target, bgColor, true, true, true, true);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

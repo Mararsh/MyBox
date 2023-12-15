@@ -121,10 +121,6 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
 
     @FXML
     public void demo() {
-        if (!makeActualParameters()) {
-            actualParameters = null;
-            return;
-        }
         if (demoTask != null) {
             demoTask.cancel();
         }

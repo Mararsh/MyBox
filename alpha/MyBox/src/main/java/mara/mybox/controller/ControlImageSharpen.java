@@ -35,7 +35,7 @@ public class ControlImageSharpen extends BaseController {
             }
             intensitySelector.getItems().addAll(Arrays.asList("2", "1", "3", "4"));
             intensitySelector.setValue(intensity + "");
-            intensitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            intensitySelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     intensity = Integer.parseInt(newValue);

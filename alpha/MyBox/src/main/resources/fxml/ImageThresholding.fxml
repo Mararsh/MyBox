@@ -12,7 +12,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -56,31 +55,9 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                                      <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                              <Image url="@../buttons/Red/iconTips.png" />
-                                          </image>
-                                      </ImageView>
                            </children>
                         </FlowPane>
-                                <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="100.0" vgap="5.0">
-                                    <children>
-                                        <Label text="%Threshold" />
-                                        <TextField fx:id="thresholdInput" prefWidth="80.0" />
-                                    </children>
-                                </FlowPane>
-                                <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="100.0" vgap="5.0">
-                                    <children>
-                                        <Label text="%SmallValue" />
-                                        <TextField fx:id="smallInput" prefWidth="80.0" />
-                                    </children>
-                                </FlowPane>
-                                <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="100.0" vgap="5.0">
-                                    <children>
-                                        <Label text="%BigValue" />
-                                        <TextField fx:id="bigInput" prefWidth="80.0" />
-                                    </children>
-                                </FlowPane>
+                        <fx:include fx:id="thresholding" source="ControlImageThresholding.fxml" />
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
                                         <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">

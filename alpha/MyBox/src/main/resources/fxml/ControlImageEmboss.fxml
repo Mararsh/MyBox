@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageEmboss">
+    <children>
+              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                  <children>
+                      <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                          <children>
+                              <RadioButton fx:id="topRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Top" wrapText="true">
+                                  <toggleGroup>
+                                      <ToggleGroup fx:id="directionGroup" />
+                                  </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="bottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Bottom" toggleGroup="$directionGroup" wrapText="true" />
+                              <RadioButton fx:id="leftRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Left" toggleGroup="$directionGroup" wrapText="true" />
+                              <RadioButton fx:id="rightRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Right" toggleGroup="$directionGroup" wrapText="true" />
+                              <RadioButton fx:id="leftTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftTop" toggleGroup="$directionGroup" wrapText="true" />
+                              <RadioButton fx:id="rightBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightBottom" toggleGroup="$directionGroup" wrapText="true" />
+                              <RadioButton fx:id="leftBottomRadio" minHeight="-Infinity" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$directionGroup" wrapText="true" />
+                              <RadioButton fx:id="rightTopRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RightTop" toggleGroup="$directionGroup" wrapText="true" />
+                          </children>
+                      </FlowPane>
+                  </children>
+              </VBox>
+              <FlowPane fx:id="stringBoxPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                  <children>
+                      <Label fx:id="stringLabel" text="%Radius" />
+                      <ComboBox fx:id="raduisSelector" editable="true" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <CheckBox fx:id="greyCheck" mnemonicParsing="false" selected="true" text="%Grey" />
+    </children>
+</VBox>

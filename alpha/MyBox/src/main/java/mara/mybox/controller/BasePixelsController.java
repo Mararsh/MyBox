@@ -18,12 +18,18 @@ public abstract class BasePixelsController extends BaseImageEditController {
     @Override
     protected void initMore() {
         scopeController.setParameters(this);
-        imageView = scopeController.imageView;
     }
 
     @Override
-    public void loadImage(Image inImage) {
-        scopeController.loadImage(inImage);
+    protected void loadImage() {
+        if (imageController == null || !imageController.isShowing()) {
+            close();
+            return;
+        }
+        scopeController.loadImage(imageController.sourceFile,
+                imageController.imageInformation,
+                imageController.imageView.getImage(),
+                imageController.imageChanged);
     }
 
     @Override

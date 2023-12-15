@@ -130,6 +130,9 @@ public abstract class ImagesBrowserController_Load extends BaseImageController {
                     }
                 }
                 filesNumber = imageFileList.size();
+                if (filesNumber == 0) {
+                    return;
+                }
                 colsNum = (int) Math.sqrt(filesNumber);
                 colsNum = Math.max(colsNum, filesNumber / colsNum);
             }

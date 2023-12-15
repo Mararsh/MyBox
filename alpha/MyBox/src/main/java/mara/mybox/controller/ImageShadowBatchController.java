@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,7 +22,7 @@ public class ImageShadowBatchController extends BaseImageEditBatchController {
     protected ControlImageShadow shadowController;
 
     public ImageShadowBatchController() {
-        baseTitle = message("ImageManufactureBatchShadow");
+        baseTitle = message("ImageBatch") + " - " + message("Shadow");
     }
 
     @Override
@@ -52,6 +54,15 @@ public class ImageShadowBatchController extends BaseImageEditBatchController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    @Override
+    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
+        try {
+            ImageDemoTools.shadow(demoTask, files, demoImage, shadowController.awtColor());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

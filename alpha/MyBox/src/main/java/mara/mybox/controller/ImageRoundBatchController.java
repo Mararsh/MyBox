@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -17,7 +17,7 @@ public class ImageRoundBatchController extends BaseImageEditBatchController {
     protected ControlImageRound roundController;
 
     public ImageRoundBatchController() {
-        baseTitle = Languages.message("ImageManufactureBatchRound");
+        baseTitle = message("ImageBatch") + " - " + message("Round");
     }
 
     @Override

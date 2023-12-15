@@ -39,6 +39,13 @@ public class ColorConvertTools {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), a).getRGB();
     }
 
+    public static String color2css(Color color) {
+        return "rgba(" + color.getRed() + ","
+                + color.getGreen() + ","
+                + color.getBlue() + ","
+                + color.getTransparency() + ")";
+    }
+
     /*
         rgb
      */
