@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 
@@ -52,19 +53,18 @@ public class MarkdownTypesettingController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
-            String md = TextFileTools.readTexts(task, srcFile);
+            String md = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (md == null) {
-                if (task == null || !task.isWorking()) {
-                    return message("Canceled");
-                } else {
-                    return message("Failed");
-                }
+                return message("Failed");
             }
             Node document = htmlParser.parse(md);
             String html = htmlRenderer.render(document);

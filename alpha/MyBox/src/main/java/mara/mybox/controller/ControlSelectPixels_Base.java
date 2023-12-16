@@ -109,23 +109,23 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
         return ColorConvertTools.converColor(maskColor);
     }
 
-    public Image scopeImage(FxTask task) {
-        return selectedScope(task, maskColor, false);
+    public Image scopeImage(FxTask currentTask) {
+        return selectedScope(currentTask, maskColor, false);
     }
 
-    public Image selectedScope(FxTask task, java.awt.Color bgColor, boolean cutMargins) {
+    public Image selectedScope(FxTask currentTask, java.awt.Color bgColor, boolean cutMargins) {
         if (pickScopeValues() == null) {
             return null;
         }
-        return ScopeTools.selectedScope(task,
+        return ScopeTools.selectedScope(currentTask,
                 srcImage(), scope,
                 bgColor, cutMargins,
                 scopeExcludeCheck.isSelected(),
                 !handleTransparentCheck.isSelected());
     }
 
-    public Image maskImage(FxTask task) {
-        return ScopeTools.maskScope(task,
+    public Image maskImage(FxTask currentTask) {
+        return ScopeTools.maskScope(currentTask,
                 srcImage(), scope,
                 scopeExcludeCheck.isSelected(),
                 !handleTransparentCheck.isSelected());

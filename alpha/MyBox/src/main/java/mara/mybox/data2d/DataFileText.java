@@ -115,7 +115,11 @@ public class DataFileText extends DataFile {
                     reader.close();
                     return null;
                 }
-                count1[i] = FindReplaceString.count(line1, delimiters[i]);
+                count1[i] = FindReplaceString.count(task, line1, delimiters[i]);
+                if (task != null && !task.isWorking()) {
+                    reader.close();
+                    return null;
+                }
 //                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] > maxCount1) {
                     maxCount1 = count1[i];
@@ -146,7 +150,11 @@ public class DataFileText extends DataFile {
                     reader.close();
                     return null;
                 }
-                count2[i] = FindReplaceString.count(line2, delimiters[i]);
+                count2[i] = FindReplaceString.count(task, line2, delimiters[i]);
+                if (task != null && !task.isWorking()) {
+                    reader.close();
+                    return null;
+                }
 //                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] == count2[i] && count2[i] > maxCount2) {
                     maxCount2 = count2[i];

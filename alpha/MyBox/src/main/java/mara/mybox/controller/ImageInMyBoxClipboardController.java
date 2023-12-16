@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -87,7 +88,7 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
     }
 
     @Override
-    protected int deleteData(List<ImageClipboard> data) {
+    protected int deleteData(FxTask currentTask, List<ImageClipboard> data) {
         if (data == null || data.isEmpty()) {
             return 0;
         }
@@ -101,7 +102,7 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
     @Override
     protected void afterClear() {
         super.afterClear();
-        FileDeleteTools.clearDir(new File(AppPaths.getImageClipboardPath()));
+        FileDeleteTools.clearDir(null, new File(AppPaths.getImageClipboardPath()));
     }
 
     @FXML

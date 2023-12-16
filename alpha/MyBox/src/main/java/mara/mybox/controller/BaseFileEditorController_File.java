@@ -219,7 +219,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             @Override
             protected boolean handle() {
-                ok = sourceInformation.readTotalNumbers();
+                ok = sourceInformation.readTotalNumbers(this);
                 return ok;
             }
 
@@ -246,7 +246,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             @Override
             protected boolean handle() {
-                text = sourceInformation.readPage();
+                text = sourceInformation.readPage(this);
                 return true;
             }
 

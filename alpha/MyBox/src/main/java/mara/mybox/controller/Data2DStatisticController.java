@@ -247,7 +247,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                     data2D.startTask(this, filterController.filter);
                     calculation.setTask(this);
                     if (calculation.needStored()) {
-                        DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);
+                        DataTable dataTable = data2D.singleColumn(this, checkedColsIndices);
                         if (dataTable == null) {
                             return false;
                         }

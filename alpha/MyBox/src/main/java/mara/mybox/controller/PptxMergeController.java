@@ -5,8 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import mara.mybox.db.data.VisitHistory;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
@@ -40,14 +41,14 @@ public class PptxMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(File srcFile) {
+    public String handleFile(FxTask currentTask, File srcFile) {
         if (!match(srcFile)) {
             return Languages.message("Skip") + ": " + srcFile;
         }
-        try ( XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile))) {
+        try (XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile))) {
             for (XSLFSlide srcSlide : ppt.getSlides()) {
-                if (task == null || task.isCancelled()) {
-                    return message("Cancelled");
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
                 try {
                     XSLFSlide targetSlide = targetPPT.createSlide();
@@ -65,7 +66,7 @@ public class PptxMergeController extends FilesMergeController {
 
     @Override
     protected boolean closeWriter() {
-        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile))) {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile))) {
             targetPPT.write(out);
         } catch (Exception e) {
             updateLogs(e.toString(), true, true);

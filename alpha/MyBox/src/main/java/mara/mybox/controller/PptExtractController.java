@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
@@ -105,19 +106,20 @@ public class PptExtractController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         String suffix = FileNameTools.suffix(srcFile.getName());
         if ("pptx".equalsIgnoreCase(suffix)) {
-            return handlePPTX(srcFile, targetPath);
+            return handlePPTX(currentTask, srcFile, targetPath);
         }
-        return handlePPT(srcFile, targetPath);
+        return handlePPT(currentTask, srcFile, targetPath);
     }
 
-    public String handlePPT(File srcFile, File targetPath) {
+    public String handlePPT(FxTask currentTask, File srcFile, File targetPath) {
         try (HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(srcFile));) {
             SlideShowExtractor extractor;
             StringBuilder textsBuilder = new StringBuilder();
-            if (slidesCheck.isSelected() || notesCheck.isSelected() || masterCheck.isSelected() || commentsCheck.isSelected()) {
+            if (slidesCheck.isSelected() || notesCheck.isSelected()
+                    || masterCheck.isSelected() || commentsCheck.isSelected()) {
                 extractor = new SlideShowExtractor(ppt);
                 extractor.setSlidesByDefault(slidesCheck.isSelected());
                 extractor.setMasterByDefault(masterCheck.isSelected());
@@ -129,8 +131,8 @@ public class PptExtractController extends BaseBatchFileController {
             if (extractor != null || imagesCheck.isSelected() || wordCheck.isSelected() || excelCheck.isSelected()) {
                 int slideIndex = 0;
                 for (HSLFSlide slide : ppt.getSlides()) {
-                    if (task == null || task.isCancelled()) {
-                        return message("Cancelled");
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return message("Canceled");
                     }
                     slideIndex++;
                     if (extractor != null) {
@@ -144,8 +146,8 @@ public class PptExtractController extends BaseBatchFileController {
 
                     int pixIndex = 0, oleIndex = 0;
                     for (HSLFShape shape : slide.getShapes()) {
-                        if (task == null || task.isCancelled()) {
-                            return message("Cancelled");
+                        if (currentTask == null || !currentTask.isWorking()) {
+                            return message("Canceled");
                         }
                         if (imagesCheck.isSelected() && (shape instanceof HSLFPictureShape)) {
                             HSLFPictureData pictData = ((HSLFPictureShape) shape).getPictureData();
@@ -185,21 +187,24 @@ public class PptExtractController extends BaseBatchFileController {
                     }
                 }
             }
-
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (extractor != null) {
                 targetFile = makeObjectFile(srcFile, -1, -1, "txt", targetPath);
                 if (TextFileTools.writeFile(targetFile, textsBuilder.toString()) != null) {
                     targetFileGenerated(targetFile);
                 }
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
+                }
             }
-            if (task == null || task.isCancelled()) {
-                return message("Cancelled");
-            }
+
             if (soundsCheck.isSelected()) {
                 int soundIndex = 0;
                 for (HSLFSoundData sound : ppt.getSoundData()) {
-                    if (task == null || task.isCancelled()) {
-                        return message("Cancelled");
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return message("Canceled");
                     }
                     targetFile = makeObjectFile(srcFile, -1, ++soundIndex, sound.getSoundType(), targetPath);
                     if (ByteFileTools.writeFile(targetFile, sound.getData()) != null) {
@@ -215,7 +220,7 @@ public class PptExtractController extends BaseBatchFileController {
         return message("Successful");
     }
 
-    public String handlePPTX(File srcFile, File targetPath) {
+    public String handlePPTX(FxTask currentTask, File srcFile, File targetPath) {
         try (XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile))) {
             SlideShowExtractor extractor;
             StringBuilder textsBuilder = new StringBuilder();
@@ -228,11 +233,12 @@ public class PptExtractController extends BaseBatchFileController {
             } else {
                 extractor = null;
             }
-            if (extractor != null || imagesCheck.isSelected() || wordCheck.isSelected() || excelCheck.isSelected()) {
+            if (extractor != null || imagesCheck.isSelected()
+                    || wordCheck.isSelected() || excelCheck.isSelected()) {
                 int slideIndex = 0;
                 for (XSLFSlide slide : ppt.getSlides()) {
-                    if (task == null || task.isCancelled()) {
-                        return message("Cancelled");
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return message("Canceled");
                     }
                     slideIndex++;
                     if (extractor != null) {
@@ -246,14 +252,17 @@ public class PptExtractController extends BaseBatchFileController {
 
                     int pixIndex = 0, oleIndex = 0;
                     for (XSLFShape shape : slide.getShapes()) {
-                        if (task == null || task.isCancelled()) {
-                            return message("Cancelled");
+                        if (currentTask == null || !currentTask.isWorking()) {
+                            return message("Canceled");
                         }
                         if (imagesCheck.isSelected() && (shape instanceof XSLFPictureShape)) {
                             XSLFPictureData pictData = ((XSLFPictureShape) shape).getPictureData();
                             targetFile = makeObjectFile(srcFile, slideIndex, ++pixIndex, pictData.getType().extension, targetPath);
                             if (ByteFileTools.writeFile(targetFile, pictData.getData()) != null) {
                                 targetFileGenerated(targetFile);
+                            }
+                            if (currentTask == null || !currentTask.isWorking()) {
+                                return message("Canceled");
                             }
                         }
                         if ((wordCheck.isSelected() || excelCheck.isSelected())
@@ -270,11 +279,17 @@ public class PptExtractController extends BaseBatchFileController {
                                 continue;
                             }
                             targetFile = makeObjectFile(srcFile, slideIndex, ++oleIndex, ext, targetPath);
+                            if (currentTask == null || !currentTask.isWorking()) {
+                                return message("Canceled");
+                            }
                             byte[] bytes = data.getBytes();
                             if (bytes == null && data.getFileName() != null) {
                                 File file = new File(data.getFileName());
                                 if (file.exists()) {
                                     bytes = ByteFileTools.readBytes(file);
+                                }
+                                if (currentTask == null || !currentTask.isWorking()) {
+                                    return message("Canceled");
                                 }
                             }
                             if (ByteFileTools.writeFile(targetFile, bytes) != null) {

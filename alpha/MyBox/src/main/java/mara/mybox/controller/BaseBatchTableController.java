@@ -30,9 +30,10 @@ import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.fxml.cell.TableTimeCell;
@@ -77,7 +78,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         targetExtensionFilter = sourceExtensionFilter;
     }
 
-    protected abstract P create(File file);
+    protected abstract P create(FxTask currentTask, File file);
 
     @Override
     public void setControlsStyle() {
@@ -576,7 +577,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                         continue;
                     }
                     if (info.getFile().isDirectory()) {
-                        info.countDirectorySize(backgroundTask, countDirectories(), reset);
+                        info.countDirectorySize(this, countDirectories(), reset);
                         if (backgroundTask == null || isCancelled()) {
                             return false;
                         }
@@ -754,7 +755,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
             @Override
             protected boolean handle() {
-                infos = createFiles(files);
+                infos = createFiles(this, files);
                 if (infos == null) {
                     return false;
                 }
@@ -782,18 +783,18 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         start(task);
     }
 
-    public List<P> createFiles(List<File> files) {
+    public List<P> createFiles(FxTask currentTask, List<File> files) {
         try {
             if (files == null || files.isEmpty()) {
                 return null;
             }
             List<P> infos = new ArrayList<>();
             for (File file : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || currentTask.isCancelled()) {
                     return infos;
                 }
-                task.setInfo(file.getAbsolutePath());
-                P t = create(file);
+                currentTask.setInfo(file.getAbsolutePath());
+                P t = create(currentTask, file);
                 if (t != null) {
                     infos.add(t);
                 }
@@ -837,9 +838,8 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     public void addDirectory(int index, File directory) {
         try {
-
             isSettingValues = true;
-            P d = create(directory);
+            P d = create(null, directory);
             if (index < 0 || index >= tableData.size()) {
                 tableData.add(d);
             } else {
@@ -856,7 +856,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
     }
 
     @FXML

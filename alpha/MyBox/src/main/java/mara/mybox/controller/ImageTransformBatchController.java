@@ -13,6 +13,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -163,20 +164,20 @@ public class ImageTransformBatchController extends BaseImageEditBatchController 
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             BufferedImage target = null;
             if (transformType == TransformType.Shear) {
-                target = TransformTools.shearImage(task, source, shearX, 0);
+                target = TransformTools.shearImage(currentTask, source, shearX, 0);
 
             } else if (transformType == TransformType.VerticalMirror) {
-                target = TransformTools.verticalMirrorImage(task, source);
+                target = TransformTools.verticalMirrorImage(currentTask, source);
 
             } else if (transformType == TransformType.HorizontalMirror) {
-                target = TransformTools.horizontalMirrorImage(task, source);
+                target = TransformTools.horizontalMirrorImage(currentTask, source);
 
             } else if (transformType == TransformType.Rotate) {
-                target = TransformTools.rotateImage(task, source, rotateAngle);
+                target = TransformTools.rotateImage(currentTask, source, rotateAngle);
             }
 
             return target;

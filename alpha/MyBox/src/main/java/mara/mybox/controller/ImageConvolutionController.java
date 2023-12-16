@@ -19,6 +19,7 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -123,7 +124,7 @@ public class ImageConvolutionController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(inImage)
@@ -131,7 +132,7 @@ public class ImageConvolutionController extends BasePixelsController {
                     .setKernel(kernel)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = kernel.getName();
             return convolution.operateFxImage();
         } catch (Exception e) {

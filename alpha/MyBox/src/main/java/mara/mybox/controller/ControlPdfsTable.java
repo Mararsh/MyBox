@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -185,7 +186,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
     }
 
     @Override
-    protected PdfInformation create(File file) {
+    protected PdfInformation create(FxTask currentTask, File file) {
         PdfInformation d = new PdfInformation(file);
         return d;
     }

@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -122,30 +123,30 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean beforeHandleFiles() {
+    public boolean beforeHandleFiles(FxTask currentTask) {
         manageController.task = task;
         manageController.remoteController.task = task;
         return manageController.checkConnection()
-                && checkDirectory(null, targetPathName);
+                && checkDirectory(currentTask, null, targetPathName);
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
-            return handleFileWithName(file, targetPathName);
+            return handleFileToPath(currentTask, file, targetPathName);
         } catch (Exception e) {
             return file + " " + e.toString();
         }
     }
 
     @Override
-    public String handleFileWithName(File srcFile, String targetPath) {
+    public String handleFileToPath(FxTask currentTask, File srcFile, String targetPath) {
         try {
             String targetName = makeTargetFilename(srcFile, targetPath);
             if (targetName == null) {
@@ -153,7 +154,7 @@ public class RemotePathPutController extends BaseBatchFileController {
             }
             targetName = manageController.remoteController.fixFilename(targetName);
             showLogs("put " + srcFile.getAbsolutePath() + " " + targetName);
-            if (manageController.remoteController.put(srcFile, targetName,
+            if (manageController.remoteController.put(currentTask, srcFile, targetName,
                     copyMtimeCheck.isSelected(), permissions)) {
                 showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
                 return message("Successful");
@@ -167,17 +168,17 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(File dir) {
+    public String handleDirectory(FxTask currentTask, File dir) {
         try {
             dirFilesNumber = dirFilesHandled = 0;
             String targetDir = targetPathName;
             if (createDirectories) {
                 targetDir += "/" + dir.getName();
-                if (!checkDirectory(dir, targetDir)) {
+                if (!checkDirectory(currentTask, dir, targetDir)) {
                     return message("Failed");
                 }
             }
-            handleDirectory(dir, targetDir);
+            handleDirectory(currentTask, dir, targetDir);
             return MessageFormat.format(message("DirHandledSummary"), dirFilesNumber, dirFilesHandled);
         } catch (Exception e) {
             showLogs(e.toString());
@@ -186,7 +187,7 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean checkDirectory(File srcFile, String pathname) {
+    public boolean checkDirectory(FxTask currentTask, File srcFile, String pathname) {
         try {
             if (pathname == null) {
                 return false;

@@ -48,7 +48,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
         return false;
     }
 
-    public boolean checkOptions(FxTask<Void> task, Connection conn,
+    public boolean checkOptions(FxTask<Void> currentTask, Connection conn,
             List<InfoNode> sourceNodes, InfoNode targetNode) {
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             displayError(message("NoData"));
@@ -59,7 +59,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
             return false;
         }
         for (InfoNode source : sourceNodes) {
-            if (manager.tableTreeNode.equalOrDescendant(task, conn, targetNode, source)) {
+            if (manager.tableTreeNode.equalOrDescendant(currentTask, conn, targetNode, source)) {
                 displayError(message("TreeTargetComments"));
                 return false;
             }

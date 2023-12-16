@@ -17,8 +17,9 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.value.AppPaths;
@@ -104,7 +105,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
     }
 
     @Override
-    public List<ImageClipboard> readPageData(Connection conn) {
+    public List<ImageClipboard> readPageData(FxTask currentTask, Connection conn) {
         try {
             ((TableImageClipboard) tableDefinition).clearInvalid(null, conn);
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);

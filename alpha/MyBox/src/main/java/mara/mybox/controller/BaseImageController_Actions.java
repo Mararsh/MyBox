@@ -21,11 +21,12 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -248,7 +249,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         return imageView.getImage();
     }
 
-    public Object imageToSaveAs() {
+    public Object imageToSaveAs(FxTask currentTask) {
         return imageToHandle();
     }
 
@@ -406,7 +407,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (focusFile == null) {
             focusFile = previousFile();
         }
-        if (FileDeleteTools.delete(sourceFile)) {
+        if (FileDeleteTools.delete(null, sourceFile)) {
             popSuccessful();
             sourceFile = null;
             image = null;
@@ -510,7 +511,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
                 needBackup = srcFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
                 if (needBackup) {
-                    backup = addBackup(task, srcFile);
+                    backup = addBackup(this, srcFile);
                 }
                 String format = FileNameTools.suffix(targetFile.getName());
                 if (framesNumber > 1) {

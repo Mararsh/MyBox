@@ -16,6 +16,7 @@ import mara.mybox.bufferedimage.MarginTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Colors;
@@ -199,33 +200,39 @@ public class ImagePasteBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    public boolean beforeHandleFiles() {
+    public boolean beforeHandleFiles(FxTask currentTask) {
         blend = blendController.pickValues();
         if (blend == null) {
             return false;
         }
-        clipSource = ImageFileReaders.readImage(task, sourceFile);
+        clipSource = ImageFileReaders.readImage(currentTask, sourceFile);
+        if (currentTask == null || !currentTask.isWorking()) {
+            return false;
+        }
         if (clipSource != null) {
-            clipSource = TransformTools.rotateImage(task, clipSource, rotateAngle);
+            clipSource = TransformTools.rotateImage(currentTask, clipSource, rotateAngle);
         }
         return clipSource != null;
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             BufferedImage bgImage = source;
             if (enlargeCheck.isSelected()) {
                 if (clipSource.getWidth() > bgImage.getWidth()) {
-                    bgImage = MarginTools.addMargins(task, bgImage,
+                    bgImage = MarginTools.addMargins(currentTask, bgImage,
                             Colors.TRANSPARENT, clipSource.getWidth() - bgImage.getWidth() + 1,
                             false, false, false, true);
                 }
                 if (clipSource.getHeight() > bgImage.getHeight()) {
-                    bgImage = MarginTools.addMargins(task, bgImage,
+                    bgImage = MarginTools.addMargins(currentTask, bgImage,
                             Colors.TRANSPARENT, clipSource.getHeight() - bgImage.getHeight() + 1,
                             false, true, false, false);
                 }
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return null;
             }
             if (bgImage == null) {
                 return null;
@@ -259,7 +266,7 @@ public class ImagePasteBatchController extends BaseImageEditBatchController {
             } else {
                 return null;
             }
-            BufferedImage target = PixelsBlend.blend(task, clipSource, bgImage, x, y, blend);
+            BufferedImage target = PixelsBlend.blend(currentTask, clipSource, bgImage, x, y, blend);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

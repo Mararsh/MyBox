@@ -16,6 +16,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
@@ -141,7 +142,7 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public boolean makeTable() {
+    public boolean makeTable(FxTask currentTask) {
         try {
             List<Data2DColumn> sourceColumns = new ArrayList<>();
             for (int index : columnIndices) {
@@ -153,7 +154,11 @@ public class ControlNewDataTable extends BaseController {
             } else {
                 keys = columnsController.selectedNames();
             }
-            dataTable = Data2D.makeTable(task, nameInput.getText().trim(), sourceColumns, keys, idInput.getText().trim());
+            dataTable = Data2D.makeTable(currentTask, nameInput.getText().trim(),
+                    sourceColumns, keys, idInput.getText().trim());
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
+            }
             if (dataTable == null) {
                 return false;
             }
@@ -161,19 +166,19 @@ public class ControlNewDataTable extends BaseController {
             tableData2D = dataTable.getTableData2D();
             return true;
         } catch (Exception e) {
-            if (task == null) {
+            if (currentTask == null) {
                 popError(e.toString());
             } else {
-                task.setError(e.toString());
+                currentTask.setError(e.toString());
             }
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    public boolean createTable(Connection conn) {
+    public boolean createTable(FxTask currentTask, Connection conn) {
         try {
-            if (!makeTable()) {
+            if (!makeTable(currentTask)) {
                 return false;
             }
             tableData2D = dataTable.getTableData2D();
@@ -239,9 +244,9 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public boolean importAllData(Connection conn, InvalidAs invalidAs) {
+    public boolean importAllData(FxTask currentTask, Connection conn, InvalidAs invalidAs) {
         try {
-            count = data2D.importTable(task, conn, dataTable, columnIndices, false, invalidAs);
+            count = data2D.importTable(currentTask, conn, dataTable, columnIndices, false, invalidAs);
             taskController.updateLogs(message("Imported") + ": " + count);
             setRowsNumber(conn);
             return count >= 0;
@@ -267,7 +272,7 @@ public class ControlNewDataTable extends BaseController {
     @FXML
     public void sqlAction() {
         try (Connection conn = DerbyBase.getConnection()) {
-            if (!checkOptions(conn, true) || !makeTable()) {
+            if (!checkOptions(conn, true) || !makeTable(null)) {
                 return;
             }
             String sql = tableData2D.createTableStatement();

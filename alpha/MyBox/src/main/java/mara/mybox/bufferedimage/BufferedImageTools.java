@@ -32,6 +32,29 @@ import mara.mybox.value.FileExtensions;
  */
 public class BufferedImageTools {
 
+    public static class Direction {
+
+        public static int Top = 0;
+        public static int Bottom = 1;
+        public static int Left = 2;
+        public static int Right = 3;
+        public static int LeftTop = 4;
+        public static int RightBottom = 5;
+        public static int LeftBottom = 6;
+        public static int RightTop = 7;
+
+    }
+
+    public static class KeepRatioType {
+
+        public static final int BaseOnWidth = 0;
+        public static final int BaseOnHeight = 1;
+        public static final int BaseOnLarger = 2;
+        public static final int BaseOnSmaller = 3;
+        public static final int None = 9;
+
+    }
+
     public static BufferedImage addShadow(FxTask task, BufferedImage source,
             int shadowX, int shadowY, Color shadowColor, boolean isBlur) {
         try {
@@ -152,29 +175,6 @@ public class BufferedImageTools {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    public static class Direction {
-
-        public static int Top = 0;
-        public static int Bottom = 1;
-        public static int Left = 2;
-        public static int Right = 3;
-        public static int LeftTop = 4;
-        public static int RightBottom = 5;
-        public static int LeftBottom = 6;
-        public static int RightTop = 7;
-
-    }
-
-    public static class KeepRatioType {
-
-        public static final int BaseOnWidth = 0;
-        public static final int BaseOnHeight = 1;
-        public static final int BaseOnLarger = 2;
-        public static final int BaseOnSmaller = 3;
-        public static final int None = 9;
-
     }
 
     // https://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage#

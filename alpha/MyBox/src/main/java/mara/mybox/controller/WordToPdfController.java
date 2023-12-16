@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -45,21 +46,20 @@ public class WordToPdfController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
-            String html = MicrosoftDocumentTools.word2Html(task, srcFile, charset);
-            if (html == null) {
-                if (task == null || !task.isWorking()) {
-                    return message("Canceled");
-                } else {
-                    return message("Failed");
-                }
+            String html = MicrosoftDocumentTools.word2Html(currentTask, srcFile, charset);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
             }
-            String result = optionsController.html2pdf(task, html, target);
+            if (html == null) {
+                return message("Failed");
+            }
+            String result = optionsController.html2pdf(currentTask, html, target);
             if (message("Successful").equals(result)) {
                 targetFileGenerated(target);
             }

@@ -456,7 +456,7 @@ public class ImagesSpliceController extends BaseImageController {
         start(task);
     }
 
-    private Image combineImagesColumns(FxTask task, List<ImageInformation> imageInfos) {
+    private Image combineImagesColumns(FxTask currentTask, List<ImageInformation> imageInfos) {
         if (imageInfos == null || imageInfos.isEmpty() || imageCombine.getColumnsValue() <= 0) {
             return null;
         }
@@ -464,13 +464,13 @@ public class ImagesSpliceController extends BaseImageController {
             List<ImageInformation> rowImages = new ArrayList<>();
             List<ImageInformation> rows = new ArrayList<>();
             for (ImageInformation imageInfo : imageInfos) {
-                if (task != null && !task.isWorking()) {
+                if (currentTask != null && !currentTask.isWorking()) {
                     return null;
                 }
                 rowImages.add(imageInfo);
                 if (rowImages.size() == imageCombine.getColumnsValue()) {
-                    Image rowImage = CombineTools.combineSingleRow(task, imageCombine, rowImages, true, false);
-                    if (rowImage == null || (task != null && !task.isWorking())) {
+                    Image rowImage = CombineTools.combineSingleRow(currentTask, imageCombine, rowImages, true, false);
+                    if (rowImage == null || (currentTask != null && !currentTask.isWorking())) {
                         return null;
                     }
                     rows.add(new ImageInformation(rowImage));
@@ -478,13 +478,13 @@ public class ImagesSpliceController extends BaseImageController {
                 }
             }
             if (!rowImages.isEmpty()) {
-                Image rowImage = CombineTools.combineSingleRow(task, imageCombine, rowImages, true, false);
-                if (rowImage == null || (task != null && !task.isWorking())) {
+                Image rowImage = CombineTools.combineSingleRow(currentTask, imageCombine, rowImages, true, false);
+                if (rowImage == null || (currentTask != null && !currentTask.isWorking())) {
                     return null;
                 }
                 rows.add(new ImageInformation(rowImage));
             }
-            Image newImage = CombineTools.combineSingleColumn(task, imageCombine, rows, false, true);
+            Image newImage = CombineTools.combineSingleColumn(currentTask, imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
             MyBoxLog.error(e);

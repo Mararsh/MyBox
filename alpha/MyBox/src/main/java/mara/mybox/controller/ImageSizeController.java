@@ -20,6 +20,7 @@ import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -385,7 +386,7 @@ public class ImageSizeController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
+    protected void handleImage(FxTask currentTask) {
         if (scaleRadio.isSelected()) {
             opInfo = message("ZoomScale") + ":" + scale;
             handledImage = ScaleTools.scaleImage(image, scale);

@@ -9,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -99,17 +100,17 @@ public class ImageConverterBatchController extends BaseBatchImageController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
-            if (ImageConvertTools.convertColorSpace(task, srcFile, attributes, target)) {
+            if (ImageConvertTools.convertColorSpace(currentTask, srcFile, attributes, target)) {
                 targetFileGenerated(target);
                 return message("Successful");
             } else {
-                if (task.isWorking()) {
+                if (currentTask.isWorking()) {
                     return message("Failed");
                 } else {
                     return message("Canceled");

@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageGray;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -30,12 +31,12 @@ public class ImageGreyController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             ImageGray imageGray = new ImageGray(inImage, inScope);
             imageGray.setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             return imageGray.operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());

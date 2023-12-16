@@ -11,6 +11,7 @@ import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -83,7 +84,7 @@ public class ImageSmoothController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             ConvolutionKernel kernel;
             if (avarageRadio.isSelected()) {
@@ -101,7 +102,7 @@ public class ImageSmoothController extends BasePixelsController {
                     .setKernel(kernel)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = message("Intensity") + ": " + intensity;
             return convolution.operateFxImage();
         } catch (Exception e) {

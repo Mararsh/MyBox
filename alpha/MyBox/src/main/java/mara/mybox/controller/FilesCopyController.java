@@ -8,7 +8,7 @@ import java.nio.file.StandardCopyOption;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -26,7 +26,7 @@ public class FilesCopyController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {

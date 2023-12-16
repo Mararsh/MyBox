@@ -7,10 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.ByteTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -31,7 +32,7 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean readTotalNumbers() {
+    public boolean readTotalNumbers(FxTask currentTask) {
         try {
             if (file == null) {
                 return false;
@@ -45,16 +46,20 @@ public class BytesEditInformation extends FileEditInformation {
                 return false;
             }
             long byteIndex = 0, totalLBNumber = 0;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 int bufSize = FileTools.bufSize(file, 16), bufLen;
                 byte[] buf = new byte[bufSize];
                 while ((bufLen = inputStream.read(buf)) > 0) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return false;
+                    }
                     if (bufLen < bufSize) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
                     byteIndex += bufLen;
                     if (!byWidth) {
-                        totalLBNumber += FindReplaceString.count(ByteTools.bytesToHexFormat(buf), lineBreakValue);
+                        totalLBNumber += FindReplaceString.count(currentTask,
+                                ByteTools.bytesToHexFormat(buf), lineBreakValue);
                     }
                 }
             }
@@ -77,12 +82,12 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public String readPage(long pageNumber) {
-        return readObjects(pageNumber * pageSize, pageSize);
+    public String readPage(FxTask currentTask, long pageNumber) {
+        return readObjects(currentTask, pageNumber * pageSize, pageSize);
     }
 
     @Override
-    public String readObjects(long from, long number) {
+    public String readObjects(FxTask currentTask, long from, long number) {
         if (file == null || pageSize <= 0 || from < 0 || number < 0
                 || (objectsNumber > 0 && from >= objectsNumber)) {
             return null;
@@ -94,11 +99,14 @@ public class BytesEditInformation extends FileEditInformation {
         String bufHex = null;
         long pageNumber = from / pageSize, byteIndex = 0, totalLBNumber = 0, pageLBNumber = 0, pageIndex = 0;
         int bufLen;
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             int bufSize;
             byte[] buf;
             boolean isCurrentPage;
             while (true) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 isCurrentPage = pageIndex++ == pageNumber;
                 if (isCurrentPage) {
                     bufSize = (int) (Math.max(pageSize, from - pageNumber * pageSize + number));
@@ -116,7 +124,10 @@ public class BytesEditInformation extends FileEditInformation {
                 byteIndex += bufLen;
                 if (!byWidth) {
                     bufHex = ByteTools.bytesToHexFormat(buf);
-                    pageLBNumber = FindReplaceString.count(bufHex, lineBreakValue);
+                    pageLBNumber = FindReplaceString.count(currentTask, bufHex, lineBreakValue);
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return null;
+                    }
                     totalLBNumber += pageLBNumber;
                 }
                 if (isCurrentPage) {
@@ -128,6 +139,9 @@ public class BytesEditInformation extends FileEditInformation {
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return null;
+        }
+        if (currentTask != null && !currentTask.isWorking()) {
             return null;
         }
         if (bufHex == null) {
@@ -148,12 +162,12 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public String readObject(long index) {
-        return readObjects(index, 1);
+    public String readObject(FxTask currentTask, long index) {
+        return readObjects(currentTask, index, 1);
     }
 
     @Override
-    public String readLines(long from, long number) {
+    public String readLines(FxTask currentTask, long from, long number) {
         if (file == null || from < 0 || number < 0 || (linesNumber > 0 && from >= linesNumber)) {
             return null;
         }
@@ -164,11 +178,14 @@ public class BytesEditInformation extends FileEditInformation {
         long byteIndex = 0, totalLBNumber = 0, pageLBNumber = 0, fromLBNumber = 0, fromByteIndex = 0;
         String pageHex = null;
         int bufLen;
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             byte[] buf = new byte[(int) pageSize];
             long lbEnd = Math.min(from + number, linesNumber) - 1;
             String bufHex;
             while ((bufLen = inputStream.read(buf)) > 0) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 if (bufLen < pageSize) {
                     buf = ByteTools.subBytes(buf, 0, bufLen);
                 }
@@ -177,7 +194,10 @@ public class BytesEditInformation extends FileEditInformation {
                 if (byWidth) {
                     totalLBNumber = byteIndex / lineBreakWidth;
                 } else {
-                    pageLBNumber = FindReplaceString.count(bufHex, lineBreakValue);
+                    pageLBNumber = FindReplaceString.count(currentTask, bufHex, lineBreakValue);
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return null;
+                    }
                     totalLBNumber += pageLBNumber;
                 }
                 if (totalLBNumber >= from) {
@@ -197,6 +217,9 @@ public class BytesEditInformation extends FileEditInformation {
             MyBoxLog.debug(e);
             return null;
         }
+        if (currentTask != null && !currentTask.isWorking()) {
+            return null;
+        }
         if (pageHex == null) {
             return null;
         }
@@ -214,7 +237,7 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public File filter(boolean recordLineNumbers) {
+    public File filter(FxTask currentTask, boolean recordLineNumbers) {
         try {
             if (file == null || filterStrings == null || filterStrings.length == 0) {
                 return file;
@@ -225,13 +248,16 @@ public class BytesEditInformation extends FileEditInformation {
             }
             File targetFile = FileTmpTools.getTempFile();
             int lineEnd = 0, lineStart = 0;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
                 byte[] buf = new byte[(int) pageSize];
                 int bufLen;
                 String pageHex;
                 while ((bufLen = inputStream.read(buf)) > 0) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return null;
+                    }
                     if (bufLen < pageSize) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
@@ -239,9 +265,10 @@ public class BytesEditInformation extends FileEditInformation {
                     pageHex = ByteTools.formatHex(pageHex, lineBreak, lineBreakWidth, lineBreakValue);
                     String[] lines = pageHex.split("\n");
                     lineEnd = lineStart + lines.length - 1;
-                    for (int i = 0;
-                            i < lines.length;
-                            ++i) {
+                    for (int i = 0; i < lines.length; ++i) {
+                        if (currentTask != null && !currentTask.isWorking()) {
+                            return null;
+                        }
                         lines[i] += " ";
                         if (isMatchFilters(lines[i])) {
                             if (recordLineNumbers) {
@@ -268,12 +295,12 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean writeObject(String hex) {
+    public boolean writeObject(FxTask currentTask, String hex) {
         try {
             if (file == null || charset == null || hex == null || hex.isEmpty()) {
                 return false;
             }
-            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+            try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
                 byte[] bytes = ByteTools.hexFormatToBytes(hex);
                 outputStream.write(bytes);
             }
@@ -285,7 +312,7 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean writePage(FileEditInformation sourceInfo, String hex) {
+    public boolean writePage(FxTask currentTask, FileEditInformation sourceInfo, String hex) {
         try {
             if (file == null || hex == null || hex.isEmpty()
                     || sourceInfo.getFile() == null || sourceInfo.getCharset() == null) {
@@ -301,12 +328,15 @@ public class BytesEditInformation extends FileEditInformation {
             if (sourceInfo.getFile().equals(file)) {
                 targetFile = FileTmpTools.getTempFile();
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
                 int bufSize, bufLen;
                 byte[] buf;
                 long byteIndex = 0;
                 while (true) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return false;
+                    }
                     if (byteIndex < pageStartByte) {
                         bufSize = (int) Math.min(psize, pageStartByte - byteIndex);
                     } else if (byteIndex == pageStartByte) {
@@ -328,6 +358,9 @@ public class BytesEditInformation extends FileEditInformation {
                     outputStream.write(buf);
                     byteIndex += bufLen;
                 }
+            }
+            if (currentTask != null && !currentTask.isWorking()) {
+                return false;
             }
             if (sourceInfo.getFile().equals(file)) {
                 FileTools.override(targetFile, file);

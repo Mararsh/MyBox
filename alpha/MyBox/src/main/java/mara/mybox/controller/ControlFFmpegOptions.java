@@ -22,8 +22,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.StringTools;
@@ -1133,7 +1133,7 @@ public class ControlFFmpegOptions extends BaseController {
             cmd.addAll(parameters);
             if (targetFile != null) {
                 cmd.add(targetFile.getAbsolutePath());
-                FileDeleteTools.delete(targetFile);
+                FileDeleteTools.delete(null, targetFile);
             }
             parameters.add("-y");
             showCmd(cmd);

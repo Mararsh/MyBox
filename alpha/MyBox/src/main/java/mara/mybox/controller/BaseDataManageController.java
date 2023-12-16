@@ -20,8 +20,9 @@ import mara.mybox.db.data.QueryCondition.DataOperation;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -229,7 +230,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     }
 
     @Override
-    public List<P> readPageData(Connection conn) {
+    public List<P> readPageData(FxTask currentTask, Connection conn) {
         setPageSQL();
         return tableDefinition.query(conn, pageQuerySQL);
     }
@@ -450,7 +451,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     }
 
     @Override
-    public long readDataSize(Connection conn) {
+    public long readDataSize(FxTask currentTask, Connection conn) {
 //        MyBoxLog.debug(sizeQuerySQL);
         return DerbyBase.size(conn, sizeQuerySQL);
     }
@@ -706,10 +707,10 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             @Override
             protected boolean handle() {
                 if (message("ClearSelectedDataInPage").equals(type)) {
-                    deletedCount = deleteSelectedData();
+                    deletedCount = deleteSelectedData(this);
 
                 } else if (message("ClearCurrentPage").equals(type)) {
-                    deletedCount = deleteData(tableData);
+                    deletedCount = deleteData(this, tableData);
 
                 } else if (message("ClearAsConditionTrees").equals(type)) {
                     deletedCount = DerbyBase.update(clearSQL);

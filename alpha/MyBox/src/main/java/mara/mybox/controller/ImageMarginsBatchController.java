@@ -5,6 +5,7 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.MarginTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -48,11 +49,11 @@ public class ImageMarginsBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             BufferedImage target = null;
             if (marginsController.addRadio.isSelected()) {
-                target = MarginTools.addMargins(task, source,
+                target = MarginTools.addMargins(currentTask, source,
                         marginsController.colorController.awtColor(),
                         marginsController.margin,
                         marginsController.marginsTopCheck.isSelected(),
@@ -61,7 +62,7 @@ public class ImageMarginsBatchController extends BaseImageEditBatchController {
                         marginsController.marginsRightCheck.isSelected());
 
             } else if (marginsController.cutWidthRadio.isSelected()) {
-                target = MarginTools.cutMarginsByColor(task, source,
+                target = MarginTools.cutMarginsByColor(currentTask, source,
                         marginsController.colorController.awtColor(),
                         marginsController.marginsTopCheck.isSelected(),
                         marginsController.marginsBottomCheck.isSelected(),
@@ -69,7 +70,7 @@ public class ImageMarginsBatchController extends BaseImageEditBatchController {
                         marginsController.marginsRightCheck.isSelected());
 
             } else if (marginsController.cutColorRadio.isSelected()) {
-                target = MarginTools.cutMarginsByWidth(task, source,
+                target = MarginTools.cutMarginsByWidth(currentTask, source,
                         marginsController.margin,
                         marginsController.marginsTopCheck.isSelected(),
                         marginsController.marginsBottomCheck.isSelected(),
@@ -77,7 +78,7 @@ public class ImageMarginsBatchController extends BaseImageEditBatchController {
                         marginsController.marginsRightCheck.isSelected());
 
             } else if (marginsController.blurRadio.isSelected()) {
-                target = MarginTools.blurMarginsAlpha(task, source,
+                target = MarginTools.blurMarginsAlpha(currentTask, source,
                         marginsController.margin,
                         marginsController.marginsTopCheck.isSelected(),
                         marginsController.marginsBottomCheck.isSelected(),

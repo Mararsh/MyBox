@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -40,8 +41,8 @@ public class ImageBlackWhiteBatchController extends BaseImageEditBatchController
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
-        return imageBinary.setImage(source).setTask(task).operate();
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
+        return imageBinary.setImage(source).setTask(currentTask).operate();
     }
 
 }

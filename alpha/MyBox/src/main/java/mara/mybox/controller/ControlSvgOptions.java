@@ -203,13 +203,13 @@ public class ControlSvgOptions extends BaseController {
         loadDoc(doc, focusedNode);
     }
 
-    public Document toSVG(FxTask task, boolean bgColor) {
+    public Document toSVG(FxTask currentTask, boolean bgColor) {
         try {
             if (doc == null) {
                 return null;
             }
-            Document svgDoc = SvgTools.focus(task, doc, focusedNode, bgOpacity);
-            if (svgDoc == null || (task != null && !task.isWorking())) {
+            Document svgDoc = SvgTools.focus(currentTask, doc, focusedNode, bgOpacity);
+            if (svgDoc == null || (currentTask != null && !currentTask.isWorking())) {
                 return null;
             }
             Element svgNode = XmlTools.findName(svgDoc, "svg", 0);
@@ -241,16 +241,16 @@ public class ControlSvgOptions extends BaseController {
         }
     }
 
-    public String toXML(FxTask task) {
-        return XmlTools.transform(toSVG(task, true));
+    public String toXML(FxTask currentTask) {
+        return XmlTools.transform(toSVG(currentTask, true));
     }
 
-    public File toImage(FxTask task) {
-        return SvgTools.docToImage(task, this, toSVG(task, true), width, height, viewBox);
+    public File toImage(FxTask currentTask) {
+        return SvgTools.docToImage(currentTask, this, toSVG(currentTask, true), width, height, viewBox);
     }
 
-    public File toPDF() {
-        return SvgTools.docToPDF(task, this, toSVG(task, true), width, height, viewBox);
+    public File toPDF(FxTask currentTask) {
+        return SvgTools.docToPDF(currentTask, this, toSVG(currentTask, true), width, height, viewBox);
     }
 
 }

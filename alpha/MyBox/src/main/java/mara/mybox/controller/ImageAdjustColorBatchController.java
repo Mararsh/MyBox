@@ -9,6 +9,7 @@ import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 
@@ -54,7 +55,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         if (null == colorOperationType || colorActionType == null) {
             return null;
         }
@@ -62,7 +63,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(source, null,
                     colorOperationType, colorActionType)
                     .setSkipTransparent(!handleTransparentCheck.isSelected())
-                    .setTask(task);
+                    .setTask(currentTask);
             switch (colorOperationType) {
                 case Hue:
                     pixelsOperation.setFloatPara1(colorValue / 360.0f);
@@ -91,8 +92,8 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
     }
 
     @Override
-    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
-        ImageDemoTools.adjustColor(demoTask, files, demoImage, null);
+    public void makeDemoFiles(FxTask dTask, List<String> files, BufferedImage demoImage) {
+        ImageDemoTools.adjustColor(dTask, files, demoImage, null);
     }
 
 }

@@ -6,6 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.scene.control.IndexRange;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -47,7 +49,7 @@ public class FindReplaceString {
         matches = operation == Operation.FindAll ? new ArrayList<>() : null;
     }
 
-    public boolean handleString() {
+    public boolean handleString(FxTask currentTask) {
         reset();
         if (operation == null) {
             return false;
@@ -87,7 +89,10 @@ public class FindReplaceString {
                 start = 0;
                 break;
         }
-        handleString(start, end);
+        handleString(currentTask, start, end);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return false;
+        }
         if (lastMatch != null || !wrap) {
             return true;
         }
@@ -105,7 +110,7 @@ public class FindReplaceString {
                     end = start + findString.length();
                     start = 0;
                 }
-                return handleString(start, end);
+                return handleString(currentTask, start, end);
             case FindPrevious:
                 if (end > inputString.length()) {
                     return true;
@@ -117,14 +122,14 @@ public class FindReplaceString {
                     start = Math.max(unit, end - findString.length() + unit);
                     end = inputString.length();
                 }
-                handleString(start, end);
-                return true;
+                handleString(currentTask, start, end);
+                return currentTask == null || currentTask.isWorking();
             default:
                 return true;
         }
     }
 
-    public boolean handleString(int start, int end) {
+    public boolean handleString(FxTask currentTask, int start, int end) {
         try {
 //            MyBoxLog.debug(operation + " start:" + start + " end:" + end + " findString:>>" + findString + "<<  unit:" + unit);
 //            MyBoxLog.debug("findString.length()：" + findString.length());
@@ -207,11 +212,14 @@ public class FindReplaceString {
         }
     }
 
-    public String replace(String string, String find, String replace) {
+    public String replace(FxTask currentTask, String string, String find, String replace) {
         setInputString(string).setFindString(find)
                 .setReplaceString(replace == null ? "" : replace)
                 .setAnchor(0)
-                .handleString();
+                .handleString(currentTask);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return message("Canceled");
+        }
         return outputString;
     }
 
@@ -232,70 +240,89 @@ public class FindReplaceString {
                 .setAnchor(0).setIsRegex(isRegex).setCaseInsensitive(isCaseInsensitive).setMultiline(true);
     }
 
-    public static int count(String string, String find) {
-        return count(string, find, 0, false, false, true);
+    public static int count(FxTask currentTask, String string, String find) {
+        return count(currentTask, string, find, 0, false, false, true);
     }
 
-    public static int count(String string, String find, int from,
+    public static int count(FxTask currentTask, String string, String find, int from,
             boolean isRegex, boolean caseInsensitive, boolean multiline) {
         FindReplaceString stringFind = create()
                 .setOperation(Operation.Count)
                 .setInputString(string).setFindString(find).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.handleString();
+        stringFind.handleString(currentTask);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return -1;
+        }
         return stringFind.getCount();
     }
 
-    public static IndexRange next(String string, String find, int from,
+    public static IndexRange next(FxTask currentTask, String string, String find, int from,
             boolean isRegex, boolean caseInsensitive, boolean multiline) {
         FindReplaceString stringFind = create()
                 .setOperation(Operation.FindNext)
                 .setInputString(string).setFindString(find).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.handleString();
+        stringFind.handleString(currentTask);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return null;
+        }
         return stringFind.getStringRange();
     }
 
-    public static IndexRange previous(String string, String find, int from,
+    public static IndexRange previous(FxTask currentTask, String string, String find, int from,
             boolean isRegex, boolean caseInsensitive, boolean multiline) {
         FindReplaceString stringFind = create()
                 .setOperation(Operation.FindPrevious)
                 .setInputString(string).setFindString(find).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.handleString();
+        stringFind.handleString(currentTask);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return null;
+        }
         return stringFind.getStringRange();
     }
 
-    public static String replaceAll(String string, String find, String replace) {
-        return replaceAll(string, find, replace, 0, false, false, true);
+    public static String replaceAll(FxTask currentTask, String string, String find, String replace) {
+        return replaceAll(currentTask, string, find, replace, 0, false, false, true);
     }
 
-    public static String replaceAll(String string, String find, String replace, int from,
+    public static String replaceAll(FxTask currentTask, String string, String find, String replace, int from,
             boolean isRegex, boolean caseInsensitive, boolean multiline) {
         FindReplaceString stringFind = create()
                 .setOperation(Operation.ReplaceAll)
                 .setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.handleString();
+        stringFind.handleString(currentTask);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return null;
+        }
         return stringFind.getOutputString();
     }
 
-    public static String replaceAll(FindReplaceString findReplace, String string, String find, String replace) {
-        findReplace.setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).handleString();
+    public static String replaceAll(FxTask currentTask, FindReplaceString findReplace, String string, String find, String replace) {
+        findReplace.setInputString(string).setFindString(find).setReplaceString(replace)
+                .setAnchor(0).handleString(currentTask);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return null;
+        }
         return findReplace.getOutputString();
     }
 
-    public static String replaceFirst(String string, String find, String replace) {
-        return replaceFirst(string, find, replace, 0, false, false, true);
+    public static String replaceFirst(FxTask currentTask, String string, String find, String replace) {
+        return replaceFirst(currentTask, string, find, replace, 0, false, false, true);
     }
 
-    public static String replaceFirst(String string, String find, String replace, int from,
+    public static String replaceFirst(FxTask currentTask, String string, String find, String replace, int from,
             boolean isRegex, boolean caseInsensitive, boolean multiline) {
         FindReplaceString stringFind = create()
                 .setOperation(Operation.ReplaceFirst)
                 .setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.handleString();
+        stringFind.handleString(currentTask);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return null;
+        }
         return stringFind.getOutputString();
     }
 

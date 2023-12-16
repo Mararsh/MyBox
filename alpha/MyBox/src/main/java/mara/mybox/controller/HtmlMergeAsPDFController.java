@@ -8,6 +8,7 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
@@ -52,17 +53,13 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            MyBoxLog.console(targetFile);
-            MyBoxLog.console(targetPath);
             if (targetFileController != null) {
                 targetFile = targetFileController.file;
             }
             if (targetFile == null) {
                 return false;
             }
-            MyBoxLog.console(targetFile);
             targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
-            MyBoxLog.console(targetFile);
             if (targetFile == null) {
                 return false;
             }
@@ -84,11 +81,14 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            String html = TextFileTools.readTexts(task, srcFile);
-            if (html == null || (task != null && !task.isWorking())) {
+            String html = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
+            }
+            if (html == null) {
+                return message("Failed");
             }
             String body = HtmlReadTools.body(html, false);
             mergedHtml.append(body);
@@ -100,10 +100,14 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterHandleFiles() {
+    public void afterHandleFiles(FxTask currentTask) {
         try {
             mergedHtml.append("    </body>\n</html>\n");
-            String result = optionsController.html2pdf(task, mergedHtml.toString(), targetFile);
+            String result = optionsController.html2pdf(currentTask, mergedHtml.toString(), targetFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                updateLogs(message("Canceled"), true, true);
+                return;
+            }
             if (!message("Successful").equals(result)) {
                 updateLogs(result, true, true);
                 return;
@@ -113,6 +117,10 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
                 List<FileInformation> sources = new ArrayList<>();
                 sources.addAll(tableData);
                 for (int i = sources.size() - 1; i >= 0; --i) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        updateLogs(message("Canceled"), true, true);
+                        return;
+                    }
                     try {
                         FileInformation source = sources.get(i);
                         FileDeleteTools.delete(source.getFile());

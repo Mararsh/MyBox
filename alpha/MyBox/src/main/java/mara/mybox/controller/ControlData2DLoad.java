@@ -37,10 +37,10 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableComboBoxCell;
 import mara.mybox.fxml.cell.TableDataBooleanDisplayCell;
@@ -398,6 +398,9 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
             return;
         }
+        if (task != null) {
+            task.cancel();
+        }
         task = new FxSingletonTask<Void>(this) {
             private Data2D targetData;
 
@@ -417,7 +420,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                             recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
                             break;
                         case Excel: {
-                            DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
+                            DataFileExcel excelData = DataFileExcel.toExcel(this, csvData);
                             if (excelData != null) {
                                 recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
                             }
@@ -430,17 +433,17 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                                     || name.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
                                 name = name.substring(TmpTable.TmpTablePrefix.length());
                             }
-                            DataTable dataTable = csvData.toTable(task, name);
+                            DataTable dataTable = csvData.toTable(this, name);
                             targetData = dataTable;
                             break;
                         }
                         case MyBoxClipboard: {
-                            DataClipboard clip = DataClipboard.toClip(task, csvData);
+                            DataClipboard clip = DataClipboard.toClip(this, csvData);
                             targetData = clip;
                             break;
                         }
                         case Matrix: {
-                            DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
+                            DataMatrix matrix = DataMatrix.toMatrix(this, csvData);
                             targetData = matrix;
                             break;
                         }
@@ -477,19 +480,19 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                 try {
                     switch (data2D.getType()) {
                         case Texts:
-                            targetData = DataTable.toText(task, dataTable);
+                            targetData = DataTable.toText(this, dataTable);
                             if (targetData != null) {
                                 recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
                             }
                             break;
                         case CSV:
-                            targetData = DataTable.toCSV(task, dataTable);
+                            targetData = DataTable.toCSV(this, dataTable);
                             if (targetData != null) {
                                 recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
                             }
                             break;
                         case Excel: {
-                            targetData = DataTable.toExcel(task, dataTable);
+                            targetData = DataTable.toExcel(this, dataTable);
                             if (targetData != null) {
                                 recordFileWritten(targetData.getFile(), VisitHistory.FileType.Excel);
                             }
@@ -500,11 +503,11 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                             break;
                         }
                         case MyBoxClipboard: {
-                            targetData = DataTable.toClip(task, dataTable);
+                            targetData = DataTable.toClip(this, dataTable);
                             break;
                         }
                         case Matrix: {
-                            targetData = DataTable.toMatrix(task, dataTable);
+                            targetData = DataTable.toMatrix(this, dataTable);
                             break;
                         }
                     }
@@ -858,13 +861,13 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     }
 
     @Override
-    public List<List<String>> readPageData(Connection conn) {
+    public List<List<String>> readPageData(FxTask currentTask, Connection conn) {
         data2D.startFilter(null);
         return data2D.readPageData(conn);
     }
 
     @Override
-    protected void countPagination(Connection conn, long page) {
+    protected void countPagination(FxTask currentTask, Connection conn, long page) {
         if (data2D.isMatrix()) {
             pageSize = Integer.MAX_VALUE;
             dataSize = data2D.getDataSize();
@@ -874,7 +877,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             dataSizeLoaded = true;
         } else {
             pageSize = UserConfig.getInt(baseName + "PageSize", 50);
-            super.countPagination(conn, page);
+            super.countPagination(currentTask, conn, page);
         }
         data2D.setPageSize(pageSize);
         data2D.setPagesNumber(pagesNumber);
@@ -891,7 +894,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     }
 
     @Override
-    public long readDataSize(Connection conn) {
+    public long readDataSize(FxTask currentTask, Connection conn) {
         return data2D.getDataSize();
     }
 
@@ -948,7 +951,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
             @Override
             protected boolean handle() {
-                data2D.setBackgroundTask(backgroundTask);
+                data2D.setBackgroundTask(this);
                 return data2D.readTotal() >= 0;
             }
 
@@ -997,7 +1000,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     }
 
     protected void refreshPagination() {
-        countPagination(null, currentPage);
+        countPagination(null, null, currentPage);
         setPagination();
         updateStatus();
     }

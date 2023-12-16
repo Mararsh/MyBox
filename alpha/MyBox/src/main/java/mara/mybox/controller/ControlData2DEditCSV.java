@@ -122,7 +122,7 @@ public class ControlData2DEditCSV extends BaseController {
 
             @Override
             protected boolean handle() {
-                text = data2D.encodeCSV(task, delimiterName, false, false, false);
+                text = data2D.encodeCSV(this, delimiterName, false, false, false);
                 return text != null;
             }
 
@@ -195,7 +195,7 @@ public class ControlData2DEditCSV extends BaseController {
                     String text = textArea.getText();
                     if (text != null && !text.isEmpty()) {
                         int colsNumber = data2D.columnsNumber();
-                        List<List<String>> data = data2D.decodeCSV(task, text, delimiterName, false);
+                        List<List<String>> data = data2D.decodeCSV(this, text, delimiterName, false);
                         if (data == null) {
                             return false;
                         }

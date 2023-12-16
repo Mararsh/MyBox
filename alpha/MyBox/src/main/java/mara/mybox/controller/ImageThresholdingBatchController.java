@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.PixelsOperation;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -28,8 +29,8 @@ public class ImageThresholdingBatchController extends BaseImageEditBatchControll
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
-        return pixelsOperation.setImage(source).setTask(task).operate();
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
+        return pixelsOperation.setImage(source).setTask(currentTask).operate();
     }
 
 }

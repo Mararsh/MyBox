@@ -6,6 +6,7 @@ import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -35,7 +36,7 @@ public class ImageEdgeController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             ConvolutionKernel kernel = edgeController.kernel();
             if (kernel == null) {
@@ -47,7 +48,7 @@ public class ImageEdgeController extends BasePixelsController {
                     .setKernel(kernel)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             operation = kernel.getName();
             opInfo = message("Grey") + ": " + kernel.isGray();
             return convolution.operateFxImage();

@@ -11,8 +11,9 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -32,7 +33,7 @@ public class PptSplitController extends BaseBatchFileController {
     protected ControlSplit splitController;
 
     public PptSplitController() {
-        baseTitle = Languages.message("PptSplit");
+        baseTitle = message("PptSplit");
     }
 
     @Override
@@ -60,7 +61,7 @@ public class PptSplitController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             int total;
             try (SlideShow ppt = SlideShowFactory.create(srcFile)) {
@@ -69,26 +70,32 @@ public class PptSplitController extends BaseBatchFileController {
                 MyBoxLog.error(e);
                 return e.toString();
             }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             targetFilesCount = 0;
             targetFiles = new LinkedHashMap<>();
             String suffix = FileNameTools.suffix(srcFile.getName());
             switch (splitController.splitType) {
                 case Size:
-                    splitByPagesSize(srcFile, targetPath, total, suffix, splitController.size);
+                    splitByPagesSize(currentTask, srcFile, targetPath, total, suffix, splitController.size);
                     break;
                 case Number:
-                    splitByPagesSize(srcFile, targetPath, total, suffix,
+                    splitByPagesSize(currentTask, srcFile, targetPath, total, suffix,
                             splitController.size(total, splitController.number));
                     break;
                 case List:
-                    splitByList(srcFile, targetPath, suffix);
+                    splitByList(currentTask, srcFile, targetPath, suffix);
                     break;
                 default:
                     break;
             }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             updateInterface("CompleteFile");
             totalItemsHandled += total;
-            return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
+            return MessageFormat.format(message("HandlePagesGenerateNumber"),
                     totalItemsHandled, targetFilesCount);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -96,22 +103,22 @@ public class PptSplitController extends BaseBatchFileController {
         }
     }
 
-    protected void splitByPagesSize(File srcFile, File targetPath, int total, String suffix, int pagesSize) {
+    protected void splitByPagesSize(FxTask currentTask, File srcFile, File targetPath, int total, String suffix, int pagesSize) {
         try {
             int start = 0, end, index = 0;
             boolean pptx = "pptx".equalsIgnoreCase(suffix);
             while (start < total) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
                 end = start + pagesSize;
                 targetFile = makeTargetFile(srcFile, ++index, suffix, targetPath);
                 if (pptx) {
-                    if (savePPTX(srcFile, targetFile, start, end)) {
+                    if (savePPTX(currentTask, srcFile, targetFile, start, end)) {
                         targetFileGenerated(targetFile);
                     }
                 } else {
-                    if (savePPT(srcFile, targetFile, start, end)) {
+                    if (savePPT(currentTask, srcFile, targetFile, start, end)) {
                         targetFileGenerated(targetFile);
                     }
                 }
@@ -122,13 +129,13 @@ public class PptSplitController extends BaseBatchFileController {
         }
     }
 
-    protected void splitByList(File srcFile, File targetPath, String suffix) {
+    protected void splitByList(FxTask currentTask, File srcFile, File targetPath, String suffix) {
         try {
             int start = 0, end, index = 0;
             boolean pptx = "pptx".equalsIgnoreCase(suffix);
             List<Integer> list = splitController.list;
             for (int i = 0; i < list.size();) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
                 // To user, both start and end are 1-based. To codes, both start and end are 0-based.
@@ -137,11 +144,11 @@ public class PptSplitController extends BaseBatchFileController {
                 end = list.get(i++);
                 targetFile = makeTargetFile(srcFile, ++index, suffix, targetPath);
                 if (pptx) {
-                    if (savePPTX(srcFile, targetFile, start, end)) {
+                    if (savePPTX(currentTask, srcFile, targetFile, start, end)) {
                         targetFileGenerated(targetFile);
                     }
                 } else {
-                    if (savePPT(srcFile, targetFile, start, end)) {
+                    if (savePPT(currentTask, srcFile, targetFile, start, end)) {
                         targetFileGenerated(targetFile);
                     }
                 }
@@ -169,34 +176,53 @@ public class PptSplitController extends BaseBatchFileController {
     }
 
     // Include start, and exlucde end. Both start and end are 0-based
-    protected boolean savePPT(File srcFile, File targetFile, int start, int end) {
+    protected boolean savePPT(FxTask currentTask, File srcFile, File targetFile, int start, int end) {
         try (HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(srcFile))) {
             List<HSLFSlide> slides = ppt.getSlides();
             int total = slides.size();
             if (start > end || start >= total) {
                 return false;
             }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
+            }
+
             // https://stackoverflow.com/questions/51419421/split-pptx-slideshow-with-apache-poi
             // Need delete shapes for ppt
             for (int i = total - 1; i >= end; i--) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return false;
+                }
                 HSLFSlide slide = slides.get(i);
                 Iterator<HSLFShape> iterator = slide.iterator();
                 if (iterator != null) {
                     while (iterator.hasNext()) {
+                        if (currentTask == null || !currentTask.isWorking()) {
+                            return false;
+                        }
                         slide.removeShape(iterator.next());
                     }
                 }
                 ppt.removeSlide(i);
             }
             for (int i = 0; i < start; i++) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return false;
+                }
                 HSLFSlide slide = slides.get(0);
                 Iterator<HSLFShape> iterator = slide.iterator();
                 if (iterator != null) {
                     while (iterator.hasNext()) {
+                        if (currentTask == null || !currentTask.isWorking()) {
+                            return false;
+                        }
                         slide.removeShape(iterator.next());
                     }
                 }
                 ppt.removeSlide(0);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
             }
             ppt.write(targetFile);
             return targetFile.exists();
@@ -207,17 +233,29 @@ public class PptSplitController extends BaseBatchFileController {
     }
 
     // Include start, and exlucde end. Both start and end are 0-based
-    protected boolean savePPTX(File srcFile, File targetFile, int start, int end) {
+    protected boolean savePPTX(FxTask currentTask, File srcFile, File targetFile, int start, int end) {
         try (XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile));
                 FileOutputStream out = new FileOutputStream(targetFile)) {
             List<XSLFSlide> slides = ppt.getSlides();
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
+            }
             int total = slides.size();
             // Looks need not remove shapes for pptx in current version
             for (int i = total - 1; i >= end; i--) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return false;
+                }
                 ppt.removeSlide(i);
             }
             for (int i = 0; i < start; i++) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return false;
+                }
                 ppt.removeSlide(0);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
             }
             ppt.write(out);
         } catch (Exception e) {

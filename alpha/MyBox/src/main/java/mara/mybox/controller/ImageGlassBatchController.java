@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageMosaic;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -31,14 +32,8 @@ public class ImageGlassBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
-        try {
-            mosaic.setImage(source);
-            return mosaic.init().setTask(task).operateImage();
-        } catch (Exception e) {
-            displayError(e.toString());
-            return null;
-        }
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
+        return mosaic.setImage(source).setTask(currentTask).operateImage();
     }
 
 }

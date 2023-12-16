@@ -28,6 +28,7 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -266,7 +267,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         if (selectedNode == null || targetPath == null) {
             return false;
         }
@@ -277,7 +278,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         count = level = 0;
         firstRow = true;
         try (Connection conn = DerbyBase.getConnection()) {
-            exportNode(conn, selectedNode.getValue(), listController.chainName(selectedNode.getParent()));
+            exportNode(currentTask, conn, selectedNode.getValue(), listController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -468,7 +469,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         return well;
     }
 
-    public void exportNode(Connection conn, InfoNode node, String parentChainName) {
+    public void exportNode(FxTask currentTask, Connection conn, InfoNode node, String parentChainName) {
         level++;
         if (conn == null || node == null) {
             return;
@@ -480,16 +481,19 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 tags = tableTreeNodeTag.nodeTags(conn, node.getNodeid());
             }
             if (textsWriter != null) {
-                writeTexts(conn, parentChainName, node, tags);
+                writeTexts(currentTask, conn, parentChainName, node, tags);
             }
             if (htmlWriter != null) {
-                writeHtml(conn, parentChainName, node, htmlWriter, tags);
+                writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
             }
             if (xmlWriter != null) {
-                writeXml(conn, parentChainName, node, tags);
+                writeXml(currentTask, conn, parentChainName, node, tags);
             }
             if (jsonWriter != null) {
-                writeJson(conn, parentChainName, node, tags);
+                writeJson(currentTask, conn, parentChainName, node, tags);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return;
             }
             String nodeChainName;
             if (parentChainName != null && !parentChainName.isBlank()) {
@@ -517,7 +521,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 }
                 framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
 
-                writeHtml(conn, nodeChainName, node, bookWriter, tags);
+                writeHtml(currentTask, conn, nodeChainName, node, bookWriter, tags);
                 try {
                     bookWriter.write(indent + "\n</BODY>\n</HTML>");
                     bookWriter.flush();
@@ -543,10 +547,16 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                     updateLogs(e.toString());
                 }
             }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return;
+            }
 
             if (children != null) {
                 for (InfoNode child : children) {
-                    exportNode(conn, child, nodeChainName);
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return;
+                    }
+                    exportNode(currentTask, conn, child, nodeChainName);
                 }
             }
         } catch (Exception e) {
@@ -555,7 +565,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         level--;
     }
 
-    protected void writeTexts(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
+    protected void writeTexts(FxTask currentTask, Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             textsWriter.write(AppValues.MyBoxSeparator + (idCheck.isSelected() ? node.getNodeid() : "") + "\n");
             textsWriter.write((parentName == null ? InfoNode.RootIdentify : parentName) + "\n");
@@ -590,7 +600,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeHtml(Connection conn, String parentName, InfoNode node, FileWriter writer, List<InfoNodeTag> tags) {
+    protected void writeHtml(FxTask currentTask, Connection conn, String parentName, InfoNode node, FileWriter writer, List<InfoNodeTag> tags) {
         try {
             writer.write(indent + indent + "<div id=\"" + node.getNodeid() + "\">\n");
             if (idCheck.isSelected()) {
@@ -617,7 +627,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 writer.write("</H4>\n");
             }
             writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
-            String infoHtml = InfoNode.infoHtml(task, this, node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
+            String infoHtml = InfoNode.infoHtml(currentTask, this, node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
             if (infoHtml != null && !infoHtml.isBlank()) {
                 writer.write(indent + indent + indent + infoHtml + "\n");
             }
@@ -627,7 +637,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeXml(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
+    protected void writeXml(FxTask currentTask, Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             xmlWriter.write(indent + indent + "<" + message("Node") + ">\n");
             if (idCheck.isSelected()) {
@@ -668,7 +678,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeJson(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
+    protected void writeJson(FxTask currentTask, Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             StringBuilder s = new StringBuilder();
             if (!firstRow) {
@@ -711,7 +721,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                         .append("\"").append(message("Tags")).append("\": ")
                         .append(JsonTools.encode(t));
             }
-            String infoJson = InfoNode.infoJson(task, this, node.getCategory(), node.getInfo(), indent + indent);
+            String infoJson = InfoNode.infoJson(currentTask, this, node.getCategory(), node.getInfo(), indent + indent);
             if (infoJson != null && !infoJson.isBlank()) {
                 s.append(infoJson);
             }

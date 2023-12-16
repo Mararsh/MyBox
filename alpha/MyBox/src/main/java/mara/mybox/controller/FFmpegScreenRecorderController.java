@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
@@ -164,7 +165,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
             if (miaoRecordCheck.isSelected()) {
                 SoundTools.BenWu();
@@ -189,6 +190,9 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 String line;
                 long start = new Date().getTime();
                 while ((line = inReader.readLine()) != null) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        break;
+                    }
                     recording = line.contains(" bitrate=");
                     if (recording) {
                         started = true;
@@ -221,6 +225,10 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 SoundTools.miao7();
             }
             showLogs(message("Exit"));
+            if (currentTask == null || !currentTask.isWorking()) {
+                showLogs(message("Canceled"));
+                return false;
+            }
             if (started) {
                 Platform.runLater(new Runnable() {
                     @Override

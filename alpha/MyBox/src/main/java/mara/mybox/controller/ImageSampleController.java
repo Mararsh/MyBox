@@ -15,6 +15,7 @@ import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Languages;
@@ -259,16 +260,16 @@ public class ImageSampleController extends BaseShapeController {
     }
 
     @Override
-    public BufferedImage imageToSaveAs() {
+    public BufferedImage imageToSaveAs(FxTask currentTask) {
         if (sourceFile != null && imageInformation != null) {
             ImageInformation info = new ImageInformation(sourceFile);
             info.setIndex(imageInformation.getIndex())
                     .setRegion(x1, y1, x2, y2)
                     .setXscale(widthScale).setYscale(heightScale)
                     .setImageFormat(imageInformation.getImageFormat());
-            return ImageFileReaders.readFrame(task, info);
+            return ImageFileReaders.readFrame(currentTask, info);
         } else if (image != null) {
-            return CropTools.sample(task, SwingFXUtils.fromFXImage(image, null),
+            return CropTools.sample(currentTask, SwingFXUtils.fromFXImage(image, null),
                     (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
         } else {
             return null;

@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -46,12 +47,12 @@ public class ImageThresholdingController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             pixelsOperation.setImage(inImage).setScope(inScope)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = message("Threshold") + ": " + thresholdingController.threshold;
             Image result = pixelsOperation.operateFxImage();
             pixelsOperation = null;

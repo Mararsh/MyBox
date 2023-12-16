@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -108,13 +109,13 @@ public class Data2DTableCreateController extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try (Connection conn = DerbyBase.getConnection()) {
-            if (!attributesController.createTable(conn)) {
+            if (!attributesController.createTable(currentTask, conn)) {
                 return false;
             }
             if (editController.data2D.isMutiplePages()) {
-                attributesController.importAllData(conn, invalidAs);
+                attributesController.importAllData(currentTask, conn, invalidAs);
             } else {
                 attributesController.importData(conn, null, invalidAs);
             }

@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -47,10 +48,10 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
-            return remoteController.connect(task)
-                    && synchronize(remoteController.currentConnection.getPath());
+            return remoteController.connect(currentTask)
+                    && synchronize(currentTask, remoteController.currentConnection.getPath());
         } catch (Exception e) {
             showLogs(e.toString());
             return false;
@@ -71,14 +72,14 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     }
 
     @Override
-    public List<FileNode> targetChildren(FileNode targetNode) {
-        return remoteController.children(targetNode);
+    public List<FileNode> targetChildren(FxTask currentTask, FileNode targetNode) {
+        return remoteController.children(currentTask, targetNode);
     }
 
     @Override
-    public void deleteTargetFile(FileNode targetNode) {
+    public void deleteTargetFile(FxTask currentTask, FileNode targetNode) {
         if (targetNode != null) {
-            remoteController.delete(targetNode.nodeFullName());
+            remoteController.delete(currentTask, targetNode.nodeFullName());
         }
     }
 
@@ -92,12 +93,12 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     }
 
     @Override
-    public boolean copyFile(File sourceFile, FileNode targetNode) {
+    public boolean copyFile(FxTask currentTask, File sourceFile, FileNode targetNode) {
         try {
             if (targetNode == null) {
                 return false;
             }
-            return remoteController.put(sourceFile, targetNode.nodeFullName(),
+            return remoteController.put(currentTask, sourceFile, targetNode.nodeFullName(),
                     copyAttr.isCopyMTime(), copyAttr.getPermissions());
         } catch (Exception e) {
             showLogs(e.toString());

@@ -6,6 +6,7 @@ import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -87,7 +88,7 @@ public class ImageManufactureBatchEnhancementController extends BaseImageEditBat
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             BufferedImage target = null;
             ImageConvolution imageConvolution;
@@ -99,7 +100,7 @@ public class ImageManufactureBatchEnhancementController extends BaseImageEditBat
                         imageContrast.setImage(source)
                                 .setIntPara1(optionsController.intPara1)
                                 .setIntPara2(optionsController.intPara2)
-                                .setTask(task);
+                                .setTask(currentTask);
                         target = imageContrast.operate();
                         break;
                     case Convolution:
@@ -111,7 +112,7 @@ public class ImageManufactureBatchEnhancementController extends BaseImageEditBat
                         imageConvolution = ImageConvolution.create()
                                 .setKernel(optionsController.kernel);
                         imageConvolution.setImage(source)
-                                .setTask(task);
+                                .setTask(currentTask);
                         target = imageConvolution.operate();
                         break;
                     default:

@@ -9,10 +9,10 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.poi.sl.usermodel.Slide;
@@ -30,7 +30,7 @@ public class PptToImagesController extends BaseBatchFileController {
     protected ControlImageFormat formatController;
 
     public PptToImagesController() {
-        baseTitle = Languages.message("PptToImages");
+        baseTitle = message("PptToImages");
     }
 
     @Override
@@ -60,15 +60,15 @@ public class PptToImagesController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try (SlideShow ppt = SlideShowFactory.create(srcFile)) {
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;
             int index = 0;
             for (Slide slide : slides) {
-                if (task == null || !task.isWorking()) {
-                    return message("Cancelled");
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = slideImage.createGraphics();
@@ -76,14 +76,14 @@ public class PptToImagesController extends BaseBatchFileController {
                     g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
-                BufferedImage targetImage = ImageConvertTools.convertColorSpace(task,
+                BufferedImage targetImage = ImageConvertTools.convertColorSpace(currentTask,
                         slideImage, formatController.attributes);
-                if (task == null || !task.isWorking()) {
-                    return message("Cancelled");
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
                 if (targetImage != null) {
                     targetFile = makeTargetFile(srcFile, ++index, targetPath);
-                    if (ImageFileWriters.writeImageFile(task,
+                    if (ImageFileWriters.writeImageFile(currentTask,
                             targetImage, formatController.attributes, targetFile.getAbsolutePath())) {
                         targetFileGenerated(targetFile);
                     }
@@ -94,7 +94,7 @@ public class PptToImagesController extends BaseBatchFileController {
             return e.toString();
         }
 
-        return Languages.message("Successful");
+        return message("Successful");
     }
 
     public File makeTargetFile(File srcFile, int index, File targetPath) {

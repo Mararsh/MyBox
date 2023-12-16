@@ -12,6 +12,7 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -62,17 +63,20 @@ public class HtmlMergeAsMarkdownController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
-            String html = TextFileTools.readTexts(task, file);
-            if (html == null || (task != null && !task.isWorking())) {
-                return message("Canceled");
+            String html = TextFileTools.readTexts(currentTask, file);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Cancelled");
+            }
+            if (html == null) {
+                return message("Failed");
             }
             String md = mdConverter.convert(html);
             writer.write(md + "\n");

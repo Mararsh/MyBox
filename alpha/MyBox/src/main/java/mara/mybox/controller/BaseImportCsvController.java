@@ -173,15 +173,15 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || currentTask.isCancelled()) {
                 return Languages.message("Canceled");
             }
             if (srcFile == null || !srcFile.isFile()) {
                 return Languages.message("Skip");
             }
-            long count = importFile(srcFile);
+            long count = importFile(currentTask, srcFile);
             if (count >= 0) {
                 totalItemsHandled += count;
                 return Languages.message("Successful");
@@ -194,9 +194,9 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
         }
     }
 
-    public long importFile(File file) {
+    public long importFile(FxTask currentTask, File file) {
         try (Connection conn = DerbyBase.getConnection()) {
-            long ret = importFile(task, conn, file);
+            long ret = importFile(currentTask, conn, file);
             conn.commit();
             return ret;
         } catch (Exception e) {
@@ -205,7 +205,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
         return -1;
     }
 
-    public long importFile(FxTask task, Connection conn, File file) {
+    public long importFile(FxTask currentTask, Connection conn, File file) {
         if (getTableDefinition() == null) {
             return -1;
         }
@@ -213,8 +213,8 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
 //            return importFileBatch(conn, file);
 //        }
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0;
-        File validFile = FileTools.removeBOM(task, file);
-        if (validFile == null || (task != null && !task.isWorking())) {
+        File validFile = FileTools.removeBOM(currentTask, file);
+        if (validFile == null || (currentTask != null && !currentTask.isWorking())) {
             return -1;
         }
         try (CSVParser parser = CSVParser.parse(validFile, TextFileTools.charset(file), CsvTools.csvFormat())) {
@@ -228,7 +228,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                 conn.setAutoCommit(false);
                 int line = 0;
                 for (CSVRecord record : parser) {
-                    if (task == null || !task.isWorking()) {
+                    if (currentTask == null || !currentTask.isWorking()) {
                         conn.commit();
                         updateLogs("Canceled", true);
                         return importCount;

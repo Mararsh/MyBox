@@ -11,6 +11,7 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -69,7 +70,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
     }
 
     @Override
-    public List<P> readPageData(Connection conn) {
+    public List<P> readPageData(FxTask currentTask, Connection conn) {
         if (tableDefinition != null) {
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } else {
@@ -78,7 +79,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
     }
 
     @Override
-    public long readDataSize(Connection conn) {
+    public long readDataSize(FxTask currentTask, Connection conn) {
         if (tableDefinition != null) {
             if (queryConditions != null) {
                 return tableDefinition.conditionSize(conn, queryConditions);
@@ -91,7 +92,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
     }
 
     @Override
-    protected int deleteData(List<P> data) {
+    protected int deleteData(FxTask currentTask, List<P> data) {
         if (data == null || data.isEmpty()) {
             return 0;
         }
@@ -102,7 +103,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
     }
 
     @Override
-    protected long clearData() {
+    protected long clearData(FxTask currentTask) {
         if (tableDefinition != null) {
             return tableDefinition.deleteCondition(queryConditions);
         } else {

@@ -930,7 +930,7 @@ public class DataTableGroup {
                 return false;
             }
             long rowIndex;
-            String sql;
+            String sql, script;
             for (DataFilter filter : conditions) {
                 if (task == null || task.isCancelled()) {
                     return false;
@@ -947,7 +947,11 @@ public class DataTableGroup {
                 recordGroup(groupid, parameterValue);
                 fmax = Math.min(max <= 0 ? Long.MAX_VALUE : max,
                         fmax <= 0 ? Long.MAX_VALUE : fmax);
-                filter.setFilledScript(tmpData.tmpScript(filter.getFilledScript()));
+                script = tmpData.tmpScript(filter.getFilledScript());
+                if (task == null || task.isCancelled()) {
+                    return false;
+                }
+                filter.setFilledScript(script);
                 if (task != null) {
                     task.setInfo(sql);
                 }

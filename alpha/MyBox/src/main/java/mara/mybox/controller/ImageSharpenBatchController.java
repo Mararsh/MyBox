@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 
@@ -35,11 +36,11 @@ public class ImageSharpenBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             return ImageConvolution.create()
                     .setImage(source).setKernel(kernel)
-                    .setTask(task)
+                    .setTask(currentTask)
                     .operate();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -48,11 +49,11 @@ public class ImageSharpenBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
+    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
         try {
             ImageConvolution convolution = ImageConvolution.create()
                     .setImage(demoImage);
-            ImageDemoTools.sharpen(demoTask, files, convolution);
+            ImageDemoTools.sharpen(currentTask, files, convolution);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

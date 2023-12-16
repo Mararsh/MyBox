@@ -10,6 +10,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
@@ -53,13 +54,13 @@ public class ImageSepiaController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             pixelsOperation.setImage(inImage)
                     .setScope(inScope)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = message("Intensity") + ": " + sepiaController.intensity;
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
@@ -69,7 +70,7 @@ public class ImageSepiaController extends BasePixelsController {
     }
 
     @Override
-    protected void makeDemoFiles(List<String> files, Image inImage) {
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image inImage) {
         try {
             BufferedImage demoImage = SwingFXUtils.fromFXImage(inImage, null);
             BufferedImage bufferedImage;
@@ -78,21 +79,21 @@ public class ImageSepiaController extends BasePixelsController {
                     demoImage, scope(), PixelsOperation.OperationType.Sepia)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(demoTask);
+                    .setTask(currentTask);
             List<Integer> values = Arrays.asList(60, 80, 20, 50, 10, 5, 100, 15, 20);
             for (int v : values) {
-                if (demoTask == null || !demoTask.isWorking()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
                 bufferedImage = pixelsOperation.setIntPara1(v).operate();
-                if (demoTask == null || !demoTask.isWorking()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
                 tmpFile = FileTmpTools.generateFile(message("Sepia") + "_" + message("Intensity") + v, "png")
                         .getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                if (ImageFileWriters.writeImageFile(currentTask, bufferedImage, tmpFile)) {
                     files.add(tmpFile);
-                    demoTask.setInfo(tmpFile);
+                    currentTask.setInfo(tmpFile);
                 }
             }
 

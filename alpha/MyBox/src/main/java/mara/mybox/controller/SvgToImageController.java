@@ -6,6 +6,7 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
@@ -57,32 +58,30 @@ public class SvgToImageController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return message("Skip");
         }
-        Document doc = XmlTools.fileToDoc(task, this, srcFile);
+        Document doc = XmlTools.fileToDoc(currentTask, this, srcFile);
+        if (currentTask == null || !currentTask.isWorking()) {
+            return message("Canceled");
+        }
         if (doc == null) {
-            if (task != null && !task.isWorking()) {
-                return message("Failed");
-            } else {
-                return message("Canceled");
-            }
+            return message("Failed");
         }
         svgOptionsController.checkValues(doc);
-        File tmpFile = SvgTools.fileToImage(task, this, srcFile,
+        File tmpFile = SvgTools.fileToImage(currentTask, this, srcFile,
                 svgOptionsController.width,
                 svgOptionsController.height,
                 svgOptionsController.area);
-        if (tmpFile == null || !tmpFile.exists()) {
-            if (task != null && !task.isWorking()) {
-                return message("Failed");
-            } else {
-                return message("Canceled");
-            }
+        if (currentTask == null || !currentTask.isWorking()) {
+            return message("Canceled");
         }
-        if (ImageConvertTools.convertColorSpace(task, tmpFile, attributes, target)) {
+        if (tmpFile == null || !tmpFile.exists()) {
+            return message("Canceled");
+        }
+        if (ImageConvertTools.convertColorSpace(currentTask, tmpFile, attributes, target)) {
             targetFileGenerated(target);
             return message("Successful");
         } else {

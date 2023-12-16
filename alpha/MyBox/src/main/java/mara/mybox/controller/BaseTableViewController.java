@@ -536,6 +536,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     }
                     data = new ArrayList<>();
                     for (int r = 0; r < tableData.size(); r++) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         List<String> row = new ArrayList<>();
                         for (int c = 0; c < colsNumber; c++) {
                             if (c == rowsSelectionColumnIndex) {
@@ -588,7 +591,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         start(htmlTask, false, message("LoadingTableData"));
     }
 
-    protected StringTable makeStringTable(FxTask task) {
+    protected StringTable makeStringTable(FxTask currentTask) {
         try {
             List<String> names = new ArrayList<>();
             int rowsSelectionColumnIndex = -1;
@@ -622,7 +625,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                             width = (int) image.getWidth();
                         }
                         if (image != null) {
-                            String base64 = FxImageTools.base64(task, image, "png");
+                            String base64 = FxImageTools.base64(currentTask, image, "png");
                             if (base64 != null) {
                                 s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
                             }

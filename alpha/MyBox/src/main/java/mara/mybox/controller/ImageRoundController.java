@@ -12,6 +12,7 @@ import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
@@ -70,12 +71,12 @@ public class ImageRoundController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
-        handledImage = FxImageTools.setRound(task, srcImage(), w, h, color);
+    protected void handleImage(FxTask currentTask) {
+        handledImage = FxImageTools.setRound(currentTask, srcImage(), w, h, color);
     }
 
     @Override
-    protected void makeDemoFiles(List<String> files, Image demoImage) {
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         try {
             BufferedImage srcImage = SwingFXUtils.fromFXImage(srcImage(), null);
             int width = srcImage.getWidth();
@@ -86,15 +87,15 @@ public class ImageRoundController extends BaseImageEditController {
             values.addAll(Arrays.asList(width / 6, width / 8, width / 4, width / 10,
                     width / 20, width / 30));
             for (int r : values) {
-                if (demoTask == null || !demoTask.isWorking()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
                 BufferedImage bufferedImage = BufferedImageTools.setRound(
-                        demoTask, srcImage, r, r, acolor);
+                        currentTask, srcImage, r, r, acolor);
                 String tmpFile = FileTmpTools.generateFile(prefix + r, "png").getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                if (ImageFileWriters.writeImageFile(currentTask, bufferedImage, "png", tmpFile)) {
                     files.add(tmpFile);
-                    demoTask.setInfo(tmpFile);
+                    currentTask.setInfo(tmpFile);
                 }
             }
         } catch (Exception e) {

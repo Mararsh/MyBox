@@ -8,8 +8,8 @@ import javafx.geometry.Point2D;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -80,7 +80,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
             @Override
             protected boolean handle() {
-                ok = sourceInformation.writeObject(mainArea.getText());
+                ok = sourceInformation.writeObject(this, mainArea.getText());
                 return ok;
             }
 
@@ -115,9 +115,9 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             @Override
             protected boolean handle() {
                 if (backupController != null && backupController.needBackup()) {
-                    backupController.addBackup(task, sourceFile);
+                    backupController.addBackup(this, sourceFile);
                 }
-                return sourceInformation.writePage(sourceInformation, mainArea.getText());
+                return sourceInformation.writePage(this, sourceInformation, mainArea.getText());
             }
 
             @Override
@@ -128,8 +128,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 }
                 sourceInformation.setTotalNumberRead(false);
                 String pageText = mainArea.getText();
-                sourceInformation.setCurrentPageLineEnd(sourceInformation.getCurrentPageLineStart() + pageLinesNumber(pageText));
-                sourceInformation.setCurrentPageObjectEnd(sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber(pageText));
+                sourceInformation.setCurrentPageLineEnd(
+                        sourceInformation.getCurrentPageLineStart() + pageLinesNumber(pageText));
+                sourceInformation.setCurrentPageObjectEnd(
+                        sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber(pageText));
                 updateInterface(false);
                 loadTotalNumbers();
             }
@@ -167,7 +169,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
             @Override
             protected boolean handle() {
-                return targetInformation.writePage(sourceInformation, mainArea.getText());
+                return targetInformation.writePage(this, sourceInformation, mainArea.getText());
             }
 
             @Override
@@ -234,7 +236,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
                     @Override
                     protected boolean handle() {
-                        text = sourceInformation.readLine(locateLine);
+                        text = sourceInformation.readLine(this, locateLine);
                         return text != null;
                     }
 
@@ -277,7 +279,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
                     @Override
                     protected boolean handle() {
-                        text = sourceInformation.readObject(locateObject);
+                        text = sourceInformation.readObject(this, locateObject);
                         return text != null;
                     }
 
@@ -330,7 +332,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
                     @Override
                     protected boolean handle() {
-                        text = sourceInformation.readLines(from, number);
+                        text = sourceInformation.readLines(this, from, number);
                         return text != null;
                     }
 
@@ -385,7 +387,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
                     @Override
                     protected boolean handle() {
-                        text = sourceInformation.readObjects(from, len);
+                        text = sourceInformation.readObjects(this, from, len);
                         return text != null;
                     }
 
@@ -448,7 +450,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 } else {
                     finalCondition = filterConditionsString + "\n" + message("And") + conditions;
                 }
-                filteredFile = filterInfo.filter(filterController.filterLineNumberCheck.isSelected());
+                filteredFile = filterInfo.filter(this, filterController.filterLineNumberCheck.isSelected());
                 return filteredFile != null;
             }
 
@@ -458,11 +460,11 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     popInformation(message("NoData"));
                     return;
                 }
-                TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-                controller.sourceFileChanged(filteredFile);
-                controller.filterConditionsLabel.setText(finalCondition);
-                controller.filterConditionsString = finalCondition;
-                controller.filterPane.setExpanded(true);
+                TextEditorController c = (TextEditorController) openStage(Fxmls.TextEditorFxml);
+                c.sourceFileChanged(filteredFile);
+                c.filterConditionsLabel.setText(finalCondition);
+                c.filterConditionsString = finalCondition;
+                c.filterPane.setExpanded(true);
             }
         };
         start(filterTask, false, null);

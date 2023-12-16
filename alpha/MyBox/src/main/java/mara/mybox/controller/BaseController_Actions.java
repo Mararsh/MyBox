@@ -482,44 +482,44 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         }
     }
 
-    public LoadingController start(Task<?> task) {
-        return start(task, true, null);
+    public LoadingController start(Task<?> currentTask) {
+        return start(currentTask, true, null);
     }
 
-    public LoadingController start(Task<?> task, String info) {
-        return start(task, true, info);
+    public LoadingController start(Task<?> currentTask, String info) {
+        return start(currentTask, true, info);
     }
 
-    public LoadingController start(Task<?> task, boolean handling) {
-        return start(task, handling, null);
+    public LoadingController start(Task<?> currentTask, boolean handling) {
+        return start(currentTask, handling, null);
     }
 
-    public LoadingController start(Task<?> task, boolean handling, String info) {
+    public LoadingController start(Task<?> currentTask, boolean handling, String info) {
         LoadingController controller = null;
         if (handling) {
-            controller = handling(task, info);
-        } else if (task instanceof FxTask) {
-            FxTask sTask = (FxTask) task;
+            controller = handling(currentTask, info);
+        } else if (currentTask instanceof FxTask) {
+            FxTask sTask = (FxTask) currentTask;
             sTask.setController(myController);
             sTask.setSelf(sTask);
             sTask.setLoading(controller);
         }
-        Thread thread = new Thread(task);
+        Thread thread = new Thread(currentTask);
         thread.setDaemon(false);
         thread.start();
         return controller;
     }
 
-    public void start(Task<?> task, Node node) {
-        if (task instanceof FxTask) {
-            FxTask sTask = (FxTask) task;
+    public void start(Task<?> currentTask, Node node) {
+        if (currentTask instanceof FxTask) {
+            FxTask sTask = (FxTask) currentTask;
             sTask.setController(myController);
             sTask.setSelf(sTask);
             if (node != null) {
                 sTask.setDisableNode(node);
             }
         }
-        Thread thread = new Thread(task);
+        Thread thread = new Thread(currentTask);
         thread.setDaemon(false);
         thread.start();
     }

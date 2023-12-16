@@ -237,9 +237,9 @@ public class ImagesPlayController extends BaseImagesListController {
                 } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
                     return loadPPT();
                 } else if (fileFormat.equalsIgnoreCase("ico") || fileFormat.equalsIgnoreCase("icon")) {
-                    return loadIconFile();
+                    return loadIconFile(this);
                 } else {
-                    return loadImageFile();
+                    return loadImageFile(this);
                 }
             }
 
@@ -255,7 +255,7 @@ public class ImagesPlayController extends BaseImagesListController {
     }
 
     // Read images as more as possible
-    protected boolean loadImageFile() {
+    protected boolean loadImageFile(FxTask currentTask) {
         imageReader = null;
         imageInfos.clear();
         Platform.runLater(() -> {
@@ -270,7 +270,11 @@ public class ImagesPlayController extends BaseImagesListController {
             if (loading != null) {
                 loading.setInfo(message("Loading") + " " + message("MetaData"));
             }
-            ImageFileReaders.readImageFileMetaData(task, imageReader, fileInfo);
+            ImageFileReaders.readImageFileMetaData(currentTask, imageReader, fileInfo);
+            if (currentTask == null || !currentTask.isWorking()) {
+                loading.setInfo(message("Canceled"));
+                return false;
+            }
             imageInfos.addAll(fileInfo.getImagesInformation());
             if (imageInfos == null) {
                 imageReader.dispose();
@@ -311,7 +315,7 @@ public class ImagesPlayController extends BaseImagesListController {
         }
     }
 
-    protected boolean loadIconFile() {
+    protected boolean loadIconFile(FxTask currentTask) {
         imageInfos.clear();
         Platform.runLater(() -> {
             imagesRadio.setSelected(true);
@@ -320,7 +324,10 @@ public class ImagesPlayController extends BaseImagesListController {
             return false;
         }
         try {
-            ImageFileInformation finfo = ImageFileInformation.readIconFile(task, sourceFile);
+            ImageFileInformation finfo = ImageFileInformation.readIconFile(currentTask, sourceFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
+            }
             imageInfos.addAll(finfo.getImagesInformation());
         } catch (Exception e) {
             if (task != null) {
@@ -329,7 +336,7 @@ public class ImagesPlayController extends BaseImagesListController {
             MyBoxLog.error(e);
             return false;
         }
-        return task != null && !task.isCancelled();
+        return true;
     }
 
     public boolean loadPPT() {

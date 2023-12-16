@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 
@@ -35,7 +36,7 @@ public class ImageShadowBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             int w, h;
             if (wPer) {
@@ -48,7 +49,7 @@ public class ImageShadowBatchController extends BaseImageEditBatchController {
             } else {
                 h = shadowController.h;
             }
-            BufferedImage target = BufferedImageTools.addShadow(task,
+            BufferedImage target = BufferedImageTools.addShadow(currentTask,
                     source, w, h, color, blur);
             return target;
         } catch (Exception e) {
@@ -58,9 +59,9 @@ public class ImageShadowBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
+    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
         try {
-            ImageDemoTools.shadow(demoTask, files, demoImage, shadowController.awtColor());
+            ImageDemoTools.shadow(currentTask, files, demoImage, shadowController.awtColor());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

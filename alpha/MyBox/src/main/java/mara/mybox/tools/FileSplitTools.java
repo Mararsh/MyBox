@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -16,7 +17,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class FileSplitTools {
 
-    public static List<File> splitFileByFilesNumber(File file, String filename, long filesNumber) {
+    public static List<File> splitFileByFilesNumber(FxTask currentTask, File file, String filename, long filesNumber) {
         try {
             if (file == null || filesNumber <= 0) {
                 return null;
@@ -32,6 +33,9 @@ public class FileSplitTools {
                 int startIndex = 0;
                 int endIndex = 0;
                 while ((fileIndex < filesNumber) && (bufLen = inputStream.read(buf)) > 0) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return null;
+                    }
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit) + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(newFilename))) {
@@ -43,6 +47,9 @@ public class FileSplitTools {
                     splittedFiles.add(new File(newFilename));
                     fileIndex++;
                     startIndex = endIndex;
+                }
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return null;
                 }
                 buf = new byte[(int) (file.length() - endIndex)];
                 bufLen = inputStream.read(buf);
@@ -62,13 +69,16 @@ public class FileSplitTools {
         }
     }
 
-    public static List<File> splitFileByStartEndList(File file, String filename, List<Long> startEndList) {
+    public static List<File> splitFileByStartEndList(FxTask currentTask, File file, String filename, List<Long> startEndList) {
         try {
             if (file == null || startEndList == null || startEndList.isEmpty() || startEndList.size() % 2 > 0) {
                 return null;
             }
             List<File> splittedFiles = new ArrayList<>();
             for (int i = 0; i < startEndList.size(); i += 2) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return null;
+                }
                 File f = cutFile(file, filename, startEndList.get(i), startEndList.get(i + 1));
                 if (f != null) {
                     splittedFiles.add(f);
@@ -81,7 +91,7 @@ public class FileSplitTools {
         }
     }
 
-    public static List<File> splitFileByBytesNumber(File file, String filename, long bytesNumber) {
+    public static List<File> splitFileByBytesNumber(FxTask currentTask, File file, String filename, long bytesNumber) {
         try {
             if (file == null || bytesNumber <= 0) {
                 return null;
@@ -100,6 +110,9 @@ public class FileSplitTools {
                 int startIndex = 0;
                 int endIndex = 0;
                 while ((bufLen = inputStream.read(buf)) > 0) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return null;
+                    }
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit) + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(newFilename))) {

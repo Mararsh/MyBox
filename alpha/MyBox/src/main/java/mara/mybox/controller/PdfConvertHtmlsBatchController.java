@@ -14,6 +14,7 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -103,7 +104,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
         try {
@@ -120,7 +121,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                 actualParameters.currentPage = actualParameters.fromPage;
             }
 
-            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                     currentParameters.password, AppVariables.PdfMemUsage)) {
                 doc = pd;
 
@@ -139,7 +140,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                     }
                     for (currentParameters.currentPage = currentParameters.startPage;
                             currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
-                        if (task == null || task.isCancelled()) {
+                        if (currentTask == null || currentTask.isCancelled()) {
                             break;
                         }
                         updateLogs(Languages.message("HandlingPage") + ":" + currentParameters.currentPage, true, true);
@@ -207,7 +208,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
             PDFDomTree parser = new PDFDomTree(domConfig);
             parser.setStartPage(start);                                       // 1-based
             parser.setEndPage(end);
-            try ( Writer output = new PrintWriter(htmlFile, "utf-8")) {
+            try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
                 parser.writeText(doc, output);
                 return htmlFile;
             } catch (Exception e) {

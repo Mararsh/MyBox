@@ -31,8 +31,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
@@ -535,15 +535,24 @@ public class ControlFindReplace extends BaseController {
             @Override
             protected boolean handle() {
                 if (!findReplace.isMultiplePages()) {
-                    if (!findReplace.handleString()) {
+                    if (!findReplace.handleString(this)) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         error = findReplace.getError();
                     }
-                } else if (!findReplace.handlePage()) {
+                } else if (!findReplace.handlePage(this)) {
+                    if (!isWorking()) {
+                        return false;
+                    }
                     if (editerController.fileChanged.getValue()) {
                         askSave = true;
                         return false;
                     }
-                    if (!findReplace.handleFile()) {
+                    if (!findReplace.handleFile(this)) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         error = findReplace.getError();
                     }
                 }
@@ -551,7 +560,7 @@ public class ControlFindReplace extends BaseController {
                     return false;
                 }
                 lastStringRange = findReplace.getStringRange();
-                return true;
+                return isWorking();
             }
 
             @Override
@@ -640,14 +649,17 @@ public class ControlFindReplace extends BaseController {
 
             @Override
             protected boolean handle() {
-                if (!findReplace.handleString()) {
+                if (!findReplace.handleString(this)) {
+                    if (!isWorking()) {
+                        return false;
+                    }
                     error = findReplace.getError();
                 }
                 if (error != null) {
                     return false;
                 }
                 lastStringRange = findReplace.getStringRange();
-                return true;
+                return isWorking();
             }
 
             @Override

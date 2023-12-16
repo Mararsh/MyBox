@@ -32,12 +32,12 @@ public class ImageMosaic extends PixelsOperation {
 
     public static ImageMosaic create(BufferedImage image, ImageScope scope, MosaicType type, int intensity) {
         return ImageMosaic.create().image(image)
-                .scope(scope).type(type).intensity(intensity).init();
+                .scope(scope).type(type).intensity(intensity);
     }
 
     public static ImageMosaic create(Image image, ImageScope scope, MosaicType type, int intensity) {
         return ImageMosaic.create().image(SwingFXUtils.fromFXImage(image, null))
-                .scope(scope).type(type).intensity(intensity).init();
+                .scope(scope).type(type).intensity(intensity);
     }
 
     public ImageMosaic type(MosaicType type) {
@@ -57,15 +57,6 @@ public class ImageMosaic extends PixelsOperation {
 
     public ImageMosaic scope(ImageScope scope) {
         this.scope = scope;
-        return this;
-    }
-
-    public ImageMosaic init() {
-        if (type == null) {
-            type = MosaicType.Mosaic;
-        }
-        imageWidth = image.getWidth();
-        imageHeight = image.getHeight();
         return this;
     }
 

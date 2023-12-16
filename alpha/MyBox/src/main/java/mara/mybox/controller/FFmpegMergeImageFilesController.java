@@ -14,6 +14,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.imagefile.ImageFileReaders.getReader;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -38,12 +39,12 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
     }
 
     @Override
-    protected File handleImages() {
+    protected File handleImages(FxTask currentTask) {
         try {
             imageFileString = new StringBuilder();
             lastFile = null;
             for (int i = 0; i < tableData.size(); ++i) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     updateLogs(message("TaskCancelled"), true);
                     return null;
                 }
@@ -57,9 +58,9 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 if (!file.exists()) {
                     result = message("NotFound");
                 } else if (file.isFile()) {
-                    result = handleFile(file, info.getDuration());
+                    result = handleFile(currentTask, file, info.getDuration());
                 } else if (file.isDirectory()) {
-                    result = handleDirectory(file, info.getDuration());
+                    result = handleDirectory(currentTask, file, info.getDuration());
                 } else {
                     result = message("NotFound");
                 }
@@ -79,7 +80,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         }
     }
 
-    public String handleDirectory(File directory, long duration) {
+    public String handleDirectory(FxTask currentTask, File directory, long duration) {
         try {
             if (directory == null || !directory.isDirectory()) {
                 return message("Failed");
@@ -89,13 +90,13 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 return message("Done");
             }
             for (File srcFile : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return message("Canceled");
                 }
                 if (srcFile.isFile()) {
-                    handleFile(srcFile, duration);
+                    handleFile(currentTask, srcFile, duration);
                 } else if (srcFile.isDirectory()) {
-                    handleDirectory(srcFile, duration);
+                    handleDirectory(currentTask, srcFile, duration);
                 }
             }
             return message("Done");
@@ -105,7 +106,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         }
     }
 
-    public String handleFile(File file, long duration) {
+    public String handleFile(FxTask currentTask, File file, long duration) {
         if (file == null) {
             return message("Failed");
         }
@@ -117,7 +118,10 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             try {
                 List<BufferedImage> imageSrc = ICODecoder.read(file);
                 for (BufferedImage image : imageSrc) {
-                    handleImage(image, duration);
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return message("Canceled");
+                    }
+                    handleImage(currentTask, image, duration);
                 }
                 totalFilesHandled++;
                 return message("Done");
@@ -137,6 +141,9 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             ImageInformation imageInfo = new ImageInformation(file);
             imageInfo.setImageFormat(format);
             for (int i = 0; i < num; i++) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
+                }
                 if (num > 1) {
                     updateLogs(message("Reading") + ": " + file + "-" + (i + 1), true);
                 } else {
@@ -149,10 +156,13 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                     if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                         break;
                     }
-                    frame = ImageFileReaders.readBrokenImage(task, e, imageInfo.setIndex(i));
+                    frame = ImageFileReaders.readBrokenImage(currentTask, e, imageInfo.setIndex(i));
+                }
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
                 if (frame != null) {
-                    handleImage(frame, duration);
+                    handleImage(currentTask, frame, duration);
                 } else {
                     break;
                 }
@@ -166,12 +176,12 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         }
     }
 
-    public boolean handleImage(BufferedImage image, long duration) {
+    public boolean handleImage(FxTask currentTask, BufferedImage image, long duration) {
         try {
             BufferedImage fitImage = ScaleTools.fitSize(image,
                     ffmpegOptionsController.width, ffmpegOptionsController.height);
             File tmpFile = FileTmpTools.getTempFile(".png");
-            if (ImageFileWriters.writeImageFile(task, fitImage, tmpFile) && tmpFile.exists()) {
+            if (ImageFileWriters.writeImageFile(currentTask, fitImage, tmpFile) && tmpFile.exists()) {
                 lastFile = tmpFile;
                 imageFileString.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
                 imageFileString.append("duration  ").append(duration / 1000.00f).append("\n");

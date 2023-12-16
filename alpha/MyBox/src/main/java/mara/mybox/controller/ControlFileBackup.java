@@ -22,16 +22,16 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlFileBackup extends BaseController {
-    
+
     protected TableFileBackup tableFileBackup;
-    
+
     @FXML
     protected CheckBox backupCheck;
     @FXML
     protected Button backupButton;
     @FXML
     protected Label totalLabel;
-    
+
     public ControlFileBackup() {
     }
 
@@ -40,11 +40,11 @@ public class ControlFileBackup extends BaseController {
         try {
             this.parentController = parent;
             this.baseName = name;
-            
+
             tableFileBackup = new TableFileBackup();
-            
+
             backupCheck.setSelected(UserConfig.getBoolean(baseName + "Backup", false));
-            
+
             backupCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
@@ -52,28 +52,28 @@ public class ControlFileBackup extends BaseController {
                     if (!backupCheck.isSelected()) {
                         totalLabel.setText("");
                     }
-                    
+
                 }
             });
-            
+
             backupButton.disableProperty().bind(backupCheck.selectedProperty().not());
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-    
+
     public void loadBackups(File file) {
         sourceFile = file;
         totalLabel.setText("");
     }
-    
-    public void addBackup(FxTask task, File file) {
+
+    public void addBackup(FxTask currentTask, File file) {
         sourceFile = file;
         FxTask backTask = new FxTask<Void>(this) {
             private int total;
             private FileBackup backup;
-            
+
             @Override
             protected boolean handle() {
                 backup = null;
@@ -92,7 +92,7 @@ public class ControlFileBackup extends BaseController {
                 }
                 return true;
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 if (backup != null) {
@@ -101,23 +101,23 @@ public class ControlFileBackup extends BaseController {
                     FileBackupController.updateList(sourceFile);
                 }
             }
-            
+
             @Override
             protected void whenFailed() {
                 totalLabel.setText(error != null ? error : message("FailBackup"));
             }
-            
+
         };
         start(backTask, false);
     }
-    
+
     public boolean needBackup() {
         return backupCheck != null && backupCheck.isSelected();
     }
-    
+
     @FXML
     public void showBackups() {
         FileBackupController.load(this);
     }
-    
+
 }

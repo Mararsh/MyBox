@@ -9,6 +9,7 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
@@ -63,7 +64,7 @@ public class PptToPdfController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return message("Skip");
@@ -84,8 +85,8 @@ public class PptToPdfController extends BaseBatchFileController {
             int height = ppt.getPageSize().height;
             int count = 0, total = slides.size();
             for (Slide slide : slides) {
-                if (task == null || task.isCancelled()) {
-                    return message("Cancelled");
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = slideImage.createGraphics();
@@ -93,11 +94,14 @@ public class PptToPdfController extends BaseBatchFileController {
                     g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
-                if (task == null || task.isCancelled()) {
-                    return message("Cancelled");
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
-                PdfTools.writePage(task,
+                PdfTools.writePage(currentTask,
                         document, "png", slideImage, ++count, total, pdfOptionsController);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
             }
             PDPage page = document.getPage(0);
             PDPageXYZDestination dest = new PDPageXYZDestination();

@@ -6,10 +6,11 @@ import javafx.fxml.FXML;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,7 +23,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
     protected ControlTextFilter filterController;
 
     public TextFilterBatchController() {
-        baseTitle = Languages.message("TextFilterBatch");
+        baseTitle = message("TextFilterBatch");
     }
 
     @Override
@@ -58,36 +59,41 @@ public class TextFilterBatchController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             String namePrefix = FileNameTools.prefix(srcFile.getName());
-            File target = makeTargetFile(Languages.message("Filter") + "-" + namePrefix, ".txt", targetPath);
+            File target = makeTargetFile(message("Filter") + "-" + namePrefix, ".txt", targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
             TextEditInformation fileInfo = new TextEditInformation(srcFile);
-            fileInfo.setLineBreak(TextTools.checkLineBreak(task, srcFile));
+            fileInfo.setLineBreak(TextTools.checkLineBreak(currentTask, srcFile));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
             fileInfo.checkCharset();
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
 
             fileInfo.setFilterStrings(filterController.filterStrings);
             fileInfo.setFilterType(filterController.filterType);
 
-            File filteredFile = fileInfo.filter(filterController.filterLineNumberCheck.isSelected());
-
+            File filteredFile = fileInfo.filter(currentTask, filterController.filterLineNumberCheck.isSelected());
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (filteredFile == null || !filteredFile.exists() || filteredFile.length() == 0) {
-                return Languages.message("NoData");
+                return message("NoData");
             }
             if (FileTools.override(filteredFile, target)) {
                 targetFileGenerated(target);
-                return Languages.message("Successful");
+                return message("Successful");
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

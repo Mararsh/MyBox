@@ -8,6 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -95,9 +96,9 @@ public class ImageRotateController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
+    protected void handleImage(FxTask currentTask) {
         opInfo = currentAngle + "";
-        handledImage = TransformTools.rotateImage(task, currentImage(), currentAngle);
+        handledImage = TransformTools.rotateImage(currentTask, currentImage(), currentAngle);
     }
 
     /*

@@ -16,14 +16,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-
-import mara.mybox.value.Languages;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -55,7 +53,7 @@ public class FilesCompressBatchController extends BaseBatchFileController {
     protected Label commentsLabel;
 
     public FilesCompressBatchController() {
-        baseTitle = Languages.message("FilesCompressBatch");
+        baseTitle = message("FilesCompressBatch");
         viewTargetPath = true;
     }
 
@@ -121,30 +119,33 @@ public class FilesCompressBatchController extends BaseBatchFileController {
         }
         sevenZCompressPane.setVisible(ArchiveStreamFactory.SEVEN_Z.equals(compressor));
         if ("pack200".equals(compressor)) {
-            commentsLabel.setText(Languages.message("Pack200Comments"));
+            commentsLabel.setText(message("Pack200Comments"));
         } else {
             commentsLabel.setText("");
         }
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             targetFile = makeTargetFile(srcFile.getName(), extension, targetPath);
             if (targetFile == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
-            Date startTime = new Date();
+            startTime = new Date();
             File tmpFile = FileTmpTools.getTempFile();
             if (compressor.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
-                try ( SevenZOutputFile sevenZOutput = new SevenZOutputFile(tmpFile)) {
+                try (SevenZOutputFile sevenZOutput = new SevenZOutputFile(tmpFile)) {
                     sevenZOutput.setContentCompression(sevenCompress);
                     SevenZArchiveEntry entry = sevenZOutput.createArchiveEntry(srcFile, srcFile.getName());
                     sevenZOutput.putArchiveEntry(entry);
-                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
+                    try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
                         int len;
                         byte[] buf = new byte[AppValues.IOBufferLength];
                         while ((len = inputStream.read(buf)) > 0) {
+                            if (currentTask == null || !currentTask.isWorking()) {
+                                break;
+                            }
                             sevenZOutput.write(buf, 0, len);
                         }
                     }
@@ -155,11 +156,11 @@ public class FilesCompressBatchController extends BaseBatchFileController {
             } else if ("zip".equals(compressor) || "jar".equals(compressor)
                     || "7z".equals(compressor)) {
                 ArchiveStreamFactory f = new ArchiveStreamFactory("UTF-8");
-                try ( ArchiveOutputStream archiveOut = new ArchiveStreamFactory("UTF-8").
+                try (ArchiveOutputStream archiveOut = new ArchiveStreamFactory("UTF-8").
                         createArchiveOutputStream(compressor, new BufferedOutputStream(new FileOutputStream(tmpFile)))) {
                     ArchiveEntry entry = archiveOut.createArchiveEntry(srcFile, srcFile.getName());
                     archiveOut.putArchiveEntry(entry);
-                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
+                    try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
                         if (inputStream != null) {
                             IOUtils.copy(inputStream, archiveOut);
                         }
@@ -169,18 +170,21 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                 }
 
             } else {
-                try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile));
-                         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                         CompressorOutputStream compressOut = new CompressorStreamFactory().
+                try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile));
+                        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                        CompressorOutputStream compressOut = new CompressorStreamFactory().
                                 createCompressorOutputStream(compressor, out)) {
                     if (inputStream != null) {
                         IOUtils.copy(inputStream, compressOut);
                     }
                 }
             }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (FileTools.override(tmpFile, targetFile)) {
                 if (verboseCheck == null || verboseCheck.isSelected()) {
-                    updateLogs(MessageFormat.format(Languages.message("FileCompressedSuccessfully"),
+                    updateLogs(MessageFormat.format(message("FileCompressedSuccessfully"),
                             targetFile, FileTools.showFileSize(srcFile.length()),
                             FileTools.showFileSize(targetFile.length()),
                             (100 - targetFile.length() * 100 / srcFile.length()),
@@ -188,13 +192,13 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                     ));
                 }
                 targetFileGenerated(targetFile);
-                return Languages.message("Successful");
+                return message("Successful");
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

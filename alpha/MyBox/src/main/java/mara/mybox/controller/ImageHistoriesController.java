@@ -375,8 +375,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
 
             @Override
             protected boolean handle() {
-                deletedCount = tableImageEditHistory.clearHistories(task, sourceFile);
-                MyBoxLog.console(deletedCount);
+                deletedCount = tableImageEditHistory.clearHistories(this, sourceFile);
                 return true;
             }
 

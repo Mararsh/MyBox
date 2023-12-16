@@ -15,6 +15,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
@@ -74,12 +75,12 @@ public class DataFileExcelMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(File srcFile) {
+    public String handleFile(FxTask currentTask, File srcFile) {
         String result;
         try (Workbook sourceBook = WorkbookFactory.create(srcFile)) {
             List<String> rowData = new ArrayList<>();
             for (int s = 0; s < sourceBook.getNumberOfSheets(); s++) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return message("Cancelled");
                 }
                 Sheet sourceSheet = sourceBook.getSheetAt(s);
@@ -94,7 +95,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
                     targetIndex = sheetsIndex.get(sheetName);
                 }
                 for (Row sourceRow : sourceSheet) {
-                    if (task == null || task.isCancelled()) {
+                    if (currentTask == null || !currentTask.isWorking()) {
                         return message("Cancelled");
                     }
                     if (sourceRow == null) {

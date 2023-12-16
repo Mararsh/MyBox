@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Iterator;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
@@ -31,7 +32,7 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public int handleCurrentPage() {
+    public int handleCurrentPage(FxTask currentTask) {
         int index = 0;
         try {
             PDPage page = doc.getPage(currentParameters.currentPage - 1);  // 0-based
@@ -40,7 +41,7 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
             if (iterable != null) {
                 Iterator<COSName> pageIterator = iterable.iterator();
                 while (pageIterator.hasNext()) {
-                    if (task == null || task.isCancelled()) {
+                    if (currentTask == null || currentTask.isCancelled()) {
                         break;
                     }
                     COSName cosName = pageIterator.next();
@@ -52,7 +53,7 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
                             + "_page" + currentParameters.currentPage + "_index" + index;
                     String suffix = pdxObject.getSuffix();
                     File tFile = makeTargetFile(namePrefix, "." + suffix, currentParameters.currentTargetPath);
-                    if (ImageFileWriters.writeImageFile(task, pdxObject.getImage(), suffix, tFile.getAbsolutePath())) {
+                    if (ImageFileWriters.writeImageFile(currentTask, pdxObject.getImage(), suffix, tFile.getAbsolutePath())) {
                         targetFileGenerated(tFile);
                     }
                     if (isPreview) {

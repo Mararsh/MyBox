@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -26,7 +27,7 @@ public class ImageRoundBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             int w, h;
             if (roundController.wPercenatge()) {
@@ -39,7 +40,7 @@ public class ImageRoundBatchController extends BaseImageEditBatchController {
             } else {
                 h = roundController.h;
             }
-            BufferedImage target = BufferedImageTools.setRound(task, source,
+            BufferedImage target = BufferedImageTools.setRound(currentTask, source,
                     w, h, roundController.awtColor());
             return target;
         } catch (Exception e) {

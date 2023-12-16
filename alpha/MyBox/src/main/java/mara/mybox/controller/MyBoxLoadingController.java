@@ -241,7 +241,8 @@ public class MyBoxLoadingController implements Initializable {
             String oldPath = ConfigTools.readValue("MyBoxOldDataPath");
             if (oldPath != null) {
                 if (oldPath.equals(ConfigTools.defaultDataPath())) {
-                    FileDeleteTools.deleteDirExcept(new File(oldPath), ConfigTools.defaultConfigFile());
+                    FileDeleteTools.deleteDirExcept(null,
+                            new File(oldPath), ConfigTools.defaultConfigFile());
                 } else {
                     FileDeleteTools.deleteDir(new File(oldPath));
                 }

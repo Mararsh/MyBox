@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import mara.mybox.bufferedimage.ImageGray;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -16,10 +17,10 @@ public class ImageGreyBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             ImageGray imageGray = new ImageGray(source);
-            return imageGray.setTask(task).operateImage();
+            return imageGray.setTask(currentTask).operateImage();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

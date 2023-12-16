@@ -6,8 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -17,37 +18,37 @@ import mara.mybox.value.Languages;
 public class FilesMoveController extends BaseBatchFileController {
 
     public FilesMoveController() {
-        baseTitle = Languages.message("FilesMove");
+        baseTitle = message("FilesMove");
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
             Path path = Files.move(Paths.get(srcFile.getAbsolutePath()), Paths.get(target.getAbsolutePath()),
                     StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             if (path == null) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
             if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(Languages.message("FileMovedSuccessfully") + ": " + path.toString());
+                updateLogs(message("FileMovedSuccessfully") + ": " + path.toString());
             }
-            return Languages.message("Successful");
+            return message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
     @Override
-    protected boolean handleDirectory(File sourcePath, String targetPath) {
-        if (super.handleDirectory(sourcePath, targetPath)) {
+    protected boolean handleDirectory(FxTask currentTask, File sourcePath, String targetPath) {
+        if (super.handleDirectory(currentTask, sourcePath, targetPath)) {
             if (sourcePath != null && sourcePath.isDirectory()
                     && sourcePath.list().length == 0) {
-                FileDeleteTools.deleteDir(sourcePath);
+                FileDeleteTools.deleteDir(currentTask, sourcePath);
             }
             return true;
         } else {
@@ -56,7 +57,7 @@ public class FilesMoveController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterHandleFiles() {
+    public void afterHandleFiles(FxTask currentTask) {
         targetFileGenerated(targetPath);
     }
 

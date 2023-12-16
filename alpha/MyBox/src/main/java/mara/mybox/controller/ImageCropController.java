@@ -11,6 +11,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -85,28 +86,28 @@ public class ImageCropController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             operation = message("Crop");
             opInfo = null;
             cuttedClip = null;
             Color color = bgColorController.awtColor();
-            handledImage = ScopeTools.selectedScope(task,
+            handledImage = ScopeTools.selectedScope(currentTask,
                     inImage, inScope, color,
                     imageMarginsCheck.isSelected(),
                     excludeScope(), skipTransparent());
-            if (handledImage == null || task == null || task.isWorking()) {
+            if (handledImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
             if (copyClipboardCheck.isSelected()) {
-                cuttedClip = ScopeTools.selectedScope(task,
+                cuttedClip = ScopeTools.selectedScope(currentTask,
                         inImage, inScope, color,
                         clipMarginsCheck.isSelected(),
                         excludeScope(), skipTransparent());
-                if (cuttedClip == null || task == null || task.isWorking()) {
+                if (cuttedClip == null || currentTask == null || !currentTask.isWorking()) {
                     return null;
                 }
-                ImageClipboard.add(task, cuttedClip, ImageClipboard.ImageSource.Crop);
+                ImageClipboard.add(currentTask, cuttedClip, ImageClipboard.ImageSource.Crop);
             }
             return handledImage;
         } catch (Exception e) {

@@ -44,9 +44,9 @@ import mara.mybox.color.IccXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
@@ -1967,7 +1967,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             @Override
             protected boolean handle() {
                 if (backupController.needBackup()) {
-                    backupController.addBackup(task, file);
+                    backupController.addBackup(this, file);
                 }
                 return profile.write(file, newHeaderData);
             }

@@ -11,6 +11,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -72,7 +73,7 @@ public class ImageReplaceColorController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, inScope, PixelsOperation.OperationType.Color)
@@ -82,7 +83,7 @@ public class ImageReplaceColorController extends BasePixelsController {
                     .setBoolPara3(brightnessCheck.isSelected())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = colorController.css();
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {
@@ -92,16 +93,16 @@ public class ImageReplaceColorController extends BasePixelsController {
     }
 
     @Override
-    protected void makeDemoFiles(List<String> files, Image inImage) {
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image inImage) {
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, scope(), PixelsOperation.OperationType.Color)
                     .setColorPara1(colorController.awtColor())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(demoTask);
+                    .setTask(currentTask);
             String prefix = colorController.css();
-            ImageDemoTools.replaceColor(demoTask, files, pixelsOperation, prefix);
+            ImageDemoTools.replaceColor(currentTask, files, pixelsOperation, prefix);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

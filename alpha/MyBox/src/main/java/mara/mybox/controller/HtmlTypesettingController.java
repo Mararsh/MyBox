@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import org.jsoup.Jsoup;
@@ -25,7 +26,7 @@ public class HtmlTypesettingController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
@@ -33,9 +34,13 @@ public class HtmlTypesettingController extends BaseBatchFileController {
             }
 
             Document doc = Jsoup.parse(srcFile);
-
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (doc == null) {
+                return message("Failed");
+            }
             TextFileTools.writeFile(target, doc.html(), doc.charset());
-
             if (target.exists() && target.length() > 0) {
                 targetFileGenerated(target);
                 return message("Successful");

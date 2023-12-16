@@ -454,6 +454,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public List<List<String>> sortedData(List<Integer> colIndices, boolean needRowNumber) {
         try {
+            if (data2D == null) {
+                return null;
+            }
             if (maxData <= 0 && (sortController == null || orders == null || orders.isEmpty())) {
                 return filteredData(colIndices, needRowNumber);
             }
@@ -465,7 +468,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (showColNames()) {
                 outputData.add(0, csvData.columnNames());
             }
-            FileDeleteTools.delete(csvData.getFile());
+            FileDeleteTools.delete(data2D.getTask(), csvData.getFile());
             outputColumns = csvData.columns;
             return outputData;
         } catch (Exception e) {

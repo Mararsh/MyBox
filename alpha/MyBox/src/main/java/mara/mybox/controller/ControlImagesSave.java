@@ -414,7 +414,7 @@ public class ControlImagesSave extends BaseController {
         }
     }
 
-    protected BufferedImage image(FxTask task, int index) {
+    protected BufferedImage image(FxTask currentTask, int index) {
         try {
             if (imageInfos == null || index < 0 || index >= imageInfos.size()) {
                 return null;
@@ -423,7 +423,7 @@ public class ControlImagesSave extends BaseController {
             if (info == null) {
                 return null;
             }
-            Image image = info.loadThumbnail(task, savedWidth);
+            Image image = info.loadThumbnail(currentTask, savedWidth);
             if (image == null) {
                 return null;
             }

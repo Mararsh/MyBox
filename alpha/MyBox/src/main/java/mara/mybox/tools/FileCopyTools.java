@@ -81,7 +81,7 @@ public class FileCopyTools {
                 attr = new FileSynchronizeAttributes();
             }
             if (targetPath.exists()) {
-                if (clearTarget && !FileDeleteTools.deleteDir(targetPath)) {
+                if (clearTarget && !FileDeleteTools.deleteDir(task, targetPath)) {
                     return false;
                 }
             } else {

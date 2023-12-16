@@ -22,9 +22,10 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxBackgroundTask;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
@@ -165,7 +166,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     @Override
-    public List<GeographyCode> readPageData(Connection conn) {
+    public List<GeographyCode> readPageData(FxTask currentTask, Connection conn) {
         setPageSQL();
 //        MyBoxLog.debug(dataQuerySQL);
         return TableGeographyCode.queryCodes(conn, pageQuerySQL, true);

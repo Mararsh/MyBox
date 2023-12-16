@@ -6,8 +6,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,7 +20,7 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
     protected FlexmarkHtmlConverter mdConverter;
 
     public HtmlToMarkdownController() {
-        baseTitle = Languages.message("HtmlToMarkdown");
+        baseTitle = message("HtmlToMarkdown");
         targetFileSuffix = "md";
     }
 
@@ -43,16 +43,18 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
-
-            String html = TextFileTools.readTexts(task, srcFile);
-            if (html == null || (task != null && !task.isWorking())) {
+            String html = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
+            }
+            if (html == null) {
+                return message("Failed");
             }
             String md = mdConverter.convert(html);
             TextFileTools.writeFile(target, md, Charset.forName("utf-8"));
@@ -64,7 +66,7 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

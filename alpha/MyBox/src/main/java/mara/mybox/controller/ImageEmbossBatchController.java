@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -30,11 +31,11 @@ public class ImageEmbossBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             ImageConvolution imageConvolution = ImageConvolution.create().
                     setImage(source).setKernel(kernel);
-            return imageConvolution.setTask(task).operate();
+            return imageConvolution.setTask(currentTask).operate();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

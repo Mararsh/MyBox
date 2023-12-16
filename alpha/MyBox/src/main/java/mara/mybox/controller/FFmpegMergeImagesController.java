@@ -18,6 +18,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
@@ -130,11 +131,11 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 @Override
                 public Void call() {
                     try {
-                        File imagesListFile = handleImages();
+                        File imagesListFile = handleImages(this);
                         if (imagesListFile == null) {
                             return null;
                         }
-                        File audiosListFile = handleAudios();
+                        File audiosListFile = handleAudios(this);
                         merge(imagesListFile, audiosListFile, videoFile);
 
                     } catch (Exception e) {
@@ -183,13 +184,13 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
     }
 
     //  https://trac.ffmpeg.org/wiki/Slideshow
-    protected File handleImages() {
+    protected File handleImages(FxTask currentTask) {
         try {
             StringBuilder s = new StringBuilder();
             File lastFile = null;
             boolean selected = tableController.selectedItem() != null;
             for (int i = 0; i < tableData.size(); ++i) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || currentTask.isCancelled()) {
                     showLogs(message("TaskCancelled"));
                     return null;
                 }
@@ -207,18 +208,18 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                     }
                 }
                 try {
-                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(task, info);
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(currentTask, info);
                     if (bufferedImage == null) {
                         continue;
                     }
-                    if (task == null || task.isCancelled()) {
+                    if (currentTask == null || currentTask.isCancelled()) {
                         showLogs(message("TaskCancelled"));
                         return null;
                     }
                     BufferedImage fitImage = ScaleTools.fitSize(bufferedImage,
                             ffmpegOptionsController.width, ffmpegOptionsController.height);
                     File tmpFile = FileTmpTools.getTempFile(".png");
-                    if (ImageFileWriters.writeImageFile(task, fitImage, tmpFile) && tmpFile.exists()) {
+                    if (ImageFileWriters.writeImageFile(currentTask, fitImage, tmpFile) && tmpFile.exists()) {
                         lastFile = tmpFile;
                         s.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
                         s.append("duration  ").append(info.getDuration() / 1000.00f).append("\n");
@@ -241,12 +242,12 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         }
     }
 
-    protected File handleAudios() {
+    protected File handleAudios(FxTask currentTask) {
         try {
             StringBuilder s = new StringBuilder();
             boolean selected = audiosTableController.selectedItem() != null;
             for (int i = 0; i < audiosData.size(); ++i) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || currentTask.isCancelled()) {
                     showLogs(message("TaskCancelled"));
                     return null;
                 }

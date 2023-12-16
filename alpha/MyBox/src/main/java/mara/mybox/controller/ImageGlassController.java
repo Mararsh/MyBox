@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageMosaic;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -46,13 +47,12 @@ public class ImageGlassController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             mosaic.setImage(inImage).setScope(inScope);
-            mosaic.init()
-                    .setExcludeScope(excludeScope())
+            mosaic.setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = message("Intensity") + ": " + mosaicController.intensity;
             return mosaic.operateFxImage();
         } catch (Exception e) {

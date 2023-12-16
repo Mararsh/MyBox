@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Row;
@@ -33,7 +34,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         String result;
         try (Workbook wb = WorkbookFactory.create(srcFile)) {
             for (int s = 0; s < wb.getNumberOfSheets(); s++) {
@@ -41,7 +42,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                 updateLogs(message("Reading") + " " + message("Sheet") + ":" + sheet.getSheetName());
                 List<String> names = null;
                 for (Row row : sheet) {
-                    if (task == null || task.isCancelled()) {
+                    if (currentTask == null || currentTask.isCancelled()) {
                         return message("Cancelled");
                     }
                     if (row == null) {

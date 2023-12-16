@@ -14,6 +14,7 @@ import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantiz
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -76,14 +77,14 @@ public class ImageReduceColorsController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             calData = optionsController.quanDataCheck.isSelected();
             quantization = ImageQuantizationFactory.create(inImage, inScope,
                     optionsController, calData);
             quantization.setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             if (optionsController.algorithm == QuantizationAlgorithm.KMeansClustering) {
                 KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
                 q.getKmeans().setMaxIteration(optionsController.kmeansLoop);

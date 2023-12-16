@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Languages;
@@ -46,7 +47,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
     }
 
     @Override
-    public void handleCurrentFile() {
+    public void handleCurrentFile(FxTask currentTask) {
         try {
             tableController.markFileHandling(currentParameters.currentIndex);
             currentParameters.currentSourceFile = getCurrentFile();
@@ -55,7 +56,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
             if (!currentParameters.currentSourceFile.exists()) {
                 result = Languages.message("NotFound");
             } else if (currentParameters.currentSourceFile.isDirectory()) {
-                FileDeleteTools.deleteNestedDir(currentParameters.currentSourceFile);
+                FileDeleteTools.deleteNestedDir(currentTask, currentParameters.currentSourceFile);
                 if (currentParameters.currentSourceFile.exists()) {
                     result = Languages.message("Failed");
                 } else {

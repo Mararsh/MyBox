@@ -11,6 +11,7 @@ import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.recordInfo;
 import mara.mybox.tools.FileDeleteTools;
@@ -103,33 +104,33 @@ public class ClearExpiredDataController extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
             recordInfo(this, message("ClearExpiredData") + "...");
 
             if (tmpFilesCheck.isSelected()) {
                 recordInfo(this, message("Clear") + ": " + AppVariables.MyBoxTempPath);
-                FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
+                FileDeleteTools.clearDir(currentTask, AppVariables.MyBoxTempPath);
             }
-            if (task != null && task.isCancelled()) {
+            if (currentTask != null && currentTask.isCancelled()) {
                 return true;
             }
             try (Connection conn = DerbyBase.getConnection()) {
                 if (imageClipboardCheck.isSelected()) {
                     new TableImageClipboard().clearInvalid(this, conn);
-                    if (task != null && task.isCancelled()) {
+                    if (currentTask != null && currentTask.isCancelled()) {
                         return true;
                     }
                 }
                 if (imageEditHistoriesCheck.isSelected()) {
                     new TableImageEditHistory().clearInvalid(this, conn);
-                    if (task != null && task.isCancelled()) {
+                    if (currentTask != null && currentTask.isCancelled()) {
                         return true;
                     }
                 }
                 if (filesBackupsCheck.isSelected()) {
                     new TableFileBackup().clearInvalid(this, conn);
-                    if (task != null && task.isCancelled()) {
+                    if (currentTask != null && currentTask.isCancelled()) {
                         return true;
                     }
                 }

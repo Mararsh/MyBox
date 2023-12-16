@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -61,12 +62,15 @@ public class HtmlSetCharsetController extends BaseBatchHtmlController {
     }
 
     @Override
-    public String covertHtml(File srcFile, Charset charset) {
-        String html = TextFileTools.readTexts(task, srcFile);
-        if (html == null || (task != null && !task.isWorking())) {
+    public String covertHtml(FxTask currentTask, File srcFile, Charset charset) {
+        String html = TextFileTools.readTexts(currentTask, srcFile);
+        if (currentTask == null || !currentTask.isWorking()) {
             return message("Canceled");
         }
-        return HtmlWriteTools.setCharset(task, html, charset);
+        if (html == null) {
+            return message("Failed");
+        }
+        return HtmlWriteTools.setCharset(currentTask, html, charset);
     }
 
 }

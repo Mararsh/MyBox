@@ -12,6 +12,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -117,7 +118,7 @@ public class ImageTextController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
+    protected void handleImage(FxTask currentTask) {
         handledImage = imageView.getImage();
     }
 

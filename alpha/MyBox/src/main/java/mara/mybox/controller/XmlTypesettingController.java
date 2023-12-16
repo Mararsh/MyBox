@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.XmlTools;
@@ -88,17 +89,23 @@ public class XmlTypesettingController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
             Document doc = builder.parse(srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (doc == null) {
                 return message("Failed");
             }
-            XmlTools.Strip(task, this, doc);
+            XmlTools.Strip(currentTask, this, doc);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             String sourceEncoding = doc.getXmlEncoding();
             if (sourceEncoding == null) {
                 sourceEncoding = "utf-8";
@@ -130,6 +137,9 @@ public class XmlTypesettingController extends BaseBatchFileController {
                     + "\" encoding=\"" + targetEncoding + "\" standalone=\"yes\"?>\n"
                     + xml;
             TextFileTools.writeFile(target, xml, Charset.forName(targetEncoding));
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (target.exists() && target.length() > 0) {
                 targetFileGenerated(target);
                 return message("Successful");

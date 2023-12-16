@@ -293,7 +293,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     }
 
     @Override
-    public long readDataSize(Connection conn) {
+    public long readDataSize(FxTask currentTask, Connection conn) {
         if (loadedParent != null) {
             if (descendantsRadio.isSelected()) {
                 return tableTreeNode.decentantsSize(conn, loadedParent.getNodeid()) + 1;
@@ -311,7 +311,7 @@ public abstract class BaseInfoTreeController extends BaseSysTableController<Info
     }
 
     @Override
-    public List<InfoNode> readPageData(Connection conn) {
+    public List<InfoNode> readPageData(FxTask currentTask, Connection conn) {
         if (loadedParent != null && descendantsRadio.isSelected()) {
             return tableTreeNode.decentants(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 

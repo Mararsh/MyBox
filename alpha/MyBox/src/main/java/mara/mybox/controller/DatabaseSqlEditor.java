@@ -28,8 +28,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -135,7 +135,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                                     outputArea.appendText(DateTools.nowString() + "  " + message("UpdatedCount") + ": " + count);
                                 } else {
                                     ResultSet results = statement.getResultSet();
-                                    data = DataTable.save(task, results);
+                                    data = DataTable.save(this, results);
                                 }
                             }
                             conn.commit();

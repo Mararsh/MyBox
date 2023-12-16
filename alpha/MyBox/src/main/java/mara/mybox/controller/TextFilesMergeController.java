@@ -23,6 +23,7 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.bomBytes;
@@ -163,7 +164,7 @@ public class TextFilesMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
             TextEditInformation sourceInfo = new TextEditInformation(file);
             if (sourceEncodingAutoDetermine) {
@@ -181,6 +182,9 @@ public class TextFilesMergeController extends FilesMergeController {
                 }
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return message("Canceled");
+                    }
                     writer.write(line + taregtLineBreakValue);
                 }
             } catch (Exception e) {

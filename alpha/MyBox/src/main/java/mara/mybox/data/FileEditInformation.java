@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
@@ -134,7 +135,7 @@ public abstract class FileEditInformation extends FileInformation implements Clo
             }
             String setName;
             withBom = false;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] header = new byte[4];
                 int bufLen;
                 if ((bufLen = inputStream.read(header, 0, 4)) > 0) {
@@ -156,16 +157,16 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         }
     }
 
-    public boolean convertCharset(FileEditInformation targetInfo) {
+    public boolean convertCharset(FxTask currentTask, FileEditInformation targetInfo) {
         try {
             if (file == null || charset == null
                     || targetInfo == null || targetInfo.getFile() == null || targetInfo.getCharset() == null) {
                 return false;
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetInfo.getFile()));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetInfo.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                    InputStreamReader reader = new InputStreamReader(inputStream, charset);
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetInfo.getFile()));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetInfo.getCharset())) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
@@ -186,30 +187,30 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         }
     }
 
-    public abstract boolean readTotalNumbers();
+    public abstract boolean readTotalNumbers(FxTask currentTask);
 
-    public abstract String readPage(long pageNumber);
+    public abstract String readPage(FxTask currentTask, long pageNumber);
 
-    public abstract boolean writeObject(String text);
+    public abstract boolean writeObject(FxTask currentTask, String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo, String text);
+    public abstract boolean writePage(FxTask currentTask, FileEditInformation sourceInfo, String text);
 
-    public abstract String readLines(long from, long number);
+    public abstract String readLines(FxTask currentTask, long from, long number);
 
-    public abstract String readObjects(long from, long number);
+    public abstract String readObjects(FxTask currentTask, long from, long number);
 
-    public abstract File filter(boolean recordLineNumbers);
+    public abstract File filter(FxTask currentTask, boolean recordLineNumbers);
 
-    public String readPage() {
-        return readPage(currentPage);
+    public String readPage(FxTask currentTask) {
+        return readPage(currentTask, currentPage);
     }
 
-    public String readLine(long line) {
-        return readLines(line, 1);
+    public String readLine(FxTask currentTask, long line) {
+        return readLines(currentTask, line, 1);
     }
 
-    public String readObject(long index) {
-        return readObjects(index, 1);
+    public String readObject(FxTask currentTask, long index) {
+        return readObjects(currentTask, index, 1);
     }
 
     public boolean isMatchFilters(String string) {

@@ -8,6 +8,7 @@ import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -57,14 +58,14 @@ public class ImageBlendColorController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                     inImage, inScope, PixelsOperation.OperationType.Blend)
                     .setColorPara1(colorController.awtColor())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blend);
             return pixelsOperation.operateFxImage();
         } catch (Exception e) {

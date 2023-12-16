@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -196,12 +197,12 @@ public class ImageContrastController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
+    protected void handleImage(FxTask currentTask) {
         try {
             ImageContrast imageContrast = new ImageContrast()
                     .setAlgorithm(contrastAlgorithm);
             imageContrast.setImage(imageView.getImage())
-                    .setTask(task);
+                    .setTask(currentTask);
             if (contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Stretching) {
                 imageContrast.setIntPara1(left).setIntPara2(right);
                 opInfo = left + "-" + right;

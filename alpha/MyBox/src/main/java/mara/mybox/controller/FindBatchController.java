@@ -13,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -86,16 +87,22 @@ public abstract class FindBatchController extends FindReplaceBatchController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            FileEditInformation info = info(srcFile);
+            FileEditInformation info = info(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Cancelled");
+            }
             if (info == null) {
                 return message("Failed");
             }
-            if (!findReplace.handleFile()) {
+            if (!findReplace.handleFile(currentTask)) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
+                }
                 return message("Failed");
             }
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Cancelled");
             }
             DataFileCSV matchesData = findReplace.getMatchesData();

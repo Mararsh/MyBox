@@ -91,7 +91,7 @@ public class SecurityCertificatesAddController extends BaseChildController {
             protected boolean handle() {
                 error = null;
                 if (certController.backupController.needBackup()) {
-                    certController.backupController.addBackup(task, certController.sourceFile);
+                    certController.backupController.addBackup(this, certController.sourceFile);
                 }
                 if (addressRadio.isSelected()) {
                     try {

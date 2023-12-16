@@ -6,6 +6,7 @@ import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -47,7 +48,7 @@ public class ImageEmbossController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(inImage)
@@ -55,7 +56,7 @@ public class ImageEmbossController extends BasePixelsController {
                     .setKernel(kernel)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = kernel.getName() + " " + message("Grey") + ": " + kernel.isGray();
             Image emboss = convolution.operateFxImage();
             kernel = null;

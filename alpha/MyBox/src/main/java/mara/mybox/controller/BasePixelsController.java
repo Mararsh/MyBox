@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -54,12 +55,12 @@ public abstract class BasePixelsController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
+    protected void handleImage(FxTask currentTask) {
         scope = scope();
-        handledImage = handleImage(srcImage(), scope);
+        handledImage = handleImage(currentTask, srcImage(), scope);
     }
 
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         return null;
     }
 

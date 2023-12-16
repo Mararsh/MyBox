@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -22,7 +23,7 @@ public class ImageEdgeBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             ConvolutionKernel kernel = edgeController.kernel();
             if (kernel == null) {
@@ -31,7 +32,7 @@ public class ImageEdgeBatchController extends BaseImageEditBatchController {
             ImageConvolution convolution = ImageConvolution.create();
             BufferedImage target = convolution.setImage(source)
                     .setKernel(kernel)
-                    .setTask(task).operate();
+                    .setTask(currentTask).operate();
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

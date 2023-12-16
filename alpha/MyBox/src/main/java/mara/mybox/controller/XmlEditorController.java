@@ -261,7 +261,7 @@ public class XmlEditorController extends BaseFileController {
                         return false;
                     }
                     if (sourceFile != null && backupController.needBackup()) {
-                        backupController.addBackup(task, sourceFile);
+                        backupController.addBackup(this, sourceFile);
                     }
                     return FileTools.override(tmpFile, targetFile);
                 } catch (Exception e) {

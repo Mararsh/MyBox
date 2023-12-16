@@ -701,9 +701,9 @@ public class WeiboSnapRunController extends BaseController {
                 if (parameters.isCreatePDF()) {
                     mergeMonthPdf(pdfPath, currentMonthString, currentMonthPageCount);
                 }
-                FileDeleteTools.deleteEmptyDir(pdfPath, false);
-                FileDeleteTools.deleteEmptyDir(htmlPath, false);
-                FileDeleteTools.deleteEmptyDir(pixPath, false);
+                FileDeleteTools.deleteEmptyDir(null, pdfPath, false);
+                FileDeleteTools.deleteEmptyDir(null, htmlPath, false);
+                FileDeleteTools.deleteEmptyDir(null, pixPath, false);
                 Calendar c = Calendar.getInstance();
                 c.setTime(currentMonth);
                 c.add(Calendar.MONTH, 1);
@@ -1469,7 +1469,7 @@ public class WeiboSnapRunController extends BaseController {
             if (openLoadingStage()) {
                 loadingController.setInfo(Languages.message("DeleteEmptyDirectories"));
             }
-            FileDeleteTools.deleteEmptyDir(rootPath, false);
+            FileDeleteTools.deleteEmptyDir(null, rootPath, false);
             if (parent != null && snapType == SnapType.Posts) {
                 parent.setDuration(currentMonthString, "");
             }

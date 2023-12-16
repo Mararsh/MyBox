@@ -19,6 +19,7 @@ import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Saturation;
 import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Yellow;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -51,7 +52,7 @@ public class ImageAdjustColorController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             opInfo = message(optionsController.colorActionType.name());
             if (optionsController.needValue()) {
@@ -63,7 +64,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     optionsController.colorActionType)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             switch (optionsController.colorOperationType) {
                 case Hue:
                     pixelsOperation.setFloatPara1(optionsController.colorValue / 360.0f);
@@ -91,8 +92,8 @@ public class ImageAdjustColorController extends BasePixelsController {
     }
 
     @Override
-    protected void makeDemoFiles(List<String> files, Image inImage) {
-        ImageDemoTools.adjustColor(demoTask, files,
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image inImage) {
+        ImageDemoTools.adjustColor(currentTask, files,
                 SwingFXUtils.fromFXImage(inImage, null), scope());
     }
 

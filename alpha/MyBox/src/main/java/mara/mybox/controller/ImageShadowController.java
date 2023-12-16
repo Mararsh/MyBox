@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -67,15 +68,15 @@ public class ImageShadowController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
-        handledImage = FxImageTools.addShadow(task, srcImage(), w, h, color, blur);
+    protected void handleImage(FxTask currentTask) {
+        handledImage = FxImageTools.addShadow(currentTask, srcImage(), w, h, color, blur);
     }
 
     @Override
-    protected void makeDemoFiles(List<String> files, Image demoImage) {
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         try {
             BufferedImage srcImage = SwingFXUtils.fromFXImage(demoImage, null);
-            ImageDemoTools.shadow(demoTask, files, srcImage, shadowController.awtColor());
+            ImageDemoTools.shadow(currentTask, files, srcImage, shadowController.awtColor());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

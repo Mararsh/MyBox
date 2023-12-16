@@ -28,13 +28,13 @@ public class ControlSvgImage extends BaseShapeController {
             @Override
             protected boolean handle() {
                 try {
-                    Document fdoc = SvgTools.focus(task, doc, node, 0.5f);
-                    if (fdoc == null || !task.isWorking()) {
+                    Document fdoc = SvgTools.focus(this, doc, node, 0.5f);
+                    if (fdoc == null || !isWorking()) {
                         return false;
                     }
 //            doc = SvgTools.removeSize(doc);
                     File tmpFile = SvgTools.docToImage(this, myController, fdoc, -1, -1, null);
-                    if (tmpFile == null || !task.isWorking()) {
+                    if (tmpFile == null || !isWorking()) {
                         return false;
                     }
                     if (tmpFile.exists()) {

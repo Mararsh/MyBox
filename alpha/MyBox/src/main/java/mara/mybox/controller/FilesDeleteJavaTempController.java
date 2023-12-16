@@ -90,7 +90,7 @@ public class FilesDeleteJavaTempController extends BaseController {
                 try {
                     System.gc();
                     before = FileUtils.sizeOfDirectory(path);
-                    FileDeleteTools.clearJavaIOTmpPath();
+                    FileDeleteTools.clearJavaIOTmpPath(this);
                     after = FileUtils.sizeOfDirectory(path);
                 } catch (Exception e) {
 //                        MyBoxLog.debug(e);

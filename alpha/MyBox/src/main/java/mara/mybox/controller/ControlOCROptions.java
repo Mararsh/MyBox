@@ -501,16 +501,16 @@ public class ControlOCROptions extends BaseController {
         words = null;
     }
 
-    public boolean imageOCR(FxTask task, Image image, boolean allData) {
+    public boolean imageOCR(FxTask currentTask, Image image, boolean allData) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        bufferedImage = AlphaTools.removeAlpha(task, bufferedImage);
-        return bufferedImageOCR(task, bufferedImage, allData);
+        bufferedImage = AlphaTools.removeAlpha(currentTask, bufferedImage);
+        return bufferedImageOCR(currentTask, bufferedImage, allData);
     }
 
-    public boolean bufferedImageOCR(FxTask task, BufferedImage bufferedImage, boolean allData) {
+    public boolean bufferedImageOCR(FxTask currentTask, BufferedImage bufferedImage, boolean allData) {
         try {
             clearResults();
-            if (bufferedImage == null || (task != null && !task.isWorking())) {
+            if (bufferedImage == null || (currentTask != null && !currentTask.isWorking())) {
                 return false;
             }
             Tesseract instance = tesseract();
@@ -527,16 +527,16 @@ public class ControlOCROptions extends BaseController {
             instance.createDocumentsWithResults​(bufferedImage, tmp,
                     tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
             File txtFile = new File(tmp + ".txt");
-            texts = TextFileTools.readTexts(task, txtFile);
+            texts = TextFileTools.readTexts(currentTask, txtFile);
             FileDeleteTools.delete(txtFile);
-            if (texts == null || (task != null && !task.isWorking())) {
+            if (texts == null || (currentTask != null && !currentTask.isWorking())) {
                 return false;
             }
             if (allData) {
                 File htmlFile = new File(tmp + ".hocr");
-                html = TextFileTools.readTexts(task, htmlFile);
+                html = TextFileTools.readTexts(currentTask, htmlFile);
                 FileDeleteTools.delete(htmlFile);
-                if (html == null || (task != null && !task.isWorking())) {
+                if (html == null || (currentTask != null && !currentTask.isWorking())) {
                     return false;
                 }
 

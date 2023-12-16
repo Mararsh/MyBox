@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
@@ -140,9 +141,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            long count = importFile(srcFile);
+            long count = importFile(currentTask, srcFile);
             if (count >= 0) {
                 totalItemsHandled += count;
                 return message("Imported") + ": " + count;
@@ -154,12 +155,15 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         }
     }
 
-    public long importFile(File file) {
+    public long importFile(FxTask currentTask, File file) {
         if (file == null || !file.exists()) {
             return -1;
         }
-        File validFile = FileTools.removeBOM(task, file);
-        if (validFile == null || (task != null && !task.isWorking())) {
+        File validFile = FileTools.removeBOM(currentTask, file);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return -4;
+        }
+        if (validFile == null) {
             return -1;
         }
         try (Connection conn = DerbyBase.getConnection();
@@ -167,14 +171,17 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             conn.setAutoCommit(false);
             String line;
             while ((line = reader.readLine()) != null && line.isBlank()) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
+                }
             }
             if (line == null) {
                 return -2;
             }
             if (line.startsWith(AppValues.MyBoxSeparator)) {
-                return importByMyBoxSeparator(conn, reader);
+                return importByMyBoxSeparator(currentTask, conn, reader);
             } else {
-                return importByBlankLine(conn, reader, line);
+                return importByBlankLine(currentTask, conn, reader, line);
             }
         } catch (Exception e) {
             showLogs(e.toString());
@@ -182,7 +189,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         }
     }
 
-    public long importByBlankLine(Connection conn, BufferedReader reader, String firstLine) {
+    public long importByBlankLine(FxTask currentTask, Connection conn, BufferedReader reader, String firstLine) {
         if (conn == null || reader == null || rootNode == null) {
             return -1;
         }
@@ -193,10 +200,10 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             Date time;
             long parentid, baseTime = new Date().getTime();
             while (line != null) {
-                if (task != null && !task.isWorking()) {
-                    return -1;
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
                 }
-                parentid = getParent(conn, line);
+                parentid = getParent(currentTask, conn, line);
                 if (parentid < -1) {
                     break;
                 }
@@ -206,8 +213,8 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 }
                 if (line.isBlank()) {
                     while ((line = reader.readLine()) != null && line.isBlank()) {
-                        if (task != null && !task.isWorking()) {
-                            return -1;
+                        if (currentTask != null && !currentTask.isWorking()) {
+                            return -4;
                         }
                     }
                     continue;
@@ -235,8 +242,8 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     value = line;
                     if (value != null && !line.isBlank()) {
                         while ((line = reader.readLine()) != null && !line.isBlank()) {
-                            if (task != null && !task.isWorking()) {
-                                return -1;
+                            if (currentTask != null && !currentTask.isWorking()) {
+                                return -4;
                             }
                             value += System.lineSeparator() + line;
                         }
@@ -248,7 +255,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                             }
                             if (more == null || more.isBlank()) {
                                 try {
-                                    File iconFile = IconTools.readIcon(task, value, downIcon);
+                                    File iconFile = IconTools.readIcon(currentTask, value, downIcon);
                                     if (iconFile != null && iconFile.exists()) {
                                         more = iconFile.getAbsolutePath();
                                     }
@@ -268,8 +275,8 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     count++;
                 }
                 while ((line = reader.readLine()) != null && line.isBlank()) {
-                    if (task != null && !task.isWorking()) {
-                        return -1;
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
                     }
                 }
             }
@@ -280,7 +287,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         return count;
     }
 
-    public long importByMyBoxSeparator(Connection conn, BufferedReader reader) {
+    public long importByMyBoxSeparator(FxTask currentTask, Connection conn, BufferedReader reader) {
         if (conn == null || reader == null || rootNode == null) {
             return -1;
         }
@@ -291,7 +298,13 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             Date time;
             long parentid, baseTime = new Date().getTime();
             while ((line = reader.readLine()) != null && !line.isBlank()) {
-                parentid = getParent(conn, line);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
+                }
+                parentid = getParent(currentTask, conn, line);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
+                }
                 if (parentid < -1) {
                     break;
                 }
@@ -299,6 +312,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 time = null;
                 tagsString = null;
                 while ((line = reader.readLine()) != null && line.isBlank()) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
+                    }
                 }
                 if (line == null) {
                     break;
@@ -308,6 +324,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 }
                 name = line;
                 while ((line = reader.readLine()) != null && line.isBlank()) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
+                    }
                 }
                 if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
                     if (line.startsWith(InfoNode.TimePrefix)) {
@@ -326,12 +345,15 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     info = line;
                     if (info != null && !info.startsWith(AppValues.MyBoxSeparator)) {
                         while ((line = reader.readLine()) != null && !line.startsWith(AppValues.MyBoxSeparator)) {
+                            if (currentTask != null && !currentTask.isWorking()) {
+                                return -4;
+                            }
                             info += "\n" + line;
                         }
                     }
                     if (info != null && !info.isBlank() && isWebFavorite) {
                         try {
-                            File iconFile = IconTools.readIcon(task, info, downIcon);
+                            File iconFile = IconTools.readIcon(currentTask, info, downIcon);
                             if (iconFile != null && iconFile.exists()) {
                                 info += InfoNode.ValueSeparater + "\n" + iconFile.getAbsolutePath();
                             }
@@ -353,7 +375,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         return count;
     }
 
-    public long getParent(Connection conn, String parentChain) {
+    public long getParent(FxTask currentTask, Connection conn, String parentChain) {
         try {
             if (InfoNode.RootIdentify.equals(parentChain)) {
                 return -1;
@@ -371,6 +393,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 }
                 String[] names = chain.split(InfoNode.TitleSeparater);
                 for (String name : names) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
+                    }
                     InfoNode parentNode = tableTreeNode.find(conn, parentid, name);
                     if (parentNode == null) {
                         parentNode = InfoNode.create()

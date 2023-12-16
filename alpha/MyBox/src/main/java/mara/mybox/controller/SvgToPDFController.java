@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
@@ -38,30 +39,28 @@ public class SvgToPDFController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return message("Skip");
         }
-        Document doc = XmlTools.fileToDoc(task, this, srcFile);
+        Document doc = XmlTools.fileToDoc(currentTask, this, srcFile);
+        if (currentTask == null || !currentTask.isWorking()) {
+            return message("Canceled");
+        }
         if (doc == null) {
-            if (task != null && !task.isWorking()) {
-                return message("Failed");
-            } else {
-                return message("Canceled");
-            }
+            return message("Failed");
         }
         svgOptionsController.checkValues(doc);
-        File tmpFile = SvgTools.fileToPDF(task, this, srcFile,
+        File tmpFile = SvgTools.fileToPDF(currentTask, this, srcFile,
                 svgOptionsController.width,
                 svgOptionsController.height,
                 svgOptionsController.area);
+        if (currentTask == null || !currentTask.isWorking()) {
+            return message("Canceled");
+        }
         if (tmpFile == null || !tmpFile.exists()) {
-            if (task != null && !task.isWorking()) {
-                return message("Failed");
-            } else {
-                return message("Canceled");
-            }
+            return message("Failed");
         }
         if (FileTools.override(tmpFile, target, true)) {
             targetFileGenerated(target);

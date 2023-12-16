@@ -560,10 +560,13 @@ public class TmpTable extends DataTable {
         }
         String tmpScript = script;
         for (int i = 0; i < sourcePickIndice.size(); i++) {
+            if (task == null || task.isCancelled()) {
+                return null;
+            }
             int col = sourcePickIndice.get(i);
             String sourceName = sourceData.columnName(col);
             String tmpName = columnName(i + valueIndexOffset);
-            tmpScript = findReplace().replace(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
+            tmpScript = findReplace().replace(task, script, "#{" + sourceName + "}", "#{" + tmpName + "}");
         }
         return tmpScript;
     }

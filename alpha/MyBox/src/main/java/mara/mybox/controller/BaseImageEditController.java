@@ -160,7 +160,7 @@ public class BaseImageEditController extends BaseShapeController {
 
             @Override
             protected boolean handle() {
-                handleImage();
+                handleImage(this);
                 return !isCancelled() && handledImage != null;
             }
 
@@ -187,7 +187,7 @@ public class BaseImageEditController extends BaseShapeController {
         start(task);
     }
 
-    protected void handleImage() {
+    protected void handleImage(FxTask currentTask) {
     }
 
     protected void passHandled(Image passImage) {
@@ -225,7 +225,7 @@ public class BaseImageEditController extends BaseShapeController {
                         return false;
                     }
                     files = new ArrayList<>();
-                    makeDemoFiles(files, demoImage);
+                    makeDemoFiles(this, files, demoImage);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -251,7 +251,7 @@ public class BaseImageEditController extends BaseShapeController {
         start(demoTask);
     }
 
-    protected void makeDemoFiles(List<String> files, Image demoImage) {
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
     }
 
     @FXML

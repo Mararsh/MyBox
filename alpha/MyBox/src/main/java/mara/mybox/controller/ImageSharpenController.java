@@ -7,6 +7,7 @@ import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -38,7 +39,7 @@ public class ImageSharpenController extends BasePixelsController {
     }
 
     @Override
-    protected Image handleImage(Image inImage, ImageScope inScope) {
+    protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
             ConvolutionKernel kernel = sharpenController.kernel();
             if (kernel == null) {
@@ -48,7 +49,7 @@ public class ImageSharpenController extends BasePixelsController {
             convolution.setImage(inImage).setScope(inScope).setKernel(kernel)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
-                    .setTask(task);
+                    .setTask(currentTask);
             opInfo = message("Intensity") + ": " + sharpenController.intensity;
             return convolution.operateFxImage();
         } catch (Exception e) {
@@ -58,14 +59,14 @@ public class ImageSharpenController extends BasePixelsController {
     }
 
     @Override
-    protected void makeDemoFiles(List<String> files, Image demoImage) {
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         try {
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(demoImage)
                     .setScope(scope())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent());
-            ImageDemoTools.sharpen(demoTask, files, convolution);
+            ImageDemoTools.sharpen(currentTask, files, convolution);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

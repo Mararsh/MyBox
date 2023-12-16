@@ -9,6 +9,7 @@ import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -123,7 +124,7 @@ public class BaseShapeEditController extends BaseImageEditController {
             @Override
             protected boolean handle() {
                 shapeData = currentMaskShapeData();
-                newImage = handleShape();
+                newImage = handleShape(this);
                 return newImage != null;
             }
 
@@ -169,8 +170,8 @@ public class BaseShapeEditController extends BaseImageEditController {
         goAction();
     }
 
-    protected Image handleShape() {
-        return ShapeTools.drawShape(task, srcImage(), shapeData, shapeStyle, blender);
+    protected Image handleShape(FxTask currentTask) {
+        return ShapeTools.drawShape(currentTask, srcImage(), shapeData, shapeStyle, blender);
     }
 
     @FXML

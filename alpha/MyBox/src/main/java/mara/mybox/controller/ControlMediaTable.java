@@ -23,9 +23,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.cell.TableDurationCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -96,7 +96,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @Override
-    protected MediaInformation create(File file) {
+    protected MediaInformation create(FxTask currentTask, File file) {
         try {
             MediaInformation info = new MediaInformation(file);
             info.setDuration(-1);

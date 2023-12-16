@@ -52,7 +52,7 @@ public class InfoTreeNodesCopyController extends BaseInfoTreeHandleController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (!checkOptions(task, conn, sourceNodes, targetNode)) {
+                    if (!checkOptions(this, conn, sourceNodes, targetNode)) {
                         return false;
                     }
                     for (InfoNode sourceNode : sourceNodes) {

@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
@@ -37,7 +38,7 @@ public class TextReplaceBatchController extends FindReplaceBatchController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
@@ -45,12 +46,18 @@ public class TextReplaceBatchController extends FindReplaceBatchController {
             }
             File tmpFile = FileTmpTools.getTempFile();
             Files.copy(srcFile, tmpFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
 
-            FileEditInformation info = info(tmpFile);
+            FileEditInformation info = info(currentTask, tmpFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (info == null) {
                 return message("Failed");
             }
-            if (!findReplace.handleFile() || !tmpFile.exists()) {
+            if (!findReplace.handleFile(currentTask) || !tmpFile.exists()) {
                 return message("Failed");
             }
             int count = findReplace.getCount();

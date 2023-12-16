@@ -19,6 +19,7 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -252,24 +253,24 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     }
 
     @Override
-    protected ImageInformation create(File file) {
-        ImageFileInformation finfo = ImageFileInformation.create(task, file);
+    protected ImageInformation create(FxTask currentTask, File file) {
+        ImageFileInformation finfo = ImageFileInformation.create(currentTask, file);
         return finfo != null ? finfo.getImageInformation() : null;
     }
 
     @Override
-    public List<ImageInformation> createFiles(List<File> files) {
+    public List<ImageInformation> createFiles(FxTask currentTask, List<File> files) {
         try {
             if (files == null || files.isEmpty()) {
                 return null;
             }
             List<ImageInformation> infos = new ArrayList<>();
             for (File file : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || currentTask.isCancelled()) {
                     return infos;
                 }
-                task.setInfo(file.getAbsolutePath());
-                ImageFileInformation finfo = ImageFileInformation.create(task, file);
+                currentTask.setInfo(file.getAbsolutePath());
+                ImageFileInformation finfo = ImageFileInformation.create(currentTask, file);
                 if (finfo != null) {
                     infos.addAll(finfo.getImagesInformation());
 

@@ -24,6 +24,7 @@ import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
@@ -174,7 +175,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     }
 
     @Override
-    protected long clearData() {
+    protected long clearData(FxTask currentTask) {
         return data2D.clearData();
     }
 

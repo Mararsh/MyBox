@@ -457,7 +457,7 @@ public class HtmlWriteTools {
         }
     }
 
-    public static int replace(org.w3c.dom.Document doc, String findString,
+    public static int replace(FxTask currentTask, org.w3c.dom.Document doc, String findString,
             boolean reg, boolean caseInsensitive, String color, String bgColor, String font) {
         if (doc == null) {
             return 0;
@@ -469,10 +469,10 @@ public class HtmlWriteTools {
         FindReplaceString finder = FindReplaceString.create().setOperation(FindReplaceString.Operation.FindNext)
                 .setFindString(findString).setIsRegex(reg).setCaseInsensitive(caseInsensitive).setMultiline(true);
         String replaceSuffix = " style=\"color:" + color + "; background: " + bgColor + "; font-size:" + font + ";\">" + findString + "</span>";
-        return replace(finder, nodeList.item(0), 0, replaceSuffix);
+        return replace(currentTask, finder, nodeList.item(0), 0, replaceSuffix);
     }
 
-    public static int replace(FindReplaceString finder, Node node, int index, String replaceSuffix) {
+    public static int replace(FxTask currentTask, FindReplaceString finder, Node node, int index, String replaceSuffix) {
         if (node == null || replaceSuffix == null || finder == null) {
             return index;
         }
@@ -481,7 +481,13 @@ public class HtmlWriteTools {
         if (texts != null && !texts.isBlank()) {
             StringBuilder s = new StringBuilder();
             while (true) {
-                finder.setInputString(texts).setAnchor(0).handleString();
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -1;
+                }
+                finder.setInputString(texts).setAnchor(0).handleString(currentTask);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -1;
+                }
                 if (finder.getStringRange() == null) {
                     break;
                 }
@@ -497,7 +503,10 @@ public class HtmlWriteTools {
         }
         Node child = node.getFirstChild();
         while (child != null) {
-            replace(finder, child, newIndex, replaceSuffix);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return -1;
+            }
+            replace(currentTask, finder, child, newIndex, replaceSuffix);
             child = child.getNextSibling();
         }
         return newIndex;

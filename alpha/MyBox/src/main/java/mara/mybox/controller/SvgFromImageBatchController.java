@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SvgTools;
@@ -39,17 +40,20 @@ public class SvgFromImageBatchController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
-            BufferedImage image = ImageFileReaders.readImage(task, srcFile);
+            BufferedImage image = ImageFileReaders.readImage(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (image == null) {
                 return message("InvalidData");
             }
-            File svgFile = SvgTools.imageToSvgFile(task, this, srcFile,
+            File svgFile = SvgTools.imageToSvgFile(currentTask, this, srcFile,
                     optionsController.myboxRadio.isSelected() ? optionsController.quantizationController : null,
                     optionsController.options);
             if (svgFile != null && svgFile.exists() && FileTools.override(svgFile, target, true)) {

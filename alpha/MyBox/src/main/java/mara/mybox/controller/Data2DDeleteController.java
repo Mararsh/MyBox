@@ -112,7 +112,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                 try {
                     if (!data2D.isTmpData() && tableController.dataController.backupController != null
                             && tableController.dataController.backupController.needBackup()) {
-                        tableController.dataController.backupController.addBackup(task, data2D.getFile());
+                        tableController.dataController.backupController.addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
                     count = data2D.deleteRows(errorContinueCheck.isSelected());

@@ -41,6 +41,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -700,7 +701,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    protected long clearData() {
+    protected long clearData(FxTask currentTask) {
         if (palettesController.isAllColors()) {
             return tableColor.clearData();
         } else {
@@ -753,7 +754,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
        Data
      */
     @Override
-    public long readDataSize(Connection conn) {
+    public long readDataSize(FxTask currentTask, Connection conn) {
         if (palettesController.isAllColors()) {
             return tableColor.size(conn);
         } else {
@@ -762,7 +763,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public List<ColorData> readPageData(Connection conn) {
+    public List<ColorData> readPageData(FxTask currentTask, Connection conn) {
         if (palettesController.isAllColors()) {
             return tableColor.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
         } else {
@@ -777,7 +778,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    protected int deleteData(List<ColorData> data) {
+    protected int deleteData(FxTask currentTask, List<ColorData> data) {
         if (data == null || data.isEmpty()) {
             return 0;
         }

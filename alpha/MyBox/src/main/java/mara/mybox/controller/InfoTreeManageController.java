@@ -17,8 +17,9 @@ import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -271,7 +272,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         table
      */
     @Override
-    protected long clearData() {
+    protected long clearData(FxTask currentTask) {
         if (queryConditions != null) {
             return tableTreeNode.deleteCondition(queryConditions);
 

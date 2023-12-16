@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -39,7 +40,7 @@ public class Data2DExportTask extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         return exportController.export();
     }
 

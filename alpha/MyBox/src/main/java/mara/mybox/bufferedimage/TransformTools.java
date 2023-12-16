@@ -28,8 +28,8 @@ public class TransformTools {
         double sin = Math.abs(Math.sin(radians));
         int width = source.getWidth();
         int height = source.getHeight();
-        int newWidth = (int) (width * cos + height * sin) + 1;
-        int newHeight = (int) (height * cos + width * sin) + 1;
+        int newWidth = (int) (width * cos + height * sin) + 2;
+        int newHeight = (int) (height * cos + width * sin) + 2;
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
@@ -56,8 +56,8 @@ public class TransformTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            int newWidth = (int) (width + height * Math.abs(shearX) + 1) * 2;
-            int newHeight = (int) (width * Math.abs(shearY) + height + 1) * 2;
+            int newWidth = (int) (width + height * Math.abs(shearX)) * 2 + 2;
+            int newHeight = (int) (width * Math.abs(shearY) + height) * 2 + 2;
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
             Graphics2D g = target.createGraphics();
@@ -66,7 +66,7 @@ public class TransformTools {
             }
             Color bgColor = Colors.TRANSPARENT;
             g.setBackground(bgColor);
-            g.translate(newWidth / 2, newHeight / 2);
+            g.translate(newWidth / 2 + 1, newHeight / 2 + 1);
             g.shear(shearX, shearY);
             if (task != null && !task.isWorking()) {
                 return null;

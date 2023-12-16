@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -35,11 +36,12 @@ public class ImageShearController extends BaseImageEditController {
             super.initMore();
             operation = message("Shear");
 
-            shearX = UserConfig.getFloat("ImageShearX", 0.5f);
+            shearX = UserConfig.getFloat("ImageShearX", 1f);
             xSelector.getItems().addAll(Arrays.asList(
-                    "0.5", "-0.5", "0", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
-                    "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
-                    "1.5", "-1.5", "2", "-2"));
+                    "1", "-1", "1.5", "-1.5", "2", "-2", "3", "-3", "4", "-4", "5", "-5", "0",
+                    "0.5", "-0.5", "0.4", "-0.4", "0.3", "-0.3", "0.2", "-0.2", "0.1", "-0.1",
+                    "0.7", "-0.7", "0.8", "-0.8", "0.9", "-0.9")
+            );
             xSelector.setValue(shearX + "");
             xSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -56,9 +58,10 @@ public class ImageShearController extends BaseImageEditController {
 
             shearY = UserConfig.getFloat("ImageShearY", 0f);
             ySelector.getItems().addAll(Arrays.asList(
-                    "0", "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
-                    "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
-                    "1.5", "-1.5", "2", "-2"));
+                    "1", "-1", "1.5", "-1.5", "2", "-2", "3", "-3", "4", "-4", "5", "-5", "0",
+                    "0.5", "-0.5", "0.4", "-0.4", "0.3", "-0.3", "0.2", "-0.2", "0.1", "-0.1",
+                    "0.7", "-0.7", "0.8", "-0.8", "0.9", "-0.9")
+            );
             ySelector.setValue(shearY + "");
             ySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -80,8 +83,8 @@ public class ImageShearController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
-        handledImage = TransformTools.shearImage(task, imageView.getImage(), shearX, shearY);
+    protected void handleImage(FxTask currentTask) {
+        handledImage = TransformTools.shearImage(currentTask, imageView.getImage(), shearX, shearY);
     }
 
     /*

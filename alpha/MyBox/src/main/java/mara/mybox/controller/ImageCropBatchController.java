@@ -11,6 +11,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -235,7 +236,7 @@ public class ImageCropBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -258,7 +259,7 @@ public class ImageCropBatchController extends BaseImageEditBatchController {
                 errorString = message("BeyondSize");
                 return null;
             }
-            return CropTools.cropOutside(task, source, x1, y1, x2, y2);
+            return CropTools.cropOutside(currentTask, source, x1, y1, x2, y2);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

@@ -10,6 +10,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 
@@ -100,7 +101,7 @@ public abstract class FindReplaceBatchController extends BaseBatchFileController
         optionsController.thisPane.setDisable(disable);
     }
 
-    public FileEditInformation info(File file) {
+    public FileEditInformation info(FxTask currentTask, File file) {
         FileEditInformation fileInfo;
         if (editType == Edit_Type.Bytes) {
             fileInfo = new BytesEditInformation(file);
@@ -109,7 +110,7 @@ public abstract class FindReplaceBatchController extends BaseBatchFileController
             if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {
                 return null;
             }
-            fileInfo.setLineBreak(TextTools.checkLineBreak(task, file));
+            fileInfo.setLineBreak(TextTools.checkLineBreak(currentTask, file));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
         }
         fileInfo.setPagesNumber(2);

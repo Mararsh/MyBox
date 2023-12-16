@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import static mara.mybox.value.Languages.message;
@@ -28,13 +29,16 @@ public class WordToHtmlController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
             File tmpFile = MicrosoftDocumentTools.word2HtmlFile(srcFile, charset);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (!FileTools.override(tmpFile, target)) {
                 return message("Failed");
             }

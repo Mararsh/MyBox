@@ -280,7 +280,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
 
             @Override
             protected boolean handle() {
-                deletedCount = tableFileBackup.clearBackups(task, sourceFile.getAbsolutePath());
+                deletedCount = tableFileBackup.clearBackups(this, sourceFile.getAbsolutePath());
                 return true;
             }
 

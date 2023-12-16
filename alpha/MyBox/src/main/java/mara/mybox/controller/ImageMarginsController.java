@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.MarginTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -100,13 +101,13 @@ public class ImageMarginsController extends BaseImageEditController {
     }
 
     @Override
-    protected void handleImage() {
+    protected void handleImage(FxTask currentTask) {
         if (marginsController.dragRadio.isSelected()) {
-            handledImage = MarginTools.dragMarginsFx(task, currentImage(),
+            handledImage = MarginTools.dragMarginsFx(currentTask, currentImage(),
                     marginsController.colorController.color(), maskRectangleData);
 
         } else if (marginsController.addRadio.isSelected()) {
-            handledImage = MarginTools.addMarginsFx(task, currentImage(),
+            handledImage = MarginTools.addMarginsFx(currentTask, currentImage(),
                     marginsController.colorController.color(),
                     marginsController.margin,
                     marginsController.marginsTopCheck.isSelected(),
@@ -116,7 +117,7 @@ public class ImageMarginsController extends BaseImageEditController {
             opInfo = marginsController.margin + "";
 
         } else if (marginsController.blurRadio.isSelected()) {
-            handledImage = MarginTools.blurMarginsAlpha(task, currentImage(),
+            handledImage = MarginTools.blurMarginsAlpha(currentTask, currentImage(),
                     marginsController.margin,
                     marginsController.marginsTopCheck.isSelected(),
                     marginsController.marginsBottomCheck.isSelected(),
@@ -125,7 +126,7 @@ public class ImageMarginsController extends BaseImageEditController {
             opInfo = marginsController.margin + "";
 
         } else if (marginsController.cutColorRadio.isSelected()) {
-            handledImage = MarginTools.cutMarginsByColor(task, currentImage(),
+            handledImage = MarginTools.cutMarginsByColor(currentTask, currentImage(),
                     marginsController.colorController.color(),
                     marginsController.distance,
                     marginsController.marginsTopCheck.isSelected(),
@@ -135,7 +136,7 @@ public class ImageMarginsController extends BaseImageEditController {
             opInfo = marginsController.distance + "";
 
         } else if (marginsController.cutWidthRadio.isSelected()) {
-            handledImage = MarginTools.cutMarginsByWidth(task, currentImage(),
+            handledImage = MarginTools.cutMarginsByWidth(currentTask, currentImage(),
                     marginsController.margin,
                     marginsController.marginsTopCheck.isSelected(),
                     marginsController.marginsBottomCheck.isSelected(),

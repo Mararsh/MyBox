@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
@@ -225,7 +226,7 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         String newName = makeName(srcFile);
         names.put(srcFile.getAbsolutePath(), newName);
         return message("Handling");
@@ -249,9 +250,13 @@ public class FilesRenameController extends BaseBatchFileController {
                         }
                     } else {
                         if (replaceAllRadio.isSelected()) {
-                            newName = FindReplaceString.replaceAll(currentName, oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                            newName = FindReplaceString.replaceAll(null,
+                                    currentName, oldStringInput.getText(),
+                                    FileNameTools.filter(newStringInput.getText()));
                         } else {
-                            newName = FindReplaceString.replaceFirst(currentName, oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                            newName = FindReplaceString.replaceFirst(null,
+                                    currentName, oldStringInput.getText(),
+                                    FileNameTools.filter(newStringInput.getText()));
                         }
                     }
                     break;
@@ -292,7 +297,7 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @Override
-    protected boolean handleDirectory(File sourcePath, String targetPath) {
+    protected boolean handleDirectory(FxTask currentTask, File sourcePath, String targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
             return false;
         }
@@ -314,7 +319,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 }
             }
             for (File file : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 if (file.isFile()) {
@@ -328,7 +333,7 @@ public class FilesRenameController extends BaseBatchFileController {
                         dirFilesHandled++;
                     }
                 } else if (file.isDirectory() && sourceCheckSubdir) {
-                    handleDirectory(file, null);
+                    handleDirectory(currentTask, file, null);
                 }
             }
             return true;

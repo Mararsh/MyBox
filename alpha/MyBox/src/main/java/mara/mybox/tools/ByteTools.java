@@ -337,16 +337,16 @@ public class ByteTools {
         }
     }
 
-    public static int countNumber(byte[] bytes, byte[] subBytes) {
-        return FindReplaceString.count(bytesToHex(bytes), bytesToHex(subBytes));
+    public static int countNumber(FxTask currentTask, byte[] bytes, byte[] subBytes) {
+        return FindReplaceString.count(currentTask, bytesToHex(bytes), bytesToHex(subBytes));
     }
 
-    public static int countNumber(byte[] bytes, byte c) {
-        return FindReplaceString.count(bytesToHex(bytes), byteToHex(c));
+    public static int countNumber(FxTask currentTask, byte[] bytes, byte c) {
+        return FindReplaceString.count(currentTask, bytesToHex(bytes), byteToHex(c));
     }
 
-    public static int countNumber(byte[] bytes, String hex) {
-        return FindReplaceString.count(bytesToHex(bytes), hex);
+    public static int countNumber(FxTask currentTask, byte[] bytes, String hex) {
+        return FindReplaceString.count(currentTask, bytesToHex(bytes), hex);
     }
 
     public static int lineIndex(String lineText, Charset charset, int offset) {

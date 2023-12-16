@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -31,7 +32,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     }
 
     @Override
-    public boolean beforeHandleFiles() {
+    public boolean beforeHandleFiles(FxTask currentTask) {
         try {
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
             return true;
@@ -42,11 +43,14 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            String html = TextFileTools.readTexts(task, srcFile);
-            if (html == null || (task != null && !task.isWorking())) {
+            String html = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
+            }
+            if (html == null) {
+                return message("Failed");
             }
             String text = Jsoup.parse(html).wholeText();
             writer.write(text + "\n");
@@ -58,7 +62,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     }
 
     @Override
-    public void afterHandleFiles() {
+    public void afterHandleFiles(FxTask currentTask) {
         try {
             writer.flush();
             writer.close();

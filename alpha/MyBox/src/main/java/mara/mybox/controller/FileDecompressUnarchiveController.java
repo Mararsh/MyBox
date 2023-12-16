@@ -24,6 +24,7 @@ import mara.mybox.data.FileInformation.FileType;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
@@ -503,7 +504,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
             fileUnarchive = new FileUnarchive()
                     .setTaskController(this)

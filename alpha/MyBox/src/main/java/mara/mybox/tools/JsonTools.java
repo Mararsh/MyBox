@@ -8,6 +8,7 @@ import java.util.Map;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FindReplaceString;
 import static mara.mybox.data.FindReplaceString.create;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -16,7 +17,7 @@ import static mara.mybox.data.FindReplaceString.create;
  */
 public class JsonTools {
 
-    public static LinkedHashMap<String, String> jsonValues(String data, List<String> keys) {
+    public static LinkedHashMap<String, String> jsonValues(FxTask currentTask, String data, List<String> keys) {
         try {
             LinkedHashMap<String, String> values = new LinkedHashMap<>();
             String subdata = data;
@@ -25,7 +26,13 @@ public class JsonTools {
                     .setFindString("[\\},]").setAnchor(0)
                     .setIsRegex(true).setCaseInsensitive(true).setMultiline(true);
             for (String key : keys) {
-                Map<String, Object> value = jsonValue(subdata, key, endFind);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
+                Map<String, Object> value = jsonValue(currentTask, subdata, key, endFind);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 if (value == null) {
                     continue;
                 }
@@ -42,7 +49,7 @@ public class JsonTools {
         }
     }
 
-    public static Map<String, Object> jsonValue(String json, String key, FindReplaceString endFind) {
+    public static Map<String, Object> jsonValue(FxTask currentTask, String json, String key, FindReplaceString endFind) {
         try {
             String flag = "\"" + key + "\":";
             int startPos = json.indexOf(flag);
@@ -50,7 +57,10 @@ public class JsonTools {
                 return null;
             }
             String data = json.substring(startPos + flag.length());
-            endFind.setInputString(data).handleString();
+            endFind.setInputString(data).handleString(currentTask);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return null;
+            }
             IndexRange end = endFind.getStringRange();
             if (end == null) {
                 return null;

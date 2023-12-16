@@ -43,7 +43,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
     @FXML
     protected CheckBox handleTransparentCheck;
 
-    protected abstract BufferedImage handleImage(BufferedImage source);
+    protected abstract BufferedImage handleImage(FxTask currentTask, BufferedImage source);
 
     @Override
     public void initControls() {
@@ -86,7 +86,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             if (browseButton != null) {
                 browseButton.setDisable(targetFiles == null || targetFiles.isEmpty());
@@ -96,8 +96,8 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             if (target == null) {
                 return Languages.message("Skip");
             }
-            BufferedImage sourceImage = ImageFileReaders.readImage(task, srcFile);
-            BufferedImage targetImage = handleImage(sourceImage);
+            BufferedImage sourceImage = ImageFileReaders.readImage(currentTask, srcFile);
+            BufferedImage targetImage = handleImage(currentTask, sourceImage);
             if (targetImage == null) {
                 if (errorString != null) {
                     return errorString;
@@ -105,7 +105,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                     return Languages.message("Failed");
                 }
             }
-            ImageFileWriters.writeImageFile(task,
+            ImageFileWriters.writeImageFile(currentTask,
                     targetImage, attributes, target.getAbsolutePath());
 
             targetFileGenerated(target);
@@ -149,7 +149,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                         return false;
                     }
                     files = new ArrayList<>();
-                    makeDemoFiles(files, demoImage);
+                    makeDemoFiles(this, files, demoImage);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -175,7 +175,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
         start(demoTask);
     }
 
-    public void makeDemoFiles(List<String> files, BufferedImage demoImage) {
+    public void makeDemoFiles(FxTask dTask, List<String> files, BufferedImage demoImage) {
     }
 
 }

@@ -12,6 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
@@ -127,7 +128,7 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
             if (!match(file)) {
                 return done;
@@ -141,7 +142,7 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(File directory) {
+    public String handleDirectory(FxTask currentTask, File directory) {
         try {
             if (directory == null || !directory.isDirectory()) {
                 return done;
@@ -151,7 +152,7 @@ public class FilesFindController extends BaseBatchFileController {
                 return done;
             }
             for (File srcFile : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return done;
                 }
                 if (srcFile.isFile()) {
@@ -162,7 +163,7 @@ public class FilesFindController extends BaseBatchFileController {
                     totalMatched++;
                     filesList.add(new FileInformation(srcFile));
                 } else if (srcFile.isDirectory()) {
-                    handleDirectory(srcFile);
+                    handleDirectory(currentTask, srcFile);
                 }
             }
             return done;

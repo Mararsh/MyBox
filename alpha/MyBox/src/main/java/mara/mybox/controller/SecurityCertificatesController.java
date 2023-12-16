@@ -17,8 +17,8 @@ import javafx.stage.Window;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -338,7 +338,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
                 error = null;
                 try {
                     if (backupController.needBackup()) {
-                        backupController.addBackup(task, sourceFile);
+                        backupController.addBackup(this, sourceFile);
                     }
                     List<String> aliases = new ArrayList();
                     for (CertificateEntry cert : selected) {

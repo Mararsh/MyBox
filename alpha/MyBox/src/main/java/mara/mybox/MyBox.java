@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.CertificateTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.CertificateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -50,7 +50,7 @@ public class MyBox {
                             if (!dataPathFile.exists()) {
                                 dataPathFile.mkdirs();
                             } else if (!dataPathFile.isDirectory()) {
-                                FileDeleteTools.delete(dataPathFile);
+                                FileDeleteTools.delete(null, dataPathFile);
                                 dataPathFile.mkdirs();
                             }
                             if (dataPathFile.exists() && dataPathFile.isDirectory()) {
@@ -73,7 +73,7 @@ public class MyBox {
                 if (!dataPathFile.exists()) {
                     dataPathFile.mkdirs();
                 } else if (!dataPathFile.isDirectory()) {
-                    FileDeleteTools.delete(dataPathFile);
+                    FileDeleteTools.delete(null, dataPathFile);
                     dataPathFile.mkdirs();
                 }
                 if (dataPathFile.exists() && dataPathFile.isDirectory()) {

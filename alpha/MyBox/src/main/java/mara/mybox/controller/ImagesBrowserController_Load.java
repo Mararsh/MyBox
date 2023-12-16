@@ -256,15 +256,15 @@ public abstract class ImagesBrowserController_Load extends BaseImageController {
         }
     }
 
-    protected ImageInformation loadInfo(FxTask task, File file) {
+    protected ImageInformation loadInfo(FxTask currentTask, File file) {
         if (displayMode == ImagesBrowserController_Load.DisplayMode.FilesList) {
-            ImageFileInformation finfo = ImageFileInformation.create(task, file);
+            ImageFileInformation finfo = ImageFileInformation.create(currentTask, file);
             if (finfo == null) {
                 return null;
             }
             return finfo.getImageInformation();
         } else {
-            return ImageFileReaders.makeInfo(task, file, thumbWidth);
+            return ImageFileReaders.makeInfo(currentTask, file, thumbWidth);
         }
     }
 

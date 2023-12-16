@@ -274,7 +274,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         if (pageText == null) {
             return 0;
         }
-        return FindReplaceString.count(pageText, "\n") + 1;
+        return FindReplaceString.count(null, pageText, "\n") + 1;
     }
 
     protected int pageObjectsNumber(String pageText) {

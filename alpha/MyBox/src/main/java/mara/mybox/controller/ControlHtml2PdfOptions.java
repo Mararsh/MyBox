@@ -93,8 +93,8 @@ public class ControlHtml2PdfOptions extends BaseController {
         cssArea.setText(css);
     }
 
-    public String html2pdf(FxTask task, String html, File target) {
-        return PdfTools.html2pdf(task, target, html, cssArea.getText().trim(),
+    public String html2pdf(FxTask currentTask, String html, File target) {
+        return PdfTools.html2pdf(currentTask, target, html, cssArea.getText().trim(),
                 ignoreHeadCheck.isVisible() && ignoreHeadCheck.isSelected(), pdfOptions);
     }
 

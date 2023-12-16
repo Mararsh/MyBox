@@ -32,6 +32,7 @@ import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -296,7 +297,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public boolean preHandlePages() {
+    public boolean preHandlePages(FxTask currentTask) {
         try {
             ocrTexts = "";
             renderer = new PDFRenderer(doc);
@@ -308,14 +309,14 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public int handleCurrentPage() {
+    public int handleCurrentPage(FxTask currentTask) {
         int num;
         updateLogs(message("HandlingPage") + ":" + currentParameters.currentPage, true, true);
         pageStart = new Date().getTime();
         if (convertRadio.isSelected()) {
-            num = convertPage();
+            num = convertPage(currentTask);
         } else {
-            num = extractPage();
+            num = extractPage(currentTask);
         }
         if (num > 0 && separatorCheck.isSelected()) {
             String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
@@ -325,13 +326,13 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         return num;
     }
 
-    protected int convertPage() {
+    protected int convertPage(FxTask currentTask) {
         String text = null;
         try {
             // ImageType.BINARY work bad while ImageType.RGB works best
             BufferedImage bufferedImage
                     = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, ImageType.RGB);    // 0-based
-            text = ocr(bufferedImage);
+            text = ocr(currentTask, bufferedImage);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -349,7 +350,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         }
     }
 
-    protected int extractPage() {
+    protected int extractPage(FxTask currentTask) {
         int count = 0;
         String text = "";
         try {
@@ -360,7 +361,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 Iterator<COSName> pageIterator = iterable.iterator();
                 int index = 0;
                 while (pageIterator.hasNext()) {
-                    if (task == null || task.isCancelled()) {
+                    if (currentTask == null || !currentTask.isWorking()) {
                         break;
                     }
                     COSName cosName = pageIterator.next();
@@ -370,7 +371,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                     index++;
                     PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
                     BufferedImage bufferedImage = pdxObject.getImage();
-                    String results = ocr(bufferedImage);
+                    String results = ocr(currentTask, bufferedImage);
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        break;
+                    }
                     if (results != null) {
                         text += results + System.getProperty("line.separator");
                         count++;
@@ -383,6 +387,9 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+        if (currentTask == null || !currentTask.isWorking()) {
+            return count;
+        }
         if (!text.isBlank()) {
             String s = message("Page") + ":" + currentParameters.currentPage + "   "
                     + MessageFormat.format(message("OCRresults"),
@@ -393,26 +400,32 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         return count;
     }
 
-    protected BufferedImage preprocess(BufferedImage bufferedImage) {
+    protected BufferedImage preprocess(FxTask currentTask, BufferedImage bufferedImage) {
         try {
             lastImage = bufferedImage;
 
             if (threshold > 0) {
                 ImageBinary imageBinary = new ImageBinary();
                 imageBinary.setImage(lastImage)
-                        .setIntPara1(threshold).setTask(task);
+                        .setIntPara1(threshold).setTask(currentTask);
                 lastImage = imageBinary.operateImage();
             }
-            if (lastImage == null || (task != null && !task.isWorking())) {
+            if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
             if (rotate != 0) {
-                lastImage = TransformTools.rotateImage(task, lastImage, rotate);
+                lastImage = TransformTools.rotateImage(currentTask, lastImage, rotate);
+                if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
+                    return null;
+                }
             }
             if (scale > 0 && scale != 1) {
                 lastImage = ScaleTools.scaleImageByScale(lastImage, scale);
+                if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
+                    return null;
+                }
             }
-            if (lastImage == null || (task != null && !task.isWorking())) {
+            if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
             String algorithm = algorithmSelector.getValue();
@@ -420,13 +433,13 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             } else if (message("GrayHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
                 imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization)
-                        .setImage(lastImage).setTask(task);
+                        .setImage(lastImage).setTask(currentTask);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("GrayHistogramStretching").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
                 imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching)
-                        .setImage(lastImage).setTask(task)
+                        .setImage(lastImage).setTask(currentTask)
                         .setIntPara1(100)
                         .setIntPara2(100);
                 lastImage = imageContrast.operateImage();
@@ -434,59 +447,59 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             } else if (message("GrayHistogramShifting").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
                 imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting)
-                        .setImage(lastImage).setTask(task)
+                        .setImage(lastImage).setTask(currentTask)
                         .setIntPara1(80);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
                 imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization)
-                        .setImage(lastImage).setTask(task);
+                        .setImage(lastImage).setTask(currentTask);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("UnsharpMasking").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(task).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).operateImage();
 
             } else if ((message("Enhancement") + "-" + "FourNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(task).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).operateImage();
 
             } else if ((message("Enhancement") + "-" + "EightNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(task).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).operateImage();
 
             } else if (message("GaussianBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(task).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).operateImage();
 
             } else if (message("AverageBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(task).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).operateImage();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(task).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).operateImage();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(task).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).operateImage();
             }
-            if (lastImage == null || (task != null && !task.isWorking())) {
+            if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
             if (deskewCheck.isSelected()) {
@@ -495,6 +508,9 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
                         || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
                     lastImage = ImageHelper.rotateImage(lastImage, -imageSkewAngle);
+                    if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
+                        return null;
+                    }
                 }
             }
 
@@ -512,14 +528,17 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         }
     }
 
-    protected String ocr(BufferedImage image) {
+    protected String ocr(FxTask currentTask, BufferedImage image) {
         if (image == null) {
             return null;
         }
         try {
-            lastImage = preprocess(image);
+            lastImage = preprocess(currentTask, image);
+            if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
+                return null;
+            }
             if (ocrOptionsController.embedRadio.isSelected()) {
-                ocrOptionsController.bufferedImageOCR(task, lastImage, false);
+                ocrOptionsController.bufferedImageOCR(currentTask, lastImage, false);
                 return ocrOptionsController.texts;
             }
             if (process != null) {
@@ -527,23 +546,23 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 process = null;
             }
             File imageFile = FileTmpTools.getTempFile(".png");
-            BufferedImage bufferedImage = AlphaTools.removeAlpha(task, lastImage);
-            if (bufferedImage == null || (task != null && !task.isWorking())) {
+            BufferedImage bufferedImage = AlphaTools.removeAlpha(currentTask, lastImage);
+            if (bufferedImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
-            ImageFileWriters.writeImageFile(task, bufferedImage, "png", imageFile.getAbsolutePath());
-            if (task != null && !task.isWorking()) {
+            ImageFileWriters.writeImageFile(currentTask, bufferedImage, "png", imageFile.getAbsolutePath());
+            if (currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
             String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
             process = ocrOptionsController.process(imageFile, fileBase);
-            if (process == null) {
+            if (process == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
             String outputs = "", line;
             try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 while ((line = inReader.readLine()) != null) {
-                    if (task != null && !task.isWorking()) {
+                    if (currentTask == null || !currentTask.isWorking()) {
                         process.destroyForcibly();
                         return null;
                     }
@@ -555,7 +574,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             process.waitFor();
             File textFile = new File(fileBase + ".txt");
             if (textFile.exists()) {
-                String texts = TextFileTools.readTexts(task, textFile);
+                String texts = TextFileTools.readTexts(currentTask, textFile);
                 FileDeleteTools.delete(textFile);
                 return texts;
             } else {
@@ -572,7 +591,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public void postHandlePages() {
+    public void postHandlePages(FxTask currentTask) {
         try {
             File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
                     ".txt", currentParameters.currentTargetPath);
