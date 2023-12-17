@@ -133,12 +133,12 @@ public class ControlImageBinary extends BaseController {
         start(task);
     }
 
-    public ImageBinary pickValues() {
-        if (!checkThreshold()) {
+    public ImageBinary pickValues(int t) {
+        if (t < 0 && !checkThreshold()) {
             return null;
         }
         ImageBinary imageBinary = new ImageBinary();
-        imageBinary.setIntPara1(threshold)
+        imageBinary.setIntPara1(t <= 0 ? threshold : t)
                 .setIsDithering(ditherCheck.isSelected());
         if (otsuRadio.isSelected()) {
             imageBinary.setAlgorithm(BinaryAlgorithm.OTSU);

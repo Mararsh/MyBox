@@ -1,11 +1,13 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageQuantization;
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -36,7 +38,6 @@ public class ImageReduceColorsBatchController extends BaseImageEditBatchControll
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-
         try {
             ImageQuantization quantization = ImageQuantizationFactory.create(
                     source, null, optionsController, false);
@@ -50,6 +51,11 @@ public class ImageReduceColorsBatchController extends BaseImageEditBatchControll
             displayError(e.toString());
             return null;
         }
+    }
+
+    @Override
+    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
+        ImageDemoTools.reduceColor(currentTask, files, demoImage);
     }
 
 }

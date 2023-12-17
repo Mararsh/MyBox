@@ -147,7 +147,9 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
     public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
         try {
             pickOperation();
-            ImageDemoTools.replaceColor(currentTask, files, pixelsOperation, newColorSetController.css());
+            ImageDemoTools.replaceColor(currentTask, files,
+                    pixelsOperation.setImage(demoImage),
+                    newColorSetController.css());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

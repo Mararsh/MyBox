@@ -158,56 +158,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImagePasteBatchFxml);
         });
 
-        MenuItem imageAdjustColorMenu = new MenuItem(message("AdjustColor"));
-        imageAdjustColorMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageAdjustColorBatchFxml);
-        });
-
-        MenuItem imageReplaceColorMenu = new MenuItem(message("ReplaceColor"));
-        imageReplaceColorMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageReplaceColorBatchFxml);
-        });
-
-        MenuItem imageReduceColorsMenu = new MenuItem(message("ReduceColors"));
-        imageReduceColorsMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageReduceColorsBatchFxml);
-        });
-
-        MenuItem imageGreyMenu = new MenuItem(message("Grey"));
-        imageGreyMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageGreyBatchFxml);
-        });
-
-        MenuItem imageBlackWhiteMenu = new MenuItem(message("BlackOrWhite"));
-        imageBlackWhiteMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageBlackWhiteBatchFxml);
-        });
-
-        MenuItem imageSepiaMenu = new MenuItem(message("Sepia"));
-        imageSepiaMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageSepiaBatchFxml);
-        });
-
-        MenuItem imageThresholdingsMenu = new MenuItem(message("Thresholding"));
-        imageThresholdingsMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageThresholdingBatchFxml);
-        });
-
-        MenuItem imageEdgeMenu = new MenuItem(message("EdgeDetection"));
-        imageEdgeMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageEdgeBatchFxml);
-        });
-
-        MenuItem imageEmbossMenu = new MenuItem(message("Emboss"));
-        imageEmbossMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageEmbossBatchFxml);
-        });
-
-        MenuItem imageSharpenMenu = new MenuItem(message("Sharpen"));
-        imageSharpenMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageSharpenBatchFxml);
-        });
-
         MenuItem imageTextMenu = new MenuItem(message("Text"));
         imageTextMenu.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImageTextBatchFxml);
@@ -259,14 +209,113 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         });
 
         Menu imageBatchMenu = new Menu(message("ImageBatch"));
-        imageBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
-                imageAdjustColorMenu, imageReplaceColorMenu, imageReduceColorsMenu,
-                imageGreyMenu, imageBlackWhiteMenu, imageSepiaMenu, imageThresholdingsMenu,
-                imageEdgeMenu, imageSharpenMenu,
-                imageTextMenu, imageRoundMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
+        imageBatchMenu.getItems().addAll(
+                imageColorBatchMenu(), imagePixelsBatchMenu(),
+                imageSizeMenu, imageMarginsMenu, imageTransformMenu, imageRoundMenu,
+                imageShadowMenu, imageCropMenu, imagePasteMenu, imageTextMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, new SeparatorMenuItem(),
                 imageOCRBatch);
         return imageBatchMenu;
+
+    }
+
+    private Menu imageColorBatchMenu() {
+
+        MenuItem imageReplaceColorMenu = new MenuItem(message("ReplaceColor"));
+        imageReplaceColorMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageReplaceColorBatchFxml);
+        });
+
+        MenuItem imageBlendColorMenu = new MenuItem(message("BlendColor"));
+        imageBlendColorMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageBlendColorBatchFxml);
+        });
+
+        MenuItem imageAdjustColorMenu = new MenuItem(message("AdjustColor"));
+        imageAdjustColorMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageAdjustColorBatchFxml);
+        });
+
+        MenuItem imageBlackWhiteMenu = new MenuItem(message("BlackOrWhite"));
+        imageBlackWhiteMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageBlackWhiteBatchFxml);
+        });
+
+        MenuItem imageGreyMenu = new MenuItem(message("Grey"));
+        imageGreyMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageGreyBatchFxml);
+        });
+
+        MenuItem imageSepiaMenu = new MenuItem(message("Sepia"));
+        imageSepiaMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSepiaBatchFxml);
+        });
+
+        MenuItem imageReduceColorsMenu = new MenuItem(message("ReduceColors"));
+        imageReduceColorsMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageReduceColorsBatchFxml);
+        });
+
+        MenuItem imageThresholdingsMenu = new MenuItem(message("Thresholding"));
+        imageThresholdingsMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageThresholdingBatchFxml);
+        });
+
+        Menu imageColorBatchMenu = new Menu(message("Color"));
+        imageColorBatchMenu.getItems().addAll(
+                imageReplaceColorMenu, imageBlendColorMenu, imageAdjustColorMenu,
+                imageBlackWhiteMenu, imageGreyMenu, imageSepiaMenu,
+                imageReduceColorsMenu, imageThresholdingsMenu
+        );
+        return imageColorBatchMenu;
+    }
+
+    private Menu imagePixelsBatchMenu() {
+        MenuItem imageMosaicMenu = new MenuItem(message("Mosaic"));
+        imageMosaicMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageMosaicBatchFxml);
+        });
+
+        MenuItem imageFrostedGlassMenu = new MenuItem(message("FrostedGlass"));
+        imageFrostedGlassMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageGlassBatchFxml);
+        });
+
+        MenuItem imageSmoothMenu = new MenuItem(message("Smooth"));
+        imageSmoothMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSmoothBatchFxml);
+        });
+
+        MenuItem imageSharpenMenu = new MenuItem(message("Sharpen"));
+        imageSharpenMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSharpenBatchFxml);
+        });
+
+        MenuItem imageContrastMenu = new MenuItem(message("Contrast"));
+        imageContrastMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageContrastBatchFxml);
+        });
+
+        MenuItem imageEdgeMenu = new MenuItem(message("EdgeDetection"));
+        imageEdgeMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageEdgeBatchFxml);
+        });
+
+        MenuItem imageEmbossMenu = new MenuItem(message("Emboss"));
+        imageEmbossMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageEmbossBatchFxml);
+        });
+
+        MenuItem imageConvolutionMenu = new MenuItem(message("Convolution"));
+        imageConvolutionMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageConvolutionBatchFxml);
+        });
+
+        Menu imagePixelsMenu = new Menu(message("Pixels"));
+        imagePixelsMenu.getItems().addAll(
+                imageMosaicMenu, imageFrostedGlassMenu, imageSmoothMenu, imageSharpenMenu,
+                imageContrastMenu, imageEdgeMenu, imageEmbossMenu, imageConvolutionMenu);
+        return imagePixelsMenu;
 
     }
 

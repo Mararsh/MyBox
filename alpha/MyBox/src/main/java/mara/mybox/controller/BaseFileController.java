@@ -115,9 +115,9 @@ public abstract class BaseFileController extends BaseController {
             items.add(menu);
 
             if (sourceFile != null) {
-                menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    recoverAction();
+                menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    refreshAction();
                 });
                 items.add(menu);
 

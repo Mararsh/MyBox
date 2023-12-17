@@ -7,11 +7,9 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
@@ -20,7 +18,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -130,20 +127,13 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             @Override
             protected boolean handle() {
                 try {
-                    BufferedImage demoImage = null;
                     List<File> sources = pickSourceFiles(true, false);
-                    if (sources != null && !sources.isEmpty()) {
-                        demoImage = ImageFileReaders.readImage(this, sources.get(0));
-                        if (demoTask == null || !demoTask.isWorking()) {
-                            return false;
-                        }
-                        if (demoImage != null) {
-                            demoImage = ScaleTools.demoImage(demoImage);
-                        }
+                    BufferedImage demoImage = ImageFileReaders.readImage(this, sources.get(0));
+                    if (demoTask == null || !demoTask.isWorking()) {
+                        return false;
                     }
-                    if (demoImage == null) {
-                        demoImage = SwingFXUtils.fromFXImage(
-                                new Image("img/" + "cover" + AppValues.AppYear + "g9.png"), null);
+                    if (demoImage != null) {
+                        demoImage = ScaleTools.demoImage(demoImage);
                     }
                     if (demoImage == null || demoTask == null || !demoTask.isWorking()) {
                         return false;

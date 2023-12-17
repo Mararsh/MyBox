@@ -332,23 +332,6 @@ public class BaseImageController extends BaseImageController_Actions {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            boolean imageShown = imageView != null && imageView.getImage() != null;
-            if (imageShown) {
-                menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
-                        StyleTools.getIconImageView("iconSave.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    saveAction();
-                });
-                items.add(menu);
-
-                menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
-                        StyleTools.getIconImageView("iconSaveAs.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    saveAsAction();
-                });
-                items.add(menu);
-            }
-
             if (sourceFile != null) {
                 String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
                 if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
@@ -374,43 +357,23 @@ public class BaseImageController extends BaseImageController_Actions {
                     items.add(menu);
                 }
 
-                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
-                        StyleTools.getIconImageView("iconRecover.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    recoverAction();
-                });
-                items.add(menu);
-
                 menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     refreshAction();
                 });
                 items.add(menu);
 
-                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
-                backItem.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
-                    }
-                });
-                items.add(backItem);
+                items.add(new SeparatorMenuItem());
 
-                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    openBackups();
-                });
-                items.add(menu);
             }
-
-            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Create"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent event) -> {
                 createAction();
             });
             items.add(menu);
+
+            boolean imageShown = imageView != null && imageView.getImage() != null;
 
             menu = new MenuItem(message("LoadContentInSystemClipboard")
                     + (imageShown ? "" : ("    Ctrl+V " + message("Or") + " Alt+V")),
@@ -428,10 +391,18 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
+            if (imageShown) {
+                menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                        StyleTools.getIconImageView("iconSaveAs.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    saveAsAction();
+                });
+                items.add(menu);
+            }
+
             if (sourceFile == null) {
                 return items;
             }
-
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));

@@ -161,6 +161,13 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         }
     }
 
+    public int centerSize() {
+        if (centers == null) {
+            return 0;
+        }
+        return centers.size();
+    }
+
     /*
         get/set
      */

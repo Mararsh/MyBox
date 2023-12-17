@@ -23,6 +23,7 @@ import mara.mybox.bufferedimage.PixelsBlend.TransparentAs;
 import static mara.mybox.bufferedimage.PixelsBlend.fixedOpacity;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.data.ImageItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -30,7 +31,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -226,7 +226,7 @@ public class ControlImagesBlend extends BaseController {
         }
 
         if (baseImage == null) {
-            baseImage = new Image("img/cover" + AppValues.AppYear + "g5.png");
+            baseImage = ImageItem.exampleImage();
         }
         if (overlay == null) {
             overlay = FxImageTools.createImage(

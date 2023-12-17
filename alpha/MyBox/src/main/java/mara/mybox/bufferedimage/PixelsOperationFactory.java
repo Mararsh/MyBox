@@ -20,12 +20,8 @@ import mara.mybox.value.Colors;
 public class PixelsOperationFactory {
 
     public static PixelsOperation createFX(Image image, ImageScope scope, OperationType operationType) {
-        if (image != null) {
-            return create(null, scope, operationType);
-        } else {
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-            return create(bufferedImage, scope, operationType);
-        }
+        return create(image != null ? SwingFXUtils.fromFXImage(image, null) : null,
+                scope, operationType);
     }
 
     public static PixelsOperation create(BufferedImage image, ImageScope scope, OperationType operationType) {
@@ -427,8 +423,9 @@ public class PixelsOperationFactory {
             this.scope = scope;
         }
 
-        public void setBlender(PixelsBlend blender) {
+        public BlendColor setBlender(PixelsBlend blender) {
             this.blender = blender;
+            return this;
         }
 
         @Override

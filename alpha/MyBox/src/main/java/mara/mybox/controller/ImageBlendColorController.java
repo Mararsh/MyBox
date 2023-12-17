@@ -38,7 +38,7 @@ public class ImageBlendColorController extends BasePixelsController {
 
             operation = message("BlendColor");
 
-            colorController.init(this, baseName + "NewColor", Color.PINK);
+            colorController.init(this, baseName + "Color", Color.PINK);
 
             blendController.setParameters(this);
         } catch (Exception e) {

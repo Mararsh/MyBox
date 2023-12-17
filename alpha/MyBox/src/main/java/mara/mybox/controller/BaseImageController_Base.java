@@ -184,9 +184,17 @@ public abstract class BaseImageController_Base extends BaseFileController {
             if (getMyStage() == null || thisPane.getParent() != null) {
                 return;
             }
+            myStage.setTitle(getBaseTitle() + fileTitle());
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public String fileTitle() {
+        try {
             String title;
             if (sourceFile != null) {
-                title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
+                title = " " + sourceFile.getAbsolutePath();
                 if (framesNumber > 1 && frameIndex >= 0) {
                     title += " - " + message("Frame") + " " + (frameIndex + 1);
                 }
@@ -194,14 +202,15 @@ public abstract class BaseImageController_Base extends BaseFileController {
                     title += " - " + message("Scaled");
                 }
             } else {
-                title = getBaseTitle();
+                title = "";
             }
             if (imageChanged) {
                 title += "  " + "*";
             }
-            getMyStage().setTitle(title);
+            return title;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return "";
         }
     }
 

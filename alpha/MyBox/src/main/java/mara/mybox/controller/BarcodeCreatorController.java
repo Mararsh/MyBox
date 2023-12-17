@@ -19,10 +19,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -446,8 +447,7 @@ public class BarcodeCreatorController extends BaseImageController {
             });
             qrErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getString("QRErrorCorrection", Languages.message("ErrorCorrectionLevelH")));
 
-            File pic = mara.mybox.fxml.FxFileTools.getInternalFile(
-                    "/img/cover" + AppValues.AppYear + "g9.png", "image", "About.png");
+            File pic = ImageItem.exampleImageFile();
             if (pic != null) {
                 sourceFileInput.setText(pic.getAbsolutePath());
             }

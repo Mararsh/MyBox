@@ -56,8 +56,16 @@ public class TransformTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            int newWidth = (int) (width + height * Math.abs(shearX)) * 2 + 2;
-            int newHeight = (int) (width * Math.abs(shearY) + height) * 2 + 2;
+            int offsetX = (int) (height * Math.abs(shearX)) + 1;
+            int newWidth = width + offsetX + 1;
+            if (shearX >= 0) {
+                offsetX = 0;
+            }
+            int offsetY = (int) (width * Math.abs(shearY)) + 1;
+            int newHeight = height + offsetY + 1;
+            if (shearY >= 0) {
+                offsetY = 0;
+            }
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
             Graphics2D g = target.createGraphics();
@@ -66,7 +74,7 @@ public class TransformTools {
             }
             Color bgColor = Colors.TRANSPARENT;
             g.setBackground(bgColor);
-            g.translate(newWidth / 2 + 1, newHeight / 2 + 1);
+            g.translate(offsetX, offsetY);
             g.shear(shearX, shearY);
             if (task != null && !task.isWorking()) {
                 return null;

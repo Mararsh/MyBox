@@ -45,6 +45,10 @@ public class ControlColorMatch extends BaseController {
     @FXML
     protected CheckBox squareRootCheck;
 
+    public ControlColorMatch() {
+        TipsLabelKey = "ColorMatchComments";
+    }
+
     public void changeNotify() {
         changeNotify.set(!changeNotify.get());
     }

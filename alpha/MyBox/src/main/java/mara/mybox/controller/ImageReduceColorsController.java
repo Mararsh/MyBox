@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -15,6 +16,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -30,7 +32,6 @@ public class ImageReduceColorsController extends BasePixelsController {
     protected List<Color> quantizationColors;
     protected StringTable quanTable;
     protected ImageQuantization quantization;
-    protected int actualLoop = -1;
     protected boolean calData;
 
     @FXML
@@ -58,6 +59,8 @@ public class ImageReduceColorsController extends BasePixelsController {
         try {
             super.initMore();
             operation = message("ReduceColors");
+            paletteAddButton.setVisible(false);
+            htmlButton.setVisible(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -68,33 +71,54 @@ public class ImageReduceColorsController extends BasePixelsController {
         if (!super.checkOptions()) {
             return false;
         }
-        quantizationColors = null;
-        paletteAddButton.setVisible(false);
-        htmlButton.setVisible(false);
-        quanTable = null;
-        optionsController.resultsLabel.setText("");
-        return true;
+        try {
+            quantizationColors = null;
+            paletteAddButton.setVisible(false);
+            htmlButton.setVisible(false);
+            quanTable = null;
+            optionsController.resultsLabel.setText("");
+            calData = optionsController.quanDataCheck.isSelected();
+            return true;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
     }
 
     @Override
     protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
-            calData = optionsController.quanDataCheck.isSelected();
-            quantization = ImageQuantizationFactory.create(inImage, inScope,
+            quantization = ImageQuantizationFactory.createFX(inImage, inScope,
                     optionsController, calData);
-            quantization.setExcludeScope(excludeScope())
+            quantization.setImage(inImage).setScope(inScope)
+                    .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
+            opInfo = optionsController.algorithm.name();
             if (optionsController.algorithm == QuantizationAlgorithm.KMeansClustering) {
                 KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
                 q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
                 handledImage = q.operateFxImage();
-                actualLoop = q.getKmeans().getLoopCount();
             } else {
                 handledImage = quantization.operateFxImage();
             }
-            operation = message("ReduceColors");
-            opInfo = optionsController.algorithm.name();
+
+            String name = null;
+            if (imageController.sourceFile != null) {
+                name = imageController.sourceFile.getName();
+            }
+            quanTable = quantization.countTable(currentTask, name);
+
+            List<ImageQuantization.ColorCount> sortedCounts = quantization.getSortedCounts();
+            if (sortedCounts != null && !sortedCounts.isEmpty()) {
+                quantizationColors = new ArrayList<>();
+                for (int i = 0; i < sortedCounts.size(); ++i) {
+                    ImageQuantization.ColorCount count = sortedCounts.get(i);
+                    Color color = ColorConvertTools.converColor(count.color);
+                    quantizationColors.add(color);
+                }
+            }
+
             return handledImage;
         } catch (Exception e) {
             displayError(e.toString());
@@ -107,28 +131,14 @@ public class ImageReduceColorsController extends BasePixelsController {
         if (quantization == null) {
             return;
         }
-        String name = null;
-        if (imageController.sourceFile != null) {
-            name = imageController.sourceFile.getName();
-        }
-        quanTable = quantization.countTable(name);
+        optionsController.resultsLabel.setText("-----\n" + quantization.resultInfo());
         if (quanTable != null) {
             htmlButton.setVisible(true);
             if (calData) {
                 htmlAction();
             }
         }
-        if (actualLoop >= 0) {
-            optionsController.resultsLabel.setText(message("ActualLoop") + ":" + actualLoop);
-        }
-        List<ImageQuantization.ColorCount> sortedCounts = quantization.getSortedCounts();
-        if (sortedCounts != null && !sortedCounts.isEmpty()) {
-            quantizationColors = new ArrayList<>();
-            for (int i = 0; i < sortedCounts.size(); ++i) {
-                ImageQuantization.ColorCount count = sortedCounts.get(i);
-                Color color = ColorConvertTools.converColor(count.color);
-                quantizationColors.add(color);
-            }
+        if (quantizationColors != null && !quantizationColors.isEmpty()) {
             paletteAddButton.setVisible(true);
         }
     }
@@ -140,7 +150,7 @@ public class ImageReduceColorsController extends BasePixelsController {
             return;
         }
         HtmlTableController controller
-                = (HtmlTableController) WindowTools.openStage(Fxmls.HtmlTableFxml);
+                = (HtmlTableController) WindowTools.popStage(this, Fxmls.HtmlTableFxml);
         controller.loadTable(quanTable);
     }
 
@@ -151,6 +161,11 @@ public class ImageReduceColorsController extends BasePixelsController {
             return;
         }
         ColorsManageController.addColors(quantizationColors);
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        ImageDemoTools.reduceColor(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
     }
 
     /*

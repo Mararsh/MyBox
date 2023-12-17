@@ -3,13 +3,20 @@ package mara.mybox.fxml;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
+import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageConvolution;
+import mara.mybox.bufferedimage.ImageQuantization;
+import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
+import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -485,6 +492,263 @@ public class ImageDemoTools {
             } else {
                 MyBoxLog.error(e.toString());
             }
+        }
+    }
+
+    public static void shear(FxTask demoTask, List<String> files, BufferedImage demoImage) {
+        if (demoTask == null || demoImage == null || files == null) {
+            return;
+        }
+        try {
+            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
+                    + File.separator + message("Shear");
+
+            BufferedImage bufferedImage = TransformTools.shearImage(demoTask, demoImage, 1.5f, 2);
+            if (!demoTask.isWorking()) {
+                return;
+            }
+            String tmpFile = FileTmpTools.getPathTempFile(path, "radio_(1.5,2)", ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (!demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 2, -1.5f);
+            if (!demoTask.isWorking()) {
+                return;
+            }
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(2,-1.5)", ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (!demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -1.5f, 2);
+            if (!demoTask.isWorking()) {
+                return;
+            }
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(-1.5,2)", ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (!demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -2, -1.5f);
+            if (!demoTask.isWorking()) {
+                return;
+            }
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(-2,-1.5)", ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (!demoTask.isWorking()) {
+                return;
+            }
+
+        } catch (Exception e) {
+            if (demoTask != null) {
+                demoTask.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+        }
+    }
+
+    public static void blackWhite(FxTask demoTask, List<String> files, ImageBinary binary) {
+        if (demoTask == null || binary == null || files == null) {
+            return;
+        }
+        try {
+            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
+                    + File.separator + message("BlackOrWhite");
+
+            binary.setTask(demoTask);
+            int threshold = binary.getIntPara1();
+
+            BufferedImage bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Default)
+                    .setIsDithering(true)
+                    .operate();
+            String tmpFile = FileTmpTools.getPathTempFile(path, message("Default")
+                    + "_" + message("Dithering"), ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Default)
+                    .setIsDithering(false)
+                    .operate();
+            tmpFile = FileTmpTools.getPathTempFile(path, message("Default"), ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            List<Integer> inputs = new ArrayList<>();
+            inputs.addAll(Arrays.asList(64, 96, 112, 128, 144, 160, 176, 198, 228));
+            if (threshold > 0 && threshold < 255 && !inputs.contains(threshold)) {
+                inputs.add(threshold);
+            }
+            for (int v : inputs) {
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                bufferedImage = binary
+                        .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                        .setIntPara1(v)
+                        .setIsDithering(true)
+                        .setTask(demoTask)
+                        .operate();
+                tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + v
+                        + "_" + message("Dithering"), ".png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                    files.add(tmpFile);
+                    demoTask.setInfo(tmpFile);
+                }
+
+                bufferedImage = binary
+                        .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                        .setIntPara1(v)
+                        .setIsDithering(false)
+                        .setTask(demoTask)
+                        .operate();
+                tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + v, ".png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                    files.add(tmpFile);
+                    demoTask.setInfo(tmpFile);
+                }
+            }
+
+            int otsu = ImageBinary.threshold(demoTask, binary.getImage());
+            bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                    .setIntPara1(otsu)
+                    .setIsDithering(true)
+                    .setTask(demoTask)
+                    .operate();
+            tmpFile = FileTmpTools.getPathTempFile(path, message("OTSU")
+                    + otsu + "_" + message("Dithering"), ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = binary
+                    .setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                    .setIntPara1(otsu)
+                    .setIsDithering(false)
+                    .setTask(demoTask)
+                    .operate();
+            tmpFile = FileTmpTools.getPathTempFile(path, message("OTSU") + otsu, ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void sepia(FxTask demoTask, List<String> files, PixelsOperation pixelsOperation) {
+        if (demoTask == null || pixelsOperation == null || files == null) {
+            return;
+        }
+        try {
+            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
+                    + File.separator + message("Sepia");
+
+            pixelsOperation.setTask(demoTask);
+
+            List<Integer> values = Arrays.asList(60, 80, 20, 50, 10, 5, 100, 15, 20);
+            for (int v : values) {
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                BufferedImage bufferedImage = pixelsOperation.setIntPara1(v).operate();
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                String tmpFile = FileTmpTools.getPathTempFile(path, message("Intensity") + v, ".png")
+                        .getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                    files.add(tmpFile);
+                    demoTask.setInfo(tmpFile);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void reduceColor(FxTask demoTask, List<String> files, BufferedImage demoImage) {
+        if (demoTask == null || demoImage == null || files == null) {
+            return;
+        }
+        try {
+            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
+                    + File.separator + message("ReduceColor");
+
+            ImageQuantization quantization;
+            BufferedImage bufferedImage;
+            String tmpFile;
+            for (QuantizationAlgorithm a : QuantizationAlgorithm.values()) {
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                quantization = ImageQuantizationFactory.create(demoImage, null,
+                        a, 5, 1024, 2, 4, 3, false, true, true);
+                bufferedImage = quantization.setTask(demoTask).operate();
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                tmpFile = FileTmpTools.getPathTempFile(path,
+                        message(quantization.getAlgorithm().name()) + "_" + message("Colors") + "5", ".png")
+                        .getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                    files.add(tmpFile);
+                    demoTask.setInfo(tmpFile);
+                }
+
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                quantization = ImageQuantizationFactory.create(demoImage, null,
+                        a, 256, 1024, 2, 4, 3, false, true, true);
+                bufferedImage = quantization.setTask(demoTask).operate();
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                tmpFile = FileTmpTools.getPathTempFile(path,
+                        message(quantization.getAlgorithm().name()) + "_" + message("Colors") + "256", ".png")
+                        .getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                    files.add(tmpFile);
+                    demoTask.setInfo(tmpFile);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

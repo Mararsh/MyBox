@@ -464,7 +464,7 @@ public class ControlImageFormat extends BaseController {
             if (isSettingValues || attributes == null || !thisPane.getChildren().contains(binaryBox)) {
                 return;
             }
-            attributes.setImageBinary(binaryController.pickValues());
+            attributes.setImageBinary(binaryController.pickValues(-1));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

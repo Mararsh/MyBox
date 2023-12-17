@@ -27,11 +27,11 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
+import mara.mybox.data.ImageItem;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -95,7 +95,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
             image = imageView.getImage();
         }
         if (image == null) {
-            image = new Image("img/" + "cover" + AppValues.AppYear + "g9.png");
+            image = ImageItem.exampleImage();
             loadImage(image);
         }
         return image;

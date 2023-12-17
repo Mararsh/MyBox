@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Colors;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
@@ -18,7 +19,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.bufferedimage.ImageScope.ScopeType.Colors;
 
 /**
  * @Author Mara

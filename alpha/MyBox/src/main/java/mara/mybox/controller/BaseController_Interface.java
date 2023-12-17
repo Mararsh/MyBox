@@ -219,6 +219,26 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 systemMethodButton.setDisable(true);
             }
 
+            if (tipsView != null) {
+                tipsView.setPickOnBounds(true);
+                tipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        popTips();
+                    }
+                });
+            }
+
+            if (rightTipsView != null) {
+                rightTipsView.setPickOnBounds(true);
+                rightTipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        popTips();
+                    }
+                });
+            }
+
             initLeftPaneControl();
             initRightPaneControl();
 
@@ -548,25 +568,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }
 
                 if (tipsView != null) {
-                    tipsView.setPickOnBounds(true);
                     NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
-                    tipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            popTips();
-                        }
-                    });
                 }
 
                 if (rightTipsView != null) {
-                    rightTipsView.setPickOnBounds(true);
                     NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
-                    rightTipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            popTips();
-                        }
-                    });
                 }
             }
 

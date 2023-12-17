@@ -25,7 +25,7 @@ public class ControlImageThresholding extends BaseController {
     protected TextField thresholdInput, smallInput, bigInput;
 
     public ControlImageThresholding() {
-        TipsLabelKey = message("ImageThresholdingComments");
+        TipsLabelKey = "ImageThresholdingComments";
     }
 
     @Override

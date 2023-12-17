@@ -325,7 +325,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void refreshAction() {
-        if (sourceFile == null) {
+        if (sourceFile == null || !checkBeforeNextAction()) {
             return;
         }
         sourceFileChanged(sourceFile);
@@ -407,7 +407,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     public void view(File file) {
         if (file != null) {
-            ControllerTools.openTarget(file.getAbsolutePath());
+            ControllerTools.popTarget(myController, file.getAbsolutePath(), true);
         }
     }
 

@@ -27,10 +27,8 @@ public abstract class BasePixelsController extends BaseImageEditController {
             close();
             return;
         }
-        scopeController.loadImage(imageController.sourceFile,
-                imageController.imageInformation,
-                imageController.imageView.getImage(),
-                imageController.imageChanged);
+        scopeController.loadImage(srcImage());
+        updateStageTitle();
     }
 
     @Override

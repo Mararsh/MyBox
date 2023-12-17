@@ -62,6 +62,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void openImageBlendColorBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageBlendColorBatchFxml);
+    }
+
+    @FXML
     protected void openImageGreyBatch(ActionEvent event) {
         loadScene(Fxmls.ImageGreyBatchFxml);
     }

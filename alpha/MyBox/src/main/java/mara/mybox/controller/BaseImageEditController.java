@@ -72,7 +72,7 @@ public class BaseImageEditController extends BaseShapeController {
 
             initMore();
 
-            refreshAction();
+            loadImage();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -82,21 +82,12 @@ public class BaseImageEditController extends BaseShapeController {
     protected void initMore() {
     }
 
-    @FXML
-    @Override
-    public void refreshAction() {
-        loadImage();
-    }
-
     protected void loadImage() {
         if (imageController == null || !imageController.isShowing()) {
             close();
             return;
         }
-        loadImage(imageController.sourceFile,
-                imageController.imageInformation,
-                imageController.imageView.getImage(),
-                imageController.imageChanged);
+        loadImage(srcImage());
     }
 
     @Override
@@ -110,6 +101,18 @@ public class BaseImageEditController extends BaseShapeController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
+        }
+    }
+
+    @Override
+    public void updateStageTitle() {
+        try {
+            if (getMyStage() == null) {
+                return;
+            }
+            myStage.setTitle(getBaseTitle() + imageController.fileTitle());
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 

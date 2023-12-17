@@ -359,7 +359,7 @@ public class ImageEditorController extends BaseImageController {
     }
 
     @Override
-    public List<MenuItem> operationsMenuItems(Event fevent) {
+    public List<MenuItem> dataMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -394,7 +394,44 @@ public class ImageEditorController extends BaseImageController {
                 showHistories();
             });
             items.add(menu);
+
             items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
+                    StyleTools.getIconImageView("iconSave.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                saveAction();
+            });
+            items.add(menu);
+
+            CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+            backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+            backItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                }
+            });
+            items.add(backItem);
+
+            menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                openBackups();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
 
             menu = new MenuItem(message("Margins"), StyleTools.getIconImageView("iconRectangle.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -429,6 +466,52 @@ public class ImageEditorController extends BaseImageController {
             menu = new MenuItem(message("Crop"), StyleTools.getIconImageView("iconCrop.png"));
             menu.setOnAction((ActionEvent event) -> {
                 cropAction();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateRight();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                rotateLeft();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                turnOver();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Rotate"), StyleTools.getIconImageView("iconReplace.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageRotateController.open(this);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageShearController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("MirrorHorizontal"), StyleTools.getIconImageView("iconHorizontal.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                horizontalAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("MirrorVertical"), StyleTools.getIconImageView("iconVertical.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                verticalAction();
             });
             items.add(menu);
 
@@ -584,79 +667,6 @@ public class ImageEditorController extends BaseImageController {
                 @Override
                 public void handle(ActionEvent event) {
                     UserConfig.setBoolean(baseName + "PixelsMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            popEventMenu(fevent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void popTransformMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TransformMenuPopWhenMouseHovering", true)) {
-            showTransformMenu(event);
-        }
-    }
-
-    @FXML
-    public void showTransformMenu(Event fevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                rotateRight();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                rotateLeft();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                turnOver();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Rotate"), StyleTools.getIconImageView("iconReplace.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageRotateController.open(this);
-            });
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageShearController.open(this);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("MirrorHorizontal"), StyleTools.getIconImageView("iconHorizontal.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                horizontalAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("MirrorVertical"), StyleTools.getIconImageView("iconVertical.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                verticalAction();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "TransformMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TransformMenuPopWhenMouseHovering", popItem.isSelected());
                 }
             });
             items.add(popItem);

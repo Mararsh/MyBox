@@ -198,6 +198,18 @@ public class ImageItem {
         return preDefined;
     }
 
+    public static String exampleImageName() {
+        return "img/cover" + AppValues.AppYear + "g5.png";
+    }
+
+    public static Image exampleImage() {
+        return new Image(exampleImageName());
+    }
+
+    public static File exampleImageFile() {
+        return FxFileTools.getInternalFile("/" + exampleImageName(), "image", "About.png");
+    }
+
     /*
         get/set
      */

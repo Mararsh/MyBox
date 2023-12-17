@@ -1,13 +1,17 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -86,6 +90,12 @@ public class ImageShearController extends BaseImageEditController {
     protected void handleImage(FxTask currentTask) {
         handledImage = TransformTools.shearImage(currentTask, imageView.getImage(), shearX, shearY);
     }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        ImageDemoTools.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
+    }
+
 
     /*
         static methods

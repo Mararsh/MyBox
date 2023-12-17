@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.List;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScope;
@@ -11,9 +8,8 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -70,33 +66,14 @@ public class ImageSepiaController extends BasePixelsController {
     }
 
     @Override
-    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image inImage) {
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         try {
-            BufferedImage demoImage = SwingFXUtils.fromFXImage(inImage, null);
-            BufferedImage bufferedImage;
-            String tmpFile;
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(
+            PixelsOperation op = PixelsOperationFactory.createFX(
                     demoImage, scope(), PixelsOperation.OperationType.Sepia)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
-            List<Integer> values = Arrays.asList(60, 80, 20, 50, 10, 5, 100, 15, 20);
-            for (int v : values) {
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-                bufferedImage = pixelsOperation.setIntPara1(v).operate();
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-                tmpFile = FileTmpTools.generateFile(message("Sepia") + "_" + message("Intensity") + v, "png")
-                        .getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(currentTask, bufferedImage, tmpFile)) {
-                    files.add(tmpFile);
-                    currentTask.setInfo(tmpFile);
-                }
-            }
-
+            ImageDemoTools.sepia(currentTask, files, op);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

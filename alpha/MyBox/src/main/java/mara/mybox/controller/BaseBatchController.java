@@ -25,6 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
+import mara.mybox.data.ImageItem;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -339,7 +340,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 }
 
                 if (previewButton != null) {
-                    previewButton.disableProperty().bind(startButton.disableProperty());
+                    previewButton.setDisable(false);
                 }
             }
 
@@ -519,51 +520,54 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public List<File> pickSourceFiles(boolean onlyOne, boolean reset) {
+        List<File> files = new ArrayList<>();
         try {
-            if (tableData == null || tableData.isEmpty()) {
-                return null;
-            }
-            List<File> files = new ArrayList<>();
-            ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-            for (int i = 0; i < tableData.size(); ++i) {
-                FileInformation d = tableController.fileInformation(i);
-                if (d == null) {
-                    continue;
-                }
-                if (reset) {
-                    d.setHandled("");
-                }
-                if (selected != null && !selected.isEmpty() && !selected.contains(i)) {
-                    continue;
-                }
-                File file = d.getFile();
-                if (!files.contains(file)) {
-                    files.add(file);
-                    if (onlyOne) {
-                        break;
+            if (tableData != null) {
+                ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+                for (int i = 0; i < tableData.size(); ++i) {
+                    FileInformation d = tableController.fileInformation(i);
+                    if (d == null) {
+                        continue;
+                    }
+                    if (reset) {
+                        d.setHandled("");
+                    }
+                    if (selected != null && !selected.isEmpty() && !selected.contains(i)) {
+                        continue;
+                    }
+                    File file = d.getFile();
+                    if (!files.contains(file)) {
+                        files.add(file);
+                        if (onlyOne) {
+                            break;
+                        }
                     }
                 }
             }
-            return files;
+            if (onlyOne && files.isEmpty()) {
+                files.add(ImageItem.exampleImageFile());
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
-            return null;
         }
+        return files;
     }
 
     public boolean makePreviewParameters() {
+        isPreview = true;
         if (!makeActualParameters()) {
             actualParameters = null;
+            isPreview = false;
             return false;
         }
         try {
             previewParameters = (ProcessParameters) actualParameters.clone();
         } catch (Exception e) {
+            isPreview = false;
             return false;
         }
         previewParameters.status = "start";
         currentParameters = previewParameters;
-        isPreview = true;
         return true;
     }
 

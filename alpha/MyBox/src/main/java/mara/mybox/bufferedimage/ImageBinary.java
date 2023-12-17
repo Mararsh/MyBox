@@ -27,12 +27,10 @@ public class ImageBinary extends PixelsOperation {
     }
 
     public ImageBinary() {
-        MyBoxLog.console("s");
         init();
     }
 
     final public void init() {
-        MyBoxLog.console("init");
         intPara1 = -1;
         defaultBinary = null;
         operationType = OperationType.BlackOrWhite;
@@ -41,7 +39,6 @@ public class ImageBinary extends PixelsOperation {
     }
 
     public ImageBinary(Image image) {
-        MyBoxLog.console("i");
         init();
         this.image = SwingFXUtils.fromFXImage(image, null);
     }

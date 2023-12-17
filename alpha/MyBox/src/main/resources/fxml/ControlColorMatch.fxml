@@ -23,7 +23,7 @@ License:    Apache License Version 2.0
       <FlowPane hgap="2.0" layoutX="10.0" layoutY="112.0" prefWrapLength="80.0" vgap="2.0">
          <children>
             <Label minHeight="-Infinity" text="%Match" wrapText="true" />
-                                <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../buttons/Red/iconTips.png" />
                                     </image>

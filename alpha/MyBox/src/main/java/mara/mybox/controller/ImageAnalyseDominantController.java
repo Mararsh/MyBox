@@ -114,7 +114,7 @@ public class ImageAnalyseDominantController extends BaseController {
                         return false;
                     }
                     quantization.operate();
-                    StringTable table = quantization.countTable(null);
+                    StringTable table = quantization.countTable(this, null);
                     if (table == null) {
                         return false;
                     }
