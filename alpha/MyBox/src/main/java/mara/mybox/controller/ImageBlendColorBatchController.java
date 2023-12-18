@@ -1,11 +1,13 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperationFactory.BlendColor;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
@@ -46,7 +48,7 @@ public class ImageBlendColorBatchController extends BaseImageEditBatchController
         if (!super.makeMoreParameters()) {
             return false;
         }
-        PixelsBlend blend = blendController.pickValues();
+        PixelsBlend blend = blendController.pickValues(-1f);
         if (blend == null) {
             return false;
         }
@@ -58,6 +60,11 @@ public class ImageBlendColorBatchController extends BaseImageEditBatchController
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         return blendColor.setImage(source).setTask(currentTask).operateImage();
+    }
+
+    @Override
+    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
+        ColorDemos.blendColor(currentTask, files, demoImage, colorController.color());
     }
 
 }

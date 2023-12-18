@@ -10,7 +10,7 @@ import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -93,7 +93,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
 
     @Override
     public void makeDemoFiles(FxTask dTask, List<String> files, BufferedImage demoImage) {
-        ImageDemoTools.adjustColor(dTask, files, demoImage, null);
+        ColorDemos.adjustColor(dTask, files, demoImage, null);
     }
 
 }

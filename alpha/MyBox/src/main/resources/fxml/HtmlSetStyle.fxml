@@ -54,7 +54,7 @@ License:    Apache License Version 2.0
                                  </children>
                               </HBox>
                                         <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

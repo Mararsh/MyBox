@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -55,7 +55,7 @@ public class ImageBlackWhiteBatchController extends BaseImageEditBatchController
                 return;
             }
             imageBinary.setImage(demoImage);
-            ImageDemoTools.blackWhite(currentTask, files, imageBinary);
+            ColorDemos.blackWhite(currentTask, files, imageBinary);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

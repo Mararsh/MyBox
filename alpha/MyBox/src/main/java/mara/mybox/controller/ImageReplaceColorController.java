@@ -12,7 +12,7 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -102,7 +102,7 @@ public class ImageReplaceColorController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             String prefix = colorController.css();
-            ImageDemoTools.replaceColor(currentTask, files, pixelsOperation, prefix);
+            ColorDemos.replaceColor(currentTask, files, pixelsOperation, prefix);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -201,7 +201,7 @@ public class ImagePasteBatchController extends BaseImageEditBatchController {
 
     @Override
     public boolean beforeHandleFiles(FxTask currentTask) {
-        blend = blendController.pickValues();
+        blend = blendController.pickValues(-1);
         if (blend == null) {
             return false;
         }

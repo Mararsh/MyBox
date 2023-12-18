@@ -209,9 +209,17 @@ public class BaseImageEditController extends BaseShapeController {
     protected void finalHandle() {
     }
 
+    protected boolean checkDemoOptions() {
+        if (imageController == null || !imageController.isShowing()) {
+            close();
+            return false;
+        }
+        return srcImage() != null;
+    }
+
     @FXML
     protected void demo() {
-        if (!checkOptions()) {
+        if (!checkDemoOptions()) {
             return;
         }
         if (demoTask != null) {

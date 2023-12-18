@@ -340,7 +340,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 }
 
                 if (previewButton != null) {
-                    previewButton.setDisable(false);
+                    previewButton.disableProperty().bind(startButton.disableProperty());
                 }
             }
 

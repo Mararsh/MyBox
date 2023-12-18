@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                                 <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtml2PdfOptions.fxml" VBox.vgrow="ALWAYS" />
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

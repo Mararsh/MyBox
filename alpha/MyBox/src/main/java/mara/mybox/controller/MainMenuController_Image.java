@@ -112,6 +112,21 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void openImageSmoothBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageSmoothBatchFxml);
+    }
+
+    @FXML
+    protected void openImageContrastBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageContrastBatchFxml);
+    }
+
+    @FXML
+    protected void openImageConvolutionBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageConvolutionBatchFxml);
+    }
+
+    @FXML
     protected void openImageTextBatch(ActionEvent event) {
         loadScene(Fxmls.ImageTextBatchFxml);
     }

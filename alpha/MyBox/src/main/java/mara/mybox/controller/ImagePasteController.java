@@ -2,8 +2,10 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -18,12 +20,15 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
@@ -39,7 +44,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ImagePasteController extends BaseImageEditController {
 
-    protected ImageScope scope;
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
     protected int keepRatioType;
@@ -171,7 +175,7 @@ public class ImagePasteController extends BaseImageEditController {
         if (clipSource == null || scope == null || maskRectangleData == null) {
             return;
         }
-        PixelsBlend blend = blendController.pickValues();
+        PixelsBlend blend = blendController.pickValues(-1);
         if (blend == null) {
             return;
         }
@@ -320,6 +324,14 @@ public class ImagePasteController extends BaseImageEditController {
     @Override
     public void okAction() {
         passHandled(currentImage());
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        Image overlay = finalClip != null ? finalClip : ImageItem.exampleImage();
+        ColorDemos.blendImage(currentTask, files,
+                SwingFXUtils.fromFXImage(demoImage, null),
+                SwingFXUtils.fromFXImage(overlay, null));
     }
 
 

@@ -8,6 +8,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ValidationTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -38,7 +40,7 @@ public class ControlImageSharpen extends BaseController {
             intensitySelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    intensity = Integer.parseInt(newValue);
+                    checkIntensity();
                 }
             });
 
@@ -49,7 +51,32 @@ public class ControlImageSharpen extends BaseController {
         }
     }
 
-    protected ConvolutionKernel kernel() {
+    protected boolean checkIntensity() {
+        if (isSettingValues) {
+            return true;
+        }
+        int v;
+        try {
+            v = Integer.parseInt(intensitySelector.getValue());
+        } catch (Exception e) {
+            v = -1;
+        }
+        if (v > 0) {
+            intensity = v;
+            UserConfig.setInt(baseName + "Intensity", v);
+            ValidationTools.setEditorNormal(intensitySelector);
+            return true;
+        } else {
+            popError(message("InvalidParameter") + ": " + message("Intensity"));
+            ValidationTools.setEditorBadStyle(intensitySelector);
+            return false;
+        }
+    }
+
+    protected ConvolutionKernel pickValues() {
+        if (!checkIntensity()) {
+            return null;
+        }
         try {
             if (unmaskRadio.isSelected()) {
                 return ConvolutionKernel.makeUnsharpMasking(intensity);

@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fximage;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -6,19 +6,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ColorConvertTools;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageBinary;
-import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageQuantization;
 import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.PixelsBlend;
+import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
-import mara.mybox.bufferedimage.TransformTools;
-import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppPaths;
@@ -29,7 +29,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-12-1
  * @License Apache License Version 2.0
  */
-public class ImageDemoTools {
+public class ColorDemos {
 
     public static void replaceColor(FxTask demoTask, List<String> files,
             PixelsOperation pixelsOperation, String prefix) {
@@ -331,233 +331,118 @@ public class ImageDemoTools {
         }
     }
 
-    public static void sharpen(FxTask demoTask, List<String> files, ImageConvolution convolution) {
-        if (demoTask == null || convolution == null || files == null) {
+    public static void blendColor(FxTask currentTask, List<String> files, BufferedImage baseImage, javafx.scene.paint.Color color) {
+        if (color == null) {
+            color = javafx.scene.paint.Color.PINK;
+        }
+        Image overlay = FxImageTools.createImage(
+                (int) (baseImage.getWidth() * 7 / 8), (int) (baseImage.getHeight() * 7 / 8),
+                color);
+        blendImage(currentTask, files, baseImage, SwingFXUtils.fromFXImage(overlay, null));
+    }
+
+    public static void blendImage(FxTask currentTask, List<String> files, BufferedImage baseImage, BufferedImage overlay) {
+        if (currentTask == null || baseImage == null || overlay == null || files == null) {
             return;
         }
         try {
+            BufferedImage baseBI = mara.mybox.bufferedimage.ScaleTools.demoImage(baseImage);
+            BufferedImage overlayBI = mara.mybox.bufferedimage.ScaleTools.demoImage(overlay);
+
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
-                    + File.separator + message("Sharpen");
+                    + File.separator + message("BlendColor");
 
-            BufferedImage bufferedImage = convolution
-                    .setKernel(ConvolutionKernel.makeUnsharpMasking(1))
-                    .setTask(demoTask)
-                    .operate();
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            String tmpFile = FileTmpTools.getPathTempFile(path, message("UnsharpMasking") + "_1", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                if (!demoTask.isWorking()) {
+            int x = (int) (baseBI.getWidth() - overlayBI.getWidth()) / 2;
+            int y = (int) (baseBI.getHeight() - overlayBI.getHeight()) / 2;
+
+            PixelsBlend.ImagesBlendMode mode;
+            PixelsBlend blender;
+            BufferedImage blended;
+            String tmpFile;
+            for (String name : PixelsBlendFactory.blendModes()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                demoTask.setInfo(tmpFile);
-            }
+                mode = PixelsBlendFactory.blendMode(name);
+                blender = PixelsBlendFactory.create(mode).setBlendMode(mode);
 
-            bufferedImage = convolution
-                    .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
-                    .setTask(demoTask)
-                    .operate();
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, message("UnsharpMasking") + "_2", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                if (!demoTask.isWorking()) {
+                blender.setOpacity(1f).setBaseAbove(false)
+                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
+                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
+                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                demoTask.setInfo(tmpFile);
-            }
-
-            bufferedImage = convolution
-                    .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
-                    .setTask(demoTask)
-                    .operate();
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, message("UnsharpMasking") + "_3", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                if (!demoTask.isWorking()) {
+                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
+                        + message("Opacity") + "1_" + message("Overlay") + "_" + message("BaseImage"),
+                        ".png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
+                    files.add(tmpFile);
+                    currentTask.setInfo(tmpFile);
+                }
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                demoTask.setInfo(tmpFile);
-            }
 
-            bufferedImage = convolution
-                    .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
-                    .setTask(demoTask)
-                    .operate();
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, message("UnsharpMasking") + "_4", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                if (!demoTask.isWorking()) {
+                blender.setOpacity(0.5f).setBaseAbove(false)
+                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
+                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
+                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                demoTask.setInfo(tmpFile);
-            }
-
-            bufferedImage = convolution
-                    .setKernel(ConvolutionKernel.MakeSharpenEightNeighborLaplace())
-                    .setTask(demoTask)
-                    .operate();
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, message("EightNeighborLaplace"), ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                if (!demoTask.isWorking()) {
+                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
+                        + message("Opacity") + "0.5_" + message("Overlay") + "_" + message("BaseImage"),
+                        ".png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
+                    files.add(tmpFile);
+                    currentTask.setInfo(tmpFile);
+                }
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                demoTask.setInfo(tmpFile);
-            }
 
-            bufferedImage = convolution
-                    .setKernel(ConvolutionKernel.MakeSharpenFourNeighborLaplace())
-                    .setTask(demoTask)
-                    .operate();
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, message("FourNeighborLaplace"), ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                if (!demoTask.isWorking()) {
+                blender.setOpacity(0.5f).setBaseAbove(false)
+                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
+                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
+                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                demoTask.setInfo(tmpFile);
+                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
+                        + message("Opacity") + "0.5_" + message("Transparent") + "_" + message("BaseImage"),
+                        ".png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
+                    files.add(tmpFile);
+                    currentTask.setInfo(tmpFile);
+                }
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return;
+                }
+
+                blender.setOpacity(0.5f).setBaseAbove(false)
+                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
+                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
+                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return;
+                }
+                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
+                        + message("Opacity") + "0.5_" + message("Transparent") + "_" + message("Transparent"),
+                        ".png").getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
+                    files.add(tmpFile);
+                    currentTask.setInfo(tmpFile);
+                }
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return;
+                }
+
             }
 
         } catch (Exception e) {
-            if (demoTask != null) {
-                demoTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-        }
-    }
-
-    public static void shadow(FxTask demoTask, List<String> files, BufferedImage demoImage, Color color) {
-        if (demoTask == null || color == null || files == null) {
-            return;
-        }
-        try {
-            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
-                    + File.separator + message("Shadow");
-
-            int offsetX = Math.max(30, demoImage.getWidth() / 20);
-            int offsetY = Math.max(30, demoImage.getHeight() / 20);
-
-            shadow(demoTask, files, demoImage, path, color, offsetX, offsetY, true);
-            shadow(demoTask, files, demoImage, path, color, offsetX, -offsetY, true);
-            shadow(demoTask, files, demoImage, path, color, -offsetX, offsetY, true);
-            shadow(demoTask, files, demoImage, path, color, -offsetX, -offsetY, true);
-            shadow(demoTask, files, demoImage, path, color, offsetX, offsetY, false);
-            shadow(demoTask, files, demoImage, path, color, offsetX, -offsetY, false);
-            shadow(demoTask, files, demoImage, path, color, -offsetX, offsetY, false);
-            shadow(demoTask, files, demoImage, path, color, -offsetX, -offsetY, false);
-        } catch (Exception e) {
-            if (demoTask != null) {
-                demoTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-        }
-    }
-
-    public static void shadow(FxTask demoTask, List<String> files, BufferedImage demoImage,
-            String path, Color color, int offsetX, int offsetY, boolean blur) {
-        try {
-            BufferedImage bufferedImage = BufferedImageTools.addShadow(demoTask, demoImage,
-                    -offsetX, -offsetY, color, blur);
-            String tmpFile = FileTmpTools.getPathTempFile(path,
-                    ColorConvertTools.color2css(color)
-                    + "_x-" + offsetX + "_y-" + offsetY + (blur ? ("_" + message("Blur")) : ""),
-                    ".png")
-                    .getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                demoTask.setInfo(tmpFile);
-            }
-        } catch (Exception e) {
-            if (demoTask != null) {
-                demoTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-        }
-    }
-
-    public static void shear(FxTask demoTask, List<String> files, BufferedImage demoImage) {
-        if (demoTask == null || demoImage == null || files == null) {
-            return;
-        }
-        try {
-            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
-                    + File.separator + message("Shear");
-
-            BufferedImage bufferedImage = TransformTools.shearImage(demoTask, demoImage, 1.5f, 2);
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            String tmpFile = FileTmpTools.getPathTempFile(path, "radio_(1.5,2)", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                demoTask.setInfo(tmpFile);
-            }
-            if (!demoTask.isWorking()) {
-                return;
-            }
-
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 2, -1.5f);
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(2,-1.5)", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                demoTask.setInfo(tmpFile);
-            }
-            if (!demoTask.isWorking()) {
-                return;
-            }
-
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -1.5f, 2);
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(-1.5,2)", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                demoTask.setInfo(tmpFile);
-            }
-            if (!demoTask.isWorking()) {
-                return;
-            }
-
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -2, -1.5f);
-            if (!demoTask.isWorking()) {
-                return;
-            }
-            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(-2,-1.5)", ".png").getAbsolutePath();
-            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
-                files.add(tmpFile);
-                demoTask.setInfo(tmpFile);
-            }
-            if (!demoTask.isWorking()) {
-                return;
-            }
-
-        } catch (Exception e) {
-            if (demoTask != null) {
-                demoTask.setError(e.toString());
+            if (currentTask != null) {
+                currentTask.setError(e.toString());
             } else {
                 MyBoxLog.error(e.toString());
             }
@@ -701,13 +586,13 @@ public class ImageDemoTools {
         }
     }
 
-    public static void reduceColor(FxTask demoTask, List<String> files, BufferedImage demoImage) {
+    public static void reduceColors(FxTask demoTask, List<String> files, BufferedImage demoImage) {
         if (demoTask == null || demoImage == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
-                    + File.separator + message("ReduceColor");
+                    + File.separator + message("ReduceColors");
 
             ImageQuantization quantization;
             BufferedImage bufferedImage;
@@ -717,13 +602,30 @@ public class ImageDemoTools {
                     return;
                 }
                 quantization = ImageQuantizationFactory.create(demoImage, null,
-                        a, 5, 1024, 2, 4, 3, false, true, true);
+                        a, 8, 256, 1, 1, 1, false, true, true);
                 bufferedImage = quantization.setTask(demoTask).operate();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        message(quantization.getAlgorithm().name()) + "_" + message("Colors") + "5", ".png")
+                        message(quantization.getAlgorithm().name()) + "_" + message("Colors") + "8", ".png")
+                        .getAbsolutePath();
+                if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                    files.add(tmpFile);
+                    demoTask.setInfo(tmpFile);
+                }
+
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                quantization = ImageQuantizationFactory.create(demoImage, null,
+                        a, 27, 1024, 1, 1, 1, false, true, true);
+                bufferedImage = quantization.setTask(demoTask).operate();
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                tmpFile = FileTmpTools.getPathTempFile(path,
+                        message(quantization.getAlgorithm().name()) + "_" + message("Colors") + "27", ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
                     files.add(tmpFile);
@@ -747,6 +649,80 @@ public class ImageDemoTools {
                     demoTask.setInfo(tmpFile);
                 }
             }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void thresholding(FxTask demoTask, List<String> files, BufferedImage demoImage) {
+        if (demoTask == null || demoImage == null || files == null) {
+            return;
+        }
+        try {
+            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
+                    + File.separator + message("Thresholding");
+
+            PixelsOperation op = PixelsOperationFactory.create(
+                    demoImage, null, PixelsOperation.OperationType.Thresholding)
+                    .setIsDithering(false).setTask(demoTask);
+
+            BufferedImage bufferedImage = op.setIntPara1(128).setIntPara2(255).setIntPara3(0).operate();
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+            String tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + "128_"
+                    + message("BigValue") + "255_" + message("SmallValue") + "0", ".png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = op.setIntPara1(60).setIntPara2(190).setIntPara3(10).operate();
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+            tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + "60_"
+                    + message("BigValue") + "190_" + message("SmallValue") + "10", ".png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = op.setIntPara1(200).setIntPara2(255).setIntPara3(60).operate();
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+            tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + "200_"
+                    + message("BigValue") + "255_" + message("SmallValue") + "60", ".png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            bufferedImage = op.setIntPara1(160).setIntPara2(225).setIntPara3(0).operate();
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+            tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + "160_"
+                    + message("BigValue") + "225_" + message("SmallValue") + "0", ".png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

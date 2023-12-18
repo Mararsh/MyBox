@@ -185,12 +185,12 @@ License:    Apache License Version 2.0
                                             <items>                                       
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageMosaicBatch" text="%Mosaic" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageGlassBatch" text="%FrostedGlass" />
-                                                <MenuItem mnemonicParsing="false" onAction="#openImageSharpenBatch" text="%Smooth" />
+                                                <MenuItem mnemonicParsing="false" onAction="#openImageSmoothBatch" text="%Smooth" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageSharpenBatch" text="%Sharpen" />
-                                                <MenuItem mnemonicParsing="false" onAction="#openImageReduceColorsBatch" text="%Contrast" />
+                                                <MenuItem mnemonicParsing="false" onAction="#openImageContrastBatch" text="%Contrast" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageEdgeBatch" text="%EdgeDetection" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageEmbossBatch" text="%Emboss" />
-                                                <MenuItem mnemonicParsing="false" onAction="#openImageReduceColorsBatch" text="Convolution" />
+                                                <MenuItem mnemonicParsing="false" onAction="#openImageConvolutionBatch" text="%Convolution" />
                                                
                                             </items>
                                         </Menu>

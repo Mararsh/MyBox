@@ -74,7 +74,7 @@ License:    Apache License Version 2.0
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="20.0" layoutY="201.0" vgap="5.0" />
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                        <Button fx:id="previewButton"  mnemonicParsing="false" onAction="#previewAction" >
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

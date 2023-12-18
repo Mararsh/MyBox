@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageContrast">
+    <children>
+      <VBox fx:id="contrastABox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Algorithm" />
+            <RadioButton fx:id="hsbRaido" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%HSBHistogramEqualization" wrapText="true">
+               <toggleGroup>
+                  <ToggleGroup fx:id="contrastGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="grayEqualizationRaido" minHeight="-Infinity" mnemonicParsing="false" text="%GrayHistogramEqualization" toggleGroup="$contrastGroup" wrapText="true" />
+            <RadioButton fx:id="grayStretchingRaido" layoutX="15.0" layoutY="96.0" minHeight="-Infinity" mnemonicParsing="false" text="%GrayHistogramStretching" toggleGroup="$contrastGroup" wrapText="true" />
+            <RadioButton fx:id="grayShiftingRaido" layoutX="15.0" layoutY="137.0" minHeight="-Infinity" mnemonicParsing="false" text="%GrayHistogramShifting" toggleGroup="$contrastGroup" wrapText="true" />
+         </children>
+      </VBox>
+      <VBox fx:id="setBox" spacing="5.0">
+         <children>
+            <FlowPane fx:id="leftValuePane" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%LeftThreshold" wrapText="true" />
+                  <TextField fx:id="leftInput" prefWidth="80.0" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="rightValuePane" hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%RightThreshold" wrapText="true" />
+                  <TextField fx:id="rightInput" prefWidth="80.0" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="offsetPane" hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%Offset" wrapText="true" />
+                  <TextField fx:id="offsetInput" prefWidth="80.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+    </children>
+</VBox>

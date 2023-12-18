@@ -9,9 +9,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ImageDemos;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -93,7 +93,7 @@ public class ImageShearController extends BaseImageEditController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ImageDemoTools.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
+        ImageDemos.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
     }
 
 

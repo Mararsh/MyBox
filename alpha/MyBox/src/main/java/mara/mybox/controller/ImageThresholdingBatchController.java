@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fximage.ColorDemos;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -31,6 +33,11 @@ public class ImageThresholdingBatchController extends BaseImageEditBatchControll
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         return pixelsOperation.setImage(source).setTask(currentTask).operate();
+    }
+
+    @Override
+    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
+        ColorDemos.thresholding(currentTask, files, demoImage);
     }
 
 }

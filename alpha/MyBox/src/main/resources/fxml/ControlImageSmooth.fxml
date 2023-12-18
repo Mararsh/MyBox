@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageSmooth">
+    <children>
+              <VBox fx:id="blurABox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                  <children>
+                      <Label text="%Algorithm" />
+                      <RadioButton fx:id="avarageRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%AverageBlur" wrapText="true">
+                          <toggleGroup>
+                              <ToggleGroup fx:id="blurGroup" />
+                          </toggleGroup>
+                      </RadioButton>
+                      <RadioButton fx:id="gaussianRadio" minHeight="-Infinity" mnemonicParsing="false" text="%GaussianBlur" toggleGroup="$blurGroup" wrapText="true" />
+                      <RadioButton fx:id="motionRadio" layoutX="15.0" layoutY="96.0" minHeight="-Infinity" mnemonicParsing="false" text="%MotionBlur" toggleGroup="$blurGroup" wrapText="true" />
+                  </children>
+              </VBox>
+              <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%Intensity" wrapText="true" />
+                      <ComboBox fx:id="intensitySelector" editable="true" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+    </children>
+</VBox>

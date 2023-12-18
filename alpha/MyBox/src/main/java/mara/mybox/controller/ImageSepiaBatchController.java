@@ -7,7 +7,7 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -46,7 +46,7 @@ public class ImageSepiaBatchController extends BaseImageEditBatchController {
             PixelsOperation op = PixelsOperationFactory.create(
                     demoImage, null, PixelsOperation.OperationType.Sepia)
                     .setTask(currentTask);
-            ImageDemoTools.sepia(currentTask, files, op);
+            ColorDemos.sepia(currentTask, files, op);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

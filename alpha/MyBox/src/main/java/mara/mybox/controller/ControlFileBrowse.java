@@ -107,7 +107,7 @@ public class ControlFileBrowse extends BaseController {
     }
 
     public void initMore() {
-        sortMode = FileSortMode.NameAsc;
+        sortMode = FileSortMode.ModifyTimeDesc;
         listCheck.setSelected(UserConfig.getBoolean(baseName + "ListDirectoryValidFiles", true));
         listCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override

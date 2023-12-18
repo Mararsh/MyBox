@@ -15,7 +15,7 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -147,7 +147,7 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
     public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
         try {
             pickOperation();
-            ImageDemoTools.replaceColor(currentTask, files,
+            ColorDemos.replaceColor(currentTask, files,
                     pixelsOperation.setImage(demoImage),
                     newColorSetController.css());
         } catch (Exception e) {

@@ -7,7 +7,7 @@ import mara.mybox.bufferedimage.ImageQuantization;
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -55,7 +55,7 @@ public class ImageReduceColorsBatchController extends BaseImageEditBatchControll
 
     @Override
     public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
-        ImageDemoTools.reduceColor(currentTask, files, demoImage);
+        ColorDemos.reduceColors(currentTask, files, demoImage);
     }
 
 }

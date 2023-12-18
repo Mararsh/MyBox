@@ -15,8 +15,8 @@ import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantiz
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -165,7 +165,7 @@ public class ImageReduceColorsController extends BasePixelsController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ImageDemoTools.reduceColor(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
+        ColorDemos.reduceColors(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
     }
 
     /*

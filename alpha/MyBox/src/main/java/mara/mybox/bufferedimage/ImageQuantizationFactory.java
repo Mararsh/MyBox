@@ -528,7 +528,6 @@ public class ImageQuantizationFactory {
 
         @Override
         public RegionQuantization buildPalette() {
-            MyBoxLog.console(quantizationSize + " " + regionSize);
             super.buildPalette();
             regionColors = new ArrayList<>();
             return this;

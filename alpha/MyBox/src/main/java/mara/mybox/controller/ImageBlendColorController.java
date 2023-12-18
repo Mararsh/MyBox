@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -8,6 +10,7 @@ import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -52,7 +55,7 @@ public class ImageBlendColorController extends BasePixelsController {
             close();
             return false;
         }
-        blend = blendController.pickValues();
+        blend = blendController.pickValues(-1f);
         opInfo = colorController.css();
         return blend != null;
     }
@@ -72,6 +75,13 @@ public class ImageBlendColorController extends BasePixelsController {
             displayError(e.toString());
             return null;
         }
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        ColorDemos.blendColor(currentTask, files,
+                SwingFXUtils.fromFXImage(demoImage, null),
+                colorController.color());
     }
 
 

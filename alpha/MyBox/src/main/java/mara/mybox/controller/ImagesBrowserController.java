@@ -36,7 +36,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             super.initValues();
 
             colsNum = -1;
-            displayMode = DisplayMode.ImagesGrid;
+            displayMode = DisplayMode.ThumbnailsList;
             currentIndex = -1;
             thumbWidth = UserConfig.getInt(baseName + "ThumbnailWidth", 100);
             thumbWidth = thumbWidth > 0 ? thumbWidth : 100;

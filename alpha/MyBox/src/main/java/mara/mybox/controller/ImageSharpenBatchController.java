@@ -6,8 +6,8 @@ import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -31,7 +31,7 @@ public class ImageSharpenBatchController extends BaseImageEditBatchController {
         if (!super.makeMoreParameters()) {
             return false;
         }
-        kernel = sharpenController.kernel();
+        kernel = sharpenController.pickValues();
         return kernel != null;
     }
 
@@ -53,7 +53,7 @@ public class ImageSharpenBatchController extends BaseImageEditBatchController {
         try {
             ImageConvolution convolution = ImageConvolution.create()
                     .setImage(demoImage);
-            ImageDemoTools.sharpen(currentTask, files, convolution);
+            PixelDemos.sharpen(currentTask, files, convolution);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

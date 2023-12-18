@@ -49,7 +49,10 @@ public class ImageRoundController extends BaseImageEditController {
 
     @Override
     protected boolean checkOptions() {
-        if (!super.checkOptions() || !roundController.pickValues()) {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        if (!roundController.pickValues()) {
             return false;
         }
         if (roundController.wPercenatge()) {

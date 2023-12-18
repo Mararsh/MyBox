@@ -20,7 +20,7 @@ import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Yellow;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -93,7 +93,7 @@ public class ImageAdjustColorController extends BasePixelsController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image inImage) {
-        ImageDemoTools.adjustColor(currentTask, files,
+        ColorDemos.adjustColor(currentTask, files,
                 SwingFXUtils.fromFXImage(inImage, null), scope());
     }
 

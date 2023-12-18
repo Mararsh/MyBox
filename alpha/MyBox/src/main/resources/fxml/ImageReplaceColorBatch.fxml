@@ -93,7 +93,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                          <Button fx:id="previewButton"  mnemonicParsing="false" onAction="#previewAction" >
                                              <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>

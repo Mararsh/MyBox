@@ -7,8 +7,8 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -73,7 +73,7 @@ public class ImageSepiaController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
-            ImageDemoTools.sepia(currentTask, files, op);
+            ColorDemos.sepia(currentTask, files, op);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

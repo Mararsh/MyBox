@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageMosaic;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
@@ -27,13 +29,18 @@ public class ImageGlassBatchController extends BaseImageEditBatchController {
         if (!super.makeMoreParameters()) {
             return false;
         }
-        mosaic = mosaicController.pickValues(true);
+        mosaic = mosaicController.pickValues(ImageMosaic.MosaicType.FrostedGlass);
         return mosaic != null;
     }
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         return mosaic.setImage(source).setTask(currentTask).operateImage();
+    }
+
+    @Override
+    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
+        PixelDemos.mosaic(currentTask, files, demoImage, ImageMosaic.MosaicType.FrostedGlass);
     }
 
 }

@@ -7,8 +7,8 @@ import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -19,6 +19,8 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageSharpenController extends BasePixelsController {
+
+    protected ConvolutionKernel kernel;
 
     @FXML
     protected ControlImageSharpen sharpenController;
@@ -39,12 +41,17 @@ public class ImageSharpenController extends BasePixelsController {
     }
 
     @Override
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        kernel = sharpenController.pickValues();
+        return kernel != null;
+    }
+
+    @Override
     protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
-            ConvolutionKernel kernel = sharpenController.kernel();
-            if (kernel == null) {
-                return null;
-            }
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(inImage).setScope(inScope).setKernel(kernel)
                     .setExcludeScope(excludeScope())
@@ -66,7 +73,7 @@ public class ImageSharpenController extends BasePixelsController {
                     .setScope(scope())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent());
-            ImageDemoTools.sharpen(currentTask, files, convolution);
+            PixelDemos.sharpen(currentTask, files, convolution);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

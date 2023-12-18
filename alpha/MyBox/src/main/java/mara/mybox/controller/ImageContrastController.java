@@ -1,24 +1,17 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -27,30 +20,13 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageContrastController extends BaseImageEditController {
 
-    protected ContrastAlgorithm contrastAlgorithm;
-    protected int left, right, offset, para1, para2;
+    protected ImageContrast contrast;
 
     @FXML
-    protected ToggleGroup contrastGroup;
-    @FXML
-    protected RadioButton hsbRaido, grayEqualizationRaido, grayStretchingRaido, grayShiftingRaido;
-    @FXML
-    protected VBox setBox;
-    @FXML
-    protected FlowPane leftValuePane, rightValuePane, offsetPane;
-    @FXML
-    protected TextField leftInput, rightInput, offsetInput;
+    protected ControlImageContrast contrastController;
 
     public ImageContrastController() {
         baseTitle = message("Contrast");
-    }
-
-    @Override
-    public void setControlsStyle() {
-        super.setControlsStyle();
-        NodeStyleTools.setTooltip(leftInput, new Tooltip("0~255"));
-        NodeStyleTools.setTooltip(rightInput, new Tooltip("0~255"));
-        NodeStyleTools.setTooltip(offsetInput, new Tooltip("-255~255"));
     }
 
     @Override
@@ -59,125 +35,9 @@ public class ImageContrastController extends BaseImageEditController {
             super.initMore();
             operation = message("Contrast");
 
-            left = UserConfig.getInt(baseName + "LeftThreshold", 100);
-            if (left < 0 || left > 255) {
-                left = 100;
-            }
-            leftInput.setText(left + "");
-            leftInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    try {
-                        if (newValue) {
-                            return;
-                        }
-                        int v = Integer.parseInt(leftInput.getText());
-                        if (v >= 0 && v <= 255) {
-                            left = v;
-                            leftInput.setStyle(null);
-                            UserConfig.setInt(baseName + "LeftThreshold", left);
-                        } else {
-                            leftInput.setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        leftInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            right = UserConfig.getInt(baseName + "RightThreshold", 100);
-            if (right < 0 || right > 255) {
-                right = 100;
-            }
-            rightInput.setText(right + "");
-            rightInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    try {
-                        if (newValue) {
-                            return;
-                        }
-                        int v = Integer.parseInt(rightInput.getText());
-                        if (v >= 0 && v <= 255) {
-                            right = v;
-                            rightInput.setStyle(null);
-                            UserConfig.setInt(baseName + "RightThreshold", right);
-                        } else {
-                            rightInput.setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        rightInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            offset = UserConfig.getInt(baseName + "Offset", 100);
-            if (offset < -255 || offset > 255) {
-                offset = 100;
-            }
-            offsetInput.setText(offset + "");
-            offsetInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    try {
-                        if (newValue) {
-                            return;
-                        }
-                        int v = Integer.parseInt(offsetInput.getText());
-                        if (v >= -255 && v <= 255) {
-                            offset = v;
-                            offsetInput.setStyle(null);
-                            UserConfig.setInt(baseName + "Offset", offset);
-                        } else {
-                            offsetInput.setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        offsetInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            contrastGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkContrastAlgorithm();
-                }
-            });
-
-            checkContrastAlgorithm();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    protected void checkContrastAlgorithm() {
-        try {
-            contrastAlgorithm = null;
-            setBox.getChildren().clear();
-            if (hsbRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
-
-            } else if (grayEqualizationRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Equalization;
-
-            } else if (grayStretchingRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Stretching;
-                if (!setBox.getChildren().contains(leftValuePane)) {
-                    setBox.getChildren().addAll(leftValuePane, rightValuePane);
-                }
-
-            } else if (grayShiftingRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Shifting;
-                if (!setBox.getChildren().contains(offsetPane)) {
-                    setBox.getChildren().add(offsetPane);
-                }
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-
     }
 
     @Override
@@ -185,36 +45,28 @@ public class ImageContrastController extends BaseImageEditController {
         if (!super.checkOptions()) {
             return false;
         }
-        if (contrastAlgorithm != null
-                && left >= 0 && left <= 255
-                && right >= 0 && right <= 255
-                && offset >= -255 && offset <= 255) {
-            return true;
-        } else {
-            popError(message("InvalidParameter"));
-            return false;
-        }
+        contrast = contrastController.pickValues();
+        return contrast != null;
     }
 
     @Override
     protected void handleImage(FxTask currentTask) {
         try {
-            ImageContrast imageContrast = new ImageContrast()
-                    .setAlgorithm(contrastAlgorithm);
-            imageContrast.setImage(imageView.getImage())
-                    .setTask(currentTask);
-            if (contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Stretching) {
-                imageContrast.setIntPara1(left).setIntPara2(right);
-                opInfo = left + "-" + right;
+            if (contrastController.contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Stretching) {
+                opInfo = contrastController.left + "-" + contrastController.right;
 
-            } else if (contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Shifting) {
-                imageContrast.setIntPara1(offset);
-                opInfo = offset + "";
+            } else if (contrastController.contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Shifting) {
+                opInfo = contrastController.offset + "";
             }
-            handledImage = imageContrast.operateFxImage();
+            handledImage = contrast.setImage(srcImage()).setTask(currentTask).operateFxImage();
         } catch (Exception e) {
             displayError(e.toString());
         }
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        PixelDemos.contrast(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
     }
 
     /*

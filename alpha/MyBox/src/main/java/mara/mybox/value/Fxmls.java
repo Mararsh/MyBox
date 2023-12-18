@@ -178,6 +178,7 @@ public class Fxmls {
     public static final String ImageEdgeBatchFxml = "/fxml/ImageEdgeBatch.fxml";
     public static final String ImageEmbossBatchFxml = "/fxml/ImageEmbossBatch.fxml";
     public static final String ImageSharpenBatchFxml = "/fxml/ImageSharpenBatch.fxml";
+    public static final String ImageSmoothBatchFxml = "/fxml/ImageSmoothBatch.fxml";
     public static final String ImageShadowBatchFxml = "/fxml/ImageShadowBatch.fxml";
     public static final String ImageRoundBatchFxml = "/fxml/ImageRoundBatch.fxml";
     public static final String ImageMarginsBatchFxml = "/fxml/ImageMarginsBatch.fxml";
@@ -186,7 +187,6 @@ public class Fxmls {
     public static final String ImagePasteBatchFxml = "/fxml/ImagePasteBatch.fxml";
     public static final String ImageMosaicBatchFxml = "/fxml/ImageMosaicBatch.fxml";
     public static final String ImageGlassBatchFxml = "/fxml/ImageGlassBatch.fxml";
-    public static final String ImageSmoothBatchFxml = "/fxml/ImageSmoothBatch.fxml";
     public static final String ImageContrastBatchFxml = "/fxml/ImageContrastBatch.fxml";
     public static final String ImageConvolutionBatchFxml = "/fxml/ImageConvolutionBatch.fxml";
 

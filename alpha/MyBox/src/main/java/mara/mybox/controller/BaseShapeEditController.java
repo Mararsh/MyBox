@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -7,6 +9,7 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -43,7 +46,7 @@ public class BaseShapeEditController extends BaseImageEditController {
             }
             if (blendController != null) {
                 blendController.setParameters(this);
-                blender = blendController.pickValues();
+                blender = blendController.pickValues(-1);
             }
 
             resetShapeOptions();
@@ -82,7 +85,7 @@ public class BaseShapeEditController extends BaseImageEditController {
 
     public boolean checkBlend() {
         if (blendController != null) {
-            blender = blendController.pickValues();
+            blender = blendController.pickValues(-1);
             if (blender == null) {
                 if (blendTab != null) {
                     tabPane.getSelectionModel().select(blendTab);
@@ -190,6 +193,13 @@ public class BaseShapeEditController extends BaseImageEditController {
     @Override
     public void clearAction() {
         loadImage(srcImage());
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        ColorDemos.blendColor(currentTask, files,
+                SwingFXUtils.fromFXImage(demoImage, null),
+                strokeController.colorController.color());
     }
 
 }

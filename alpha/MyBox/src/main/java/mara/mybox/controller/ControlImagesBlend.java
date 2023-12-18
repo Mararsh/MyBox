@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,11 +25,10 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.ImageItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -162,9 +160,11 @@ public class ControlImagesBlend extends BaseController {
         return opacity() >= 0;
     }
 
-    public PixelsBlend pickValues() {
-        if (!checkValues()) {
+    public PixelsBlend pickValues(float t) {
+        if (t < 0 && !checkValues()) {
             return null;
+        } else {
+            opacity = t;
         }
         PixelsBlend blend = null;
         try (Connection conn = DerbyBase.getConnection()) {
@@ -209,30 +209,14 @@ public class ControlImagesBlend extends BaseController {
 
     @FXML
     public void demo() {
-        Image baseImage = null;
-        Image overlay = null;
-        Color color = Color.PINK;
-        if (parentController instanceof ImageBlendColorController) {
-            baseImage = ((ImageBlendColorController) parentController).srcImage();
-            color = ((ImageBlendColorController) parentController).colorController.color();
+        demo(Color.PINK);
+    }
 
-        } else if (parentController instanceof ImagePasteController) {
-            baseImage = ((ImagePasteController) parentController).srcImage();
-            overlay = ((ImagePasteController) parentController).finalClip;
-
-        } else if (parentController instanceof BaseImageEditController) {
-            baseImage = ((BaseImageEditController) parentController).srcImage();
-
-        }
-
-        if (baseImage == null) {
-            baseImage = ImageItem.exampleImage();
-        }
-        if (overlay == null) {
-            overlay = FxImageTools.createImage(
-                    (int) (baseImage.getWidth()), (int) (baseImage.getHeight()),
-                    color);
-        }
+    public void demo(Color color) {
+        Image baseImage = ImageItem.exampleImage();
+        Image overlay = FxImageTools.createImage(
+                (int) (baseImage.getWidth()), (int) (baseImage.getHeight()),
+                color);
         demo(baseImage, overlay);
     }
 
@@ -244,7 +228,7 @@ public class ControlImagesBlend extends BaseController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private List<File> files;
+            private List<String> files;
 
             @Override
             protected boolean handle() {
@@ -253,50 +237,9 @@ public class ControlImagesBlend extends BaseController {
                     overlayBI = ScaleTools.demoImage(overlayBI);
                     BufferedImage baseBI = SwingFXUtils.fromFXImage(baseImage, null);
                     baseBI = ScaleTools.demoImage(baseBI);
-                    int x = (int) (baseBI.getWidth() - overlayBI.getWidth()) / 2;
-                    int y = (int) (baseBI.getHeight() - overlayBI.getHeight()) / 2;
                     files = new ArrayList<>();
-                    float copacity = opacity >= 1f ? 0.5f : 1f;
-                    PixelsBlend blender = PixelsBlendFactory.create(ImagesBlendMode.NORMAL)
-                            .setBlendMode(ImagesBlendMode.NORMAL)
-                            .setOpacity(copacity)
-                            .setBaseAbove(baseAboveCheck.isSelected())
-                            .setBaseTransparentAs(baseTransparentAs)
-                            .setOverlayTransparentAs(overlayTransparentAs);
-                    BufferedImage blended = PixelsBlend.blend(this, overlayBI, baseBI, x, y, blender);
-                    if (task == null || isCancelled()) {
-                        return true;
-                    }
-
-                    File tmpFile = FileTmpTools.generateFile(message("NormalMode")
-                            + "-" + message("Opacity") + "-" + copacity + "f", "png");
-                    if (ImageFileWriters.writeImageFile(this, blended, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile.getAbsolutePath());
-                    }
-                    for (String name : PixelsBlendFactory.blendModes()) {
-                        if (task == null || isCancelled()) {
-                            return true;
-                        }
-                        PixelsBlend.ImagesBlendMode mode = PixelsBlendFactory.blendMode(name);
-                        blender = PixelsBlendFactory.create(mode)
-                                .setBlendMode(mode)
-                                .setOpacity(opacity)
-                                .setBaseAbove(baseAboveCheck.isSelected())
-                                .setBaseTransparentAs(baseTransparentAs)
-                                .setOverlayTransparentAs(overlayTransparentAs);
-                        blended = PixelsBlend.blend(this, overlayBI, baseBI, x, y, blender);
-                        if (task == null || isCancelled()) {
-                            return true;
-                        }
-                        tmpFile = FileTmpTools.generateFile(name + "-"
-                                + message("Opacity") + "-" + opacity + "f", "png");
-                        if (ImageFileWriters.writeImageFile(this, blended, tmpFile)) {
-                            files.add(tmpFile);
-                            task.setInfo(tmpFile.getAbsolutePath());
-                        }
-                    }
-                    return !files.isEmpty();
+                    ColorDemos.blendImage(this, files, baseBI, overlayBI);
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -312,8 +255,8 @@ public class ControlImagesBlend extends BaseController {
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                    b.loadImages(files);
+                            = (ImagesBrowserController) WindowTools.popStage(myController, Fxmls.ImagesBrowserFxml);
+                    b.loadFiles(files);
                 }
             }
 

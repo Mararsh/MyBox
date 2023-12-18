@@ -64,13 +64,10 @@ public class ControlImageMosaic extends BaseController {
         }
     }
 
-    public ImageMosaic pickValues(boolean isGlass) {
+    public ImageMosaic pickValues(ImageMosaic.MosaicType type) {
         if (!checkIntensity()) {
             return null;
         }
-        return ImageMosaic.create()
-                .type(isGlass ? ImageMosaic.MosaicType.FrostedGlass
-                        : ImageMosaic.MosaicType.Mosaic)
-                .intensity(intensity);
+        return ImageMosaic.create().setType(type).setIntensity(intensity);
     }
 }

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -8,8 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fximage.ImageDemos;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -45,7 +44,10 @@ public class ImageShadowController extends BaseImageEditController {
 
     @Override
     protected boolean checkOptions() {
-        if (!super.checkOptions() || !shadowController.pickValues()) {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        if (!shadowController.pickValues()) {
             return false;
         }
         if (shadowController.wPercenatge()) {
@@ -74,12 +76,9 @@ public class ImageShadowController extends BaseImageEditController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        try {
-            BufferedImage srcImage = SwingFXUtils.fromFXImage(demoImage, null);
-            ImageDemoTools.shadow(currentTask, files, srcImage, shadowController.awtColor());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        ImageDemos.shadow(currentTask, files,
+                SwingFXUtils.fromFXImage(demoImage, null),
+                shadowController.awtColor());
     }
 
 

@@ -7,7 +7,7 @@ import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ImageDemoTools;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -75,11 +75,12 @@ public class ImageBlackWhiteController extends BasePixelsController {
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         try {
+            imageBinary = binaryController.pickValues(128);
             if (imageBinary == null) {
                 return;
             }
             imageBinary.setImage(demoImage);
-            ImageDemoTools.blackWhite(currentTask, files, imageBinary);
+            ColorDemos.blackWhite(currentTask, files, imageBinary);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

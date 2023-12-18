@@ -247,7 +247,7 @@ public abstract class ImagesBrowserController_Load extends BaseImageController {
 
             getMyStage().setTitle(getBaseTitle() + " " + path.getAbsolutePath());
             totalLabel.setText("/" + total);
-            displayMode = DisplayMode.ImagesGrid;
+            displayMode = DisplayMode.ThumbnailsList;
 
             makeImagesNevigator(false);
 

@@ -1,10 +1,13 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageMosaic;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -42,7 +45,7 @@ public class ImageGlassController extends BasePixelsController {
         if (!super.checkOptions()) {
             return false;
         }
-        mosaic = mosaicController.pickValues(true);
+        mosaic = mosaicController.pickValues(ImageMosaic.MosaicType.FrostedGlass);
         return mosaic != null;
     }
 
@@ -59,6 +62,13 @@ public class ImageGlassController extends BasePixelsController {
             displayError(e.toString());
             return null;
         }
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        PixelDemos.mosaic(currentTask, files,
+                SwingFXUtils.fromFXImage(demoImage, null),
+                ImageMosaic.MosaicType.FrostedGlass);
     }
 
     /*

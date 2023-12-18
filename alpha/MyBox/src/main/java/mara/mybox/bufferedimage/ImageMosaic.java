@@ -2,8 +2,6 @@ package mara.mybox.bufferedimage;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 
 /**
  * @Author Mara
@@ -24,40 +22,11 @@ public class ImageMosaic extends PixelsOperation {
     public ImageMosaic() {
         this.operationType = OperationType.Mosaic;
         this.type = MosaicType.Mosaic;
+        intensity = 20;
     }
 
     public static ImageMosaic create() {
         return new ImageMosaic();
-    }
-
-    public static ImageMosaic create(BufferedImage image, ImageScope scope, MosaicType type, int intensity) {
-        return ImageMosaic.create().image(image)
-                .scope(scope).type(type).intensity(intensity);
-    }
-
-    public static ImageMosaic create(Image image, ImageScope scope, MosaicType type, int intensity) {
-        return ImageMosaic.create().image(SwingFXUtils.fromFXImage(image, null))
-                .scope(scope).type(type).intensity(intensity);
-    }
-
-    public ImageMosaic type(MosaicType type) {
-        this.type = type;
-        return this;
-    }
-
-    public ImageMosaic intensity(int intensity) {
-        this.intensity = intensity;
-        return this;
-    }
-
-    public ImageMosaic image(BufferedImage image) {
-        this.image = image;
-        return this;
-    }
-
-    public ImageMosaic scope(ImageScope scope) {
-        this.scope = scope;
-        return this;
     }
 
     @Override
@@ -65,6 +34,19 @@ public class ImageMosaic extends PixelsOperation {
         int newColor = ShapeTools.mosaic(image, imageWidth, imageHeight, x, y, type, intensity);
         target.setRGB(x, y, newColor);
         return new Color(newColor, true);
+    }
+
+    /*
+        set
+     */
+    public ImageMosaic setType(MosaicType type) {
+        this.type = type;
+        return this;
+    }
+
+    public ImageMosaic setIntensity(int intensity) {
+        this.intensity = intensity;
+        return this;
     }
 
 }

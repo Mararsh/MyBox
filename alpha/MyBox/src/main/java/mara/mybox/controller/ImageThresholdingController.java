@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -61,6 +64,11 @@ public class ImageThresholdingController extends BasePixelsController {
             displayError(e.toString());
             return null;
         }
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        ColorDemos.thresholding(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
     }
 
     /*

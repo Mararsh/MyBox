@@ -45,7 +45,7 @@ public class ControlFilesBrowse extends ControlFileBrowse {
     @Override
     public void initMore() {
         try {
-            String savedMode = UserConfig.getString(baseName + "SortMode", FileSortMode.NameAsc.name());
+            String savedMode = UserConfig.getString(baseName + "SortMode", FileSortMode.ModifyTimeDesc.name());
             sortMode = FileSortTools.sortMode(savedMode);
             switch (sortMode) {
                 case ModifyTimeDesc:
