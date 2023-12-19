@@ -432,13 +432,13 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             if (algorithm == null || algorithm.trim().isEmpty()) {
             } else if (message("GrayHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
-                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization)
+                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramEqualization)
                         .setImage(lastImage).setTask(currentTask);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("GrayHistogramStretching").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
-                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching)
+                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramStretching)
                         .setImage(lastImage).setTask(currentTask)
                         .setIntPara1(100)
                         .setIntPara2(100);
@@ -446,14 +446,14 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
 
             } else if (message("GrayHistogramShifting").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
-                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting)
+                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramShifting)
                         .setImage(lastImage).setTask(currentTask)
                         .setIntPara1(80);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
-                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization)
+                imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.SaturationHistogramEqualization)
                         .setImage(lastImage).setTask(currentTask);
                 lastImage = imageContrast.operateImage();
 

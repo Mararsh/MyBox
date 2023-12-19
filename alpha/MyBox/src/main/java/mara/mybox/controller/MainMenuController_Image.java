@@ -142,8 +142,18 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageTransformBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageTransformBatchFxml);
+    protected void openImageShearBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageShearBatchFxml);
+    }
+
+    @FXML
+    protected void openImageMirrorBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageMirrorBatchFxml);
+    }
+
+    @FXML
+    protected void openImageRotateBatch(ActionEvent event) {
+        loadScene(Fxmls.ImageRotateBatchFxml);
     }
 
     @FXML

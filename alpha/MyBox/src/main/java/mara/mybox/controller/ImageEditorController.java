@@ -451,12 +451,6 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Shadow"), StyleTools.getIconImageView("iconShadow.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageShadowController.open(this);
-            });
-            items.add(menu);
-
             menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageEraserController.open(this);
@@ -623,6 +617,12 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Shadow"), StyleTools.getIconImageView("iconShadow.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageShadowController.open(this);
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("Smooth"), StyleTools.getIconImageView("iconSmooth.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageSmoothController.open(this);
@@ -658,8 +658,6 @@ public class ImageEditorController extends BaseImageController {
                 ImageConvolutionController.open(this);
             });
             items.add(menu);
-
-            items.add(new SeparatorMenuItem());
 
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean(baseName + "PixelsMenuPopWhenMouseHovering", true));

@@ -1,22 +1,16 @@
 package mara.mybox.controller;
 
-import java.util.Arrays;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageDemos;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -25,10 +19,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageShearController extends BaseImageEditController {
 
-    protected float shearX, shearY;
-
     @FXML
-    protected ComboBox xSelector, ySelector;
+    protected ControlImageShear shearController;
 
     public ImageShearController() {
         baseTitle = message("Shear");
@@ -40,60 +32,30 @@ public class ImageShearController extends BaseImageEditController {
             super.initMore();
             operation = message("Shear");
 
-            shearX = UserConfig.getFloat("ImageShearX", 1f);
-            xSelector.getItems().addAll(Arrays.asList(
-                    "1", "-1", "1.5", "-1.5", "2", "-2", "3", "-3", "4", "-4", "5", "-5", "0",
-                    "0.5", "-0.5", "0.4", "-0.4", "0.3", "-0.3", "0.2", "-0.2", "0.1", "-0.1",
-                    "0.7", "-0.7", "0.8", "-0.8", "0.9", "-0.9")
-            );
-            xSelector.setValue(shearX + "");
-            xSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        shearX = Float.parseFloat(newValue);
-                        UserConfig.setFloat("ImageShearX", shearX);
-                        ValidationTools.setEditorNormal(xSelector);
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(xSelector);
-                    }
-                }
-            });
-
-            shearY = UserConfig.getFloat("ImageShearY", 0f);
-            ySelector.getItems().addAll(Arrays.asList(
-                    "1", "-1", "1.5", "-1.5", "2", "-2", "3", "-3", "4", "-4", "5", "-5", "0",
-                    "0.5", "-0.5", "0.4", "-0.4", "0.3", "-0.3", "0.2", "-0.2", "0.1", "-0.1",
-                    "0.7", "-0.7", "0.8", "-0.8", "0.9", "-0.9")
-            );
-            ySelector.setValue(shearY + "");
-            ySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        shearY = Float.parseFloat(newValue);
-                        UserConfig.setFloat("ImageShearY", shearY);
-                        ValidationTools.setEditorNormal(ySelector);
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(ySelector);
-                    }
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
 
+    @Override
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        return shearController.pickValues();
     }
 
     @Override
     protected void handleImage(FxTask currentTask) {
-        handledImage = TransformTools.shearImage(currentTask, imageView.getImage(), shearX, shearY);
+        opInfo = message("XRatio") + ":" + shearController.shearX + " "
+                + message("YRatio") + ":" + shearController.shearY;
+        handledImage = TransformTools.shearImage(currentTask, imageView.getImage(),
+                shearController.shearX, shearController.shearY);
     }
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ImageDemos.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
+        ImageDemos.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null), prefix());
     }
 
 

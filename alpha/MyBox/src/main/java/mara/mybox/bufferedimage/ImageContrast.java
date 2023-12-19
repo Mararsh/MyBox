@@ -2,8 +2,6 @@ package mara.mybox.bufferedimage;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 import mara.mybox.fxml.FxTask;
 
 /**
@@ -16,18 +14,29 @@ import mara.mybox.fxml.FxTask;
 public class ImageContrast extends PixelsOperation {
 
     protected ContrastAlgorithm algorithm;
+    protected long threshold;
+    protected int offset, percentage;
 
     public static enum ContrastAlgorithm {
-        Gray_Histogram_Equalization,
-        Gray_Histogram_Stretching,
-        Gray_Histogram_Shifting,
-        Luma_Histogram_Equalization,
-        HSB_Histogram_Equalization,
-        Adaptive_Histogram_Equalization
+        GrayHistogramEqualization,
+        GrayHistogramStretching,
+        GrayHistogramShifting,
+        SaturationHistogramEqualization,
+        SaturationHistogramStretching,
+        SaturationHistogramShifting,
+        BrightnessHistogramEqualization,
+        BrightnessHistogramStretching,
+        BrightnessHistogramShifting,
+        SaturationBrightnessHistogramEqualization,
+        SaturationBrightnessHistogramStretching,
+        SaturationBrightnessHistogramShifting
     }
 
     public ImageContrast() {
         this.operationType = OperationType.Contrast;
+        threshold = 0;
+        percentage = 0;
+        offset = 0;
     }
 
     @Override
@@ -36,28 +45,45 @@ public class ImageContrast extends PixelsOperation {
             return image;
         }
         switch (algorithm) {
-            case Gray_Histogram_Equalization:
+            case GrayHistogramEqualization:
                 return grayHistogramEqualization(task, image);
-            case Gray_Histogram_Shifting:
-                return grayHistogramShifting(task, image, intPara1);
-            case Gray_Histogram_Stretching:
-                return grayHistogramStretching(task, image, intPara1, intPara2);
-            case Luma_Histogram_Equalization:
-                return image;
-            case HSB_Histogram_Equalization:
+            case GrayHistogramStretching:
+                return grayHistogramStretching(task, image, threshold, percentage);
+            case GrayHistogramShifting:
+                return grayHistogramShifting(task, image, offset);
+            case SaturationHistogramEqualization:
+                return saturationHistogramEqualization(task, image);
+            case SaturationHistogramStretching:
+                return saturationHistogramStretching(task, image, threshold, percentage);
+            case SaturationHistogramShifting:
+                return saturationHistogramShifting(task, image, offset);
+            case BrightnessHistogramEqualization:
                 return brightnessHistogramEqualization(task, image);
+            case BrightnessHistogramStretching:
+                return brightnessHistogramStretching(task, image, threshold, percentage);
+            case BrightnessHistogramShifting:
+                return brightnessHistogramShifting(task, image, offset);
+            case SaturationBrightnessHistogramEqualization:
+                return saturationBrightnessHistogramEqualization(task, image);
+            case SaturationBrightnessHistogramStretching:
+                return saturationBrightnessHistogramStretching(task, image, threshold, percentage);
+            case SaturationBrightnessHistogramShifting:
+                return saturationBrightnessHistogramShifting(task, image, offset);
             default:
                 return image;
         }
     }
 
-    public static int[] grayHistogram(FxTask task, BufferedImage greyImage) {
-        if (greyImage == null) {
+    // https://en.wikipedia.org/wiki/Histogram_equalization
+    public static BufferedImage grayHistogramEqualization(FxTask task, BufferedImage image) {
+        if (image == null) {
             return null;
         }
-        int width = greyImage.getWidth();
-        int height = greyImage.getHeight();
-        int[] greyHistogram = new int[256];
+        int width = image.getWidth();
+        int height = image.getHeight();
+        long[] greyHistogram = new long[256];
+        int pixel, grey;
+        long count = 0;
         for (int y = 0; y < height; y++) {
             if (task != null && !task.isWorking()) {
                 return null;
@@ -66,31 +92,20 @@ public class ImageContrast extends PixelsOperation {
                 if (task != null && !task.isWorking()) {
                     return null;
                 }
-                int grey = new Color(greyImage.getRGB(x, y)).getRed();
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    continue;
+                }
+                grey = ColorConvertTools.pixel2grayValue(pixel);
                 greyHistogram[grey]++;
+                count++;
             }
         }
-        return greyHistogram;
-    }
-
-    // https://en.wikipedia.org/wiki/Histogram_equalization
-    public static BufferedImage grayHistogramEqualization(FxTask task, BufferedImage image) {
-        if (image == null) {
-            return null;
+        if (count == 0) {
+            return image;
         }
-        BufferedImage grayImage = image;
-        if (image.getType() != BufferedImage.TYPE_BYTE_GRAY) {
-            grayImage = ImageGray.byteGray(task, image);
-        }
-        int width = grayImage.getWidth();
-        int height = grayImage.getHeight();
-        int[] greyHistogram = grayHistogram(task, grayImage);
-        if (greyHistogram == null) {
-            return null;
-        }
-
-        float nf = 255.0f / (width * height);
-        int cumulative = 0;
+        float nf = 255.0f / count;
+        long cumulative = 0;
         int[] lookUpTable = new int[256];
         for (int i = 0; i < 256; ++i) {
             if (task != null && !task.isWorking()) {
@@ -100,7 +115,7 @@ public class ImageContrast extends PixelsOperation {
             lookUpTable[i] = Math.round(cumulative * nf);
         }
 
-        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < height; y++) {
             if (task != null && !task.isWorking()) {
                 return null;
@@ -109,9 +124,101 @@ public class ImageContrast extends PixelsOperation {
                 if (task != null && !task.isWorking()) {
                     return null;
                 }
-                int grey = new Color(grayImage.getRGB(x, y)).getRed();
-                grey = lookUpTable[grey];
-                target.setRGB(x, y, ColorConvertTools.rgb2Pixel(grey, grey, grey));
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    grey = ColorConvertTools.pixel2grayValue(pixel);
+                    grey = lookUpTable[grey];
+                    target.setRGB(x, y, ColorConvertTools.rgb2Pixel(grey, grey, grey));
+                }
+            }
+        }
+        return target;
+    }
+
+    // https://blog.csdn.net/fang20277/article/details/51801093
+    public static BufferedImage grayHistogramStretching(FxTask task, BufferedImage image,
+            long threshold, int percentage) {
+        if (image == null || threshold < 0 || percentage < 0) {
+            return null;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        long[] greyHistogram = new long[256];
+        int pixel, grey;
+        long count = 0;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    continue;
+                }
+                grey = ColorConvertTools.pixel2grayValue(pixel);
+                greyHistogram[grey]++;
+                count++;
+            }
+        }
+        if (count == 0) {
+            return image;
+        }
+        int min = 0, max = 0;
+        long v, cumulative = 0, cumulativeThreshold = width * height * percentage / 100;
+        for (int i = 0; i < 256; ++i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = greyHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                min = i;
+                break;
+            }
+        }
+        cumulative = 0;
+        for (int i = 255; i >= 0; --i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = greyHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                max = i;
+                break;
+            }
+        }
+        if (min == max) {
+            return null;
+        }
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        float scale = 255.0f / (max - min) + 0.5f;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    grey = ColorConvertTools.pixel2grayValue(pixel);
+                    grey = (int) ((grey - min) * scale);
+                    if (grey < 0) {
+                        grey = 0;
+                    } else if (grey > 255) {
+                        grey = 255;
+                    }
+                    target.setRGB(x, y, ColorConvertTools.rgb2Pixel(grey, grey, grey));
+                }
             }
         }
         return target;
@@ -121,16 +228,10 @@ public class ImageContrast extends PixelsOperation {
         if (image == null) {
             return null;
         }
-        BufferedImage grayImage = image;
-        if (image.getType() != BufferedImage.TYPE_BYTE_GRAY) {
-            grayImage = ImageGray.byteGray(task, image);
-            if (task != null && !task.isWorking()) {
-                return null;
-            }
-        }
-        int width = grayImage.getWidth();
-        int height = grayImage.getHeight();
-        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int pixel, grey;
         for (int y = 0; y < height; y++) {
             if (task != null && !task.isWorking()) {
                 return null;
@@ -139,53 +240,28 @@ public class ImageContrast extends PixelsOperation {
                 if (task != null && !task.isWorking()) {
                     return null;
                 }
-                int grey = new Color(grayImage.getRGB(x, y)).getRed();
-                grey = Math.max(Math.min(grey + offset, 255), 0);
-                target.setRGB(x, y, ColorConvertTools.rgb2Pixel(grey, grey, grey));
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    grey = ColorConvertTools.pixel2grayValue(pixel);
+                    grey = Math.max(Math.min(grey + offset, 255), 0);
+                    target.setRGB(x, y, ColorConvertTools.rgb2Pixel(grey, grey, grey));
+                }
             }
         }
         return target;
     }
 
-    public static BufferedImage grayHistogramStretching(FxTask task, BufferedImage image,
-            int leftThreshold, int rightThreshold) {
-        if (image == null || leftThreshold < 0 || rightThreshold < 0) {
+    public static BufferedImage saturationHistogramEqualization(FxTask task, BufferedImage image) {
+        if (image == null) {
             return null;
         }
-        BufferedImage grayImage = image;
-        if (image.getType() != BufferedImage.TYPE_BYTE_GRAY) {
-            grayImage = ImageGray.byteGray(task, image);
-        }
-        int width = grayImage.getWidth();
-        int height = grayImage.getHeight();
-        int min = 0, max = 0;
-        int[] greyHistogram = grayHistogram(task, image);
-        if (greyHistogram == null) {
-            return null;
-        }
-        for (int i = 0; i < 256; ++i) {
-            if (task != null && !task.isWorking()) {
-                return null;
-            }
-            if (greyHistogram[i] >= leftThreshold) {
-                min = i;
-                break;
-            }
-        }
-        for (int i = 255; i >= 0; --i) {
-            if (task != null && !task.isWorking()) {
-                return null;
-            }
-            if (greyHistogram[i] >= rightThreshold) {
-                max = i;
-                break;
-            }
-        }
-        if (min == 0 && max == 255) {
-            return grayImage;
-        }
-        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-        float scale = 255.0f / (max - min);
+        int width = image.getWidth();
+        int height = image.getHeight();
+        long[] saturationHistogram = new long[101];
+        long nonTransparent = 0;
+        int saturation;
         for (int y = 0; y < height; y++) {
             if (task != null && !task.isWorking()) {
                 return null;
@@ -194,15 +270,162 @@ public class ImageContrast extends PixelsOperation {
                 if (task != null && !task.isWorking()) {
                     return null;
                 }
-                int grey = new Color(grayImage.getRGB(x, y)).getRed();
-                if (grey <= min) {
-                    grey = 0;
-                } else if (grey >= max) {
-                    grey = 255;
-                } else {
-                    grey = (int) ((grey - min) * scale);
+                int p = image.getRGB(x, y);
+                if (p == 0) {
+                    continue;
                 }
-                target.setRGB(x, y, ColorConvertTools.rgb2Pixel(grey, grey, grey));
+                nonTransparent++;
+                saturation = Math.round(ColorConvertTools.getSaturation(new Color(p)) * 100);
+                saturationHistogram[saturation]++;
+            }
+        }
+        if (nonTransparent == 0) {
+            return image;
+        }
+        float nf = 100.0f / nonTransparent;
+        long cumulative = 0;
+        int[] lookUpTable = new int[101];
+        for (int i = 0; i < 101; ++i) {
+            cumulative += saturationHistogram[i];
+            lookUpTable[i] = Math.round(cumulative * nf);
+        }
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int pixel;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    saturation = Math.round(hsb[1] * 100);
+                    saturation = lookUpTable[saturation];
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], saturation / 100.0f, hsb[2]));
+                }
+            }
+        }
+        return target;
+    }
+
+    public static BufferedImage saturationHistogramStretching(FxTask task, BufferedImage image,
+            long threshold, int percentage) {
+        if (image == null || threshold < 0 || percentage < 0) {
+            return null;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        long[] saturationHistogram = new long[101];
+        long nonTransparent = 0;
+        int saturation, pixel;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    continue;
+                }
+                nonTransparent++;
+                saturation = Math.round(ColorConvertTools.getSaturation(new Color(pixel)) * 100);
+                saturationHistogram[saturation]++;
+            }
+        }
+        if (nonTransparent == 0) {
+            return image;
+        }
+        int min = 0, max = 0;
+        long v, cumulative = 0, cumulativeThreshold = width * height * percentage / 100;
+        for (int i = 0; i < 101; ++i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = saturationHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                min = i;
+                break;
+            }
+        }
+        cumulative = 0;
+        for (int i = 100; i >= 0; --i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = saturationHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                max = i;
+                break;
+            }
+        }
+        if (min == max) {
+            return null;
+        }
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        float scale = 100.0f / (max - min);
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    saturation = Math.round(hsb[1] * 100);
+                    if (saturation <= min) {
+                        saturation = 0;
+                    } else if (saturation >= max) {
+                        saturation = 100;
+                    } else {
+                        saturation = (int) ((saturation - min) * scale);
+                    }
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], saturation / 100.0f, hsb[2]));
+                }
+            }
+        }
+        return target;
+    }
+
+    public static BufferedImage saturationHistogramShifting(FxTask task, BufferedImage image, int offset) {
+        if (image == null) {
+            return null;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int pixel, saturation;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    saturation = Math.round(hsb[1] * 100);
+                    saturation = Math.max(Math.min(saturation + offset, 100), 0);
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], saturation / 100.0f, hsb[2]));
+                }
             }
         }
         return target;
@@ -214,8 +437,9 @@ public class ImageContrast extends PixelsOperation {
         }
         int width = colorImage.getWidth();
         int height = colorImage.getHeight();
-        int[] brightnessHistogram = new int[101];
-        int nonTransparent = 0;
+        long[] brightnessHistogram = new long[101];
+        long nonTransparent = 0;
+        int brightness;
         for (int y = 0; y < height; y++) {
             if (task != null && !task.isWorking()) {
                 return null;
@@ -229,13 +453,13 @@ public class ImageContrast extends PixelsOperation {
                     continue;
                 }
                 nonTransparent++;
-                int brightness = Math.round(ColorConvertTools.getBrightness(new Color(p)) * 100);
+                brightness = Math.round(ColorConvertTools.getBrightness(new Color(p)) * 100);
                 brightnessHistogram[brightness]++;
             }
         }
 
         float nf = 100.0f / nonTransparent;
-        int cumulative = 0;
+        long cumulative = 0;
         int[] lookUpTable = new int[101];
         for (int i = 0; i < 101; ++i) {
             cumulative += brightnessHistogram[i];
@@ -256,7 +480,7 @@ public class ImageContrast extends PixelsOperation {
                     target.setRGB(x, y, 0);
                 } else {
                     float[] hsb = ColorConvertTools.color2hsb(new Color(p));
-                    int brightness = Math.round(hsb[2] * 100);
+                    brightness = Math.round(hsb[2] * 100);
                     brightness = lookUpTable[brightness];
                     target.setRGB(x, y, Color.HSBtoRGB(hsb[0], hsb[1], brightness / 100.0f));
                 }
@@ -265,22 +489,349 @@ public class ImageContrast extends PixelsOperation {
         return target;
     }
 
-    public static Image grayHistogramEqualization(FxTask task, Image grayImage) {
-        BufferedImage image = SwingFXUtils.fromFXImage(grayImage, null);
-        image = grayHistogramEqualization(task, image);
-        if (image == null || (task != null && !task.isWorking())) {
+    public static BufferedImage brightnessHistogramStretching(FxTask task, BufferedImage image,
+            long threshold, int percentage) {
+        if (image == null || threshold < 0 || percentage < 0) {
             return null;
         }
-        return SwingFXUtils.toFXImage(image, null);
+        int brightness;
+        int width = image.getWidth();
+        int height = image.getHeight();
+        long[] brightnessHistogram = new long[101];
+        long nonTransparent = 0;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                int p = image.getRGB(x, y);
+                if (p == 0) {
+                    continue;
+                }
+                nonTransparent++;
+                brightness = Math.round(ColorConvertTools.getBrightness(new Color(p)) * 100);
+                brightnessHistogram[brightness]++;
+            }
+        }
+        if (nonTransparent == 0) {
+            return image;
+        }
+        int min = 0, max = 0;
+        long v, cumulative = 0, cumulativeThreshold = width * height * percentage / 100;
+        for (int i = 0; i < 101; ++i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = brightnessHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                min = i;
+                break;
+            }
+        }
+        cumulative = 0;
+        for (int i = 100; i >= 0; --i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = brightnessHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                max = i;
+                break;
+            }
+        }
+        if (min == max) {
+            return null;
+        }
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        float scale = 100.0f / (max - min);
+        int pixel;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    brightness = Math.round(hsb[2] * 100);
+                    if (brightness <= min) {
+                        brightness = 0;
+                    } else if (brightness >= max) {
+                        brightness = 100;
+                    } else {
+                        brightness = (int) ((brightness - min) * scale);
+                    }
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], hsb[1], brightness / 100.0f));
+                }
+            }
+        }
+        return target;
     }
 
-    public static Image brightnessHistogramEqualization(FxTask task, Image colorImage) {
-        BufferedImage image = SwingFXUtils.fromFXImage(colorImage, null);
-        image = brightnessHistogramEqualization(task, image);
-        if (image == null || (task != null && !task.isWorking())) {
+    public static BufferedImage brightnessHistogramShifting(FxTask task, BufferedImage image, int offset) {
+        if (image == null) {
             return null;
         }
-        return SwingFXUtils.toFXImage(image, null);
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int pixel, brightness;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    brightness = Math.round(hsb[2] * 100);
+                    brightness = Math.max(Math.min(brightness + offset, 100), 0);
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], hsb[1], brightness / 100.0f));
+                }
+            }
+        }
+        return target;
+    }
+
+    public static BufferedImage saturationBrightnessHistogramEqualization(FxTask task, BufferedImage image) {
+        if (image == null) {
+            return null;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        long[] saturationHistogram = new long[101];
+        long[] brightnessHistogram = new long[101];
+        long nonTransparent = 0;
+        int pixel, saturation, brightness;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    continue;
+                }
+                nonTransparent++;
+                float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                saturation = Math.round(hsb[1] * 100);
+                saturationHistogram[saturation]++;
+                brightness = Math.round(hsb[2] * 100);
+                brightnessHistogram[brightness]++;
+            }
+        }
+        if (nonTransparent == 0) {
+            return image;
+        }
+        float nf = 100.0f / nonTransparent;
+        long sCumulative = 0, bCumulative = 0;
+        int[] sLlookUpTable = new int[101], bLlookUpTable = new int[101];
+        for (int i = 0; i < 101; ++i) {
+            sCumulative += saturationHistogram[i];
+            sLlookUpTable[i] = Math.round(sCumulative * nf);
+
+            bCumulative += brightnessHistogram[i];
+            bLlookUpTable[i] = Math.round(bCumulative * nf);
+        }
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    saturation = Math.round(hsb[1] * 100);
+                    saturation = sLlookUpTable[saturation];
+                    brightness = Math.round(hsb[2] * 100);
+                    brightness = bLlookUpTable[brightness];
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], saturation / 100.0f, brightness / 100.0f));
+                }
+            }
+        }
+        return target;
+    }
+
+    public static BufferedImage saturationBrightnessHistogramStretching(FxTask task, BufferedImage image,
+            long threshold, int percentage) {
+        if (image == null || threshold < 0 || percentage < 0) {
+            return null;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        long[] saturationHistogram = new long[101];
+        long[] brightnessHistogram = new long[101];
+        long nonTransparent = 0;
+        int pixel, saturation, brightness;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    continue;
+                }
+                nonTransparent++;
+                float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                saturation = Math.round(hsb[1] * 100);
+                saturationHistogram[saturation]++;
+                brightness = Math.round(hsb[2] * 100);
+                brightnessHistogram[brightness]++;
+            }
+        }
+        if (nonTransparent == 0) {
+            return image;
+        }
+        int sMin = 0, sMax = 0, bMin = 0, bMax = 0;
+        long v, cumulative = 0, cumulativeThreshold = width * height * percentage / 100;
+        for (int i = 0; i < 101; ++i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = saturationHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                sMin = i;
+                break;
+            }
+        }
+        cumulative = 0;
+        for (int i = 100; i >= 0; --i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = saturationHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                sMax = i;
+                break;
+            }
+        }
+        cumulative = 0;
+        for (int i = 0; i < 101; ++i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = brightnessHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                bMin = i;
+                break;
+            }
+        }
+        cumulative = 0;
+        for (int i = 100; i >= 0; --i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            v = brightnessHistogram[i];
+            cumulative += v;
+            if (v > threshold || cumulative > cumulativeThreshold) {
+                bMax = i;
+                break;
+            }
+        }
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        float sScale = sMin == sMax ? -1 : (100.0f / (sMax - sMin));
+        float bScale = bMin == bMax ? -1 : (100.0f / (bMax - bMin));
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    saturation = Math.round(hsb[1] * 100);
+                    if (sScale > 0) {
+                        if (saturation <= sMin) {
+                            saturation = 0;
+                        } else if (saturation >= sMax) {
+                            saturation = 100;
+                        } else {
+                            saturation = (int) ((saturation - sMin) * sScale);
+                        }
+                    }
+                    brightness = Math.round(hsb[2] * 100);
+                    if (bScale > 0) {
+                        if (brightness <= bMin) {
+                            brightness = 0;
+                        } else if (brightness >= bMax) {
+                            brightness = 100;
+                        } else {
+                            brightness = (int) ((brightness - bMin) * bScale);
+                        }
+                    }
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], saturation / 100.0f, brightness / 100.0f));
+                }
+            }
+        }
+        return target;
+    }
+
+    public static BufferedImage saturationBrightnessHistogramShifting(FxTask task, BufferedImage image, int offset) {
+        if (image == null) {
+            return null;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int pixel, saturation, brightness;
+        for (int y = 0; y < height; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            for (int x = 0; x < width; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                pixel = image.getRGB(x, y);
+                if (pixel == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ColorConvertTools.color2hsb(new Color(pixel));
+                    saturation = Math.round(hsb[1] * 100);
+                    saturation = Math.max(Math.min(saturation + offset, 100), 0);
+                    brightness = Math.round(hsb[2] * 100);
+                    brightness = Math.max(Math.min(brightness + offset, 100), 0);
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], saturation / 100.0f, brightness / 100.0f));
+                }
+            }
+        }
+        return target;
     }
 
     /*
@@ -292,6 +843,33 @@ public class ImageContrast extends PixelsOperation {
 
     public ImageContrast setAlgorithm(ContrastAlgorithm algorithm) {
         this.algorithm = algorithm;
+        return this;
+    }
+
+    public long getThreshold() {
+        return threshold;
+    }
+
+    public ImageContrast setThreshold(long thresholdValue) {
+        this.threshold = thresholdValue;
+        return this;
+    }
+
+    public int getPercentage() {
+        return percentage;
+    }
+
+    public ImageContrast setPercentage(int percentage) {
+        this.percentage = percentage;
+        return this;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public ImageContrast setOffset(int offset) {
+        this.offset = offset;
         return this;
     }
 

@@ -300,26 +300,26 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (algorithm == null || algorithm.trim().isEmpty()) {
             } else if (message("GrayHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast()
-                        .setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramEqualization);
                 imageContrast.setImage(lastImage).setTask(currentTask);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("GrayHistogramStretching").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast()
-                        .setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramStretching);
                 imageContrast.setImage(lastImage).setTask(currentTask).
                         setIntPara1(100).setIntPara2(100);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("GrayHistogramShifting").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast()
-                        .setAlgorithm(ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramShifting);
                 imageContrast.setImage(lastImage).setIntPara1(80).setTask(currentTask);
                 lastImage = imageContrast.operateImage();
 
             } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast()
-                        .setAlgorithm(ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.SaturationHistogramEqualization);
                 imageContrast.setImage(lastImage).setTask(currentTask);
                 lastImage = imageContrast.operateImage();
 

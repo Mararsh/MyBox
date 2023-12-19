@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fximage.ImageDemos;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -76,7 +76,7 @@ public class ImageShadowController extends BaseImageEditController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ImageDemos.shadow(currentTask, files,
+        PixelDemos.shadow(currentTask, files,
                 SwingFXUtils.fromFXImage(demoImage, null),
                 shadowController.awtColor());
     }

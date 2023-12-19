@@ -185,6 +185,7 @@ License:    Apache License Version 2.0
                                             <items>                                       
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageMosaicBatch" text="%Mosaic" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageGlassBatch" text="%FrostedGlass" />
+                                                <MenuItem mnemonicParsing="false" onAction="#openImageShadowBatch" text="%Shadow" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageSmoothBatch" text="%Smooth" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageSharpenBatch" text="%Sharpen" />
                                                 <MenuItem mnemonicParsing="false" onAction="#openImageContrastBatch" text="%Contrast" />
@@ -196,9 +197,10 @@ License:    Apache License Version 2.0
                                         </Menu>
                                         <MenuItem mnemonicParsing="false" onAction="#openImageSizeBatch" text="%Size" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageMarginsBatch" text="%Margins" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageTransformBatch" text="%Transform" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageRotateBatch" text="%Rotate" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageMirrorBatch" text="%Mirror" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageShearBatch" text="%Shear" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageRoundBatch" text="%Round" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageShadowBatch" text="%Shadow" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageCropBatch" text="%Crop" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImagePasteBatch" text="%Paste" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageTextBatch" text="%Text" />

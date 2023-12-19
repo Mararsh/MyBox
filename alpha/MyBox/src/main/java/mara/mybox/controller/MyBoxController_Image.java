@@ -168,14 +168,19 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageRoundBatchFxml);
         });
 
-        MenuItem imageShadowMenu = new MenuItem(message("Shadow"));
-        imageShadowMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageShadowBatchFxml);
+        MenuItem imageRotateMenu = new MenuItem(message("Rotate"));
+        imageRotateMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageRotateBatchFxml);
         });
 
-        MenuItem imageTransformMenu = new MenuItem(message("Transform"));
-        imageTransformMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageTransformBatchFxml);
+        MenuItem imageMirrorMenu = new MenuItem(message("Mirror"));
+        imageMirrorMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageMirrorBatchFxml);
+        });
+
+        MenuItem imageShearMenu = new MenuItem(message("Shear"));
+        imageShearMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageShearBatchFxml);
         });
 
         MenuItem imageMarginsMenu = new MenuItem(message("Margins"));
@@ -211,8 +216,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         Menu imageBatchMenu = new Menu(message("ImageBatch"));
         imageBatchMenu.getItems().addAll(
                 imageColorBatchMenu(), imagePixelsBatchMenu(),
-                imageSizeMenu, imageMarginsMenu, imageTransformMenu, imageRoundMenu,
-                imageShadowMenu, imageCropMenu, imagePasteMenu, imageTextMenu, new SeparatorMenuItem(),
+                imageSizeMenu, imageMarginsMenu, imageRotateMenu, imageMirrorMenu, imageShearMenu,
+                imageRoundMenu, imageCropMenu, imagePasteMenu, imageTextMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, new SeparatorMenuItem(),
                 imageOCRBatch);
         return imageBatchMenu;
@@ -281,6 +286,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageGlassBatchFxml);
         });
 
+        MenuItem imageShadowMenu = new MenuItem(message("Shadow"));
+        imageShadowMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageShadowBatchFxml);
+        });
+
         MenuItem imageSmoothMenu = new MenuItem(message("Smooth"));
         imageSmoothMenu.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImageSmoothBatchFxml);
@@ -313,7 +323,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         Menu imagePixelsMenu = new Menu(message("Pixels"));
         imagePixelsMenu.getItems().addAll(
-                imageMosaicMenu, imageFrostedGlassMenu, imageSmoothMenu, imageSharpenMenu,
+                imageMosaicMenu, imageFrostedGlassMenu, imageShadowMenu,
+                imageSmoothMenu, imageSharpenMenu,
                 imageContrastMenu, imageEdgeMenu, imageEmbossMenu, imageConvolutionMenu);
         return imagePixelsMenu;
 

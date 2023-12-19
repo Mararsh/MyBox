@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -8,10 +9,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
@@ -25,24 +28,29 @@ import mara.mybox.value.UserConfig;
 public class ControlImageContrast extends BaseController {
 
     protected ContrastAlgorithm contrastAlgorithm;
-    protected int left, right, offset;
+    protected long threshold;
+    protected int offset, percentage;
 
     @FXML
-    protected ToggleGroup contrastGroup;
+    protected ToggleGroup aGroup;
     @FXML
-    protected RadioButton hsbRaido, grayEqualizationRaido, grayStretchingRaido, grayShiftingRaido;
+    protected RadioButton saturationRaido, brightnessRaido, saturationBrightnessRaido, grayRaido,
+            equalizationRaido, stretchingRaido, shiftingRaido;
     @FXML
     protected VBox setBox;
     @FXML
-    protected FlowPane leftValuePane, rightValuePane, offsetPane;
+    protected FlowPane thresholdPane, percentagePane, offsetPane;
     @FXML
-    protected TextField leftInput, rightInput, offsetInput;
+    protected TextField thresholdInput, percentageInput, offsetInput;
+
+    public ControlImageContrast() {
+        TipsLabelKey = "ImageContrastComments";
+    }
 
     @Override
     public void setControlsStyle() {
         super.setControlsStyle();
-        NodeStyleTools.setTooltip(leftInput, new Tooltip("0~255"));
-        NodeStyleTools.setTooltip(rightInput, new Tooltip("0~255"));
+        NodeStyleTools.setTooltip(percentageInput, new Tooltip("1~49"));
         NodeStyleTools.setTooltip(offsetInput, new Tooltip("-255~255"));
     }
 
@@ -51,37 +59,37 @@ public class ControlImageContrast extends BaseController {
         try {
             super.initControls();
 
-            left = UserConfig.getInt(baseName + "LeftThreshold", 100);
-            if (left < 0 || left > 255) {
-                left = 100;
+            threshold = UserConfig.getLong(baseName + "Threshold", 1000);
+            if (threshold < 0) {
+                threshold = 1000;
             }
-            leftInput.setText(left + "");
-            leftInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            thresholdInput.setText(threshold + "");
+            thresholdInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (!newValue) {
-                        checkLeft();
+                        checkThreshold();
                     }
                 }
             });
 
-            right = UserConfig.getInt(baseName + "RightThreshold", 100);
-            if (right < 0 || right > 255) {
-                right = 100;
+            percentage = UserConfig.getInt(baseName + "Percentage", 5);
+            if (percentage <= 0) {
+                percentage = 5;
             }
-            rightInput.setText(right + "");
-            rightInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            percentageInput.setText(percentage + "");
+            percentageInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (!newValue) {
-                        checkRight();
+                        checkPercentage();
                     }
                 }
             });
 
-            offset = UserConfig.getInt(baseName + "Offset", 100);
+            offset = UserConfig.getInt(baseName + "Offset", 5);
             if (offset < -255 || offset > 255) {
-                offset = 100;
+                offset = 5;
             }
             offsetInput.setText(offset + "");
             offsetInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -93,7 +101,7 @@ public class ControlImageContrast extends BaseController {
                 }
             });
 
-            contrastGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            aGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     checkContrastAlgorithm();
@@ -107,81 +115,116 @@ public class ControlImageContrast extends BaseController {
         }
     }
 
-    protected void checkContrastAlgorithm() {
+    protected void forImage(Image image) {
+        long size = (long) (image.getWidth() * image.getHeight());
+        thresholdInput.setText("" + size / 2);
+    }
+
+    protected boolean checkContrastAlgorithm() {
         try {
             contrastAlgorithm = null;
             setBox.getChildren().clear();
-            leftInput.setStyle(null);
-            rightInput.setStyle(null);
+            thresholdInput.setStyle(null);
+            percentageInput.setStyle(null);
             offsetInput.setStyle(null);
-            if (hsbRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
 
-            } else if (grayEqualizationRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Equalization;
-
-            } else if (grayStretchingRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Stretching;
-                if (!setBox.getChildren().contains(leftValuePane)) {
-                    setBox.getChildren().addAll(leftValuePane, rightValuePane);
+            if (saturationRaido.isSelected()) {
+                if (equalizationRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.SaturationHistogramEqualization;
+                } else if (stretchingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.SaturationHistogramStretching;
+                } else if (shiftingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.SaturationHistogramShifting;
                 }
-                checkLeft();
-                checkRight();
 
-            } else if (grayShiftingRaido.isSelected()) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Shifting;
+            } else if (brightnessRaido.isSelected()) {
+                if (equalizationRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.BrightnessHistogramEqualization;
+                } else if (stretchingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.BrightnessHistogramStretching;
+                } else if (shiftingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.BrightnessHistogramShifting;
+                }
+
+            } else if (saturationBrightnessRaido.isSelected()) {
+                if (equalizationRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.SaturationBrightnessHistogramEqualization;
+                } else if (stretchingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.SaturationBrightnessHistogramStretching;
+                } else if (shiftingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.SaturationBrightnessHistogramShifting;
+                }
+
+            } else if (grayRaido.isSelected()) {
+                if (equalizationRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.GrayHistogramEqualization;
+                } else if (stretchingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.GrayHistogramStretching;
+                } else if (shiftingRaido.isSelected()) {
+                    contrastAlgorithm = ContrastAlgorithm.GrayHistogramShifting;
+                }
+
+            }
+
+            if (stretchingRaido.isSelected()) {
+                if (!setBox.getChildren().contains(thresholdPane)) {
+                    setBox.getChildren().addAll(thresholdPane, percentagePane);
+                }
+                return checkThreshold() && checkPercentage();
+
+            } else if (shiftingRaido.isSelected()) {
                 if (!setBox.getChildren().contains(offsetPane)) {
                     setBox.getChildren().add(offsetPane);
                 }
-                checkOffset();
+                return checkOffset();
+            } else {
+                return true;
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-
-    }
-
-    protected boolean checkLeft() {
-        if (isSettingValues) {
-            return true;
-        }
-        int v;
-        try {
-            v = Integer.parseInt(leftInput.getText());
-        } catch (Exception e) {
-            v = -1;
-        }
-        if (v >= 0 && v <= 255) {
-            left = v;
-            leftInput.setStyle(null);
-            UserConfig.setInt(baseName + "LeftThreshold", left);
-            return true;
-        } else {
-            popError(message("InvalidParameter") + ": " + message("LeftThreshold"));
-            leftInput.setStyle(UserConfig.badStyle());
             return false;
         }
     }
 
-    protected boolean checkRight() {
+    protected boolean checkThreshold() {
         if (isSettingValues) {
             return true;
         }
         int v;
         try {
-            v = Integer.parseInt(rightInput.getText());
+            v = Integer.parseInt(thresholdInput.getText());
         } catch (Exception e) {
             v = -1;
         }
-        if (v >= 0 && v <= 255) {
-            right = v;
-            rightInput.setStyle(null);
-            UserConfig.setInt(baseName + "RightThreshold", right);
+        if (v > 0) {
+            threshold = v;
+            thresholdInput.setStyle(null);
             return true;
         } else {
-            popError(message("InvalidParameter") + ": " + message("RightThreshold"));
-            rightInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("Threshold"));
+            thresholdInput.setStyle(UserConfig.badStyle());
+            return false;
+        }
+    }
+
+    protected boolean checkPercentage() {
+        if (isSettingValues) {
+            return true;
+        }
+        int v;
+        try {
+            v = Integer.parseInt(percentageInput.getText());
+        } catch (Exception e) {
+            v = -1;
+        }
+        if (v > 0 && v < 50) {
+            percentage = v;
+            percentageInput.setStyle(null);
+            return true;
+        } else {
+            popError(message("InvalidParameter") + ": " + message("Percentage"));
+            percentageInput.setStyle(UserConfig.badStyle());
             return false;
         }
     }
@@ -199,7 +242,6 @@ public class ControlImageContrast extends BaseController {
         if (v >= -255 && v <= 255) {
             offset = v;
             offsetInput.setStyle(null);
-            UserConfig.setInt(baseName + "Offset", offset);
             return true;
         } else {
             popError(message("InvalidParameter") + ": " + message("Offset"));
@@ -209,22 +251,22 @@ public class ControlImageContrast extends BaseController {
     }
 
     protected ImageContrast pickValues() {
-        if (grayStretchingRaido.isSelected()) {
-            if (!checkLeft() || !checkRight()) {
-                return null;
-            }
-        } else if (grayShiftingRaido.isSelected()) {
-            if (!checkOffset()) {
-                return null;
-            }
+        if (!checkContrastAlgorithm()) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            UserConfig.setLong(conn, baseName + "Threshold", threshold);
+            UserConfig.setInt(conn, baseName + "Percentage", percentage);
+            UserConfig.setInt(conn, baseName + "Offset", offset);
+        } catch (Exception e) {
         }
         ImageContrast imageContrast = new ImageContrast()
                 .setAlgorithm(contrastAlgorithm);
-        if (contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Stretching) {
-            imageContrast.setIntPara1(left).setIntPara2(right);
+        if (stretchingRaido.isSelected()) {
+            imageContrast.setThreshold(threshold).setPercentage(percentage);
 
-        } else if (contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Shifting) {
-            imageContrast.setIntPara1(offset);
+        } else if (shiftingRaido.isSelected()) {
+            imageContrast.setOffset(offset);
         }
         return imageContrast;
     }

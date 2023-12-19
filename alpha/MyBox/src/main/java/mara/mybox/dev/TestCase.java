@@ -132,10 +132,13 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("ReduceColors"), Fxmls.ImageReduceColorsBatchFxml));
             cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("EdgeDetection"), Fxmls.ImageEdgeBatchFxml));
             cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Sharpen"), Fxmls.ImageSharpenBatchFxml));
+            cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Smooth"), Fxmls.ImageSmoothBatchFxml));
             cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Text"), Fxmls.ImageTextBatchFxml));
             cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Round"), Fxmls.ImageRoundBatchFxml));
             cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Shadow"), Fxmls.ImageShadowBatchFxml));
-            cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Transform"), Fxmls.ImageTransformBatchFxml));
+            cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Mirror"), Fxmls.ImageMirrorBatchFxml));
+            cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Shear"), Fxmls.ImageShearBatchFxml));
+            cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Rotate"), Fxmls.ImageRotateBatchFxml));
             cases.add(new TestCase(index++, message("ImageBatch") + "-" + message("Margins"), Fxmls.ImageMarginsBatchFxml));
             cases.add(new TestCase(index++, message("ImagesSplice"), Fxmls.ImagesSpliceFxml));
             cases.add(new TestCase(index++, message("ImageAlphaAdd"), Fxmls.ImageAlphaAddBatchFxml));

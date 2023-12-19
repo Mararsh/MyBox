@@ -41,6 +41,20 @@ public class ImageContrastController extends BaseImageEditController {
     }
 
     @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
+            contrastController.forImage(srcImage());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
     protected boolean checkOptions() {
         if (!super.checkOptions()) {
             return false;
@@ -52,10 +66,10 @@ public class ImageContrastController extends BaseImageEditController {
     @Override
     protected void handleImage(FxTask currentTask) {
         try {
-            if (contrastController.contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Stretching) {
-                opInfo = contrastController.left + "-" + contrastController.right;
+            if (contrastController.contrastAlgorithm == ContrastAlgorithm.GrayHistogramStretching) {
+                opInfo = contrastController.threshold + "-" + contrastController.percentage;
 
-            } else if (contrastController.contrastAlgorithm == ContrastAlgorithm.Gray_Histogram_Shifting) {
+            } else if (contrastController.contrastAlgorithm == ContrastAlgorithm.GrayHistogramShifting) {
                 opInfo = contrastController.offset + "";
             }
             handledImage = contrast.setImage(srcImage()).setTask(currentTask).operateFxImage();
@@ -66,7 +80,9 @@ public class ImageContrastController extends BaseImageEditController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        PixelDemos.contrast(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
+        PixelDemos.contrast(currentTask, files,
+                SwingFXUtils.fromFXImage(demoImage, null),
+                prefix());
     }
 
     /*

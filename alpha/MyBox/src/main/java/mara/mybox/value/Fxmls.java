@@ -183,7 +183,9 @@ public class Fxmls {
     public static final String ImageRoundBatchFxml = "/fxml/ImageRoundBatch.fxml";
     public static final String ImageMarginsBatchFxml = "/fxml/ImageMarginsBatch.fxml";
     public static final String ImageSizeBatchFxml = "/fxml/ImageSizeBatch.fxml";
-    public static final String ImageTransformBatchFxml = "/fxml/ImageTransformBatch.fxml";
+    public static final String ImageMirrorBatchFxml = "/fxml/ImageMirrorBatch.fxml";
+    public static final String ImageShearBatchFxml = "/fxml/ImageShearBatch.fxml";
+    public static final String ImageRotateBatchFxml = "/fxml/ImageRotateBatch.fxml";
     public static final String ImagePasteBatchFxml = "/fxml/ImagePasteBatch.fxml";
     public static final String ImageMosaicBatchFxml = "/fxml/ImageMosaicBatch.fxml";
     public static final String ImageGlassBatchFxml = "/fxml/ImageGlassBatch.fxml";

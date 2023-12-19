@@ -306,27 +306,27 @@ public class ImageOCRProcessController extends BaseImageController {
 
                     } else if (message("GrayHistogramEqualization").equals(algorithm)) {
                         ImageContrast imageContrast = new ImageContrast()
-                                .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Equalization);
+                                .setAlgorithm(ContrastAlgorithm.GrayHistogramEqualization);
                         ocrImage = imageContrast.setImage(imageView.getImage())
                                 .setTask(this).operateFxImage();
 
                     } else if (message("GrayHistogramStretching").equals(algorithm)) {
                         ImageContrast imageContrast = new ImageContrast()
-                                .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Stretching);
+                                .setAlgorithm(ContrastAlgorithm.GrayHistogramStretching);
                         ocrImage = imageContrast.setImage(imageView.getImage())
                                 .setIntPara1(50).setIntPara2(50)
                                 .setTask(this).operateFxImage();
 
                     } else if (message("GrayHistogramShifting").equals(algorithm)) {
                         ImageContrast imageContrast = new ImageContrast()
-                                .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Shifting);
+                                .setAlgorithm(ContrastAlgorithm.GrayHistogramShifting);
                         ocrImage = imageContrast.setImage(imageView.getImage())
                                 .setIntPara1(10)
                                 .setTask(this).operateFxImage();
 
                     } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                         ImageContrast imageContrast = new ImageContrast()
-                                .setAlgorithm(ContrastAlgorithm.HSB_Histogram_Equalization);
+                                .setAlgorithm(ContrastAlgorithm.SaturationHistogramEqualization);
                         ocrImage = imageContrast.setImage(imageView.getImage())
                                 .setTask(this).operateFxImage();
 
@@ -433,7 +433,7 @@ public class ImageOCRProcessController extends BaseImageController {
                     }
 
                     ImageContrast imageContrast = new ImageContrast()
-                            .setAlgorithm(ContrastAlgorithm.HSB_Histogram_Equalization);
+                            .setAlgorithm(ContrastAlgorithm.SaturationHistogramEqualization);
                     bufferedImage = imageContrast.setImage(image).setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("HSBHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
@@ -442,7 +442,7 @@ public class ImageOCRProcessController extends BaseImageController {
                     }
 
                     imageContrast = new ImageContrast()
-                            .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Equalization);
+                            .setAlgorithm(ContrastAlgorithm.GrayHistogramEqualization);
                     bufferedImage = imageContrast.setImage(image).setTask(this).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(this, bufferedImage, tmpFile)) {
@@ -451,7 +451,7 @@ public class ImageOCRProcessController extends BaseImageController {
                     }
 
                     imageContrast = new ImageContrast()
-                            .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Stretching);
+                            .setAlgorithm(ContrastAlgorithm.GrayHistogramStretching);
                     bufferedImage = imageContrast.setImage(image).setTask(this)
                             .setIntPara1(100).setIntPara2(100).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramStretching"), "png").getAbsolutePath();
@@ -461,7 +461,7 @@ public class ImageOCRProcessController extends BaseImageController {
                     }
 
                     imageContrast = new ImageContrast()
-                            .setAlgorithm(ContrastAlgorithm.Gray_Histogram_Shifting);
+                            .setAlgorithm(ContrastAlgorithm.GrayHistogramShifting);
                     bufferedImage = imageContrast.setImage(image).setTask(this)
                             .setIntPara1(40).operateImage();
                     tmpFile = FileTmpTools.generateFile(message("GrayHistogramShifting"), "png").getAbsolutePath();

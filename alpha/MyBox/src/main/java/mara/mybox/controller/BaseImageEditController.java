@@ -124,6 +124,11 @@ public class BaseImageEditController extends BaseShapeController {
         return imageView.getImage();
     }
 
+    protected String prefix() {
+        return imageController.sourceFile != null
+                ? imageController.sourceFile.getName() : "";
+    }
+
     @Override
     public void fitView() {
         if (needFixSize) {

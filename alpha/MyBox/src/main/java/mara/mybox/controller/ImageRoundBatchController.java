@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ImageDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
@@ -47,6 +49,11 @@ public class ImageRoundBatchController extends BaseImageEditBatchController {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    @Override
+    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
+        ImageDemos.round(currentTask, files, demoImage, roundController.awtColor(), "");
     }
 
 }

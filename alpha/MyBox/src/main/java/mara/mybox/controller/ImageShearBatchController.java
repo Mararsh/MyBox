@@ -3,8 +3,8 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.ImageContrast;
-import mara.mybox.fximage.PixelDemos;
+import mara.mybox.bufferedimage.TransformTools;
+import mara.mybox.fximage.ImageDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
@@ -13,15 +13,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2018-9-23
  * @License Apache License Version 2.0
  */
-public class ImageContrastBatchController extends BaseImageEditBatchController {
-
-    protected ImageContrast contrast;
+public class ImageShearBatchController extends BaseImageEditBatchController {
 
     @FXML
-    protected ControlImageContrast contrastController;
+    protected ControlImageShear shearController;
 
-    public ImageContrastBatchController() {
-        baseTitle = message("ImageBatch") + " - " + message("Contrast");
+    public ImageShearBatchController() {
+        baseTitle = message("ImageBatch") + " - " + message("Shear");
     }
 
     @Override
@@ -29,18 +27,18 @@ public class ImageContrastBatchController extends BaseImageEditBatchController {
         if (!super.makeMoreParameters()) {
             return false;
         }
-        contrast = contrastController.pickValues();
-        return contrast != null;
+        return shearController.pickValues();
     }
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return contrast.setImage(source).setTask(currentTask).operate();
+        return TransformTools.shearImage(currentTask, source,
+                shearController.shearX, shearController.shearY);
     }
 
     @Override
     public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
-        PixelDemos.contrast(currentTask, files, demoImage, "");
+        ImageDemos.shear(currentTask, files, demoImage, null);
     }
 
 }

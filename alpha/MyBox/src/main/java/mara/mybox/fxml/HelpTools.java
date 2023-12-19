@@ -433,6 +433,12 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "Thresholding")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageThresholdingComments")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message(lang, "Contrast")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ImageContrastComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message(lang, "Shear")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ImageShearComments")).append("</PRE>\n");
+
             s.append("    <H3>").append(message(lang, "ImageRepeatTile")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageRepeatTips")).append("</PRE>\n");
 

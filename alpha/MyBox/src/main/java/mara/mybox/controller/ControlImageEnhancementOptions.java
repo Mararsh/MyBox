@@ -300,7 +300,7 @@ public class ControlImageEnhancementOptions extends BaseController {
 
     protected void makeContrastBox() {
         try {
-            contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
+            contrastAlgorithm = ContrastAlgorithm.SaturationHistogramEqualization;
             setBox.getChildren().addAll(contrastABox);
 
             checkContrastAlgorithm();
@@ -425,10 +425,10 @@ public class ControlImageEnhancementOptions extends BaseController {
                 okButton.disableProperty().unbind();
             }
             if (Languages.message("GrayHistogramEqualization").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Equalization;
+                contrastAlgorithm = ContrastAlgorithm.GrayHistogramEqualization;
 
             } else if (Languages.message("GrayHistogramStretching").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Stretching;
+                contrastAlgorithm = ContrastAlgorithm.GrayHistogramStretching;
                 intPara1 = 100;
                 intLabel1.setText(Languages.message("LeftThreshold"));
                 intInput1.textProperty().addListener(new ChangeListener<String>() {
@@ -480,7 +480,7 @@ public class ControlImageEnhancementOptions extends BaseController {
                 }
 
             } else if (Languages.message("GrayHistogramShifting").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Shifting;
+                contrastAlgorithm = ContrastAlgorithm.GrayHistogramShifting;
                 intPara1 = 80;
                 intLabel1.setText(Languages.message("Offset"));
                 intInput1.textProperty().addListener(new ChangeListener<String>() {
@@ -510,7 +510,7 @@ public class ControlImageEnhancementOptions extends BaseController {
                 }
 
             } else if (Languages.message("HSBHistogramEqualization").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
+                contrastAlgorithm = ContrastAlgorithm.SaturationHistogramEqualization;
 
             }
 
