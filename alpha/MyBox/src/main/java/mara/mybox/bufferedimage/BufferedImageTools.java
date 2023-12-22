@@ -32,17 +32,8 @@ import mara.mybox.value.FileExtensions;
  */
 public class BufferedImageTools {
 
-    public static class Direction {
-
-        public static int Top = 0;
-        public static int Bottom = 1;
-        public static int Left = 2;
-        public static int Right = 3;
-        public static int LeftTop = 4;
-        public static int RightBottom = 5;
-        public static int LeftBottom = 6;
-        public static int RightTop = 7;
-
+    public static enum Direction {
+        Top, Bottom, Left, Right, LeftTop, RightBottom, LeftBottom, RightTop
     }
 
     public static class KeepRatioType {

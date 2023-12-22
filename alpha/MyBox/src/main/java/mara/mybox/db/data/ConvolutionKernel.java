@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.bufferedimage.BufferedImageTools.Direction;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatMatrixTools;
 import mara.mybox.tools.FloatTools;
@@ -606,7 +607,7 @@ public class ConvolutionKernel {
         -1, 0, 0, 0, 0
     };
 
-    public static float[][] makeEmbossMatrix(int direction, int size) {
+    public static float[][] makeEmbossMatrix(Direction direction, int size) {
         float[][] m = null;
         if (direction == BufferedImageTools.Direction.Top) {
             if (size == 3) {
@@ -660,10 +661,10 @@ public class ConvolutionKernel {
         return m;
     }
 
-    public static ConvolutionKernel makeEmbossKernel(int direction, int size, boolean gray) {
+    public static ConvolutionKernel makeEmbossKernel(Direction direction, int size, boolean gray) {
         ConvolutionKernel kernel = new ConvolutionKernel();
         kernel.setName(message("Emboss") + " "
-                + message("Direction") + ":" + direction + " "
+                + message("Direction") + ": " + message("direction") + " "
                 + message("Size") + ":" + size);
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));

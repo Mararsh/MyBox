@@ -81,8 +81,7 @@ public class ImageContrastController extends BaseImageEditController {
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         PixelDemos.contrast(currentTask, files,
-                SwingFXUtils.fromFXImage(demoImage, null),
-                prefix());
+                SwingFXUtils.fromFXImage(demoImage, null), srcFile());
     }
 
     /*

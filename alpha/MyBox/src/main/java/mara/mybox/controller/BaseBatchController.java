@@ -216,7 +216,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         break;
                     }
                 }
-                controller.loadImages(files, 3);
+                controller.loadImages(files);
             }
         } catch (Exception e) {
         }

@@ -21,6 +21,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -97,13 +98,15 @@ public abstract class BaseController_Attributes {
             infoButton, metaButton, openSourceButton, systemMethodButton,
             transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
-    protected VBox paraBox;
+    protected VBox paraBox, mainAreaBox;
+    @FXML
+    protected HBox toolbar;
     @FXML
     protected Label bottomLabel, tipsLabel;
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox rightPaneCheck, leftPaneCheck;
+    protected CheckBox rightPaneCheck, leftPaneCheck, toolbarCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML

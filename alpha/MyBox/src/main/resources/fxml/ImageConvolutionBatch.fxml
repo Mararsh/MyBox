@@ -42,18 +42,9 @@ License:    Apache License Version 2.0
                            <content>
                                       <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                           <children>
-                                    <fx:include fx:id="smooth" source="ControlImageSmooth.fxml" />
+                                    <fx:include fx:id="convolution" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageConvolution.fxml" VBox.vgrow="ALWAYS" />
                                     <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                        <children>
-                                          <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconDemo.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
                                                     <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
                                                         <graphic>
                                                             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

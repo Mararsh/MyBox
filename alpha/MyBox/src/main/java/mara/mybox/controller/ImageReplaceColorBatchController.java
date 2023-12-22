@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
@@ -14,8 +15,8 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -144,12 +145,11 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
     }
 
     @Override
-    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
+    public void makeDemoFiles(FxTask currentTask, List<String> files, File demoFile, BufferedImage demoImage) {
         try {
             pickOperation();
             ColorDemos.replaceColor(currentTask, files,
-                    pixelsOperation.setImage(demoImage),
-                    newColorSetController.css());
+                    pixelsOperation.setImage(demoImage), demoFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

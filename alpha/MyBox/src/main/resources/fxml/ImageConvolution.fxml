@@ -10,7 +10,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
@@ -49,30 +48,7 @@ License:    Apache License Version 2.0
                               </Button>
                            </children>
                         </FlowPane>
-                                <FlowPane fx:id="rightValuePane" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                    <children>
-                                        <Label minHeight="-Infinity" text="%ConvolutionKernel" wrapText="true" />
-                                        <Button fx:id="refreshButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconRefresh.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconManage.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </FlowPane>
-                                <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                        <fx:include fx:id="convolution" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageConvolution.fxml" VBox.vgrow="ALWAYS" />
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
                                         <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">

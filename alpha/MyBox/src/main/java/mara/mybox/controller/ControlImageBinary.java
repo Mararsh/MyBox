@@ -134,8 +134,10 @@ public class ControlImageBinary extends BaseController {
     }
 
     public ImageBinary pickValues(int t) {
-        if (t < 0 && !checkThreshold()) {
-            return null;
+        if (t < 0) {
+            if (!checkThreshold()) {
+                return null;
+            }
         }
         ImageBinary imageBinary = new ImageBinary();
         imageBinary.setIntPara1(t <= 0 ? threshold : t)

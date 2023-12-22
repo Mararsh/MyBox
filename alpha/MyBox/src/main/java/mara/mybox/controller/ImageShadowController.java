@@ -78,7 +78,7 @@ public class ImageShadowController extends BaseImageEditController {
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         PixelDemos.shadow(currentTask, files,
                 SwingFXUtils.fromFXImage(demoImage, null),
-                shadowController.awtColor());
+                shadowController.awtColor(), srcFile());
     }
 
 

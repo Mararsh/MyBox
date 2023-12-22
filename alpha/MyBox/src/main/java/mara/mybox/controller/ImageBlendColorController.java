@@ -81,7 +81,7 @@ public class ImageBlendColorController extends BasePixelsController {
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         ColorDemos.blendColor(currentTask, files,
                 SwingFXUtils.fromFXImage(demoImage, null),
-                colorController.color());
+                colorController.color(), srcFile());
     }
 
 

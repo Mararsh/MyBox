@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -17,6 +20,8 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageEdgeController extends BasePixelsController {
+
+    protected ConvolutionKernel kernel;
 
     @FXML
     protected ControlImageEdge edgeController;
@@ -36,12 +41,17 @@ public class ImageEdgeController extends BasePixelsController {
     }
 
     @Override
+    protected boolean checkOptions() {
+        if (!super.checkOptions()) {
+            return false;
+        }
+        kernel = edgeController.pickValues();
+        return kernel != null;
+    }
+
+    @Override
     protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
-            ConvolutionKernel kernel = edgeController.kernel();
-            if (kernel == null) {
-                return null;
-            }
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(inImage)
                     .setScope(inScope)
@@ -56,6 +66,11 @@ public class ImageEdgeController extends BasePixelsController {
             displayError(e.toString());
             return null;
         }
+    }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        PixelDemos.edge(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null), srcFile());
     }
 
 

@@ -1,12 +1,13 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fximage.ShapeDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -58,19 +59,12 @@ public class ImageTextBatchController extends BaseImageEditBatchController {
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        try {
-            BufferedImage target = ImageTextTools.addText(currentTask, source, optionsController);
-            return target;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+        return ImageTextTools.addText(currentTask, source, optionsController);
     }
 
     @Override
-    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
-        ColorDemos.blendColor(currentTask, files, demoImage,
-                optionsController.fontColorController.color());
+    public void makeDemoFiles(FxTask currentTask, List<String> files, File demoFile, BufferedImage demoImage) {
+        ShapeDemos.text(currentTask, files, demoImage, optionsController, demoFile);
     }
 
 }

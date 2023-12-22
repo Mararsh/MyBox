@@ -3,22 +3,16 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -31,10 +25,10 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageConvolutionController extends BasePixelsController {
 
-    protected ConvolutionKernel kernel, loadedKernel;
+    protected ConvolutionKernel kernel;
 
     @FXML
-    protected ListView<ConvolutionKernel> listView;
+    protected ControlImageConvolution convolutionController;
 
     public ImageConvolutionController() {
         baseTitle = message("Convolution");
@@ -46,68 +40,16 @@ public class ImageConvolutionController extends BasePixelsController {
             super.initMore();
             operation = message("Convolution");
 
-            listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-            listView.setCellFactory(new Callback<ListView<ConvolutionKernel>, ListCell<ConvolutionKernel>>() {
+            convolutionController.doubleClickedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public ListCell<ConvolutionKernel> call(ListView<ConvolutionKernel> param) {
-
-                    ListCell<ConvolutionKernel> cell = new ListCell<ConvolutionKernel>() {
-                        @Override
-                        public void updateItem(ConvolutionKernel item, boolean empty) {
-                            super.updateItem(item, empty);
-                            setText(null);
-                            setGraphic(null);
-                            if (empty || item == null) {
-                                return;
-                            }
-                            setText(item.getName());
-                        }
-                    };
-                    return cell;
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    okAction();
                 }
             });
-            listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        okAction();
-                    }
-                }
-            });
-
-            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            List<ConvolutionKernel> kernels;
-
-            @Override
-            protected boolean handle() {
-                kernels = TableConvolutionKernel.read();
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                listView.getItems().setAll(kernels);
-            }
-        };
-        start(task);
-    }
-
-    @FXML
-    public void manageAction() {
-        openStage(Fxmls.ConvolutionKernelManagerFxml);
     }
 
     @Override
@@ -115,12 +57,8 @@ public class ImageConvolutionController extends BasePixelsController {
         if (!super.checkOptions()) {
             return false;
         }
-        kernel = listView.getSelectionModel().getSelectedItem();
-        if (kernel == null) {
-            popError(message("SelectToHandle"));
-            return false;
-        }
-        return true;
+        kernel = convolutionController.pickValues();
+        return kernel != null;
     }
 
     @Override

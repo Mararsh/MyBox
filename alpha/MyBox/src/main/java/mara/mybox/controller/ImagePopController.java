@@ -123,6 +123,21 @@ public class ImagePopController extends BaseShapeController {
         }
     }
 
+    public void setSourceController(BaseImageController parent) {
+        try {
+            this.parentController = parent;
+            sourceController = parent;
+            sourceImageView = parent.imageView;
+
+            setControls();
+
+            refreshAction();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
     @FXML
     @Override
     public void refreshAction() {
@@ -191,6 +206,17 @@ public class ImagePopController extends BaseShapeController {
         try {
             ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
             controller.setFile(parent, filename);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagePopController openSource(BaseImageController parent) {
+        try {
+            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            controller.setSourceController(parent);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

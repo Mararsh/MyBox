@@ -102,11 +102,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageToHandle() == null) {
             return false;
         }
-        if (imageView != null) {
-            ImagePopController.openView(this, imageView);
-        } else {
-            ImagePopController.openImage(this, imageToHandle());
-        }
+        ImagePopController.openSource((BaseImageController) this);
         return true;
     }
 
@@ -343,6 +339,62 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 imageView.setImage(newImage);
                 refinePane();
                 setImageChanged(true);
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    public void horizontalAction() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.horizontalImage(this, imageView.getImage());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                updateImage(message("MirrorHorizontal"), newImage);
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    public void verticalAction() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.verticalImage(this, imageView.getImage());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                updateImage(message("MirrorVertical"), newImage);
             }
 
         };

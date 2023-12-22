@@ -13,8 +13,6 @@ import mara.mybox.bufferedimage.ImageQuantization;
 import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.PixelsBlend;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
@@ -32,14 +30,19 @@ import static mara.mybox.value.Languages.message;
 public class ColorDemos {
 
     public static void replaceColor(FxTask demoTask, List<String> files,
-            PixelsOperation pixelsOperation, String prefix) {
-        if (demoTask == null || pixelsOperation == null || prefix == null || files == null) {
+            PixelsOperation pixelsOperation, File demoFile) {
+        if (demoTask == null || pixelsOperation == null || files == null) {
             return;
         }
         try {
             pixelsOperation.setTask(demoTask);
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("ReplaceColor");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             BufferedImage bufferedImage = pixelsOperation
                     .setBoolPara1(true).setBoolPara2(false).setBoolPara3(false)
@@ -47,7 +50,7 @@ public class ColorDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            String tmpFile = FileTmpTools.getPathTempFile(path, prefix + "_" + message("Hue"), ".png").getAbsolutePath();
+            String tmpFile = FileTmpTools.getPathTempFile(path, message("Hue"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -61,7 +64,7 @@ public class ColorDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "_" + message("Saturation"), ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, message("Saturation"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -76,7 +79,7 @@ public class ColorDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "_" + message("Brightness"), ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, message("Brightness"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -91,7 +94,7 @@ public class ColorDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "_" + message("All"), ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, message("All"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -106,10 +109,15 @@ public class ColorDemos {
     }
 
     public static void adjustColor(FxTask demoTask, List<String> files,
-            BufferedImage demoImage, ImageScope scope) {
+            BufferedImage demoImage, ImageScope scope, File demoFile) {
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("AdjustColor");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             PixelsOperation pixelsOperation;
             BufferedImage bufferedImage;
@@ -331,131 +339,36 @@ public class ColorDemos {
         }
     }
 
-    public static void blendColor(FxTask currentTask, List<String> files, BufferedImage baseImage, javafx.scene.paint.Color color) {
+    public static void blendColor(FxTask currentTask, List<String> files, BufferedImage baseImage,
+            javafx.scene.paint.Color color, File demoFile) {
+        if (currentTask == null || baseImage == null || files == null) {
+            return;
+        }
         if (color == null) {
             color = javafx.scene.paint.Color.PINK;
         }
         Image overlay = FxImageTools.createImage(
                 (int) (baseImage.getWidth() * 7 / 8), (int) (baseImage.getHeight() * 7 / 8),
                 color);
-        blendImage(currentTask, files, baseImage, SwingFXUtils.fromFXImage(overlay, null));
+        int x = (int) (baseImage.getWidth() - overlay.getWidth()) / 2;
+        int y = (int) (baseImage.getHeight() - overlay.getHeight()) / 2;
+        ShapeDemos.blendImage(currentTask, files, message("BlendColor"),
+                baseImage, SwingFXUtils.fromFXImage(overlay, null), x, y, demoFile);
     }
 
-    public static void blendImage(FxTask currentTask, List<String> files, BufferedImage baseImage, BufferedImage overlay) {
-        if (currentTask == null || baseImage == null || overlay == null || files == null) {
-            return;
-        }
-        try {
-            BufferedImage baseBI = mara.mybox.bufferedimage.ScaleTools.demoImage(baseImage);
-            BufferedImage overlayBI = mara.mybox.bufferedimage.ScaleTools.demoImage(overlay);
-
-            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
-                    + File.separator + message("BlendColor");
-
-            int x = (int) (baseBI.getWidth() - overlayBI.getWidth()) / 2;
-            int y = (int) (baseBI.getHeight() - overlayBI.getHeight()) / 2;
-
-            PixelsBlend.ImagesBlendMode mode;
-            PixelsBlend blender;
-            BufferedImage blended;
-            String tmpFile;
-            for (String name : PixelsBlendFactory.blendModes()) {
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-                mode = PixelsBlendFactory.blendMode(name);
-                blender = PixelsBlendFactory.create(mode).setBlendMode(mode);
-
-                blender.setOpacity(1f).setBaseAbove(false)
-                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
-                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
-                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
-                        + message("Opacity") + "1_" + message("Overlay") + "_" + message("BaseImage"),
-                        ".png").getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
-                    files.add(tmpFile);
-                    currentTask.setInfo(tmpFile);
-                }
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-
-                blender.setOpacity(0.5f).setBaseAbove(false)
-                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
-                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
-                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
-                        + message("Opacity") + "0.5_" + message("Overlay") + "_" + message("BaseImage"),
-                        ".png").getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
-                    files.add(tmpFile);
-                    currentTask.setInfo(tmpFile);
-                }
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-
-                blender.setOpacity(0.5f).setBaseAbove(false)
-                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
-                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
-                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
-                        + message("Opacity") + "0.5_" + message("Transparent") + "_" + message("BaseImage"),
-                        ".png").getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
-                    files.add(tmpFile);
-                    currentTask.setInfo(tmpFile);
-                }
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-
-                blender.setOpacity(0.5f).setBaseAbove(false)
-                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
-                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
-                blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-                tmpFile = FileTmpTools.getPathTempFile(path, name + "-"
-                        + message("Opacity") + "0.5_" + message("Transparent") + "_" + message("Transparent"),
-                        ".png").getAbsolutePath();
-                if (ImageFileWriters.writeImageFile(currentTask, blended, tmpFile)) {
-                    files.add(tmpFile);
-                    currentTask.setInfo(tmpFile);
-                }
-                if (currentTask == null || !currentTask.isWorking()) {
-                    return;
-                }
-
-            }
-
-        } catch (Exception e) {
-            if (currentTask != null) {
-                currentTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-        }
-    }
-
-    public static void blackWhite(FxTask demoTask, List<String> files, ImageBinary binary) {
+    public static void blackWhite(FxTask demoTask, List<String> files,
+            ImageBinary binary, File demoFile) {
         if (demoTask == null || binary == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("BlackOrWhite");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             binary.setTask(demoTask);
             int threshold = binary.getIntPara1();
@@ -555,13 +468,19 @@ public class ColorDemos {
         }
     }
 
-    public static void sepia(FxTask demoTask, List<String> files, PixelsOperation pixelsOperation) {
+    public static void sepia(FxTask demoTask, List<String> files,
+            PixelsOperation pixelsOperation, File demoFile) {
         if (demoTask == null || pixelsOperation == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Sepia");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             pixelsOperation.setTask(demoTask);
 
@@ -586,13 +505,19 @@ public class ColorDemos {
         }
     }
 
-    public static void reduceColors(FxTask demoTask, List<String> files, BufferedImage demoImage) {
+    public static void reduceColors(FxTask demoTask, List<String> files,
+            BufferedImage demoImage, File demoFile) {
         if (demoTask == null || demoImage == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("ReduceColors");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             ImageQuantization quantization;
             BufferedImage bufferedImage;
@@ -654,13 +579,19 @@ public class ColorDemos {
         }
     }
 
-    public static void thresholding(FxTask demoTask, List<String> files, BufferedImage demoImage) {
+    public static void thresholding(FxTask demoTask, List<String> files,
+            BufferedImage demoImage, File demoFile) {
         if (demoTask == null || demoImage == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Thresholding");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             PixelsOperation op = PixelsOperationFactory.create(
                     demoImage, null, PixelsOperation.OperationType.Thresholding)

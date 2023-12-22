@@ -16,8 +16,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageEdge extends BaseController {
 
-    protected int threshold, small, big;
-
     @FXML
     protected RadioButton eightLaplaceRadio, eightLaplaceExcludedRadio,
             fourLaplaceRadio, fourLaplaceExcludedRadio;
@@ -42,7 +40,7 @@ public class ControlImageEdge extends BaseController {
         }
     }
 
-    public ConvolutionKernel kernel() {
+    public ConvolutionKernel pickValues() {
         try {
             ConvolutionKernel kernel;
             if (eightLaplaceRadio.isSelected()) {

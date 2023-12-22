@@ -21,24 +21,25 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageDemos {
 
-    public static void shear(FxTask demoTask, List<String> files, BufferedImage demoImage, String prefix) {
+    public static void shear(FxTask demoTask, List<String> files,
+            BufferedImage demoImage, File demoFile) {
         if (demoTask == null || demoImage == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Shear");
-            if (prefix == null) {
-                prefix = "";
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
             } else {
-                prefix += "_";
+                path += File.separator + "x";
             }
 
             BufferedImage bufferedImage = TransformTools.shearImage(demoTask, demoImage, 1f, 0);
             if (!demoTask.isWorking()) {
                 return;
             }
-            String tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(1,0)", ".png").getAbsolutePath();
+            String tmpFile = FileTmpTools.getPathTempFile(path, "radio_(1,0)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -51,7 +52,7 @@ public class ImageDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(-1,0)", ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(-1,0)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -64,7 +65,7 @@ public class ImageDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(0,1)", ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(0,1)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -77,7 +78,7 @@ public class ImageDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(0,-1)", ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(0,-1)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -90,7 +91,7 @@ public class ImageDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(1.5,2)", ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(1.5,2)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -103,7 +104,7 @@ public class ImageDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(2,-1.5)", ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(2,-1.5)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -116,7 +117,7 @@ public class ImageDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(-1.5,2)", ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(-1.5,2)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -129,7 +130,7 @@ public class ImageDemos {
             if (!demoTask.isWorking()) {
                 return;
             }
-            tmpFile = FileTmpTools.getPathTempFile(path, prefix + "radio_(-2,-1.5)", ".png").getAbsolutePath();
+            tmpFile = FileTmpTools.getPathTempFile(path, "radio_(-2,-1.5)", ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 demoTask.setInfo(tmpFile);
@@ -147,18 +148,18 @@ public class ImageDemos {
         }
     }
 
-    public static void round(FxTask demoTask, List<String> files, BufferedImage demoImage,
-            Color color, String prefix) {
+    public static void round(FxTask demoTask, List<String> files,
+            BufferedImage demoImage, Color color, File demoFile) {
         if (demoTask == null || demoImage == null || files == null || color == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Round");
-            if (prefix == null) {
-                prefix = "";
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
             } else {
-                prefix += "_";
+                path += File.separator + "x";
             }
 
             int width = demoImage.getWidth();
@@ -175,7 +176,7 @@ public class ImageDemos {
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
-                tmpFile = FileTmpTools.getPathTempFile(path, prefix + message("Round") + v, ".png")
+                tmpFile = FileTmpTools.getPathTempFile(path, message("Round") + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
                     files.add(tmpFile);

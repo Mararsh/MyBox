@@ -77,6 +77,9 @@ public class BaseImageController extends BaseImageController_Actions {
                     maskPane.getChildren().add(xyText);
                 }
             }
+            if (mainAreaBox == null) {
+                mainAreaBox = imageBox;
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -293,37 +296,9 @@ public class BaseImageController extends BaseImageController_Actions {
                 });
             }
 
-            if (toolbarCheck != null) {
-                toolbarCheck.setSelected(UserConfig.getBoolean(baseName + "Toolbar", true));
-                toolbarCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "Toolbar", toolbarCheck.isSelected());
-                        checkToolsBar();
-                    }
-                });
-                checkToolsBar();
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void checkToolsBar() {
-        if (toolbar == null || toolbarCheck == null || imageBox == null) {
-            return;
-        }
-        if (toolbarCheck.isSelected()) {
-            if (!imageBox.getChildren().contains(toolbar)) {
-                imageBox.getChildren().add(0, toolbar);
-            }
-        } else {
-            if (imageBox.getChildren().contains(toolbar)) {
-                imageBox.getChildren().remove(toolbar);
-            }
-        }
-        refreshStyle(imageBox);
     }
 
     @Override
@@ -573,6 +548,18 @@ public class BaseImageController extends BaseImageController_Actions {
             menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
             menu.setOnAction((ActionEvent event) -> {
                 turnOver();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("MirrorHorizontal"), StyleTools.getIconImageView("iconHorizontal.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                horizontalAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("MirrorVertical"), StyleTools.getIconImageView("iconVertical.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                verticalAction();
             });
             items.add(menu);
 

@@ -11,8 +11,8 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fximage.ShapeDemos;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -126,9 +126,9 @@ public class ImageTextController extends BaseImageEditController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ColorDemos.blendColor(currentTask, files,
-                SwingFXUtils.fromFXImage(demoImage, null),
-                optionsController.fontColorController.color());
+        ShapeDemos.text(currentTask, files,
+                SwingFXUtils.fromFXImage(srcImage(), null),
+                optionsController, srcFile());
     }
 
     /*

@@ -22,10 +22,10 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fximage.ShapeDemos;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -326,12 +326,23 @@ public class ImagePasteController extends BaseImageEditController {
         passHandled(currentImage());
     }
 
+    @FXML
+    @Override
+    public void previewAction() {
+        ImagePopController c = ImagePopController.openImage(myController, currentImage());
+        c.setTitle(myController.getTitle());
+        c.imageLabel.setText(operation);
+    }
+
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         Image overlay = finalClip != null ? finalClip : ImageItem.exampleImage();
-        ColorDemos.blendImage(currentTask, files,
-                SwingFXUtils.fromFXImage(demoImage, null),
-                SwingFXUtils.fromFXImage(overlay, null));
+        ShapeDemos.blendImage(currentTask, files, message("Paste"),
+                SwingFXUtils.fromFXImage(bgImage, null),
+                SwingFXUtils.fromFXImage(overlay, null),
+                (int) maskRectangleData.getX(),
+                (int) maskRectangleData.getY(),
+                srcFile());
     }
 
 

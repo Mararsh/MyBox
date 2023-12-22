@@ -25,8 +25,8 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.ImageItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fximage.ShapeDemos;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -116,10 +116,6 @@ public class ControlImagesBlend extends BaseController {
         }
     }
 
-    public boolean isBaseAbove() {
-        return baseAboveCheck.isSelected();
-    }
-
     public TransparentAs baseTransparentAs() {
         if (baseAsOverlayRadio.isSelected()) {
             baseTransparentAs = TransparentAs.Another;
@@ -142,7 +138,7 @@ public class ControlImagesBlend extends BaseController {
         return overlayTransparentAs;
     }
 
-    public float opacity() {
+    public float checkOpacity() {
         float f = -1;
         try {
             f = Float.parseFloat(opacitySelector.getValue());
@@ -157,12 +153,14 @@ public class ControlImagesBlend extends BaseController {
     }
 
     public boolean checkValues() {
-        return opacity() >= 0;
+        return checkOpacity() >= 0;
     }
 
     public PixelsBlend pickValues(float t) {
-        if (t < 0 && !checkValues()) {
-            return null;
+        if (t < 0) {
+            if (!checkValues()) {
+                return null;
+            }
         } else {
             opacity = t;
         }
@@ -183,7 +181,6 @@ public class ControlImagesBlend extends BaseController {
 
             UserConfig.setInt(conn, baseName + "BlendOpacity", (int) (opacity * 100));
 
-//            UserConfig.setBoolean(conn, baseName + "BaseAbove", baseAboveCheck.isSelected());
             baseTransparentAs();
             UserConfig.setString(conn, baseName + "BaseTransparentAs", baseTransparentAs.name());
 
@@ -195,10 +192,6 @@ public class ControlImagesBlend extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return makeBlend();
-    }
-
-    public PixelsBlend makeBlend() {
         return PixelsBlendFactory.create(blendMode)
                 .setBlendMode(blendMode)
                 .setOpacity(fixedOpacity(opacity))
@@ -238,7 +231,9 @@ public class ControlImagesBlend extends BaseController {
                     BufferedImage baseBI = SwingFXUtils.fromFXImage(baseImage, null);
                     baseBI = ScaleTools.demoImage(baseBI);
                     files = new ArrayList<>();
-                    ColorDemos.blendImage(this, files, baseBI, overlayBI);
+                    int x = (int) (baseImage.getWidth() - overlay.getWidth()) / 2;
+                    int y = (int) (baseImage.getHeight() - overlay.getHeight()) / 2;
+                    ShapeDemos.blendImage(this, files, message("BlendColor"), baseBI, overlayBI, x, y, null);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

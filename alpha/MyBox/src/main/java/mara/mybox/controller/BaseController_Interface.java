@@ -219,6 +219,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 systemMethodButton.setDisable(true);
             }
 
+            initMainArea();
+
             if (tipsView != null) {
                 tipsView.setPickOnBounds(true);
                 tipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -249,6 +251,37 @@ public abstract class BaseController_Interface extends BaseController_Files {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void initMainArea() {
+        if (toolbar == null || toolbarCheck == null || mainAreaBox == null) {
+            return;
+        }
+        toolbarCheck.setSelected(UserConfig.getBoolean(baseName + "Toolbar", true));
+        toolbarCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                UserConfig.setBoolean(baseName + "Toolbar", toolbarCheck.isSelected());
+                checkToolbar();
+            }
+        });
+        checkToolbar();
+    }
+
+    public void checkToolbar() {
+        if (toolbar == null || toolbarCheck == null || mainAreaBox == null) {
+            return;
+        }
+        if (toolbarCheck.isSelected()) {
+            if (!mainAreaBox.getChildren().contains(toolbar)) {
+                mainAreaBox.getChildren().add(0, toolbar);
+            }
+        } else {
+            if (mainAreaBox.getChildren().contains(toolbar)) {
+                mainAreaBox.getChildren().remove(toolbar);
+            }
+        }
+        refreshStyle(mainAreaBox);
     }
 
     public void initLeftPaneControl() {
@@ -700,6 +733,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public BaseController branchStage(String newFxml) {
         return WindowTools.branchStage(myController, newFxml);
+    }
+
+    public BaseController popStage(String newFxml) {
+        return WindowTools.popStage(myController, newFxml);
     }
 
     public void updateStageTitle(File file) {

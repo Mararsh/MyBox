@@ -3,12 +3,10 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
@@ -34,7 +32,6 @@ import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -42,64 +39,6 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class ImagesBrowserController_Pane extends ImagesBrowserController_Menu {
-
-    protected void initViewPane() {
-        try {
-            if (imageView != null) {
-                viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
-            viewPane.setExpanded(UserConfig.getBoolean(baseName + "ViewPane", false));
-            viewPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "ViewPane", viewPane.isExpanded());
-            });
-
-            viewPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    protected void makeImagesNevigator(boolean makeCurrentList) {
-        if (isSettingValues) {
-            return;
-        }
-        try {
-            if (imageFileList != null && !imageFileList.isEmpty() && filesNumber > 0) {
-                File firstFile = imageFileList.get(0);
-                List<File> pathFiles = filesController.validFiles(firstFile);
-                int total = pathFiles.size();
-                totalLabel.setText("/" + total);
-
-                filesController.setCurrentFile(firstFile);
-                if (total <= 0 || filesNumber >= total) {
-                    filesController.nextFileButton.setDisable(true);
-                    filesController.previousFileButton.setDisable(true);
-                } else {
-                    filesController.nextFileButton.setDisable(false);
-                    filesController.previousFileButton.setDisable(false);
-                }
-
-                if (makeCurrentList) {
-                    imageFileList.clear();
-                    if (total > 0) {
-                        if (filesNumber >= total) {
-                            imageFileList.addAll(pathFiles);
-                        } else {
-                            imageFileList.addAll(pathFiles.subList(0, filesNumber));
-                        }
-                    }
-                }
-            } else {
-                filesController.setCurrentFile(null);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        makeImagesPane();
-    }
 
     protected void makeImagesPane() {
         try {
@@ -113,19 +52,14 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             imageTitleList = new ArrayList<>();
             imageScrollList = new ArrayList<>();
             selectedIndexes = new ArrayList<>();
-            rowsNum = 0;
+            flowPane.getChildren().clear();
 
             if (displayMode == DisplayMode.ThumbnailsList
                     || displayMode == DisplayMode.FilesList) {
-                if (viewBox.getChildren().contains(gridOptionsBox)) {
-                    viewBox.getChildren().remove(gridOptionsBox);
-                }
                 makeListBox();
 
-            } else if (colsNum > 0) {
-                if (!viewBox.getChildren().contains(gridOptionsBox)) {
-                    viewBox.getChildren().add(gridOptionsBox);
-                }
+            } else {
+
                 makeImagesGrid();
 
             }
@@ -136,8 +70,8 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         }
     }
 
-    protected void makeImagesGrid() {
-        if (colsNum <= 0 || displayMode != DisplayMode.ImagesGrid
+    private void makeImagesGrid() {
+        if (displayMode != DisplayMode.ImagesGrid
                 || imageFileList == null || imageFileList.isEmpty()) {
             return;
         }
@@ -200,29 +134,19 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         start(backgroundTask, false);
     }
 
-    protected void makeGridBox() {
-        int num = imageFileList.size();
-        HBox line = new HBox();
-        for (int i = 0; i < num; ++i) {
+    private void makeGridBox() {
+        flowPane.getChildren().clear();
+        imagesPane.getChildren().add(flowPane);
+        for (int i = 0; i < imageFileList.size(); ++i) {
             File file = imageFileList.get(i);
-            if (i % colsNum == 0) {
-                line = new HBox();
-                line.setAlignment(Pos.TOP_CENTER);
-                line.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                line.setSpacing(5);
-                imagesPane.getChildren().add(line);
-                VBox.setVgrow(line, Priority.ALWAYS);
-                HBox.setHgrow(line, Priority.ALWAYS);
-                rowsNum++;
-            }
 
             final VBox vbox = new VBox();
+            vbox.setPrefWidth(thumbWidth + 20);
             vbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
             VBox.setVgrow(vbox, Priority.ALWAYS);
             HBox.setHgrow(vbox, Priority.ALWAYS);
-            line.setAlignment(Pos.TOP_CENTER);
-            vbox.setPadding(new Insets(5, 5, 5, 5));
-            line.getChildren().add(vbox);
+            vbox.setPadding(new Insets(1, 1, 1, 1));
+            flowPane.getChildren().add(vbox);
 
             ScrollPane sPane = new ScrollPane();
             sPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -254,6 +178,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
 
             final int index = i;
             vbox.setOnMouseClicked((MouseEvent event) -> {
+                String sindex = index + "";
                 File clickedFile = imageFileList.get(index);
                 if (event.getButton() == MouseButton.SECONDARY) {
                     popContextMenu(index, iView, event);
@@ -262,23 +187,21 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                     ImageEditorController.openFile(clickedFile);
                     return;
                 }
-                currentIndex = index;
                 viewImage(clickedFile);
-                Integer o = Integer.valueOf(index);
                 if (event.isControlDown()) {
-                    if (selectedIndexes.contains(o)) {
-                        selectedIndexes.remove(o);
+                    if (selectedIndexes.contains(sindex)) {
+                        selectedIndexes.remove(sindex);
                         vbox.setStyle(null);
                     } else {
-                        selectedIndexes.add(o);
+                        selectedIndexes.add(sindex);
                         vbox.setStyle("-fx-background-color:dodgerblue;-fx-text-fill:white;");
                     }
                 } else {
-                    for (int ix : selectedIndexes) {
-                        imageBoxList.get(ix).setStyle(null);
+                    for (String ix : selectedIndexes) {
+                        imageBoxList.get(Integer.parseInt(ix)).setStyle(null);
                     }
                     selectedIndexes.clear();
-                    selectedIndexes.add(o);
+                    selectedIndexes.add(sindex);
                     vbox.setStyle("-fx-background-color:dodgerblue;-fx-text-fill:white;");
                 }
             });
@@ -290,19 +213,12 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
 
         }
 
-        for (int i = 0; i < num; ++i) {
-            double w = imagesPane.getWidth() / colsNum - 5;
-            double h = imagesPane.getHeight() / rowsNum - 5;
-            VBox vbox = imageBoxList.get(i);
-            vbox.setPrefWidth(w);
-            vbox.setPrefHeight(h);
-        }
         // https://stackoverflow.com/questions/26152642/get-the-height-of-a-node-in-javafx-generate-a-layout-pass
-        imagesPane.applyCss();
-        imagesPane.layout();
+        flowPane.applyCss();
+        flowPane.layout();
     }
 
-    protected void makeListBox() {
+    private void makeListBox() {
         try {
             if (displayMode != DisplayMode.ThumbnailsList
                     && displayMode != DisplayMode.FilesList) {
@@ -353,7 +269,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         }
     }
 
-    protected void makeSourceTable() {
+    private void makeSourceTable() {
         try {
             tableView = new TableView<>();
             tableView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -536,7 +452,10 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 @Override
                 public void changed(ObservableValue ov, Object t, Object t1) {
                     if (!isSettingValues) {
-                        selectedIndexes = tableView.getSelectionModel().getSelectedIndices();
+                        selectedIndexes.clear();
+                        for (int index : tableView.getSelectionModel().getSelectedIndices()) {
+                            selectedIndexes.add(index + "");
+                        }
                     }
                 }
             });

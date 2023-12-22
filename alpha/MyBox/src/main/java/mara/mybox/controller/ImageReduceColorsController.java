@@ -165,7 +165,7 @@ public class ImageReduceColorsController extends BasePixelsController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ColorDemos.reduceColors(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null));
+        ColorDemos.reduceColors(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null), srcFile());
     }
 
     /*

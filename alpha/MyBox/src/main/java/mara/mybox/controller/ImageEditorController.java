@@ -35,7 +35,6 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -445,15 +444,27 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Round"), StyleTools.getIconImageView("iconRound.png"));
+            menu = new MenuItem(message("Rotate"), StyleTools.getIconImageView("iconReplace.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageRoundController.open(this);
+                ImageRotateController.open(this);
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
+            menu = new MenuItem(message("Mirror"), StyleTools.getIconImageView("iconHorizontal.png"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageEraserController.open(this);
+                ImageMirrorController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageShearController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Round"), StyleTools.getIconImageView("iconRound.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageRoundController.open(this);
             });
             items.add(menu);
 
@@ -463,49 +474,9 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("RotateRight"), StyleTools.getIconImageView("iconRotateRight.png"));
+            menu = new MenuItem(message("Eraser"), StyleTools.getIconImageView("iconEraser.png"));
             menu.setOnAction((ActionEvent event) -> {
-                rotateRight();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("RotateLeft"), StyleTools.getIconImageView("iconRotateLeft.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                rotateLeft();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("TurnOver"), StyleTools.getIconImageView("iconTurnOver.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                turnOver();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Rotate"), StyleTools.getIconImageView("iconReplace.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageRotateController.open(this);
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageShearController.open(this);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("MirrorHorizontal"), StyleTools.getIconImageView("iconHorizontal.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                horizontalAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("MirrorVertical"), StyleTools.getIconImageView("iconVertical.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                verticalAction();
+                ImageEraserController.open(this);
             });
             items.add(menu);
 
@@ -861,62 +832,6 @@ public class ImageEditorController extends BaseImageController {
         } else {
             ImagePasteController.open(this);
         }
-    }
-
-    @FXML
-    public void horizontalAction() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = TransformTools.horizontalImage(this, imageView.getImage());
-                if (task == null || isCancelled()) {
-                    return false;
-                }
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                updateImage(message("MirrorHorizontal"), newImage);
-            }
-
-        };
-        start(task);
-    }
-
-    @FXML
-    public void verticalAction() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            private Image newImage;
-
-            @Override
-            protected boolean handle() {
-                newImage = TransformTools.verticalImage(this, imageView.getImage());
-                if (task == null || isCancelled()) {
-                    return false;
-                }
-                return newImage != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                updateImage(message("MirrorVertical"), newImage);
-            }
-
-        };
-        start(task);
     }
 
     public void applyKernel(ConvolutionKernel kernel) {

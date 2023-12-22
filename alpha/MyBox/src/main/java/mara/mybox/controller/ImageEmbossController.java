@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -66,6 +69,12 @@ public class ImageEmbossController extends BasePixelsController {
             return null;
         }
     }
+
+    @Override
+    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
+        PixelDemos.emboss(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null), srcFile());
+    }
+
 
     /*
         static methods

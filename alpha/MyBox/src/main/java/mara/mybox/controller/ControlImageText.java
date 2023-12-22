@@ -197,7 +197,7 @@ public class ControlImageText extends BaseController {
         try {
             bordersBox.disableProperty().bind(bordersCheck.selectedProperty().not());
 
-            bordersCheck.setSelected(UserConfig.getBoolean(conn, baseName + "Borders", false));
+            bordersCheck.setSelected(UserConfig.getBoolean(conn, baseName + "Borders", true));
 
             bordersFillCheck.setSelected(UserConfig.getBoolean(conn, baseName + "BordersFill", true));
 
@@ -688,6 +688,14 @@ public class ControlImageText extends BaseController {
 
     public int getBordersMargin() {
         return bordersMargin;
+    }
+
+    /*
+        set
+     */
+    public ControlImageText setBlend(PixelsBlend blend) {
+        this.blend = blend;
+        return this;
     }
 
 }

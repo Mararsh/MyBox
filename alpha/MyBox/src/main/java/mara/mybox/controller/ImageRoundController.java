@@ -75,7 +75,7 @@ public class ImageRoundController extends BaseImageEditController {
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         ImageDemos.round(currentTask, files,
                 SwingFXUtils.fromFXImage(demoImage, null),
-                roundController.awtColor(), prefix());
+                roundController.awtColor(), srcFile());
     }
 
     /*

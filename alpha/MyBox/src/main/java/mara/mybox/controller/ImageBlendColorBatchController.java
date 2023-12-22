@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.paint.Color;
@@ -63,8 +64,8 @@ public class ImageBlendColorBatchController extends BaseImageEditBatchController
     }
 
     @Override
-    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
-        ColorDemos.blendColor(currentTask, files, demoImage, colorController.color());
+    public void makeDemoFiles(FxTask currentTask, List<String> files, File demoFile, BufferedImage demoImage) {
+        ColorDemos.blendColor(currentTask, files, demoImage, colorController.color(), demoFile);
     }
 
 }

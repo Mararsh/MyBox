@@ -120,12 +120,6 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(Languages.message("Rename"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rename(index);
-        });
-        items.add(menu);
-
         menu = new MenuItem(Languages.message("Delete"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             delete(index);
@@ -193,12 +187,6 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(Languages.message("Rename"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rename(index);
-        });
-        items.add(menu);
 
         menu = new MenuItem(Languages.message("Delete"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {

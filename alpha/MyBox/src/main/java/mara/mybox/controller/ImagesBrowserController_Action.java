@@ -2,26 +2,22 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -132,7 +128,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 imageFileList.remove(file);
             }
             popSuccessful();
-            makeImagesNevigator(true);
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -146,7 +142,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         } else {
             selectedIndexes.clear();
             for (int i = 0; i < imageBoxList.size(); i++) {
-                selectedIndexes.add(i);
+                selectedIndexes.add(i + "");
                 VBox vbox = imageBoxList.get(i);
                 vbox.setStyle("-fx-background-color:dodgerblue;-fx-text-fill:white;");
             }
@@ -182,21 +178,13 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
     }
 
     public void rotateImages(int rotateAngle) {
-        if (saveRotationCheck.isSelected()) {
-            saveRotation(selectedIndexes, rotateAngle);
-        } else {
-            rotateImages(selectedIndexes, rotateAngle);
-        }
+        saveRotation(selectedIndexes, rotateAngle);
     }
 
     public void rotateImages(int index, int rotateAngle) {
-        List<Integer> indexs = new ArrayList<>();
-        indexs.add(index);
-        if (saveRotationCheck.isSelected()) {
-            saveRotation(indexs, rotateAngle);
-        } else {
-            rotateImages(indexs, rotateAngle);
-        }
+        List<String> indexs = new ArrayList<>();
+        indexs.add(index + "");
+        saveRotation(indexs, rotateAngle);
     }
 
     public void rotateImages(List<Integer> indexs, int rotateAngle) {
@@ -248,10 +236,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         }
     }
 
-    public void saveRotation(List<Integer> indexs, int rotateAngle) {
-        if (!saveRotationCheck.isSelected()) {
-            return;
-        }
+    public void saveRotation(List<String> indexs, int rotateAngle) {
         if (task != null) {
             task.cancel();
         }
@@ -292,7 +277,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                         if (!isWorking()) {
                             return false;
                         }
-                        int index = indexs.get(i);
+                        int index = Integer.parseInt(indexs.get(i));
                         ImageInformation info = tableData.get(index);
                         if (info.isIsMultipleFrames()) {
                             hasMultipleFrames = true;
@@ -356,7 +341,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                         }
                     } else {
                         for (int i = 0; i < indexs.size(); ++i) {
-                            int index = indexs.get(i);
+                            int index = Integer.parseInt(indexs.get(i));
                             ImageView iView = imageViewList.get(index);
                             iView.setImage(tableData.get(index).getThumbnail());
                         }
@@ -366,12 +351,12 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                     tableView.refresh();
                     if (indexs != null) {
                         for (int i = 0; i < indexs.size(); ++i) {
-                            tableView.getSelectionModel().select(indexs.get(i));
+                            tableView.getSelectionModel().select(Integer.parseInt(indexs.get(i)));
                         }
                     }
                 }
                 popSaved();
-                if (indexs == null || indexs.isEmpty() || indexs.contains(currentIndex)) {
+                if (indexs == null || indexs.isEmpty()) {
                     viewImage(sourceFile);
                 }
             }
@@ -380,74 +365,17 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         start(task);
     }
 
-    @Override
-    public void fileRenamed(File newFile) {
-        fileRenamed(currentIndex, newFile);
-    }
-
-    public void rename(int index) {
-        try {
-            if (index >= tableData.size()) {
-                return;
-            }
-            ImageInformation info = tableData.get(index);
-            if (info == null) {
-                return;
-            }
-            File file = info.getImageFileInformation().getFile();
-            FileRenameController controller = (FileRenameController) WindowTools.openStage(Fxmls.FileRenameFxml);
-            controller.set(file);
-            controller.getMyStage().setOnHiding((WindowEvent event) -> {
-                File newFile = controller.getNewFile();
-                Platform.runLater(() -> {
-                    fileRenamed(index, newFile);
-                });
-            });
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void fileRenamed(int index, File newFile) {
-        try {
-            if (newFile == null) {
-                return;
-            }
-            ImageInformation info = tableData.get(index);
-            if (info == null) {
-                return;
-            }
-            File file = info.getImageFileInformation().getFile();
-            info.setFile(file);
-            tableData.set(index, info);
-            imageFileList.set(index, newFile);
-            if (displayMode == DisplayMode.ImagesGrid) {
-                imageTitleList.get(index).setText(newFile.getName());
-            } else if (displayMode == DisplayMode.FilesList || displayMode == DisplayMode.ThumbnailsList) {
-                tableView.refresh();
-            }
-            if (index == currentIndex) {
-                super.fileRenamed(newFile);
-            } else {
-                recordFileOpened(newFile);
-                popInformation(MessageFormat.format(Languages.message("FileRenamed"), file.getAbsolutePath(), newFile.getAbsolutePath()));
-            }
-            notifyLoad();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @FXML
     @Override
     public void deleteAction() {
         try {
             if (selectedIndexes == null || selectedIndexes.isEmpty()) {
+                popError(message("SelectToHandle"));
                 return;
             }
             int count = 0;
-            for (int index : selectedIndexes) {
-                ImageInformation info = tableData.get(index);
+            for (String index : selectedIndexes) {
+                ImageInformation info = tableData.get(Integer.parseInt(index));
                 File file = info.getImageFileInformation().getFile();
                 if (FileDeleteTools.delete(file)) {
                     imageFileList.remove(file);
@@ -455,7 +383,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 }
             }
             popInformation(Languages.message("TotalDeletedFiles") + ": " + count);
-            makeImagesNevigator(true);
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -464,22 +392,25 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
 
     @FXML
     protected void filesListAction(ActionEvent event) {
-        colsnumBox.getSelectionModel().select(Languages.message("FilesList"));
+        displayMode = DisplayMode.FilesList;
+        refreshAction();
     }
 
     @FXML
     protected void thumbsListAction(ActionEvent event) {
-        colsnumBox.getSelectionModel().select(Languages.message("ThumbnailsList"));
+        displayMode = DisplayMode.ThumbnailsList;
+        refreshAction();
     }
 
     @FXML
     protected void gridAction(ActionEvent event) {
-        colsnumBox.getSelectionModel().select("" + (colsNum > 0 ? colsNum : 3));
+        displayMode = DisplayMode.ImagesGrid;
+        refreshAction();
     }
 
     @FXML
     public void zoomOutAll() {
-        if (displayMode != ImagesBrowserController_Load.DisplayMode.ImagesGrid) {
+        if (displayMode != DisplayMode.ImagesGrid) {
             return;
         }
         if (selectedIndexes == null || selectedIndexes.isEmpty()) {
@@ -487,8 +418,8 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 zoomOut(i);
             }
         } else {
-            for (int i = 0; i < selectedIndexes.size(); ++i) {
-                zoomOut(selectedIndexes.get(i));
+            for (String i : selectedIndexes) {
+                zoomOut(Integer.parseInt(i));
             }
         }
     }
@@ -503,8 +434,8 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 zoomIn(i);
             }
         } else {
-            for (int i = 0; i < selectedIndexes.size(); ++i) {
-                zoomIn(selectedIndexes.get(i));
+            for (String i : selectedIndexes) {
+                zoomIn(Integer.parseInt(i));
             }
         }
     }
@@ -519,8 +450,8 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 imageSize(i);
             }
         } else {
-            for (int i = 0; i < selectedIndexes.size(); ++i) {
-                imageSize(selectedIndexes.get(i));
+            for (String i : selectedIndexes) {
+                imageSize(Integer.parseInt(i));
             }
         }
     }
@@ -535,8 +466,8 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 paneSize(i);
             }
         } else {
-            for (int i = 0; i < selectedIndexes.size(); ++i) {
-                paneSize(selectedIndexes.get(i));
+            for (String i : selectedIndexes) {
+                paneSize(Integer.parseInt(i));
             }
         }
     }

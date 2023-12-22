@@ -55,7 +55,7 @@ public class ImageShearController extends BaseImageEditController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ImageDemos.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null), prefix());
+        ImageDemos.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null), srcFile());
     }
 
 

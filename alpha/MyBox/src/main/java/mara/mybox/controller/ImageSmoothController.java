@@ -75,7 +75,7 @@ public class ImageSmoothController extends BasePixelsController {
                     .setScope(scope())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent());
-            PixelDemos.smooth(currentTask, files, convolution);
+            PixelDemos.smooth(currentTask, files, convolution, srcFile());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

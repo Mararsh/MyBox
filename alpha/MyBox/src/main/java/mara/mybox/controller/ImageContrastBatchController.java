@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageContrast;
@@ -39,8 +40,8 @@ public class ImageContrastBatchController extends BaseImageEditBatchController {
     }
 
     @Override
-    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
-        PixelDemos.contrast(currentTask, files, demoImage, "");
+    public void makeDemoFiles(FxTask currentTask, List<String> files, File demoFile, BufferedImage demoImage) {
+        PixelDemos.contrast(currentTask, files, demoImage, demoFile);
     }
 
 }

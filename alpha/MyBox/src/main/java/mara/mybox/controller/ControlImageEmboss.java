@@ -1,15 +1,11 @@
 package mara.mybox.controller;
 
-import java.util.Arrays;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ValidationTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -19,13 +15,13 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageEmboss extends BaseController {
 
-    protected int direction, raduis;
+    protected int raduis;
+    protected BufferedImageTools.Direction direction;
 
     @FXML
     protected RadioButton topRadio, bottomRadio, leftRadio, rightRadio,
-            leftTopRadio, rightBottomRadio, leftBottomRadio, rightTopRadio;
-    @FXML
-    protected ComboBox<String> raduisSelector;
+            leftTopRadio, rightBottomRadio, leftBottomRadio, rightTopRadio,
+            radius3Radio, radius5Radio;
     @FXML
     protected CheckBox greyCheck;
 
@@ -37,12 +33,11 @@ public class ControlImageEmboss extends BaseController {
             topRadio.setSelected(true);
 
             raduis = UserConfig.getInt(baseName + "Raduis", 3);
-            if (raduis <= 0) {
-                raduis = 3;
+            if (raduis == 3) {
+                radius3Radio.setSelected(true);
+            } else {
+                radius5Radio.setSelected(true);
             }
-            raduisSelector.getItems().addAll(Arrays.asList("1", "3", "5"));
-            raduisSelector.setValue(raduis + "");
-
             greyCheck.setSelected(UserConfig.getBoolean(baseName + "Grey", true));
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -51,21 +46,12 @@ public class ControlImageEmboss extends BaseController {
 
     protected ConvolutionKernel pickValues() {
         try {
-            int v;
-            try {
-                v = Integer.parseInt(raduisSelector.getValue());
-            } catch (Exception e) {
-                v = -1;
-            }
-            if (v > 0) {
-                raduis = v;
-                UserConfig.setInt(baseName + "Raduis", raduis);
-                ValidationTools.setEditorNormal(raduisSelector);
+            if (radius3Radio.isSelected()) {
+                raduis = 3;
             } else {
-                popError(message("InvalidParameter") + ": " + message("Radius"));
-                ValidationTools.setEditorBadStyle(raduisSelector);
-                return null;
+                raduis = 5;
             }
+            UserConfig.setInt(baseName + "Raduis", raduis);
 
             if (topRadio.isSelected()) {
                 direction = BufferedImageTools.Direction.Top;

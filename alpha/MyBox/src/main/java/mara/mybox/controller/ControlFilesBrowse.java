@@ -224,12 +224,13 @@ public class ControlFilesBrowse extends ControlFileBrowse {
             previousFileButton.setDisable(true);
             return;
         }
-        List<File> files = nextFiles(imageFileList.get(imageFileList.size() - 1), browserController.filesNumber);
+        List<File> files = nextFiles(imageFileList.get(imageFileList.size() - 1),
+                browserController.imageFileList.size());
         if (files == null || files.isEmpty()) {
             popError(message("NoMore"));
             nextFileButton.setDisable(true);
         } else {
-            browserController.loadImages(files, browserController.colsNum);
+            browserController.loadImages(files);
             previousFileButton.setDisable(false);
         }
     }
@@ -243,12 +244,13 @@ public class ControlFilesBrowse extends ControlFileBrowse {
             previousFileButton.setDisable(true);
             return;
         }
-        List<File> files = previousFiles(imageFileList.get(0), browserController.filesNumber);
+        List<File> files = previousFiles(imageFileList.get(0),
+                browserController.imageFileList.size());
         if (files == null || files.isEmpty()) {
             popError(message("NoMore"));
             previousFileButton.setDisable(true);
         } else {
-            browserController.loadImages(files, browserController.colsNum);
+            browserController.loadImages(files);
             nextFileButton.setDisable(false);
         }
     }

@@ -19,8 +19,8 @@ import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Saturation;
 import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Yellow;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -54,7 +54,8 @@ public class ImageAdjustColorController extends BasePixelsController {
     @Override
     protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
-            opInfo = message(optionsController.colorActionType.name());
+            opInfo = message(optionsController.colorOperationType.name()) + " "
+                    + message(optionsController.colorActionType.name());
             if (optionsController.needValue()) {
                 opInfo += ": " + optionsController.colorValue;
             }
@@ -94,7 +95,7 @@ public class ImageAdjustColorController extends BasePixelsController {
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image inImage) {
         ColorDemos.adjustColor(currentTask, files,
-                SwingFXUtils.fromFXImage(inImage, null), scope());
+                SwingFXUtils.fromFXImage(inImage, null), scope(), srcFile());
     }
 
     /*

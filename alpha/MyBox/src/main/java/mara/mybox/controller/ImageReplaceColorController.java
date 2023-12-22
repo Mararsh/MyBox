@@ -11,8 +11,8 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -101,8 +101,7 @@ public class ImageReplaceColorController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
-            String prefix = colorController.css();
-            ColorDemos.replaceColor(currentTask, files, pixelsOperation, prefix);
+            ColorDemos.replaceColor(currentTask, files, pixelsOperation, srcFile());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

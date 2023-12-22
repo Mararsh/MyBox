@@ -11,7 +11,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -64,11 +63,9 @@ public abstract class BaseImageController_Base extends BaseFileController {
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, selectPixelsButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, toolbarCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
-    @FXML
-    protected HBox toolbar;
 
     public BaseImageController_Base() {
         loadNotify = new SimpleBooleanProperty(false);

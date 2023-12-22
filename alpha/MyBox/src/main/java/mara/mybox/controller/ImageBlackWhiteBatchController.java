@@ -1,12 +1,13 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -48,14 +49,14 @@ public class ImageBlackWhiteBatchController extends BaseImageEditBatchController
     }
 
     @Override
-    public void makeDemoFiles(FxTask currentTask, List<String> files, BufferedImage demoImage) {
+    public void makeDemoFiles(FxTask currentTask, List<String> files, File demoFile, BufferedImage demoImage) {
         try {
             imageBinary = binaryController.pickValues(128);
             if (imageBinary == null) {
                 return;
             }
             imageBinary.setImage(demoImage);
-            ColorDemos.blackWhite(currentTask, files, imageBinary);
+            ColorDemos.blackWhite(currentTask, files, imageBinary, demoFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

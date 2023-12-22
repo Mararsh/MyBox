@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -124,9 +125,8 @@ public class BaseImageEditController extends BaseShapeController {
         return imageView.getImage();
     }
 
-    protected String prefix() {
-        return imageController.sourceFile != null
-                ? imageController.sourceFile.getName() : "";
+    protected File srcFile() {
+        return imageController.sourceFile;
     }
 
     @Override
@@ -178,7 +178,9 @@ public class BaseImageEditController extends BaseShapeController {
                     return;
                 }
                 if (isPreview) {
-                    ImagePopController.openImage(myController, handledImage);
+                    ImagePopController c = ImagePopController.openImage(myController, handledImage);
+                    c.setTitle(myController.getTitle());
+                    c.imageLabel.setText(operation + " " + opInfo);
                 } else {
                     passHandled(handledImage);
                 }

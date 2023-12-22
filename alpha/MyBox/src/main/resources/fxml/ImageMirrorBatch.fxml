@@ -40,36 +40,36 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="optionsTab" text="%Options">
                             <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                           <content>
-                                      <VBox fx:id="optionsVBox" spacing="10.0">
-                                          <children>
-                                    <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                                       <children>
-                                                    <RadioButton mnemonicParsing="false" selected="true" text="%HorizontalMirror">
-                                             <toggleGroup>
-                                                <ToggleGroup fx:id="mirrorGroup" />
-                                             </toggleGroup>
-                                          </RadioButton>
-                                                    <RadioButton mnemonicParsing="false" text="%VerticalMirror" toggleGroup="$mirrorGroup" />
-                                       </children>
-                                    </FlowPane>
-                                              <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconPreview.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                          </children>
-                                          <padding>
-                                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                          </padding>
-                                      </VBox>
-                           </content>
-                        </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                    <content>
+                                        <VBox fx:id="optionsVBox" spacing="10.0">
+                                            <children>
+                                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                                    <children>
+                                                        <RadioButton fx:id="horizontalRadio" mnemonicParsing="false" selected="true" text="%HorizontalMirror">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="mirrorGroup" /> 
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" text="%VerticalMirror" toggleGroup="$mirrorGroup" />
+                                                    </children>
+                                                </FlowPane>
+                                                <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconPreview.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
                             </content>
                         </Tab>
                         <Tab fx:id="targetTab" text="%TargetFiles">

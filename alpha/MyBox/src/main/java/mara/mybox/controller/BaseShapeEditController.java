@@ -199,7 +199,7 @@ public class BaseShapeEditController extends BaseImageEditController {
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         ColorDemos.blendColor(currentTask, files,
                 SwingFXUtils.fromFXImage(demoImage, null),
-                strokeController.colorController.color());
+                strokeController.colorController.color(), srcFile());
     }
 
 }

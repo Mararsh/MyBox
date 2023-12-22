@@ -73,7 +73,7 @@ public class ImageSharpenController extends BasePixelsController {
                     .setScope(scope())
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent());
-            PixelDemos.sharpen(currentTask, files, convolution);
+            PixelDemos.sharpen(currentTask, files, convolution, srcFile());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

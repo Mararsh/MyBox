@@ -67,7 +67,7 @@ public class ImageMosaicController extends BasePixelsController {
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         PixelDemos.mosaic(currentTask, files,
                 SwingFXUtils.fromFXImage(demoImage, null),
-                ImageMosaic.MosaicType.Mosaic);
+                ImageMosaic.MosaicType.Mosaic, srcFile());
     }
 
 

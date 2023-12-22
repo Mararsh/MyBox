@@ -28,25 +28,25 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class BaseImageEditBatchController extends BaseBatchImageController {
-    
+
     protected ImageAttributes attributes;
     protected String errorString;
     protected FxTask demoTask;
-    
+
     @FXML
     protected ControlImageFormat formatController;
     @FXML
     protected Button browseButton;
     @FXML
     protected CheckBox handleTransparentCheck;
-    
+
     protected abstract BufferedImage handleImage(FxTask currentTask, BufferedImage source);
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             if (formatController != null) {
                 formatController.setParameters(this, false);
             }
@@ -62,19 +62,19 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                     }
                 });
             }
-            
+
             previewButton.disableProperty().unbind();
             previewButton.setDisable(false);
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
-    
+
     @Override
     public boolean makeMoreParameters() {
         if (formatController != null) {
@@ -83,14 +83,14 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
         }
         return super.makeMoreParameters();
     }
-    
+
     @Override
     public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             if (browseButton != null) {
                 browseButton.setDisable(targetFiles == null || targetFiles.isEmpty());
             }
-            
+
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return Languages.message("Skip");
@@ -106,7 +106,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             }
             ImageFileWriters.writeImageFile(currentTask,
                     targetImage, attributes, target.getAbsolutePath());
-            
+
             targetFileGenerated(target);
             if (browseButton != null) {
                 browseButton.setDisable(false);
@@ -117,7 +117,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             return Languages.message("Failed");
         }
     }
-    
+
     @FXML
     public void demo() {
         if (demoTask != null) {
@@ -125,12 +125,13 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
         }
         demoTask = new FxSingletonTask<Void>(this) {
             private List<String> files;
-            
+
             @Override
             protected boolean handle() {
                 try {
                     List<File> sources = pickSourceFiles(true, false);
-                    BufferedImage demoImage = ImageFileReaders.readImage(this, sources.get(0));
+                    File demoFile = sources.get(0);
+                    BufferedImage demoImage = ImageFileReaders.readImage(this, demoFile);
                     if (demoTask == null || !demoTask.isWorking()) {
                         return false;
                     }
@@ -141,18 +142,18 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                         return false;
                     }
                     files = new ArrayList<>();
-                    makeDemoFiles(this, files, demoImage);
+                    makeDemoFiles(this, files, demoFile, demoImage);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
             }
-            
+
             @Override
             protected void whenSucceeded() {
             }
-            
+
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -162,12 +163,13 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                     b.loadFiles(files);
                 }
             }
-            
+
         };
         start(demoTask);
     }
-    
-    public void makeDemoFiles(FxTask dTask, List<String> files, BufferedImage demoImage) {
+
+    public void makeDemoFiles(FxTask dTask, List<String> files,
+            File demoFile, BufferedImage demoImage) {
     }
-    
+
 }

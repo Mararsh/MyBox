@@ -68,7 +68,7 @@ public class ImageGlassController extends BasePixelsController {
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
         PixelDemos.mosaic(currentTask, files,
                 SwingFXUtils.fromFXImage(demoImage, null),
-                ImageMosaic.MosaicType.FrostedGlass);
+                ImageMosaic.MosaicType.FrostedGlass, srcFile());
     }
 
     /*

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.bufferedimage.BufferedImageTools.Direction;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
@@ -28,13 +29,19 @@ import static mara.mybox.value.Languages.message;
  */
 public class PixelDemos {
 
-    public static void mosaic(FxTask demoTask, List<String> files, BufferedImage demoImage, MosaicType type) {
+    public static void mosaic(FxTask demoTask, List<String> files, BufferedImage demoImage,
+            MosaicType type, File demoFile) {
         if (demoTask == null || demoImage == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Mosaic");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             ImageMosaic mosaic = ImageMosaic.create().setType(type);
             mosaic.setImage(demoImage).setTask(demoTask);
@@ -62,13 +69,19 @@ public class PixelDemos {
         }
     }
 
-    public static void shadow(FxTask demoTask, List<String> files, BufferedImage demoImage, Color color) {
+    public static void shadow(FxTask demoTask, List<String> files, BufferedImage demoImage,
+            Color color, File demoFile) {
         if (demoTask == null || color == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Shadow");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             int offsetX = Math.max(30, demoImage.getWidth() / 20);
             int offsetY = Math.max(30, demoImage.getHeight() / 20);
@@ -113,13 +126,19 @@ public class PixelDemos {
         }
     }
 
-    public static void smooth(FxTask demoTask, List<String> files, ImageConvolution convolution) {
+    public static void smooth(FxTask demoTask, List<String> files,
+            ImageConvolution convolution, File demoFile) {
         if (demoTask == null || convolution == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Smooth");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             List<Integer> values = Arrays.asList(1, 2, 3, 4);
             BufferedImage bufferedImage;
@@ -190,13 +209,19 @@ public class PixelDemos {
         }
     }
 
-    public static void sharpen(FxTask demoTask, List<String> files, ImageConvolution convolution) {
+    public static void sharpen(FxTask demoTask, List<String> files,
+            ImageConvolution convolution, File demoFile) {
         if (demoTask == null || convolution == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Sharpen");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
 
             BufferedImage bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(1))
@@ -303,17 +328,18 @@ public class PixelDemos {
         }
     }
 
-    public static void contrast(FxTask demoTask, List<String> files, BufferedImage demoImage, String prefix) {
+    public static void contrast(FxTask demoTask, List<String> files,
+            BufferedImage demoImage, File demoFile) {
         if (demoTask == null || demoImage == null || files == null) {
             return;
         }
         try {
             String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
                     + File.separator + message("Contrast");
-            if (prefix == null) {
-                prefix = "";
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
             } else {
-                prefix += "_";
+                path += File.separator + "x";
             }
 
             ImageContrast contrast = new ImageContrast();
@@ -326,7 +352,7 @@ public class PixelDemos {
                 return;
             }
             String tmpFile = FileTmpTools.getPathTempFile(path,
-                    prefix + message("Saturation") + "-" + message("HistogramEqualization"), ".png")
+                    message("Saturation") + "-" + message("HistogramEqualization"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
@@ -343,7 +369,7 @@ public class PixelDemos {
                 return;
             }
             tmpFile = FileTmpTools.getPathTempFile(path,
-                    prefix + message("Brightness") + "-" + message("HistogramEqualization"), ".png").getAbsolutePath();
+                    message("Brightness") + "-" + message("HistogramEqualization"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 if (!demoTask.isWorking()) {
@@ -362,7 +388,7 @@ public class PixelDemos {
                 return;
             }
             tmpFile = FileTmpTools.getPathTempFile(path,
-                    prefix + message("SaturationBrightness") + "-" + message("HistogramEqualization"), ".png").getAbsolutePath();
+                    message("SaturationBrightness") + "-" + message("HistogramEqualization"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 if (!demoTask.isWorking()) {
@@ -381,7 +407,7 @@ public class PixelDemos {
                 return;
             }
             tmpFile = FileTmpTools.getPathTempFile(path,
-                    prefix + message("Gray") + "-" + message("HistogramEqualization"), ".png").getAbsolutePath();
+                    message("Gray") + "-" + message("HistogramEqualization"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
                 if (!demoTask.isWorking()) {
@@ -408,7 +434,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("Saturation") + "-" + message("HistogramStretching") + "_"
+                        message("Saturation") + "-" + message("HistogramStretching") + "_"
                         + message("Percentage") + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
@@ -427,7 +453,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("Brightness") + "-" + message("HistogramStretching") + "_"
+                        message("Brightness") + "-" + message("HistogramStretching") + "_"
                         + message("Percentage") + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
@@ -446,7 +472,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("SaturationBrightness") + "-" + message("HistogramStretching") + "_"
+                        message("SaturationBrightness") + "-" + message("HistogramStretching") + "_"
                         + message("Percentage") + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
@@ -465,7 +491,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("Gray") + "-" + message("HistogramStretching") + "_"
+                        message("Gray") + "-" + message("HistogramStretching") + "_"
                         + message("Percentage") + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
@@ -488,7 +514,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("Saturation") + "-" + message("HistogramShifting") + "_" + v, ".png")
+                        message("Saturation") + "-" + message("HistogramShifting") + "_" + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
                     files.add(tmpFile);
@@ -506,7 +532,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("Brightness") + "-" + message("HistogramShifting") + "_" + v, ".png")
+                        message("Brightness") + "-" + message("HistogramShifting") + "_" + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
                     files.add(tmpFile);
@@ -524,7 +550,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("SaturationBrightness") + "-" + message("HistogramShifting") + "_" + v, ".png")
+                        message("SaturationBrightness") + "-" + message("HistogramShifting") + "_" + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
                     files.add(tmpFile);
@@ -542,7 +568,7 @@ public class PixelDemos {
                     return;
                 }
                 tmpFile = FileTmpTools.getPathTempFile(path,
-                        prefix + message("Gray") + "-" + message("HistogramShifting") + "_" + v, ".png")
+                        message("Gray") + "-" + message("HistogramShifting") + "_" + v, ".png")
                         .getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
                     files.add(tmpFile);
@@ -550,6 +576,121 @@ public class PixelDemos {
                 }
             }
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void edge(FxTask demoTask, List<String> files,
+            BufferedImage demoImage, File demoFile) {
+        if (demoTask == null || demoImage == null || files == null) {
+            return;
+        }
+        try {
+            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
+                    + File.separator + message("EdgeDetection");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
+
+            ImageConvolution convolution = ImageConvolution.create();
+            convolution.setImage(demoImage).setTask(demoTask);
+
+            convolution(demoTask, files, path,
+                    convolution.setKernel(ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace()));
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            convolution(demoTask, files, path,
+                    convolution.setKernel(ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert()));
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            convolution(demoTask, files, path,
+                    convolution.setKernel(ConvolutionKernel.makeEdgeDetectionFourNeighborLaplace()));
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            convolution(demoTask, files, path,
+                    convolution.setKernel(ConvolutionKernel.makeEdgeDetectionFourNeighborLaplaceInvert()));
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void emboss(FxTask demoTask, List<String> files,
+            BufferedImage demoImage, File demoFile) {
+        if (demoTask == null || demoImage == null || files == null) {
+            return;
+        }
+        try {
+            String path = AppPaths.getGeneratedPath() + File.separator + "imageDemo"
+                    + File.separator + message("Emboss");
+            if (demoFile != null) {
+                path += File.separator + demoFile.getName();
+            } else {
+                path += File.separator + "x";
+            }
+
+            ImageConvolution convolution = ImageConvolution.create();
+            convolution.setImage(demoImage).setTask(demoTask);
+
+            for (Direction d : Direction.values()) {
+                convolution(demoTask, files, path,
+                        convolution.setKernel(ConvolutionKernel.makeEmbossKernel(d, 3, true)));
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+                convolution(demoTask, files, path,
+                        convolution.setKernel(ConvolutionKernel.makeEmbossKernel(d, 5, true)));
+                if (demoTask == null || !demoTask.isWorking()) {
+                    return;
+                }
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void convolution(FxTask demoTask, List<String> files,
+            String path, ImageConvolution convolution) {
+        try {
+            convolution.getKernel().setGray(false);
+            BufferedImage bufferedImage = convolution.setIsGray(false).operate();
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+            String tmpFile = FileTmpTools.getPathTempFile(path, convolution.getKernel().getName(), ".png")
+                    .getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+
+            convolution.getKernel().setGray(true);
+            bufferedImage = convolution.setIsGray(true).operate();
+            if (demoTask == null || !demoTask.isWorking()) {
+                return;
+            }
+            tmpFile = FileTmpTools.getPathTempFile(path, convolution.getKernel().getName()
+                    + "_" + message("Grey"), ".png").getAbsolutePath();
+            if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, tmpFile)) {
+                files.add(tmpFile);
+                demoTask.setInfo(tmpFile);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

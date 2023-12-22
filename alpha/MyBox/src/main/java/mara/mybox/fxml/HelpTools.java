@@ -448,9 +448,6 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "ImageSplit")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageSplitTips")).append("</PRE>\n");
 
-            s.append("    <H3>").append(message(lang, "ImagesBrowser")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImagesBrowserTips")).append("</PRE>\n");
-
             s.append("    <H3>").append(message(lang, "ImagesEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImagesEditorTips")).append("</PRE>\n");
 

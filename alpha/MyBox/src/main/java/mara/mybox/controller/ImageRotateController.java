@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
 public class ImageRotateController extends BaseImageEditController {
 
     @FXML
-    protected ComboBox angleSelector;
+    protected ComboBox<String> angleSelector;
     @FXML
     protected Slider angleSlider;
 
@@ -40,29 +40,22 @@ public class ImageRotateController extends BaseImageEditController {
             angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    rotate(newValue.intValue());
+                    if (isSettingValues) {
+                        return;
+                    }
+                    rotateAngle = newValue.intValue();
+                    angleSelector.setValue(rotateAngle + "");
+                    rotate(rotateAngle);
                 }
             });
 
-            rotateAngle = UserConfig.getInt("ImageRotateAngle", 45);
+            rotateAngle = UserConfig.getInt(baseName + "RotateAngle", 45);
             angleSelector.getItems().addAll(Arrays.asList(
                     "45", "-45", "90", "-90", "180", "-180", "30", "-30", "60", "-60",
                     "120", "-120", "15", "-15", "5", "-5", "10", "-10", "1", "-1",
                     "75", "-75", "135", "-135"));
             angleSelector.setVisibleRowCount(10);
             angleSelector.setValue(rotateAngle + "");
-            angleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        rotateAngle = Integer.parseInt(newValue);
-                        UserConfig.setInt("ImageRotateAngle", rotateAngle);
-                        ValidationTools.setEditorNormal(angleSelector);
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(angleSelector);
-                    }
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -86,6 +79,17 @@ public class ImageRotateController extends BaseImageEditController {
     @FXML
     @Override
     public void goAction() {
+        try {
+            rotateAngle = Integer.parseInt(angleSelector.getValue());
+            ValidationTools.setEditorNormal(angleSelector);
+            isSettingValues = true;
+            angleSlider.setValue(rotateAngle);
+            isSettingValues = false;
+        } catch (Exception e) {
+            popError(message("InvalidParameter") + ": " + message("RotateAngle"));
+            ValidationTools.setEditorBadStyle(angleSelector);
+            return;
+        }
         rotate(rotateAngle);
     }
 
@@ -97,6 +101,7 @@ public class ImageRotateController extends BaseImageEditController {
 
     @Override
     protected void handleImage(FxTask currentTask) {
+        UserConfig.setInt(baseName + "RotateAngle", currentAngle);
         opInfo = currentAngle + "";
         handledImage = TransformTools.rotateImage(currentTask, currentImage(), currentAngle);
     }

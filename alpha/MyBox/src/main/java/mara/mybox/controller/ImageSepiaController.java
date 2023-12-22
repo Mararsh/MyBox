@@ -73,7 +73,7 @@ public class ImageSepiaController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
-            ColorDemos.sepia(currentTask, files, op);
+            ColorDemos.sepia(currentTask, files, op, srcFile());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
