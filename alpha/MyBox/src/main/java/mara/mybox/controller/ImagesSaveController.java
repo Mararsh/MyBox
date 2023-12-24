@@ -165,11 +165,14 @@ public class ImagesSaveController extends BaseTaskController {
         setBox.getChildren().clear();
         targetVBox.getChildren().clear();
 
+        String bname;
         if (imagesRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Image);
             setBox.getChildren().addAll(savedWidthBox, imageFormatBox);
             targetVBox.getChildren().add(pathBox);
-            pathController.initPathSelecter().baseName(baseName).savedName(baseName + "TargetFile")
+            bname = baseName + "ImagesTargetPath";
+            pathController.initPathSelecter()
+                    .baseName(bname).savedName(bname)
                     .type(TargetPathType).initFile();
 
         } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
@@ -177,22 +180,29 @@ public class ImagesSaveController extends BaseTaskController {
             if (tifFileRadio.isSelected()) {
                 setTargetFileType(VisitHistory.FileType.Tif);
                 setBox.getChildren().addAll(savedWidthBox);
+                bname = baseName + "TifTargetFile";
 
             } else if (gifFileRadio.isSelected()) {
                 setTargetFileType(VisitHistory.FileType.Gif);
                 setBox.getChildren().addAll(savedWidthBox, gifLoopCheck);
+                bname = baseName + "GifTargetFile";
 
             } else if (pdfRadio.isSelected()) {
                 setTargetFileType(VisitHistory.FileType.PDF);
                 setBox.getChildren().addAll(savedWidthBox, pdfBox);
+                bname = baseName + "PDFTargetFile";
 
             } else if (pptRadio.isSelected()) {
                 setTargetFileType(VisitHistory.FileType.PPT);
                 setBox.getChildren().addAll(savedWidthBox, pptBox);
+                bname = baseName + "PPTTargetFile";
+            } else {
+                return;
             }
 
             targetVBox.getChildren().add(fileBox);
-            fileController.initFileSelecter().baseName(baseName).savedName(baseName + "TargetFile")
+            fileController.initFileSelecter()
+                    .baseName(bname).savedName(bname)
                     .type(TargetFileType).initFile();
         }
     }
@@ -221,20 +231,20 @@ public class ImagesSaveController extends BaseTaskController {
 
     protected boolean checkImageWidth() {
         int v;
-        try {
-            v = Integer.parseInt(savedWidthSelector.getValue());
-        } catch (Exception e) {
+        if (message("OriginalSize").equals(savedWidthSelector.getValue())) {
             v = -1;
-        }
-        if (v > 0) {
-            savedWidth = v;
-            ValidationTools.setEditorNormal(savedWidthSelector);
-            return true;
         } else {
-            popError(message("InvalidParameter") + ": " + message("SavedWidth"));
-            ValidationTools.setEditorBadStyle(savedWidthSelector);
-            return false;
+            try {
+                v = Integer.parseInt(savedWidthSelector.getValue());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("SavedWidth"));
+                ValidationTools.setEditorBadStyle(savedWidthSelector);
+                return false;
+            }
         }
+        savedWidth = v > 0 ? v : -1;
+        ValidationTools.setEditorNormal(savedWidthSelector);
+        return true;
     }
 
     public void initGif() {
@@ -457,7 +467,7 @@ public class ImagesSaveController extends BaseTaskController {
     @Override
     public void afterSuccess() {
         if (imagesRadio.isSelected()) {
-            recordFileWritten(targetFile.getParent());
+            recordFileWritten(targetPath);
             multipleFilesGenerated(fileNames);
 
         } else if (tifFileRadio.isSelected()) {
@@ -490,9 +500,15 @@ public class ImagesSaveController extends BaseTaskController {
             if (imageInfos == null || index < 0 || index >= imageInfos.size()) {
                 return null;
             }
+            String msg = message("Current") + ": " + (index + 1) + "/" + imageInfos.size();
+            updateLogs(msg, true);
             ImageInformation info = imageInfos.get(index);
             if (info == null) {
                 return null;
+            }
+            if (info.getFile() != null) {
+                msg = message("SourceFile") + ": " + info.getFile();
+                updateLogs(msg, true);
             }
             Image image = info.loadThumbnail(currentTask, savedWidth);
             if (image == null) {
@@ -528,16 +544,18 @@ public class ImagesSaveController extends BaseTaskController {
                     continue;
                 }
                 String filename = file.getAbsolutePath();
+                updateLogs(message("TargetFile") + ": " + filename);
                 BufferedImage converted = ImageConvertTools.convertColorSpace(currentTask,
                         bufferedImage, formatController.attributes);
-                ImageFileWriters.writeImageFile(currentTask, converted, formatController.attributes, filename);
-                if (currentTask == null || !currentTask.isWorking()) {
+                if (converted == null || currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
-                fileNames.add(filename);
-                String msg = MessageFormat.format(message("NumberFileGenerated"),
-                        (i + 1) + "/" + imageInfos.size(), "\"" + filename + "\"");
-                updateLogs(msg);
+                if (ImageFileWriters.writeImageFile(currentTask, converted, formatController.attributes, filename)) {
+                    fileNames.add(filename);
+                    String msg = MessageFormat.format(message("NumberFileGenerated"),
+                            (i + 1) + "/" + imageInfos.size(), "\"" + filename + "\"");
+                    updateLogs(msg, true);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -565,6 +583,9 @@ public class ImagesSaveController extends BaseTaskController {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
+                if (bufferedImage == null) {
+                    continue;
+                }
                 String sourceFormat = imageInfos.get(i).getImageFormat();
                 PdfTools.writePage(currentTask,
                         document, sourceFormat, bufferedImage, ++count,
@@ -573,7 +594,7 @@ public class ImagesSaveController extends BaseTaskController {
                     return false;
                 }
                 String msg = MessageFormat.format(message("NumberPageWritten"), (i + 1) + "/" + imageInfos.size());
-                updateLogs(msg);
+                updateLogs(msg, true);
             }
 
             PDPage page = document.getPage(0);
@@ -610,13 +631,19 @@ public class ImagesSaveController extends BaseTaskController {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
+                if (bufferedImage == null) {
+                    continue;
+                }
                 IIOMetadata metaData = ImageTiffFile.getWriterMeta(null, bufferedImage, writer, param);
+                if (metaData == null) {
+                    continue;
+                }
                 writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                 if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
-                updateLogs(msg);
+                updateLogs(msg, true);
             }
             writer.endWriteSequence();
             writer.dispose();
@@ -645,13 +672,16 @@ public class ImagesSaveController extends BaseTaskController {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
+                if (bufferedImage == null) {
+                    continue;
+                }
                 ImageGifFile.getParaMeta(imageInfos.get(i).getDuration(), gifLoopCheck.isSelected(), param, metaData);
                 gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                 if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
-                updateLogs(msg);
+                updateLogs(msg, true);
             }
             gifWriter.endWriteSequence();
             gifWriter.dispose();
@@ -675,6 +705,9 @@ public class ImagesSaveController extends BaseTaskController {
                 if (image == null || currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
+                if (image == null) {
+                    continue;
+                }
                 HSLFPictureShape shape = MicrosoftDocumentTools.imageShape(currentTask, ppt, image, "png");
                 if (shape == null || currentTask == null || !currentTask.isWorking()) {
                     return false;
@@ -686,7 +719,7 @@ public class ImagesSaveController extends BaseTaskController {
                     return false;
                 }
                 String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
-                updateLogs(msg);
+                updateLogs(msg, true);
             }
             ppt.write(tmpFile);
         } catch (Exception e) {

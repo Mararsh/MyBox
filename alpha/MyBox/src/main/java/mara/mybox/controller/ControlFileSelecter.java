@@ -94,7 +94,10 @@ public class ControlFileSelecter extends BaseController {
             name = defaultName;
         }
         if (fileInput != null) {
+            isSettingValues = true;
             fileInput.setText(name);
+            isSettingValues = false;
+            checkFileInput();
         } else {
             setFile(new File(name));
         }
