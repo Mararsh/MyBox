@@ -575,7 +575,7 @@ public class ControlPlay extends BaseController {
                     loadingController = null;
                 }
                 if (snaps != null && !snaps.isEmpty()) {
-                    ImagesEditorController.open(snaps);
+                    ImagesEditorController.openFiles(snaps);
                 }
             }
         });

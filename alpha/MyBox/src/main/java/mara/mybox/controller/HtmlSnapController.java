@@ -295,7 +295,7 @@ public class HtmlSnapController extends WebAddressController {
                     loadingController = null;
                 }
                 if (snaps != null && !snaps.isEmpty()) {
-                    ImagesEditorController.open(snaps);
+                    ImagesEditorController.openFiles(snaps);
                 }
                 if (webEngine != null) {
                     webEngine.getLoadWorker().cancel();

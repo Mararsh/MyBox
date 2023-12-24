@@ -67,7 +67,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
 
     public void initTarget() {
         try {
-            targetPathInputController.baseName(baseName).init();
+            targetPathInputController.baseName(baseName).initFile();
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())

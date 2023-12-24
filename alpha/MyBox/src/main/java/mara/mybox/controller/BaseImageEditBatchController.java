@@ -160,7 +160,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b
                             = (ImagesBrowserController) WindowTools.popStage(myController, Fxmls.ImagesBrowserFxml);
-                    b.loadFiles(files);
+                    b.loadFilenames(files);
                 }
             }
 

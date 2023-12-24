@@ -21,8 +21,6 @@ import thridparty.image4j.ICODecoder;
 /**
  * @Author Mara
  * @CreateDate 2018-6-19
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageFileInformation extends FileInformation {
@@ -68,6 +66,20 @@ public class ImageFileInformation extends FileInformation {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public static ImageFileInformation clone(ImageFileInformation sourceInfo, ImageFileInformation targetInfo) {
+        if (sourceInfo == null || targetInfo == null) {
+            return null;
+        }
+        FileInformation.clone(sourceInfo, targetInfo);
+        targetInfo.imageFormat = sourceInfo.imageFormat;
+        targetInfo.password = sourceInfo.password;
+        targetInfo.imageInformation = sourceInfo.imageInformation;
+        targetInfo.imagesInformation = sourceInfo.imagesInformation;
+        targetInfo.createTime = sourceInfo.createTime;
+        targetInfo.numberOfImages = sourceInfo.numberOfImages;
+        return targetInfo;
     }
 
     public static ImageFileInformation readImageFile(FxTask task, File file) {

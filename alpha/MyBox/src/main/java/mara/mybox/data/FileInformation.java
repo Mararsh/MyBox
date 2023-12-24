@@ -139,6 +139,28 @@ public class FileInformation {
         return null;
     }
 
+    public static FileInformation clone(FileInformation sourceInfo, FileInformation targetInfo) {
+        if (sourceInfo == null || targetInfo == null) {
+            return null;
+        }
+        targetInfo.file = sourceInfo.file;
+        targetInfo.tableIndex = sourceInfo.tableIndex;
+        targetInfo.fileSize = sourceInfo.fileSize;
+        targetInfo.createTime = sourceInfo.createTime;
+        targetInfo.modifyTime = sourceInfo.modifyTime;
+        targetInfo.filesNumber = sourceInfo.filesNumber;
+        targetInfo.data = sourceInfo.data;
+        targetInfo.handled = sourceInfo.handled;
+        targetInfo.fileType = sourceInfo.fileType;
+        targetInfo.selected.set(sourceInfo.selected.get());
+        targetInfo.sizeWithSubdir = sourceInfo.sizeWithSubdir;
+        targetInfo.sizeWithoutSubdir = sourceInfo.sizeWithoutSubdir;
+        targetInfo.filesWithSubdir = sourceInfo.filesWithSubdir;
+        targetInfo.filesWithoutSubdir = sourceInfo.filesWithoutSubdir;
+        targetInfo.duration = sourceInfo.duration;
+        return targetInfo;
+    }
+
     /*
         custmized get/set
      */

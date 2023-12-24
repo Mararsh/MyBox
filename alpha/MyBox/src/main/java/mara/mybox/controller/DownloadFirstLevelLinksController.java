@@ -183,7 +183,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             textParser = Parser.builder(textOptions).build();
             textCollectingVisitor = new TextCollectingVisitor();
 
-            targetPathInputController.baseName(baseName).init();
+            targetPathInputController.baseName(baseName).initFile();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }

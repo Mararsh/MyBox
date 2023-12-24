@@ -861,7 +861,7 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
         
-        targetPathInputController.baseName(baseName).init();
+        targetPathInputController.baseName(baseName).initFile();
         
         startButton.disableProperty().bind(targetPathInputController.valid.not()
                 .or(startMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))

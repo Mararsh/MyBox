@@ -40,8 +40,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-8-8
  * @License Apache License Version 2.0
  */
-public class ImageSplitController extends BaseImagesListController {
+public class ImageSplitController extends BaseShapeController {
 
+    protected List<ImageInformation> imageInfos;
     protected List<Integer> rows, cols;
     protected int rowsNumber, colsNumber, width, height;
     protected SimpleBooleanProperty splitValid;
@@ -62,7 +63,7 @@ public class ImageSplitController extends BaseImagesListController {
     protected TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
             widthInput, heightInput;
     @FXML
-    protected CheckBox displaySizeCheck, popMenuCheck;
+    protected CheckBox displaySizeCheck;
     @FXML
     protected VBox splitOptionsBox, splitCustomizeBox;
     @FXML
@@ -78,6 +79,7 @@ public class ImageSplitController extends BaseImagesListController {
         try {
             super.initValues();
 
+            imageInfos = new ArrayList<>();
             splitValid = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
@@ -98,14 +100,6 @@ public class ImageSplitController extends BaseImagesListController {
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     UserConfig.setBoolean(baseName + "DisplaySize", displaySizeCheck.isSelected());
                     indicateSplit();
-                }
-            });
-
-            popMenuCheck.setSelected(UserConfig.getBoolean(baseName + "PopMenu", true));
-            popMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "PopMenu", popMenuCheck.isSelected());
                 }
             });
 
@@ -135,8 +129,6 @@ public class ImageSplitController extends BaseImagesListController {
             splitValid.set(false);
             clearCols();
             clearRows();
-
-            saveController.editFramesButton.setVisible(imageInformation == null || !imageInformation.isIsSampled());
 
             return true;
         } catch (Exception e) {
@@ -651,7 +643,7 @@ public class ImageSplitController extends BaseImagesListController {
         line.hoverProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                if (newValue && popMenuCheck.isSelected()) {
+                if (newValue && popLineMenuCheck.isSelected()) {
                     popNodeMenu(line, lineMenu(line, index, isCol, ratio));
                 }
             }
@@ -777,7 +769,6 @@ public class ImageSplitController extends BaseImagesListController {
         if (!splitValid.get()) {
             return;
         }
-        List<ImageInformation> infos = new ArrayList<>();
         try {
             int x1, y1, x2, y2;
             for (int i = 0; i < rows.size() - 1; ++i) {
@@ -793,13 +784,12 @@ public class ImageSplitController extends BaseImagesListController {
                         info = new ImageInformation(image);
                     }
                     info.setRegion(x1, y1, x2, y2);
-                    infos.add(info);
+                    imageInfos.add(info);
                 }
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-        imageInfos.setAll(infos);
     }
 
     @Override
@@ -866,10 +856,34 @@ public class ImageSplitController extends BaseImagesListController {
         return true;
     }
 
+    @FXML
     @Override
-    public boolean controlAltS() {
-        saveController.saveAsAction();
-        return false;
+    public void playAction() {
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        ImagesPlayController.playImages(imageInfos);
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        ImagesSaveController.saveImages(this, imageInfos);
+    }
+
+    @FXML
+    @Override
+    public void editFrames() {
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        ImagesEditorController.openImages(imageInfos);
     }
 
 }

@@ -8,12 +8,17 @@ package mara.mybox.controller;
 public class ControlTargetPath extends ControlTargetFile {
 
     public ControlTargetPath() {
+        initPathSelecter();
+    }
+
+    public final ControlTargetPath initPathSelecter() {
+        initSelecter();
         isSource = false;
         isDirectory = true;
         checkQuit = false;
         permitNull = false;
         mustExist = true;
-        defaultFile = null;
+        return this;
     }
 
 }

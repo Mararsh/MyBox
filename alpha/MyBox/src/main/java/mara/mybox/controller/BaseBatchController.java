@@ -212,11 +212,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         continue;
                     }
                     files.addAll(tfiles);
-                    if (files.size() >= 9) {
-                        break;
-                    }
                 }
-                controller.loadImages(files);
+                controller.loadSourceFiles(files);
             }
         } catch (Exception e) {
         }
@@ -890,7 +887,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         if (FileTools.isEqualOrSubPath(targetPath, srcFile.getAbsolutePath())) {
                             continue;
                         }
-                        String subPathName = makeTargetFilename(srcFile, targetPath);
+                        String subPathName = makeTargetPathFilename(srcFile, targetPath);
                         if (!checkDirectory(currentTask, srcFile, subPathName)) {
                             return false;
                         }

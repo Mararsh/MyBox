@@ -36,7 +36,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  * @CreateDate 2018-6-19
  * @License Apache License Version 2.0
  */
-public class ImageInformation extends ImageFileInformation implements Cloneable {
+public class ImageInformation extends ImageFileInformation {
 
     protected ImageFileInformation imageFileInformation;
     protected ImageInformation self;
@@ -92,25 +92,59 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         self = this;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {   // just need shallow copy
-        try {
-            ImageInformation newInfo = (ImageInformation) super.clone();
-            newInfo.self = newInfo;
-            return newInfo;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
+    public ImageInformation cloneAttributes() {
+        ImageInformation info = new ImageInformation();
+        return clone(this, info);
     }
 
-    public ImageInformation cloneAttributes() {
-        try {
-            return (ImageInformation) clone();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+    public static ImageInformation clone(ImageInformation sourceInfo, ImageInformation targetInfo) {
+        if (sourceInfo == null || targetInfo == null) {
             return null;
         }
+        ImageFileInformation.clone(sourceInfo, targetInfo);
+        if (sourceInfo.imageFileInformation != null) {
+            targetInfo.imageFileInformation = new ImageFileInformation();
+            ImageFileInformation.clone(sourceInfo.imageFileInformation, targetInfo.imageFileInformation);
+        }
+        targetInfo.self = targetInfo;
+        targetInfo.index = sourceInfo.index;
+        targetInfo.imageType = sourceInfo.imageType;
+        targetInfo.sampleScale = sourceInfo.sampleScale;
+        targetInfo.dpi = sourceInfo.dpi;
+        targetInfo.xscale = sourceInfo.xscale;
+        targetInfo.yscale = sourceInfo.yscale;
+        targetInfo.width = sourceInfo.width;
+        targetInfo.height = sourceInfo.height;
+        targetInfo.requiredWidth = sourceInfo.requiredWidth;
+        targetInfo.maxWidth = sourceInfo.maxWidth;
+        targetInfo.thumbnailRotation = sourceInfo.thumbnailRotation;
+        targetInfo.colorSpace = sourceInfo.colorSpace;
+        targetInfo.pixelsString = sourceInfo.pixelsString;
+        targetInfo.loadSizeString = sourceInfo.loadSizeString;
+        targetInfo.pixelsString = sourceInfo.pixelsString;
+        targetInfo.fileSizeString = sourceInfo.fileSizeString;
+        targetInfo.profileName = sourceInfo.profileName;
+        targetInfo.profileCompressionMethod = sourceInfo.profileCompressionMethod;
+        targetInfo.metaDataXml = sourceInfo.metaDataXml;
+        targetInfo.error = sourceInfo.error;
+        targetInfo.isMultipleFrames = sourceInfo.isMultipleFrames;
+        targetInfo.isSampled = sourceInfo.isSampled;
+        targetInfo.isScaled = sourceInfo.isScaled;
+        targetInfo.needSample = sourceInfo.needSample;
+        targetInfo.region = sourceInfo.region;
+        targetInfo.availableMem = sourceInfo.availableMem;
+        targetInfo.bytesSize = sourceInfo.bytesSize;
+        targetInfo.requiredMem = sourceInfo.requiredMem;
+        targetInfo.totalRequiredMem = sourceInfo.totalRequiredMem;
+        targetInfo.image = sourceInfo.image;
+        targetInfo.thumbnail = sourceInfo.thumbnail;
+        targetInfo.regionImage = sourceInfo.regionImage;
+        targetInfo.metaData = sourceInfo.metaData;
+        targetInfo.standardAttributes = sourceInfo.standardAttributes;
+        targetInfo.nativeAttributes = sourceInfo.nativeAttributes;
+        targetInfo.imageTypes = sourceInfo.imageTypes;
+        targetInfo.rawImageType = sourceInfo.rawImageType;
+        return targetInfo;
     }
 
     public ImageInformation as() {

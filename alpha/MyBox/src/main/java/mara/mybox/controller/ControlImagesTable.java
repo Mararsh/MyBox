@@ -30,7 +30,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -188,7 +188,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     }
 
     @Override
-    public void tableChanged() {
+    protected void tableChanged() {
         super.tableChanged();
         hasSampled.set(hasSampled());
     }
@@ -231,14 +231,18 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 d += m.getDuration();
             }
         }
-        String s = Languages.message("TotalPixels") + ": " + StringTools.format(pixels) + "  ";
+        String s = message("TotalPixels") + ": " + StringTools.format(pixels) + "  ";
         if (durationColumn != null) {
-            s += Languages.message("TotalDuration") + ": " + DateTools.timeMsDuration(d) + "  ";
+            s += message("TotalDuration") + ": " + DateTools.timeMsDuration(d) + "  ";
         }
-        s += MessageFormat.format(Languages.message("TotalFilesNumberSize"),
+        s += MessageFormat.format(message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         if (viewButton != null) {
-            s += "  " + Languages.message("DoubleClickToOpen");
+            s += "  " + message("DoubleClickToOpen");
+        }
+        int selected = tableView.getSelectionModel().getSelectedIndices().size();
+        if (selected > 0) {
+            s += "  " + message("Selected") + ": " + selected;
         }
         tableLabel.setText(s);
     }
@@ -281,6 +285,29 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    @Override
+    public void addDirectory(int index, File directory) {
+        if (directory == null || !directory.exists() || !directory.isDirectory()) {
+            return;
+        }
+        try {
+            File[] list = directory.listFiles();
+            if (list == null || list.length == 0) {
+                popInformation(message("NoData"));
+                return;
+            }
+            List<File> files = new ArrayList<>();
+            for (File file : list) {
+                if (file.exists() && file.isFile() && FileTools.isSupportedImage(file)) {
+                    files.add(file);
+                }
+            }
+            addFiles(index, files);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -354,7 +381,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void pasteAction() {
         Image clip = ImageClipboardTools.fetchImageInClipboard(false);
         if (clip == null) {
-            popError(Languages.message("NoImageInClipboard"));
+            popError(message("NoImageInClipboard"));
             return;
         }
         ImageInformation info = new ImageInformation(clip);
@@ -380,7 +407,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void setDurationAction() {
         try {
             if (duration <= 0) {
-                popError(Languages.message("InvalidData"));
+                popError(message("InvalidData"));
                 return;
             }
             isSettingValues = true;

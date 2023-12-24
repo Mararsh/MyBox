@@ -45,7 +45,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             sourceCodesPathController.label(message("sourceCodesPath"))
                     .isDirectory(true).isSource(false).mustExist(true).permitNull(false)
                     .defaultFile("win".equals(SystemTools.os()) ? new File("D:\\MyBox") : new File("/home/mara/mybox"))
-                    .baseName(baseName).savedName(baseName + "SourceCodesPath").init();
+                    .baseName(baseName).savedName(baseName + "SourceCodesPath").initFile();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

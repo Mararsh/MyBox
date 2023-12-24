@@ -148,7 +148,7 @@ public class RemotePathPutController extends BaseBatchFileController {
     @Override
     public String handleFileToPath(FxTask currentTask, File srcFile, String targetPath) {
         try {
-            String targetName = makeTargetFilename(srcFile, targetPath);
+            String targetName = makeTargetPathFilename(srcFile, targetPath);
             if (targetName == null) {
                 return message("Skip");
             }

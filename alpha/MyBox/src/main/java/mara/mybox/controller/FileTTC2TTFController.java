@@ -47,10 +47,10 @@ public class FileTTC2TTFController extends HtmlTableController {
                     .isSource(true).isDirectory(false).mustExist(true).permitNull(false)
                     .type(VisitHistory.FileType.TTC)
                     .baseName(baseName).savedName(baseName + "TTC")
-                    .init();
+                    .initFile();
 
             targetPathInputController.mustExist(true).type(VisitHistory.FileType.TTF)
-                    .baseName(baseName).init();
+                    .baseName(baseName).initFile();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(

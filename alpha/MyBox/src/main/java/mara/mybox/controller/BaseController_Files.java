@@ -829,7 +829,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             return null;
         }
         try {
-            String targetName = makeTargetFilename(srcFile, targetPath.getAbsolutePath());
+            String targetName = makeTargetPathFilename(srcFile, targetPath.getAbsolutePath());
             if (targetName == null) {
                 return null;
             }
@@ -841,7 +841,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }
     }
 
-    public String makeTargetFilename(File srcFile, String targetPath) {
+    public String makeTargetPathFilename(File srcFile, String targetPath) {
         if (srcFile == null || targetPath == null) {
             return null;
         }

@@ -548,7 +548,7 @@ public class ImageOCRProcessController extends BaseImageController {
                 if (files != null && !files.isEmpty()) {
                     ImagesBrowserController b
                             = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                    b.loadFiles(files);
+                    b.loadFilenames(files);
                 }
             }
 

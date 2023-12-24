@@ -565,7 +565,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             } else if (result.get() == buttonBrowse) {
                 final ImagesBrowserController controller = ImagesBrowserController.open();
                 if (controller != null) {
-                    controller.loadFiles(fileNames);
+                    controller.loadFilenames(fileNames);
                 }
             }
 

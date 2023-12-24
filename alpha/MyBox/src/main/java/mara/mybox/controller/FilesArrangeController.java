@@ -86,7 +86,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             initDirTab();
             initConditionTab();
 
-            targetPathInputController.baseName(baseName).init();
+            targetPathInputController.baseName(baseName).initFile();
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -218,19 +217,19 @@ public class ControlFilesBrowse extends ControlFileBrowse {
     @FXML
     @Override
     public void nextAction() {
-        ObservableList<File> imageFileList = browserController.imageFileList;
-        if (imageFileList == null || imageFileList.isEmpty()) {
+        if (browserController.tableData == null || browserController.tableData.isEmpty()) {
             nextFileButton.setDisable(true);
             previousFileButton.setDisable(true);
             return;
         }
-        List<File> files = nextFiles(imageFileList.get(imageFileList.size() - 1),
-                browserController.imageFileList.size());
+        List<File> files = nextFiles(
+                browserController.tableData.get(browserController.tableData.size() - 1).getFile(),
+                browserController.tableData.size());
         if (files == null || files.isEmpty()) {
             popError(message("NoMore"));
             nextFileButton.setDisable(true);
         } else {
-            browserController.loadImages(files);
+            browserController.loadSourceFiles(files);
             previousFileButton.setDisable(false);
         }
     }
@@ -238,19 +237,18 @@ public class ControlFilesBrowse extends ControlFileBrowse {
     @FXML
     @Override
     public void previousAction() {
-        ObservableList<File> imageFileList = browserController.imageFileList;
-        if (imageFileList == null || imageFileList.isEmpty()) {
+        if (browserController.tableData == null || browserController.tableData.isEmpty()) {
             nextFileButton.setDisable(true);
             previousFileButton.setDisable(true);
             return;
         }
-        List<File> files = previousFiles(imageFileList.get(0),
-                browserController.imageFileList.size());
+        List<File> files = previousFiles(browserController.tableData.get(0).getFile(),
+                browserController.tableData.size());
         if (files == null || files.isEmpty()) {
             popError(message("NoMore"));
             previousFileButton.setDisable(true);
         } else {
-            browserController.loadImages(files);
+            browserController.loadSourceFiles(files);
             nextFileButton.setDisable(false);
         }
     }

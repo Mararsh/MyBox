@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -40,18 +39,22 @@ public class ControlTargetFile extends ControlFileSelecter {
     protected CheckBox appendTimestampCheck;
 
     public ControlTargetFile() {
+        initFileSelecter();
+    }
+
+    public final ControlTargetFile initFileSelecter() {
+        initSelecter();
         isSource = false;
         isDirectory = false;
         checkQuit = false;
         permitNull = false;
         mustExist = false;
-        notify = new SimpleBooleanProperty(false);
-        defaultFile = null;
+        return this;
     }
 
     @Override
-    public ControlFileSelecter init() {
-        super.init();
+    public ControlFileSelecter initFile() {
+        super.initFile();
         initTargetExistType();
         return this;
     }

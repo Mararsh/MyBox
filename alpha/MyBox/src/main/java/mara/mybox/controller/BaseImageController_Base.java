@@ -38,10 +38,9 @@ public abstract class BaseImageController_Base extends BaseFileController {
     protected Image image;
     protected ImageAttributes attributes;
     protected final SimpleBooleanProperty loadNotify;
-    protected boolean imageChanged, isPickingColor;
+    protected boolean imageChanged, isPickingColor, backgroundLoad;
     protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, // 0-based
             sizeChangeAware, zoomStep, xZoomStep, yZoomStep;
-    protected LoadingController loadingController;
     protected FxTask loadTask;
     protected double mouseX, mouseY;
     protected ColorsPickingController paletteController;

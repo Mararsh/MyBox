@@ -127,7 +127,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
                 }
             });
 
-            targetPathInputController.baseName(baseName).init();
+            targetPathInputController.baseName(baseName).initFile();
 
             targetPathInputController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override

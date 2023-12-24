@@ -53,8 +53,9 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  * @CreateDate 2021-5-29
  * @License Apache License Version 2.0
  */
-public class ImagesPlayController extends BaseImagesListController {
+public class ImagesPlayController extends BaseShapeController {
 
+    protected List<ImageInformation> imageInfos;
     protected int queueSize, fromFrame, toFrame;
     protected String fileFormat, pdfPassword, inPassword;
     protected LoadingController loading;
@@ -99,6 +100,7 @@ public class ImagesPlayController extends BaseImagesListController {
             super.initControls();
 
             memoryThreadhold = 200 * 1024 * 1024;
+            imageInfos = new ArrayList<>();
 
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -470,6 +472,8 @@ public class ImagesPlayController extends BaseImagesListController {
                     ninfo.setDuration(playController.timeValue);
                 }
                 imageInfos.add(ninfo);
+                if (ninfo.getRegion() != null) {
+                }
             }
             framesNumber = imageInfos.size();
             playImages();
@@ -666,9 +670,11 @@ public class ImagesPlayController extends BaseImagesListController {
             }
             double imageWidth = info.getWidth();
             double targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
-            Image thumb = info.getThumbnail();
-            if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
-                return thumb;
+            if (info.getRegion() == null) {
+                Image thumb = info.getThumbnail();
+                if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
+                    return thumb;
+                }
             }
             info.setThumbnail(null);
             if (fileFormat == null) {
@@ -746,6 +752,17 @@ public class ImagesPlayController extends BaseImagesListController {
     /*
         static
      */
+    public static ImagesPlayController playImages(List<ImageInformation> infos) {
+        try {
+            ImagesPlayController controller = (ImagesPlayController) WindowTools.openStage(Fxmls.ImagesPlayFxml);
+            controller.loadImages(infos);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static ImagesPlayController playPDF(File file, String password) {
         try {
             ImagesPlayController controller = (ImagesPlayController) WindowTools.openStage(Fxmls.ImagesPlayFxml);

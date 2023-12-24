@@ -107,11 +107,11 @@ public class ControlOCROptions extends BaseController {
             tesseractPathController.type(VisitHistory.FileType.All)
                     .isDirectory(false).mustExist(true).permitNull(true)
                     .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tesseract.exe") : new File("/bin/tesseract"))
-                    .baseName(baseName).savedName("TesseractPath").init();
+                    .baseName(baseName).savedName("TesseractPath").initFile();
 
             dataPathController.isDirectory(true).mustExist(true).permitNull(false)
                     .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tessdata") : new File("/usr/local/share/tessdata/"))
-                    .baseName(baseName).savedName(OCRTools.TessDataPath).init();
+                    .baseName(baseName).savedName(OCRTools.TessDataPath).initFile();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

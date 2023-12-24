@@ -215,6 +215,7 @@ public class Fxmls {
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
     public static final String ImageSampleFxml = "/fxml/ImageSample.fxml";
     public static final String ImagesEditorFxml = "/fxml/ImagesEditor.fxml";
+    public static final String ImagesSaveFxml = "/fxml/ImagesSave.fxml";
     public static final String ImagesPlayFxml = "/fxml/ImagesPlay.fxml";
     public static final String ImageAlphaExtractBatchFxml = "/fxml/ImageAlphaExtractBatch.fxml";
     public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";

@@ -37,7 +37,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         try {
             super.setParameters(manageController);
 
-            targetPathInputController.baseName(baseName).init();
+            targetPathInputController.baseName(baseName).initFile();
 
             copyMtimeCheck.setSelected(UserConfig.getBoolean(baseName + "CopyMtime", true));
             copyMtimeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

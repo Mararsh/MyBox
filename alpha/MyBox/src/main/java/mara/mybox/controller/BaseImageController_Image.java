@@ -51,8 +51,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
-        if (loadTask != null && !loadTask.isQuit()) {
-            return;
+        if (loadTask != null) {
+            loadTask.cancel();
         }
         loadTask = new FxTask<Void>(this) {
             private ImageInformation loadedInfo;
@@ -104,7 +104,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             }
 
         };
-        start(loadTask);
+        if (backgroundLoad) {
+            start(loadTask, thisPane);
+        } else {
+            start(loadTask);
+        }
     }
 
     public void askSample(ImageInformation imageInfo) {
@@ -117,8 +121,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageFile(file);
             return;
         }
-        if (loadTask != null && !loadTask.isQuit()) {
-            return;
+        if (loadTask != null) {
+            loadTask.cancel();
         }
         boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
         loadTask = new FxTask<Void>(this) {
@@ -146,7 +150,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadTask = null;
             }
         };
-        loadingController = start(loadTask);
+        if (backgroundLoad) {
+            start(loadTask, thisPane);
+        } else {
+            start(loadTask);
+        }
     }
 
     public void loadImageInfo(ImageInformation info) {
@@ -170,8 +178,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageInfo(info);
             return;
         }
-        if (loadTask != null && !loadTask.isQuit()) {
-            return;
+        if (loadTask != null) {
+            loadTask.cancel();
         }
         loadTask = new FxTask<Void>(this) {
 
@@ -192,7 +200,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadTask = null;
             }
         };
-        loadingController = start(loadTask);
+        if (backgroundLoad) {
+            start(loadTask, thisPane);
+        } else {
+            start(loadTask);
+        }
     }
 
     public void loadImage(Image inImage) {

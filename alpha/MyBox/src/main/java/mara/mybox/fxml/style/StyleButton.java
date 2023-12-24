@@ -52,8 +52,6 @@ public class StyleButton {
             switch (id) {
                 case "saveButton":
                     return new StyleData(id, message("Save"), "CTRL+S / ALT+S", "iconSave.png");
-                case "saveImagesButton":
-                    return new StyleData(id, message("SaveAsImages"), message("SaveAsImages") + "\n" + message("FilePrefixInput"), "", "");
                 case "saveTiffButton":
                     return new StyleData(id, message("SaveAsTiff"), "", "iconTIF.png");
                 case "savePdfButton":

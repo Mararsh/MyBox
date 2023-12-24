@@ -111,7 +111,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         targetFile = targetFileController.file();
                     }
                 });
-                targetFileController.baseName(interfaceName).savedName(interfaceName + "TargetFile").type(TargetFileType).init();
+                targetFileController.baseName(interfaceName).savedName(interfaceName + "TargetFile").type(TargetFileType).initFile();
             }
 
             if (targetPathController != null) {
@@ -121,7 +121,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         targetPath = targetPathController.file();
                     }
                 });
-                targetPathController.baseName(interfaceName).savedName(interfaceName + "TargetPath").type(TargetPathType).init();
+                targetPathController.baseName(interfaceName).savedName(interfaceName + "TargetPath").type(TargetPathType).initFile();
             }
 
             if (operationBarController != null) {
