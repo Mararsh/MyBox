@@ -1,4 +1,4 @@
-package mara.mybox.fxml.cell;
+package mara.mybox.fximage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,36 +15,36 @@ import mara.mybox.value.AppVariables;
  * @CreateDate 2023-12-9
  * @License Apache License Version 2.0
  */
-public class ImageFileCellTask<Void> extends FxTask<Void> {
+public class ImageViewFileTask<Void> extends FxTask<Void> {
 
     private IndexedCell cell;
     private String filename = null;
     private ImageView view = null;
     private int thumbWidth = AppVariables.thumbnailWidth;
 
-    public ImageFileCellTask<Void> setCell(IndexedCell cell) {
+    public ImageViewFileTask<Void> setCell(IndexedCell cell) {
         this.cell = cell;
         return this;
     }
 
-    public ImageFileCellTask<Void> setFilename(String filename) {
+    public ImageViewFileTask<Void> setFilename(String filename) {
         this.filename = filename;
         return this;
     }
 
-    public ImageFileCellTask<Void> setView(ImageView view) {
+    public ImageViewFileTask<Void> setView(ImageView view) {
         this.view = view;
         return this;
     }
 
-    public ImageFileCellTask<Void> setThumbWidth(int thumbWidth) {
+    public ImageViewFileTask<Void> setThumbWidth(int thumbWidth) {
         this.thumbWidth = thumbWidth;
         return this;
     }
 
     @Override
     public void run() {
-        if (cell == null || view == null || filename == null) {
+        if (view == null || filename == null) {
             return;
         }
         File file = new File(filename);
@@ -54,7 +54,9 @@ public class ImageFileCellTask<Void> extends FxTask<Void> {
                 @Override
                 public void run() {
                     view.setImage(SwingFXUtils.toFXImage(image, null));
-                    cell.setGraphic(view);
+                    if (cell != null) {
+                        cell.setGraphic(view);
+                    }
                 }
             });
         }

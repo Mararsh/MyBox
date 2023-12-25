@@ -403,6 +403,9 @@ public class ImageFileReaders {
         if (file == null || !file.exists() || !file.isFile()) {
             return null;
         }
+        if (task != null) {
+            task.setInfo(message("ReadingMedia...") + ": " + file);
+        }
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String format = fileInfo.getImageFormat();
         if ("ico".equals(format) || "icon".equals(format)) {
@@ -438,6 +441,9 @@ public class ImageFileReaders {
             File file = fileInfo.getFile();
             List<ImageInformation> imagesInfo = new ArrayList<>();
             if (reader == null) {
+                if (task != null) {
+                    task.setInfo("fail to get reader");
+                }
                 fileInfo.setNumberOfImages(1);
                 ImageInformation imageInfo = ImageInformation.create(targetFormat, file);
                 imageInfo.setImageFileInformation(fileInfo);
@@ -457,11 +463,17 @@ public class ImageFileReaders {
             fileInfo.setImageFormat(format);
             int num = reader.getNumImages(true);
             fileInfo.setNumberOfImages(num);
+            if (task != null) {
+                task.setInfo("Number Of Images: " + num);
+            }
 
             ImageInformation imageInfo;
             for (int i = 0; i < num; ++i) {
                 if (task != null && !task.isWorking()) {
                     return false;
+                }
+                if (task != null) {
+                    task.setInfo(message("Handle") + ": " + i + "/" + num);
                 }
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
@@ -482,7 +494,14 @@ public class ImageFileReaders {
                 List<ImageTypeSpecifier> typesValue = new ArrayList<>();
                 if (types != null) {
                     while (types.hasNext()) {
-                        typesValue.add(types.next());
+                        if (task != null && !task.isWorking()) {
+                            return false;
+                        }
+                        ImageTypeSpecifier t = types.next();
+                        typesValue.add(t);
+                        if (task != null) {
+                            task.setInfo("ImageTypeSpecifier : " + t.getClass());
+                        }
                     }
                     ImageTypeSpecifier imageType = reader.getRawImageType(i);
                     ColorModel colorModel = null;
@@ -554,6 +573,9 @@ public class ImageFileReaders {
         try {
             if (imageInfo == null || iioMetaData == null) {
                 return false;
+            }
+            if (task != null) {
+                task.setInfo("read Image Meta Data : " + format);
             }
             StringBuilder metaDataXml = new StringBuilder();
             String[] formatNames = iioMetaData.getMetadataFormatNames();

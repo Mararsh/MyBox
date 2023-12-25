@@ -23,6 +23,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -32,24 +33,30 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-2-12
  * @License Apache License Version 2.0
  */
-public class SvgEditorController extends XmlEditorController {
+public class SvgEditorController extends BaseDomEditorController {
 
     @FXML
     protected ControlSvgTree treeController;
     @FXML
     protected ControlSvgHtml htmlController;
+    @FXML
+    protected ControlXmlOptions optionsController;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
         TipsLabelKey = "SVGEditorTips";
+        typeName = "SVG";
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.SVG);
     }
 
     @Override
     public void initValues() {
         try {
             super.initValues();
-
-            domController = treeController;
 
             treeController.editorController = this;
             treeController.svgNodeController.editor = this;
@@ -60,14 +67,11 @@ public class SvgEditorController extends XmlEditorController {
     }
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.SVG);
-    }
-
-    @Override
     public void initControls() {
         try {
             super.initControls();
+
+            typesettingCheck.selectedProperty().bindBidirectional(optionsController.indentCheck.selectedProperty());
 
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -93,8 +97,39 @@ public class SvgEditorController extends XmlEditorController {
     }
 
     @Override
+    public String currentEncoding() {
+        String encoding = treeController.doc.getXmlEncoding();
+        if (encoding == null) {
+            encoding = "utf-8";
+        }
+        return encoding;
+    }
+
+    @Override
     public void openSavedFile(File file) {
         SvgEditorController.open(file);
+    }
+
+    @Override
+    public void loadDom(String xml, boolean updated) {
+        treeController.makeTree(xml);
+        domChanged(updated);
+    }
+
+    @Override
+    public String textsByDom() {
+        return XmlTools.transform(treeController.doc);
+    }
+
+    @Override
+    public void clearDom() {
+        treeController.clearTree();
+        domChanged(true);
+    }
+
+    @Override
+    public void domMenuAction() {
+        treeController.popFunctionsMenu(null);
     }
 
     @FXML
@@ -221,14 +256,6 @@ public class SvgEditorController extends XmlEditorController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
-        }
-    }
-
-    @FXML
-    @Override
-    protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
         }
     }
 

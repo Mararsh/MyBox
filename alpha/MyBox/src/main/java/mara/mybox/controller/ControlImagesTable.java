@@ -270,12 +270,12 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             }
             List<ImageInformation> infos = new ArrayList<>();
             for (File file : files) {
-                if (currentTask == null || currentTask.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return infos;
                 }
                 currentTask.setInfo(file.getAbsolutePath());
                 ImageFileInformation finfo = ImageFileInformation.create(currentTask, file);
-                if (finfo != null) {
+                if (finfo != null && finfo.getImagesInformation() != null) {
                     infos.addAll(finfo.getImagesInformation());
 
                 }

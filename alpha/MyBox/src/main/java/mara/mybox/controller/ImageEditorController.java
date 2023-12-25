@@ -380,7 +380,7 @@ public class ImageEditorController extends BaseImageController {
             items.add(menu);
 
             menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
-                    StyleTools.getIconImageView("iconRedo.png"));
+                    StyleTools.getIconImageView("iconRecover.png"));
             menu.setOnAction((ActionEvent event) -> {
                 recoverAction();
             });

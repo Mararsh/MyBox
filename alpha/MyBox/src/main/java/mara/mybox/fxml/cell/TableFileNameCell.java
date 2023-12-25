@@ -1,5 +1,6 @@
 package mara.mybox.fxml.cell;
 
+import mara.mybox.fximage.ImageViewFileTask;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
@@ -43,7 +44,7 @@ public class TableFileNameCell<T> extends TableCell<T, String>
                 }
                 String suffix = FileNameTools.suffix(item).toLowerCase();
                 if (FileExtensions.SupportedImages.contains(suffix)) {
-                    ImageFileCellTask task = new ImageFileCellTask()
+                    ImageViewFileTask task = new ImageViewFileTask()
                             .setCell(this).setView(imageview)
                             .setFilename(item).setThumbWidth(thumbWidth);
                     Thread thread = new Thread(task);

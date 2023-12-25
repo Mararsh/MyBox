@@ -12,7 +12,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import mara.mybox.controller.LoadingController;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
@@ -546,7 +545,6 @@ public class ImageInformation extends ImageFileInformation {
                 imageInfo.setBytesSize(bytesSize);
                 imageInfo.setRequiredMem(requiredMem);
 
-                LoadingController loading = task != null ? task.getLoading() : null;
                 if (availableMem < requiredMem) {
                     int scale = (int) Math.ceil(1d * requiredMem / availableMem);
 //                    int scale = (int) Math.sqrt(1d * requiredMem / availableMem);
@@ -554,7 +552,7 @@ public class ImageInformation extends ImageFileInformation {
                     imageInfo.setSampleScale(scale);
                     imageInfo.setMaxWidth(imageInfo.getWidth() / scale);
 
-                    if (loading != null) {
+                    if (task != null) {
                         int sampledWidth = (int) (imageInfo.getWidth() / scale);
                         int sampledHeight = (int) (imageInfo.getHeight() / scale);
                         int sampledSize = (int) (sampledWidth * sampledHeight * imageInfo.getColorChannels() / (1024 * 1024));
@@ -562,7 +560,7 @@ public class ImageInformation extends ImageFileInformation {
                                 imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getColorChannels(),
                                 bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
                                 sampledWidth, sampledHeight, sampledSize);
-                        loading.setInfo(msg);
+                        task.setInfo(msg);
                     }
 
                 } else {
@@ -571,13 +569,12 @@ public class ImageInformation extends ImageFileInformation {
                     imageInfo.setNeedSample(false);
                     imageInfo.setMaxWidth(imageInfo.getWidth() * ratio);
 
-                    if (loading != null) {
+                    if (task != null) {
                         String msg = message("AvaliableMemory") + ": " + availableMem / (1024 * 1024) + "MB" + "\n"
                                 + message("RequireMemory") + ": " + requiredMem / (1024 * 1024) + "MB";
-                        loading.setInfo(msg);
+                        task.setInfo(msg);
                     }
                 }
-
             }
 
             return true;

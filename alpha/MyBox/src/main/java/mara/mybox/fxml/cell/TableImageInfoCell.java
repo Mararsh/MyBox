@@ -1,5 +1,6 @@
 package mara.mybox.fxml.cell;
 
+import mara.mybox.fximage.ImageViewInfoTask;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
@@ -28,7 +29,7 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
                 if (empty || item == null) {
                     return;
                 }
-                ImageInfoCellTask task = new ImageInfoCellTask()
+                ImageViewInfoTask task = new ImageViewInfoTask()
                         .setCell(this).setView(imageview).setItem(item);
                 Thread thread = new Thread(task);
                 thread.setDaemon(false);

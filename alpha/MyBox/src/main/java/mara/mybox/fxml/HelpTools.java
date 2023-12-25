@@ -1184,11 +1184,11 @@ public class HelpTools {
                 items.add(new SeparatorMenuItem());
 
                 CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-                hoverMenu.setSelected(UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false));
+                hoverMenu.setSelected(UserConfig.getBoolean("XMLHelpsPopWhenMouseHovering", false));
                 hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("XmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                        UserConfig.setBoolean("XMLHelpsPopWhenMouseHovering", hoverMenu.isSelected());
                     }
                 });
                 items.add(hoverMenu);
@@ -1244,11 +1244,11 @@ public class HelpTools {
                 items.add(new SeparatorMenuItem());
 
                 CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-                hoverMenu.setSelected(UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false));
+                hoverMenu.setSelected(UserConfig.getBoolean("SVGHelpsPopWhenMouseHovering", false));
                 hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("SvgHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                        UserConfig.setBoolean("SVGHelpsPopWhenMouseHovering", hoverMenu.isSelected());
                     }
                 });
                 items.add(hoverMenu);

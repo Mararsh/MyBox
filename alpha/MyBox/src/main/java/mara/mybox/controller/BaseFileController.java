@@ -18,6 +18,7 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -50,16 +51,6 @@ public abstract class BaseFileController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public FileBackup addBackup(FxTask inTask, File file) {
-        if (file == null || !file.exists()) {
-            return null;
-        }
-        if (tableFileBackup == null) {
-            tableFileBackup = new TableFileBackup();
-        }
-        return tableFileBackup.addBackup(file);
     }
 
     @FXML
@@ -115,6 +106,13 @@ public abstract class BaseFileController extends BaseController {
             items.add(menu);
 
             if (sourceFile != null) {
+                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                        StyleTools.getIconImageView("iconInfo.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                items.add(menu);
+
                 menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     refreshAction();
@@ -141,7 +139,7 @@ public abstract class BaseFileController extends BaseController {
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("Create"), StyleTools.getIconImageView("iconCreate.png"));
+            menu = new MenuItem(message("Create"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent event) -> {
                 createAction();
             });
@@ -358,6 +356,32 @@ public abstract class BaseFileController extends BaseController {
     @FXML
     public void openBackups() {
         FileBackupController.load(this);
+    }
+
+    public FileBackup addBackup(FxTask inTask, File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        if (tableFileBackup == null) {
+            tableFileBackup = new TableFileBackup();
+        }
+        return tableFileBackup.addBackup(file);
+    }
+
+    @FXML
+    @Override
+    public void infoAction() {
+        String info = fileInfo();
+        if (info != null && !info.isBlank()) {
+            TextPopController.loadText(info);
+        }
+    }
+
+    public String fileInfo() {
+        if (sourceFile == null) {
+            return null;
+        }
+        return FileTools.fileInformation(sourceFile);
     }
 
 }

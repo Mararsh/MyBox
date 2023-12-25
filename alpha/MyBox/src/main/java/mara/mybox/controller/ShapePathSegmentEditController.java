@@ -478,7 +478,7 @@ public class ShapePathSegmentEditController extends BaseInputController {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("SVGHelpsPopWhenMouseHovering", false)) {
             showHelps(event);
         }
     }

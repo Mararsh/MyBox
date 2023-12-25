@@ -764,7 +764,8 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             @Override
-            protected void whenSucceeded() {
+            protected void finalAction() {
+                super.finalAction();
                 if (infos == null || infos.isEmpty()) {
                     return;
                 }

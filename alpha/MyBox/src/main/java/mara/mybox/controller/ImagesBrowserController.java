@@ -30,6 +30,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ImageViewInfoTask;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -230,6 +231,16 @@ public class ImagesBrowserController extends ControlImagesTable {
     @FXML
     @Override
     public void refreshAction() {
+        List<ImageInformation> invalid = new ArrayList<>();
+        for (ImageInformation info : tableData) {
+            File file = info.getFile();
+            if (file == null || !file.exists() || !file.isFile()) {
+                invalid.add(info);
+            }
+        }
+        if (!invalid.isEmpty()) {
+            tableData.removeAll(invalid);
+        }
         if (displayMode == DisplayMode.ThumbnailsList
                 || displayMode == DisplayMode.FilesList) {
             makeTableView();
@@ -244,8 +255,8 @@ public class ImagesBrowserController extends ControlImagesTable {
                 return;
             }
             imagesBox.getChildren().clear();
-            flowPane.getChildren().clear();
             imagesBox.getChildren().add(gridBox);
+            flowPane.getChildren().clear();
             imageBoxList.clear();
             imageViewList.clear();
             imageTitleList.clear();
@@ -281,8 +292,12 @@ public class ImagesBrowserController extends ControlImagesTable {
                 ImageView iView = new ImageView();
                 iView.setPreserveRatio(true);
                 iView.setUserData(sPane);
-                iView.setImage(imageInfo.getThumbnail());
                 aPane.getChildren().add(iView);
+                ImageViewInfoTask itask = new ImageViewInfoTask()
+                        .setView(iView).setItem(imageInfo);
+                Thread thread = new Thread(itask);
+                thread.setDaemon(false);
+                thread.start();
 
                 Label titleLabel = new Label();
                 titleLabel.setWrapText(true);
@@ -301,6 +316,9 @@ public class ImagesBrowserController extends ControlImagesTable {
 
                 final int index = i;
                 vbox.setOnMouseClicked((MouseEvent event) -> {
+                    if (index >= tableData.size()) {
+                        return;
+                    }
                     ImageInformation info = tableData.get(index);
                     if (info == null) {
                         return;
