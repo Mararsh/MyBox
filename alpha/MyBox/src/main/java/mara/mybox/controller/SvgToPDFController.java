@@ -18,7 +18,7 @@ import org.w3c.dom.Document;
 public class SvgToPDFController extends BaseBatchFileController {
 
     @FXML
-    protected ControlXmlOptions xmlOptionsController;
+    protected XmlOptionsController xmlOptionsController;
     @FXML
     protected ControlSvgTranscode svgOptionsController;
 

@@ -8,6 +8,8 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -15,7 +17,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-4-30
  * @License Apache License Version 2.0
  */
-public class ControlJsonOptions extends BaseController {
+public class JsonOptionsController extends BaseController {
 
     @FXML
     protected CheckBox AllowJavaCommentsCheck, AllowYamlCommentsCheck, AllowSingleQuotesCheck, AllowUnquotedFieldNamesCheck,
@@ -23,6 +25,10 @@ public class ControlJsonOptions extends BaseController {
             AllowLeadingPlusSignForNumbersCheck, AllowLeadingDecimalPointForNumbersCheck, AllowTrailingDecimalPointForNumbersCheck,
             AllowNonNumericNumbersCheck, AllowMissingValuesCheck, AllowTrailingCommaCheck,
             quoteFieldNamesCheck, writeNanAsStringsCheck, writeNumbersAsStringsCheck, escapeNonASCIICheck;
+
+    public JsonOptionsController() {
+        baseTitle = "JSON";
+    }
 
     @Override
     public void initControls() {
@@ -171,6 +177,20 @@ public class ControlJsonOptions extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    /*
+        static
+     */
+    public static JsonOptionsController open() {
+        try {
+            JsonOptionsController controller = (JsonOptionsController) WindowTools.popStage(null, Fxmls.JsonOptionsFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

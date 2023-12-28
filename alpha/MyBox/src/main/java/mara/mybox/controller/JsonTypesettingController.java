@@ -28,7 +28,7 @@ public class JsonTypesettingController extends BaseBatchFileController {
     @FXML
     protected RadioButton indentRadio;
     @FXML
-    protected ControlJsonOptions optionsController;
+    protected JsonOptionsController optionsController;
 
     public JsonTypesettingController() {
         baseTitle = message("JsonTypesetting");

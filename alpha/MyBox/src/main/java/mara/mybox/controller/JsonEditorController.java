@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -14,6 +15,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -26,8 +29,6 @@ public class JsonEditorController extends BaseDomEditorController {
 
     @FXML
     protected ControlJsonTree domController;
-    @FXML
-    protected ControlJsonOptions optionsController;
 
     public JsonEditorController() {
         baseTitle = message("JsonEditor");
@@ -85,6 +86,11 @@ public class JsonEditorController extends BaseDomEditorController {
         domChanged(true);
     }
 
+    @FXML
+    protected void options(Event event) {
+        JsonOptionsController.open();
+    }
+
     @Override
     public void domMenuAction() {
         domController.popFunctionsMenu(null);
@@ -126,6 +132,14 @@ public class JsonEditorController extends BaseDomEditorController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    @FXML
+    protected void example() {
+        File example = HelpTools.jsonExample(AppVariables.CurrentLangName);
+        if (example != null && example.exists()) {
+            loadTexts(TextFileTools.readTexts(null, example, Charset.forName("utf-8")));
         }
     }
 

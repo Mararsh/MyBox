@@ -37,7 +37,7 @@ public class XmlTypesettingController extends BaseBatchFileController {
     protected boolean indent;
 
     @FXML
-    protected ControlXmlOptions optionsController;
+    protected XmlOptionsController optionsController;
     @FXML
     protected ToggleGroup targetEncodingGroup;
     @FXML

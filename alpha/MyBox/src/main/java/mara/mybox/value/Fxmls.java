@@ -78,10 +78,12 @@ public class Fxmls {
     public static final String JsonAddFieldFxml = "/fxml/JsonAddField.fxml";
     public static final String JsonAddElementFxml = "/fxml/JsonAddElement.fxml";
     public static final String JsonTypesettingFxml = "/fxml/JsonTypesetting.fxml";
+    public static final String JsonOptionsFxml = "/fxml/JsonOptions.fxml";
 
     public static final String XmlEditorFxml = "/fxml/XmlEditor.fxml";
     public static final String XmlAddNodeFxml = "/fxml/XmlAddNode.fxml";
     public static final String XmlTypesettingFxml = "/fxml/XmlTypesetting.fxml";
+    public static final String XmlOptionsFxml = "/fxml/XmlOptions.fxml";
 
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";

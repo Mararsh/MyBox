@@ -23,7 +23,7 @@ public class SvgToImageController extends BaseBatchFileController {
     protected ImageAttributes attributes;
 
     @FXML
-    protected ControlXmlOptions xmlOptionsController;
+    protected XmlOptionsController xmlOptionsController;
     @FXML
     protected ControlSvgTranscode svgOptionsController;
     @FXML

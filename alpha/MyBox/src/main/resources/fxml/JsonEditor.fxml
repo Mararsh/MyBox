@@ -10,8 +10,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -51,6 +49,15 @@ License:    Apache License Version 2.0
                                             </ImageView>
                                         </graphic>
                                     </Button>
+                        <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#example">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconExamples.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                         <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -94,6 +101,15 @@ License:    Apache License Version 2.0
                                       </ImageView>
                                   </graphic>
                               </Button>
+                  <Button fx:id="optionsButton" mnemonicParsing="false" onAction="#options">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconOptions.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                         </children>
                     </HBox>
             <VBox fx:id="mainAreaBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
@@ -140,15 +156,6 @@ License:    Apache License Version 2.0
                                           </Button>
                            </children>
                         </FlowPane>
-                        <CheckBox fx:id="typesettingCheck" mnemonicParsing="false" selected="true">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/red/iconTypesetting.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </CheckBox>
                                     <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTexts">
                                         <graphic>
                                             <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -227,24 +234,6 @@ License:    Apache License Version 2.0
                                           </VBox>
                                       </content>
                                   </Tab>
-                        <Tab fx:id="optionsTab" closable="false" text="%Options">
-                           <content>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                 <content>
-                                    <VBox spacing="2.0">
-                                       <padding>
-                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                       </padding>
-                                       <children>
-                                                          <Label text="%TakeEffectNextReadWrite" />
-                                                          <Separator prefWidth="200.0" />
-                                                          <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" source="ControlJsonOptions.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </ScrollPane>
-                           </content>
-                        </Tab>
                               </tabs>
                           </TabPane>
                </children>

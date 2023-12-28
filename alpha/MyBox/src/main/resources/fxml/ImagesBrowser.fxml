@@ -95,6 +95,15 @@ License:    Apache License Version 2.0
                                                             </ImageView>
                                        </graphic>
                                     </RadioButton>
+                                    <Button fx:id="optionsButton" mnemonicParsing="false" onAction="#options">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconOptions.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                     <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -124,15 +133,6 @@ License:    Apache License Version 2.0
                                     </Button>
                                             </children>
                                         </FlowPane>
-                                          <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconRefresh.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
                               <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../buttons/Red/iconDoubleRight.png" />
@@ -144,8 +144,17 @@ License:    Apache License Version 2.0
                            <children>
                               <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
                                  <children>
-                                    <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
+                                    <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                        <children>
+                                                      <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
                                                           <Button fx:id="selectNoneImagesButton" mnemonicParsing="false" onAction="#selectNoneImages">
                                                               <graphic>
                                                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

@@ -99,7 +99,9 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         try {
             super.initTree();
 
-            idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
+            if (idColumn != null) {
+                idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
+            }
 
             timeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("updateTime"));
             timeColumn.setCellFactory(new TreeTableDateCell());
@@ -371,6 +373,12 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         items.addAll(viewMenuItems(item));
 
         items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("AboutTreeInformation"), StyleTools.getIconImageView("iconClaw.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            openHtml(HelpTools.aboutTreeInformation());
+        });
+        items.add(menu);
 
         CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
         popItem.setSelected(UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true));

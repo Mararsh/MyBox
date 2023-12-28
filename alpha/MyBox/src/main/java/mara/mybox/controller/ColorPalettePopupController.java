@@ -254,6 +254,11 @@ public class ColorPalettePopupController extends BaseChildController {
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Examples"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+
             items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));
 
             items.add(new SeparatorMenuItem());

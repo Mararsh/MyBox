@@ -23,7 +23,6 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
-import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -33,14 +32,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-2-12
  * @License Apache License Version 2.0
  */
-public class SvgEditorController extends BaseDomEditorController {
+public class SvgEditorController extends XmlEditorController {
 
     @FXML
     protected ControlSvgTree treeController;
     @FXML
     protected ControlSvgHtml htmlController;
-    @FXML
-    protected ControlXmlOptions optionsController;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
@@ -56,10 +53,11 @@ public class SvgEditorController extends BaseDomEditorController {
     @Override
     public void initValues() {
         try {
-            super.initValues();
-
+            domController = treeController;
             treeController.editorController = this;
             treeController.svgNodeController.editor = this;
+
+            super.initValues();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -70,8 +68,6 @@ public class SvgEditorController extends BaseDomEditorController {
     public void initControls() {
         try {
             super.initControls();
-
-            typesettingCheck.selectedProperty().bindBidirectional(optionsController.indentCheck.selectedProperty());
 
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -97,39 +93,8 @@ public class SvgEditorController extends BaseDomEditorController {
     }
 
     @Override
-    public String currentEncoding() {
-        String encoding = treeController.doc.getXmlEncoding();
-        if (encoding == null) {
-            encoding = "utf-8";
-        }
-        return encoding;
-    }
-
-    @Override
     public void openSavedFile(File file) {
         SvgEditorController.open(file);
-    }
-
-    @Override
-    public void loadDom(String xml, boolean updated) {
-        treeController.makeTree(xml);
-        domChanged(updated);
-    }
-
-    @Override
-    public String textsByDom() {
-        return XmlTools.transform(treeController.doc);
-    }
-
-    @Override
-    public void clearDom() {
-        treeController.clearTree();
-        domChanged(true);
-    }
-
-    @Override
-    public void domMenuAction() {
-        treeController.popFunctionsMenu(null);
     }
 
     @FXML
@@ -259,10 +224,9 @@ public class SvgEditorController extends BaseDomEditorController {
         }
     }
 
-    @FXML
     @Override
-    protected void showHelps(Event event) {
-        popEventMenu(event, HelpTools.svgHelps(true));
+    protected List<MenuItem> helpMenus(Event event) {
+        return HelpTools.svgHelps(false);
     }
 
     /*

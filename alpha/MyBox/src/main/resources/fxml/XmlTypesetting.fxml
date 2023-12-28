@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <fx:include fx:id="options" source="ControlXmlOptions.fxml" />
+                                                        <fx:include fx:id="options" source="XmlOptions.fxml" />
                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                                             <children>
                                                                 <Label text="%TargetFileCharset" />

@@ -656,6 +656,18 @@ public class HelpTools {
         }
     }
 
+    public static File xmlExample(String lang) {
+        return FxFileTools.getInternalFile(
+                "/data/examples/Food_consumption_of_China_" + lang + ".xml",
+                "data", "Food_consumption_of_China_" + lang + ".xml", true);
+    }
+
+    public static File jsonExample(String lang) {
+        return FxFileTools.getInternalFile(
+                "/data/examples/Food_consumption_of_China_" + lang + ".json",
+                "data", "Food_consumption_of_China_" + lang + ".json", true);
+    }
+
     public static String charsetLink() {
         return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html";
     }
@@ -1149,7 +1161,7 @@ public class HelpTools {
         }
     }
 
-    public static List<MenuItem> xmlHelps(boolean popMenu) {
+    public static List<MenuItem> xmlHelps() {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -1179,20 +1191,6 @@ public class HelpTools {
                 }
             });
             items.add(menuItem);
-
-            if (popMenu) {
-                items.add(new SeparatorMenuItem());
-
-                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-                hoverMenu.setSelected(UserConfig.getBoolean("XMLHelpsPopWhenMouseHovering", false));
-                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("XMLHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                    }
-                });
-                items.add(hoverMenu);
-            }
 
             return items;
         } catch (Exception e) {
@@ -1234,7 +1232,7 @@ public class HelpTools {
 
             items.add(new SeparatorMenuItem());
 
-            items.addAll(HelpTools.xmlHelps(false));
+            items.addAll(HelpTools.xmlHelps());
 
             items.add(new SeparatorMenuItem());
 

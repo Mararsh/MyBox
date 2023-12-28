@@ -14,7 +14,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -30,8 +29,8 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -138,7 +137,7 @@ public class ControlColorPaletteSelector extends BaseController {
                         doubleClickedNotify.set(!doubleClickedNotify.get());
                     } else if (event.getButton() == MouseButton.SECONDARY) {
                         if (isManager) {
-                            popNodeMenu(palettesList, makeManageMenu());
+                            popNodeMenu(palettesList, operationsMenuItems(null));
                         }
                     }
                 }
@@ -283,7 +282,8 @@ public class ControlColorPaletteSelector extends BaseController {
         return currentPalette == null ? -1 : currentPalette.getCpnid();
     }
 
-    public List<MenuItem> makeManageMenu() {
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
         ColorPaletteName palette = selected();
         boolean isAll = palette.getName().equals(allColors.getName());
         List<MenuItem> items = new ArrayList<>();
@@ -339,33 +339,7 @@ public class ControlColorPaletteSelector extends BaseController {
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-
         return items;
-    }
-
-    @FXML
-    public void popManageMenu(Event event) {
-        if (UserConfig.getBoolean("ColorsManagePopWhenMouseHovering", true)) {
-            showManageMenu(event);
-        }
-    }
-
-    @FXML
-    public void showManageMenu(Event event) {
-        List<MenuItem> items = makeManageMenu();
-
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean("ColorsManagePopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("ColorsManagePopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
-
-        popEventMenu(event, items);
     }
 
     public void deletePalette() {

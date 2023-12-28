@@ -7,7 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.XmlTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -15,12 +17,16 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-4-30
  * @License Apache License Version 2.0
  */
-public class ControlXmlOptions extends BaseController {
+public class XmlOptionsController extends BaseController {
 
     @FXML
     protected CheckBox dtdValidationCheck, ignoreCommentsCheck,
             ignoreBlankTextCheck, ignoreBlankCDATACheck, ignoreBlankCommentCheck,
             ignoreBlankInstructionCheck, supportNamespacesCheck, indentCheck;
+
+    public XmlOptionsController() {
+        baseTitle = "XML";
+    }
 
     @Override
     public void initControls() {
@@ -108,6 +114,21 @@ public class ControlXmlOptions extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+
+    /*
+        static
+     */
+    public static XmlOptionsController open() {
+        try {
+            XmlOptionsController controller = (XmlOptionsController) WindowTools.popStage(null, Fxmls.XmlOptionsFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

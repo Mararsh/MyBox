@@ -13,6 +13,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -46,13 +47,15 @@ public abstract class BaseDomEditorController extends BaseFileController {
     protected final SimpleBooleanProperty loadNotify;
 
     @FXML
-    protected Tab domTab, textsTab, optionsTab;
+    protected Tab domTab, textsTab;
     @FXML
     protected TextArea textsArea;
     @FXML
     protected Label textsLabel;
     @FXML
-    protected CheckBox wrapTextsCheck, typesettingCheck;
+    protected CheckBox wrapTextsCheck;
+    @FXML
+    protected Button backupButton;
 
     public abstract String makeBlank();
 
@@ -85,6 +88,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
             initTextsTab();
 
             recoverButton.setDisable(true);
+            backupButton.setDisable(true);
 
             tabChanged();
 
@@ -133,8 +137,6 @@ public abstract class BaseDomEditorController extends BaseFileController {
 
             }
         }
-
-        super.sourceFileChanged(file);
         if (task != null) {
             task.cancel();
         }
@@ -154,6 +156,8 @@ public abstract class BaseDomEditorController extends BaseFileController {
 
             @Override
             protected void whenSucceeded() {
+                sourceFile = file;
+                recordFileOpened(sourceFile);
                 writePanes(texts);
             }
 
@@ -168,8 +172,8 @@ public abstract class BaseDomEditorController extends BaseFileController {
         loadText(texts, false);
         updateTitle();
         isSettingValues = false;
-        recordFileOpened(sourceFile);
         recoverButton.setDisable(true);
+        backupButton.setDisable(sourceFile == null);
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -177,19 +181,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     @FXML
     @Override
     public void createAction() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            String blank = makeBlank();
-            if (blank == null || blank.isBlank()) {
-                return;
-            }
-            sourceFile = null;
-            writePanes(blank);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        loadTexts(makeBlank());
     }
 
     @FXML
@@ -198,6 +190,18 @@ public abstract class BaseDomEditorController extends BaseFileController {
         if (sourceFile != null && sourceFile.exists()) {
             fileChanged = false;
             sourceFileChanged(sourceFile);
+        }
+    }
+
+    public void loadTexts(String texts) {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            sourceFile = null;
+            writePanes(texts);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
