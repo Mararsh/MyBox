@@ -207,7 +207,7 @@ License:    Apache License Version 2.0
                                                                 <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
                                                                     <children>
                                                                         <CheckBox fx:id="dashCheck" mnemonicParsing="false" text="%Dotted" />
-                                                                        <Label minHeight="-Infinity" text="%StrokeDasharray" wrapText="true">
+                                                                        <Label minHeight="-Infinity" text="%StrokeDashArray" wrapText="true">
                                                                             <FlowPane.margin>
                                                                                 <Insets />
                                                                             </FlowPane.margin>

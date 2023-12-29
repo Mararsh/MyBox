@@ -20,16 +20,6 @@ License:    Apache License Version 2.0
     <children>
         <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
-                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <CheckBox fx:id="nodesListCheck" minWidth="-Infinity" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconList.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
                 <Button fx:id="addButton" layoutX="555.0" layoutY="10.0" mnemonicParsing="false" onAction="#addAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -57,6 +47,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+                <CheckBox fx:id="nodesListCheck" minWidth="-Infinity" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconList.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
             </children>
         </HBox>
         <TreeTableView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

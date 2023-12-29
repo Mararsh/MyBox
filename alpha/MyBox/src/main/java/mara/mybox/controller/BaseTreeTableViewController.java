@@ -392,6 +392,91 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         actions
      */
     @FXML
+    public void popViewMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true)) {
+            showViewMenu(event);
+        }
+    }
+
+    @FXML
+    public void showViewMenu(Event event) {
+        TreeItem<NodeP> item = selected();
+        if (item == null) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        items.addAll(viewMenuItems(item));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "TreeViewPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        if (event == null) {
+            popNodeMenu(treeView, items);
+        } else {
+            popEventMenu(event, items);
+        }
+    }
+
+    public List<MenuItem> viewMenuItems(TreeItem<NodeP> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        List<MenuItem> items = foldMenuItems(treeItem);
+
+        NodeP node = treeItem.getValue();
+        if (node == null) {
+            return items;
+        }
+        items.add(new SeparatorMenuItem());
+
+        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            viewNode(treeItem);
+        });
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, value(node));
+        });
+        menu.setDisable(treeItem == null);
+        items.add(menu);
+
+        menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, title(node));
+        });
+        menu.setDisable(treeItem == null);
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
+        });
+        items.add(menu);
+
+        return items;
+    }
+
+    @FXML
     public void popFunctionsMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "TreeFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -471,39 +556,6 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return items;
     }
 
-    public List<MenuItem> viewMenuItems(TreeItem<NodeP> item) {
-        List<MenuItem> items = foldMenuItems(item);
-
-        MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconView.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            viewNode(item);
-        });
-        menu.setDisable(item == null);
-        items.add(menu);
-
-        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
-        });
-        menu.setDisable(item == null);
-        items.add(menu);
-
-        menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
-        });
-        menu.setDisable(item == null);
-        items.add(menu);
-
-        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        items.add(menu);
-
-        return items;
-    }
-
     public void showItemMenu(TreeItem<NodeP> item) {
         popNodeMenu(treeView, makeFunctionsMenu(item));
     }
@@ -575,6 +627,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     @FXML
+    @Override
     public void popOperationsMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "TreeOperationsPopWhenMouseHovering", true)) {
             showOperationsMenu(event);
@@ -582,6 +635,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     @FXML
+    @Override
     public void showOperationsMenu(Event event) {
         TreeItem<NodeP> item = selected();
         if (item == null) {
@@ -616,7 +670,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     public List<MenuItem> operationsMenuItems(TreeItem<NodeP> item) {
-        return viewMenuItems(item);
+        return functionMenuItems(item);
     }
 
     @FXML

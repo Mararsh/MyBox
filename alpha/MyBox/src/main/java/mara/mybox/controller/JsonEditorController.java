@@ -93,7 +93,7 @@ public class JsonEditorController extends BaseDomEditorController {
 
     @Override
     public void domMenuAction() {
-        domController.popFunctionsMenu(null);
+        domController.showFunctionsMenu(null);
     }
 
     @Override

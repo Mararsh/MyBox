@@ -14,8 +14,8 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.XmlTools;
@@ -219,10 +219,6 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         return node == null ? null : node.getValue();
     }
 
-    public String xml(XmlTreeNode node) {
-        return XmlTools.transform(node.getNode());
-    }
-
     @Override
     public String copyTitleMessage() {
         return message("CopyName");
@@ -232,6 +228,91 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         actions
      */
     @Override
+    public List<MenuItem> viewMenuItems(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        List<MenuItem> items = foldMenuItems(treeItem);
+        MenuItem menu;
+
+        XmlTreeNode node = treeItem.getValue();
+        if (node == null) {
+            return items;
+        }
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            viewNode(treeItem);
+        });
+        items.add(menu);
+
+        String xml = XmlTools.transform(node.getNode());
+        if (xml != null && !xml.isBlank()) {
+            menu = new MenuItem(message("NodeXML"), StyleTools.getIconImageView("iconXML.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextPopController.loadText(xml);
+            });
+            items.add(menu);
+        }
+
+        String text = node.getNode() == null ? null : node.getNode().getTextContent();
+        if (text != null && !text.isBlank()) {
+            menu = new MenuItem(message("NodeTexts"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextPopController.loadText(text);
+            });
+            items.add(menu);
+        }
+
+        items.add(new SeparatorMenuItem());
+
+        if (xml != null && !xml.isBlank()) {
+            menu = new MenuItem(message("CopyNodeXmlCodes"), StyleTools.getIconImageView("iconCopySystem.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextClipboardTools.copyToSystemClipboard(this, xml);
+            });
+            items.add(menu);
+        }
+
+        if (text != null && !text.isBlank()) {
+            menu = new MenuItem(message("CopyNodeTextContent"), StyleTools.getIconImageView("iconCopySystem.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextClipboardTools.copyToSystemClipboard(this, text);
+            });
+            items.add(menu);
+        }
+
+        String value = node.getValue();
+        if (value != null && !value.isBlank()) {
+            menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextClipboardTools.copyToSystemClipboard(this, value);
+            });
+            items.add(menu);
+        }
+
+        String title = node.getTitle();
+        if (title != null && !title.isBlank()) {
+            menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextClipboardTools.copyToSystemClipboard(this, title);
+            });
+            items.add(menu);
+        }
+
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
+        });
+        items.add(menu);
+
+        return items;
+    }
+
+    @Override
     public List<MenuItem> functionMenuItems(TreeItem<XmlTreeNode> treeItem) {
         if (treeItem == null) {
             return null;
@@ -240,31 +321,9 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
 
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
-
-        viewMenu.getItems().addAll(foldMenuItems(treeItem));
-
-        viewMenu.getItems().add(new SeparatorMenuItem());
-
-        MenuItem menu = new MenuItem(message("NodeXML"), StyleTools.getIconImageView("iconXML.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            xml(treeItem);
-        });
-        viewMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("NodeTexts"), StyleTools.getIconImageView("iconTxt.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            text(treeItem);
-        });
-        viewMenu.getItems().add(menu);
+        viewMenu.getItems().addAll(viewMenuItems(treeItem));
 
         viewMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        viewMenu.getItems().add(menu);
-
-        items.add(new SeparatorMenuItem());
 
         items.addAll(modifyMenus(treeItem));
 
@@ -311,36 +370,6 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             duplicate(treeItem, false);
         });
         menu.setDisable(treeItem.getParent() == null);
-        items.add(menu);
-
-        items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(message("CopyNodeXmlCodes"), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, xml(treeItem.getValue()));
-        });
-        menu.setDisable(treeItem.getValue() == null);
-        items.add(menu);
-
-        menu = new MenuItem(message("CopyNodeTextContent"), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getNode().getTextContent());
-        });
-        menu.setDisable(treeItem.getValue() == null);
-        items.add(menu);
-
-        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, value(treeItem.getValue()));
-        });
-        menu.setDisable(treeItem.getValue() == null);
-        items.add(menu);
-
-        menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, title(treeItem.getValue()));
-        });
-        menu.setDisable(treeItem.getValue() == null);
         items.add(menu);
 
         if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
@@ -403,38 +432,6 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
 
         };
         start(task);
-    }
-
-    public void xml(TreeItem<XmlTreeNode> treeItem) {
-        try {
-            if (treeItem == null) {
-                return;
-            }
-            String xml = xml(treeItem.getValue());
-            if (xml == null || xml.isBlank()) {
-                popInformation(message("NoData"));
-            } else {
-                TextPopController.loadText(xml);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void text(TreeItem<XmlTreeNode> treeItem) {
-        try {
-            if (treeItem == null) {
-                return;
-            }
-            String texts = treeItem.getValue().getNode().getTextContent();
-            if (texts == null || texts.isEmpty()) {
-                popInformation(message("NoData"));
-            } else {
-                TextPopController.loadText(texts);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     public void deleteNode(TreeItem<XmlTreeNode> treeItem) {

@@ -21,9 +21,8 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -256,17 +255,11 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
 
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
-
-        viewMenu.getItems().addAll(foldMenuItems(treeItem));
-
-        MenuItem menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        viewMenu.getItems().add(menu);
+        viewMenu.getItems().addAll(viewMenuItems(treeItem));
 
         items.add(new SeparatorMenuItem());
 
+        MenuItem menu;
         if (jsonTreeNode.isObject()) {
             menu = new MenuItem(message("AddField"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -301,20 +294,6 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
             duplicate(treeItem, false);
         });
         menu.setDisable(treeItem.getParent() == null);
-        items.add(menu);
-
-        items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, value(treeItem.getValue()));
-        });
-        items.add(menu);
-
-        menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, title(treeItem.getValue()));
-        });
         items.add(menu);
 
         if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {

@@ -3,15 +3,22 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -70,19 +77,21 @@ public class ControlSvgTree extends ControlXmlTree {
         }
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("Draw"), StyleTools.getIconImageView("iconDraw.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            drawShape(treeItem);
-        });
-        menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().isSvgShape());
-        items.add(menu);
+        if (treeItem.getValue() == null || !treeItem.getValue().isSvgShape()) {
+            Menu drawMenu = new Menu(message("Draw"), StyleTools.getIconImageView("iconDraw.png"));
+            items.add(drawMenu);
+            drawMenu.getItems().addAll(drawShapeMenus(treeItem));
+        }
 
-        menu = new MenuItem(message("SvgAddShape"), StyleTools.getIconImageView("iconNewItem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addShape(treeItem);
-        });
-        menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().canAddSvgShape());
-        items.add(menu);
+        if (treeItem.getValue() == null || !treeItem.getValue().canAddSvgShape()) {
+            Menu addMenu = new Menu(message("SvgAddShape"), StyleTools.getIconImageView("iconNewItem.png"));
+            items.add(addMenu);
+            addMenu.getItems().addAll(addShapeMenus(treeItem));
+        }
+
+        if (!items.isEmpty()) {
+            items.add(new SeparatorMenuItem());
+        }
 
         items.addAll(super.modifyMenus(treeItem));
 
@@ -90,8 +99,127 @@ public class ControlSvgTree extends ControlXmlTree {
     }
 
     @FXML
-    public void addShape() {
-        addShape(selected());
+    public void popAddShapeMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "AddShapePopWhenMouseHovering", true)) {
+            showAddShapeMenu(event);
+        }
+    }
+
+    @FXML
+    public void showAddShapeMenu(Event event) {
+        TreeItem<XmlTreeNode> treeItem = selected();
+        if (treeItem == null) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(treeItem)));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        items.addAll(addShapeMenus(treeItem));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "AddShapePopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "AddShapePopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        if (event == null) {
+            popNodeMenu(treeView, items);
+        } else {
+            popEventMenu(event, items);
+        }
+    }
+
+    public List<MenuItem> addShapeMenus(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+
+        });
+        items.add(menu);
+
+        return items;
+    }
+
+    @FXML
+    public void popDrawShapeMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "DrawShapePopWhenMouseHovering", true)) {
+            showDrawShapeMenu(event);
+        }
+    }
+
+    @FXML
+    public void showDrawShapeMenu(Event event) {
+        TreeItem<XmlTreeNode> treeItem = selected();
+        if (treeItem == null) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(treeItem)));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        items.addAll(drawShapeMenus(treeItem));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "DrawShapePopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "DrawShapePopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        if (event == null) {
+            popNodeMenu(treeView, items);
+        } else {
+            popEventMenu(event, items);
+        }
+    }
+
+    public List<MenuItem> drawShapeMenus(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+
+        });
+        items.add(menu);
+
+        return items;
     }
 
     public void addShape(TreeItem<XmlTreeNode> treeItem) {
