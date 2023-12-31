@@ -491,9 +491,9 @@ public class XmlTools {
         return h;
     }
 
-    public static Node find(Node node, String hierarchyNumber) {
+    public static Node find(Node doc, String hierarchyNumber) {
         try {
-            if (node == null || hierarchyNumber == null || hierarchyNumber.isBlank()) {
+            if (doc == null || hierarchyNumber == null || hierarchyNumber.isBlank()) {
                 return null;
             }
             String[] numbers = hierarchyNumber.split("\\.", -1);
@@ -501,7 +501,7 @@ public class XmlTools {
                 return null;
             }
             int index;
-            Node current = node;
+            Node current = doc;
             for (String n : numbers) {
                 index = Integer.parseInt(n);
                 NodeList nodeList = current.getChildNodes();
@@ -517,27 +517,40 @@ public class XmlTools {
         }
     }
 
-    public static void remove(Node sourceNode, Node targetNode) {
+    public static void remove(Node doc, Node targetNode) {
         try {
-            if (sourceNode == null || targetNode == null) {
+            if (doc == null || targetNode == null) {
                 return;
             }
-            NodeList nodeList = sourceNode.getChildNodes();
-            if (nodeList == null) {
+            Node child = find(doc, hierarchyNumber(targetNode));
+            if (child == null) {
                 return;
             }
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node child = nodeList.item(i);
-                if (targetNode.equals(child)) {
-                    sourceNode.removeChild(child);
-                    return;
-                }
-                remove(child, targetNode);
+            Node parent = child.getParentNode();
+            if (parent == null) {
+                return;
             }
+            parent.removeChild(child);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
+
+    public static void remove(Node targetNode) {
+        try {
+            if (targetNode == null) {
+                return;
+            }
+            Node parent = targetNode.getParentNode();
+            if (parent == null) {
+                return;
+            }
+            parent.removeChild(targetNode);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
 
     /*
         transform

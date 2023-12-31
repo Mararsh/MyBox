@@ -204,6 +204,7 @@ public class Fxmls {
     public static final String SvgFromImageFxml = "/fxml/SvgFromImage.fxml";
     public static final String SvgFromImageBatchFxml = "/fxml/SvgFromImageBatch.fxml";
     public static final String SvgCircleFxml = "/fxml/SvgCircle.fxml";
+    public static final String SvgRectangleFxml = "/fxml/SvgRectangle.fxml";
 
     public static final String PointInputFxml = "/fxml/PointInput.fxml";
     public static final String LineInputFxml = "/fxml/LineInput.fxml";

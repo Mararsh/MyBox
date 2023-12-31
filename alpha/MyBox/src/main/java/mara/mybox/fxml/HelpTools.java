@@ -1464,8 +1464,8 @@ public class HelpTools {
             values.put("stroke-linecap: butt; ", message("StrokeLinecap") + " - " + message("Butt"));
             values.put("stroke-linecap: round; ", message("StrokeLinecap") + " - " + message("Round"));
             values.put("stroke-linecap: square; ", message("StrokeLinecap") + " - " + message("SquareShape"));
-            values.put("stroke-dasharray: 2,5; ", message("StrokeDasharray"));
-            values.put("stroke-dasharray: 20,10,5,5,5,10; ", message("StrokeDasharray"));
+            values.put("stroke-dasharray: 2,5; ", message("StrokeDashArray"));
+            values.put("stroke-dasharray: 20,10,5,5,5,10; ", message("StrokeDashArray"));
             values.put("font-size: 15px; ", message("FontSize"));
             values.put("font-family: sans-serif; ", message("FontFamily"));
             values.put("color: #6900ff; ", message("Color"));

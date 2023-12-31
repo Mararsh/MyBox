@@ -29,17 +29,23 @@ License:    Apache License Version 2.0
                     <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
                         <children>
                             <Label minHeight="-Infinity" text="%Width" wrapText="true" />
-                            <ComboBox fx:id="widthSelector" editable="true" prefWidth="80.0" />
+                            <ComboBox fx:id="widthSelector" editable="true" prefWidth="100.0" />
                         </children>
                     </FlowPane>
          </children>
       </VBox>
-      <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+      <VBox fx:id="fillBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
             <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
                <children>
                   <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%Fill" />
                   <fx:include fx:id="fill" source="ControlColorSet.fxml" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="fillOpacityPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%FillOpacity" wrapText="true" />
+                  <ComboBox fx:id="fillOpacitySelector" editable="true" prefWidth="100.0" />
                </children>
             </FlowPane>
          </children>
@@ -61,7 +67,7 @@ License:    Apache License Version 2.0
             <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
                <children>
                   <Label minHeight="-Infinity" text="%StrokeMiterLimit" wrapText="true" />
-                  <ComboBox fx:id="limitSelector" editable="true" prefWidth="80.0" />
+                  <ComboBox fx:id="limitSelector" editable="true" prefWidth="100.0" />
                </children>
             </FlowPane>
          </children>

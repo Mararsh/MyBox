@@ -68,7 +68,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
             focusedNode = treeItem.getValue().getNode();
         } catch (Exception e) {
         }
-        editor.htmlController.loadDoc(editor.treeController.doc, focusedNode);
+        editor.htmlController.loadDoc(editor.treeController.doc, focusedNode, null);
         shapeOpPane.setVisible(item != null && item.getValue() != null
                 && item.getValue().isSvgShape());
     }
@@ -183,7 +183,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
             popInformation(message("SelectToHandle"));
             return;
         }
-        SvgEditShapeController.open(editor, treeItem);
+        editor.drawShape(treeItem);
     }
 
     @FXML

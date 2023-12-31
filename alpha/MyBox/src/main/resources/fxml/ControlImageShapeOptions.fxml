@@ -255,7 +255,7 @@
                                         <FlowPane hgap="2.0" layoutX="15.0" layoutY="109.0" prefWrapLength="0.0" vgap="2.0">
                                             <children>
                                                 <CheckBox fx:id="dashCheck" mnemonicParsing="false" text="%Dotted" />
-                                                <Label minHeight="-Infinity" text="%StrokeDasharray" wrapText="true">
+                                                <Label minHeight="-Infinity" text="%StrokeDashArray" wrapText="true">
                                                     <padding>
                                                         <Insets left="10.0" />
                                                     </padding>

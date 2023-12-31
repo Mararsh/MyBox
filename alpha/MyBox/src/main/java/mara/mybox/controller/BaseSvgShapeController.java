@@ -12,8 +12,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.SVG;
+import mara.mybox.data.ShapeStyle;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -24,12 +24,12 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -42,7 +42,8 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
     protected TreeItem<XmlTreeNode> treeItem;
     protected SVG svg;
     protected Document doc;
-    protected Element element;
+    protected Element srcElement, shapeElement;
+    protected String shapeName;
 
     @FXML
     protected Tab shapeTab, styleTab, xmlTab;
@@ -59,26 +60,18 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
     @FXML
     protected ControlSvgOptions optionsController;
 
-    public abstract void setShape();
+    public abstract boolean elementToShape(Element node);
+
+    public abstract void setShapeInputs();
+
+    public abstract void showShape();
 
     public abstract boolean pickShape();
 
     public abstract boolean shape2Element();
 
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            initStyleControls();
-            initSvgOptions();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setParameters(SvgEditorController controller, TreeItem<XmlTreeNode> item) {
+    public void setParameters(SvgEditorController controller,
+            TreeItem<XmlTreeNode> item, Element element) {
         try {
             if (controller == null) {
                 close();
@@ -86,25 +79,35 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             }
             editor = controller;
             treeItem = item;
-            doc = (Document) editor.treeController.doc.cloneNode(true);
+            Document srcDoc = editor.treeController.doc;
+            doc = (Document) srcDoc.cloneNode(true);
             svg = new SVG(doc);
-            element = (Element) item.getValue().getNode();
 
             initMore();
 
             String hierarchyNumber = treeItem.getValue().hierarchyNumber();
-            String info = editor.sourceFile != null
-                    ? editor.sourceFile.getAbsolutePath() + "   " : "";
-            infoLabel.setText(message("AddInto") + ": " + info + " - "
-                    + message("HierarchyNumber") + ": " + hierarchyNumber);
+            String info = element != null ? message("Edit") : message("Add");
+            info += "." + shapeName + "\n";
+            info += editor.sourceFile != null
+                    ? (message("File") + ": " + editor.sourceFile.getName() + "\n") : "";
+            info += message("HierarchyNumber") + ": " + hierarchyNumber;
+            infoLabel.setText(info);
 
+            baseTitle = message("SVGEditor") + "-" + info.replaceAll("\n", " - ");
+            setTitle(baseTitle);
+
+            clearMaskShapes();
             anchorCheck.setSelected(true);
             showAnchors = true;
             popShapeMenu = true;
+            srcElement = element;
+            shapeElement = null;
 
-            optionsController.loadDoc(doc, element);
+            strokeController.setParameters(this);
+            shapeStyle = strokeController.pickValues();
 
-            loadElement(element);
+            initSvgOptions();
+            optionsController.loadDoc(srcDoc, null, srcElement);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -124,9 +127,6 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
      */
     public void initSvgOptions() {
         try {
-            if (optionsController == null) {
-                return;
-            }
             optionsController.noBgColor();
 
             optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
@@ -148,62 +148,20 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
         }
     }
 
-    public void loadDoc(Document doc, Element node) {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private Image image;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    Document fdoc = SvgTools.focus(this, doc, node, 0.5f);
-                    if (fdoc == null || !isWorking()) {
-                        return false;
-                    }
-//            doc = SvgTools.removeSize(doc);
-                    File tmpFile = SvgTools.docToImage(this, myController, fdoc, -1, -1, null);
-                    if (tmpFile == null || !isWorking()) {
-                        return false;
-                    }
-                    if (tmpFile.exists()) {
-                        image = FxImageTools.readImage(this, tmpFile);
-                        FileDeleteTools.delete(tmpFile);
-                    } else {
-                        image = null;
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                loadImage(image);
-            }
-
-        };
-        start(task);
-
-    }
-
     public void loadBackGround() {
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private Image image;
+            private Image bgImage;
 
             @Override
             protected boolean handle() {
                 try {
-                    image = null;
+                    bgImage = null;
                     File tmpFile = optionsController.toImage(this);
                     if (tmpFile != null && tmpFile.exists()) {
-                        image = FxImageTools.readImage(this, tmpFile);
+                        bgImage = FxImageTools.readImage(this, tmpFile);
                         FileDeleteTools.delete(tmpFile);
                     }
                     return true;
@@ -215,58 +173,46 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
             @Override
             protected void whenSucceeded() {
-                loadImage(image);
+                if (image == null) {
+                    loadImage(bgImage);
+                } else {
+                    image = bgImage;
+                    imageView.setImage(bgImage);
+                    showShape();
+                }
             }
 
         };
         start(task);
     }
 
-    public void loadElement(Element element) {
+    @Override
+    public boolean afterImageLoaded() {
         try {
-            if (element != null) {
-                loadShape(element);
-                loadStyle(element);
-                loadXml(element);
+            if (!super.afterImageLoaded()) {
+                return false;
             }
-            clearMaskShapes();
-            drawMaskShape();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
+            initShape();
+            strokeController.setWidthList();
 
+            if (srcElement != null) {
+                shapeElement = (Element) srcElement.cloneNode(true);
+                elementToShape(shapeElement);
+                elementToStyle(shapeElement);
+                setShapeInputs();
+                loadXml(shapeElement);
+                showShape();
+            } else {
+                shapeElement = null;
+                maskCircleData = null;
+                shapeStyle = strokeController.pickValues();
+                showShape();
+                shape2Element();
+                style2Element();
+                setShapeInputs();
+                loadXml(shapeElement);
+            }
 
-    /*
-        shape
-     */
-    public boolean loadShape(Element node) {
-        try {
-            float x, y, r;
-            try {
-                x = Float.parseFloat(node.getAttribute("cx"));
-            } catch (Exception e) {
-                popError(message("InvalidParameter") + ": x");
-                return false;
-            }
-            try {
-                y = Float.parseFloat(node.getAttribute("cy"));
-            } catch (Exception e) {
-                popError(message("InvalidParameter") + ": y");
-                return false;
-            }
-            try {
-                r = Float.parseFloat(node.getAttribute("r"));
-            } catch (Exception e) {
-                r = -1f;
-            }
-            if (r <= 0) {
-                popError(message("InvalidParameter") + ": " + message("Radius"));
-                return false;
-            }
-            element = node;
-            maskCircleData = new DoubleCircle(x, y, r);
-            setShape();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -275,46 +221,76 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
     }
 
     @FXML
-    public void goShape() {
-        if (pickShape() && shape2Element()) {
-            loadXml(element);
-            drawMaskShape();
-        }
-    }
-
-    /*
-        style
-     */
-    public void initStyleControls() {
+    @Override
+    public void okAction() {
         try {
-            strokeController.setParameters(this);
-            shapeStyle = strokeController.pickValues();
+            if (editor == null || !editor.isShowing() || treeItem == null) {
+                close();
+                return;
+            }
+            if (shapeElement == null) {
+                popError(message("NoData"));
+                return;
+            }
+            if (srcElement == null) {
+                Node newNode = editor.treeController.doc.importNode(shapeElement, true);
+                treeItem.getValue().getNode().appendChild(newNode);
+                TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
+                treeItem.getChildren().add(newItem);
 
-            styleArea.setText(shapeStyle.getMore());
-            styleArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue o, Boolean ov, Boolean nv) {
-                    if (isSettingValues || nv) {
-                        return;
-                    }
-                    String v = styleArea.getText();
-                    if (v != null && !v.isBlank()) {
-                        v = StringTools.trimBlanks(v);
-                        shapeStyle.setMore(v);
-                        TableStringValues.add("SvgStyleHistories", v);
-                    } else {
-                        shapeStyle.setMore(null);
-                    }
-                    goStyle();
+                close();
+                editor.treeController.focusItem(newItem);
+                editor.domChanged(true);
+                editor.popInformation(message("CreatedSuccessfully"));
+            } else {
+                if (treeItem.getParent() == null) {
+                    editor.treeController.loadNode(shapeElement);
+                } else {
+                    treeItem.getParent().getValue().getNode().replaceChild(shapeElement, srcElement);
+                    treeItem.setValue(new XmlTreeNode(shapeElement));
                 }
-            });
+
+                close();
+                editor.treeController.focusItem(treeItem);
+                editor.domChanged(true);
+                editor.popInformation(message("UpdateSuccessfully"));
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void loadStyle(Element node) {
+    /*
+        shape
+     */
+    public void initShape() {
+    }
+
+    @FXML
+    public void goShape() {
+        if (pickShape()) {
+            maskShapeDataChanged();
+        }
+    }
+
+    @Override
+    public void maskShapeDataChanged() {
+        if (shape2Element()) {
+            loadShape();
+        }
+    }
+
+    public void loadShape() {
+        setShapeInputs();
+        loadXml(shapeElement);
+        showShape();
+    }
+
+    /*
+        style
+     */
+    public void elementToStyle(Element node) {
         try {
             if (node == null) {
                 return;
@@ -360,13 +336,16 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
                     strokeController.fillController.setColor(Color.TRANSPARENT);
                 }
             }
-//            v = node.getAttribute("fill-opacity");  // #####
-//            try {
-//                strokeController.fillOpacitySelector.setValue(Float.valueOf(v) + "");
-//            } catch (Exception e) {
-//                strokeController.fillOpacitySelector.setValue("-1");
-//            }
+            v = node.getAttribute("fill-opacity");
+            try {
+                strokeController.fillOpacitySelector.setValue(Float.valueOf(v) + "");
+            } catch (Exception e) {
+                strokeController.fillOpacitySelector.setValue("-1");
+            }
+
             styleArea.setText(node.getAttribute("style"));
+
+            shapeStyle = strokeController.pickValues();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -374,52 +353,52 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
     public boolean style2Element() {
         try {
-            if (shapeStyle == null || element == null) {
+            if (shapeStyle == null || shapeElement == null) {
                 popError(message("InvalidData"));
                 return false;
             }
             if (shapeStyle.getStrokeWidth() <= 0) {
-                element.removeAttribute("stroke");
-                element.removeAttribute("stroke-width");
+                shapeElement.removeAttribute("stroke");
+                shapeElement.removeAttribute("stroke-width");
             } else {
-                element.setAttribute("stroke", shapeStyle.getStrokeColorCss());
-                element.setAttribute("stroke-width", shapeStyle.getStrokeWidth() + "");
+                shapeElement.setAttribute("stroke", shapeStyle.getStrokeColorCss());
+                shapeElement.setAttribute("stroke-width", shapeStyle.getStrokeWidth() + "");
             }
 
             if (shapeStyle.isIsFillColor()) {
-                element.setAttribute("fill", shapeStyle.getFilleColorCss());
+                shapeElement.setAttribute("fill", shapeStyle.getFilleColorCss());
             } else {
-                element.removeAttribute("fill");
+                shapeElement.removeAttribute("fill");
             }
             if (shapeStyle.getFillOpacity() >= 0) {
-                element.setAttribute("fill-opacity", shapeStyle.getFillOpacity() + "");
+                shapeElement.setAttribute("fill-opacity", shapeStyle.getFillOpacity() + "");
             } else {
-                element.removeAttribute("fill-opacity");
+                shapeElement.removeAttribute("fill-opacity");
             }
 
             if (shapeStyle.isIsStrokeDash()) {
                 String dash = shapeStyle.getStrokeDashText();
                 if (dash != null && !dash.isBlank()) {
-                    element.setAttribute("stroke-dasharray", dash);
+                    shapeElement.setAttribute("stroke-dasharray", dash);
                 } else {
-                    element.removeAttribute("stroke-dasharray");
+                    shapeElement.removeAttribute("stroke-dasharray");
                 }
             } else {
-                element.removeAttribute("stroke-dasharray");
+                shapeElement.removeAttribute("stroke-dasharray");
             }
 
             String v = shapeStyle.getStrokeLineCapText();
             if (v != null && !v.isBlank()) {
-                element.setAttribute("stroke-linecap", v);
+                shapeElement.setAttribute("stroke-linecap", v);
             } else {
-                element.removeAttribute("stroke-linecap");
+                shapeElement.removeAttribute("stroke-linecap");
             }
 
             String more = shapeStyle.getMore();
             if (more != null && !more.isBlank()) {
-                element.setAttribute("style", more);
+                shapeElement.setAttribute("style", more);
             } else {
-                element.removeAttribute("style");
+                shapeElement.removeAttribute("style");
             }
             return true;
         } catch (Exception e) {
@@ -430,9 +409,34 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
     @FXML
     public void goStyle() {
+        String v = styleArea.getText();
+        if (v != null && !v.isBlank()) {
+            v = StringTools.trimBlanks(v);
+            shapeStyle.setMore(v);
+            TableStringValues.add("SvgStyleHistories", v);
+        } else {
+            shapeStyle.setMore(null);
+        }
+        applyStyle();
+    }
+
+    @FXML
+    public void goSroke() {
+        ShapeStyle style = strokeController.pickValues();
+        if (style == null) {
+            return;
+        }
+        if (shapeStyle != null) {
+            style.setMore(shapeStyle.getMore());
+        }
+        shapeStyle = style;
+        applyStyle();
+    }
+
+    public void applyStyle() {
         if (style2Element()) {
-            loadXml(element);
-            drawMaskShape();
+            loadXml(shapeElement);
+            showShape();
         }
     }
 
@@ -463,6 +467,12 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
     @FXML
     protected void clearStyle() {
         styleArea.clear();
+    }
+
+    @FXML
+    @Override
+    public void options() {
+        ImageOptionsController.open(this);
     }
 
     /*
@@ -526,7 +536,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
                     if (e == null || !isWorking()) {
                         return false;
                     }
-                    element = (Element) doc.importNode(e, true);
+                    shapeElement = (Element) doc.importNode(e, true);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -537,12 +547,14 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             @Override
             protected void whenSucceeded() {
                 updateXmlCount();
-                loadElement(element);
+                elementToShape(shapeElement);
+                elementToStyle(shapeElement);
+                setShapeInputs();
+                showShape();
             }
 
         };
         start(task);
-
     }
 
     @FXML

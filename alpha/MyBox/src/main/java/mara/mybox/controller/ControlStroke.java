@@ -11,6 +11,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import mara.mybox.data.ShapeStyle;
@@ -31,7 +33,7 @@ public class ControlStroke extends BaseController {
     @FXML
     protected ControlColorSet colorController, fillController;
     @FXML
-    protected ComboBox<String> widthSelector, limitSelector;
+    protected ComboBox<String> widthSelector, limitSelector, fillOpacitySelector;
     @FXML
     protected ToggleGroup joinGroup, capGroup;
     @FXML
@@ -41,6 +43,10 @@ public class ControlStroke extends BaseController {
     protected TextField arrayInput, offsetInput;
     @FXML
     protected CheckBox dashCheck, fillCheck;
+    @FXML
+    protected VBox fillBox;
+    @FXML
+    protected FlowPane fillOpacityPane;
 
     protected void setParameters(BaseShapeController parent) {
         try {
@@ -51,66 +57,66 @@ public class ControlStroke extends BaseController {
             baseName = parent.baseName;
             style = new ShapeStyle(baseName);
 
-            if (colorController != null) {
-                colorController.init(this, baseName + "Color", style.getStrokeColor());
+            colorController.init(this, baseName + "Color", style.getStrokeColor());
+
+            widthSelector.setValue((int) style.getStrokeWidth() + "");
+
+            switch (style.getStrokeLineJoinAwt()) {
+                case BasicStroke.JOIN_ROUND:
+                    joinRoundRadio.setSelected(true);
+                    break;
+                case BasicStroke.JOIN_BEVEL:
+                    joinBevelRadio.setSelected(true);
+                    break;
+                default:
+                    joinMiterRadio.setSelected(true);
+                    break;
             }
 
-            if (widthSelector != null) {
-                widthSelector.setValue((int) style.getStrokeWidth() + "");
+            List<String> vl = new ArrayList<>();
+            vl.addAll(Arrays.asList("10", "5", "2", "1", "8", "15", "20"));
+            int iv = (int) style.getStrokeLineLimit();
+            if (!vl.contains(iv + "")) {
+                vl.add(0, iv + "");
+            }
+            limitSelector.getItems().setAll(vl);
+            limitSelector.setValue(iv + "");
+
+            switch (style.getStrokeLineCapAwt()) {
+                case BasicStroke.CAP_ROUND:
+                    capRoundRadio.setSelected(true);
+                    break;
+                case BasicStroke.CAP_SQUARE:
+                    capSquareRadio.setSelected(true);
+                    break;
+                default:
+                    capButtRadio.setSelected(true);
+                    break;
             }
 
-            if (joinGroup != null) {
-                switch (style.getStrokeLineJoinAwt()) {
-                    case BasicStroke.JOIN_ROUND:
-                        joinRoundRadio.setSelected(true);
-                        break;
-                    case BasicStroke.JOIN_BEVEL:
-                        joinBevelRadio.setSelected(true);
-                        break;
-                    default:
-                        joinMiterRadio.setSelected(true);
-                        break;
-                }
+            dashCheck.setSelected(style.isIsStrokeDash());
+            if (arrayInput != null) {
+                arrayInput.setText(style.getStrokeDashText());
+            }
+            if (offsetInput != null) {
+                offsetInput.setText(style.getDashOffset() + "");
             }
 
-            if (limitSelector != null) {
-                List<String> vl = new ArrayList<>();
-                vl.addAll(Arrays.asList("10", "5", "2", "1", "8", "15", "20"));
-                int iv = (int) style.getStrokeLineLimit();
-                if (!vl.contains(iv + "")) {
-                    vl.add(0, iv + "");
-                }
-                limitSelector.getItems().setAll(vl);
-                limitSelector.setValue(iv + "");
-            }
+            fillCheck.setSelected(style.isIsFillColor());
+            fillController.init(this, baseName + "Fill", style.getFillColor());
 
-            if (capGroup != null) {
-                switch (style.getStrokeLineCapAwt()) {
-                    case BasicStroke.CAP_ROUND:
-                        capRoundRadio.setSelected(true);
-                        break;
-                    case BasicStroke.CAP_SQUARE:
-                        capSquareRadio.setSelected(true);
-                        break;
-                    default:
-                        capButtRadio.setSelected(true);
-                        break;
-                }
+            vl = new ArrayList<>();
+            vl.addAll(Arrays.asList("0.5", "0.3", "0", "1.0", "0.05", "0.02", "0.1",
+                    "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"));
+            iv = (int) style.getFillOpacity();
+            if (!vl.contains(iv + "")) {
+                vl.add(0, iv + "");
             }
+            fillOpacitySelector.getItems().setAll(vl);
+            fillOpacitySelector.setValue(iv + "");
 
-            if (dashCheck != null) {
-                dashCheck.setSelected(style.isIsStrokeDash());
-                if (arrayInput != null) {
-                    arrayInput.setText(style.getStrokeDashText());
-                }
-                if (offsetInput != null) {
-                    offsetInput.setText(style.getDashOffset() + "");
-                }
-            }
-
-            if (fillCheck != null) {
-                fillCheck.setSelected(style.isIsFillColor());
-                fillController.init(this, baseName + "Fill", style.getFillColor());
+            if (shapeController instanceof BaseImageEditController) {
+                fillBox.getChildren().remove(fillOpacityPane);
             }
 
         } catch (Exception e) {
@@ -129,7 +135,7 @@ public class ControlStroke extends BaseController {
             return;
         }
         List<String> ws = new ArrayList<>();
-        ws.addAll(Arrays.asList("3", "1", "2", "5", "8", "10", "15", "25", "30",
+        ws.addAll(Arrays.asList("2", "3", "1", "5", "8", "10", "15", "25", "30",
                 "50", "80", "100", "150", "200", "300", "500"));
         int max = (int) view.getImage().getWidth();
         int step = max / 10;
@@ -142,86 +148,91 @@ public class ControlStroke extends BaseController {
             if (!ws.contains(initValue + "")) {
                 ws.add(0, initValue + "");
             }
+        } else {
+            initValue = 2;
         }
         selector.getItems().setAll(ws);
-        if (initValue >= 0) {
-            selector.setValue(initValue + "");
-        }
+        selector.setValue(initValue + "");
     }
 
     protected ShapeStyle pickValues() {
-        if (widthSelector != null) {
-            float v = -1;
-            try {
-                v = Float.parseFloat(widthSelector.getValue());
-            } catch (Exception e) {
-            }
-            if (v <= 0) {
-                popError(message("InvalidParameter") + ": " + message("Width"));
+        float v = -1;
+        try {
+            v = Float.parseFloat(widthSelector.getValue());
+        } catch (Exception e) {
+        }
+        if (v <= 0) {
+            popError(message("InvalidParameter") + ": " + message("Width"));
+            return null;
+        }
+        style.setStrokeWidth(v);
+
+        style.setStrokeColor(colorController.color());
+
+        if (joinRoundRadio.isSelected()) {
+            style.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        } else if (joinBevelRadio.isSelected()) {
+            style.setStrokeLineJoin(StrokeLineJoin.BEVEL);
+        } else {
+            style.setStrokeLineJoin(StrokeLineJoin.MITER);
+        }
+
+        v = -1;
+        try {
+            v = Float.parseFloat(limitSelector.getValue());
+        } catch (Exception e) {
+        }
+        if (v < 1) {
+            popError(message("InvalidParameter") + ": " + message("StrokeMiterLimit"));
+            return null;
+        }
+        style.setStrokeLineLimit(v);
+
+        if (capRoundRadio.isSelected()) {
+            style.setStrokeLineCap(StrokeLineCap.ROUND);
+        } else if (capSquareRadio.isSelected()) {
+            style.setStrokeLineCap(StrokeLineCap.SQUARE);
+        } else {
+            style.setStrokeLineCap(StrokeLineCap.BUTT);
+        }
+        style.setIsStrokeDash(dashCheck.isSelected());
+
+        if (dashCheck.isSelected()) {
+            List<Double> values = ShapeStyle.text2StrokeDash(arrayInput.getText());
+            if (values == null || values.isEmpty()) {
+                popError(message("InvalidParameter") + ": " + message("StrokeDashArray"));
                 return null;
             }
-            style.setStrokeWidth(v);
-        }
-        if (colorController != null) {
-            style.setStrokeColor(colorController.color());
-        }
-        if (joinGroup != null) {
-            if (joinRoundRadio.isSelected()) {
-                style.setStrokeLineJoin(StrokeLineJoin.ROUND);
-            } else if (joinBevelRadio.isSelected()) {
-                style.setStrokeLineJoin(StrokeLineJoin.BEVEL);
-            } else {
-                style.setStrokeLineJoin(StrokeLineJoin.MITER);
-            }
-        }
-        if (limitSelector != null) {
-            float v = -1;
+            style.setStrokeDash(values);
+
+            v = -1;
             try {
-                v = Float.parseFloat(limitSelector.getValue());
+                v = Float.parseFloat(offsetInput.getText());
             } catch (Exception e) {
             }
-            if (v < 1) {
-                popError(message("InvalidParameter") + ": " + message("StrokeMiterLimit"));
+            if (v < 0) {
+                popError(message("InvalidParameter") + ": " + message("StrokeDashOffset"));
                 return null;
             }
-            style.setStrokeLineLimit(v);
+            style.setDashOffset(v);
         }
-        if (capGroup != null) {
-            if (capRoundRadio.isSelected()) {
-                style.setStrokeLineCap(StrokeLineCap.ROUND);
-            } else if (capSquareRadio.isSelected()) {
-                style.setStrokeLineCap(StrokeLineCap.SQUARE);
-            } else {
-                style.setStrokeLineCap(StrokeLineCap.BUTT);
-            }
-        }
-        if (dashCheck != null) {
-            style.setIsStrokeDash(dashCheck.isSelected());
 
-            if (dashCheck.isSelected()) {
-                List<Double> values = ShapeStyle.text2StrokeDash(arrayInput.getText());
-                if (values == null || values.isEmpty()) {
-                    popError(message("InvalidParameter") + ": " + message("StrokeDashArray"));
-                    return null;
-                }
-                style.setStrokeDash(values);
+        style.setIsFillColor(fillCheck.isSelected());
+        style.setFillColor(fillController.color());
 
-                float v = -1;
-                try {
-                    v = Float.parseFloat(offsetInput.getText());
-                } catch (Exception e) {
-                }
-                if (v < 0) {
-                    popError(message("InvalidParameter") + ": " + message("StrokeDashOffset"));
-                    return null;
-                }
-                style.setDashOffset(v);
+        if (fillBox.getChildren().contains(fillOpacityPane)) {
+            v = -1;
+            try {
+                v = Float.parseFloat(fillOpacitySelector.getValue());
+            } catch (Exception e) {
             }
+            if (v < 0 || v > 1) {
+                popError(message("InvalidParameter") + ": " + message("FillOpacity"));
+                return null;
+            }
+            style.setFillOpacity(v);
         }
-        if (fillCheck != null) {
-            style.setIsFillColor(fillCheck.isSelected());
-            style.setFillColor(fillController.color());
-        }
+
         style.save();
         return style;
     }

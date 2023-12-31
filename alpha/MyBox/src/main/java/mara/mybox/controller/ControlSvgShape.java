@@ -23,9 +23,9 @@ import static mara.mybox.data.DoubleShape.ShapeType.Polygon;
 import mara.mybox.data.SVG;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
@@ -73,7 +73,6 @@ public class ControlSvgShape extends ControlShapeOptions {
 
             initXML();
             if (optionsController != null) {
-                optionsController.svgShapeControl = this;
                 initSvgOptions();
             }
 
@@ -89,7 +88,7 @@ public class ControlSvgShape extends ControlShapeOptions {
             this.editor = editor;
             doc = (Document) editor.treeController.doc.cloneNode(true);
             svg = new SVG(doc);
-            optionsController.loadDoc(doc, node);
+            optionsController.loadDoc(doc, node, null);
 
             loadElement(node);
             addListener();

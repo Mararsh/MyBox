@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import mara.mybox.data.DoubleCircle;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -12,19 +12,19 @@ import org.w3c.dom.Element;
 
 /**
  * @Author Mara
- * @CreateDate 2023-12-29
+ * @CreateDate 2023-12-31
  * @License Apache License Version 2.0
  */
-public class SvgCircleController extends BaseSvgShapeController {
+public class SvgRectangleController extends BaseSvgShapeController {
 
     @FXML
-    protected ControlCircle circleController;
+    protected ControlRectangle rectController;
 
     @Override
     public void initMore() {
         try {
-            shapeName = message("Circle");
-            circleController.setParameters(this);
+            shapeName = message("Rectangle");
+            rectController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -34,29 +34,38 @@ public class SvgCircleController extends BaseSvgShapeController {
     @Override
     public boolean elementToShape(Element node) {
         try {
-            float x, y, r;
+            float x, y, w, h;
             try {
-                x = Float.parseFloat(node.getAttribute("cx"));
+                x = Float.parseFloat(node.getAttribute("x"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": x");
                 return false;
             }
             try {
-                y = Float.parseFloat(node.getAttribute("cy"));
+                y = Float.parseFloat(node.getAttribute("y"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": y");
                 return false;
             }
             try {
-                r = Float.parseFloat(node.getAttribute("r"));
+                w = Float.parseFloat(node.getAttribute("width"));
             } catch (Exception e) {
-                r = -1f;
+                w = -1f;
             }
-            if (r <= 0) {
-                popError(message("InvalidParameter") + ": " + message("Radius"));
+            if (w <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Width"));
                 return false;
             }
-            maskCircleData = new DoubleCircle(x, y, r);
+            try {
+                h = Float.parseFloat(node.getAttribute("height"));
+            } catch (Exception e) {
+                h = -1f;
+            }
+            if (h <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Height"));
+                return false;
+            }
+            maskRectangleData = DoubleRectangle.xywh(x, y, w, h);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -65,27 +74,34 @@ public class SvgCircleController extends BaseSvgShapeController {
     }
 
     @Override
+    public void initShape() {
+        rectController.setRoundList();
+    }
+
+    @Override
     public void showShape() {
-        showMaskCircle();
+        showMaskRectangle();
     }
 
     @Override
     public void setShapeInputs() {
-        circleController.loadValues();
+        rectController.loadValues();
     }
 
     @Override
     public boolean shape2Element() {
         try {
-            if (maskCircleData == null) {
+            if (maskRectangleData == null) {
                 return false;
             }
             if (shapeElement == null) {
-                shapeElement = doc.createElement("circle");
+                shapeElement = doc.createElement("rect");
             }
-            shapeElement.setAttribute("cx", scaleValue(maskCircleData.getCenterX()));
-            shapeElement.setAttribute("cy", scaleValue(maskCircleData.getCenterY()));
-            shapeElement.setAttribute("r", scaleValue(maskCircleData.getRadius()));
+            shapeElement.setAttribute("x", scaleValue(maskRectangleData.getX()));
+            shapeElement.setAttribute("y", scaleValue(maskRectangleData.getY()));
+            shapeElement.setAttribute("width", scaleValue(maskRectangleData.getWidth()));
+            shapeElement.setAttribute("height", scaleValue(maskRectangleData.getHeight()));
+
             return true;
 
         } catch (Exception e) {
@@ -96,21 +112,21 @@ public class SvgCircleController extends BaseSvgShapeController {
 
     @Override
     public boolean pickShape() {
-        return circleController.pickValues();
+        return rectController.pickValues();
     }
 
 
     /*
         static
      */
-    public static SvgCircleController drawShape(SvgEditorController editor,
+    public static SvgRectangleController drawShape(SvgEditorController editor,
             TreeItem<XmlTreeNode> item, Element element) {
         try {
             if (editor == null || item == null) {
                 return null;
             }
-            SvgCircleController controller = (SvgCircleController) WindowTools.childStage(
-                    editor, Fxmls.SvgCircleFxml);
+            SvgRectangleController controller = (SvgRectangleController) WindowTools.childStage(
+                    editor, Fxmls.SvgRectangleFxml);
             controller.setParameters(editor, item, element);
             return controller;
         } catch (Exception e) {

@@ -13,6 +13,8 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TreeItem;
+import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -23,9 +25,12 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -72,7 +77,7 @@ public class SvgEditorController extends XmlEditorController {
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    htmlController.loadDoc(treeController.doc, null);
+                    htmlController.loadDoc(treeController.doc, null, null);
                 }
             });
 
@@ -84,7 +89,7 @@ public class SvgEditorController extends XmlEditorController {
     @Override
     public void domChanged(boolean changed) {
         super.domChanged(changed);
-        htmlController.loadDoc(treeController.doc, treeController.selectedNode());
+        htmlController.loadDoc(treeController.doc, treeController.selectedNode(), null);
     }
 
     @Override
@@ -95,6 +100,37 @@ public class SvgEditorController extends XmlEditorController {
     @Override
     public void openSavedFile(File file) {
         SvgEditorController.open(file);
+    }
+
+    public void drawShape(TreeItem<XmlTreeNode> treeItem) {
+        try {
+            Node node = treeItem.getValue().getNode();
+            if (node == null) {
+                return;
+            }
+            if (XmlTools.type(node) != XmlTreeNode.NodeType.Element) {
+                return;
+            }
+            Element element = (Element) node;
+            String tag = element.getNodeName();
+            if ("rect".equalsIgnoreCase(tag)) {
+                SvgRectangleController.drawShape(this, treeItem, element);
+            } else if ("circle".equalsIgnoreCase(tag)) {
+                SvgCircleController.drawShape(this, treeItem, element);
+            } else if ("ellipse".equalsIgnoreCase(tag)) {
+                SvgCircleController.drawShape(this, treeItem, element);
+            } else if ("line".equalsIgnoreCase(tag)) {
+                SvgCircleController.drawShape(this, treeItem, element);
+            } else if ("polyline".equalsIgnoreCase(tag)) {
+                SvgCircleController.drawShape(this, treeItem, element);
+            } else if ("polygon".equalsIgnoreCase(tag)) {
+                SvgCircleController.drawShape(this, treeItem, element);
+            } else if ("path".equalsIgnoreCase(tag)) {
+                SvgCircleController.drawShape(this, treeItem, element);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     @FXML

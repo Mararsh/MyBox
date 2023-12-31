@@ -33,7 +33,6 @@ import org.w3c.dom.Node;
  */
 public class ControlSvgOptions extends BaseController {
 
-    protected ControlSvgShape svgShapeControl;
     protected Document doc;
     protected Node focusedNode;
     protected float width, height, bgOpacity;
@@ -123,15 +122,18 @@ public class ControlSvgOptions extends BaseController {
         pane2.getChildren().remove(bgColorBox);
     }
 
-    public void loadDoc(Document doc, Node focus) {
+    public void loadDoc(Document srcDoc, Node focus, Node except) {
         try {
-            if (doc == null) {
-                this.doc = null;
+            if (srcDoc == null) {
+                doc = null;
                 sizeChanged();
                 return;
             }
-            this.doc = (Document) doc.cloneNode(true);
+            doc = (Document) srcDoc.cloneNode(true);
             focusedNode = focus;
+            if (except != null) {
+                XmlTools.remove(doc, except);
+            }
             SVG svg = new SVG(doc);
             width = svg.getWidth();
             height = svg.getHeight();
@@ -200,7 +202,7 @@ public class ControlSvgOptions extends BaseController {
 
     @FXML
     public void defaultSize() {
-        loadDoc(doc, focusedNode);
+        loadDoc(doc, focusedNode, null);
     }
 
     public Document toSVG(FxTask currentTask, boolean bgColor) {
