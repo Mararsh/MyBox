@@ -11,9 +11,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -37,7 +36,7 @@ public class ControlSvgOptions extends BaseController {
     protected Node focusedNode;
     protected float width, height, bgOpacity;
     protected Rectangle viewBox;
-    protected SimpleBooleanProperty sizeNotify, bgColorNotify, opacityNotify;
+    protected SimpleBooleanProperty changeNotify;
 
     @FXML
     protected TextField widthInput, heightInput, viewBoxInput;
@@ -48,9 +47,9 @@ public class ControlSvgOptions extends BaseController {
     @FXML
     protected ComboBox<String> opacitySelector;
     @FXML
-    protected FlowPane pane2;
+    protected VBox bgBox;
     @FXML
-    protected HBox bgColorBox;
+    protected FlowPane colorPane;
 
     @Override
     public void setControlsStyle() {
@@ -71,68 +70,62 @@ public class ControlSvgOptions extends BaseController {
         try {
             super.initControls();
 
-            sizeNotify = new SimpleBooleanProperty(false);
-            bgColorNotify = new SimpleBooleanProperty(false);
-            opacityNotify = new SimpleBooleanProperty(false);
+            changeNotify = new SimpleBooleanProperty(false);
 
             bgColorController.init(this, baseName + "BackgroundColor", Color.TRANSPARENT);
-            bgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
-                    if (bgColorCheck.isSelected()) {
-                        bgColorChanged();
-                    }
-                }
-            });
 
-            bgColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    bgColorChanged();
-                }
-            });
+            bgColorCheck.setSelected(UserConfig.getBoolean(baseName + "ShowBackgroundColor", false));
 
             bgOpacity = UserConfig.getFloat(baseName + "BackgroundOpacity", 0.3f);
+            if (bgOpacity < 0) {
+                bgOpacity = 0.3f;
+            }
             opacitySelector.getItems().addAll(
                     "0.3", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.5", "0.8", "0.6", "0.4", "0.7", "0.9"
             );
             opacitySelector.setValue(bgOpacity + "");
-            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            opacitySelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        bgOpacity = Float.parseFloat(newValue);
-                        if (bgOpacity >= 0) {
-                            UserConfig.setFloat(baseName + "BackgroundOpacity", bgOpacity);
-                        }
-                        opacitySelector.getEditor().setStyle(null);
-                        opacityChanged();
-                    } catch (Exception e) {
-                        opacitySelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
+                    checkOpacity();
                 }
             });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void noBgColor() {
-        pane2.getChildren().remove(bgColorBox);
+    public void loadExcept(Document srcDoc, Node except) {
+        bgBox.getChildren().remove(colorPane);
+        load(srcDoc, null, except);
     }
 
-    public void loadDoc(Document srcDoc, Node focus, Node except) {
+    public void loadFocus(Document srcDoc, Node focus) {
+        load(srcDoc, focus, null);
+    }
+
+    public void load(Document srcDoc, Node focus, Node except) {
         try {
             if (srcDoc == null) {
                 doc = null;
-                sizeChanged();
+                changeNotify.set(!changeNotify.get());
                 return;
             }
             doc = (Document) srcDoc.cloneNode(true);
             focusedNode = focus;
             if (except != null) {
                 XmlTools.remove(doc, except);
+            }
+            initOptions();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initOptions() {
+        try {
+            if (doc == null) {
+                return;
             }
             SVG svg = new SVG(doc);
             width = svg.getWidth();
@@ -159,26 +152,14 @@ public class ControlSvgOptions extends BaseController {
             } else {
                 heightInput.clear();
             }
-            sizeChanged();
+            changeNotify.set(!changeNotify.get());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void sizeChanged() {
-        sizeNotify.set(!sizeNotify.get());
-    }
-
-    public void bgColorChanged() {
-        bgColorNotify.set(!bgColorNotify.get());
-    }
-
-    public void opacityChanged() {
-        opacityNotify.set(!opacityNotify.get());
-    }
-
     @FXML
-    public void goSize() {
+    public void goOptions() {
         width = -1;
         try {
             float v = Float.parseFloat(widthInput.getText());
@@ -187,6 +168,7 @@ public class ControlSvgOptions extends BaseController {
             }
         } catch (Exception e) {
         }
+
         height = -1;
         try {
             float v = Float.parseFloat(heightInput.getText());
@@ -197,15 +179,36 @@ public class ControlSvgOptions extends BaseController {
         }
         viewBox = SvgTools.viewBox(viewBoxInput.getText());
 
-        sizeChanged();
+        if (checkOpacity()) {
+            UserConfig.setFloat(baseName + "BackgroundOpacity", bgOpacity);
+            UserConfig.setBoolean(baseName + "ShowBackgroundColor", bgColorCheck.isSelected());
+            changeNotify.set(!changeNotify.get());
+        }
+    }
+
+    public boolean checkOpacity() {
+        float v = -1;
+        try {
+            v = Float.parseFloat(opacitySelector.getValue());
+        } catch (Exception e) {
+        }
+        if (v >= 0) {
+            bgOpacity = v;
+            opacitySelector.getEditor().setStyle(null);
+            return true;
+        } else {
+            popError(message("InvalidParameter") + ": " + message("BackgroundOpacity"));
+            opacitySelector.getEditor().setStyle(UserConfig.badStyle());
+            return false;
+        }
     }
 
     @FXML
     public void defaultSize() {
-        loadDoc(doc, focusedNode, null);
+        initOptions();
     }
 
-    public Document toSVG(FxTask currentTask, boolean bgColor) {
+    public Document toSVG(FxTask currentTask) {
         try {
             if (doc == null) {
                 return null;
@@ -244,15 +247,15 @@ public class ControlSvgOptions extends BaseController {
     }
 
     public String toXML(FxTask currentTask) {
-        return XmlTools.transform(toSVG(currentTask, true));
+        return XmlTools.transform(toSVG(currentTask));
     }
 
     public File toImage(FxTask currentTask) {
-        return SvgTools.docToImage(currentTask, this, toSVG(currentTask, true), width, height, viewBox);
+        return SvgTools.docToImage(currentTask, this, toSVG(currentTask), width, height, viewBox);
     }
 
     public File toPDF(FxTask currentTask) {
-        return SvgTools.docToPDF(currentTask, this, toSVG(currentTask, true), width, height, viewBox);
+        return SvgTools.docToPDF(currentTask, this, toSVG(currentTask), width, height, viewBox);
     }
 
 }

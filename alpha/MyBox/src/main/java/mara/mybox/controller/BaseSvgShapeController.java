@@ -107,7 +107,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             shapeStyle = strokeController.pickValues();
 
             initSvgOptions();
-            optionsController.loadDoc(srcDoc, null, srcElement);
+            optionsController.loadExcept(srcDoc, srcElement);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -127,16 +127,8 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
      */
     public void initSvgOptions() {
         try {
-            optionsController.noBgColor();
 
-            optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadBackGround();
-                }
-            });
-
-            optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
+            optionsController.changeNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadBackGround();
@@ -180,6 +172,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
                     imageView.setImage(bgImage);
                     showShape();
                 }
+                imageView.setOpacity(optionsController.bgOpacity);
             }
 
         };
@@ -298,12 +291,12 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             try {
                 strokeController.colorController.setColor(Color.web(node.getAttribute("stroke")));
             } catch (Exception e) {
-                strokeController.widthSelector.setValue("-1");
+                strokeController.colorController.setColor(Color.BLACK);
             }
             try {
                 strokeController.widthSelector.setValue(Float.valueOf(node.getAttribute("stroke-width")) + "");
             } catch (Exception e) {
-                strokeController.widthSelector.setValue("-1");
+                strokeController.widthSelector.setValue("2");
             }
 
             String v = node.getAttribute("stroke-dasharray");
@@ -340,7 +333,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             try {
                 strokeController.fillOpacitySelector.setValue(Float.valueOf(v) + "");
             } catch (Exception e) {
-                strokeController.fillOpacitySelector.setValue("-1");
+                strokeController.fillOpacitySelector.setValue("1");
             }
 
             styleArea.setText(node.getAttribute("style"));
@@ -367,12 +360,13 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
             if (shapeStyle.isIsFillColor()) {
                 shapeElement.setAttribute("fill", shapeStyle.getFilleColorCss());
+                if (shapeStyle.getFillOpacity() >= 0) {
+                    shapeElement.setAttribute("fill-opacity", shapeStyle.getFillOpacity() + "");
+                } else {
+                    shapeElement.removeAttribute("fill-opacity");
+                }
             } else {
                 shapeElement.removeAttribute("fill");
-            }
-            if (shapeStyle.getFillOpacity() >= 0) {
-                shapeElement.setAttribute("fill-opacity", shapeStyle.getFillOpacity() + "");
-            } else {
                 shapeElement.removeAttribute("fill-opacity");
             }
 

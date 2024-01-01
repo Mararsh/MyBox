@@ -43,6 +43,8 @@ public class SvgEditorController extends XmlEditorController {
     protected ControlSvgTree treeController;
     @FXML
     protected ControlSvgHtml htmlController;
+    @FXML
+    protected ControlSvgOptions optionsController;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
@@ -74,10 +76,12 @@ public class SvgEditorController extends XmlEditorController {
         try {
             super.initControls();
 
+            htmlController.setParameters(this);
+
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    htmlController.loadDoc(treeController.doc, null, null);
+                    optionsController.loadFocus(treeController.doc, null);
                 }
             });
 
@@ -89,7 +93,7 @@ public class SvgEditorController extends XmlEditorController {
     @Override
     public void domChanged(boolean changed) {
         super.domChanged(changed);
-        htmlController.loadDoc(treeController.doc, treeController.selectedNode(), null);
+        optionsController.loadFocus(treeController.doc, treeController.selectedNode());
     }
 
     @Override
@@ -272,6 +276,18 @@ public class SvgEditorController extends XmlEditorController {
         try {
             SvgEditorController controller = (SvgEditorController) WindowTools.openStage(Fxmls.SvgEditorFxml);
             controller.sourceFileChanged(file);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static SvgEditorController load(String xml) {
+        try {
+            SvgEditorController controller = (SvgEditorController) WindowTools.openStage(Fxmls.SvgEditorFxml);
+            controller.writePanes(xml);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

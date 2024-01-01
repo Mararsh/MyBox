@@ -88,7 +88,7 @@ public class ControlSvgShape extends ControlShapeOptions {
             this.editor = editor;
             doc = (Document) editor.treeController.doc.cloneNode(true);
             svg = new SVG(doc);
-            optionsController.loadDoc(doc, node, null);
+            optionsController.loadFocus(doc, node);
 
             loadElement(node);
             addListener();
@@ -105,16 +105,8 @@ public class ControlSvgShape extends ControlShapeOptions {
             if (optionsController == null) {
                 return;
             }
-            optionsController.noBgColor();
 
-            optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    showController.loadBackGround();
-                }
-            });
-
-            optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
+            optionsController.changeNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     showController.loadBackGround();

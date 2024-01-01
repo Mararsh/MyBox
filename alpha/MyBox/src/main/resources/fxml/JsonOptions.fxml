@@ -18,25 +18,33 @@ License:    Apache License Version 2.0
          <content>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                <children>
-                    <Label text="%Read" />
-                    <CheckBox fx:id="AllowJavaCommentsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowJavaComments" wrapText="true" />
-                    <CheckBox fx:id="AllowYamlCommentsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowYamlComments" wrapText="true" />
-                    <CheckBox fx:id="AllowSingleQuotesCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowSingleQuotes" wrapText="true" />
-                    <CheckBox fx:id="AllowUnquotedFieldNamesCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowUnquotedFieldNames" wrapText="true" />
-                    <CheckBox fx:id="AllowUnescapedControlCharsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowUnescapedControlChars" wrapText="true" />
-                    <CheckBox fx:id="AllowBackslashEscapingAnyCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowBackslashEscapingAny" wrapText="true" />
-                    <CheckBox fx:id="AllowLeadingZerosForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowLeadingZerosForNumbers" wrapText="true" />
-                    <CheckBox fx:id="AllowLeadingPlusSignForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowLeadingPlusSignForNumbers" wrapText="true" />
-                    <CheckBox fx:id="AllowLeadingDecimalPointForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowLeadingDecimalPointForNumbers" wrapText="true" />
-                    <CheckBox fx:id="AllowTrailingDecimalPointForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowTrailingDecimalPointForNumbers" wrapText="true" />
-                    <CheckBox fx:id="AllowNonNumericNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowNonNumericNumbers" wrapText="true" />
-                    <CheckBox fx:id="AllowMissingValuesCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowMissingValues" wrapText="true" />
-                    <CheckBox fx:id="AllowTrailingCommaCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowTrailingComma" wrapText="true" />
-                    <Label text="%Write" />
-                    <CheckBox fx:id="quoteFieldNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%QuoteFieldNames" wrapText="true" />
-                    <CheckBox fx:id="writeNanAsStringsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%WriteNanAsStrings" wrapText="true" />
-                    <CheckBox fx:id="writeNumbersAsStringsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%WriteNumbersAsStrings" wrapText="true" />
-                    <CheckBox fx:id="escapeNonASCIICheck" minHeight="-Infinity" mnemonicParsing="false" text="%EscapeNonASCII" wrapText="true" />
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                          <Label text="%Read" />
+                          <CheckBox fx:id="AllowJavaCommentsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowJavaComments" wrapText="true" />
+                          <CheckBox fx:id="AllowYamlCommentsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowYamlComments" wrapText="true" />
+                          <CheckBox fx:id="AllowSingleQuotesCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowSingleQuotes" wrapText="true" />
+                          <CheckBox fx:id="AllowUnquotedFieldNamesCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowUnquotedFieldNames" wrapText="true" />
+                          <CheckBox fx:id="AllowUnescapedControlCharsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowUnescapedControlChars" wrapText="true" />
+                          <CheckBox fx:id="AllowBackslashEscapingAnyCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowBackslashEscapingAny" wrapText="true" />
+                          <CheckBox fx:id="AllowLeadingZerosForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowLeadingZerosForNumbers" wrapText="true" />
+                          <CheckBox fx:id="AllowLeadingPlusSignForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowLeadingPlusSignForNumbers" wrapText="true" />
+                          <CheckBox fx:id="AllowLeadingDecimalPointForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowLeadingDecimalPointForNumbers" wrapText="true" />
+                          <CheckBox fx:id="AllowTrailingDecimalPointForNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowTrailingDecimalPointForNumbers" wrapText="true" />
+                          <CheckBox fx:id="AllowNonNumericNumbersCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowNonNumericNumbers" wrapText="true" />
+                          <CheckBox fx:id="AllowMissingValuesCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowMissingValues" wrapText="true" />
+                          <CheckBox fx:id="AllowTrailingCommaCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllowTrailingComma" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="413.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                          <Label text="%Write" />
+                          <CheckBox fx:id="quoteFieldNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%QuoteFieldNames" wrapText="true" />
+                          <CheckBox fx:id="writeNanAsStringsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%WriteNanAsStrings" wrapText="true" />
+                          <CheckBox fx:id="writeNumbersAsStringsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%WriteNumbersAsStrings" wrapText="true" />
+                          <CheckBox fx:id="escapeNonASCIICheck" minHeight="-Infinity" mnemonicParsing="false" text="%EscapeNonASCII" wrapText="true" />
+                     </children>
+                  </VBox>
                </children>
             </VBox>
          </content>

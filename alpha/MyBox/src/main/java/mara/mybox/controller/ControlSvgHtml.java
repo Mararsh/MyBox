@@ -1,11 +1,19 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
@@ -17,45 +25,38 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-7-2
  * @License Apache License Version 2.0
  */
-public class ControlSvgHtml extends ControlSvgOptions {
+public class ControlSvgHtml extends BaseController {
 
+    protected SvgEditorController editor;
+    protected ControlSvgOptions optionsController;
     protected WebEngine webEngine;
     protected String currentXML;
 
     @FXML
     protected WebView webView;
 
-    @Override
-    public void initControls() {
+    public void setParameters(SvgEditorController editor) {
         try {
-            super.initControls();
-
-            webView.setCache(false);
             webEngine = webView.getEngine();
+            webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
+
+            this.editor = editor;
+            optionsController = editor.optionsController;
+            optionsController.changeNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawSVG();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void sizeChanged() {
-        drawSVG();
-    }
-
-    @Override
-    public void bgColorChanged() {
-        drawSVG();
-    }
-
-    @Override
-    public void opacityChanged() {
-        drawSVG();
-    }
-
     public void drawSVG() {
-        if (doc == null) {
+        if (optionsController.doc == null) {
             currentXML = null;
             webEngine.loadContent("");
             return;
@@ -67,7 +68,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
             @Override
             protected boolean handle() {
                 try {
-                    currentXML = toXML(this);
+                    currentXML = optionsController.toXML(this);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -78,10 +79,66 @@ public class ControlSvgHtml extends ControlSvgOptions {
             @Override
             protected void whenSucceeded() {
                 webEngine.loadContent(currentXML);
+                editor.showRightPane();
             }
 
         };
         start(task);
+    }
+
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("Html"), StyleTools.getIconImageView("iconHtml.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                htmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconSVG.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                imageAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            items.add(menu);
+
+            menu = new MenuItem("PDF", StyleTools.getIconImageView("iconPDF.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                pdfAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem("XML", StyleTools.getIconImageView("iconXML.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                xmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SVG"), StyleTools.getIconImageView("iconSVG.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                svgAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Text"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                txtAction();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @FXML
@@ -125,7 +182,10 @@ public class ControlSvgHtml extends ControlSvgOptions {
             protected boolean handle() {
                 try {
                     tmpFile = SvgTools.textToPDF(this,
-                            myController, currentXML, width, height, viewBox);
+                            myController, currentXML,
+                            optionsController.width,
+                            optionsController.height,
+                            optionsController.viewBox);
                     return tmpFile != null && tmpFile.exists();
                 } catch (Exception e) {
                     error = e.toString();
@@ -147,7 +207,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
     }
 
     @FXML
-    public void viewAction() {
+    public void imageAction() {
         if (currentXML == null || currentXML.isBlank()) {
             popError(message("NoData"));
             return;
@@ -162,7 +222,10 @@ public class ControlSvgHtml extends ControlSvgOptions {
             protected boolean handle() {
                 try {
                     tmpFile = SvgTools.textToImage(this,
-                            myController, currentXML, width, height, viewBox);
+                            myController, currentXML,
+                            optionsController.width,
+                            optionsController.height,
+                            optionsController.viewBox);
                     return tmpFile != null && tmpFile.exists();
                 } catch (Exception e) {
                     error = e.toString();
@@ -189,16 +252,25 @@ public class ControlSvgHtml extends ControlSvgOptions {
             popError(message("NoData"));
             return;
         }
-        TextEditorController.edit(currentXML);
+        TextPopController.loadText(currentXML);
     }
 
     @FXML
-    protected void popXml() {
+    protected void xmlAction() {
         if (currentXML == null || currentXML.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        HtmlPopController.showHtml(this, currentXML);
+        XmlEditorController.load(currentXML);
+    }
+
+    @FXML
+    protected void svgAction() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        SvgEditorController.load(currentXML);
     }
 
 }

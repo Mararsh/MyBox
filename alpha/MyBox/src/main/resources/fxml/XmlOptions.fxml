@@ -21,16 +21,24 @@ License:    Apache License Version 2.0
          <content>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                <children>
-                    <Label text="%Read" />
-                    <CheckBox fx:id="ignoreBlankTextCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringText" wrapText="true" />
-                    <CheckBox fx:id="ignoreBlankCDATACheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringCDATA" wrapText="true" />
-                    <CheckBox fx:id="ignoreBlankCommentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringComments" wrapText="true" />
-                    <CheckBox fx:id="ignoreBlankInstructionCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringInstruction" wrapText="true" />
-                    <CheckBox fx:id="ignoreCommentsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreComments" wrapText="true" />
-                    <CheckBox fx:id="dtdValidationCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DTDValidation" wrapText="true" />
-                    <CheckBox fx:id="supportNamespacesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SupportNamespaces" wrapText="true" />
-                    <Label text="%Write" />
-                    <CheckBox fx:id="indentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%TransformerIndent" wrapText="true" />
+                  <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                          <Label text="%Read" />
+                          <CheckBox fx:id="ignoreBlankTextCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringText" wrapText="true" />
+                          <CheckBox fx:id="ignoreBlankCDATACheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringCDATA" wrapText="true" />
+                          <CheckBox fx:id="ignoreBlankCommentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringComments" wrapText="true" />
+                          <CheckBox fx:id="ignoreBlankInstructionCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreBlankStringInstruction" wrapText="true" />
+                          <CheckBox fx:id="ignoreCommentsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreComments" wrapText="true" />
+                          <CheckBox fx:id="dtdValidationCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DTDValidation" wrapText="true" />
+                          <CheckBox fx:id="supportNamespacesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SupportNamespaces" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                          <Label text="%Write" />
+                          <CheckBox fx:id="indentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%TransformerIndent" wrapText="true" />
+                     </children>
+                  </VBox>
                </children>
             </VBox>
          </content>

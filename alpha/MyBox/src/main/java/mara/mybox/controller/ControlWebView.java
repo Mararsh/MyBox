@@ -46,11 +46,11 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
@@ -1114,6 +1114,7 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
+    @Override
     public void popOperationsMenu(Event event) {
         if (UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true)) {
             showOperationsMenu(event);
@@ -1121,6 +1122,7 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
+    @Override
     public void showOperationsMenu(Event event) {
         try {
             List<MenuItem> items = new ArrayList<>();
