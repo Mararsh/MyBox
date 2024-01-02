@@ -71,7 +71,8 @@ public class ImageTextTools {
                         optionsController.getBaseY() - m,
                         optionsController.getTextWidth() + 2 * m,
                         optionsController.getTextHeight() + 2 * m);
-                border.setRound(optionsController.getBordersArc());
+                border.setRoundx(optionsController.getBordersArc());
+                border.setRoundy(optionsController.getBordersArc());
                 Shape shape = border.getShape();
                 if (style == null || (task != null && !task.isWorking())) {
                     return null;

@@ -109,7 +109,13 @@ public class ControlSvgTree extends ControlXmlTree {
         }
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
+        MenuItem menu = new MenuItem(message("StraightLine"), StyleTools.getIconImageView("iconLine.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgLineController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Rectangle"), StyleTools.getIconImageView("iconRectangle.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             SvgRectangleController.drawShape(editorController, treeItem, null);
         });
@@ -118,6 +124,54 @@ public class ControlSvgTree extends ControlXmlTree {
         menu = new MenuItem(message("Circle"), StyleTools.getIconImageView("iconCircle.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             SvgCircleController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Ellipse"), StyleTools.getIconImageView("iconEllipse.png"));
+        menu.setOnAction((ActionEvent event) -> {
+            SvgEllipseController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Polyline"), StyleTools.getIconImageView("iconPolyline.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgPolylineController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Polygon"), StyleTools.getIconImageView("iconStar.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgPolygonController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("ArcCurve"), StyleTools.getIconImageView("iconArc.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgArcController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("QuadraticCurve"), StyleTools.getIconImageView("iconQuadratic.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgQuadraticController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("CubicCurve"), StyleTools.getIconImageView("iconCubic.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgCubicController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Polylines"), StyleTools.getIconImageView("iconPolylines.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgPolylinesController.drawShape(editorController, treeItem, null);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("SVGPath"), StyleTools.getIconImageView("iconSVG.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgPathController.drawShape(editorController, treeItem, null);
         });
         items.add(menu);
 

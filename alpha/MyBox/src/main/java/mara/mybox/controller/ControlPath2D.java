@@ -32,7 +32,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
-    protected ControlShapeOptions optionsOontroller;
     public int Scale;
 
     @FXML
@@ -143,25 +142,13 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         try {
             String s = textArea.getText();
             loadPath(s);
-            if (tableData.isEmpty()) {
-                popError(message("NoData"));
-                return false;
+            if (!tableData.isEmpty()) {
+                TableStringValues.add("SvgPathHistories", s);
             }
-            TableStringValues.add("SvgPathHistories", s);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
-        }
-    }
-
-    @FXML
-    @Override
-    public void goAction() {
-        if (tabPane.getSelectionModel().getSelectedItem() == textsTab) {
-            if (pickValue() && optionsOontroller != null) {
-                optionsOontroller.goShape();
-            }
         }
     }
 
@@ -176,7 +163,6 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         }
         return list;
     }
-
 
     /*
         table

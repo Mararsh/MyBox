@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.Rectangle;
 import java.io.File;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -30,13 +29,12 @@ import org.w3c.dom.Node;
  * @CreateDate 2023-7-2
  * @License Apache License Version 2.0
  */
-public class ControlSvgOptions extends BaseController {
+public class ControlSvgViewOptions extends BaseController {
 
     protected Document doc;
     protected Node focusedNode;
     protected float width, height, bgOpacity;
     protected Rectangle viewBox;
-    protected SimpleBooleanProperty changeNotify;
 
     @FXML
     protected TextField widthInput, heightInput, viewBoxInput;
@@ -70,8 +68,6 @@ public class ControlSvgOptions extends BaseController {
         try {
             super.initControls();
 
-            changeNotify = new SimpleBooleanProperty(false);
-
             bgColorController.init(this, baseName + "BackgroundColor", Color.TRANSPARENT);
 
             bgColorCheck.setSelected(UserConfig.getBoolean(baseName + "ShowBackgroundColor", false));
@@ -95,24 +91,25 @@ public class ControlSvgOptions extends BaseController {
         }
     }
 
-    public void loadExcept(Document srcDoc, Node except) {
-        bgBox.getChildren().remove(colorPane);
-        load(srcDoc, null, except);
+    public void loadExcept(FxTask currentTask, Document srcDoc, Node except) {
+        load(currentTask, srcDoc, null, except);
     }
 
-    public void loadFocus(Document srcDoc, Node focus) {
-        load(srcDoc, focus, null);
+    public void loadFocus(FxTask currentTask, Document srcDoc, Node focus) {
+        load(currentTask, srcDoc, focus, null);
     }
 
-    public void load(Document srcDoc, Node focus, Node except) {
+    public void load(FxTask currentTask, Document srcDoc, Node focus, Node except) {
         try {
             if (srcDoc == null) {
                 doc = null;
-                changeNotify.set(!changeNotify.get());
                 return;
             }
             doc = (Document) srcDoc.cloneNode(true);
             focusedNode = focus;
+            if (currentTask != null && !currentTask.isWorking()) {
+                return;
+            }
             if (except != null) {
                 XmlTools.remove(doc, except);
             }
@@ -152,14 +149,12 @@ public class ControlSvgOptions extends BaseController {
             } else {
                 heightInput.clear();
             }
-            changeNotify.set(!changeNotify.get());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @FXML
-    public void goOptions() {
+    public boolean pickValues() {
         width = -1;
         try {
             float v = Float.parseFloat(widthInput.getText());
@@ -182,7 +177,9 @@ public class ControlSvgOptions extends BaseController {
         if (checkOpacity()) {
             UserConfig.setFloat(baseName + "BackgroundOpacity", bgOpacity);
             UserConfig.setBoolean(baseName + "ShowBackgroundColor", bgColorCheck.isSelected());
-            changeNotify.set(!changeNotify.get());
+            return true;
+        } else {
+            return false;
         }
     }
 

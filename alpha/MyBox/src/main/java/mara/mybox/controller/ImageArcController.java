@@ -17,7 +17,7 @@ public class ImageArcController extends BaseShapeEditController {
     protected ControlArc arcController;
 
     public ImageArcController() {
-        baseTitle = message("Arc");
+        baseTitle = message("ArcCurve");
     }
 
     @Override
@@ -25,7 +25,7 @@ public class ImageArcController extends BaseShapeEditController {
         try {
             super.initMore();
 
-            operation = message("Arc");
+            operation = message("ArcCurve");
 
             arcController.setParameters(this);
 

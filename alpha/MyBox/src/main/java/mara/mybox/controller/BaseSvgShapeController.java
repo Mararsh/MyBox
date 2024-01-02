@@ -58,7 +58,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
     @FXML
     protected ControlStroke strokeController;
     @FXML
-    protected ControlSvgOptions optionsController;
+    protected ControlSvgViewOptions optionsController;
 
     public abstract boolean elementToShape(Element node);
 
@@ -82,6 +82,12 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             Document srcDoc = editor.treeController.doc;
             doc = (Document) srcDoc.cloneNode(true);
             svg = new SVG(doc);
+            srcElement = element;
+            shapeElement = null;
+
+            clearMask();
+            resetShapeOptions();
+            supportPath = true;
 
             initMore();
 
@@ -96,18 +102,34 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             baseTitle = message("SVGEditor") + "-" + info.replaceAll("\n", " - ");
             setTitle(baseTitle);
 
-            clearMaskShapes();
-            anchorCheck.setSelected(true);
-            showAnchors = true;
-            popShapeMenu = true;
-            srcElement = element;
-            shapeElement = null;
+            recoverButton.setVisible(srcElement != null);
 
             strokeController.setParameters(this);
             shapeStyle = strokeController.pickValues();
 
-            initSvgOptions();
-            optionsController.loadExcept(srcDoc, srcElement);
+            optionsController.bgBox.getChildren().remove(optionsController.colorPane);
+            if (task != null) {
+                task.cancel();
+            }
+            task = new FxSingletonTask<Void>(this) {
+                @Override
+                protected boolean handle() {
+                    try {
+                        optionsController.loadExcept(this, srcDoc, srcElement);
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    loadBackGround();
+                }
+
+            };
+            start(task);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -122,22 +144,56 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
         return DoubleTools.imageScale(d) + "";
     }
 
-    /*
-        svg
-     */
-    public void initSvgOptions() {
+    @FXML
+    @Override
+    public void okAction() {
         try {
+            if (editor == null || !editor.isShowing() || treeItem == null) {
+                close();
+                return;
+            }
+            if (shapeElement == null) {
+                popError(message("NoData"));
+                return;
+            }
+            if (srcElement == null) {
+                Node newNode = editor.treeController.doc.importNode(shapeElement, true);
+                treeItem.getValue().getNode().appendChild(newNode);
+                TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
+                treeItem.getChildren().add(newItem);
 
-            optionsController.changeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadBackGround();
+                close();
+                editor.treeController.focusItem(newItem);
+                editor.domChanged(true);
+                editor.popInformation(message("CreatedSuccessfully"));
+            } else {
+                if (treeItem.getParent() == null) {
+                    editor.treeController.loadNode(shapeElement);
+                } else {
+                    treeItem.getParent().getValue().getNode().replaceChild(shapeElement, srcElement);
+                    treeItem.setValue(new XmlTreeNode(shapeElement));
                 }
-            });
+
+                close();
+                editor.treeController.focusItem(treeItem);
+                editor.domChanged(true);
+                editor.popInformation(message("UpdateSuccessfully"));
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    /*
+        view
+     */
+    @FXML
+    public void goView() {
+        if (!optionsController.pickValues()) {
+            return;
+        }
+        loadBackGround();
     }
 
     public void loadBackGround() {
@@ -185,6 +241,16 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
             if (!super.afterImageLoaded()) {
                 return false;
             }
+            return makeSvg();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean makeSvg() {
+        try {
+            clearMask();
             initShape();
             strokeController.setWidthList();
 
@@ -195,9 +261,9 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
                 setShapeInputs();
                 loadXml(shapeElement);
                 showShape();
+
             } else {
                 shapeElement = null;
-                maskCircleData = null;
                 shapeStyle = strokeController.pickValues();
                 showShape();
                 shape2Element();
@@ -210,47 +276,6 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
-        }
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        try {
-            if (editor == null || !editor.isShowing() || treeItem == null) {
-                close();
-                return;
-            }
-            if (shapeElement == null) {
-                popError(message("NoData"));
-                return;
-            }
-            if (srcElement == null) {
-                Node newNode = editor.treeController.doc.importNode(shapeElement, true);
-                treeItem.getValue().getNode().appendChild(newNode);
-                TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
-                treeItem.getChildren().add(newItem);
-
-                close();
-                editor.treeController.focusItem(newItem);
-                editor.domChanged(true);
-                editor.popInformation(message("CreatedSuccessfully"));
-            } else {
-                if (treeItem.getParent() == null) {
-                    editor.treeController.loadNode(shapeElement);
-                } else {
-                    treeItem.getParent().getValue().getNode().replaceChild(shapeElement, srcElement);
-                    treeItem.setValue(new XmlTreeNode(shapeElement));
-                }
-
-                close();
-                editor.treeController.focusItem(treeItem);
-                editor.domChanged(true);
-                editor.popInformation(message("UpdateSuccessfully"));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
         }
     }
 
@@ -278,6 +303,12 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
         setShapeInputs();
         loadXml(shapeElement);
         showShape();
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        makeSvg();
     }
 
     /*
@@ -466,7 +497,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
     @FXML
     @Override
     public void options() {
-        ImageOptionsController.open(this);
+        ImageShapeOptionsController.open(this, false);
     }
 
     /*

@@ -108,12 +108,12 @@ public class ControlStroke extends BaseController {
             vl = new ArrayList<>();
             vl.addAll(Arrays.asList("0.5", "0.3", "0", "1.0", "0.05", "0.02", "0.1",
                     "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"));
-            iv = (int) style.getFillOpacity();
-            if (!vl.contains(iv + "")) {
-                vl.add(0, iv + "");
+            float fv = style.getFillOpacity();
+            if (!vl.contains(fv + "")) {
+                vl.add(0, fv + "");
             }
             fillOpacitySelector.getItems().setAll(vl);
-            fillOpacitySelector.setValue(iv + "");
+            fillOpacitySelector.setValue(fv + "");
 
             if (shapeController instanceof BaseImageEditController) {
                 fillBox.getChildren().remove(fillOpacityPane);
@@ -220,7 +220,7 @@ public class ControlStroke extends BaseController {
         style.setIsFillColor(fillCheck.isSelected());
         style.setFillColor(fillController.color());
 
-        if (fillBox.getChildren().contains(fillOpacityPane)) {
+        if (fillCheck.isSelected()) {
             v = -1;
             try {
                 v = Float.parseFloat(fillOpacitySelector.getValue());

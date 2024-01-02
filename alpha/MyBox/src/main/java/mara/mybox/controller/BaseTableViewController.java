@@ -427,6 +427,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         tableData.remove(tableData.size() - 1);
     }
 
+    public void clear() {
+        tableData.clear();
+    }
+
     @FXML
     public void moveUpAction() {
         List<Integer> selected = new ArrayList<>();

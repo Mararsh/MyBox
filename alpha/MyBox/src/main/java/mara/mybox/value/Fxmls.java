@@ -196,8 +196,6 @@ public class Fxmls {
     public static final String ImageConvolutionBatchFxml = "/fxml/ImageConvolutionBatch.fxml";
 
     public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
-    public static final String SvgAddShapeFxml = "/fxml/SvgAddShape.fxml";
-    public static final String SvgEditShapeFxml = "/fxml/SvgEditShape.fxml";
     public static final String SvgTypesettingFxml = "/fxml/SvgTypesetting.fxml";
     public static final String SvgToImageFxml = "/fxml/SvgToImage.fxml";
     public static final String SvgToPDFFxml = "/fxml/SvgToPDF.fxml";
@@ -205,6 +203,15 @@ public class Fxmls {
     public static final String SvgFromImageBatchFxml = "/fxml/SvgFromImageBatch.fxml";
     public static final String SvgCircleFxml = "/fxml/SvgCircle.fxml";
     public static final String SvgRectangleFxml = "/fxml/SvgRectangle.fxml";
+    public static final String SvgEllipseFxml = "/fxml/SvgEllipse.fxml";
+    public static final String SvgLineFxml = "/fxml/SvgLine.fxml";
+    public static final String SvgPolylineFxml = "/fxml/SvgPolyline.fxml";
+    public static final String SvgPolygonFxml = "/fxml/SvgPolygon.fxml";
+    public static final String SvgQuadraticFxml = "/fxml/SvgQuadratic.fxml";
+    public static final String SvgCubicFxml = "/fxml/SvgCubic.fxml";
+    public static final String SvgArcFxml = "/fxml/SvgArc.fxml";
+    public static final String SvgPolylinesFxml = "/fxml/SvgPolylines.fxml";
+    public static final String SvgPathFxml = "/fxml/SvgPath.fxml";
 
     public static final String PointInputFxml = "/fxml/PointInput.fxml";
     public static final String LineInputFxml = "/fxml/LineInput.fxml";

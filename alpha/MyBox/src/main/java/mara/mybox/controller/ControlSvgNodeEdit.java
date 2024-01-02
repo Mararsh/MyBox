@@ -68,7 +68,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
             focusedNode = treeItem.getValue().getNode();
         } catch (Exception e) {
         }
-        editor.optionsController.loadFocus(editor.treeController.doc, focusedNode);
+        editor.drawSVG(focusedNode);
         shapeOpPane.setVisible(item != null && item.getValue() != null
                 && item.getValue().isSvgShape());
     }

@@ -71,6 +71,9 @@ public class BaseImageEditController extends BaseShapeController {
             getMyWindow().requestFocus();
             myStage.toFront();
 
+            clearMask();
+            resetShapeOptions();
+
             initMore();
 
             loadImage();

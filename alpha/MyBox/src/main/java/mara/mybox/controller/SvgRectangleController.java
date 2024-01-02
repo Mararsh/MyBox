@@ -26,6 +26,10 @@ public class SvgRectangleController extends BaseSvgShapeController {
             shapeName = message("Rectangle");
             rectController.setParameters(this);
 
+            anchorCheck.setSelected(true);
+            showAnchors = true;
+            popShapeMenu = true;
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -34,7 +38,7 @@ public class SvgRectangleController extends BaseSvgShapeController {
     @Override
     public boolean elementToShape(Element node) {
         try {
-            float x, y, w, h;
+            float x, y, w, h, rx = 0, ry = 0;
             try {
                 x = Float.parseFloat(node.getAttribute("x"));
             } catch (Exception e) {
@@ -65,7 +69,17 @@ public class SvgRectangleController extends BaseSvgShapeController {
                 popError(message("InvalidParameter") + ": " + message("Height"));
                 return false;
             }
+            try {
+                rx = Float.parseFloat(node.getAttribute("rx"));
+            } catch (Exception e) {
+            }
+            try {
+                ry = Float.parseFloat(node.getAttribute("ry"));
+            } catch (Exception e) {
+            }
             maskRectangleData = DoubleRectangle.xywh(x, y, w, h);
+            maskRectangleData.setRoundx(rx);
+            maskRectangleData.setRoundy(ry);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -101,6 +115,8 @@ public class SvgRectangleController extends BaseSvgShapeController {
             shapeElement.setAttribute("y", scaleValue(maskRectangleData.getY()));
             shapeElement.setAttribute("width", scaleValue(maskRectangleData.getWidth()));
             shapeElement.setAttribute("height", scaleValue(maskRectangleData.getHeight()));
+            shapeElement.setAttribute("rx", scaleValue(maskRectangleData.getRoundx()));
+            shapeElement.setAttribute("ry", scaleValue(maskRectangleData.getRoundy()));
 
             return true;
 

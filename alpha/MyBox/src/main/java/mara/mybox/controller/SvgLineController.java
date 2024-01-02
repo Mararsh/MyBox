@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import mara.mybox.data.DoubleCircle;
+import mara.mybox.data.DoubleLine;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -15,16 +15,16 @@ import org.w3c.dom.Element;
  * @CreateDate 2023-12-29
  * @License Apache License Version 2.0
  */
-public class SvgCircleController extends BaseSvgShapeController {
+public class SvgLineController extends BaseSvgShapeController {
 
     @FXML
-    protected ControlCircle circleController;
+    protected ControlLine lineController;
 
     @Override
     public void initMore() {
         try {
-            shapeName = message("Circle");
-            circleController.setParameters(this);
+            shapeName = message("StraightLine");
+            lineController.setParameters(this);
 
             anchorCheck.setSelected(true);
             showAnchors = true;
@@ -38,29 +38,32 @@ public class SvgCircleController extends BaseSvgShapeController {
     @Override
     public boolean elementToShape(Element node) {
         try {
-            float x, y, r;
+            float x1, y1, x2, y2;
             try {
-                x = Float.parseFloat(node.getAttribute("cx"));
+                x1 = Float.parseFloat(node.getAttribute("x1"));
             } catch (Exception e) {
-                popError(message("InvalidParameter") + ": x");
+                popError(message("InvalidParameter") + ": x1");
                 return false;
             }
             try {
-                y = Float.parseFloat(node.getAttribute("cy"));
+                y1 = Float.parseFloat(node.getAttribute("y1"));
             } catch (Exception e) {
-                popError(message("InvalidParameter") + ": y");
+                popError(message("InvalidParameter") + ": y1");
                 return false;
             }
             try {
-                r = Float.parseFloat(node.getAttribute("r"));
+                x2 = Float.parseFloat(node.getAttribute("x2"));
             } catch (Exception e) {
-                r = -1f;
-            }
-            if (r <= 0) {
-                popError(message("InvalidParameter") + ": " + message("Radius"));
+                popError(message("InvalidParameter") + ": x2");
                 return false;
             }
-            maskCircleData = new DoubleCircle(x, y, r);
+            try {
+                y2 = Float.parseFloat(node.getAttribute("y2"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y2");
+                return false;
+            }
+            maskLineData = new DoubleLine(x1, y1, x2, y2);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -70,28 +73,28 @@ public class SvgCircleController extends BaseSvgShapeController {
 
     @Override
     public void showShape() {
-        showMaskCircle();
+        showMaskLine();
     }
 
     @Override
     public void setShapeInputs() {
-        circleController.loadValues();
+        lineController.loadValues();
     }
 
     @Override
     public boolean shape2Element() {
         try {
-            if (maskCircleData == null) {
+            if (maskLineData == null) {
                 return false;
             }
             if (shapeElement == null) {
-                shapeElement = doc.createElement("circle");
+                shapeElement = doc.createElement("line");
             }
-            shapeElement.setAttribute("cx", scaleValue(maskCircleData.getCenterX()));
-            shapeElement.setAttribute("cy", scaleValue(maskCircleData.getCenterY()));
-            shapeElement.setAttribute("r", scaleValue(maskCircleData.getRadius()));
+            shapeElement.setAttribute("x1", scaleValue(maskLineData.getStartX()));
+            shapeElement.setAttribute("y1", scaleValue(maskLineData.getStartY()));
+            shapeElement.setAttribute("x2", scaleValue(maskLineData.getEndX()));
+            shapeElement.setAttribute("y2", scaleValue(maskLineData.getEndY()));
             return true;
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -100,21 +103,21 @@ public class SvgCircleController extends BaseSvgShapeController {
 
     @Override
     public boolean pickShape() {
-        return circleController.pickValues();
+        return lineController.pickValues();
     }
 
 
     /*
         static
      */
-    public static SvgCircleController drawShape(SvgEditorController editor,
+    public static SvgLineController drawShape(SvgEditorController editor,
             TreeItem<XmlTreeNode> item, Element element) {
         try {
             if (editor == null || item == null) {
                 return null;
             }
-            SvgCircleController controller = (SvgCircleController) WindowTools.childStage(
-                    editor, Fxmls.SvgCircleFxml);
+            SvgLineController controller = (SvgLineController) WindowTools.childStage(
+                    editor, Fxmls.SvgLineFxml);
             controller.setParameters(editor, item, element);
             return controller;
         } catch (Exception e) {

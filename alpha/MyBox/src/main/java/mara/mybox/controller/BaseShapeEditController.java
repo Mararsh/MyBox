@@ -40,6 +40,8 @@ public class BaseShapeEditController extends BaseImageEditController {
     @Override
     protected void initMore() {
         try {
+            supportPath = true;
+
             if (strokeController != null) {
                 strokeController.setParameters(this);
                 shapeStyle = strokeController.pickValues();
@@ -48,9 +50,6 @@ public class BaseShapeEditController extends BaseImageEditController {
                 blendController.setParameters(this);
                 blender = blendController.pickValues(-1);
             }
-
-            resetShapeOptions();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

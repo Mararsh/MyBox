@@ -15,9 +15,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class DoubleRectangle implements DoubleShape {
 
-    protected double x, y, width, height, round;
+    protected double x, y, width, height, roundx, roundy;
 
     public DoubleRectangle() {
+        roundx = 0;
+        roundy = 0;
     }
 
     public static DoubleRectangle xywh(double x, double y, double width, double height) {
@@ -81,8 +83,8 @@ public class DoubleRectangle implements DoubleShape {
 
     @Override
     public Shape getShape() {
-        if (round > 0) {
-            return new RoundRectangle2D.Double(x, y, width, height, round, round);
+        if (roundx > 0 || roundy > 0) {
+            return new RoundRectangle2D.Double(x, y, width, height, roundx, roundy);
         } else {
             return new Rectangle2D.Double(x, y, width, height);
         }
@@ -90,7 +92,10 @@ public class DoubleRectangle implements DoubleShape {
 
     @Override
     public DoubleRectangle copy() {
-        return DoubleRectangle.xywh(x, y, width, height);
+        DoubleRectangle rect = DoubleRectangle.xywh(x, y, width, height);
+        rect.setRoundx(roundx);
+        rect.setRoundy(roundy);
+        return rect;
     }
 
     @Override
@@ -104,7 +109,11 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public boolean contains(double px, double py) {
-        return px >= x && px < x + width && py >= y && py < y + height;
+        if (roundx > 0 || roundy > 0) {
+            return DoubleShape.contains(this, px, py);
+        } else {
+            return px >= x && px < x + width && py >= y && py < y + height;
+        }
     }
 
     @Override
@@ -228,12 +237,20 @@ public class DoubleRectangle implements DoubleShape {
         this.y = y;
     }
 
-    public double getRound() {
-        return round;
+    public double getRoundx() {
+        return roundx;
     }
 
-    public void setRound(double round) {
-        this.round = round;
+    public void setRoundx(double roundx) {
+        this.roundx = roundx;
+    }
+
+    public double getRoundy() {
+        return roundy;
+    }
+
+    public void setRoundy(double roundy) {
+        this.roundy = roundy;
     }
 
 }

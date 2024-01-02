@@ -55,7 +55,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     @FXML
     protected CheckBox wrapTextsCheck;
     @FXML
-    protected Button backupButton;
+    protected Button backupButton, txtButton;
 
     public abstract String makeBlank();
 
@@ -603,23 +603,19 @@ public abstract class BaseDomEditorController extends BaseFileController {
             TextClipboardPopController.closeAll();
 
             Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
-            if (currentTab == domTab) {
+            if (currentTab == domTab || currentTab == textsTab) {
                 menuButton.setDisable(false);
                 synchronizeButton.setDisable(false);
                 saveButton.setDisable(false);
                 clearButton.setDisable(false);
-
-            } else if (currentTab == textsTab) {
-                menuButton.setDisable(false);
-                synchronizeButton.setDisable(false);
-                saveButton.setDisable(false);
-                clearButton.setDisable(false);
+                txtButton.setDisable(false);
 
             } else {
                 menuButton.setDisable(true);
                 synchronizeButton.setDisable(true);
                 saveButton.setDisable(true);
                 clearButton.setDisable(true);
+                txtButton.setDisable(true);
 
             }
 

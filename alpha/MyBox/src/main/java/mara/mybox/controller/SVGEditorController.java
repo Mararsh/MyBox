@@ -18,6 +18,7 @@ import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -44,7 +45,7 @@ public class SvgEditorController extends XmlEditorController {
     @FXML
     protected ControlSvgHtml htmlController;
     @FXML
-    protected ControlSvgOptions optionsController;
+    protected ControlSvgViewOptions optionsController;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
@@ -81,7 +82,7 @@ public class SvgEditorController extends XmlEditorController {
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    optionsController.loadFocus(treeController.doc, null);
+                    drawSVG();
                 }
             });
 
@@ -90,10 +91,41 @@ public class SvgEditorController extends XmlEditorController {
         }
     }
 
+    public void drawSVG() {
+        drawSVG(treeController.selectedNode());
+    }
+
+    public void drawSVG(Node focusNode) {
+
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                try {
+                    optionsController.loadFocus(this, treeController.doc, focusNode);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                htmlController.drawSVG();
+            }
+
+        };
+        start(task);
+
+    }
+
     @Override
     public void domChanged(boolean changed) {
         super.domChanged(changed);
-        optionsController.loadFocus(treeController.doc, treeController.selectedNode());
+        drawSVG();
     }
 
     @Override
@@ -122,19 +154,27 @@ public class SvgEditorController extends XmlEditorController {
             } else if ("circle".equalsIgnoreCase(tag)) {
                 SvgCircleController.drawShape(this, treeItem, element);
             } else if ("ellipse".equalsIgnoreCase(tag)) {
-                SvgCircleController.drawShape(this, treeItem, element);
+                SvgEllipseController.drawShape(this, treeItem, element);
             } else if ("line".equalsIgnoreCase(tag)) {
-                SvgCircleController.drawShape(this, treeItem, element);
+                SvgLineController.drawShape(this, treeItem, element);
             } else if ("polyline".equalsIgnoreCase(tag)) {
-                SvgCircleController.drawShape(this, treeItem, element);
+                SvgPolylineController.drawShape(this, treeItem, element);
             } else if ("polygon".equalsIgnoreCase(tag)) {
-                SvgCircleController.drawShape(this, treeItem, element);
+                SvgPolygonController.drawShape(this, treeItem, element);
             } else if ("path".equalsIgnoreCase(tag)) {
-                SvgCircleController.drawShape(this, treeItem, element);
+                SvgPathController.drawShape(this, treeItem, element);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    @FXML
+    public void goView() {
+        if (!optionsController.pickValues()) {
+            return;
+        }
+        drawSVG();
     }
 
     @FXML

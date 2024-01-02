@@ -224,9 +224,9 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#ImageToSvg" text="%ImageToSvg" /> 
                                     </items>
                                 </Menu>
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />
-                                <MenuItem mnemonicParsing="false" onAction="#ImageScope" text="%ImageScope" />
+                                <!--<SeparatorMenuItem mnemonicParsing="false" />-->
+                                <!--                                <MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />
+                                <MenuItem mnemonicParsing="false" onAction="#ImageScope" text="%ImageScope" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />

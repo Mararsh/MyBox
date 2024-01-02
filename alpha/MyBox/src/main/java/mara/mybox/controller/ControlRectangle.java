@@ -22,7 +22,7 @@ public class ControlRectangle extends BaseController {
     @FXML
     protected TextField rectXInput, rectYInput, rectWidthInput, rectHeightInput;
     @FXML
-    protected ComboBox<String> roundSizeSelector;
+    protected ComboBox<String> roundWidthSelector, roundHeightSelector;
 
     protected void setParameters(BaseShapeController parent) {
         try {
@@ -45,6 +45,8 @@ public class ControlRectangle extends BaseController {
             rectYInput.setText(shapeController.scale(shapeController.maskRectangleData.getY()) + "");
             rectWidthInput.setText(shapeController.scale(shapeController.maskRectangleData.getWidth()) + "");
             rectHeightInput.setText(shapeController.scale(shapeController.maskRectangleData.getHeight()) + "");
+            roundWidthSelector.setValue(shapeController.scale(shapeController.maskRectangleData.getRoundx()) + "");
+            roundHeightSelector.setValue(shapeController.scale(shapeController.maskRectangleData.getRoundy()) + "");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -54,14 +56,15 @@ public class ControlRectangle extends BaseController {
         if (shapeController == null) {
             return;
         }
-        float round = 0;
+        float roundx = 0;
         try {
-            round = Float.parseFloat(roundSizeSelector.getValue());
+            roundx = Float.parseFloat(roundWidthSelector.getValue());
         } catch (Exception e) {
         }
-        if (round < 0) {
-            round = 0;
+        if (roundx < 0) {
+            roundx = 0;
         }
+
         List<String> ws = new ArrayList<>();
         ws.addAll(Arrays.asList("0", "2", "5", "10", "15", "30", "40", "50"));
         int max = (int) (shapeController.image.getWidth() / 4);
@@ -71,13 +74,30 @@ public class ControlRectangle extends BaseController {
                 ws.add(0, w + "");
             }
         }
-        roundSizeSelector.getItems().setAll(ws);
-        roundSizeSelector.setValue(round + "");
+        if (!ws.contains(roundx + "")) {
+            ws.add(0, roundx + "");
+        }
+        roundWidthSelector.getItems().setAll(ws);
+        roundWidthSelector.setValue(roundx + "");
+
+        float roundy = 0;
+        try {
+            roundy = Float.parseFloat(roundHeightSelector.getValue());
+        } catch (Exception e) {
+        }
+        if (roundy < 0) {
+            roundy = 0;
+        }
+        if (!ws.contains(roundy + "")) {
+            ws.add(0, roundy + "");
+        }
+        roundHeightSelector.getItems().setAll(ws);
+        roundHeightSelector.setValue(roundx + "");
     }
 
     public boolean pickValues() {
         try {
-            float x, y, w, h, round;
+            float x, y, w, h, roundx, roundy;
             try {
                 x = Float.parseFloat(rectXInput.getText());
             } catch (Exception e) {
@@ -109,15 +129,24 @@ public class ControlRectangle extends BaseController {
                 return false;
             }
             try {
-                round = Float.parseFloat(roundSizeSelector.getValue());
+                roundx = Float.parseFloat(roundWidthSelector.getValue());
             } catch (Exception e) {
-                round = 0;
+                roundx = 0;
             }
-            if (round < 0) {
-                round = 0;
+            if (roundx < 0) {
+                roundx = 0;
+            }
+            try {
+                roundy = Float.parseFloat(roundHeightSelector.getValue());
+            } catch (Exception e) {
+                roundy = 0;
+            }
+            if (roundy < 0) {
+                roundy = 0;
             }
             shapeController.maskRectangleData = DoubleRectangle.xywh(x, y, w, h);
-            shapeController.maskRectangleData.setRound(round);
+            shapeController.maskRectangleData.setRoundx(roundx);
+            shapeController.maskRectangleData.setRoundy(roundy);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

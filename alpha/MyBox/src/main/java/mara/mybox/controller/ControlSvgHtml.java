@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -28,7 +26,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlSvgHtml extends BaseController {
 
     protected SvgEditorController editor;
-    protected ControlSvgOptions optionsController;
+    protected ControlSvgViewOptions optionsController;
     protected WebEngine webEngine;
     protected String currentXML;
 
@@ -43,12 +41,6 @@ public class ControlSvgHtml extends BaseController {
 
             this.editor = editor;
             optionsController = editor.optionsController;
-            optionsController.changeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    drawSVG();
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -83,7 +75,7 @@ public class ControlSvgHtml extends BaseController {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     @Override
@@ -98,7 +90,7 @@ public class ControlSvgHtml extends BaseController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconSVG.png"));
+            menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconView.png"));
             menu.setOnAction((ActionEvent event) -> {
                 imageAction();
             });
@@ -122,7 +114,7 @@ public class ControlSvgHtml extends BaseController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("SVG"), StyleTools.getIconImageView("iconSVG.png"));
+            menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
             menu.setOnAction((ActionEvent event) -> {
                 svgAction();
             });

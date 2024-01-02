@@ -98,10 +98,6 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         tableData.remove(index);
     }
 
-    public void clear() {
-        tableData.clear();
-    }
-
     public List<DoublePoint> getPoints() {
         List<DoublePoint> list = new ArrayList<>();
         for (DoublePoint p : tableData) {
