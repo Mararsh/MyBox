@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.bufferedimage.ImageFileInformation;
@@ -67,6 +68,7 @@ public class ImageInformationController extends HtmlTableController {
             ImageFileInformation finfo = info.getImageFileInformation();
             StringBuilder s = new StringBuilder();
             s.append(makeFileInfoTable(finfo)).append("\n</br></br>\n");
+            s.append(makeInfoTable(info)).append("\n</br></br>\n");
             for (int i = 0; i < finfo.getImagesInformation().size(); ++i) {
                 ImageInformation iInfo = finfo.getImagesInformation().get(i);
                 if (iInfo.getIccProfile() != null) {
@@ -89,9 +91,6 @@ public class ImageInformationController extends HtmlTableController {
     }
 
     protected String makeFileInfoTable(ImageFileInformation finfo) {
-//        List<String> names = new ArrayList<>();
-//        names.addAll(Arrays.asList(message("Name"), message("Value")
-//        ));
         table = new StringTable(null, message("ImageFileInformation"));
         File file = finfo.getFile();
         table.add(Arrays.asList(message("FilesPath"), file.getParent()));
@@ -104,11 +103,29 @@ public class ImageInformationController extends HtmlTableController {
         return StringTable.tableDiv(table);
     }
 
+    protected String makeInfoTable(ImageInformation info) {
+        table = new StringTable(null, message("CurrentImage"));
+        table.add(Arrays.asList(message("CurrentFrame"), (info.getIndex() + 1) + ""));
+        table.add(Arrays.asList(message("Pixels"), (int) info.getWidth() + "x" + (int) info.getHeight()));
+        Image image = info.getThumbnail();
+        if (image == null) {
+            image = info.getImage();
+        }
+        if (image != null) {
+            table.add(Arrays.asList(message("LoadedSize"), (int) image.getWidth() + "x" + (int) image.getHeight()));
+        }
+        if (info.isIsScaled()) {
+            table.add(Arrays.asList(message("Scaled"), "scaleX: " + info.getXscale() + " scaleY:" + info.getYscale()));
+        }
+        if (info.isIsSampled()) {
+            table.add(Arrays.asList(message("Sample"),
+                    info.sampleInformation(null, image).replaceAll("\n", "<br>")));
+        }
+        return StringTable.tableDiv(table);
+    }
+
     public String makeImageInformationTable(int index, ImageInformation imageInfo) {
         try {
-//            List<String> names = new ArrayList<>();
-//            names.addAll(Arrays.asList(message("Name"), message("Value")
-//            ));
             table = new StringTable(null, message("Image") + " " + (index + 1));
             loadStandardInformation(table, imageInfo);
             switch (imageInfo.getImageFormat()) {
@@ -379,25 +396,12 @@ public class ImageInformationController extends HtmlTableController {
     /*
         static
      */
-    public static ImageInformationController open() {
-        try {
-            ImageInformationController controller = (ImageInformationController) WindowTools.openStage(Fxmls.ImageInformationFxml);
-            if (controller != null) {
-                controller.requestMouse();
-            }
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public static ImageInformationController open(ImageInformation info) {
         try {
             if (info == null) {
                 return null;
             }
-            ImageInformationController controller = open();
+            ImageInformationController controller = (ImageInformationController) WindowTools.openStage(Fxmls.ImageInformationFxml);
             if (controller != null) {
                 controller.loadImageFileInformation(info);
             }

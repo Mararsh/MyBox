@@ -33,6 +33,8 @@ public class ImageTooLargeController extends BaseController {
         }
         this.parent = parent;
         this.imageInfo = imageInfo;
+        imageInfo.setXscale(imageInfo.getSampleScale());
+        imageInfo.setYscale(imageInfo.getSampleScale());
         infoLabel.setText(imageInfo.sampleInformation(null, null));
     }
 

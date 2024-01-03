@@ -11,7 +11,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageLineController extends BaseShapeEditController {
+public class ImageLineController extends BaseImageShapeController {
 
     @FXML
     protected ControlLine lineController;

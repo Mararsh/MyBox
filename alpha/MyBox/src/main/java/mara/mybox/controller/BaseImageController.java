@@ -35,8 +35,8 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  *
  * BaseImageController < BaseImageController_Actions < BaseImageController_Image
- * < BaseImageController_MouseEvents < BaseImageController_Shapes <
- * BaseImageController_Mask < BaseImageController_ImageView
+ * < BaseImageController_MouseEvents < BaseImageController_Mask <
+ * BaseImageController_ImageView
  */
 public class BaseImageController extends BaseImageController_Actions {
 

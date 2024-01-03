@@ -158,7 +158,15 @@ public class ShapePathSegmentEditController extends BaseInputController {
     }
 
     public void checkCoord() {
-        if (isSettingValues || segment == null) {
+        if (isSettingValues) {
+            return;
+        }
+        if (segment == null) {
+            if (hlineRadio.isSelected()) {
+                endYInput.setText(startY + "");
+            } else if (vlineRadio.isSelected()) {
+                endXInput.setText(startX + "");
+            }
             return;
         }
         DoublePoint p;

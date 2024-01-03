@@ -414,6 +414,28 @@ public interface DoubleShape {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
+        }
+
+        items.addAll(svgInfoMenu(shapeData));
+
+        items.add(new SeparatorMenuItem());
+
+        return items;
+
+    }
+
+    public static List<MenuItem> svgInfoMenu(DoubleShape shapeData) {
+        if (shapeData == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+
+        if (shapeData instanceof DoublePath) {
+            DoublePath pathData = (DoublePath) shapeData;
+
             menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -485,8 +507,6 @@ public interface DoubleShape {
             items.add(menu);
 
         }
-
-        items.add(new SeparatorMenuItem());
 
         return items;
 

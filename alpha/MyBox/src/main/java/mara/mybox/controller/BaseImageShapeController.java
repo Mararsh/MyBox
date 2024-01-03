@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsBlend;
+import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ColorDemos;
@@ -19,7 +20,7 @@ import mara.mybox.fxml.FxTask;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class BaseShapeEditController extends BaseImageEditController {
+public class BaseImageShapeController extends BaseImageEditController {
 
     protected DoubleShape shapeData;
     protected PixelsBlend blender;
@@ -33,15 +34,13 @@ public class BaseShapeEditController extends BaseImageEditController {
     @FXML
     protected Button shapeButton;
 
-    public BaseShapeEditController() {
+    public BaseImageShapeController() {
         TipsLabelKey = "ShapeEditTips";
     }
 
     @Override
     protected void initMore() {
         try {
-            supportPath = true;
-
             if (strokeController != null) {
                 strokeController.setParameters(this);
                 shapeStyle = strokeController.pickValues();
@@ -186,6 +185,11 @@ public class BaseShapeEditController extends BaseImageEditController {
     @Override
     public void options() {
         ImageShapeOptionsController.open(this, false);
+    }
+
+    @Override
+    public void popSvgPath(DoublePath pathData) {
+        ImageSVGPathController.loadPath(imageController, pathData);
     }
 
     @FXML

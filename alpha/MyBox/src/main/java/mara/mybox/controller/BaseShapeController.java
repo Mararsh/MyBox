@@ -54,7 +54,6 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
             anchorShape = AnchorShape.Rectangle;
         }
         popShapeMenu = true;
-        supportPath = false;
         maskControlDragged = false;
     }
 

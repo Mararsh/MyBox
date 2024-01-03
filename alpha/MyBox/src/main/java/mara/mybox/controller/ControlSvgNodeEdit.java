@@ -178,15 +178,6 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         shape
      */
     @FXML
-    public void drawShape() {
-        if (treeItem == null) {
-            popInformation(message("SelectToHandle"));
-            return;
-        }
-        editor.drawShape(treeItem);
-    }
-
-    @FXML
     public void popShapeMenu(Event event) {
         if (UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", true)) {
             showShapeMenu(event);

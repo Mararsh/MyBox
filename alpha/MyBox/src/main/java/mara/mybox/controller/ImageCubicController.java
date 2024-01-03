@@ -11,7 +11,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageCubicController extends BaseShapeEditController {
+public class ImageCubicController extends BaseImageShapeController {
 
     @FXML
     protected ControlCubic cubicController;

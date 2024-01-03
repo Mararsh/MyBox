@@ -37,15 +37,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="drawButton" mnemonicParsing="false" onAction="#drawShape">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconDraw.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
                     </children>
                 </FlowPane>
                 <Label fx:id="infoLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />

@@ -17,6 +17,8 @@ import org.w3c.dom.Element;
  */
 public class SvgPathController extends BaseSvgShapeController {
 
+    protected DoublePath initData;
+
     @FXML
     protected ControlPath2D pathController;
 
@@ -31,6 +33,27 @@ public class SvgPathController extends BaseSvgShapeController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void setInitData(DoublePath initData) {
+        this.initData = initData;
+    }
+
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
+            if (initData != null) {
+                loadSvgPath(initData);
+                initData = null;
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -126,6 +149,23 @@ public class SvgPathController extends BaseSvgShapeController {
             SvgPathController controller = (SvgPathController) WindowTools.childStage(
                     editor, Fxmls.SvgPathFxml);
             controller.setParameters(editor, item, element);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static SvgPathController loadPath(SvgEditorController editor,
+            TreeItem<XmlTreeNode> item, DoublePath pathData) {
+        try {
+            if (editor == null || item == null) {
+                return null;
+            }
+            SvgPathController controller = (SvgPathController) WindowTools.childStage(
+                    editor, Fxmls.SvgPathFxml);
+            controller.setInitData(pathData);
+            controller.setParameters(editor, item, null);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

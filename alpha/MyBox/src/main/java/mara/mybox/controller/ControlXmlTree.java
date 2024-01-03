@@ -265,6 +265,11 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             items.add(menu);
         }
 
+        List<MenuItem> more = viewMoreItems(treeItem);
+        if (more != null && !more.isEmpty()) {
+            items.addAll(more);
+        }
+
         items.add(new SeparatorMenuItem());
 
         if (xml != null && !xml.isBlank()) {
@@ -310,6 +315,10 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         items.add(menu);
 
         return items;
+    }
+
+    public List<MenuItem> viewMoreItems(TreeItem<XmlTreeNode> treeItem) {
+        return null;
     }
 
     @Override

@@ -84,7 +84,6 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
         try {
             tableColor = new TableColor();
             popShapeMenu = true;
-            supportPath = false;
             shapeStyle = null;
             needFixSize = true;
             showNotify = new SimpleBooleanProperty(false);

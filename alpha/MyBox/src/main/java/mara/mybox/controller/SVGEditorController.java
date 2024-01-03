@@ -13,8 +13,6 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TreeItem;
-import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -26,11 +24,9 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
-import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -96,15 +92,21 @@ public class SvgEditorController extends XmlEditorController {
     }
 
     public void drawSVG(Node focusNode) {
-
-        if (task != null) {
-            task.cancel();
+        if (optionsController.doc == null) {
+            htmlController.drawSVG("");
+            return;
         }
-        task = new FxSingletonTask<Void>(this) {
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
+        }
+        backgroundTask = new FxSingletonTask<Void>(this) {
+            String svg;
+
             @Override
             protected boolean handle() {
                 try {
                     optionsController.loadFocus(this, treeController.doc, focusNode);
+                    svg = optionsController.toXML(this);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -114,12 +116,11 @@ public class SvgEditorController extends XmlEditorController {
 
             @Override
             protected void whenSucceeded() {
-                htmlController.drawSVG();
+                htmlController.drawSVG(svg);
             }
 
         };
-        start(task);
-
+        start(backgroundTask, false);
     }
 
     @Override
@@ -136,37 +137,6 @@ public class SvgEditorController extends XmlEditorController {
     @Override
     public void openSavedFile(File file) {
         SvgEditorController.open(file);
-    }
-
-    public void drawShape(TreeItem<XmlTreeNode> treeItem) {
-        try {
-            Node node = treeItem.getValue().getNode();
-            if (node == null) {
-                return;
-            }
-            if (XmlTools.type(node) != XmlTreeNode.NodeType.Element) {
-                return;
-            }
-            Element element = (Element) node;
-            String tag = element.getNodeName();
-            if ("rect".equalsIgnoreCase(tag)) {
-                SvgRectangleController.drawShape(this, treeItem, element);
-            } else if ("circle".equalsIgnoreCase(tag)) {
-                SvgCircleController.drawShape(this, treeItem, element);
-            } else if ("ellipse".equalsIgnoreCase(tag)) {
-                SvgEllipseController.drawShape(this, treeItem, element);
-            } else if ("line".equalsIgnoreCase(tag)) {
-                SvgLineController.drawShape(this, treeItem, element);
-            } else if ("polyline".equalsIgnoreCase(tag)) {
-                SvgPolylineController.drawShape(this, treeItem, element);
-            } else if ("polygon".equalsIgnoreCase(tag)) {
-                SvgPolygonController.drawShape(this, treeItem, element);
-            } else if ("path".equalsIgnoreCase(tag)) {
-                SvgPathController.drawShape(this, treeItem, element);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     @FXML

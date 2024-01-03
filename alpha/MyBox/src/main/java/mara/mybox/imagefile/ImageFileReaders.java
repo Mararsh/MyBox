@@ -26,10 +26,10 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.color.ColorBase;
-import mara.mybox.controller.LoadingController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.ImageHints;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.NamedNodeMap;
@@ -105,16 +105,25 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFrame(FxTask task, ImageInformation imageInfo) {
-        if (imageInfo == null || imageInfo.getFile() == null) {
+        if (imageInfo == null) {
+            return null;
+        }
+        File file = imageInfo.getFile();
+        if (file == null) {
             return null;
         }
         String format = imageInfo.getImageFormat();
+        if (task != null) {
+            task.setInfo(message("File") + ": " + file);
+            task.setInfo(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
+            task.setInfo(message("Format") + ": " + format);
+        }
         if ("ico".equals(format) || "icon".equals(format)) {
             return readIcon(task, imageInfo);
         }
         BufferedImage bufferedImage = null;
         try (ImageInputStream iis = ImageIO.createImageInputStream(
-                new BufferedInputStream(new FileInputStream(imageInfo.getFile())))) {
+                new BufferedInputStream(new FileInputStream(file)))) {
             ImageReader reader = getReader(iis, format);
             if (reader == null) {
                 return null;
@@ -140,20 +149,33 @@ public class ImageFileReaders {
             Rectangle region = imageInfo.getIntRegion();
             if (region != null) {
                 param.setSourceRegion(region);
+                if (task != null) {
+                    task.setInfo(message("Region") + ": " + region.toString());
+                }
             }
             int xscale = imageInfo.getXscale();
             int yscale = imageInfo.getYscale();
             if (xscale != 1 || yscale != 1) {
                 param.setSourceSubsampling(xscale, yscale, 0, 0);
+                if (task != null) {
+                    task.setInfo(message("Scale") + ": " + " xscale=" + xscale + " yscale= " + yscale);
+                }
             } else {
                 ImageInformation.checkMem(task, imageInfo);
                 int sampleScale = imageInfo.getSampleScale();
                 if (sampleScale > 1) {
-                    param.setSourceSubsampling(sampleScale, sampleScale, 0, 0);
+                    if (task != null) {
+                        task.setInfo("sampleScale: " + sampleScale);
+                    }
+//                    param.setSourceSubsampling(sampleScale, sampleScale, 0, 0);
+                    return null;
                 }
             }
             BufferedImage bufferedImage;
             try {
+                if (task != null) {
+                    task.setInfo(message("Reading") + ": " + message("Frame") + " " + imageInfo.getIndex());
+                }
                 bufferedImage = reader.read(imageInfo.getIndex(), param);
                 if (bufferedImage == null) {
                     return null;
@@ -164,12 +186,18 @@ public class ImageFileReaders {
                 imageInfo.setImageType(bufferedImage.getType());
                 int requiredWidth = (int) imageInfo.getRequiredWidth();
                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
+                    if (task != null) {
+                        task.setInfo(message("Scale") + ": " + message("Width") + " " + requiredWidth);
+                    }
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
                 } else if (ImageHints != null) {
                     bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, ImageHints);
                 }
                 return bufferedImage;
             } catch (Exception e) {
+                if (task != null) {
+                    task.setInfo(message("Error") + ": " + e.toString());
+                }
                 return readBrokenImage(task, e, imageInfo);
             }
         } catch (Exception e) {
@@ -194,7 +222,14 @@ public class ImageFileReaders {
             File file = readInfo.getFile();
             int index = readInfo.getIndex();
             int requiredWidth = (int) readInfo.getRequiredWidth();
-            LoadingController loading = task != null ? task.getLoading() : null;
+            if (task != null) {
+                task.setInfo(message("File") + ": " + file);
+                task.setInfo(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
+                task.setInfo(message("Frame") + ": " + index);
+                if (requiredWidth > 0) {
+                    task.setInfo(message("LoadWidth") + ": " + requiredWidth);
+                }
+            }
             String format = readInfo.getImageFormat();
             if ("ico".equals(format) || "icon".equals(format)) {
                 if (fileInfo == null) {
@@ -207,10 +242,20 @@ public class ImageFileReaders {
                 if (fileInfo.getImagesInformation() == null) {
                     return null;
                 }
-                int size = fileInfo.getImagesInformation().size();
-                if (size > 0 && index < size) {
+                int framesNumber = fileInfo.getImagesInformation().size();
+                if (task != null) {
+                    task.setInfo(message("FramesNumber") + ": " + framesNumber);
+                }
+                if (framesNumber > 0 && index < framesNumber) {
                     imageInfo = fileInfo.getImagesInformation().get(index);
+                    if (task != null) {
+                        task.setInfo(message("Pixels") + ": " + (int) imageInfo.getWidth() + "x" + (int) imageInfo.getHeight());
+                    }
                     if (!onlyInformation) {
+                        if (task != null) {
+                            task.setInfo(message("Reading") + ": " + message("Frame")
+                                    + " " + index + "/" + framesNumber);
+                        }
                         imageInfo.setRequiredWidth(requiredWidth);
                         BufferedImage bufferedImage = readIcon(task, imageInfo);
                         if (task != null && !task.isWorking()) {
@@ -225,8 +270,8 @@ public class ImageFileReaders {
                     if (reader != null) {
                         reader.setInput(iis, false, false);
                         fileInfo = new ImageFileInformation(file);
-                        if (loading != null) {
-                            loading.setInfo(message("Reading") + ": " + message("MetaData"));
+                        if (task != null) {
+                            task.setInfo(message("Reading") + ": " + message("MetaData"));
                         }
                         ImageFileReaders.readImageFileMetaData(task, reader, fileInfo);
                         if (task != null && !task.isWorking()) {
@@ -235,12 +280,19 @@ public class ImageFileReaders {
                         if (fileInfo.getImagesInformation() == null) {
                             return null;
                         }
-                        int size = fileInfo.getImagesInformation().size();
-                        if (size > 0 && index < size) {
+                        int framesNumber = fileInfo.getImagesInformation().size();
+                        if (task != null) {
+                            task.setInfo(message("FramesNumber") + ": " + framesNumber);
+                        }
+                        if (framesNumber > 0 && index < framesNumber) {
                             imageInfo = fileInfo.getImagesInformation().get(index);
+                            if (task != null) {
+                                task.setInfo(message("Pixels") + ": " + (int) imageInfo.getWidth() + "x" + (int) imageInfo.getHeight());
+                            }
                             if (!onlyInformation) {
-                                if (loading != null) {
-                                    loading.setInfo(message("Reading") + ": Image " + index + " / " + size);
+                                if (task != null) {
+                                    task.setInfo(message("Reading") + ": " + message("Frame")
+                                            + " " + index + "/" + framesNumber);
                                 }
                                 imageInfo.setRequiredWidth(requiredWidth);
                                 BufferedImage bufferedImage = readFrame(task, reader, imageInfo);
@@ -251,6 +303,10 @@ public class ImageFileReaders {
                             }
                         }
                         reader.dispose();
+                    } else {
+                        if (task != null) {
+                            task.setError("Fail to get reader");
+                        }
                     }
                 } catch (Exception e) {
                     if (task != null) {

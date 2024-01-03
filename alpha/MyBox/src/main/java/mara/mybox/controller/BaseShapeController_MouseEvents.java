@@ -14,6 +14,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.getBound;
@@ -497,25 +498,23 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
         });
         scaleMenu.getItems().add(menu);
 
-        if (supportPath) {
-            menu = new MenuItem(message("RotateShape"), StyleTools.getIconImageView("iconRotateRight.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    ShapeRotateInputController.open((BaseShapeController) myController, shapeData, p);
-                }
-            });
-            items.add(menu);
+        menu = new MenuItem(message("RotateShape"), StyleTools.getIconImageView("iconRotateRight.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                ShapeRotateInputController.open((BaseShapeController) myController, shapeData, p);
+            }
+        });
+        items.add(menu);
 
-            menu = new MenuItem(message("ShearShape"), StyleTools.getIconImageView("iconShear.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent mevent) {
-                    ShapeShearInputController.open((BaseShapeController) myController, shapeData);
-                }
-            });
-            items.add(menu);
-        }
+        menu = new MenuItem(message("ShearShape"), StyleTools.getIconImageView("iconShear.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent mevent) {
+                ShapeShearInputController.open((BaseShapeController) myController, shapeData);
+            }
+        });
+        items.add(menu);
 
         items.add(new SeparatorMenuItem());
 
@@ -595,6 +594,25 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
 
     public void translateShape() {
         maskShapeDataChanged();
+    }
+
+    public void handleSvgPath(DoublePath pathData) {
+        if (isMaskPathShown()) {
+            loadSvgPath(pathData);
+        } else {
+            popSvgPath(pathData);
+        }
+    }
+
+    public void loadSvgPath(DoublePath pathData) {
+        clearMask();
+        maskPathData = pathData;
+        showMaskPath();
+        maskShapeDataChanged();
+    }
+
+    public void popSvgPath(DoublePath pathData) {
+        TextPopController.loadText(pathData.pathAbs());
     }
 
     @FXML

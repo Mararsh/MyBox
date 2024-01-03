@@ -21,7 +21,6 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.ImageHints;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -215,11 +214,13 @@ public class ImageInformation extends ImageFileInformation {
             sampledWidth = (int) maxWidth;
             sampledHeight = (int) (maxWidth * height / width);
         }
-        sampledSize = (int) (sampledWidth * sampledHeight * getColorChannels() / (1024 * 1024));
-        String msg = MessageFormat.format(Languages.message("ImageTooLarge"),
-                width, height, getColorChannels(),
-                bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
-                sampledWidth, sampledHeight, sampledSize);
+        int channels = getColorChannels();
+        int mb = 1024 * 1024;
+        sampledSize = (int) (sampledWidth * sampledHeight * channels / mb);
+        String msg = MessageFormat.format(message("ImageTooLarge"),
+                width, height, channels,
+                bytesSize / mb, requiredMem / mb, availableMem / mb,
+                sampleScale, sampledWidth, sampledHeight, sampledSize);
         return msg;
     }
 
@@ -556,7 +557,7 @@ public class ImageInformation extends ImageFileInformation {
                         int sampledWidth = (int) (imageInfo.getWidth() / scale);
                         int sampledHeight = (int) (imageInfo.getHeight() / scale);
                         int sampledSize = (int) (sampledWidth * sampledHeight * imageInfo.getColorChannels() / (1024 * 1024));
-                        String msg = MessageFormat.format(Languages.message("ImageTooLarge"),
+                        String msg = MessageFormat.format(message("ImageTooLarge"),
                                 imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getColorChannels(),
                                 bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
                                 sampledWidth, sampledHeight, sampledSize);

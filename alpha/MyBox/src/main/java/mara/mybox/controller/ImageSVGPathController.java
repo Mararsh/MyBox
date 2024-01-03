@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import mara.mybox.data.DoublePath;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -11,7 +12,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageSVGPathController extends BaseShapeEditController {
+public class ImageSVGPathController extends BaseImageShapeController {
+
+    protected DoublePath initData;
 
     @FXML
     protected ControlPath2D pathController;
@@ -28,6 +31,27 @@ public class ImageSVGPathController extends BaseShapeEditController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void setInitData(DoublePath initData) {
+        this.initData = initData;
+    }
+
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
+            if (initData != null) {
+                loadSvgPath(initData);
+                initData = null;
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -70,13 +94,20 @@ public class ImageSVGPathController extends BaseShapeEditController {
     /*
         static methods
      */
-    public static ImageSVGPathController open(ImageEditorController parent) {
+    public static ImageSVGPathController open(BaseImageController parent) {
+        return loadPath(parent, null);
+    }
+
+    public static ImageSVGPathController loadPath(BaseImageController parent, DoublePath pathData) {
         try {
             if (parent == null) {
                 return null;
             }
             ImageSVGPathController controller = (ImageSVGPathController) WindowTools.branchStage(
                     parent, Fxmls.ImageSVGPathFxml);
+            if (pathData != null) {
+                controller.setInitData(pathData);
+            }
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

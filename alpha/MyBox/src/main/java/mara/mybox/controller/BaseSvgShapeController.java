@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import mara.mybox.data.DoublePath;
 import mara.mybox.data.SVG;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.data.XmlTreeNode;
@@ -87,7 +88,6 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
             clearMask();
             resetShapeOptions();
-            supportPath = true;
 
             initMore();
 
@@ -309,6 +309,11 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
     @Override
     public void recoverAction() {
         makeSvg();
+    }
+
+    @Override
+    public void popSvgPath(DoublePath pathData) {
+        SvgPathController.loadPath(editor, treeItem, pathData);
     }
 
     /*

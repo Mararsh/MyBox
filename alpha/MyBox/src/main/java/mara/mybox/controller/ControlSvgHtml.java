@@ -28,7 +28,7 @@ public class ControlSvgHtml extends BaseController {
     protected SvgEditorController editor;
     protected ControlSvgViewOptions optionsController;
     protected WebEngine webEngine;
-    protected String currentXML;
+    protected String currentSVG;
 
     @FXML
     protected WebView webView;
@@ -47,35 +47,9 @@ public class ControlSvgHtml extends BaseController {
         }
     }
 
-    public void drawSVG() {
-        if (optionsController.doc == null) {
-            currentXML = null;
-            webEngine.loadContent("");
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            @Override
-            protected boolean handle() {
-                try {
-                    currentXML = optionsController.toXML(this);
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                webEngine.loadContent(currentXML);
-                editor.showRightPane();
-            }
-
-        };
-        start(task, thisPane);
+    public void drawSVG(String svg) {
+        currentSVG = svg;
+        webEngine.loadContent(svg);
     }
 
     @Override
@@ -90,7 +64,7 @@ public class ControlSvgHtml extends BaseController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconDefault.png"));
             menu.setOnAction((ActionEvent event) -> {
                 imageAction();
             });
@@ -135,22 +109,22 @@ public class ControlSvgHtml extends BaseController {
 
     @FXML
     public void htmlAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        HtmlEditorController.openHtml(currentXML);
+        HtmlEditorController.openHtml(currentSVG);
     }
 
     @FXML
     @Override
     public void systemMethod() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
         File tmpFile = FileTmpTools.getTempFile(".svg");
-        TextFileTools.writeFile(tmpFile, currentXML);
+        TextFileTools.writeFile(tmpFile, currentSVG);
         if (tmpFile != null && tmpFile.exists()) {
             browse(tmpFile);
         } else {
@@ -160,7 +134,7 @@ public class ControlSvgHtml extends BaseController {
 
     @FXML
     public void pdfAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
@@ -174,7 +148,7 @@ public class ControlSvgHtml extends BaseController {
             protected boolean handle() {
                 try {
                     tmpFile = SvgTools.textToPDF(this,
-                            myController, currentXML,
+                            myController, currentSVG,
                             optionsController.width,
                             optionsController.height,
                             optionsController.viewBox);
@@ -200,7 +174,7 @@ public class ControlSvgHtml extends BaseController {
 
     @FXML
     public void imageAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
@@ -214,7 +188,7 @@ public class ControlSvgHtml extends BaseController {
             protected boolean handle() {
                 try {
                     tmpFile = SvgTools.textToImage(this,
-                            myController, currentXML,
+                            myController, currentSVG,
                             optionsController.width,
                             optionsController.height,
                             optionsController.viewBox);
@@ -240,29 +214,29 @@ public class ControlSvgHtml extends BaseController {
 
     @FXML
     protected void txtAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        TextPopController.loadText(currentXML);
+        TextPopController.loadText(currentSVG);
     }
 
     @FXML
     protected void xmlAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        XmlEditorController.load(currentXML);
+        XmlEditorController.load(currentSVG);
     }
 
     @FXML
     protected void svgAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        SvgEditorController.load(currentXML);
+        SvgEditorController.load(currentSVG);
     }
 
 }

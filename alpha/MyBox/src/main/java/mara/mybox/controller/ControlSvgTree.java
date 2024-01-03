@@ -13,12 +13,17 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data.DoubleShape;
+import static mara.mybox.data.DoubleShape.toShape;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -32,7 +37,7 @@ public class ControlSvgTree extends ControlXmlTree {
     @FXML
     protected ControlSvgNodeEdit svgNodeController;
     @FXML
-    protected Button addShapeButton;
+    protected Button addShapeButton, drawButton;
 
     @Override
     public void initValues() {
@@ -61,6 +66,7 @@ public class ControlSvgTree extends ControlXmlTree {
     public void setRoot(TreeItem<XmlTreeNode> root) {
         super.setRoot(root);
         addShapeButton.setDisable(true);
+        drawButton.setDisable(true);
     }
 
     @Override
@@ -68,6 +74,21 @@ public class ControlSvgTree extends ControlXmlTree {
         super.itemClicked(event, item);
         addShapeButton.setDisable(item == null || item.getValue() == null
                 || !item.getValue().canAddSvgShape());
+        drawButton.setDisable(item == null || item.getValue() == null
+                || !item.getValue().isSvgShape());
+    }
+
+    @Override
+    public List<MenuItem> viewMoreItems(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        XmlTreeNode node = treeItem.getValue();
+        if (node == null || !node.isSvgShape()) {
+            return null;
+        }
+        DoubleShape shapeData = toShape(this, (Element) node.getNode());
+        return DoubleShape.svgInfoMenu(shapeData);
     }
 
     @Override
@@ -82,7 +103,7 @@ public class ControlSvgTree extends ControlXmlTree {
             if (node.isSvgShape()) {
                 MenuItem drawMenu = new MenuItem(message("Draw"), StyleTools.getIconImageView("iconDraw.png"));
                 drawMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                    editorController.drawShape(treeItem);
+                    drawShape(treeItem);
                 });
                 items.add(drawMenu);
             }
@@ -221,6 +242,52 @@ public class ControlSvgTree extends ControlXmlTree {
             popNodeMenu(treeView, items);
         } else {
             popEventMenu(event, items);
+        }
+    }
+
+    @FXML
+    public void drawShape() {
+        TreeItem<XmlTreeNode> treeItem = selected();
+        if (treeItem == null) {
+            popInformation(message("SelectToHandle"));
+            return;
+        }
+        XmlTreeNode node = treeItem.getValue();
+        if (node == null || !node.isSvgShape()) {
+            popInformation(message("Invalid"));
+            return;
+        }
+        drawShape(treeItem);
+    }
+
+    public void drawShape(TreeItem<XmlTreeNode> treeItem) {
+        try {
+            Node node = treeItem.getValue().getNode();
+            if (node == null) {
+                return;
+            }
+            if (XmlTools.type(node) != XmlTreeNode.NodeType.Element) {
+                return;
+            }
+            Element element = (Element) node;
+            String tag = element.getNodeName();
+            if ("rect".equalsIgnoreCase(tag)) {
+                SvgRectangleController.drawShape(editorController, treeItem, element);
+            } else if ("circle".equalsIgnoreCase(tag)) {
+                SvgCircleController.drawShape(editorController, treeItem, element);
+            } else if ("ellipse".equalsIgnoreCase(tag)) {
+                SvgEllipseController.drawShape(editorController, treeItem, element);
+            } else if ("line".equalsIgnoreCase(tag)) {
+                SvgLineController.drawShape(editorController, treeItem, element);
+            } else if ("polyline".equalsIgnoreCase(tag)) {
+                SvgPolylineController.drawShape(editorController, treeItem, element);
+            } else if ("polygon".equalsIgnoreCase(tag)) {
+                SvgPolygonController.drawShape(editorController, treeItem, element);
+            } else if ("path".equalsIgnoreCase(tag)) {
+                SvgPathController.drawShape(editorController, treeItem, element);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 

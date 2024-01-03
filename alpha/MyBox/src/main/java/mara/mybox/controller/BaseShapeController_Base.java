@@ -72,7 +72,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     protected DoubleArc maskArcData;
     protected DoublePath maskPathData;
     protected boolean maskControlDragged, showAnchors, popItemMenu, popShapeMenu,
-            addPointWhenClick, supportPath;
+            addPointWhenClick;
     protected AnchorShape anchorShape;
     protected Polyline currentLine;
     protected List<DoublePoint> currentLineData;
