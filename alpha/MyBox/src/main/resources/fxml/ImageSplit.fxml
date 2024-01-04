@@ -118,7 +118,7 @@ License:    Apache License Version 2.0
                                         </FlowPane>
                                     </children>
                                 </HBox>
-                        <VBox fx:id="mainAreaBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+                        <VBox fx:id="imageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
                                  <children>

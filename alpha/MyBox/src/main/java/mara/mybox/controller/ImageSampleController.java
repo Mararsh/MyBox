@@ -113,6 +113,8 @@ public class ImageSampleController extends BaseShapeController {
                             .or(Bindings.isEmpty(widthScaleSelector.getEditor().textProperty()))
             );
 
+            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

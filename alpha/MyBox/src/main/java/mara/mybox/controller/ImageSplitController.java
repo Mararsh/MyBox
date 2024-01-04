@@ -110,6 +110,8 @@ public class ImageSplitController extends BaseShapeController {
 
             checkSplitMethod();
 
+            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
