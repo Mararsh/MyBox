@@ -14,7 +14,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -70,8 +69,6 @@ public class ImagesPlayController extends BaseShapeController {
     protected Thread frameThread;
     protected FxSingletonTask frameTask;
 
-    @FXML
-    protected TitledPane viewPane;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
@@ -143,7 +140,6 @@ public class ImagesPlayController extends BaseShapeController {
             });
 
             imageBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
             fileVBox.getChildren().remove(pdfBox);
 
@@ -256,7 +252,6 @@ public class ImagesPlayController extends BaseShapeController {
         loading = start(task);
     }
 
-    // Read images as more as possible
     protected boolean loadImageFile(FxTask currentTask) {
         imageReader = null;
         imageInfos.clear();

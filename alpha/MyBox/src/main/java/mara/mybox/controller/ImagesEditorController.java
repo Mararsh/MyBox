@@ -37,6 +37,7 @@ public class ImagesEditorController extends BaseController {
             super.initValues();
             tableController.parentController = this;
             tableController.parentFxml = myFxml;
+            tableController.tableView.getColumns().remove(tableController.currentIndexColumn);
             viewController.backgroundLoad = true;
 
         } catch (Exception e) {

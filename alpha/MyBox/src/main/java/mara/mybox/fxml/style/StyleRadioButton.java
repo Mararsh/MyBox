@@ -108,6 +108,12 @@ public class StyleRadioButton {
                 return new StyleData(id, message("Magenta"), "", "");
             case "colorOpacityRadio":
                 return new StyleData(id, message("Opacity"), "", "iconOpacity.png");
+            case "listRadio":
+                return new StyleData(id, message("List"), "", "iconList.png");
+            case "thumbRadio":
+                return new StyleData(id, message("ThumbnailsList"), "", "iconThumbsList.png");
+            case "gridRadio":
+                return new StyleData(id, message("Grid"), "", "iconBrowse.png");
 
         }
         return null;

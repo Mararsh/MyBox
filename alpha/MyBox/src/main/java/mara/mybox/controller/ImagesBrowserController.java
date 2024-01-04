@@ -135,7 +135,6 @@ public class ImagesBrowserController extends ControlImagesTable {
 
             opPane.disableProperty().bind(Bindings.isEmpty(tableData));
             mainAreaBox.disableProperty().bind(Bindings.isEmpty(tableData));
-            rightPane.disableProperty().bind(Bindings.isEmpty(tableData));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -995,6 +994,11 @@ public class ImagesBrowserController extends ControlImagesTable {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void options() {
+        ImageOptionsController.open(viewController);
     }
 
     /*

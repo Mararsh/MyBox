@@ -20,7 +20,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
@@ -62,8 +61,6 @@ public class ImageAnalyseController extends BaseImageController {
     protected CheckBox sortCheck, componentsLegendCheck, grayHistCheck, redHistCheck,
             greenHistCheck, blueHistCheck, alphaHistCheck,
             hueHistCheck, saturationHistCheck, brightnessHistCheck;
-    @FXML
-    protected TabPane dataPane;
     @FXML
     protected Tab statisticTab, histogramTab, dominantTab, redTab, greenTab, blueTab,
             hueTab, brightnessTab, saturationTab, grayTab, alphaTab;
@@ -640,16 +637,16 @@ public class ImageAnalyseController extends BaseImageController {
             snapPara.setTransform(Transform.scale(scale, scale));
 
             // Display the object when make snapshot, so need switch to each tab
-            Tab currentTab = dataPane.getSelectionModel().getSelectedItem();
+            Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
 
-            dataPane.getSelectionModel().select(statisticTab);
+            tabPane.getSelectionModel().select(statisticTab);
             String html = statisticController.currentHtml();
             Thread.sleep(50);
             final String colorsViewHml = HtmlReadTools.body(html);
 
             final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(dominantTab);
+            tabPane.getSelectionModel().select(dominantTab);
             dominantController.tabPane.getSelectionModel().select(dominantController.colorTab);
             html = dominantController.colorsController.currentHtml();
             Thread.sleep(50);
@@ -659,7 +656,7 @@ public class ImageAnalyseController extends BaseImageController {
             dominantController.tabPane.getSelectionModel().select(dominantController.pieTab);
             final Image dominantPieSnap = dominantController.dominantPie.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(grayTab);
+            tabPane.getSelectionModel().select(grayTab);
             html = WebViewTools.getHtml(grayView);
             Thread.sleep(50);
             final String greyHtml = HtmlReadTools.body(html);
@@ -667,7 +664,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image greyBarchartSnap = grayBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(redTab);
+            tabPane.getSelectionModel().select(redTab);
             html = WebViewTools.getHtml(redView);
             Thread.sleep(50);
             final String redHtml = HtmlReadTools.body(html);
@@ -675,7 +672,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image redBarchartSnap = redBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(greenTab);
+            tabPane.getSelectionModel().select(greenTab);
             html = WebViewTools.getHtml(greenView);
             Thread.sleep(50);
             final String greenHtml = HtmlReadTools.body(html);
@@ -683,7 +680,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image greenBarchartSnap = greenBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(blueTab);
+            tabPane.getSelectionModel().select(blueTab);
             html = WebViewTools.getHtml(blueView);
             Thread.sleep(50);
             final String blueHtml = HtmlReadTools.body(html);
@@ -691,7 +688,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image blueBarchartSnap = blueBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(hueTab);
+            tabPane.getSelectionModel().select(hueTab);
             html = WebViewTools.getHtml(hueView);
             Thread.sleep(50);
             final String hueHtml = HtmlReadTools.body(html);
@@ -699,7 +696,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image hueBarchartSnap = hueBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(brightnessTab);
+            tabPane.getSelectionModel().select(brightnessTab);
             html = WebViewTools.getHtml(brightnessView);
             Thread.sleep(50);
             final String brightnessHtml = HtmlReadTools.body(html);
@@ -707,7 +704,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image brightnessBarchartSnap = brightnessBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(saturationTab);
+            tabPane.getSelectionModel().select(saturationTab);
             html = WebViewTools.getHtml(saturationView);
             Thread.sleep(50);
             final String saturationHtml = HtmlReadTools.body(html);
@@ -715,7 +712,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image saturationBarchartSnap = saturationBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(alphaTab);
+            tabPane.getSelectionModel().select(alphaTab);
             html = WebViewTools.getHtml(alphaView);
             Thread.sleep(50);
             final String alphaHtml = HtmlReadTools.body(html);
@@ -723,7 +720,7 @@ public class ImageAnalyseController extends BaseImageController {
             Thread.sleep(50);
             final Image alphaBarchartSnap = alphaBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(currentTab);
+            tabPane.getSelectionModel().select(currentTab);
 
             task = new FxSingletonTask<Void>(this) {
 

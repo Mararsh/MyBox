@@ -117,7 +117,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         ImagesBrowserController controller = (ImagesBrowserController) openStage(Fxmls.ImagesBrowserFxml);
         File file = imageFile();
         if (file != null) {
-            controller.selectSourcePath(file.getParentFile());
+            controller.addDirectory(file.getParentFile());
         }
     }
 

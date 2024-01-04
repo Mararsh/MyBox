@@ -27,23 +27,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         frameIndex = 0;
         framesNumber = 0;
-        loadImageFile(file, loadWidth);
+        loadImageFile(file);
     }
 
     public void loadImageFile(File file) {
-        loadImageFile(file, loadWidth);
-    }
-
-    public void loadImageFile(File file, int width) {
-        loadImage(file, false, width, frameIndex);
-    }
-
-    public void loadImageFile(File file, boolean onlyInformation) {
-        loadImage(file, onlyInformation, loadWidth, frameIndex);
-    }
-
-    public void loadImageFile(File file, int width, int index) {
-        loadImage(file, false, width, index);
+        loadImage(file, false, loadWidth, frameIndex);
     }
 
     // index is 0-based
@@ -360,7 +348,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         UserConfig.setInt(baseName + "LoadWidth", loadWidth);
         File file = imageFile();
         if (file != null && file.exists()) {
-            loadImageFile(file, loadWidth);
+            loadImageFile(file);
         } else if (imageView.getImage() != null) {
             loadImage(imageView.getImage(), loadWidth);
         } else if (image != null) {

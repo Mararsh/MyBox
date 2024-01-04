@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="TOP_LEFT">
+        <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="TOP_LEFT">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                     <children>
@@ -305,14 +305,14 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                         <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
                     </children>
-                    <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                    </padding>
                 </VBox>
             </children>
             <BorderPane.margin>
                 <Insets />
             </BorderPane.margin>
+         <padding>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </padding>
         </VBox>
     </center>
     <padding>

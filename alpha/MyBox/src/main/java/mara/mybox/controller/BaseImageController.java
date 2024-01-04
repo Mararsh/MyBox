@@ -231,14 +231,8 @@ public class BaseImageController extends BaseImageController_Actions {
             if (imageView == null) {
                 return;
             }
-            if (rightPane != null) {
-                rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
             if (buttonsPane != null) {
                 buttonsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
-            if (tabPane != null) {
-                tabPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
             if (scrollPane != null) {
                 scrollPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));

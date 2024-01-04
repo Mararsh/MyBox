@@ -92,8 +92,6 @@ public class ImageSplitController extends BaseShapeController {
         try {
             super.initControls();
 
-            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
-
             displaySizeCheck.setSelected(UserConfig.getBoolean(baseName + "DisplaySize", true));
             displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

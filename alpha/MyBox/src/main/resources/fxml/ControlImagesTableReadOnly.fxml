@@ -90,8 +90,8 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
                 <TableColumn fx:id="pixelsColumn" editable="false" prefWidth="120.0" text="%Pixels" />
                 <TableColumn fx:id="colorSpaceColumn" editable="false" prefWidth="100.0" text="%ColorSpace" />
-            <TableColumn fx:id="dirColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="260.0" text="%Directory" />
             <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="160.0" text="%File" />
+            <TableColumn fx:id="dirColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="260.0" text="%Directory" />
                 <TableColumn fx:id="indexColumn" editable="false" prefWidth="70.0" text="%Index" />
                 <TableColumn fx:id="sizeColumn" editable="false" prefWidth="120.0" text="%FileSize" />
                 <TableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifyTime" />

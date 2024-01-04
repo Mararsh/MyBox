@@ -408,7 +408,12 @@ public class StyleButton {
             }
         }
         if (id.startsWith("view")) {
-            return new StyleData(id, message("View"), "", "iconView.png");
+            switch (id) {
+                case "viewFileButton":
+                    return new StyleData(id, message("Open"), "", "iconDefault.png");
+                default:
+                    return new StyleData(id, message("View"), "", "iconView.png");
+            }
         }
         if (id.startsWith("html")) {
             return new StyleData(id, message("Html"), "", "iconHtml.png");

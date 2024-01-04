@@ -20,8 +20,8 @@ import mara.mybox.value.AppVariables;
  */
 public class CombineTools {
 
-    public static Image combineSingleRow(FxTask task, ImageCombine imageCombine, List<ImageInformation> images,
-            boolean isPart, boolean careTotal) {
+    public static Image combineSingleRow(FxTask task, ImageCombine imageCombine,
+            List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
         }
@@ -201,7 +201,8 @@ public class CombineTools {
         }
     }
 
-    public static Image combineImages(FxTask task, List<ImageInformation> imageInfos, int totalWidth, int totalHeight, Color bgColor,
+    public static Image combineImages(FxTask task, List<ImageInformation> imageInfos,
+            int totalWidth, int totalHeight, Color bgColor,
             List<Integer> xs, List<Integer> ys, List<Integer> widths, List<Integer> heights,
             int trueTotalWidth, int trueTotalHeight, boolean isTotalWidth, boolean isTotalHeight) {
         if (imageInfos == null || xs == null || ys == null || widths == null || heights == null) {
@@ -237,6 +238,43 @@ public class CombineTools {
                 return null;
             }
             Image newImage = SwingFXUtils.toFXImage(target, null);
+            return newImage;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Image combineImagesColumns(FxTask currentTask, ImageCombine imageCombine,
+            List<ImageInformation> imageInfos) {
+        if (imageInfos == null || imageInfos.isEmpty() || imageCombine.getColumnsValue() <= 0) {
+            return null;
+        }
+        try {
+            List<ImageInformation> rowImages = new ArrayList<>();
+            List<ImageInformation> rows = new ArrayList<>();
+            for (ImageInformation imageInfo : imageInfos) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
+                rowImages.add(imageInfo);
+                if (rowImages.size() == imageCombine.getColumnsValue()) {
+                    Image rowImage = CombineTools.combineSingleRow(currentTask, imageCombine, rowImages, true, false);
+                    if (rowImage == null || (currentTask != null && !currentTask.isWorking())) {
+                        return null;
+                    }
+                    rows.add(new ImageInformation(rowImage));
+                    rowImages = new ArrayList<>();
+                }
+            }
+            if (!rowImages.isEmpty()) {
+                Image rowImage = CombineTools.combineSingleRow(currentTask, imageCombine, rowImages, true, false);
+                if (rowImage == null || (currentTask != null && !currentTask.isWorking())) {
+                    return null;
+                }
+                rows.add(new ImageInformation(rowImage));
+            }
+            Image newImage = CombineTools.combineSingleColumn(currentTask, imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
             MyBoxLog.error(e);

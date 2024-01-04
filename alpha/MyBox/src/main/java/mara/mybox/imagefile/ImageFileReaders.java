@@ -145,29 +145,40 @@ public class ImageFileReaders {
             return null;
         }
         try {
+            double infoWidth = imageInfo.getWidth();
+            double requiredWidth = imageInfo.getRequiredWidth();
             ImageReadParam param = reader.getDefaultReadParam();
             Rectangle region = imageInfo.getIntRegion();
+            int xscale = imageInfo.getXscale();
+            if (xscale < 1) {
+                xscale = 1;
+            }
+            int yscale = imageInfo.getYscale();
+            if (yscale < 1) {
+                yscale = 1;
+            }
             if (region != null) {
                 param.setSourceRegion(region);
                 if (task != null) {
                     task.setInfo(message("Region") + ": " + region.toString());
                 }
+            } else if (requiredWidth > 0 && infoWidth > requiredWidth && xscale <= 1 && yscale <= 1) {
+                xscale = (int) Math.ceil(infoWidth / requiredWidth);
+                yscale = xscale;
             }
-            int xscale = imageInfo.getXscale();
-            int yscale = imageInfo.getYscale();
-            if (xscale != 1 || yscale != 1) {
+
+            if (xscale > 1 || yscale > 1) {
                 param.setSourceSubsampling(xscale, yscale, 0, 0);
                 if (task != null) {
                     task.setInfo(message("Scale") + ": " + " xscale=" + xscale + " yscale= " + yscale);
                 }
-            } else {
+            } else if (region == null) {
                 ImageInformation.checkMem(task, imageInfo);
                 int sampleScale = imageInfo.getSampleScale();
                 if (sampleScale > 1) {
                     if (task != null) {
                         task.setInfo("sampleScale: " + sampleScale);
                     }
-//                    param.setSourceSubsampling(sampleScale, sampleScale, 0, 0);
                     return null;
                 }
             }
@@ -184,12 +195,12 @@ public class ImageFileReaders {
                     return null;
                 }
                 imageInfo.setImageType(bufferedImage.getType());
-                int requiredWidth = (int) imageInfo.getRequiredWidth();
+
                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
                     if (task != null) {
                         task.setInfo(message("Scale") + ": " + message("Width") + " " + requiredWidth);
                     }
-                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
+                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, (int) requiredWidth);
                 } else if (ImageHints != null) {
                     bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, ImageHints);
                 }
@@ -225,7 +236,7 @@ public class ImageFileReaders {
             if (task != null) {
                 task.setInfo(message("File") + ": " + file);
                 task.setInfo(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
-                task.setInfo(message("Frame") + ": " + index);
+                task.setInfo(message("Frame") + ": " + (index + 1));
                 if (requiredWidth > 0) {
                     task.setInfo(message("LoadWidth") + ": " + requiredWidth);
                 }
@@ -415,6 +426,9 @@ public class ImageFileReaders {
                 return null;
             }
             String format = FileNameTools.suffix(file.getName()).toLowerCase();
+            if (task != null) {
+                task.setInfo("Reading broken image: " + format);
+            }
             switch (format) {
                 case "gif":
                     // Read Gif with JDK api normally. When broken, use DhyanB's API.

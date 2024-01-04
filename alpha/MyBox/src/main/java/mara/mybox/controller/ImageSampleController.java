@@ -48,8 +48,6 @@ public class ImageSampleController extends BaseShapeController {
         try {
             super.initControls();
 
-            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
-
             List<String> values = Arrays.asList("1", "2", "3", "4", "5", "6", "8", "9", "10", "15", "20",
                     "25", "30", "50", "80", "100", "200", "500", "800", "1000");
             widthScaleSelector.getItems().addAll(values);
