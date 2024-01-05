@@ -86,6 +86,15 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </Button>
+                                                    <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                                        <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                <image>
+                                                                    <Image url="@../buttons/Red/iconSave.png" />
+                                                                </image>
+                                                            </ImageView>
+                                                        </graphic>
+                                                    </Button>
                                             </children>
                                         </FlowPane>
                               <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -209,15 +218,6 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </Button>
-                                                    <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                                        <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                <image>
-                                                                    <Image url="@../buttons/Red/iconSave.png" />
-                                                                </image>
-                                                            </ImageView>
-                                                        </graphic>
-                                                    </Button>
                                  </children>
                               </FlowPane>
                                       <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -303,19 +303,6 @@ License:    Apache License Version 2.0
                                                                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                                           </padding>
                                                                       </VBox>
-                                                      <VBox layoutX="15.0" layoutY="298.0" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                         <padding>
-                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                         </padding>
-                                                         <children>
-                                                                            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
-                                                                                <children>
-                                                                                    <Label text="%Background" />
-                                                                                    <fx:include fx:id="color" source="ControlColorSet.fxml" />
-                                                                                </children>
-                                                                            </FlowPane>
-                                                         </children>
-                                                      </VBox>
                                                       <VBox layoutX="15.0" layoutY="15.0" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                          <padding>
                                                             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -331,6 +318,12 @@ License:    Apache License Version 2.0
                                                                                 <children>
                                                                                     <Label text="%Margins" />
                                                                                     <ComboBox fx:id="marginsSelector" editable="true" prefWidth="100.0" />
+                                                                                </children>
+                                                                            </FlowPane>
+                                                                            <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                                                                                <children>
+                                                                                    <Label text="%Background" />
+                                                                                    <fx:include fx:id="color" source="ControlColorSet.fxml" />
                                                                                 </children>
                                                                             </FlowPane>
                                                          </children>

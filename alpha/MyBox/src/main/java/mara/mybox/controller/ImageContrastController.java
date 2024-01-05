@@ -72,7 +72,7 @@ public class ImageContrastController extends BaseImageEditController {
             } else if (contrastController.contrastAlgorithm == ContrastAlgorithm.GrayHistogramShifting) {
                 opInfo = contrastController.offset + "";
             }
-            handledImage = contrast.setImage(srcImage()).setTask(currentTask).operateFxImage();
+            handledImage = contrast.setImage(srcImage()).setTask(currentTask).startFx();
         } catch (Exception e) {
             displayError(e.toString());
         }

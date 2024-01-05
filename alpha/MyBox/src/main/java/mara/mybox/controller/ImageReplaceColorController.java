@@ -85,7 +85,7 @@ public class ImageReplaceColorController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = colorController.css();
-            return pixelsOperation.operateFxImage();
+            return pixelsOperation.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

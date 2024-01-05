@@ -57,7 +57,7 @@ public class ImageThresholdingController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = message("Threshold") + ": " + thresholdingController.threshold;
-            Image result = pixelsOperation.operateFxImage();
+            Image result = pixelsOperation.startFx();
             pixelsOperation = null;
             return result;
         } catch (Exception e) {

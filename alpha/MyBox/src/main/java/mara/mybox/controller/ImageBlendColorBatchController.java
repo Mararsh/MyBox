@@ -60,7 +60,7 @@ public class ImageBlendColorBatchController extends BaseImageEditBatchController
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return blendColor.setImage(source).setTask(currentTask).operateImage();
+        return blendColor.setImage(source).setTask(currentTask).start();
     }
 
     @Override

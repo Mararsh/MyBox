@@ -406,9 +406,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
 
             if (threshold > 0) {
                 ImageBinary imageBinary = new ImageBinary();
-                imageBinary.setImage(lastImage)
+                imageBinary.setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                        .setImage(lastImage)
                         .setIntPara1(threshold).setTask(currentTask);
-                lastImage = imageBinary.operateImage();
+                lastImage = imageBinary.start();
             }
             if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
@@ -434,7 +435,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 ImageContrast imageContrast = new ImageContrast();
                 imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramEqualization)
                         .setImage(lastImage).setTask(currentTask);
-                lastImage = imageContrast.operateImage();
+                lastImage = imageContrast.start();
 
             } else if (message("GrayHistogramStretching").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
@@ -442,62 +443,62 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                         .setImage(lastImage).setTask(currentTask)
                         .setIntPara1(100)
                         .setIntPara2(100);
-                lastImage = imageContrast.operateImage();
+                lastImage = imageContrast.start();
 
             } else if (message("GrayHistogramShifting").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
                 imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramShifting)
                         .setImage(lastImage).setTask(currentTask)
                         .setIntPara1(80);
-                lastImage = imageContrast.operateImage();
+                lastImage = imageContrast.start();
 
             } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast();
                 imageContrast.setAlgorithm(ImageContrast.ContrastAlgorithm.SaturationHistogramEqualization)
                         .setImage(lastImage).setTask(currentTask);
-                lastImage = imageContrast.operateImage();
+                lastImage = imageContrast.start();
 
             } else if (message("UnsharpMasking").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(currentTask).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("Enhancement") + "-" + "FourNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(currentTask).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("Enhancement") + "-" + "EightNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(currentTask).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if (message("GaussianBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(currentTask).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if (message("AverageBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(currentTask).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(currentTask).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.setTask(currentTask).operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
             }
             if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
@@ -517,7 +518,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             if (invertCheck.isSelected()) {
                 PixelsOperation pixelsOperation = PixelsOperationFactory.create(lastImage,
                         null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                lastImage = pixelsOperation.operateImage();
+                lastImage = pixelsOperation.start();
             }
 
             return lastImage;

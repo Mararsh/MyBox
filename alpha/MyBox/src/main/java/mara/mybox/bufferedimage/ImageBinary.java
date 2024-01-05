@@ -20,7 +20,7 @@ public class ImageBinary extends PixelsOperation {
 
     protected BinaryAlgorithm algorithm;
     private BufferedImage defaultBinary;
-    private int threashold, blackInt;
+    private int threshold, blackInt;
 
     public static enum BinaryAlgorithm {
         OTSU, Threshold, Default
@@ -44,18 +44,18 @@ public class ImageBinary extends PixelsOperation {
     }
 
     @Override
-    public BufferedImage operate() {
+    public BufferedImage start() {
         if (image == null || operationType == null
                 || operationType != OperationType.BlackOrWhite) {
             return image;
         }
-        threashold = -1;
+        threshold = -1;
         if (algorithm == BinaryAlgorithm.OTSU) {
-            threashold = threshold(task, image);
+            threshold = threshold(task, image);
         } else if (algorithm == BinaryAlgorithm.Threshold) {
-            threashold = intPara1;
+            threshold = intPara1;
         }
-        if (threashold <= 0) {
+        if (threshold <= 0) {
             algorithm = BinaryAlgorithm.Default;
             defaultBinary = byteBinary(task, image);
         }
@@ -72,7 +72,7 @@ public class ImageBinary extends PixelsOperation {
                 newColor = Color.WHITE;
             }
         } else {
-            if (ColorConvertTools.color2grayValue(color) < threashold) {
+            if (ColorConvertTools.color2grayValue(color) < threshold) {
                 newColor = Color.BLACK;
             } else {
                 newColor = Color.WHITE;
@@ -267,8 +267,8 @@ public class ImageBinary extends PixelsOperation {
         return this;
     }
 
-    public int getThreashold() {
-        return threashold;
+    public int getThreshold() {
+        return threshold;
     }
 
 }

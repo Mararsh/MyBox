@@ -208,7 +208,7 @@ public class PixelsOperationFactory {
         if (pixelsOperation == null) {
             return image;
         }
-        return pixelsOperation.operateImage();
+        return pixelsOperation.start();
     }
 
     public static PixelsOperation replaceColorOperation(FxTask task, BufferedImage image,
@@ -346,7 +346,7 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        public BufferedImage operate() {
+        public BufferedImage start() {
             directReplace = (boolPara1 && boolPara2 && boolPara3)
                     || (!boolPara1 && !boolPara2 && !boolPara3);
             if (!directReplace) {
@@ -355,7 +355,7 @@ public class PixelsOperationFactory {
                 paraSaturation = hsb[1];
                 paraBrightness = hsb[2];
             }
-            return super.operate();
+            return super.start();
         }
 
         @Override
@@ -387,7 +387,7 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        public BufferedImage operate() {
+        public BufferedImage start() {
             directReplace = (boolPara1 && boolPara2 && boolPara3)
                     || (!boolPara1 && !boolPara2 && !boolPara3);
             if (!directReplace) {
@@ -396,7 +396,7 @@ public class PixelsOperationFactory {
                 paraSaturation = hsb[1];
                 paraBrightness = hsb[2];
             }
-            return super.operate();
+            return super.start();
         }
 
         @Override

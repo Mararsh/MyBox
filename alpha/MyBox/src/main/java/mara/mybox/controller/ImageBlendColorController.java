@@ -70,7 +70,7 @@ public class ImageBlendColorController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blend);
-            return pixelsOperation.operateFxImage();
+            return pixelsOperation.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

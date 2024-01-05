@@ -165,10 +165,4 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         }
     }
 
-    @FXML
-    @Override
-    public void clearAction() {
-        tableData.clear();
-    }
-
 }

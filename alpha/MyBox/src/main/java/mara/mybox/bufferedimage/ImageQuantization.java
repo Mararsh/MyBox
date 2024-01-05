@@ -170,7 +170,7 @@ public class ImageQuantization extends PixelsOperation {
                     setOperationType(PixelsOperation.OperationType.Quantization).
                     setIsDithering(isDithering)
                     .setTask(task);
-            regionQuantization.buildPalette().operate();
+            regionQuantization.buildPalette().start();
             ImageRGBKMeans kmeans = ImageRGBKMeans.create();
             kmeans.setK(quantizationSize).setTask(task);
             if (kmeans.init(regionQuantization).run()) {

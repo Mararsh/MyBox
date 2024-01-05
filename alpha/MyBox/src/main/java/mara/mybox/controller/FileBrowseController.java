@@ -114,7 +114,7 @@ public class FileBrowseController extends BaseController {
             if (parentController != null) {
                 setFileType(parentController.getSourceFileType());
                 baseName = parentController.baseName;
-                sourceFile = parentController.sourceFile();
+                sourceFile = parentController.sourceFile;
             }
             if (sourceFile == null) {
                 topLabel.setText("");

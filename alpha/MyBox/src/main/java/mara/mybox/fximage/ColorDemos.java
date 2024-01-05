@@ -46,7 +46,7 @@ public class ColorDemos {
 
             BufferedImage bufferedImage = pixelsOperation
                     .setBoolPara1(true).setBoolPara2(false).setBoolPara3(false)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -60,7 +60,7 @@ public class ColorDemos {
             }
 
             bufferedImage = pixelsOperation
-                    .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false).operate();
+                    .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false).start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -75,7 +75,7 @@ public class ColorDemos {
 
             bufferedImage = pixelsOperation
                     .setBoolPara1(false).setBoolPara2(false).setBoolPara3(true)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -90,7 +90,7 @@ public class ColorDemos {
 
             bufferedImage = pixelsOperation
                     .setBoolPara1(false).setBoolPara2(true).setBoolPara3(false)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -128,7 +128,7 @@ public class ColorDemos {
             pixelsOperation.setColorPara1(Color.PINK)
                     .setBoolPara1(true).setBoolPara2(false).setBoolPara3(false)
                     .setTask(demoTask);
-            bufferedImage = pixelsOperation.operate();
+            bufferedImage = pixelsOperation.start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Color") + "_" + message("Filter"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -142,7 +142,7 @@ public class ColorDemos {
             pixelsOperation = PixelsOperationFactory.create(demoImage,
                     scope, PixelsOperation.OperationType.Brightness, PixelsOperation.ColorActionType.Increase)
                     .setFloatPara1(0.5f).setTask(demoTask);
-            bufferedImage = pixelsOperation.operate();
+            bufferedImage = pixelsOperation.start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Brightness") + "_" + message("Increase"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -156,7 +156,7 @@ public class ColorDemos {
             pixelsOperation = PixelsOperationFactory.create(demoImage,
                     scope, PixelsOperation.OperationType.Hue, PixelsOperation.ColorActionType.Decrease)
                     .setFloatPara1(0.3f).setTask(demoTask);
-            bufferedImage = pixelsOperation.operate();
+            bufferedImage = pixelsOperation.start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Hue") + "_" + message("Decrease"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -170,7 +170,7 @@ public class ColorDemos {
             pixelsOperation = PixelsOperationFactory.create(demoImage,
                     scope, PixelsOperation.OperationType.Saturation, PixelsOperation.ColorActionType.Increase)
                     .setFloatPara1(0.5f).setTask(demoTask);
-            bufferedImage = pixelsOperation.operate();
+            bufferedImage = pixelsOperation.start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Saturation") + "_" + message("Increase"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -184,7 +184,7 @@ public class ColorDemos {
             pixelsOperation = PixelsOperationFactory.create(demoImage,
                     scope, PixelsOperation.OperationType.Opacity, PixelsOperation.ColorActionType.Decrease)
                     .setIntPara1(128).setTask(demoTask);
-            bufferedImage = pixelsOperation.operate();
+            bufferedImage = pixelsOperation.start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Opacity") + "_" + message("Decrease"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -198,7 +198,7 @@ public class ColorDemos {
             pixelsOperation = PixelsOperationFactory.create(demoImage,
                     scope, PixelsOperation.OperationType.Yellow, PixelsOperation.ColorActionType.Increase)
                     .setIntPara1(60).setTask(demoTask);
-            bufferedImage = pixelsOperation.operate();
+            bufferedImage = pixelsOperation.start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Yellow") + "_" + message("Increase"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -212,7 +212,7 @@ public class ColorDemos {
             pixelsOperation = PixelsOperationFactory.create(demoImage,
                     scope, PixelsOperation.OperationType.Magenta, PixelsOperation.ColorActionType.Decrease)
                     .setIntPara1(60).setTask(demoTask);
-            bufferedImage = pixelsOperation.operate();
+            bufferedImage = pixelsOperation.start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Magenta") + "_" + message("Decrease"), ".png")
                     .getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -324,7 +324,7 @@ public class ColorDemos {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(
                     demoImage, scope, type, action)
                     .setTask(demoTask);
-            BufferedImage bufferedImage = pixelsOperation.operate();
+            BufferedImage bufferedImage = pixelsOperation.start();
             String tmpFile = FileTmpTools.getPathTempFile(path, name, ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
@@ -376,7 +376,7 @@ public class ColorDemos {
             BufferedImage bufferedImage = binary
                     .setAlgorithm(ImageBinary.BinaryAlgorithm.Default)
                     .setIsDithering(true)
-                    .operate();
+                    .start();
             String tmpFile = FileTmpTools.getPathTempFile(path, message("Default")
                     + "_" + message("Dithering"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -390,7 +390,7 @@ public class ColorDemos {
             bufferedImage = binary
                     .setAlgorithm(ImageBinary.BinaryAlgorithm.Default)
                     .setIsDithering(false)
-                    .operate();
+                    .start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("Default"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
@@ -414,7 +414,7 @@ public class ColorDemos {
                         .setIntPara1(v)
                         .setIsDithering(true)
                         .setTask(demoTask)
-                        .operate();
+                        .start();
                 tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + v
                         + "_" + message("Dithering"), ".png").getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -427,7 +427,7 @@ public class ColorDemos {
                         .setIntPara1(v)
                         .setIsDithering(false)
                         .setTask(demoTask)
-                        .operate();
+                        .start();
                 tmpFile = FileTmpTools.getPathTempFile(path, message("Threshold") + v, ".png").getAbsolutePath();
                 if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                     files.add(tmpFile);
@@ -441,7 +441,7 @@ public class ColorDemos {
                     .setIntPara1(otsu)
                     .setIsDithering(true)
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("OTSU")
                     + otsu + "_" + message("Dithering"), ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
@@ -457,7 +457,7 @@ public class ColorDemos {
                     .setIntPara1(otsu)
                     .setIsDithering(false)
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             tmpFile = FileTmpTools.getPathTempFile(path, message("OTSU") + otsu, ".png").getAbsolutePath();
             if (ImageFileWriters.writeImageFile(demoTask, bufferedImage, "png", tmpFile)) {
                 files.add(tmpFile);
@@ -489,7 +489,7 @@ public class ColorDemos {
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
-                BufferedImage bufferedImage = pixelsOperation.setIntPara1(v).operate();
+                BufferedImage bufferedImage = pixelsOperation.setIntPara1(v).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -528,7 +528,7 @@ public class ColorDemos {
                 }
                 quantization = ImageQuantizationFactory.create(demoImage, null,
                         a, 8, 256, 1, 1, 1, false, true, true);
-                bufferedImage = quantization.setTask(demoTask).operate();
+                bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -545,7 +545,7 @@ public class ColorDemos {
                 }
                 quantization = ImageQuantizationFactory.create(demoImage, null,
                         a, 27, 1024, 1, 1, 1, false, true, true);
-                bufferedImage = quantization.setTask(demoTask).operate();
+                bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -562,7 +562,7 @@ public class ColorDemos {
                 }
                 quantization = ImageQuantizationFactory.create(demoImage, null,
                         a, 256, 1024, 2, 4, 3, false, true, true);
-                bufferedImage = quantization.setTask(demoTask).operate();
+                bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -597,7 +597,7 @@ public class ColorDemos {
                     demoImage, null, PixelsOperation.OperationType.Thresholding)
                     .setIsDithering(false).setTask(demoTask);
 
-            BufferedImage bufferedImage = op.setIntPara1(128).setIntPara2(255).setIntPara3(0).operate();
+            BufferedImage bufferedImage = op.setIntPara1(128).setIntPara2(255).setIntPara3(0).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -612,7 +612,7 @@ public class ColorDemos {
                 return;
             }
 
-            bufferedImage = op.setIntPara1(60).setIntPara2(190).setIntPara3(10).operate();
+            bufferedImage = op.setIntPara1(60).setIntPara2(190).setIntPara3(10).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -627,7 +627,7 @@ public class ColorDemos {
                 return;
             }
 
-            bufferedImage = op.setIntPara1(200).setIntPara2(255).setIntPara3(60).operate();
+            bufferedImage = op.setIntPara1(200).setIntPara2(255).setIntPara3(60).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -642,7 +642,7 @@ public class ColorDemos {
                 return;
             }
 
-            bufferedImage = op.setIntPara1(160).setIntPara2(225).setIntPara3(0).operate();
+            bufferedImage = op.setIntPara1(160).setIntPara2(225).setIntPara3(0).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }

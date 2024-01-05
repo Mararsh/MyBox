@@ -20,6 +20,8 @@ import mara.mybox.bufferedimage.ImageRGBKMeans;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlImageQuantization;
+import mara.mybox.controller.ControlSvgFromImage;
+import mara.mybox.controller.ControlSvgFromImage.Algorithm;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
@@ -34,8 +36,10 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 import org.w3c.dom.*;
-import thridparty.jankovicsandras.ImageTracer;
-import static thridparty.jankovicsandras.ImageTracer.bytetrans;
+import thridparty.miguelemosreverte.ImageTracer;
+import static thridparty.miguelemosreverte.ImageTracer.bytetrans;
+import thridparty.miguelemosreverte.SVGUtils;
+import thridparty.miguelemosreverte.VectorizingUtils;
 
 /**
  * @Author Mara
@@ -419,9 +423,8 @@ public class SvgTools {
     /*
         image to svg
      */
-    public static File imageToSvgFile(FxTask task, BaseController controller, File imageFile,
-            ControlImageQuantization quantizationController,
-            HashMap<String, Float> options) {
+    public static String imagefileToSvg(FxTask task, BaseController controller,
+            File imageFile, ControlSvgFromImage optionsController) {
         try {
             if (imageFile == null || !imageFile.exists()) {
                 return null;
@@ -430,75 +433,212 @@ public class SvgTools {
             if (image == null || (task != null && !task.isWorking())) {
                 return null;
             }
-            String svg = imageToSvg(task, controller, image, quantizationController, options);
-            if (svg == null || svg.isBlank() || (task != null && !task.isWorking())) {
-                return null;
-            }
-            File svgFile = FileTmpTools.generateFile("svg");
-            ImageTracer.saveString(svgFile.getAbsolutePath(), svg);
-            return svgFile;
+            return imageToSvg(task, controller, image, optionsController);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static String imageToSvg(FxTask task, BaseController controller, BufferedImage image,
-            ControlImageQuantization quantizationController,
-            HashMap<String, Float> options) {
+    // https://github.com/miguelemosreverte/imagetracerjava
+    public static String imageToSvg(FxTask task, BaseController controller,
+            BufferedImage image, ControlSvgFromImage optionsController) {
+        try {
+            if (optionsController == null || image == null) {
+                PopTools.showError(controller, message("InvalidData"));
+                return null;
+            }
+            switch (optionsController.getQuantization()) {
+                case jankovicsandras:
+                    return jankovicsandras(task, controller, image, optionsController);
+                case mybox:
+                    return mybox(task, controller, image, optionsController);
+                default:
+                    return miguelemosreverte(task, controller, image, optionsController);
+            }
+
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String miguelemosreverte(FxTask task, BaseController controller,
+            BufferedImage image, ControlSvgFromImage optionsController) {
+        try {
+            if (image == null || optionsController == null) {
+                return null;
+            }
+            HashMap<String, Float> options = optionsController.getOptions();
+            options = ImageTracer.checkoptions(options);
+            if (options == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            ImageTracer.IndexedImage ii
+                    = miguelemosreverteQuantization(task, controller, image, options);
+            if (ii == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return miguelemosreverteSVG(task, controller, ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static ImageTracer.IndexedImage miguelemosreverteQuantization(FxTask task,
+            BaseController controller, BufferedImage image, HashMap<String, Float> options) {
         try {
             if (image == null) {
                 PopTools.showError(controller, message("InvalidData"));
                 return null;
             }
-            options = ImageTracer.checkoptions(options);
-
-            // 1. Color quantization
-            ImageTracer.IndexedImage ii;
-            if (quantizationController != null) {
-                ii = colorQuantization(task, controller, image, quantizationController);
-            } else {
-                ImageTracer.ImageData imgd = ImageTracer.loadImageData(image);
-                ii = ImageTracer.colorquantization(imgd, null, options);
+            if (options == null || (task != null && !task.isWorking())) {
+                return null;
             }
+            ImageTracer.ImageData imgd = ImageTracer.loadImageData(image);
+            if (imgd == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            byte[][] palette = ImageTracer.getPalette(image, options);
+            if (palette == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return VectorizingUtils.colorquantization(imgd, palette, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String miguelemosreverteSVG(FxTask task, BaseController controller,
+            ImageTracer.IndexedImage ii, HashMap<String, Float> options) {
+        try {
             if (ii == null || (task != null && !task.isWorking())) {
                 return null;
             }
 
             // 2. Layer separation and edge detection
-            int[][][] rawlayers = ImageTracer.layering(ii);
+            int[][][] rawlayers = VectorizingUtils.layering(ii);
             if (rawlayers == null || (task != null && !task.isWorking())) {
                 return null;
             }
 
             // 3. Batch pathscan
             ArrayList<ArrayList<ArrayList<Integer[]>>> bps
-                    = ImageTracer.batchpathscan(rawlayers, (int) (Math.floor(options.get("pathomit"))));
+                    = VectorizingUtils.batchpathscan(rawlayers, (int) (Math.floor(options.get("pathomit"))));
             if (bps == null || (task != null && !task.isWorking())) {
                 return null;
             }
 
             // 4. Batch interpollation
-            ArrayList<ArrayList<ArrayList<Double[]>>> bis = ImageTracer.batchinternodes(bps);
+            ArrayList<ArrayList<ArrayList<Double[]>>> bis = VectorizingUtils.batchinternodes(bps);
             if (bis == null || (task != null && !task.isWorking())) {
                 return null;
             }
 
             // 5. Batch tracing
-            ii.layers = ImageTracer.batchtracelayers(bis, options.get("ltres"), options.get("qtres"));
+            ii.layers = VectorizingUtils.batchtracelayers(bis, options.get("ltres"), options.get("qtres"));
             if (ii.layers == null || (task != null && !task.isWorking())) {
                 return null;
             }
 
-            return ImageTracer.getsvgstring(ii, options);
+            return SVGUtils.getsvgstring(ii, options);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static ImageTracer.IndexedImage colorQuantization(FxTask task, BaseController controller,
-            BufferedImage image, ControlImageQuantization quantization) {
+    public static String jankovicsandras(FxTask task, BaseController controller,
+            BufferedImage image, ControlSvgFromImage optionsController) {
+        try {
+            if (image == null || optionsController == null) {
+                return null;
+            }
+            HashMap<String, Float> options = optionsController.getOptions();
+            options = thridparty.jankovicsandras.ImageTracer.checkoptions(options);
+            if (options == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            thridparty.jankovicsandras.ImageTracer.IndexedImage ii
+                    = jankovicsandrasQuantization(task, controller, image, options);
+            if (ii == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return jankovicsandrasSVG(task, controller, ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    // https://github.com/jankovicsandras/imagetracerjava
+    public static thridparty.jankovicsandras.ImageTracer.IndexedImage
+            jankovicsandrasQuantization(FxTask task, BaseController controller,
+                    BufferedImage image, HashMap<String, Float> options) {
+        try {
+            if (image == null || options == null) {
+                return null;
+            }
+            thridparty.jankovicsandras.ImageTracer.ImageData imgd
+                    = thridparty.jankovicsandras.ImageTracer.loadImageData(image);
+            if (imgd == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return thridparty.jankovicsandras.ImageTracer.colorquantization(imgd, null, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String jankovicsandrasSVG(FxTask task, BaseController controller,
+            thridparty.jankovicsandras.ImageTracer.IndexedImage ii,
+            HashMap<String, Float> options) {
+        try {
+            if (ii == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 2. Layer separation and edge detection
+            int[][][] rawlayers = thridparty.jankovicsandras.ImageTracer.layering(ii);
+            if (rawlayers == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 3. Batch pathscan
+            ArrayList<ArrayList<ArrayList<Integer[]>>> bps
+                    = thridparty.jankovicsandras.ImageTracer.batchpathscan(rawlayers,
+                            (int) (Math.floor(options.get("pathomit"))));
+            if (bps == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 4. Batch interpollation
+            ArrayList<ArrayList<ArrayList<Double[]>>> bis
+                    = thridparty.jankovicsandras.ImageTracer.batchinternodes(bps);
+            if (bis == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 5. Batch tracing
+            ii.layers = thridparty.jankovicsandras.ImageTracer.batchtracelayers(bis,
+                    options.get("ltres"), options.get("qtres"));
+            if (ii.layers == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            return thridparty.jankovicsandras.ImageTracer.getsvgstring(ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static ImageKMeans myboxQuantization(FxTask task,
+            BaseController controller, BufferedImage image,
+            ControlImageQuantization quantization) {
         try {
             ImageKMeans kmeans = ImageKMeans.create();
             kmeans.setAlgorithm(KMeansClustering).
@@ -513,8 +653,49 @@ public class SvgTools {
                     .setImage(image).setScope(null)
                     .setIsDithering(quantization.getQuanDitherCheck().isSelected())
                     .setTask(task);
-            kmeans.makePalette().operate();
-            return new ImageTracer.IndexedImage(kmeans.getColorIndice(), kmeans.paletteBytes);
+            kmeans.makePalette().start();
+            return kmeans;
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String mybox(FxTask task, BaseController controller,
+            BufferedImage image, ControlSvgFromImage optionsController) {
+        try {
+            if (image == null || optionsController == null) {
+                return null;
+            }
+            ImageKMeans kmeans = myboxQuantization(task, controller, image,
+                    optionsController.getQuantizationController());
+            if (kmeans == null
+                    || kmeans.paletteBytes == null
+                    || kmeans.getColorIndice() == null
+                    || (task != null && !task.isWorking())) {
+                return null;
+            }
+            HashMap<String, Float> options = optionsController.getOptions();
+            MyBoxLog.console(optionsController.getLayer().name());
+            if (optionsController.getLayer() == Algorithm.jankovicsandras) {
+                options = thridparty.jankovicsandras.ImageTracer.checkoptions(options);
+                if (options == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
+                thridparty.jankovicsandras.ImageTracer.IndexedImage ii
+                        = new thridparty.jankovicsandras.ImageTracer.IndexedImage(
+                                kmeans.getColorIndice(), kmeans.paletteBytes);
+                return jankovicsandrasSVG(task, controller, ii, options);
+            } else {
+                options = ImageTracer.checkoptions(options);
+                if (options == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
+                ImageTracer.IndexedImage ii = new ImageTracer.IndexedImage(
+                        kmeans.getColorIndice(), kmeans.paletteBytes);
+                return miguelemosreverteSVG(task, controller, ii, options);
+            }
+
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;

@@ -37,7 +37,7 @@ public class ImageConvolutionBatchController extends BaseImageEditBatchControlle
         try {
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(source).setKernel(kernel).setTask(currentTask);
-            return convolution.operateImage();
+            return convolution.start();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

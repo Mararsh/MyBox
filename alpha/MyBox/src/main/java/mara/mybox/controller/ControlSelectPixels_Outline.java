@@ -170,7 +170,7 @@ public abstract class ControlSelectPixels_Outline extends ControlSelectPixels_Co
 
                     PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                             bgImage, scope, PixelsOperation.OperationType.ShowScope);
-                    outlineImage = pixelsOperation.operateFxImage();
+                    outlineImage = pixelsOperation.startFx();
                     if (task == null || isCancelled()) {
                         return false;
                     }

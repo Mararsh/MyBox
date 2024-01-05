@@ -58,7 +58,7 @@ public class ImageSharpenController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = message("Intensity") + ": " + sharpenController.intensity;
-            return convolution.operateFxImage();
+            return convolution.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

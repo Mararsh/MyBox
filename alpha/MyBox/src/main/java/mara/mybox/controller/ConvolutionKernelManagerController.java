@@ -651,7 +651,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
                     ImageConvolution convolution = ImageConvolution.create();
                     convolution.setImage(new Image("img/exg2.png"))
                             .setKernel(kernel);
-                    demoImage = convolution.operateFxImage();
+                    demoImage = convolution.startFx();
                     return demoImage != null;
                 } catch (Exception e) {
                     error = e.toString();

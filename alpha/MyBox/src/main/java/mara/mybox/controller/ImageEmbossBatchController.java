@@ -38,7 +38,7 @@ public class ImageEmbossBatchController extends BaseImageEditBatchController {
         try {
             ImageConvolution imageConvolution = ImageConvolution.create().
                     setImage(source).setKernel(kernel);
-            return imageConvolution.setTask(currentTask).operate();
+            return imageConvolution.setTask(currentTask).start();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

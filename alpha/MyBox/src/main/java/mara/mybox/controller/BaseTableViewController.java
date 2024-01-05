@@ -29,7 +29,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -413,9 +412,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
-            return;
-        }
         tableData.clear();
     }
 

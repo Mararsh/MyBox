@@ -24,6 +24,7 @@ import mara.mybox.value.UserConfig;
 public class ControlSvgFromImage extends BaseController {
 
     protected HashMap<String, Float> options;
+    protected Algorithm quantization, layer;
 
     @FXML
     protected TextField quanRatioInput, colorsNumberInput, quanCycleInput, blurDeltaInput,
@@ -32,7 +33,7 @@ public class ControlSvgFromImage extends BaseController {
     @FXML
     protected CheckBox colorSamplingCheck, viewboxCheck, descCheck;
     @FXML
-    protected RadioButton myboxRadio, jankovicsandrasRadio,
+    protected RadioButton myboxRadio, miguelemosreverteRadio, jankovicsandrasRadio,
             blur0Radio, blur1Radio, blur2Radio, blur3Radio, blur4Radio, blur5Radio;
     @FXML
     protected ToggleGroup algorithmGroup;
@@ -40,6 +41,10 @@ public class ControlSvgFromImage extends BaseController {
     protected ControlImageQuantization quantizationController;
     @FXML
     protected VBox quantizationBox, jankovicsandrasBox, myboxBox;
+
+    public enum Algorithm {
+        miguelemosreverte, jankovicsandras, mybox
+    }
 
     @Override
     public void initControls() {
@@ -145,7 +150,7 @@ public class ControlSvgFromImage extends BaseController {
             viewboxCheck.setSelected(false);
             descCheck.setSelected(true);
 
-            jankovicsandrasRadio.setSelected(true);
+            miguelemosreverteRadio.setSelected(true);
             quantizationController.defaultForSvg();
 
         } catch (Exception e) {
@@ -329,11 +334,40 @@ public class ControlSvgFromImage extends BaseController {
 //            MyBoxLog.debug(e);
             }
 
+            if (jankovicsandrasRadio.isSelected()) {
+                quantization = Algorithm.jankovicsandras;
+            } else if (myboxRadio.isSelected()) {
+                quantization = Algorithm.mybox;
+            } else {
+                quantization = Algorithm.miguelemosreverte;
+            }
+
+            layer = Algorithm.miguelemosreverte;
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
+    }
+
+    /*
+        get
+     */
+    public HashMap<String, Float> getOptions() {
+        return options;
+    }
+
+    public Algorithm getQuantization() {
+        return quantization;
+    }
+
+    public Algorithm getLayer() {
+        return layer;
+    }
+
+    public ControlImageQuantization getQuantizationController() {
+        return quantizationController;
     }
 
 }

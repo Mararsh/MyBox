@@ -65,7 +65,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
-            return imageBinary.operateFxImage();
+            return imageBinary.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

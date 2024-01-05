@@ -103,7 +103,7 @@ public class ImageConvertTools {
                 imageBinary = new ImageBinary();
             }
             imageBinary.setImage(srcImage).setTask(task);
-            BufferedImage targetImage = imageBinary.operate();
+            BufferedImage targetImage = imageBinary.start();
             if (targetImage == null) {
                 return null;
             }

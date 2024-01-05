@@ -362,9 +362,9 @@ public class StyleTools {
             }
             PixelsOperation operation = PixelsOperationFactory.replaceColorOperation(task, srcImage,
                     color(StyleColor.Red, true), darkColor, 20).setTask(task);
-            operation = PixelsOperationFactory.replaceColorOperation(task, operation.operate(),
+            operation = PixelsOperationFactory.replaceColorOperation(task, operation.start(),
                     color(StyleColor.Red, false), lightColor, 20).setTask(task);
-            return operation.operate();
+            return operation.start();
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;

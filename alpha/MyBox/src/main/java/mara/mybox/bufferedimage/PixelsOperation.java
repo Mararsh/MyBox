@@ -61,11 +61,20 @@ public abstract class PixelsOperation {
         this.scope = scope;
     }
 
-    public BufferedImage operate() {
+    public BufferedImage start() {
         return operateImage();
     }
 
-    public BufferedImage operateImage() {
+    public Image startFx() {
+        BufferedImage target = start();
+        if (target == null || taskInvalid()) {
+            return null;
+        }
+        return SwingFXUtils.toFXImage(target, null);
+    }
+
+    // do not refer this directly
+    protected BufferedImage operateImage() {
         if (image == null || operationType == null) {
             return image;
         }
@@ -86,15 +95,7 @@ public abstract class PixelsOperation {
         }
     }
 
-    public Image operateFxImage() {
-        BufferedImage target = operate();
-        if (target == null || taskInvalid()) {
-            return null;
-        }
-        return SwingFXUtils.toFXImage(target, null);
-    }
-
-    protected BufferedImage operateScope() {
+    private BufferedImage operateScope() {
         if (image == null) {
             return image;
         }
@@ -156,7 +157,7 @@ public abstract class PixelsOperation {
 
     // https://en.wikipedia.org/wiki/Flood_fill
     // https://www.codeproject.com/Articles/6017/QuickFill-An-Efficient-Flood-Fill-Algorithm
-    protected BufferedImage operateMatting() {
+    private BufferedImage operateMatting() {
         try {
             if (image == null || scope == null || scope.isWhole()) {
                 return image;

@@ -1,11 +1,11 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.sql.Connection;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.RepeatTools;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
@@ -29,16 +30,16 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-24
  * @License Apache License Version 2.0
  */
-public class ImageRepeatController extends BaseShapeController {
+public class ImageRepeatController extends BaseImageController {
 
-    protected int canvasWidth, canvasHeight, repeatH, repeatV, interval, margin;
+    protected int hValue, vValue, interval, margins;
 
     @FXML
-    protected ControlImageSize sizeController;
+    protected BaseImageController sourceController;
     @FXML
-    protected BaseImageController scaleController, repeatController;
+    protected Tab sourceTab, repeatTab;
     @FXML
-    protected Tab imageTab, scaleTab, repeatTab, saveTab;
+    protected VBox sourceBox;
     @FXML
     protected ToggleGroup repeatGroup;
     @FXML
@@ -48,9 +49,7 @@ public class ImageRepeatController extends BaseShapeController {
     @FXML
     protected ComboBox<String> intervalSelector, marginSelector;
     @FXML
-    protected ControlColorSet colorSetController;
-    @FXML
-    protected VBox mainBox, optionsBox;
+    protected ControlColorSet colorController;
     @FXML
     protected Label repeatLabel;
 
@@ -64,11 +63,6 @@ public class ImageRepeatController extends BaseShapeController {
         try {
             super.initControls();
 
-//            sizeController.setParameters(scaleController);  /// ####
-            saveTab.disableProperty().bind(repeatController.imageView.imageProperty().isNull());
-            repeatTab.disableProperty().bind(scaleController.imageView.imageProperty().isNull());
-
-            checkRepeatType();
             repeatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
@@ -76,156 +70,152 @@ public class ImageRepeatController extends BaseShapeController {
                 }
             });
 
-            intervalSelector.getItems().addAll(Arrays.asList("0", "1", "2", "3", "5", "-1", "-3", "-5", "10", "15", "20", "30"));
-            intervalSelector.getSelectionModel().select(UserConfig.getString(baseName + "Interval", "5"));
+            interval = UserConfig.getInt(baseName + "Interval", 0);
+            intervalSelector.getItems().addAll(
+                    Arrays.asList("0", "5", "-5", "1", "-1", "10", "-10", "15", "-15", "20", "-20", "30", "-30"));
+            intervalSelector.setValue(interval + "");
 
-            marginSelector.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
-            marginSelector.getSelectionModel().select(UserConfig.getString(baseName + "Margins", "5"));
+            margins = UserConfig.getInt(baseName + "Margins", 0);
+            marginSelector.getItems().addAll(Arrays.asList("0", "5", "-5", "10", "-10", "20", "-20", "30", "-30"));
+            marginSelector.setValue(margins + "");
 
-            colorSetController.init(this, baseName + "Color");
+            colorController.init(this, baseName + "Color");
+            checkRepeatType();
+
+            goButton.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void maskShapeChanged() {
-        recoverSize();
-    }
-
     public Image sourceImage() {
-        return scaleController.imageView.getImage();
+        return sourceController.imageView.getImage();
     }
 
     public void checkRepeatType() {
         if (repeatRadio.isSelected()) {
             repeatLabel.setText(message("RepeatNumber"));
-            horizontalInput.setText(UserConfig.getInt(baseName + "RepeatHorizontal", 3) + "");
-            veriticalInput.setText(UserConfig.getInt(baseName + "RepeatVertivcal", 3) + "");
+
+            hValue = UserConfig.getInt(baseName + "RepeatHorizontal", 3);
+            if (hValue <= 0) {
+                hValue = 3;
+            }
+            vValue = UserConfig.getInt(baseName + "RepeatVertivcal", 3);
+            if (vValue <= 0) {
+                vValue = 3;
+            }
+
         } else {
             repeatLabel.setText(message("CanvasSize"));
             Image srcImage = sourceImage();
-            horizontalInput.setText(UserConfig.getInt(baseName + "CanvasHorizontal",
-                    srcImage == null ? 500 : (int) srcImage.getWidth() * 3) + "");
-            veriticalInput.setText(UserConfig.getInt(baseName + "CanvasVertical",
-                    srcImage == null ? 500 : (int) srcImage.getHeight() * 3) + "");
+            if (srcImage != null) {
+                hValue = (int) srcImage.getWidth() * 3;
+                vValue = (int) srcImage.getHeight() * 3;
+            } else {
+                hValue = UserConfig.getInt(baseName + "CanvasHorizontal", 500);
+                if (hValue <= 0) {
+                    hValue = 500;
+                }
+                vValue = UserConfig.getInt(baseName + "CanvasVertical", 500);
+                if (vValue <= 0) {
+                    vValue = 500;
+                }
+            }
+
+        }
+        horizontalInput.setText(hValue + "");
+        veriticalInput.setText(vValue + "");
+    }
+
+    public boolean checkHorizontalInput() {
+        int v;
+        try {
+            v = Integer.parseInt(horizontalInput.getText());
+        } catch (Exception e) {
+            v = -1;
+        }
+        if (v > 0) {
+            hValue = v;
+            horizontalInput.setStyle(null);
+            return true;
+        } else {
+            horizontalInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("Horizontal"));
+            return false;
         }
     }
 
-    @FXML
-    public void okSize() {
-        sizeController.scale();
+    public boolean checkVeriticalInput() {
+        int v;
+        try {
+            v = Integer.parseInt(veriticalInput.getText());
+        } catch (Exception e) {
+            v = -1;
+        }
+        if (v > 0) {
+            vValue = v;
+            veriticalInput.setStyle(null);
+            return true;
+        } else {
+            veriticalInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("Vertical"));
+            return false;
+        }
     }
 
-    @FXML
-    public void recoverSize() {
-        if (isSettingValues || imageView.getImage() == null) {
-            return;
+    public boolean checkInterval() {
+        try {
+            interval = Integer.parseInt(intervalSelector.getValue());
+            ValidationTools.setEditorNormal(intervalSelector);
+            return true;
+        } catch (Exception e) {
+            ValidationTools.setEditorBadStyle(intervalSelector);
+            popError(message("InvalidParameter") + ": " + message("Interval"));
+            return false;
         }
-        scaleController.loadImage(imageView.getImage());
+    }
+
+    public boolean checkMargins() {
+        try {
+            margins = Integer.parseInt(marginSelector.getValue());
+            ValidationTools.setEditorNormal(marginSelector);
+            return true;
+        } catch (Exception e) {
+            ValidationTools.setEditorBadStyle(marginSelector);
+            popError(message("InvalidParameter") + ": " + message("Margins"));
+            return false;
+        }
+    }
+
+    public boolean checkOptionss() {
+        if (!checkHorizontalInput() || !checkVeriticalInput()
+                || !checkInterval() || !checkMargins()) {
+            return false;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (repeatRadio.isSelected()) {
+                UserConfig.setInt(conn, baseName + "RepeatHorizontal", hValue);
+                UserConfig.setInt(conn, baseName + "RepeatVertivcal", vValue);
+            } else {
+                UserConfig.setInt(conn, baseName + "CanvasHorizontal", hValue);
+                UserConfig.setInt(conn, baseName + "CanvasVertical", vValue);
+            }
+            UserConfig.setInt(conn, baseName + "Interval", interval);
+            UserConfig.setInt(conn, baseName + "Margins", margins);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
     }
 
     @FXML
     @Override
-    public void okAction() {
-        if (repeatRadio.isSelected()) {
-            try {
-                int v = Integer.parseInt(horizontalInput.getText());
-                if (v > 0) {
-                    repeatH = v;
-                    horizontalInput.setStyle(null);
-                    UserConfig.setInt(baseName + "RepeatHorizontal", repeatH);
-                } else {
-                    horizontalInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParameter") + ": " + message("Horizontal"));
-                    return;
-                }
-            } catch (Exception e) {
-                horizontalInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Horizontal"));
-                return;
-            }
-            try {
-                int v = Integer.parseInt(veriticalInput.getText());
-                if (v > 0) {
-                    repeatV = v;
-                    veriticalInput.setStyle(null);
-                    UserConfig.setInt(baseName + "RepeatVertical", repeatV);
-                } else {
-                    veriticalInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParameter") + ": " + message("Vertical"));
-                    return;
-                }
-            } catch (Exception e) {
-                veriticalInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Vertical"));
-                return;
-            }
-        } else {
-            try {
-                int v = Integer.parseInt(horizontalInput.getText());
-                if (v > 0) {
-                    canvasWidth = v;
-                    horizontalInput.setStyle(null);
-                    UserConfig.setInt(baseName + "CanvasHorizontal", canvasWidth);
-                } else {
-                    horizontalInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParameter") + ": " + message("Horizontal"));
-                    return;
-                }
-            } catch (Exception e) {
-                horizontalInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Horizontal"));
-                return;
-            }
-            try {
-                int v = Integer.parseInt(veriticalInput.getText());
-                if (v > 0) {
-                    canvasHeight = v;
-                    veriticalInput.setStyle(null);
-                    UserConfig.setInt(baseName + "CanvasVertical", canvasHeight);
-                } else {
-                    veriticalInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParameter") + ": " + message("Vertical"));
-                    return;
-                }
-            } catch (Exception e) {
-                veriticalInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Vertical"));
-                return;
-            }
-        }
-
-        try {
-            int v = Integer.parseInt(intervalSelector.getValue());
-            interval = v;
-            UserConfig.setString(baseName + "Interval", v + "");
-            ValidationTools.setEditorNormal(intervalSelector);
-
-        } catch (Exception e) {
-            ValidationTools.setEditorBadStyle(intervalSelector);
-            popError(message("InvalidParameter") + ": " + message("Interval"));
+    public void goAction() {
+        if (!checkOptionss()) {
             return;
         }
-
-        try {
-            int v = Integer.parseInt(marginSelector.getValue());
-            if (v >= 0) {
-                margin = v;
-                UserConfig.setString(baseName + "Margins", v + "");
-                ValidationTools.setEditorNormal(marginSelector);
-            } else {
-                ValidationTools.setEditorBadStyle(marginSelector);
-                popError(message("InvalidParameter") + ": " + message("Margins"));
-                return;
-            }
-        } catch (Exception e) {
-            ValidationTools.setEditorBadStyle(marginSelector);
-            popError(message("InvalidParameter") + ": " + message("Margins"));
-            return;
-        }
-
         drawRepeat();
     }
 
@@ -246,10 +236,10 @@ public class ImageRepeatController extends BaseShapeController {
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(srcImage, null);
                 if (repeatRadio.isSelected()) {
                     bufferedImage = RepeatTools.repeat(this, bufferedImage,
-                            repeatH, repeatV, interval, margin, colorSetController.awtColor());
+                            hValue, vValue, interval, margins, colorController.awtColor());
                 } else {
                     bufferedImage = RepeatTools.tile(this, bufferedImage,
-                            canvasWidth, canvasHeight, interval, margin, colorSetController.awtColor());
+                            hValue, vValue, interval, margins, colorController.awtColor());
                 }
                 if (bufferedImage == null) {
                     return false;
@@ -260,8 +250,7 @@ public class ImageRepeatController extends BaseShapeController {
 
             @Override
             protected void whenSucceeded() {
-                repeatController.loadImage(repeatImage);
-                tabPane.getSelectionModel().select(repeatTab);
+                loadImage(repeatImage);
             }
 
         };
@@ -270,29 +259,38 @@ public class ImageRepeatController extends BaseShapeController {
 
     @FXML
     @Override
-    public void pickSaveAs(Event event) {
-        repeatController.pickSaveAs(event);
+    public boolean menuAction() {
+        if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+            sourceController.menuAction();
+            return true;
+        }
+        return super.menuAction();
     }
 
     @FXML
     @Override
-    public void popSaveAs(Event event) {
-        repeatController.popSaveAs(event);
+    public boolean popAction() {
+        if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+            sourceController.popAction();
+            return true;
+        }
+        return super.popAction();
     }
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == scaleTab) {
-            if (scaleController.keyEventsFilter(event)) {
-                return true;
-            }
-        } else if (tab == repeatTab) {
-            if (repeatController.keyEventsFilter(event)) {
+        if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+            if (sourceController.keyEventsFilter(event)) {
                 return true;
             }
         }
         return super.keyEventsFilter(event);
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        saveAsAction();
     }
 
 }

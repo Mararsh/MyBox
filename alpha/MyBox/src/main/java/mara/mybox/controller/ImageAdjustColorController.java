@@ -85,7 +85,7 @@ public class ImageAdjustColorController extends BasePixelsController {
                     pixelsOperation.setIntPara1(optionsController.colorValue);
                     break;
             }
-            return pixelsOperation.operateFxImage();
+            return pixelsOperation.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

@@ -45,7 +45,7 @@ public class ImageBlackWhiteBatchController extends BaseImageEditBatchController
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return imageBinary.setImage(source).setTask(currentTask).operate();
+        return imageBinary.setImage(source).setTask(currentTask).start();
     }
 
     @Override

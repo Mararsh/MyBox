@@ -33,7 +33,7 @@ public class ImageThresholdingBatchController extends BaseImageEditBatchControll
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return pixelsOperation.setImage(source).setTask(currentTask).operate();
+        return pixelsOperation.setImage(source).setTask(currentTask).start();
     }
 
     @Override

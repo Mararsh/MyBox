@@ -130,7 +130,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void ocrAction() {
         ImageOCRController controller = (ImageOCRController) openStage(Fxmls.ImageOCRFxml);
-        checkImage(controller);
+        checkImage(controller.sourceController);
     }
 
     @FXML
@@ -142,7 +142,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void repeatAction() {
         ImageRepeatController controller = (ImageRepeatController) openStage(Fxmls.ImageRepeatFxml);
-        checkImage(controller);
+        checkImage(controller.sourceController);
     }
 
     @FXML
@@ -153,11 +153,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     public void svgAction() {
-        File file = imageFile();
-        if (file == null) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        SvgFromImageController.open(file);
+        SvgFromImageController.open(imageView.getImage());
     }
 
     @FXML

@@ -84,7 +84,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
                     pixelsOperation.setIntPara1(colorValue);
                     break;
             }
-            BufferedImage target = pixelsOperation.operate();
+            BufferedImage target = pixelsOperation.start();
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

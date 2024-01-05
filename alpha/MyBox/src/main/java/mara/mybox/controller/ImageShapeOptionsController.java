@@ -87,7 +87,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                         if (shapeController.shapeStyle != null) {
                             shapeController.shapeStyle.setStrokeColor(strokeColorController.color());
                         }
-                        shapeController.setMaskAnchorsStyle();
+                        shapeController.setMaskShapesStyle();
                     }
                 });
             } else {

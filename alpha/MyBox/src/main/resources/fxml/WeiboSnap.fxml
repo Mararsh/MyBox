@@ -6,21 +6,25 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
+<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -347,14 +351,14 @@ License:    Apache License Version 2.0
                         <Insets />
                     </VBox.margin>
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                     </padding>
                 </TabPane>
                 <TitledPane text="%TargetFiles" VBox.vgrow="NEVER">
                     <content>
                         <VBox minHeight="-Infinity" spacing="10.0">
                             <children>
-                                <fx:include fx:id="targetPathInput" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS"  maxWidth="1.7976931348623157E308" />
+                                <fx:include fx:id="targetPathInput" maxWidth="1.7976931348623157E308" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS" />
                                 <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="22.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                                     <children>
                                         <Label text="%CategoryFiles" />
@@ -378,17 +382,10 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </TitledPane>
-                <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
+                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                     <children>
-                        <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconStart.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
+                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%FunctionNotWork"  
+                               styleClass="bold-darkRed-label" stylesheets="@../styles/MyBox.css"  HBox.hgrow="ALWAYS"/>
                         <Button fx:id="defaultButton" mnemonicParsing="false" onAction="#suggestedSettings">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -398,9 +395,18 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
+                        <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                     <VBox.margin>
-                        <Insets bottom="15.0" top="10.0" />
+                        <Insets />
                     </VBox.margin>
                 </HBox>
             </children>

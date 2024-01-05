@@ -463,7 +463,7 @@ public class ImageQuantizationFactory {
                         setOperationType(PixelsOperation.OperationType.Quantization).
                         setIsDithering(isDithering)
                         .setTask(task);
-                regionQuantization.buildPalette().operate();
+                regionQuantization.buildPalette().start();
                 regions = regionQuantization.getRegions(quantizationSize);
 
                 if (recordCount) {

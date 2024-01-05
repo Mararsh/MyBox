@@ -42,7 +42,7 @@ public class ImageSmoothBatchController extends BaseImageEditBatchController {
             return ImageConvolution.create()
                     .setImage(source).setKernel(kernel)
                     .setTask(currentTask)
-                    .operate();
+                    .start();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

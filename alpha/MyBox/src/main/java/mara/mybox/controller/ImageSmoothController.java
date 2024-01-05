@@ -60,7 +60,7 @@ public class ImageSmoothController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = message("Intensity") + ": " + smoothController.intensity;
-            return convolution.operateFxImage();
+            return convolution.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

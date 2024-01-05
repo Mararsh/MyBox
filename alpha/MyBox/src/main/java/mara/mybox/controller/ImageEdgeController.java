@@ -61,7 +61,7 @@ public class ImageEdgeController extends BasePixelsController {
                     .setTask(currentTask);
             operation = kernel.getName();
             opInfo = message("Grey") + ": " + kernel.isGray();
-            return convolution.operateFxImage();
+            return convolution.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

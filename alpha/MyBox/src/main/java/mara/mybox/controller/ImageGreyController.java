@@ -37,7 +37,7 @@ public class ImageGreyController extends BasePixelsController {
             imageGray.setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
-            return imageGray.operateFxImage();
+            return imageGray.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

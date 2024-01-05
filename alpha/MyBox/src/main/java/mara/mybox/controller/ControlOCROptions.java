@@ -340,8 +340,8 @@ public class ControlOCROptions extends BaseController {
             if (tesseractRadio.isSelected()) {
                 if (parentController != null && parentController instanceof ImageOCRController) {
                     ImageOCRController ocrController = (ImageOCRController) parentController;
-                    if (ocrController.ocrTabPane.getTabs().contains(ocrController.regionsTab)) {
-                        ocrController.ocrTabPane.getTabs().removeAll(ocrController.regionsTab, ocrController.wordsTab);
+                    if (ocrController.resultsTabPane.getTabs().contains(ocrController.regionsTab)) {
+                        ocrController.resultsTabPane.getTabs().removeAll(ocrController.regionsTab, ocrController.wordsTab);
                     }
                 }
                 tesseractPathController.thisPane.setDisable(false);
@@ -350,8 +350,8 @@ public class ControlOCROptions extends BaseController {
             } else {
                 if (parentController != null && parentController instanceof ImageOCRController) {
                     ImageOCRController ocrController = (ImageOCRController) parentController;
-                    if (!ocrController.ocrTabPane.getTabs().contains(ocrController.regionsTab)) {
-                        ocrController.ocrTabPane.getTabs().addAll(ocrController.regionsTab, ocrController.wordsTab);
+                    if (!ocrController.resultsTabPane.getTabs().contains(ocrController.regionsTab)) {
+                        ocrController.resultsTabPane.getTabs().addAll(ocrController.regionsTab, ocrController.wordsTab);
                     }
                 }
                 tesseractPathController.thisPane.setDisable(true);

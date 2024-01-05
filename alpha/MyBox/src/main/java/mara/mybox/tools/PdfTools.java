@@ -180,7 +180,7 @@ public class PdfTools {
                             .setIntPara1(threshold)
                             .setIsDithering(dithering)
                             .setTask(task);
-                    bufferedImage = imageBinary.operate();
+                    bufferedImage = imageBinary.start();
                     if (bufferedImage == null || (task != null && !task.isWorking())) {
                         return false;
                     }

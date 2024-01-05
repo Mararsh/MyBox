@@ -151,10 +151,4 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
         }
     }
 
-    @FXML
-    @Override
-    public void clearAction() {
-        tableData.clear();
-    }
-
 }

@@ -28,7 +28,7 @@ public class ScopeTools {
                         .setExcludeScope(exclude)
                         .setSkipTransparent(ignoreTransparent)
                         .setTask(task);
-                Image scopeImage = pixelsOperation.operateFxImage();
+                Image scopeImage = pixelsOperation.startFx();
                 if (cutMargins) {
                     return MarginTools.cutMarginsByColor(task, scopeImage,
                             ColorConvertTools.converColor(bgColor),
@@ -52,7 +52,7 @@ public class ScopeTools {
                     .setExcludeScope(exclude)
                     .setSkipTransparent(ignoreTransparent)
                     .setTask(task);
-            return pixelsOperation.operateFxImage();
+            return pixelsOperation.startFx();
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;

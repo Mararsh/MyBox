@@ -20,7 +20,7 @@ public class ImageGreyBatchController extends BaseImageEditBatchController {
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             ImageGray imageGray = new ImageGray(source);
-            return imageGray.setTask(currentTask).operateImage();
+            return imageGray.setTask(currentTask).start();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

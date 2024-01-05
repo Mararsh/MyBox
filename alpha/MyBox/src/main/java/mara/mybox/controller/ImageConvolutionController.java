@@ -72,7 +72,7 @@ public class ImageConvolutionController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = kernel.getName();
-            return convolution.operateFxImage();
+            return convolution.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

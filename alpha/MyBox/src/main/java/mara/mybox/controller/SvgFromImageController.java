@@ -1,10 +1,16 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.charset.Charset;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -15,6 +21,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class SvgFromImageController extends BaseChildController {
 
+    protected BufferedImage bufferedImage;
+
     @FXML
     protected ControlSvgFromImage optionsController;
 
@@ -22,13 +30,17 @@ public class SvgFromImageController extends BaseChildController {
         baseTitle = message("ImageToSvg");
     }
 
-    public void setParameters(File file) {
-        sourceFile = file;
+    public void setParameters(Image image) {
+        if (image == null) {
+            close();
+            return;
+        }
+        bufferedImage = SwingFXUtils.fromFXImage(image, null);
     }
 
     @FXML
     @Override
-    public void okAction() {
+    public void startAction() {
         if (!optionsController.pickValues()) {
             return;
         }
@@ -41,10 +53,13 @@ public class SvgFromImageController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
-                    svgFile = SvgTools.imageToSvgFile(this, myController, sourceFile,
-                            optionsController.myboxRadio.isSelected()
-                            ? optionsController.quantizationController : null,
-                            optionsController.options);
+                    String svg = SvgTools.imageToSvg(this, myController,
+                            bufferedImage, optionsController);
+                    if (svg == null || svg.isBlank() || !isWorking()) {
+                        return false;
+                    }
+                    svgFile = FileTmpTools.generateFile(optionsController.getQuantization().name(), "svg");
+                    svgFile = TextFileTools.writeFile(svgFile, svg, Charset.forName("utf-8"));
                     return svgFile != null && svgFile.exists();
                 } catch (Exception e) {
                     error = e.toString();
@@ -67,10 +82,10 @@ public class SvgFromImageController extends BaseChildController {
     /*
         static methods
      */
-    public static SvgFromImageController open(File file) {
+    public static SvgFromImageController open(Image image) {
         SvgFromImageController controller = (SvgFromImageController) WindowTools.openStage(Fxmls.SvgFromImageFxml);
         if (controller != null) {
-            controller.setParameters(file);
+            controller.setParameters(image);
             controller.requestMouse();
         }
         return controller;

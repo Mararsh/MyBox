@@ -101,7 +101,7 @@ public class ImageManufactureBatchEnhancementController extends BaseImageEditBat
                                 .setIntPara1(optionsController.intPara1)
                                 .setIntPara2(optionsController.intPara2)
                                 .setTask(currentTask);
-                        target = imageContrast.operate();
+                        target = imageContrast.start();
                         break;
                     case Convolution:
                     case Smooth:
@@ -113,7 +113,7 @@ public class ImageManufactureBatchEnhancementController extends BaseImageEditBat
                                 .setKernel(optionsController.kernel);
                         imageConvolution.setImage(source)
                                 .setTask(currentTask);
-                        target = imageConvolution.operate();
+                        target = imageConvolution.start();
                         break;
                     default:
                         break;

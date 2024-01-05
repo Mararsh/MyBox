@@ -47,7 +47,7 @@ public class ImageReduceColorsBatchController extends BaseImageEditBatchControll
                         = (ImageQuantizationFactory.KMeansClusteringQuantization) quantization;
                 q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
             }
-            return quantization.setTask(currentTask).operate();
+            return quantization.setTask(currentTask).start();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

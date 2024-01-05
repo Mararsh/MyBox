@@ -36,7 +36,7 @@ public class ImageGlassBatchController extends BaseImageEditBatchController {
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return mosaic.setImage(source).setTask(currentTask).operateImage();
+        return mosaic.setImage(source).setTask(currentTask).start();
     }
 
     @Override

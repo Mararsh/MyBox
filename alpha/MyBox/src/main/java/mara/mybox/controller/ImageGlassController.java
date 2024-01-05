@@ -57,7 +57,7 @@ public class ImageGlassController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = message("Intensity") + ": " + mosaicController.intensity;
-            return mosaic.operateFxImage();
+            return mosaic.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

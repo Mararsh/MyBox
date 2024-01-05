@@ -58,7 +58,7 @@ public class ImageSepiaController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = message("Intensity") + ": " + sepiaController.intensity;
-            return pixelsOperation.operateFxImage();
+            return pixelsOperation.startFx();
         } catch (Exception e) {
             displayError(e.toString());
             return null;

@@ -92,7 +92,7 @@ public class SvgEditorController extends XmlEditorController {
     }
 
     public void drawSVG(Node focusNode) {
-        if (optionsController.doc == null) {
+        if (treeController.doc == null) {
             htmlController.drawSVG("");
             return;
         }

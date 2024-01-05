@@ -69,15 +69,15 @@ public class ImageConvolution extends PixelsOperation {
     }
 
     @Override
-    public BufferedImage operate() {
+    public BufferedImage start() {
         if (image == null || kernel == null || kernel.getMatrix() == null) {
             return image;
         }
-        return super.operate();
+        return super.start();
     }
 
     @Override
-    public BufferedImage operateImage() {
+    protected BufferedImage operateImage() {
         if (image == null || operationType == null) {
             return image;
         }
@@ -204,12 +204,12 @@ public class ImageConvolution extends PixelsOperation {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
                     OperationType.RGB, ColorActionType.Increase);
             pixelsOperation.setIntPara1(128).setTask(task);
-            target = pixelsOperation.operate();
+            target = pixelsOperation.start();
         }
         if (convolutionKernel.isInvert()) {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
                     OperationType.RGB, ColorActionType.Invert).setTask(task);
-            target = pixelsOperation.operate();
+            target = pixelsOperation.start();
         }
         if (task != null && !task.isWorking()) {
             return null;

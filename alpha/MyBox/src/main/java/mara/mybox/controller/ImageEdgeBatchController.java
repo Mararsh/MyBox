@@ -39,7 +39,7 @@ public class ImageEdgeBatchController extends BaseImageEditBatchController {
             ImageConvolution convolution = ImageConvolution.create();
             BufferedImage target = convolution.setImage(source)
                     .setKernel(kernel)
-                    .setTask(currentTask).operate();
+                    .setTask(currentTask).start();
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

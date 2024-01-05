@@ -171,10 +171,11 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             PDImageXObject newObject = null;
             if (pdfFormat == PdfImageFormat.Tiff) {
                 ImageBinary imageBinary = new ImageBinary();
-                imageBinary.setImage(sourceImage)
+                imageBinary.setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                        .setImage(sourceImage)
                         .setIntPara1(threshold)
                         .setIsDithering(ditherCheck.isSelected());
-                BufferedImage newImage = imageBinary.operate();
+                BufferedImage newImage = imageBinary.start();
                 newImage = ImageBinary.byteBinary(currentTask, newImage);
                 if (currentTask == null || !currentTask.isWorking()) {
                     return null;

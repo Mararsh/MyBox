@@ -36,7 +36,7 @@ public class ImageContrastBatchController extends BaseImageEditBatchController {
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return contrast.setImage(source).setTask(currentTask).operate();
+        return contrast.setImage(source).setTask(currentTask).start();
     }
 
     @Override

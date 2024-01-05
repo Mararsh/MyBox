@@ -98,9 +98,9 @@ public class ImageReduceColorsController extends BasePixelsController {
             if (optionsController.algorithm == QuantizationAlgorithm.KMeansClustering) {
                 KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
                 q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
-                handledImage = q.operateFxImage();
+                handledImage = q.startFx();
             } else {
-                handledImage = quantization.operateFxImage();
+                handledImage = quantization.startFx();
             }
 
             String name = null;

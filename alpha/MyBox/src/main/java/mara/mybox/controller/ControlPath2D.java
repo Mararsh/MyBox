@@ -194,12 +194,6 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
         ShapePathSegmentEditController.open(this, index, tableData.get(index));
     }
 
-    @FXML
-    @Override
-    public void clearAction() {
-        tableData.clear();
-    }
-
     /*
         text
      */

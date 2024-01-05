@@ -23,7 +23,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.AlphaTools;
+import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -50,7 +52,7 @@ or 8 bpp grayscale uncompressed TIFF or PNG format.
 PNG is usually smaller in size than other image formats and still keeps high quality due to its employing lossless data compression algorithms;
 TIFF has the advantage of the ability to contain multiple images (pages) in a file.
  */
-public class ImageOCRController extends BaseImageController {
+public class ImageOCRController extends BaseController {
 
     protected float scale;
     protected int threshold, rotate;
@@ -58,7 +60,9 @@ public class ImageOCRController extends BaseImageController {
     protected Process process;
 
     @FXML
-    protected Tab imageTab, processTab, optionsTab, resultsTab;
+    protected BaseImageController sourceController;
+    @FXML
+    protected Tab imageTab, processTab, optionsTab;
     @FXML
     protected TextArea textArea;
     @FXML
@@ -72,11 +76,13 @@ public class ImageOCRController extends BaseImageController {
     @FXML
     protected ImageOCRProcessController preprocessController;
     @FXML
-    protected TabPane ocrTabPane;
+    protected TabPane resultsTabPane;
     @FXML
     protected Tab txtTab, htmlTab, regionsTab, wordsTab;
     @FXML
     protected Tab ocrOptionsTab;
+    @FXML
+    protected VBox resultsBox, optionsBox;
 
     public ImageOCRController() {
         baseTitle = message("ImageOCR");
@@ -106,88 +112,36 @@ public class ImageOCRController extends BaseImageController {
                 }
             });
 
-            startButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            tabPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            sourceController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    sourceLoaded();
+                }
+            });
+
+            startButton.disableProperty().bind(Bindings.isNull(sourceController.imageView.imageProperty()));
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    @FXML
     @Override
-    public boolean menuAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == processTab) {
-            preprocessController.menuAction();
-            return true;
-
-        } else if (tab == imageTab) {
-            return super.menuAction();
-
-        } else if (tab == resultsTab) {
-
-            if (txtTab.isSelected()) {
-                Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
-                MenuTextEditController.textMenu(myController, textArea, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            } else if (htmlTab.isSelected()) {
-                htmlController.menuAction();
-                return true;
-
-            } else if (regionsTab.isSelected()) {
-                regionsTableController.menuAction();
-                return true;
-
-            } else if (wordsTab.isSelected()) {
-                wordsTableController.menuAction();
-                return true;
-            }
-        }
-        return super.menuAction();
+    public File sourceFile() {
+        return sourceController.sourceFile;
     }
 
-    @FXML
-    @Override
-    public boolean popAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == processTab) {
-            preprocessController.popAction();
-            return true;
-
-        } else if (tab == imageTab) {
-            return super.popAction();
-
-        } else if (tab == resultsTab) {
-
-            if (txtTab.isSelected()) {
-                TextPopController.openInput(this, textArea);
-                return true;
-
-            } else if (htmlTab.isSelected()) {
-                htmlController.popAction();
-                return true;
-
-            } else if (regionsTab.isSelected()) {
-                regionsTableController.popAction();
-                return true;
-
-            } else if (wordsTab.isSelected()) {
-                wordsTableController.popAction();
-                return true;
-            }
-        }
-        return super.popAction();
+    public Image sourceImage() {
+        return sourceController.imageView.getImage();
     }
 
-    @Override
-    public boolean afterImageLoaded() {
+    public ImageInformation sourceInfo() {
+        return sourceController.imageInformation;
+    }
+
+    public void sourceLoaded() {
         try {
-            if (!super.afterImageLoaded()) {
-                return false;
-            }
-
+            sourceFile = sourceController.sourceFile;
             String name = sourceFile != null ? FileNameTools.prefix(sourceFile.getName()) : "";
             regionsTableController.baseTitle = name + "_regions";
             wordsTableController.baseTitle = name + "_words";
@@ -198,40 +152,106 @@ public class ImageOCRController extends BaseImageController {
             if (startCheck.isSelected()) {
                 startAction();
             }
-
-            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
-            return false;
         }
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        if (optionsBox.isFocused() || optionsBox.isFocusWithin()) {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == imageTab) {
+                sourceController.menuAction();
+                return true;
+            } else if (tab == processTab) {
+                preprocessController.menuAction();
+                return true;
+            }
+        }
+
+        if (htmlTab.isSelected()) {
+            htmlController.menuAction();
+            return true;
+
+        } else if (regionsTab.isSelected()) {
+            regionsTableController.menuAction();
+            return true;
+
+        } else if (wordsTab.isSelected()) {
+            wordsTableController.menuAction();
+            return true;
+        }
+
+        Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
+        MenuTextEditController.textMenu(myController, textArea, localToScreen.getX(), localToScreen.getY());
+        return true;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (optionsBox.isFocused() || optionsBox.isFocusWithin()) {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == imageTab) {
+                sourceController.popAction();
+                return true;
+            } else if (tab == processTab) {
+                preprocessController.popAction();
+                return true;
+            }
+        }
+
+        if (htmlTab.isSelected()) {
+            htmlController.popAction();
+            return true;
+
+        } else if (regionsTab.isSelected()) {
+            regionsTableController.popAction();
+            return true;
+
+        } else if (wordsTab.isSelected()) {
+            wordsTableController.popAction();
+            return true;
+        }
+
+        TextPopController.openInput(this, textArea);
+        return true;
     }
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == processTab) {
-            if (preprocessController.keyEventsFilter(event)) {
+        if (optionsBox.isFocused() || optionsBox.isFocusWithin()) {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == imageTab) {
+                if (sourceController.keyEventsFilter(event)) {
+                    return true;
+                }
+            } else if (tab == processTab) {
+                if (preprocessController.keyEventsFilter(event)) {
+                    return true;
+                }
+            }
+        }
+
+        Tab tab = resultsTabPane.getSelectionModel().getSelectedItem();
+        if (tab == htmlTab) {
+            if (htmlController.keyEventsFilter(event)) {
                 return true;
             }
-        } else if (tab == resultsTab) {
 
-            if (htmlTab.isSelected()) {
-                if (htmlController.keyEventsFilter(event)) {
-                    return true;
-                }
-
-            } else if (regionsTab.isSelected()) {
-                if (regionsTableController.keyEventsFilter(event)) {
-                    return true;
-                }
-
-            } else if (wordsTab.isSelected()) {
-                if (wordsTableController.keyEventsFilter(event)) {
-                    return true;
-                }
+        } else if (regionsTab.isSelected()) {
+            if (regionsTableController.keyEventsFilter(event)) {
+                return true;
             }
 
+        } else if (wordsTab.isSelected()) {
+            if (wordsTableController.keyEventsFilter(event)) {
+                return true;
+            }
         }
+
         return super.keyEventsFilter(event);
     }
 
@@ -325,8 +345,7 @@ public class ImageOCRController extends BaseImageController {
                     String i = MessageFormat.format(message("OCRresults"),
                             texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime()));
                     resultLabel.setText(i);
-                    tabPane.getSelectionModel().select(resultsTab);
-                    ocrTabPane.getSelectionModel().select(txtTab);
+                    resultsTabPane.getSelectionModel().select(txtTab);
                 } else {
                     if (outputs != null && !outputs.isBlank()) {
                         alertError(outputs);
@@ -376,8 +395,7 @@ public class ImageOCRController extends BaseImageController {
                 textArea.setText(ocrOptionsController.texts);
                 resultLabel.setText(MessageFormat.format(message("OCRresults"),
                         ocrOptionsController.texts.length(), DateTools.datetimeMsDuration(cost)));
-                tabPane.getSelectionModel().select(resultsTab);
-                ocrTabPane.getSelectionModel().select(txtTab);
+                resultsTabPane.getSelectionModel().select(txtTab);
 
                 htmlController.loadHtml(ocrOptionsController.html);
 

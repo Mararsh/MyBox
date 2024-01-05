@@ -53,7 +53,7 @@ public class PixelDemos {
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
-                bufferedImage = mosaic.setIntensity(v).operate();
+                bufferedImage = mosaic.setIntensity(v).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -150,7 +150,7 @@ public class PixelDemos {
                 bufferedImage = convolution
                         .setKernel(ConvolutionKernel.makeAverageBlur(v))
                         .setTask(demoTask)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -168,7 +168,7 @@ public class PixelDemos {
                 bufferedImage = convolution
                         .setKernel(ConvolutionKernel.makeGaussBlur(v))
                         .setTask(demoTask)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -186,7 +186,7 @@ public class PixelDemos {
                 bufferedImage = convolution
                         .setKernel(ConvolutionKernel.makeMotionBlur(v))
                         .setTask(demoTask)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -226,7 +226,7 @@ public class PixelDemos {
             BufferedImage bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(1))
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -242,7 +242,7 @@ public class PixelDemos {
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -258,7 +258,7 @@ public class PixelDemos {
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -274,7 +274,7 @@ public class PixelDemos {
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.makeUnsharpMasking(2))
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -290,7 +290,7 @@ public class PixelDemos {
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.MakeSharpenEightNeighborLaplace())
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -306,7 +306,7 @@ public class PixelDemos {
             bufferedImage = convolution
                     .setKernel(ConvolutionKernel.MakeSharpenFourNeighborLaplace())
                     .setTask(demoTask)
-                    .operate();
+                    .start();
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -347,7 +347,7 @@ public class PixelDemos {
 
             BufferedImage bufferedImage = contrast
                     .setAlgorithm(ContrastAlgorithm.SaturationHistogramEqualization)
-                    .operate();
+                    .start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -364,7 +364,7 @@ public class PixelDemos {
 
             bufferedImage = contrast
                     .setAlgorithm(ContrastAlgorithm.BrightnessHistogramEqualization)
-                    .operate();
+                    .start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -383,7 +383,7 @@ public class PixelDemos {
 
             bufferedImage = contrast
                     .setAlgorithm(ContrastAlgorithm.SaturationBrightnessHistogramEqualization)
-                    .operate();
+                    .start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -402,7 +402,7 @@ public class PixelDemos {
 
             bufferedImage = contrast
                     .setAlgorithm(ContrastAlgorithm.GrayHistogramEqualization)
-                    .operate();
+                    .start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -429,7 +429,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.SaturationHistogramStretching)
                         .setThreshold(threshold).setPercentage(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -448,7 +448,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.BrightnessHistogramStretching)
                         .setThreshold(threshold).setPercentage(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -467,7 +467,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.SaturationBrightnessHistogramStretching)
                         .setThreshold(threshold).setPercentage(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -486,7 +486,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.GrayHistogramStretching)
                         .setThreshold(threshold).setPercentage(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -509,7 +509,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.SaturationHistogramShifting)
                         .setOffset(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -527,7 +527,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.BrightnessHistogramShifting)
                         .setOffset(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -545,7 +545,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.SaturationBrightnessHistogramShifting)
                         .setOffset(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -563,7 +563,7 @@ public class PixelDemos {
                 bufferedImage = contrast
                         .setAlgorithm(ContrastAlgorithm.GrayHistogramShifting)
                         .setOffset(v)
-                        .operate();
+                        .start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -666,7 +666,7 @@ public class PixelDemos {
             String path, ImageConvolution convolution) {
         try {
             convolution.getKernel().setGray(false);
-            BufferedImage bufferedImage = convolution.setIsGray(false).operate();
+            BufferedImage bufferedImage = convolution.setIsGray(false).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -681,7 +681,7 @@ public class PixelDemos {
             }
 
             convolution.getKernel().setGray(true);
-            bufferedImage = convolution.setIsGray(true).operate();
+            bufferedImage = convolution.setIsGray(true).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }

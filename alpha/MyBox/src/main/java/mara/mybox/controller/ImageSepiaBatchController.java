@@ -38,7 +38,7 @@ public class ImageSepiaBatchController extends BaseImageEditBatchController {
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return pixelsOperation.setImage(source).setTask(currentTask).operateImage();
+        return pixelsOperation.setImage(source).setTask(currentTask).start();
     }
 
     @Override

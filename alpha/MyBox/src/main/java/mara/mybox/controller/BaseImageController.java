@@ -425,16 +425,16 @@ public class BaseImageController extends BaseImageController_Actions {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Pop") + "    Ctrl+P " + message("Or") + " Alt+P",
-                    StyleTools.getIconImageView("iconPop.png"));
+            MenuItem menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
-                popAction();
+                editAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+            menu = new MenuItem(message("Pop") + "    Ctrl+P " + message("Or") + " Alt+P",
+                    StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {
-                editAction();
+                popAction();
             });
             items.add(menu);
 

@@ -366,8 +366,8 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
         if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
 
