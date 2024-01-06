@@ -5,7 +5,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -14,7 +13,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -35,23 +33,19 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseFileImagesViewController extends BaseImageController {
 
-    protected final int ThumbWidth = 200;
-    protected int percent;
+    protected int percent, thumbWidth;
     protected FxTask thumbTask;
     protected LoadingController loading;
     protected Process process;
 
     @FXML
-    protected ComboBox<String> percentBox, dpiBox, pageSelector;
+    protected ComboBox<String> percentSelector, pageSelector, thumbWidthSelector;
     @FXML
-    protected CheckBox thumbCheck;
-    @FXML
-    protected SplitPane mainPane;
+    protected CheckBox viewThumbsCheck;
     @FXML
     protected ScrollPane thumbScrollPane;
     @FXML
     protected VBox thumbBox;
-
     @FXML
     protected Label pageLabel;
 
@@ -76,13 +70,13 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
                 });
             }
 
-            if (thumbCheck != null) {
-                thumbCheck.setSelected(UserConfig.getBoolean(baseName + "Thumbnails", false));
-                thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (viewThumbsCheck != null) {
+                viewThumbsCheck.setSelected(UserConfig.getBoolean(baseName + "Thumbnails", false));
+                viewThumbsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        checkThumbs();
-                        UserConfig.setBoolean(baseName + "Thumbnails", thumbCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Thumbnails", viewThumbsCheck.isSelected());
+                        loadThumbs();
                     }
                 });
 
@@ -94,14 +88,14 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
                 });
             }
 
-            if (percentBox != null) {
-                percentBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
+            if (percentSelector != null) {
+                percentSelector.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
                 percent = UserConfig.getInt(baseName + "Percent", 100);
                 if (percent < 0) {
                     percent = 100;
                 }
-                percentBox.getSelectionModel().select(percent + "");
-                percentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                percentSelector.getSelectionModel().select(percent + "");
+                percentSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         if (isSettingValues) {
@@ -113,26 +107,26 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
                                 percent = v;
                                 UserConfig.setInt(baseName + "Percent", percent);
                                 setPercent(percent);
-                                ValidationTools.setEditorNormal(percentBox);
+                                ValidationTools.setEditorNormal(percentSelector);
                             } else {
-                                ValidationTools.setEditorBadStyle(percentBox);
+                                ValidationTools.setEditorBadStyle(percentSelector);
                             }
 
                         } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(percentBox);
+                            ValidationTools.setEditorBadStyle(percentSelector);
                         }
                     }
                 });
             }
 
-            if (dpiBox != null) {
-                dpiBox.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
+            if (dpiSelector != null) {
+                dpiSelector.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
                 dpi = UserConfig.getInt(baseName + "DPI", 96);
                 if (dpi < 0) {
                     dpi = 96;
                 }
-                dpiBox.getSelectionModel().select(dpi + "");
-                dpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                dpiSelector.getSelectionModel().select(dpi + "");
+                dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         if (isSettingValues) {
@@ -144,12 +138,42 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
                                 dpi = v;
                                 UserConfig.setInt(baseName + "DPI", dpi);
                                 loadPage();
-                                ValidationTools.setEditorNormal(dpiBox);
+                                ValidationTools.setEditorNormal(dpiSelector);
                             } else {
-                                ValidationTools.setEditorBadStyle(dpiBox);
+                                ValidationTools.setEditorBadStyle(dpiSelector);
                             }
                         } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(dpiBox);
+                            ValidationTools.setEditorBadStyle(dpiSelector);
+                        }
+                    }
+                });
+            }
+
+            if (thumbWidthSelector != null) {
+                thumbWidthSelector.getItems().addAll(Arrays.asList("200", "100", "50", "150", "300"));
+                thumbWidth = UserConfig.getInt(baseName + "ThumbnailWidth", 200);
+                if (thumbWidth <= 0) {
+                    thumbWidth = 200;
+                }
+                thumbWidthSelector.getSelectionModel().select(dpi + "");
+                thumbWidthSelector.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        try {
+                            int v = Integer.parseInt(newValue);
+                            if (v > 0) {
+                                thumbWidth = v;
+                                UserConfig.setInt(baseName + "ThumbnailWidth", thumbWidth);
+                                ValidationTools.setEditorNormal(thumbWidthSelector);
+                                loadThumbs();
+                            } else {
+                                ValidationTools.setEditorBadStyle(thumbWidthSelector);
+                            }
+                        } catch (Exception e) {
+                            ValidationTools.setEditorBadStyle(thumbWidthSelector);
                         }
                     }
                 });
@@ -167,7 +191,7 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         super.viewSizeChanged(change);
         percent = (int) (imageView.getFitHeight() * 100 / imageView.getImage().getHeight());
         isSettingValues = true;
-        percentBox.getSelectionModel().select(percent + "");
+        percentSelector.getSelectionModel().select(percent + "");
         isSettingValues = false;
     }
 
@@ -178,8 +202,6 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
                 return;
             }
             super.initImageView();
-
-            mainPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
             scrollPane.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
                 @Override
@@ -228,44 +250,6 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         } catch (Exception e) {
             pageSelector.getEditor().setStyle(UserConfig.badStyle());
             return false;
-        }
-    }
-
-    protected void checkThumbs() {
-        if (thumbCheck.isSelected()) {
-            if (!mainPane.getItems().contains(thumbScrollPane)) {
-                mainPane.getItems().add(0, thumbScrollPane);
-            }
-            loadThumbs();
-
-        } else {
-            if (mainPane.getItems().contains(thumbScrollPane)) {
-                mainPane.getItems().remove(thumbScrollPane);
-            }
-        }
-        adjustSplitPane();
-
-    }
-
-    protected void adjustSplitPane() {
-        try {
-            int size = mainPane.getItems().size();
-            switch (size) {
-                case 1:
-                    mainPane.setDividerPositions(1);
-                    break;
-                case 2:
-                    mainPane.setDividerPosition(0, 0.3);
-                    break;
-                case 3:
-                    mainPane.setDividerPosition(0, 0.2);
-                    mainPane.setDividerPosition(1, 0.5);
-                    break;
-            }
-            mainPane.applyCss();
-            mainPane.layout();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
         }
     }
 
@@ -399,7 +383,10 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
     }
 
     protected void loadThumbs() {
-        if (thumbTask != null && !thumbTask.isQuit()) {
+        if (thumbTask != null) {
+            thumbTask.cancel();
+        }
+        if (!viewThumbsCheck.isSelected()) {
             return;
         }
         if (thumbBox.getChildren().isEmpty()) {
@@ -447,7 +434,6 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
             @Override
             protected void whenSucceeded() {
                 thumbBox.layout();
-                adjustSplitPane();
             }
 
         };

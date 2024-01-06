@@ -27,8 +27,6 @@ public class StyleCheckBox {
                 return new StyleData("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");
             case "openCheck":
                 return new StyleData("openCheck", "", message("OpenWhenComplete"), "", "iconOpenPath.png");
-            case "bookmarksCheck":
-                return new StyleData("bookmarksCheck", "", message("Bookmarks"), "", "iconTree.png");
             case "thumbCheck":
                 return new StyleData("thumbCheck", "", message("Thumbnails"), "", "iconBrowse.png");
             case "rulerXCheck":
@@ -165,6 +163,9 @@ public class StyleCheckBox {
         }
         if (id.startsWith("lostFocusCommit")) {
             return new StyleData(id, message("CommitModificationWhenDataCellLoseFocusComments"), "", "iconInput.png");
+        }
+        if (id.startsWith("view")) {
+            return new StyleData(id, message("View"), "", "iconView.png");
         }
         if (id.startsWith("pop")) {
             switch (id) {

@@ -30,16 +30,16 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-24
  * @License Apache License Version 2.0
  */
-public class ImageRepeatController extends BaseImageController {
+public class ImageRepeatController extends BaseController {
 
     protected int hValue, vValue, interval, margins;
 
     @FXML
-    protected BaseImageController sourceController;
+    protected BaseImageController sourceController, targetController;
     @FXML
     protected Tab sourceTab, repeatTab;
     @FXML
-    protected VBox sourceBox;
+    protected VBox sourceBox, targetBox;
     @FXML
     protected ToggleGroup repeatGroup;
     @FXML
@@ -250,7 +250,7 @@ public class ImageRepeatController extends BaseImageController {
 
             @Override
             protected void whenSucceeded() {
-                loadImage(repeatImage);
+                targetController.loadImage(repeatImage);
             }
 
         };
@@ -260,7 +260,10 @@ public class ImageRepeatController extends BaseImageController {
     @FXML
     @Override
     public boolean menuAction() {
-        if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+        if (targetBox.isFocused() || targetBox.isFocusWithin()) {
+            targetController.menuAction();
+            return true;
+        } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
             sourceController.menuAction();
             return true;
         }
@@ -270,7 +273,10 @@ public class ImageRepeatController extends BaseImageController {
     @FXML
     @Override
     public boolean popAction() {
-        if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+        if (targetBox.isFocused() || targetBox.isFocusWithin()) {
+            targetController.popAction();
+            return true;
+        } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
             sourceController.popAction();
             return true;
         }
@@ -279,7 +285,11 @@ public class ImageRepeatController extends BaseImageController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+        if (targetBox.isFocused() || targetBox.isFocusWithin()) {
+            if (targetController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
             if (sourceController.keyEventsFilter(event)) {
                 return true;
             }
@@ -290,7 +300,7 @@ public class ImageRepeatController extends BaseImageController {
     @FXML
     @Override
     public void saveAction() {
-        saveAsAction();
+        targetController.saveAsAction();
     }
 
 }

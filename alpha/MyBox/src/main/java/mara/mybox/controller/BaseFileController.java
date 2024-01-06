@@ -91,13 +91,6 @@ public abstract class BaseFileController extends BaseController {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
-                    StyleTools.getIconImageView("iconSave.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                saveAction();
-            });
-            items.add(menu);
-
             menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
                     StyleTools.getIconImageView("iconSaveAs.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -119,31 +112,7 @@ public abstract class BaseFileController extends BaseController {
                 });
                 items.add(menu);
 
-                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
-                backItem.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
-                    }
-                });
-                items.add(backItem);
-
-                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    openBackups();
-                });
-                items.add(menu);
-
             }
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Create"), StyleTools.getIconImageView("iconAdd.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                createAction();
-            });
-            items.add(menu);
 
             if (sourceFile == null) {
                 return items;

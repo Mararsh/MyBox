@@ -6,14 +6,9 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,7 +20,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
@@ -38,18 +32,10 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  */
 public class PptViewController extends BaseFileImagesViewController {
 
-    protected ChangeListener<Number> textsDividerListener;
-
     @FXML
     protected TextArea slideArea, notesArea, masterArea, commentsArea;
     @FXML
     protected Label slideLabel, notesLabel, masterLabel, commentsLabel;
-    @FXML
-    protected CheckBox moreCheck;
-    @FXML
-    protected SplitPane textsPane;
-    @FXML
-    protected TabPane morePane;
 
     public PptViewController() {
         baseTitle = message("PptView");
@@ -58,53 +44,6 @@ public class PptViewController extends BaseFileImagesViewController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PPTS, VisitHistory.FileType.Image);
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            moreCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayMore", true));
-            moreCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "DisplayMore", moreCheck.isSelected());
-                    checkMore();
-                }
-            });
-
-            textsDividerListener = (ObservableValue<? extends Number> v, Number ov, Number nv) -> {
-                UserConfig.setString(baseName + "TextsPanePosition", nv.doubleValue() + "");
-            };
-
-            checkMore();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void checkMore() {
-        if (moreCheck.isSelected()) {
-            if (!textsPane.getItems().contains(morePane)) {
-                textsPane.getItems().add(morePane);
-            }
-            double defaultv = 0.5;
-            try {
-                String v = UserConfig.getString(baseName + "TextsPanePosition", defaultv + "");
-                textsPane.setDividerPosition(0, Double.parseDouble(v));
-            } catch (Exception e) {
-                textsPane.setDividerPosition(0, defaultv);
-            }
-            textsPane.getDividers().get(0).positionProperty().removeListener(textsDividerListener);
-            textsPane.getDividers().get(0).positionProperty().addListener(textsDividerListener);
-        } else {
-            if (textsPane.getItems().contains(morePane)) {
-                textsPane.getDividers().get(0).positionProperty().removeListener(textsDividerListener);
-                textsPane.getItems().remove(morePane);
-            }
-        }
     }
 
     @Override
@@ -162,7 +101,7 @@ public class PptViewController extends BaseFileImagesViewController {
                 isSettingValues = false;
                 initCurrentPage();
                 loadPage();
-                checkThumbs();
+                loadThumbs();
                 browseController.setCurrentFile(sourceFile);
             }
 
@@ -269,8 +208,8 @@ public class PptViewController extends BaseFileImagesViewController {
                     g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
-                if (slideImage.getWidth() > ThumbWidth) {
-                    slideImage = ScaleTools.scaleImageWidthKeep(slideImage, ThumbWidth);
+                if (slideImage.getWidth() > thumbWidth) {
+                    slideImage = ScaleTools.scaleImageWidthKeep(slideImage, thumbWidth);
                 }
                 Image thumb = SwingFXUtils.toFXImage(slideImage, null);
                 view.setImage(thumb);
@@ -283,15 +222,6 @@ public class PptViewController extends BaseFileImagesViewController {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            textsDividerListener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*

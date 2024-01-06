@@ -36,6 +36,48 @@ public class ImageClipSelectController extends BaseImageClipController {
         }
     }
 
+    @FXML
+    @Override
+    public boolean popAction() {
+        ImageClipboard selected = selectedItem();
+        if (selected == null) {
+            popError(message("SelectToHandle"));
+            return false;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+
+            private Image clip;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    clip = ImageClipboard.loadImage(this, selected);
+                    return clip != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImagePopController.openImage(myController, clip);
+            }
+
+        };
+        start(task);
+        return true;
+    }
+
+    @Override
+    protected void checkButtons() {
+        super.checkButtons();
+        popButton.setDisable(isNoneSelected());
+    }
+
     @Override
     public void itemDoubleClicked() {
         okAction();
@@ -77,7 +119,6 @@ public class ImageClipSelectController extends BaseImageClipController {
 
         };
         start(task);
-
     }
 
     @FXML

@@ -16,11 +16,12 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebView;
@@ -33,8 +34,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -52,23 +53,24 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-6
  * @License Apache License Version 2.0
  */
-public class ImageAnalyseController extends BaseImageController {
+public class ImageAnalyseController extends BaseController {
 
+    protected Image image;
     protected ImageStatistic data;
     protected long nonTransparent;
 
+    @FXML
+    protected BaseImageController imageController;
     @FXML
     protected CheckBox sortCheck, componentsLegendCheck, grayHistCheck, redHistCheck,
             greenHistCheck, blueHistCheck, alphaHistCheck,
             hueHistCheck, saturationHistCheck, brightnessHistCheck;
     @FXML
-    protected Tab statisticTab, histogramTab, dominantTab, redTab, greenTab, blueTab,
+    protected Tab imageTab, statisticTab, histogramTab, dominantTab, redTab, greenTab, blueTab,
             hueTab, brightnessTab, saturationTab, grayTab, alphaTab;
     @FXML
     protected BarChart colorsBarchart, grayBarchart, redBarchart, greenBarchart, blueBarchart,
             hueBarchart, saturationBarchart, brightnessBarchart, alphaBarchart;
-    @FXML
-    protected Button refreshButton;
     @FXML
     protected WebView grayView, redView, greenView, blueView,
             hueView, saturationView, brightnessView, alphaView;
@@ -76,6 +78,8 @@ public class ImageAnalyseController extends BaseImageController {
     protected ControlWebView statisticController;
     @FXML
     protected ImageAnalyseDominantController dominantController;
+    @FXML
+    protected FlowPane buttonsPane;
 
     public ImageAnalyseController() {
         baseTitle = message("ImageAnalyse");
@@ -105,29 +109,22 @@ public class ImageAnalyseController extends BaseImageController {
                 }
             });
 
-            tabPane.disableProperty().bind(imageView.imageProperty().isNull());
+            buttonsPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+
+            imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    loadData();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public boolean afterImageLoaded() {
-        try {
-            if (!super.afterImageLoaded()) {
-                return false;
-            }
-            loadData();
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
         }
     }
 
     protected void loadData() {
+        image = imageController.imageView.getImage();
         if (image == null || isSettingValues) {
             return;
         }
@@ -617,6 +614,9 @@ public class ImageAnalyseController extends BaseImageController {
         }
     }
 
+    /*
+        actions
+     */
     @FXML
     @Override
     public void saveAsAction() {
@@ -871,11 +871,44 @@ public class ImageAnalyseController extends BaseImageController {
     @Override
     public void refreshAction() {
         try {
-            fitSize();
+            imageController.fitSize();
             loadData();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            imageController.menuAction();
+            return true;
+        }
+        return super.menuAction();
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            imageController.popAction();
+            return true;
+        }
+        return super.popAction();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            if (imageController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
     }
 
 }

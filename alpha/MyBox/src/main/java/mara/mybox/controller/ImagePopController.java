@@ -50,16 +50,17 @@ public class ImagePopController extends BaseShapeController {
                 }
             };
 
-            refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
-            checkSychronize();
+            refreshChangeCheck.setSelected(UserConfig.getBoolean(interfaceName + "Sychronized", true));
             refreshChangeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
+                    UserConfig.setBoolean(interfaceName + "Sychronized", refreshChangeCheck.isSelected());
                     checkSychronize();
                 }
             });
 
             fitSize();
+            checkSychronize();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

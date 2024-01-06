@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -52,10 +51,10 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  * @CreateDate 2021-5-29
  * @License Apache License Version 2.0
  */
-public class ImagesPlayController extends BaseShapeController {
+public class ImagesPlayController extends BaseController {
 
     protected List<ImageInformation> imageInfos;
-    protected int queueSize, fromFrame, toFrame;
+    protected int framesNumber, frameIndex, queueSize, fromFrame, toFrame;
     protected String fileFormat, pdfPassword, inPassword;
     protected LoadingController loading;
     protected long memoryThreadhold;
@@ -85,6 +84,8 @@ public class ImagesPlayController extends BaseShapeController {
     protected FlowPane framesPane;
     @FXML
     protected ControlPlay playController;
+    @FXML
+    protected BaseImageController viewController;
 
     public ImagesPlayController() {
         baseTitle = message("ImagesPlay");
@@ -139,8 +140,6 @@ public class ImagesPlayController extends BaseShapeController {
                 }
             });
 
-            imageBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-
             fileVBox.getChildren().remove(pdfBox);
 
             frameThread = new Thread() {
@@ -174,14 +173,6 @@ public class ImagesPlayController extends BaseShapeController {
     }
 
     @Override
-    protected void setLoadWidth() {
-        if (isSettingValues) {
-            return;
-        }
-        reloadImages();
-    }
-
-    @Override
     public void checkDPI() {
         super.checkDPI();
         if (fileFormat != null && fileFormat.equalsIgnoreCase("pdf")) {
@@ -207,10 +198,9 @@ public class ImagesPlayController extends BaseShapeController {
         sourceFile = null;
         fileFormat = null;
         pdfPassword = null;
-        image = null;
-        imageInformation = null;
         imageInfos.clear();
         playController.clear();
+        viewController.loadImage(null);
     }
 
     @Override
@@ -562,21 +552,11 @@ public class ImagesPlayController extends BaseShapeController {
         }
     }
 
-    @Override
-    public File sourceFile() {
-        if (fileFormat == null || fileFormat.equalsIgnoreCase("pdf")
-                || fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
-            return null;
-        } else {
-            return sourceFile;
-        }
-    }
-
     @FXML
     public void viewFile() {
         try {
             if (fileFormat == null) {
-                editAction();
+                ImageEditorController.openFile(sourceFile);
 
             } else if (fileFormat.equalsIgnoreCase("pdf")) {
                 PdfViewController controller = (PdfViewController) openStage(Fxmls.PdfViewFxml);
@@ -587,7 +567,7 @@ public class ImagesPlayController extends BaseShapeController {
                 controller.loadFile(sourceFile, frameIndex);
 
             } else {
-                editAction();
+                ImageEditorController.openFile(sourceFile);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -595,10 +575,8 @@ public class ImagesPlayController extends BaseShapeController {
     }
 
     @FXML
-    @Override
     public void editFrames() {
-        ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
-        controller.loadImages(imageInfos);
+        ImagesEditorController.openImages(imageInfos);
     }
 
     public void displayFrame(int index) {
@@ -609,7 +587,7 @@ public class ImagesPlayController extends BaseShapeController {
             playController.clear();
         }
         try {
-            imageInformation = imageInfos.get(index);
+            viewController.imageInformation = imageInfos.get(index);
             frameIndex = index;
         } catch (Exception e) {
             return;
@@ -619,7 +597,7 @@ public class ImagesPlayController extends BaseShapeController {
             @Override
             protected boolean handle() {
                 try {
-                    image = thumb(this, imageInformation);
+                    viewController.image = thumb(this, viewController.imageInformation);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -629,25 +607,15 @@ public class ImagesPlayController extends BaseShapeController {
 
             @Override
             protected void whenSucceeded() {
-                if (image == null) {
+                if (viewController.image == null) {
                     return;
                 }
-                imageView.setImage(image);
-                refinePane();
-                updateLabelsTitle();
+                viewController.imageView.setImage(viewController.image);
+                viewController.refinePane();
+                viewController.updateLabelsTitle();
                 playController.refreshList();
+                viewController.imageInformation.setThumbnail(null); // release memory
 
-                imageInformation.setThumbnail(null); // release memory
-//                if (image == null) {
-//                playController.pause();
-//                }
-//                if (playController.stopped.get()) {
-//                    return;
-//                }
-//                int next = playController.nextIndex();
-//                if (next >= 0 && index < imageInfos.size()) {
-//                    thumb(imageInfos.get(next));
-//                }
             }
 
             @Override
@@ -664,7 +632,7 @@ public class ImagesPlayController extends BaseShapeController {
                 return null;
             }
             double imageWidth = info.getWidth();
-            double targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
+            double targetWidth = viewController.loadWidth <= 0 ? imageWidth : viewController.loadWidth;
             if (info.getRegion() == null) {
                 Image thumb = info.getThumbnail();
                 if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
@@ -673,7 +641,7 @@ public class ImagesPlayController extends BaseShapeController {
             }
             info.setThumbnail(null);
             if (fileFormat == null) {
-                info.loadThumbnail(thumbTask, loadWidth);
+                info.loadThumbnail(thumbTask, viewController.loadWidth);
             } else if (fileFormat.equalsIgnoreCase("pdf")) {
                 if (pdfRenderer == null) {
                     openPDF(pdfPassword);
@@ -681,22 +649,22 @@ public class ImagesPlayController extends BaseShapeController {
                 if (pdfRenderer == null) {
                     return null;
                 }
-                ImageInformation.readPDF(thumbTask, pdfRenderer, pdfImageType, info, loadWidth);
+                ImageInformation.readPDF(thumbTask, pdfRenderer, pdfImageType, info, viewController.loadWidth);
 
             } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
                 if (ppt == null) {
                     openPPT();
                 }
-                ImageInformation.readPPT(thumbTask, ppt, info, loadWidth);
+                ImageInformation.readPPT(thumbTask, ppt, info, viewController.loadWidth);
 
             } else if (sourceFile != null) {
                 if (imageReader == null) {
                     openImageFile();
                 }
-                ImageInformation.readImage(thumbTask, imageReader, info, loadWidth);
+                ImageInformation.readImage(thumbTask, imageReader, info, viewController.loadWidth);
 
             } else {
-                info.loadThumbnail(thumbTask, loadWidth);
+                info.loadThumbnail(thumbTask, viewController.loadWidth);
             }
             return info.getThumbnail();
         } catch (Exception e) {

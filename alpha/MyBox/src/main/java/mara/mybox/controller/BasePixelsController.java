@@ -31,15 +31,6 @@ public abstract class BasePixelsController extends BaseImageEditController {
         updateStageTitle();
     }
 
-    @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            return scopeController.keyEventsFilter(event);
-        } else {
-            return true;
-        }
-    }
-
     public ImageScope scope() {
         return scopeController.pickScopeValues();
     }
@@ -60,6 +51,33 @@ public abstract class BasePixelsController extends BaseImageEditController {
 
     protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         return null;
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        if (scopeController.menuAction()) {
+            return true;
+        }
+        return super.menuAction();
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (scopeController.popAction()) {
+            return true;
+        }
+        return super.popAction();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return scopeController.keyEventsFilter(event);
+        } else {
+            return true;
+        }
     }
 
 }

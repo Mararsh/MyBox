@@ -257,11 +257,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
         if (toolbar == null || toolbarCheck == null || mainAreaBox == null) {
             return;
         }
-        toolbarCheck.setSelected(UserConfig.getBoolean(baseName + "Toolbar", true));
+        toolbarCheck.setSelected(UserConfig.getBoolean(interfaceName + "Toolbar", true));
         toolbarCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "Toolbar", toolbarCheck.isSelected());
+                UserConfig.setBoolean(interfaceName + "Toolbar", toolbarCheck.isSelected());
                 checkToolbar();
             }
         });

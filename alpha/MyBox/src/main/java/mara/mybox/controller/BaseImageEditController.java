@@ -15,7 +15,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -74,7 +73,7 @@ public class BaseImageEditController extends BaseShapeController {
 
             initMore();
 
-            baseTitle = message("ImageEditor") + "." + operation;
+            baseTitle = parent.baseTitle + "." + operation;
             if (imageController.sourceFile != null) {
                 baseTitle += " - " + imageController.sourceFile.getName();
             }

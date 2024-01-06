@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -387,6 +385,26 @@ public class ImageEditorController extends BaseImageController {
             menu.setDisable(recoverButton.isDisabled());
             items.add(menu);
 
+            CheckMenuItem hisItem = new CheckMenuItem(message("RecordEditHistories"));
+            hisItem.setSelected(UserConfig.getBoolean("ImageHistoriesRecord", true));
+            hisItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("ImageHistoriesRecord", hisItem.isSelected());
+                }
+            });
+            items.add(hisItem);
+
+            CheckMenuItem loadItem = new CheckMenuItem(message("RecordWhenImageLoad"));
+            loadItem.setSelected(UserConfig.getBoolean("ImageHistoriesRecordLoading", true));
+            loadItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("ImageHistoriesRecordLoading", loadItem.isSelected());
+                }
+            });
+            items.add(loadItem);
+
             menu = new MenuItem(message("EditHistories") + "    Ctrl+H " + message("Or") + " Alt+H",
                     StyleTools.getIconImageView("iconHistory.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -753,35 +771,6 @@ public class ImageEditorController extends BaseImageController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    @Override
-    public void createAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        ImageCanvasInputController controller = ImageCanvasInputController.open(this, baseTitle);
-        controller.notify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                Image canvas = controller.getCanvas();
-                if (canvas != null) {
-                    create(canvas);
-                }
-                controller.close();
-            }
-        });
-    }
-
-    public void create(Image canvas) {
-        if (canvas == null) {
-            return;
-        }
-        sourceFile = null;
-        imageInformation = null;
-        imageView.setImage(canvas);
-        saveAction();
     }
 
     @FXML

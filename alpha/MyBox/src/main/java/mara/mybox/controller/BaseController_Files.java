@@ -707,7 +707,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (sourceFile != null) {
             return FileNameTools.prefix(sourceFile.getName());
         } else {
-            return DateTools.nowFileString();
+            return baseTitle;
         }
     }
 

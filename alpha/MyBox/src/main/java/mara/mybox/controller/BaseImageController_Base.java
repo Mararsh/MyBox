@@ -213,10 +213,11 @@ public abstract class BaseImageController_Base extends BaseFileController {
     public void updateLabels() {
         try {
             String imageInfo = "", fileInfo = "", loadInfo = "";
-            if (sourceFile != null) {
-                fileInfo = message("File") + ":" + sourceFile.getAbsolutePath() + "\n"
-                        + message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
-                        + message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified());
+            File file = sourceFile();
+            if (file != null) {
+                fileInfo = message("File") + ":" + file.getAbsolutePath() + "\n"
+                        + message("FileSize") + ":" + FileTools.showFileSize(file.length()) + "\n"
+                        + message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified());
             }
             if (framesNumber > 1) {
                 imageInfo = message("FramesNumber") + ":" + framesNumber + "\n";

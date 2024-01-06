@@ -20,6 +20,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -64,7 +65,7 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @FXML
-    protected VBox imagesBox, gridBox;
+    protected VBox imagesBox, gridBox, viewBox;
     @FXML
     protected ToggleGroup displayGroup;
     @FXML
@@ -999,6 +1000,36 @@ public class ImagesBrowserController extends ControlImagesTable {
     @FXML
     public void options() {
         ImageOptionsController.open(viewController);
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            viewController.menuAction();
+            return true;
+        }
+        return super.menuAction();
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            viewController.popAction();
+            return true;
+        }
+        return super.popAction();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
     }
 
     /*

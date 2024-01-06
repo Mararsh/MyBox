@@ -28,12 +28,12 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
-            <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-               <items>
-                  <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                        <VBox fx:id="resultsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
+                <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                        <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox fx:id="resultsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
                                         <TabPane fx:id="resultsTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <tabs>
                                                 <Tab fx:id="txtTab" closable="false" text="%Text">
@@ -67,78 +67,78 @@ License:    Apache License Version 2.0
                                         </TabPane>
                                         <Label fx:id="resultLabel" maxWidth="1.7976931348623157E308" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" wrapText="true">
                                         </Label>
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-                  <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                        <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                                    <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
-                                 <children>
-                                            <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
-                                                <graphic>
-                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                        <image>
-                                                            <Image url="@../buttons/Red/iconStart.png" />
-                                                        </image>
-                                                    </ImageView>
-                                                </graphic>
-                                            </Button>
-                                          <CheckBox fx:id="startCheck" minHeight="-Infinity" mnemonicParsing="false" text="%StartWhenImageLoad" wrapText="true" />
-                                 </children>
-                                    </FlowPane>
-                                  <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                      <tabs>
-                                          <Tab fx:id="imageTab" text="%OriginalImage">
-                                              <content>
-                                                  <VBox fx:id="sourceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                      <padding>
-                                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                      </padding>
-                                             <children>
-                                                <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageSource.fxml" VBox.vgrow="ALWAYS" />
-                                             </children>
-                                                  </VBox>
-                                              </content>
-                                          </Tab>
-                                          <Tab fx:id="processTab" text="%Preprocess">
-                                              <content>
-                                                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                      <children>
-                                                          <fx:include fx:id="preprocess" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageOCRPreprocess.fxml" VBox.vgrow="ALWAYS" />
-                                                      </children>
-                                                      <padding>
-                                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                      </padding>
-                                                  </VBox>
-                                              </content>
-                                          </Tab>
-                                          <Tab fx:id="optionsTab" text="%OCROptions">
-                                              <content>
-                                                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                      <children>
-                                                          <fx:include fx:id="ocrOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlOCROptions.fxml" VBox.vgrow="ALWAYS" />
-                                                      </children>
-                                                  </VBox>
-                                              </content>
-                                          </Tab>
-                                      </tabs>
-                                  </TabPane>
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </items>
-            </SplitPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                                            <children>
+                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconStart.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <CheckBox fx:id="startCheck" minHeight="-Infinity" mnemonicParsing="false" text="%StartWhenImageLoad" wrapText="true" />
+                                            </children>
+                                        </FlowPane>
+                                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                            <tabs>
+                                                <Tab fx:id="imageTab" text="%OriginalImage">
+                                                    <content>
+                                                        <VBox fx:id="sourceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <padding>
+                                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                            </padding>
+                                                            <children>
+                                                                <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageSource.fxml" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="processTab" text="%Preprocess">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <children>
+                                                                <fx:include fx:id="preprocess" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageOCRPreprocess.fxml" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                            <padding>
+                                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                            </padding>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="optionsTab" text="%OCROptions">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <fx:include fx:id="ocrOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlOCROptions.fxml" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                            </tabs>
+                                        </TabPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </items>
+                </SplitPane>
             </children>
             <BorderPane.margin>
                 <Insets />
             </BorderPane.margin>
-         <padding>
-            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-         </padding>
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </padding>
         </VBox>
     </center>
     <padding>

@@ -6,7 +6,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.ListCell;
@@ -301,7 +300,6 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
             this.parentController = parent;
             handler = parent;
             imageController = handler.imageController;
-            handler.rightPaneControl = rightPaneControl;
 
             imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -313,17 +311,6 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-    }
-
-    @Override
-    public void initRightPaneControl() {
-        rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                handler.controlRightPane();
-            }
-        });
-        rightPaneControl.setPickOnBounds(true);
     }
 
     protected void loadImage() {

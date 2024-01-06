@@ -11,7 +11,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.CombineTools;
 import mara.mybox.bufferedimage.ImageCombine;
 import mara.mybox.bufferedimage.ImageCombine.ArrayType;
@@ -32,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-8-11
  * @License Apache License Version 2.0
  */
-public class ImagesSpliceController extends BaseImageController {
+public class ImagesSpliceController extends BaseController {
 
     protected ImageCombine imageCombine;
     protected int columns, interval, margins,
@@ -51,6 +53,10 @@ public class ImagesSpliceController extends BaseImageController {
     protected ComboBox<String> columnsSelector, intervalSelector, marginsSelector;
     @FXML
     protected ControlColorSet colorController;
+    @FXML
+    protected BaseImageController viewController;
+    @FXML
+    protected VBox viewBox, sourceBox;
 
     public ImagesSpliceController() {
         baseTitle = Languages.message("ImagesSplice");
@@ -70,7 +76,7 @@ public class ImagesSpliceController extends BaseImageController {
             initSize();
             initOthers();
 
-            saveButton.disableProperty().bind(imageView.imageProperty().isNull());
+            saveButton.disableProperty().bind(viewController.imageView.imageProperty().isNull());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -463,6 +469,8 @@ public class ImagesSpliceController extends BaseImageController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
+            Image image;
+
             @Override
             protected boolean handle() {
                 if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
@@ -479,10 +487,11 @@ public class ImagesSpliceController extends BaseImageController {
 
             @Override
             protected void whenSucceeded() {
-                imageView.setImage(image);
-                setZoomStep(image);
-                fitSize();
-                imageLabel.setText(Languages.message("CombinedSize") + ": "
+                viewController.image = image;
+                viewController.imageView.setImage(image);
+                viewController.setZoomStep(image);
+                viewController.fitSize();
+                viewController.imageLabel.setText(Languages.message("CombinedSize") + ": "
                         + (int) image.getWidth() + "x" + (int) image.getHeight());
             }
 
@@ -493,16 +502,47 @@ public class ImagesSpliceController extends BaseImageController {
     @FXML
     @Override
     public void saveAction() {
-        saveAsAction();
+        viewController.saveAsAction();
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            viewController.menuAction();
+            return true;
+        } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+            tableController.menuAction();
+            return true;
+        }
+        return super.menuAction();
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            viewController.popAction();
+            return true;
+        } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+            tableController.popAction();
+            return true;
+        }
+        return super.popAction();
     }
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            return tableController.keyEventsFilter(event);
-        } else {
-            return true;
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
+            if (tableController.keyEventsFilter(event)) {
+                return true;
+            }
         }
+        return super.keyEventsFilter(event);
     }
 
     /*

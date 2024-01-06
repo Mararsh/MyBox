@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -124,7 +126,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void statisticAction() {
         ImageAnalyseController controller = (ImageAnalyseController) openStage(Fxmls.ImageAnalyseFxml);
-        checkImage(controller);
+        checkImage(controller.imageController);
     }
 
     @FXML
@@ -667,6 +669,35 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
         };
         start(task);
+    }
+
+    @FXML
+    @Override
+    public void createAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        ImageCanvasInputController controller = ImageCanvasInputController.open(this, baseTitle);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                Image canvas = controller.getCanvas();
+                if (canvas != null) {
+                    create(canvas);
+                }
+                controller.close();
+            }
+        });
+    }
+
+    public void create(Image canvas) {
+        if (canvas == null) {
+            return;
+        }
+        sourceFile = null;
+        imageInformation = null;
+        imageView.setImage(canvas);
+        saveAction();
     }
 
     @FXML

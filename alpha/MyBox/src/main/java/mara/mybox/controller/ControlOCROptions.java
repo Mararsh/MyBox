@@ -294,7 +294,7 @@ public class ControlOCROptions extends BaseController {
                 languagesController.selectNames(selectedNames);
                 isSettingValues = false;
             } else {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("SelectToHandle")));
                 currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
 
@@ -429,7 +429,7 @@ public class ControlOCROptions extends BaseController {
                 currentOCRFilesLabel.setStyle(null);
             } else {
                 UserConfig.setString("ImageOCRLanguages", null);
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("SelectToHandle")));
                 currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
