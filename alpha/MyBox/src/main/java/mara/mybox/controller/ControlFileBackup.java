@@ -23,8 +23,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlFileBackup extends BaseController {
 
-    protected TableFileBackup tableFileBackup;
-
     @FXML
     protected CheckBox backupCheck;
     @FXML
@@ -68,7 +66,7 @@ public class ControlFileBackup extends BaseController {
         totalLabel.setText("");
     }
 
-    public void addBackup(FxTask currentTask, File file) {
+    public void addBackup2(FxTask currentTask, File file) {
         sourceFile = file;
         FxTask backTask = new FxTask<Void>(this) {
             private int total;

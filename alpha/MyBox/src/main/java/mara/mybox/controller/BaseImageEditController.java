@@ -13,8 +13,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -265,9 +263,7 @@ public class BaseImageEditController extends BaseShapeController {
             protected void finalAction() {
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
-                    ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.popStage(myController, Fxmls.ImagesBrowserFxml);
-                    b.loadFilenames(files);
+                    ImagesBrowserController.loadNames(files);
                 }
             }
 

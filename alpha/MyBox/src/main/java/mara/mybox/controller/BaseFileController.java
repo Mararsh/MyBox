@@ -11,10 +11,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import mara.mybox.db.data.FileBackup;
-import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
@@ -31,10 +28,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseFileController extends BaseController {
 
     protected FileSortTools.FileSortMode sortMode;
-    protected TableFileBackup tableFileBackup;
 
-    @FXML
-    protected ControlFileBrowse browseController;
     @FXML
     protected Label fileInfoLabel;
 
@@ -42,9 +36,6 @@ public abstract class BaseFileController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            if (browseController != null) {
-                browseController.setParameter(this);
-            }
 
             sortMode = FileSortMode.NameAsc;
 
@@ -88,35 +79,25 @@ public abstract class BaseFileController extends BaseController {
 
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
+            if (sourceFile == null) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
-                    StyleTools.getIconImageView("iconSaveAs.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                saveAsAction();
+            menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                    StyleTools.getIconImageView("iconInfo.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                infoAction();
             });
             items.add(menu);
 
-            if (sourceFile != null) {
-                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
-                        StyleTools.getIconImageView("iconInfo.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                items.add(menu);
+            menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                refreshAction();
+            });
+            items.add(menu);
 
-                menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    refreshAction();
-                });
-                items.add(menu);
-
-            }
-
-            if (sourceFile == null) {
-                return items;
-            }
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
@@ -320,21 +301,6 @@ public abstract class BaseFileController extends BaseController {
             MyBoxLog.debug(e);
             return null;
         }
-    }
-
-    @FXML
-    public void openBackups() {
-        FileBackupController.load(this);
-    }
-
-    public FileBackup addBackup(FxTask inTask, File file) {
-        if (file == null || !file.exists()) {
-            return null;
-        }
-        if (tableFileBackup == null) {
-            tableFileBackup = new TableFileBackup();
-        }
-        return tableFileBackup.addBackup(file);
     }
 
     @FXML

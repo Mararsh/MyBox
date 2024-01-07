@@ -145,7 +145,6 @@ public class BaseImageController extends BaseImageController_Actions {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
                     viewSizeChanged(Math.abs(new_val.doubleValue() - old_val.doubleValue()));
-
                 }
             });
 
@@ -336,7 +335,8 @@ public class BaseImageController extends BaseImageController_Actions {
 
             }
 
-            menu = new MenuItem(message("Create"), StyleTools.getIconImageView("iconAdd.png"));
+            menu = new MenuItem(message("Create") + "    Ctrl+N " + message("Or") + " Alt+N",
+                    StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent event) -> {
                 createAction();
             });
@@ -477,7 +477,7 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
-            if (imageFile() != null) {
+            if (sourceFile != null) {
                 menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     svgAction();

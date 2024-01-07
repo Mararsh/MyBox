@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.controller.ControlFileBackup;
+import mara.mybox.controller.BaseController;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import static mara.mybox.data.FindReplaceString.Operation.FindAll;
 import static mara.mybox.data.FindReplaceString.Operation.ReplaceAll;
@@ -13,6 +13,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -21,10 +22,10 @@ import static mara.mybox.value.Languages.message;
  */
 public class FindReplaceFile extends FindReplaceString {
 
+    protected BaseController controller;
     protected FileEditInformation fileInfo;
     protected long position;
     protected LongRange fileRange;  // location in whole file
-    protected ControlFileBackup backupController;
     protected DataFileCSV matchesData;
 
     public FindReplaceFile() {
@@ -148,9 +149,12 @@ public class FindReplaceFile extends FindReplaceString {
         return currentTask == null || currentTask.isWorking();
     }
 
-    public void backup(File file) {
-        if (backupController != null && backupController.needBackup()) {
-            backupController.addBackup(null, file);
+    public void backup(FxTask currentTask, File file) {
+        if (controller == null) {
+            return;
+        }
+        if (file != null && UserConfig.getBoolean(controller.getBaseName() + "BackupWhenSave", true)) {
+            controller.addBackup(currentTask, file);
         }
     }
 
@@ -201,15 +205,6 @@ public class FindReplaceFile extends FindReplaceString {
         return this;
     }
 
-    public ControlFileBackup getBackupController() {
-        return backupController;
-    }
-
-    public FindReplaceFile setBackupController(ControlFileBackup backupController) {
-        this.backupController = backupController;
-        return this;
-    }
-
     public long getPosition() {
         return position;
     }
@@ -225,6 +220,15 @@ public class FindReplaceFile extends FindReplaceString {
 
     public FindReplaceFile setMatchesData(DataFileCSV matchesData) {
         this.matchesData = matchesData;
+        return this;
+    }
+
+    public BaseController getController() {
+        return controller;
+    }
+
+    public FindReplaceFile setController(BaseController controller) {
+        this.controller = controller;
         return this;
     }
 

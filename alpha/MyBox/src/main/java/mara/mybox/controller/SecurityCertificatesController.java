@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
 import mara.mybox.data.CertificateEntry;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -25,6 +26,8 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -41,8 +44,6 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
     protected TextArea certArea;
     @FXML
     protected Button htmlButton;
-    @FXML
-    protected ControlFileBackup backupController;
 
     public SecurityCertificatesController() {
         baseTitle = Languages.message("SecurityCertificates");
@@ -62,8 +63,6 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
             htmlButton.setDisable(true);
             addButton.setDisable(true);
             recoverButton.setDisable(true);
-
-            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -133,7 +132,6 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         htmlButton.setDisable(true);
         addButton.setDisable(true);
         recoverButton.setDisable(true);
-        backupController.loadBackups(null);
         if (sourceFile == null) {
             return;
         }
@@ -230,7 +228,6 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
                 addButton.setDisable(false);
                 recoverButton.setDisable(false);
                 bottomLabel.setText(Languages.message("Count") + ": " + tableData.size());
-                backupController.loadBackups(sourceFile);
             }
         };
         start(task);
@@ -333,12 +330,16 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         }
         task = new FxSingletonTask<Void>(this) {
 
+            private boolean needBackup = false;
+            private FileBackup backup;
+
             @Override
             protected boolean handle() {
                 error = null;
                 try {
-                    if (backupController.needBackup()) {
-                        backupController.addBackup(this, sourceFile);
+                    needBackup = sourceFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    if (needBackup) {
+                        backup = addBackup(this, sourceFile);
                     }
                     List<String> aliases = new ArrayList();
                     for (CertificateEntry cert : selected) {
@@ -355,9 +356,19 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
 
             @Override
             protected void whenSucceeded() {
+
                 if (error == null) {
                     loadAll(null);
-                    popSuccessful();
+                    if (needBackup) {
+                        if (backup != null && backup.getBackup() != null) {
+                            popInformation(message("SavedAndBacked"));
+                            FileBackupController.updateList(sourceFile);
+                        } else {
+                            popError(message("FailBackup"));
+                        }
+                    } else {
+                        popSuccessful();
+                    }
                 } else {
                     popError(error);
                 }

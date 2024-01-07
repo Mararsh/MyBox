@@ -25,24 +25,6 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
-                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconSelectFile.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconFile.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
                 <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
                         <CheckBox fx:id="refreshChangeCheck" mnemonicParsing="false">
@@ -107,6 +89,24 @@ License:    Apache License Version 2.0
          <children>
             <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
                <children>
+                      <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
+                          <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/Red/iconSelectFile.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                  <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconFile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                   <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">

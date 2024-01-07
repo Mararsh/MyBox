@@ -30,7 +30,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  * @CreateDate 2021-5-22
  * @License Apache License Version 2.0
  */
-public class PptViewController extends BaseFileImagesViewController {
+public class PptViewController extends BaseFileImagesController {
 
     @FXML
     protected TextArea slideArea, notesArea, masterArea, commentsArea;
@@ -102,7 +102,6 @@ public class PptViewController extends BaseFileImagesViewController {
                 initCurrentPage();
                 loadPage();
                 loadThumbs();
-                browseController.setCurrentFile(sourceFile);
             }
 
         };
@@ -128,6 +127,7 @@ public class PptViewController extends BaseFileImagesViewController {
         }
         task = new FxSingletonTask<Void>(this) {
             private String slideTexts, notes, master, comments;
+            private Image image;
 
             @Override
             protected boolean handle() {

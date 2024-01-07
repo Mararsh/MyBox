@@ -41,6 +41,7 @@ import mara.mybox.color.IccTag;
 import mara.mybox.color.IccTagType;
 import mara.mybox.color.IccTags;
 import mara.mybox.color.IccXML;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
@@ -113,8 +114,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     protected Tab tagDataTab;
     @FXML
     protected Button refreshHeaderButton, refreshXmlButton, exportXmlButton;
-    @FXML
-    protected ControlFileBackup backupController;
 
     protected enum SourceType {
         Embed, Internal_File, External_File, External_Data
@@ -141,8 +140,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             initHeaderControls();
             initTagsTable();
             initOptions();
-
-            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -752,7 +749,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
                 profile = p;
                 displayProfileData();
-                backupController.loadBackups(sourceFile);
             }
 
             @Override
@@ -1964,10 +1960,14 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
         task = new FxSingletonTask<Void>(this) {
 
+            private boolean needBackup = false;
+            private FileBackup backup;
+
             @Override
             protected boolean handle() {
-                if (backupController.needBackup()) {
-                    backupController.addBackup(this, file);
+                needBackup = UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                if (needBackup) {
+                    backup = addBackup(this, file);
                 }
                 return profile.write(file, newHeaderData);
             }
@@ -1977,8 +1977,16 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 sourceFile = file;
                 sourceType = SourceType.External_File;
                 openProfile(file.getAbsolutePath());
-                popSuccessful();
-
+                if (needBackup) {
+                    if (backup != null && backup.getBackup() != null) {
+                        popInformation(message("SavedAndBacked"));
+                        FileBackupController.updateList(sourceFile);
+                    } else {
+                        popError(message("FailBackup"));
+                    }
+                } else {
+                    popInformation(sourceFile + "   " + message("Saved"));
+                }
             }
 
         };

@@ -59,7 +59,6 @@ public class WordViewController extends BaseWebViewController {
                 getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                 webViewController.loadFile(htmlFile);
                 fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
-                browseController.setCurrentFile(sourceFile);
             }
 
         };

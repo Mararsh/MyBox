@@ -20,19 +20,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BaseImageController">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageView">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
-            <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconFile.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
             <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                <children>
                   <CheckBox fx:id="toolbarCheck" mnemonicParsing="false">
@@ -88,6 +79,15 @@ License:    Apache License Version 2.0
          <children>
             <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
                <children>
+                  <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconFile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                   <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Button fx:id="optionsButton" mnemonicParsing="false" onAction="#options">

@@ -29,7 +29,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-12-09
  * @License Apache License Version 2.0
  */
-public class BytesEditorController extends BaseFileEditorController {
+public class BytesEditorController extends BaseTextController {
 
     protected Popup valuePop;
 

@@ -649,7 +649,7 @@ public class FindReplaceTextFile {
         }
         if (tmpFile != null && tmpFile.exists()) {
             if (total > 0) {
-                findReplaceFile.backup(sourceFile);
+                findReplaceFile.backup(currentTask, sourceFile);
                 return FileTools.override(tmpFile, sourceFile);
             } else {
                 return true;

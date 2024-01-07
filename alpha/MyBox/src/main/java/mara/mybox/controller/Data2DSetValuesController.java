@@ -14,6 +14,7 @@ import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -164,9 +165,8 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    if (!data2D.isTmpData() && tableController.dataController.backupController != null
-                            && tableController.dataController.backupController.needBackup()) {
-                        tableController.dataController.backupController.addBackup(this, data2D.getFile());
+                    if (!data2D.isTmpData() && UserConfig.getBoolean(tableController.baseName + "BackupWhenSave", true)) {
+                        addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
                     count = data2D.setValue(checkedColsIndices, valueController.setValue, valueController.errorContinueCheck.isSelected());

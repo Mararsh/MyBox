@@ -22,7 +22,7 @@ public class ImageScopeViewsController extends BaseChildController {
     protected BasePixelsController handler;
 
     @FXML
-    protected BaseImageController selectedController, sourceController, maskController;
+    protected ControlImageView selectedController, sourceController, maskController;
     @FXML
     protected Tab selectedTab, sourceTab, maskTab;
     @FXML

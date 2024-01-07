@@ -15,10 +15,8 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -158,9 +156,7 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             protected void finalAction() {
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
-                    ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.popStage(myController, Fxmls.ImagesBrowserFxml);
-                    b.loadFilenames(files);
+                    ImagesBrowserController.loadNames(files);
                 }
             }
 

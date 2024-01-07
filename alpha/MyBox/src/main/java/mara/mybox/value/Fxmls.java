@@ -343,6 +343,9 @@ public class Fxmls {
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
 
     public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
+    public static final String DataFileExcelSheetsFxml = "/fxml/DataFileExcelSheets.fxml";
+    public static final String DataFileExcelFormatFxml = "/fxml/DataFileExcelFormat.fxml";
+    public static final String DataFileExcelSaveAsFxml = "/fxml/DataFileExcelSaveAs.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 

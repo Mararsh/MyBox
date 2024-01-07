@@ -46,7 +46,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlFindReplace extends BaseController {
 
-    protected BaseFileEditorController editerController;
+    protected BaseTextController editerController;
     protected TextInputControl textInput;
     protected FindReplaceFile findReplace;
     protected double initX, initY;
@@ -103,7 +103,7 @@ public class ControlFindReplace extends BaseController {
         }
     }
 
-    public void setEditor(BaseFileEditorController parent) {
+    public void setEditor(BaseTextController parent) {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
@@ -513,7 +513,7 @@ public class ControlFindReplace extends BaseController {
 
         if (editerController != null) {
             findReplace.setFileInfo(editerController.sourceInformation)
-                    .setBackupController(editerController.backupController);
+                    .setController(editerController);
             editerController.sourceInformation.setFindReplace(findReplace);
         }
         return true;

@@ -233,23 +233,22 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (metaButton != null) {
             metaButton.setDisable(imageInformation == null);
         }
-        File file = imageFile();
         if (deleteButton != null) {
-            deleteButton.setDisable(file == null);
+            deleteButton.setDisable(sourceFile == null);
         }
         if (renameButton != null) {
-            renameButton.setDisable(file == null);
+            renameButton.setDisable(sourceFile == null);
         }
         if (previousButton != null) {
-            previousButton.setDisable(file == null);
+            previousButton.setDisable(sourceFile == null);
         }
         if (nextButton != null) {
-            nextButton.setDisable(file == null);
+            nextButton.setDisable(sourceFile == null);
         }
         if (openSourceButton != null) {
-            openSourceButton.setDisable(file == null || !file.exists());
+            openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         }
-        checkSystemMethodButton(file);
+        checkSystemMethodButton(sourceFile);
     }
 
     public boolean afterImageLoaded() {
@@ -346,9 +345,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         UserConfig.setInt(baseName + "LoadWidth", loadWidth);
-        File file = imageFile();
-        if (file != null && file.exists()) {
-            loadImageFile(file);
+        if (sourceFile != null && sourceFile.exists()) {
+            loadImageFile(sourceFile);
         } else if (imageView.getImage() != null) {
             loadImage(imageView.getImage(), loadWidth);
         } else if (image != null) {

@@ -203,18 +203,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             if (targetFiles == null || targetFiles.isEmpty()) {
                 return;
             }
-            ImagesBrowserController controller = ImagesBrowserController.open();
-            if (controller != null) {
-                List<File> files = new ArrayList<>();
-                for (int type : targetFiles.keySet()) {
-                    List<File> tfiles = targetFiles.get(type);
-                    if (tfiles == null) {
-                        continue;
-                    }
-                    files.addAll(tfiles);
+            List<File> files = new ArrayList<>();
+            for (int type : targetFiles.keySet()) {
+                List<File> tfiles = targetFiles.get(type);
+                if (tfiles == null) {
+                    continue;
                 }
-                controller.loadSourceFiles(files);
+                files.addAll(tfiles);
             }
+            ImagesBrowserController.loadFiles(files);
         } catch (Exception e) {
         }
     }

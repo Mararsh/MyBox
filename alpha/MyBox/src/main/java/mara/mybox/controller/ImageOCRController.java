@@ -126,7 +126,6 @@ public class ImageOCRController extends BaseController {
         }
     }
 
-    @Override
     public File sourceFile() {
         return sourceController.sourceFile;
     }

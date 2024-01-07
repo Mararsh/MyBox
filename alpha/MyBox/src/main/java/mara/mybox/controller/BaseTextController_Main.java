@@ -16,8 +16,6 @@ import javafx.scene.layout.AnchorPane;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -28,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-12-09
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditorController_Main extends BaseFileEditorController_Pair {
+public abstract class BaseTextController_Main extends BaseTextController_Pair {
 
     protected void updatePanes() {
         boolean nullFile = sourceFile == null;
@@ -53,9 +51,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             openSourceButton.setDisable(nullFile);
         }
         isSettingValues = false;
-        if (browseController != null) {
-            browseController.setCurrentFile(sourceFile);
-        }
     }
 
     protected void initMainBox() {
@@ -255,13 +250,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         }
 
         if (changed && !validateMainArea()) {
-            if (editLabel != null) {
-                editLabel.setText(message("InvalidData"));
-            }
             mainArea.setStyle(UserConfig.badStyle());
-//            popError(message("InvalidData"));
-        } else if (editLabel != null) {
-            editLabel.setText("");
+            popError(message("InvalidData"));
+        } else {
             mainArea.setStyle(null);
         }
 
@@ -302,13 +293,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         }
         int pageLinesNumber = pageLinesNumber(pageText);
         int pageObjectsNumber = pageObjectsNumber(pageText);
-        long pageObjectStart = 0, pageObjectEnd = pageObjectsNumber;
-        long pageLineStart = 0, pageLineEnd = pageLinesNumber, pagesNumber = 1;
-        long fileObjectNumber = pageObjectsNumber;
-        long fileLinesNumber = pageLinesNumber;
+        long pagesNumber = 1;
         int pageSize = sourceInformation.getPageSize();
         long currentPage = sourceInformation.getCurrentPage();
-        StringBuilder s = new StringBuilder();
         if (sourceFile == null) {
             if (pageLabel != null) {
                 pageLabel.setText("");
@@ -317,12 +304,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             sourceInformation.setLinesNumber(pageLinesNumber);
             writeLineNumbers(0, pageLinesNumber);
         } else {
-            pageLineStart = sourceInformation.getCurrentPageLineStart();
-            pageLineEnd = pageLineStart + pageLinesNumber;
+            long pageLineStart = sourceInformation.getCurrentPageLineStart();
+            long pageLineEnd = pageLineStart + pageLinesNumber;
             writeLineNumbers(pageLineStart, pageLineEnd);
-
-            pageObjectStart = sourceInformation.getCurrentPageObjectStart();
-            pageObjectEnd = pageObjectStart + pageObjectsNumber;
 
             if (!sourceInformation.isTotalNumberRead()) {
                 saveButton.setDisable(true);
@@ -332,10 +316,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 if (locatePane != null) {
                     locatePane.setDisable(true);
                 }
-                infoLabel.setText(message("CountingTotalNumber"));
             } else {
-                fileObjectNumber = sourceInformation.getObjectsNumber();
-                fileLinesNumber = sourceInformation.getLinesNumber();
+                long fileObjectNumber = sourceInformation.getObjectsNumber();
+                long fileLinesNumber = sourceInformation.getLinesNumber();
 
                 if (editType == Edit_Type.Bytes) {
                     pagesNumber = fileObjectNumber / pageSize;
@@ -351,44 +334,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
                 sourceInformation.setPagesNumber(pagesNumber);
             }
-            s.append(message("File"))
-                    .append(": ").append(sourceFile).append("\n");
-            s.append(message("FileSize"))
-                    .append(": ").append(FileTools.showFileSize(sourceFile.length())).append("\n");
-            s.append(message("FileModifyTime"))
-                    .append(": ").append(DateTools.datetimeToString(sourceFile.lastModified())).append("\n");
-            s.append(editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
-                    .append(": ").append(StringTools.format(fileObjectNumber)).append("\n");
-            s.append(message("RowsNumberInFile"))
-                    .append(": ").append(StringTools.format(fileLinesNumber)).append("\n");
-            s.append(editType == Edit_Type.Bytes ? message("BytesPerPage") : message("RowsPerPage"))
-                    .append(": ").append(StringTools.format(pageSize)).append("\n");
-            s.append(message("CurrentPage"))
-                    .append(": ").append(StringTools.format(currentPage + 1)).append(" / ")
-                    .append(StringTools.format(pagesNumber)).append("\n");
         }
-        s.append(message("LineBreak"))
-                .append(": ").append(sourceInformation.lineBreakName()).append("\n");
-        s.append(message("Charset"))
-                .append(": ").append(sourceInformation.getCharset().name()).append("\n");
-        if (pagesNumber > 1) {
-            s.append(editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage"))
-                    .append(": [").append(StringTools.format(pageObjectStart + 1))
-                    .append(" - ").append(StringTools.format(pageObjectEnd))
-                    .append("] ").append(StringTools.format(pageObjectsNumber)).append("\n");
-            s.append(message("RowsRangeInPage"))
-                    .append(": [").append(StringTools.format(pageLineStart + 1))
-                    .append(" - ").append(StringTools.format(pageLineEnd))
-                    .append("] ").append(StringTools.format(pageLinesNumber)).append("\n");
-        } else {
-            s.append(editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage"))
-                    .append(": ").append(StringTools.format(pageObjectsNumber)).append("\n");
-            s.append(message("RowsNumberInPage"))
-                    .append(": ").append(StringTools.format(pageLinesNumber)).append("\n");
-        }
-        s.append(message("PageModifyTime"))
-                .append(": ").append(DateTools.nowString()).append("\n");
-        infoLabel.setText(s.toString());
 
         pageBox.setDisable(changed);
         pagePreviousButton.setDisable(currentPage <= 0 || pagesNumber < 2);

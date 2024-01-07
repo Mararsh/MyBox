@@ -1,7 +1,12 @@
 package mara.mybox.data2d;
 
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -21,6 +26,42 @@ public abstract class Data2D extends Data2D_Operations {
             return null;
         }
     }
+
+    public String info() {
+        String info = message("Type") + ": " + message(type.name());
+        if (file != null) {
+            info = message("File") + ": " + file + "\n"
+                    + message("FileSize") + ": " + FileTools.showFileSize(file.length()) + "\n"
+                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(file.lastModified()) + "\n";
+            if (isExcel()) {
+                DataFileExcel e = (DataFileExcel) this;
+                info += message("CurrentSheet") + ": " + (sheet == null ? "" : sheet)
+                        + (e.getSheetNames() == null ? "" : " / " + e.getSheetNames().size()) + "\n";
+            } else {
+                info += message("Charset") + ": " + charset + "\n"
+                        + message("Delimiter") + ": " + TextTools.delimiterMessage(delimiter) + "\n";
+            }
+            info += message("FirstLineAsNames") + ": " + (hasHeader ? message("Yes") : message("No")) + "\n";
+        }
+        int tableRowsNumber = tableRowsNumber();
+        if (isMutiplePages()) {
+            info += message("RowsNumberInFile") + ": " + dataSize + "\n";
+        } else {
+            info += message("RowsNumber") + ": " + tableRowsNumber + "\n";
+        }
+        info += message("ColumnsNumber") + ": " + columnsNumber() + "\n"
+                + message("CurrentPage") + ": " + StringTools.format(currentPage + 1)
+                + " / " + StringTools.format(pagesNumber) + "\n";
+        if (isMutiplePages() && hasData()) {
+            info += message("RowsRangeInPage")
+                    + ": " + StringTools.format(startRowOfCurrentPage + 1) + " - "
+                    + StringTools.format(startRowOfCurrentPage + tableRowsNumber)
+                    + " ( " + StringTools.format(tableRowsNumber) + " )\n";
+        }
+        info += message("PageModifyTime") + ": " + DateTools.nowString();
+        return info;
+    }
+
 
     /*
         static

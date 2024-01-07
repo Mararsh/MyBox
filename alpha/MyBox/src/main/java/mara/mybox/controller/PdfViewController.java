@@ -312,7 +312,6 @@ public class PdfViewController extends PdfViewController_Html {
                 loadPage();
                 loadBookmarks();
                 loadThumbs();
-                browseController.setCurrentFile(sourceFile);
             }
 
         };

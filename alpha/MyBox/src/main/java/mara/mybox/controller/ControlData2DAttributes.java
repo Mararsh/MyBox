@@ -192,6 +192,11 @@ public class ControlData2DAttributes extends BaseController {
     }
 
     public void updateInfo() {
+        infoArea.setText(data2D.info());
+        updateNotify.set(!updateNotify.get());
+    }
+
+    public String dataInfo() {
         if (data2D.isDataFile() && !data2D.isTmpData()) {
             infoArea.setVisible(true);
             String info = "";
@@ -225,14 +230,10 @@ public class ControlData2DAttributes extends BaseController {
                         + " ( " + StringTools.format(data2D.tableRowsNumber()) + " )\n";
             }
             info += message("PageModifyTime") + ": " + DateTools.nowString();
-            infoArea.setText(info);
-
+            return info;
         } else {
-            infoArea.setVisible(false);
-            infoArea.clear();
+            return null;
         }
-
-        updateNotify.set(updateNotify.get());
     }
 
     public void status(Status newStatus) {
@@ -241,7 +242,6 @@ public class ControlData2DAttributes extends BaseController {
         }
         status = newStatus;
         dataController.checkStatus();
-
     }
 
     public boolean isChanged() {
@@ -251,6 +251,7 @@ public class ControlData2DAttributes extends BaseController {
     public void updateDataName() {
         isSettingValues = true;
         dataNameInput.setText(data2D.getDataName());
+        infoArea.setText(data2D.info());
         isSettingValues = false;
     }
 

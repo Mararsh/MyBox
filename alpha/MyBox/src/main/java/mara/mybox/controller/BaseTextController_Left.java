@@ -18,7 +18,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-12-09
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditorController_Left extends BaseFileEditorController_Actions {
+public abstract class BaseTextController_Left extends BaseTextController_Actions {
 
     protected void initFormatTab() {
         try {
@@ -75,24 +75,6 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 });
 
             }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initBackupsTab() {
-        try {
-            if (backupPane == null) {
-                return;
-            }
-            backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (!isSettingValues) {
-                    UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
-                }
-            });
-
-            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

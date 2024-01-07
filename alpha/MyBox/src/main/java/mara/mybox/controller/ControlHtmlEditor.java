@@ -33,6 +33,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -70,7 +71,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected final ButtonType buttonCancel = new ButtonType(message("Cancel"));
 
     @FXML
-    protected Tab viewTab, domTab, codesTab, richEditorTab, markdownTab, textsTab, backupTab;
+    protected Tab domTab, codesTab, richEditorTab, markdownTab, textsTab, viewTab;
     @FXML
     protected ControlHtmlRichEditor richEditorController;
     @FXML
@@ -79,8 +80,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected Label codesLabel, markdownLabel, textsLabel;
     @FXML
     protected ControlHtmlDomManage domController;
-    @FXML
-    protected ControlFileBackup backupController;
     @FXML
     protected CheckBox wrapCodesCheck, wrapMarkdownCheck, wrapTextsCheck;
     @FXML
@@ -112,7 +111,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
             initRichEdtiorTab();
             initMarkdownTab();
             initTextsTab();
-            initBackupsTab();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -250,22 +248,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
         }
     }
 
-    protected void initBackupsTab() {
-        try {
-            if (backupController != null) {
-                backupController.setParameters(this, baseName);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            if (!tabPane.getTabs().contains(viewTab)) {
+            if (viewTab != null && !tabPane.getTabs().contains(viewTab)) {
                 NodeStyleTools.setTooltip(menuViewButton, message("ContextMenu"));
                 NodeStyleTools.setTooltip(synchronizeViewButton, message("SynchronizeChangesToOtherPanes"));
                 NodeStyleTools.setTooltip(popViewButton, message("Pop"));
@@ -374,12 +361,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
         loadText(html, false);
         isSettingValues = false;
         viewChanged(false);
-        if (backupController != null) {
-            backupController.loadBackups(sourceFile);
-        }
-        if (browseController != null) {
-            browseController.setCurrentFile(sourceFile);
-        }
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -423,6 +404,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
             return;
         }
         task = new FxSingletonTask<Void>(this) {
+            private boolean needBackup = false;
+            private FileBackup backup;
+
             @Override
             protected boolean handle() {
                 try {
@@ -430,8 +414,10 @@ public class ControlHtmlEditor extends BaseWebViewController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
-                    if (sourceFile != null && backupController != null && backupController.needBackup()) {
-                        backupController.addBackup(this, sourceFile);
+                    needBackup = sourceFile != null && parentController != null
+                            && UserConfig.getBoolean(parentController.baseName + "BackupWhenSave", true);
+                    if (needBackup) {
+                        backup = addBackup(this, sourceFile);
                     }
                     return FileTools.override(tmpFile, targetFile);
                 } catch (Exception e) {
@@ -442,7 +428,16 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             @Override
             protected void whenSucceeded() {
-                popSaved();
+                if (needBackup) {
+                    if (backup != null && backup.getBackup() != null) {
+                        popInformation(message("SavedAndBacked"));
+                        FileBackupController.updateList(sourceFile);
+                    } else {
+                        popError(message("FailBackup"));
+                    }
+                } else {
+                    popInformation(targetFile + "   " + message("Saved"));
+                }
                 recordFileWritten(targetFile);
                 fileChanged = false;
                 loadFile(targetFile);
@@ -543,9 +538,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
             loadContents(HtmlWriteTools.emptyHmtl(null));
             getMyStage().setTitle(getBaseTitle());
             fileChanged = false;
-            if (backupController != null) {
-                backupController.loadBackups(null);
-            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -591,7 +583,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     protected void viewChanged(boolean changed) {
-        viewTab.setText(message("View") + (fileChanged ? " *" : ""));
+        if (viewTab != null) {
+            viewTab.setText(message("View") + (fileChanged ? " *" : ""));
+        }
         if (changed) {
             updateFileStatus(true);
         } else {
@@ -829,10 +823,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public boolean popAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == viewTab) {
-                return popViewAction();
-
-            } else if (tab == markdownTab) {
+            if (tab == markdownTab) {
                 MarkdownPopController.open(this, markdownArea);
                 return true;
 
@@ -848,6 +839,8 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 TextPopController.openInput(this, textsArea);
                 return true;
 
+            } else {
+                return popViewAction();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -865,10 +858,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public boolean synchronizeAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == viewTab) {
-                return synchronizeViewAction();
-
-            } else if (tab == codesTab) {
+            if (tab == codesTab) {
                 synchronizeCodes();
                 return true;
 
@@ -888,6 +878,8 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 synchronizeTexts();
                 return true;
 
+            } else {
+                return synchronizeViewAction();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

@@ -46,7 +46,6 @@ import mara.mybox.value.UserConfig;
  */
 public class FileBackupController extends BaseTableViewController<FileBackup> {
 
-    protected TableFileBackup tableFileBackup;
     protected int maxBackups;
 
     @FXML

@@ -53,8 +53,8 @@ public class MenuTextEditController extends MenuTextBaseController {
         try {
             super.setParameters(parent, node, x, y);
 
-            if (parent instanceof BaseFileEditorController) {
-                BaseFileEditorController e = (BaseFileEditorController) parent;
+            if (parent instanceof BaseTextController) {
+                BaseTextController e = (BaseTextController) parent;
                 if (textInput == null || textInput != e.mainArea) {
                     fileBox.getChildren().removeAll(saveButton, recoverButton);
                 }
@@ -251,7 +251,7 @@ public class MenuTextEditController extends MenuTextBaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (textInput == null || !(parentController instanceof BaseFileEditorController)) {
+        if (textInput == null || !(parentController instanceof BaseTextController)) {
             return;
         }
         parentController.saveAction();
@@ -260,7 +260,7 @@ public class MenuTextEditController extends MenuTextBaseController {
     @FXML
     @Override
     public void recoverAction() {
-        if (textInput == null || !(parentController instanceof BaseFileEditorController)) {
+        if (textInput == null || !(parentController instanceof BaseTextController)) {
             return;
         }
         parentController.recoverAction();

@@ -25,6 +25,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mara.mybox.db.data.FileBackup;
+import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxSingletonTask;
@@ -247,6 +249,21 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         } else {
             popError(message("NoFileOpened"));
         }
+    }
+
+    @FXML
+    public void openBackups() {
+        FileBackupController.load((BaseController) this);
+    }
+
+    public FileBackup addBackup(FxTask inTask, File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        if (tableFileBackup == null) {
+            tableFileBackup = new TableFileBackup();
+        }
+        return tableFileBackup.addBackup(file);
     }
 
     @FXML
@@ -563,10 +580,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                 browseURI(new File(path).toURI());
                 recordFileOpened(path);
             } else if (result.get() == buttonBrowse) {
-                final ImagesBrowserController controller = ImagesBrowserController.open();
-                if (controller != null) {
-                    controller.loadFilenames(fileNames);
-                }
+                ImagesBrowserController.loadNames(fileNames);
             }
 
         } catch (Exception e) {

@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class TextEditorController extends BaseFileEditorController {
+public class TextEditorController extends BaseTextController {
 
     public TextEditorController() {
         baseTitle = Languages.message("TextEditer");

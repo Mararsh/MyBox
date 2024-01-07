@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-29
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditorController_File extends BaseFileEditorController_Main {
+public abstract class BaseTextController_File extends BaseTextController_Main {
 
     @Override
     public void sourceFileChanged(File file) {
@@ -118,9 +118,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             fileChanged.set(false);
             sourceFile = file;
-            if (backupController != null) {
-                backupController.loadBackups(sourceFile);
-            }
             checkSystemMethodButton(sourceFile);
 
             FileEditInformation existedInfo = sourceInformation;
@@ -142,7 +139,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             mainArea.clear();
             lineArea.clear();
-            infoLabel.setText("");
             bottomLabel.setText("");
             selectionLabel.setText("");
             if (charsetSelector != null) {

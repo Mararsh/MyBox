@@ -458,16 +458,6 @@ public class ControlPlay extends BaseController {
 
     public void pause() {
         try {
-            stopped.set(true);
-            if (snapNode != null) {
-                synchronized (snapNode) {
-                    snapNode.notifyAll();
-                }
-            }
-            if (snapping) {
-                outSnaps();
-            }
-            snapping = false;
             if (schedule != null) {
                 schedule.cancel(true);
             }
@@ -479,12 +469,24 @@ public class ControlPlay extends BaseController {
                 targetThread.interrupt();
             }
 
+            stopped.set(true);
+            if (snapNode != null) {
+                synchronized (snapNode) {
+                    snapNode.notifyAll();
+                }
+            }
+            if (snapping) {
+                outSnaps();
+            }
+            snapping = false;
+
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     setPauseButton(true);
                 }
             });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

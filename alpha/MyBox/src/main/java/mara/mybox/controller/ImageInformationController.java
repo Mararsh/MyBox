@@ -65,18 +65,23 @@ public class ImageInformationController extends HtmlTableController {
             imageInfo = info;
             indexSelector.getItems().clear();
 
-            ImageFileInformation finfo = info.getImageFileInformation();
             StringBuilder s = new StringBuilder();
-            s.append(makeFileInfoTable(finfo)).append("\n</br></br>\n");
-            s.append(makeInfoTable(info)).append("\n</br></br>\n");
-            for (int i = 0; i < finfo.getImagesInformation().size(); ++i) {
-                ImageInformation iInfo = finfo.getImagesInformation().get(i);
-                if (iInfo.getIccProfile() != null) {
-                    indexSelector.getItems().add((i + 1) + "");
+            ImageFileInformation finfo = info.getImageFileInformation();
+            if (finfo != null) {
+                s.append(makeFileInfoTable(finfo)).append("\n</br></br>\n");
+                s.append(makeInfoTable(info)).append("\n</br></br>\n");
+                for (int i = 0; i < finfo.getImagesInformation().size(); ++i) {
+                    ImageInformation iInfo = finfo.getImagesInformation().get(i);
+                    if (iInfo.getIccProfile() != null) {
+                        indexSelector.getItems().add((i + 1) + "");
+                    }
+                    s.append(makeImageInformationTable(i, iInfo)).append("</br>\n");
                 }
-                s.append(makeImageInformationTable(i, iInfo)).append("</br>\n");
+                html = HtmlWriteTools.html(finfo.getFile().getAbsolutePath(), HtmlStyles.styleValue("Default"), s.toString());
+            } else {
+                s.append(makeInfoTable(info)).append("\n</br></br>\n");
+                html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
             }
-            html = HtmlWriteTools.html(finfo.getFile().getAbsolutePath(), HtmlStyles.styleValue("Default"), s.toString());
             loadContents​(html);
             if (indexSelector.getItems().isEmpty()) {
                 iccBox.setVisible(false);

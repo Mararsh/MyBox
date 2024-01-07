@@ -147,7 +147,6 @@ License:    Apache License Version 2.0
                                                                 </CheckBox>
                                                             </children>
                                                         </VBox>
-                                                        <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" />
                                                     </children>
                                                 </VBox>
                                             </content>

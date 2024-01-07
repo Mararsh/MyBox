@@ -27,7 +27,7 @@ import static mara.mybox.value.Languages.message;
 public class ImageInMyBoxClipboardController extends BaseImageClipController {
 
     @FXML
-    protected BaseImageController imageController;
+    protected ControlImageView imageController;
 
     public ImageInMyBoxClipboardController() {
         baseTitle = message("ImagesInMyBoxClipboard");

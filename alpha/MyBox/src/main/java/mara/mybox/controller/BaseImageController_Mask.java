@@ -89,15 +89,6 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
     /*
         image
      */
-    @Override
-    public void viewSizeChanged(double change) {
-        if (isSettingValues || change < sizeChangeAware
-                || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        refinePane();
-    }
-
     public void setImageChanged(boolean imageChanged) {
         this.imageChanged = imageChanged;
         updateLabelsTitle();

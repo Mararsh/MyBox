@@ -32,10 +32,6 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseController_Files extends BaseController_Attributes {
 
-    public File sourceFile() {
-        return sourceFile;
-    }
-
     public boolean checkBeforeNextAction() {
         return true;
     }

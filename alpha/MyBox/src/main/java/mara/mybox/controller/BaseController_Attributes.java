@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
@@ -63,6 +64,7 @@ public abstract class BaseController_Attributes {
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected StageType stageType;
     protected SaveAsType saveAsType;
+    protected TableFileBackup tableFileBackup;
 
     public static enum StageType {
         Normal, Branch, Child, Pop, Popup, OneOpen

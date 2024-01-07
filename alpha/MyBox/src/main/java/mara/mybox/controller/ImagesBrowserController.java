@@ -77,7 +77,7 @@ public class ImagesBrowserController extends ControlImagesTable {
     @FXML
     protected Button rotateLeftImagesButton, rotateRightImagesButton, turnOverImagesButton;
     @FXML
-    protected BaseImageController viewController;
+    protected ControlImageView viewController;
 
     public ImagesBrowserController() {
         baseTitle = message("ImagesBrowser");
@@ -1040,6 +1040,45 @@ public class ImagesBrowserController extends ControlImagesTable {
             ImagesBrowserController controller = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
             if (controller != null) {
                 controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesBrowserController loadFiles(List<File> files) {
+        try {
+            ImagesBrowserController controller = open();
+            if (controller != null) {
+                controller.loadSourceFiles(files);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesBrowserController loadNames(List<String> files) {
+        try {
+            ImagesBrowserController controller = open();
+            if (controller != null) {
+                controller.loadFilenames(files);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesBrowserController openPath(File path) {
+        try {
+            ImagesBrowserController controller = open();
+            if (controller != null) {
+                controller.addDirectory(path);
             }
             return controller;
         } catch (Exception e) {

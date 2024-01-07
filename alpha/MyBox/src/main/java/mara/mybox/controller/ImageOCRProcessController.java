@@ -28,11 +28,9 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.OCRTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import net.sourceforge.tess4j.util.ImageHelper;
 
@@ -576,9 +574,7 @@ public class ImageOCRProcessController extends BaseImageController {
             protected void finalAction() {
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
-                    ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                    b.loadFilenames(files);
+                    ImagesBrowserController.loadNames(files);
                 }
             }
 

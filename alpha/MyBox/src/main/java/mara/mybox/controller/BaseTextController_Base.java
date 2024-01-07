@@ -25,7 +25,7 @@ import mara.mybox.fxml.FxTask;
  * @CreateDate 2021-7-29
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditorController_Base extends BaseFileController {
+public abstract class BaseTextController_Base extends BaseFileController {
 
     protected Edit_Type editType;
     protected final SimpleBooleanProperty fileChanged;
@@ -57,7 +57,7 @@ public abstract class BaseFileEditorController_Base extends BaseFileController {
     @FXML
     protected ControlTimeLength autoSaveDurationController;
     @FXML
-    protected Label infoLabel, editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel,
+    protected Label bomLabel, pageLabel, charsetLabel, selectionLabel,
             filterConditionsLabel;
     @FXML
     protected Button charactersButton, linesButton, exampleFilterButton,
@@ -72,10 +72,8 @@ public abstract class BaseFileEditorController_Base extends BaseFileController {
     protected ControlFindReplace findReplaceController;
     @FXML
     protected ControlTextFilter filterController;
-    @FXML
-    protected ControlFileBackup backupController;
 
-    public BaseFileEditorController_Base() {
+    public BaseTextController_Base() {
         fileChanged = new SimpleBooleanProperty(false);
     }
 

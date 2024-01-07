@@ -31,6 +31,7 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -47,7 +48,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2D extends BaseController {
+public class ControlData2D extends BaseFileController {
 
     protected BaseData2DController manageController;
     protected Data2D.Type type;
@@ -57,7 +58,6 @@ public class ControlData2D extends BaseController {
     protected ControlData2DEditTable tableController;
     protected ControlData2DEditCSV csvController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
-    protected ControlFileBackup backupController;
 
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
@@ -259,13 +259,6 @@ public class ControlData2D extends BaseController {
 
     public void notifyLoaded() {
         notifyStatus();
-        if (backupController != null) {
-            if (data2D.isTmpData()) {
-                backupController.loadBackups(null);
-            } else {
-                backupController.loadBackups(data2D.getFile());
-            }
-        }
         loadedNotify.set(!loadedNotify.get());
     }
 
@@ -452,11 +445,16 @@ public class ControlData2D extends BaseController {
         }
         task = new FxSingletonTask<Void>(this) {
 
+            private boolean needBackup = false;
+            private FileBackup backup;
+
             @Override
             protected boolean handle() {
                 try {
-                    if (backupController != null && backupController.needBackup() && !data2D.isTmpData()) {
-                        backupController.addBackup(this, data2D.getFile());
+                    needBackup = data2D.isDataFile() && !data2D.isTmpData()
+                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    if (needBackup) {
+                        backup = addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, null);
                     data2D.savePageData(targetData);
@@ -474,6 +472,14 @@ public class ControlData2D extends BaseController {
             @Override
             protected void whenSucceeded() {
                 tableController.dataSaved();
+                if (needBackup) {
+                    if (backup != null && backup.getBackup() != null) {
+                        popInformation(message("SavedAndBacked"));
+                        FileBackupController.updateList(sourceFile);
+                    } else {
+                        popError(message("FailBackup"));
+                    }
+                }
             }
 
             @Override
@@ -641,6 +647,7 @@ public class ControlData2D extends BaseController {
         interface
      */
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         if (UserConfig.getBoolean("Data2DFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -648,6 +655,7 @@ public class ControlData2D extends BaseController {
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event event) {
         try {
             setData(tableController.data2D);

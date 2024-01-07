@@ -5,8 +5,10 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.input.Clipboard;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -15,13 +17,14 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2021-7-29
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditorController_Actions extends BaseFileEditorController_File {
+public abstract class BaseTextController_Actions extends BaseTextController_File {
 
     @FXML
     @Override
@@ -95,9 +98,6 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 sourceInformation.setCurrentPageLineEnd(pageLinesNumber(pageText));
                 sourceInformation.setCurrentPageObjectStart(0);
                 sourceInformation.setCurrentPageObjectEnd(pageObjectsNumber(pageText));
-                if (backupController != null && backupController.needBackup()) {
-                    backupController.loadBackups(sourceFile);
-                }
                 updateInterface(false);
                 loadTotalNumbers();
             }
@@ -112,10 +112,14 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         }
         task = new FxSingletonTask<Void>(this) {
 
+            private boolean needBackup = false;
+            private FileBackup backup;
+
             @Override
             protected boolean handle() {
-                if (backupController != null && backupController.needBackup()) {
-                    backupController.addBackup(this, sourceFile);
+                needBackup = sourceFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                if (sourceFile != null && UserConfig.getBoolean(baseName + "BackupWhenSave", true)) {
+                    backup = addBackup(this, sourceFile);
                 }
                 return sourceInformation.writePage(this, sourceInformation, mainArea.getText());
             }
@@ -124,7 +128,16 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             protected void whenSucceeded() {
                 recordFileWritten(sourceFile);
                 if (getMyWindow() != null && myWindow.isFocused()) {
-                    popSaved();
+                    if (needBackup) {
+                        if (backup != null && backup.getBackup() != null) {
+                            popInformation(message("SavedAndBacked"));
+                            FileBackupController.updateList(sourceFile);
+                        } else {
+                            popError(message("FailBackup"));
+                        }
+                    } else {
+                        popInformation(sourceFile + "   " + message("Saved"));
+                    }
                 }
                 sourceInformation.setTotalNumberRead(false);
                 String pageText = mainArea.getText();
@@ -175,9 +188,9 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             @Override
             protected void whenSucceeded() {
                 recordFileWritten(file);
-                BaseFileEditorController editor = null;
+                BaseTextController editor = null;
                 if (saveAsType == SaveAsType.Load) {
-                    editor = (BaseFileEditorController) myController;
+                    editor = (BaseTextController) myController;
                 } else if (saveAsType == SaveAsType.Open) {
                     editor = openNewStage();
                 }
@@ -194,7 +207,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         start(task);
     }
 
-    public BaseFileEditorController openNewStage() {
+    public BaseTextController openNewStage() {
         if (null == editType) {
             return null;
         } else {
@@ -479,6 +492,37 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         sourceInformation = null;
         initPage(null);
         updateInterface(false);
+    }
+
+    @FXML
+    @Override
+    public void loadContentInSystemClipboard() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            loadText(text, true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    protected void editTexts() {
+        if (sourceFile == null) {
+            String txt = mainArea.getText();
+            if (txt == null || txt.isBlank()) {
+                error = message("NoData");
+                return;
+            }
+            TextEditorController.edit(txt);
+        } else {
+            TextEditorController.open(sourceFile);
+        }
     }
 
     @FXML

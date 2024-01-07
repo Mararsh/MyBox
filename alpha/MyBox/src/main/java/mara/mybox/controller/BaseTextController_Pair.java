@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-29
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditorController_Pair extends BaseFileEditorController_Base {
+public abstract class BaseTextController_Pair extends BaseTextController_Base {
 
     @Override
     public void checkRightPane() {

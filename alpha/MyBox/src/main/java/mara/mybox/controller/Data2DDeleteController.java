@@ -10,6 +10,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -106,13 +107,15 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
         task = new FxSingletonTask<Void>(this) {
 
             private long count;
+            private boolean needBackup = false;
 
             @Override
             protected boolean handle() {
                 try {
-                    if (!data2D.isTmpData() && tableController.dataController.backupController != null
-                            && tableController.dataController.backupController.needBackup()) {
-                        tableController.dataController.backupController.addBackup(this, data2D.getFile());
+                    needBackup = data2D.isDataFile() && !data2D.isTmpData()
+                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    if (needBackup) {
+                        addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
                     count = data2D.deleteRows(errorContinueCheck.isSelected());

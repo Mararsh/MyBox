@@ -702,7 +702,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.CSV);
+        File file = chooseSaveFile(VisitHistory.FileType.CSV, currentData.dataName());
         if (file == null) {
             return;
         }
@@ -742,7 +742,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.XML);
+        File file = chooseSaveFile(VisitHistory.FileType.XML, currentData.dataName());
         if (file == null) {
             return;
         }
@@ -794,7 +794,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.JSON);
+        File file = chooseSaveFile(VisitHistory.FileType.JSON, currentData.dataName());
         if (file == null) {
             return;
         }
@@ -842,7 +842,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.Excel);
+        File file = chooseSaveFile(VisitHistory.FileType.Excel, currentData.dataName());
         if (file == null) {
             return;
         }

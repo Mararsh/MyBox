@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageQuantization;
 import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
 import mara.mybox.bufferedimage.ImageRGBKMeans;
@@ -442,12 +443,13 @@ public class SvgTools {
 
     // https://github.com/miguelemosreverte/imagetracerjava
     public static String imageToSvg(FxTask task, BaseController controller,
-            BufferedImage image, ControlSvgFromImage optionsController) {
+            BufferedImage inImage, ControlSvgFromImage optionsController) {
         try {
-            if (optionsController == null || image == null) {
+            if (optionsController == null || inImage == null) {
                 PopTools.showError(controller, message("InvalidData"));
                 return null;
             }
+            BufferedImage image = AlphaTools.removeAlpha(task, inImage);
             switch (optionsController.getQuantization()) {
                 case jankovicsandras:
                     return jankovicsandras(task, controller, image, optionsController);

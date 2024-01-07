@@ -54,7 +54,7 @@ public class ImagesSpliceController extends BaseController {
     @FXML
     protected ControlColorSet colorController;
     @FXML
-    protected BaseImageController viewController;
+    protected ControlImageView viewController;
     @FXML
     protected VBox viewBox, sourceBox;
 

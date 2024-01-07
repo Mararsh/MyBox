@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,7 +36,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
     protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
-    protected final SimpleBooleanProperty loadNotify;
+    protected final SimpleBooleanProperty loadNotify, sizeNotify;
     protected boolean imageChanged, isPickingColor, backgroundLoad;
     protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, // 0-based
             sizeChangeAware, zoomStep, xZoomStep, yZoomStep;
@@ -58,7 +57,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
     @FXML
     protected Text sizeText, xyText;
     @FXML
-    protected Label imageLabel, imageInfoLabel;
+    protected Label imageLabel;
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, selectPixelsButton;
     @FXML
@@ -68,10 +67,15 @@ public abstract class BaseImageController_Base extends BaseFileController {
 
     public BaseImageController_Base() {
         loadNotify = new SimpleBooleanProperty(false);
+        sizeNotify = new SimpleBooleanProperty(false);
     }
 
     public void notifyLoad() {
         loadNotify.set(!loadNotify.get());
+    }
+
+    public void notifySize() {
+        sizeNotify.set(!sizeNotify.get());
     }
 
     public void fitSize() {
@@ -146,11 +150,12 @@ public abstract class BaseImageController_Base extends BaseFileController {
     }
 
     public void viewSizeChanged(double change) {
-        if (change < sizeChangeAware
-                || isSettingValues || imageView == null || imageView.getImage() == null) {
+        if (isSettingValues || change < sizeChangeAware
+                || imageView == null || imageView.getImage() == null) {
             return;
         }
         refinePane();
+        notifySize();
     }
 
     public void paneSizeChanged(double change) {
@@ -169,7 +174,8 @@ public abstract class BaseImageController_Base extends BaseFileController {
     public synchronized void updateLabelsTitle() {
         try {
             updateStageTitle();
-            updateLabels();
+            updateImageLabel();
+            updateSizeLabel();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -210,14 +216,16 @@ public abstract class BaseImageController_Base extends BaseFileController {
         }
     }
 
-    public void updateLabels() {
+    public void updateImageLabel() {
         try {
+            if (imageLabel == null) {
+                return;
+            }
             String imageInfo = "", fileInfo = "", loadInfo = "";
-            File file = sourceFile();
-            if (file != null) {
-                fileInfo = message("File") + ":" + file.getAbsolutePath() + "\n"
-                        + message("FileSize") + ":" + FileTools.showFileSize(file.length()) + "\n"
-                        + message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified());
+            if (sourceFile != null) {
+                fileInfo = message("File") + ":" + sourceFile.getAbsolutePath() + "\n"
+                        + message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
+                        + message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified());
             }
             if (framesNumber > 1) {
                 imageInfo = message("FramesNumber") + ":" + framesNumber + "\n";
@@ -246,36 +254,35 @@ public abstract class BaseImageController_Base extends BaseFileController {
                 loadInfo += "\n" + message("ImageChanged");
             }
             String finalInfo = fileInfo + "\n" + imageInfo + "\n" + loadInfo;
-            if (imageInfoLabel != null) {
-                if (imageLabel != null) {
-                    imageLabel.setText(StringTools.replaceLineBreak(loadInfo));
-                }
-                if (imageInformation != null && imageInformation.isIsSampled()) {
-                    finalInfo += "\n-------\n" + imageInformation.sampleInformation(null, image);
-                }
-                imageInfoLabel.setText(finalInfo);
-            } else if (imageLabel != null) {
-                imageLabel.setText(StringTools.replaceLineBreak(finalInfo));
-            }
-            if (imageView != null && imageView.getImage() != null) {
-                if (borderLine != null) {
-                    borderLine.setLayoutX(imageView.getLayoutX() - 1);
-                    borderLine.setLayoutY(imageView.getLayoutY() - 1);
-                    borderLine.setWidth(viewWidth() + 2);
-                    borderLine.setHeight(viewHeight() + 2);
-                }
-                if (sizeText != null) {
-                    sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
-                    sizeText.setTextAlignment(TextAlignment.LEFT);
-                    if (imageView.getImage().getWidth() >= imageView.getImage().getHeight()) {
-                        sizeText.setX(borderLine.getBoundsInParent().getMinX());
-                        sizeText.setY(borderLine.getBoundsInParent().getMinY() - sceneFontSize - 1);
-                    } else {
-                        sizeText.setX(borderLine.getBoundsInParent().getMinX() - sizeText.getBoundsInParent().getWidth() - sceneFontSize);
-                        sizeText.setY(borderLine.getBoundsInParent().getMaxY() - sceneFontSize - 1);
-                    }
+            imageLabel.setText(StringTools.replaceLineBreak(finalInfo));
 
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void updateSizeLabel() {
+        try {
+            if (imageView == null || imageView.getImage() == null) {
+                return;
+            }
+            if (borderLine != null) {
+                borderLine.setLayoutX(imageView.getLayoutX() - 1);
+                borderLine.setLayoutY(imageView.getLayoutY() - 1);
+                borderLine.setWidth(viewWidth() + 2);
+                borderLine.setHeight(viewHeight() + 2);
+            }
+            if (sizeText != null) {
+                sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
+                sizeText.setTextAlignment(TextAlignment.LEFT);
+                if (imageView.getImage().getWidth() >= imageView.getImage().getHeight()) {
+                    sizeText.setX(borderLine.getBoundsInParent().getMinX());
+                    sizeText.setY(borderLine.getBoundsInParent().getMinY() - sceneFontSize - 1);
+                } else {
+                    sizeText.setX(borderLine.getBoundsInParent().getMinX() - sizeText.getBoundsInParent().getWidth() - sceneFontSize);
+                    sizeText.setY(borderLine.getBoundsInParent().getMaxY() - sceneFontSize - 1);
                 }
+
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -289,10 +296,6 @@ public abstract class BaseImageController_Base extends BaseFileController {
     /*
         values
      */
-    public File imageFile() {
-        return sourceFile();
-    }
-
     public double imageWidth() {
         if (imageView != null && imageView.getImage() != null) {
             return imageView.getImage().getWidth();

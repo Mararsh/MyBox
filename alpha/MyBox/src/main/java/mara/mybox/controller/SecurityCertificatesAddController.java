@@ -9,10 +9,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -87,11 +90,16 @@ public class SecurityCertificatesAddController extends BaseChildController {
 
         task = new FxSingletonTask<Void>(this) {
 
+            private boolean needBackup = false;
+            private FileBackup backup;
+
             @Override
             protected boolean handle() {
                 error = null;
-                if (certController.backupController.needBackup()) {
-                    certController.backupController.addBackup(this, certController.sourceFile);
+                needBackup = certController.sourceFile != null
+                        && UserConfig.getBoolean(certController.baseName + "BackupWhenSave", true);
+                if (needBackup) {
+                    backup = addBackup(this, certController.sourceFile);
                 }
                 if (addressRadio.isSelected()) {
                     try {
@@ -123,7 +131,16 @@ public class SecurityCertificatesAddController extends BaseChildController {
                     if (closeAfterCheck.isSelected()) {
                         closeStage();
                     }
-                    popSuccessful();
+                    if (needBackup) {
+                        if (backup != null && backup.getBackup() != null) {
+                            popInformation(message("SavedAndBacked"));
+                            FileBackupController.updateList(certController.sourceFile);
+                        } else {
+                            popError(message("FailBackup"));
+                        }
+                    } else {
+                        popSuccessful();
+                    }
                 } else {
                     popError(error);
                 }

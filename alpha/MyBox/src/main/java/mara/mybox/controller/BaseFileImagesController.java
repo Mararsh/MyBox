@@ -31,9 +31,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-5-22
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileImagesViewController extends BaseImageController {
+public abstract class BaseFileImagesController extends BaseFileController {
 
-    protected int percent, thumbWidth;
+    protected int percent, thumbWidth, framesNumber, frameIndex;
+    protected ImageView imageView;
     protected FxTask thumbTask;
     protected LoadingController loading;
     protected Process process;
@@ -48,6 +49,8 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
     protected VBox thumbBox;
     @FXML
     protected Label pageLabel;
+    @FXML
+    protected ControlImageView imageController;
 
     @Override
     public void setFileType() {
@@ -183,41 +186,36 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         }
     }
 
-    @Override
-    public void viewSizeChanged(double change) {
-        if (isSettingValues || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        super.viewSizeChanged(change);
-        percent = (int) (imageView.getFitHeight() * 100 / imageView.getImage().getHeight());
-        isSettingValues = true;
-        percentSelector.getSelectionModel().select(percent + "");
-        isSettingValues = false;
-    }
-
-    @Override
     public void initImageView() {
         try {
-            if (imageView == null) {
-                return;
-            }
-            super.initImageView();
+            imageView = imageController.imageView;
 
-            scrollPane.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
+            imageController.sizeNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    percent = (int) (imageView.getFitHeight() * 100
+                            / imageView.getImage().getHeight());
+                    isSettingValues = true;
+                    percentSelector.getSelectionModel().select(percent + "");
+                    isSettingValues = false;
+                }
+            });
+
+            imageController.scrollPane.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
                 @Override
                 public void handle(ScrollEvent event) {
                     double deltaY = event.getDeltaY();
                     if (event.isControlDown()) {
                     } else {
                         if (deltaY > 0) {
-                            if (scrollPane.getVvalue() == scrollPane.getVmin()) {
+                            if (imageController.scrollPane.getVvalue() == imageController.scrollPane.getVmin()) {
                                 event.consume();
                                 pagePreviousAction();
                             }
                         } else {
 
-                            if (scrollPane.getHeight() >= imageView.getFitHeight()
-                                    || scrollPane.getVvalue() == scrollPane.getVmax()) {
+                            if (imageController.scrollPane.getHeight() >= imageView.getFitHeight()
+                                    || imageController.scrollPane.getVvalue() == imageController.scrollPane.getVmax()) {
                                 event.consume();
                                 pageNextAction();
                             }
@@ -232,22 +230,21 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
     }
 
     protected boolean checkCurrentPage() {
-        if (isSettingValues || pageSelector == null) {
+        if (isSettingValues || pageSelector == null || framesNumber <= 0) {
             return false;
         }
-        String value = pageSelector.getEditor().getText();
+        int v;
         try {
-            int v = Integer.parseInt(value) - 1;
-            if (v >= 0 && v < framesNumber) {
-                setCurrentPage(v);
-                loadPage();
-                pageSelector.getEditor().setStyle(null);
-                return true;
-            } else {
-                pageSelector.getEditor().setStyle(UserConfig.badStyle());
-                return false;
-            }
+            v = Integer.parseInt(pageSelector.getValue()) - 1;
         } catch (Exception e) {
+            v = -1;
+        }
+        if (v >= 0 && v < framesNumber) {
+            setCurrentPage(v);
+            loadPage();
+            pageSelector.getEditor().setStyle(null);
+            return true;
+        } else {
             pageSelector.getEditor().setStyle(UserConfig.badStyle());
             return false;
         }
@@ -261,6 +258,7 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
             imageView.setImage(null);
             imageView.setTranslateX(0);
         }
+        imageController.reset();
     }
 
     protected void setTotalPages(int total) {
@@ -275,18 +273,12 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         if (imageView == null) {
             return;
         }
-        imageView.setPreserveRatio(true);
-        imageView.setImage(inImage);
-        image = inImage;
-        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath() + " - " + message("Page") + " " + frameIndex);
-        if (percent == 0) {
-            paneSize();
+        imageController.loadImage(this, inImage, framesNumber, frameIndex);
+        if (percent <= 0) {
+            imageController.paneSize();
         } else {
             setPercent(percent);
         }
-        setImageChanged(false);
-        updateLabelsTitle();
-        imageView.requestFocus();
     }
 
     protected void setPercent(int percent) {
@@ -297,7 +289,7 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         imageView.setFitWidth(w * percent / 100);
         double h = imageView.getImage().getHeight();
         imageView.setFitHeight(h * percent / 100);
-        refinePane();
+        imageController.refinePane();
     }
 
     public void initPage(File file, int page) {
@@ -482,11 +474,6 @@ public abstract class BaseFileImagesViewController extends BaseImageController {
         setCurrentPage(framesNumber - 1);
         loadPage();
 
-    }
-
-    @Override
-    public File imageFile() {
-        return null;
     }
 
     @Override

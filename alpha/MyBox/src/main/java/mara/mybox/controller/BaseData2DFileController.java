@@ -1,19 +1,25 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -24,13 +30,9 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseData2DFileController extends BaseData2DController {
 
     @FXML
-    protected TitledPane infoPane, saveAsPane, backupPane, formatPane;
+    protected TitledPane infoPane, backupPane, formatPane;
     @FXML
     protected VBox formatBox;
-    @FXML
-    protected ControlFileBackup backupController;
-    @FXML
-    protected Label infoLabel;
 
     public BaseData2DFileController() {
     }
@@ -50,12 +52,9 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         try {
             super.initControls();
 
-            initInfoTab();
             initFormatTab();
             initBackupsTab();
-            initSaveAsTab();
 
-            dataController.backupController = backupController;
             dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
@@ -64,25 +63,6 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             });
 
             checkStatus();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initInfoTab() {
-        try {
-            if (infoPane == null) {
-                return;
-            }
-            infoPane.setExpanded(UserConfig.getBoolean(baseName + "InfoPane", true));
-            infoPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                if (!isSettingValues) {
-                    UserConfig.setBoolean(baseName + "InfoPane", infoPane.isExpanded());
-                }
-            });
-
-            infoLabel.textProperty().bind(dataController.attributesController.infoArea.textProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -118,25 +98,6 @@ public abstract class BaseData2DFileController extends BaseData2DController {
                 }
             });
 
-            backupController.setParameters(this, baseName);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initSaveAsTab() {
-        try {
-            if (saveAsPane == null) {
-                return;
-            }
-            saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", true));
-            saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                if (!isSettingValues) {
-                    UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -149,21 +110,133 @@ public abstract class BaseData2DFileController extends BaseData2DController {
 
     protected void checkStatus() {
         if (dataController.data2D != null) {
-            sourceFile = dataController.data2D.getFile();
+            data2D = dataController.data2D;
+            sourceFile = data2D.getFile();
         } else {
             sourceFile = null;
         }
-        checkSystemMethodButton(sourceFile);
-        browseController.setCurrentFile(sourceFile);
-        leftPane.setDisable(sourceFile == null);
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    leftPane.setHvalue(0);
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                        StyleTools.getIconImageView("iconInfo.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
                 });
+                items.add(menu);
             }
-        }, 500);
+
+            menu = new MenuItem(message("Create") + "    Ctrl+N " + message("Or") + " Alt+N",
+                    StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                createAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadContentInSystemClipboard();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
+                    StyleTools.getIconImageView("iconSave.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                saveAction();
+            });
+            menu.setDisable(saveButton.isDisabled());
+            items.add(menu);
+
+            menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                    StyleTools.getIconImageView("iconRecover.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                recoverAction();
+            });
+            menu.setDisable(recoverButton.isDisabled());
+            items.add(menu);
+
+            if (data2D.isDataFile() && !data2D.isTmpData()) {
+                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+                backItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                    }
+                });
+                items.add(backItem);
+
+                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    openBackups();
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                    StyleTools.getIconImageView("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                saveAsFile();
+            });
+            items.add(menu);
+
+            if (sourceFile == null) {
+                return items;
+            }
+            items.add(new SeparatorMenuItem());
+
+            if (data2D.isTexts() || data2D.isCSV()) {
+                menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    editTextFile();
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                openSourcePath();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                FileBrowseController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @FXML
+    @Override
+    public void infoAction() {
+        String info = data2D.info();
+        if (info != null && !info.isBlank()) {
+            TextPopController.loadText(info);
+        }
+    }
+
+    public void saveAsFile() {
+        saveAsAction();
     }
 
     @FXML

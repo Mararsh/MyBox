@@ -24,7 +24,7 @@ public class ImagesEditorController extends BaseController {
     @FXML
     protected ControlImagesTable tableController;
     @FXML
-    protected BaseImageController viewController;
+    protected ControlImageView viewController;
 
     public ImagesEditorController() {
         baseTitle = Languages.message("ImagesEditor");
@@ -168,6 +168,17 @@ public class ImagesEditorController extends BaseController {
         try {
             ImagesEditorController controller = (ImagesEditorController) WindowTools.openStage(Fxmls.ImagesEditorFxml);
             controller.loadImages(infos);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesEditorController openFile(File file) {
+        try {
+            ImagesEditorController controller = (ImagesEditorController) WindowTools.openStage(Fxmls.ImagesEditorFxml);
+            controller.open(file);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

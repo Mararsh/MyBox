@@ -28,8 +28,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ShapeDemos;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -249,9 +247,7 @@ public class ControlImagesBlend extends BaseController {
             protected void finalAction() {
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
-                    ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.popStage(myController, Fxmls.ImagesBrowserFxml);
-                    b.loadFilenames(files);
+                    ImagesBrowserController.loadNames(files);
                 }
             }
 

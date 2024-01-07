@@ -120,6 +120,7 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
         }
         refinePane();
         redrawMaskShape();
+        notifySize();
     }
 
     @Override

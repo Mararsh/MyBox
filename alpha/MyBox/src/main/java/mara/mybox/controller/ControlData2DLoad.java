@@ -1055,6 +1055,11 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     @Override
     public void updateStatus() {
         super.updateStatus();
+        updateName();
+        validateData();
+    }
+
+    public void updateName() {
         myStage = getMyStage();
         if (data2D != null) {
             String name = data2D.displayName();
@@ -1070,7 +1075,6 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                 myStage.setTitle(baseTitle);
             }
         }
-        validateData();
     }
 
     public void setLabel(String s) {

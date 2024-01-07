@@ -35,7 +35,9 @@ public class ImageRepeatController extends BaseController {
     protected int hValue, vValue, interval, margins;
 
     @FXML
-    protected BaseImageController sourceController, targetController;
+    protected BaseImageController sourceController;
+    @FXML
+    protected ControlImageView targetController;
     @FXML
     protected Tab sourceTab, repeatTab;
     @FXML

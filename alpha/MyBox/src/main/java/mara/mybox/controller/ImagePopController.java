@@ -18,7 +18,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-9-18
  * @License Apache License Version 2.0
  */
-public class ImagePopController extends BaseShapeController {
+public class ImagePopController extends BaseImageController {
 
     protected BaseImageController sourceController;
     protected ImageView sourceImageView;

@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public abstract class PdfViewController_OCR extends BaseFileImagesViewController {
+public abstract class PdfViewController_OCR extends BaseFileImagesController {
 
     protected int orcPage;
     protected FxTask ocrTask;

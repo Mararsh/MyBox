@@ -116,10 +116,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     public void browseAction() {
-        ImagesBrowserController controller = (ImagesBrowserController) openStage(Fxmls.ImagesBrowserFxml);
-        File file = imageFile();
-        if (file != null) {
-            controller.addDirectory(file.getParentFile());
+        if (sourceFile != null) {
+            ImagesBrowserController.openPath(sourceFile.getParentFile());
         }
     }
 
@@ -262,19 +260,18 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (imageInformation != null && imageInformation.getRegion() != null) {
                 imageController.loadRegion(imageInformation);
             } else if (operateOriginalSize()) {
-                imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+                imageController.loadImage(sourceFile, imageInformation, imageView.getImage(), imageChanged);
             } else if (imageInformation != null && imageInformation.isIsScaled()) {
                 imageController.loadImage(imageView.getImage());
             } else {
-                imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+                imageController.loadImage(sourceFile, imageInformation, imageView.getImage(), imageChanged);
             }
         }
     }
 
     @FXML
     public void editFrames() {
-        ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
-        controller.open(sourceFile);
+        ImagesEditorController.openFile(sourceFile);
     }
 
     @FXML
@@ -437,9 +434,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 imageInformation.setFile(sourceFile);
             }
             updateLabelsTitle();
-            if (browseController != null) {
-                browseController.setCurrentFile(sourceFile);
-            }
             notifyLoad();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -516,7 +510,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (task != null) {
             task.cancel();
         }
-        File srcFile = imageFile();
+        File srcFile = sourceFile;
         if (srcFile == null) {
             targetFile = chooseSaveFile();
             if (targetFile == null) {
