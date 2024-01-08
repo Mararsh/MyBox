@@ -12,6 +12,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -41,9 +42,8 @@ public class TextEditorSaveAsController extends BaseChildController {
                 return;
             }
             baseName = fileController.baseName;
-            baseTitle = fileController.baseTitle;
             setFileType(fileController.TargetFileType);
-            setTitle(fileController.getTitle());
+            setTitle(message("SaveAs") + " - " + fileController.getTitle());
 
             targetCharsetSelector.getItems().addAll(TextTools.getCharsetNames());
             targetCharsetSelector.setValue(UserConfig.getString(baseName + "TargetCharset", "UTF-8"));

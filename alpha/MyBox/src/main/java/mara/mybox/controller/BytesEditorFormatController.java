@@ -36,9 +36,8 @@ public class BytesEditorFormatController extends BaseChildController {
                 return;
             }
             baseName = fileController.baseName;
-            baseTitle = fileController.baseTitle;
             setFileType(fileController.TargetFileType);
-            setTitle(fileController.getTitle());
+            setTitle(message("Format") + " - " + fileController.getTitle());
 
             Line_Break lb = fileController.sourceInformation.getLineBreak();
             if (lb == null) {

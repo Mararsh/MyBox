@@ -18,41 +18,6 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseTextController_Left extends BaseTextController_Actions {
 
-    protected void initSaveTab() {
-        try {
-            if (savePane != null) {
-                savePane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                    if (!isSettingValues) {
-                        UserConfig.setBoolean(baseName + "SavePane", savePane.isExpanded());
-                    }
-                });
-            }
-            if (autoSaveCheck != null) {
-                autoSaveCheck.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
-                autoSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                        checkAutoSave();
-                    }
-                });
-
-                autoSaveDurationController
-                        .permitInvalid(!autoSaveCheck.isSelected())
-                        .init(baseName + "AutoSaveDuration", 300);
-                autoSaveDurationController.notify.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                        checkAutoSave();
-                    }
-                });
-
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     protected void initFilterTab() {
         try {
             if (filterPane != null) {
@@ -133,21 +98,6 @@ public abstract class BaseTextController_Left extends BaseTextController_Actions
             MyBoxLog.error(e);
         }
 
-    }
-
-    protected void initFindTab() {
-        try {
-            if (findReplaceController == null) {
-                return;
-            }
-            findPane.setExpanded(UserConfig.getBoolean(baseName + "FindPane", false));
-            findPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "FindPane", findPane.isExpanded());
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     protected void initPageBar() {

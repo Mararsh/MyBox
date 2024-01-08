@@ -5,7 +5,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -33,28 +32,20 @@ public abstract class BaseTextController_Base extends BaseFileController {
     protected int defaultPageSize, lineBreakWidth;
     protected long lastPageFrom, lastPageTo, locateLine, locateObject;  // 0-based
     protected String lineBreakValue;
-    protected Timer autoSaveTimer;
+    protected boolean autoSave;
+    protected long autoCheckInterval;
+    protected Timer autoCheckTimer;
     protected LongRange linesRange, objectsRange;
     protected FxTask pairTask;
 
-    protected enum Action {
-        OpenFile, LoadPage, FindReplace, FindFirst, FindNext, FindPrevious, FindLast, Replace, ReplaceAll,
-        LocateLine, LocateObject, Unknown
-    }
-
     @FXML
-    protected TitledPane infoPane, formatPane, savePane, saveAsPane, findPane, filterPane, locatePane, backupPane;
+    protected TitledPane filterPane, locatePane;
     @FXML
     protected TextArea mainArea, lineArea, pairArea;
     @FXML
     protected ComboBox<String> pageSelector, pageSizeSelector;
     @FXML
-    protected CheckBox autoSaveCheck;
-    @FXML
-    protected ControlTimeLength autoSaveDurationController;
-    @FXML
-    protected Label pageLabel, charsetLabel, selectionLabel,
-            filterConditionsLabel;
+    protected Label pageLabel, charsetLabel, selectionLabel, filterConditionsLabel;
     @FXML
     protected Button charactersButton, linesButton, exampleFilterButton,
             filterButton, goObjectButton, goLineButton, goLinesRangeButton, goObjectsRangeButton;
@@ -62,8 +53,6 @@ public abstract class BaseTextController_Base extends BaseFileController {
     protected TextField objectNumberInput, lineInput, lineFromInput, lineToInput, objectFromInput, objectToInput;
     @FXML
     protected HBox pageBox;
-    @FXML
-    protected ControlFindReplace findReplaceController;
     @FXML
     protected ControlTextFilter filterController;
 

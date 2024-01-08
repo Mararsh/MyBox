@@ -110,7 +110,7 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindPopController.findMenu(parentController, node, window.getX(), window.getY());
+        FindController.forInput(parentController, textInput);
         window.hide();
     }
 
@@ -121,7 +121,8 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindReplacePopController.replaceMenu(parentController, node, window.getX(), window.getY());
+        FindReplaceController.forInput(parentController, textInput);
+        window.hide();
     }
 
     @FXML

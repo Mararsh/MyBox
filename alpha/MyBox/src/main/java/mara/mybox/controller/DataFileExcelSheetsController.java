@@ -37,9 +37,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
                 return;
             }
             baseName = fileController.baseName;
-            baseTitle = fileController.baseTitle;
             setFileType(fileController.TargetFileType);
-            setTitle(fileController.getTitle());
 
             fileController.dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -58,7 +56,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
     @Override
     public void refreshAction() {
         try {
-            setTitle(fileController.getTitle());
+            setTitle(message("Sheet") + " - " + fileController.getTitle());
             sheetSelector.getItems().clear();
             List<String> sheets = fileController.dataFileExcel.getSheetNames();
             int current = -1;

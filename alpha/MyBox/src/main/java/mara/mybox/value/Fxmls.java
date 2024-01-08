@@ -522,9 +522,10 @@ public class Fxmls {
     public static final String MenuImageScopeFxml = "/fxml/MenuImageScope.fxml";
 
     public static final String TextClipboardPopFxml = "/fxml/TextClipboardPop.fxml";
-    public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";
-    public static final String FindPopFxml = "/fxml/FindPop.fxml";
+    public static final String FindReplaceFxml = "/fxml/FindReplace.fxml";
+    public static final String FindFxml = "/fxml/Find.fxml";
     public static final String ColorsPickingFxml = "/fxml/ColorsPicking.fxml";
+    public static final String IntervalInputFxml = "/fxml/IntervalInput.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";

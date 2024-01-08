@@ -5,6 +5,7 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -27,9 +28,8 @@ public class DataFileExcelFormatController extends BaseChildController {
                 return;
             }
             baseName = fileController.baseName;
-            baseTitle = fileController.baseTitle;
             setFileType(fileController.TargetFileType);
-            setTitle(fileController.getTitle());
+            setTitle(message("Format") + " - " + fileController.getTitle());
 
             sourceWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "SourceWithNames", true));
         } catch (Exception e) {

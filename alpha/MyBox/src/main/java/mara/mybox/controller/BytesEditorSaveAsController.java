@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,9 +23,8 @@ public class BytesEditorSaveAsController extends BaseChildController {
                 return;
             }
             baseName = fileController.baseName;
-            baseTitle = fileController.baseTitle;
             setFileType(fileController.TargetFileType);
-            setTitle(fileController.getTitle());
+            setTitle(message("SaveAs") + " - " + fileController.getTitle());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

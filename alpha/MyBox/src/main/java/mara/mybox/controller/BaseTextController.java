@@ -12,14 +12,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -83,21 +80,12 @@ public abstract class BaseTextController extends BaseTextController_Left {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
-            if (findReplaceController != null) {
-                findReplaceController.setEditor(this);
-            }
-            initPage(null);
+            super.initValues();
 
-            initSaveTab();
-            initLocateTab();
-            initFilterTab();
-            initFindTab();
-            initMainBox();
-            initPairBox();
-            initPageBar();
+            autoSave = UserConfig.getBoolean(baseName + "AutoSave", true);
+            autoCheckInterval = UserConfig.getLong(baseName + "AutoCheckInterval", 300);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -105,20 +93,19 @@ public abstract class BaseTextController extends BaseTextController_Left {
     }
 
     @Override
-    public void setControlsStyle() {
+    public void initControls() {
         try {
-            super.setControlsStyle();
+            super.initControls();
+            initPage(null);
 
-            if (findReplaceController != null) {
-                if (sourceInformation != null && sourceInformation.getEditType() == Edit_Type.Bytes) {
-                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(message("FindReplaceBytesTips")));
-                } else {
-                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(message("FindReplaceTextsTips")));
-                }
-            }
+            initLocateTab();
+            initFilterTab();
+            initMainBox();
+            initPairBox();
+            initPageBar();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -205,6 +192,18 @@ public abstract class BaseTextController extends BaseTextController_Left {
         }
     }
 
+    @FXML
+    @Override
+    public void findAction() {
+        FindController.forEditor(this);
+    }
+
+    @FXML
+    @Override
+    public void replaceAction() {
+        FindReplaceController.forEditor(this);
+    }
+
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
@@ -274,12 +273,6 @@ public abstract class BaseTextController extends BaseTextController_Left {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                editTexts();
-            });
-            items.add(menu);
-
             if (sourceFile == null) {
                 return items;
             }
@@ -311,30 +304,59 @@ public abstract class BaseTextController extends BaseTextController_Left {
     }
 
     @Override
-    public boolean controlAltFilter(KeyEvent event) {
-        if (event.getCode() == null) {
-            return false;
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            CheckMenuItem backItem = new CheckMenuItem(message("AutoSave"));
+            backItem.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
+            backItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    autoSave = backItem.isSelected();
+                    UserConfig.setBoolean(baseName + "AutoSave", autoSave);
+                    checkAutoSave();
+                }
+            });
+            items.add(backItem);
+
+            menu = new MenuItem(message("CheckIntervalSeconds") + ": " + autoCheckInterval,
+                    StyleTools.getIconImageView("iconInput.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                IntervalInputController.open(this);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Find") + "    Ctrl+F " + message("Or") + " Alt+F",
+                    StyleTools.getIconImageView("iconFind.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                findAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("FindReplace") + "    Ctrl+H " + message("Or") + " Alt+H",
+                    StyleTools.getIconImageView("iconReplace.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                replaceAction();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                editTexts();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        if (findReplaceController != null && findPane != null) {
-            switch (event.getCode()) {
-                case DIGIT1:
-                case DIGIT2:
-                case F:
-                case H:
-                case W:
-                    if (leftPaneControl != null) {
-                        showLeftPane();
-                    }
-                    if (findPane.isExpanded()) {
-                        findReplaceController.keyEventsFilter(event);
-                    } else {
-                        findPane.setExpanded(true);
-                        findReplaceController.findArea.requestFocus();
-                    }
-                    return true;
-            }
-        }
-        return super.controlAltFilter(event);
     }
 
     @Override
@@ -394,9 +416,9 @@ public abstract class BaseTextController extends BaseTextController_Left {
     @Override
     public void cleanPane() {
         try {
-            if (autoSaveTimer != null) {
-                autoSaveTimer.cancel();
-                autoSaveTimer = null;
+            if (autoCheckTimer != null) {
+                autoCheckTimer.cancel();
+                autoCheckTimer = null;
             }
 
         } catch (Exception e) {

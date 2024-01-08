@@ -82,7 +82,6 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
         if (lineBreak == FileEditInformation.Line_Break.Value && lineBreakValue == null
                 || lineBreak == FileEditInformation.Line_Break.Width && lineBreakWidth <= 0) {
             popError(message("WrongLineBreak"));
-            formatPane.setExpanded(true);
             return;
         }
         initPage(file);
@@ -139,12 +138,6 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
 
             mainArea.requestFocus();
 
-            if (findReplaceController != null) {
-                findReplaceController.findReplace = null;
-                setControlsStyle();
-            }
-
-            updatePanes();
             checkAutoSave();
 
         } catch (Exception e) {
@@ -155,20 +148,16 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
 
     protected void checkAutoSave() {
         try {
-            if (autoSaveCheck == null) {
+            if (autoCheckTimer != null) {
+                autoCheckTimer.cancel();
+                autoCheckTimer = null;
+            }
+            if (sourceFile == null || !autoSave || autoCheckInterval <= 0) {
                 return;
             }
-            autoSaveDurationController.permitInvalid(!autoSaveCheck.isSelected());
-            if (autoSaveTimer != null) {
-                autoSaveTimer.cancel();
-                autoSaveTimer = null;
-            }
-            if (sourceFile == null || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
-                return;
-            }
-            long interval = autoSaveDurationController.value * 1000;
-            autoSaveTimer = new Timer();
-            autoSaveTimer.schedule(new TimerTask() {
+            long interval = autoCheckInterval * 1000;
+            autoCheckTimer = new Timer();
+            autoCheckTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {

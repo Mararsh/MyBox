@@ -269,6 +269,29 @@ public class BytesEditorController extends BaseTextController {
         return items;
     }
 
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (sourceFile != null) {
+                menu = new MenuItem(message("FormattedHexadecimal"), StyleTools.getIconImageView("iconHex.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    formatMainArea();
+                });
+                items.add(menu);
+            }
+
+            items.addAll(super.operationsMenuItems(fevent));
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     /*
         static
      */

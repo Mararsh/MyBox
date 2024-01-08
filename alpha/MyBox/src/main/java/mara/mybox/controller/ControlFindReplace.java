@@ -17,9 +17,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.BytesEditInformation;
+import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceMatch;
@@ -57,8 +59,8 @@ public class ControlFindReplace extends BaseController {
     @FXML
     protected TextArea findArea, replaceArea;
     @FXML
-    protected Button findPreviousButton, findNextButton, countButton, listButton, historyFindButton,
-            replaceButton, replaceAllButton, exampleFindButton, historyStringButton;
+    protected Button findPreviousButton, findNextButton, countButton, listButton,
+            replaceButton, replaceAllButton, exampleFindButton;
     @FXML
     protected Label findLabel;
     @FXML
@@ -67,20 +69,6 @@ public class ControlFindReplace extends BaseController {
     public ControlFindReplace() {
         baseTitle = message("FindReplace");
         TipsLabelKey = message("FindReplaceTips");
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.removeTooltip(historyFindButton);
-            if (historyStringButton != null) {
-                NodeStyleTools.removeTooltip(historyStringButton);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     @Override
@@ -104,11 +92,21 @@ public class ControlFindReplace extends BaseController {
     }
 
     public void setEditor(BaseTextController parent) {
-        editerController = parent;
-        parentController = parent;
-        textInput = parent.mainArea;
-        editType = parent.editType;
-        setControls();
+        try {
+            editerController = parent;
+            parentController = parent;
+            textInput = editerController.mainArea;
+            editType = editerController.editType;
+            if (editerController.sourceInformation != null
+                    && editerController.sourceInformation.getEditType() == FileEditInformation.Edit_Type.Bytes) {
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FindReplaceBytesTips")));
+            } else {
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FindReplaceTextsTips")));
+            }
+            setControls();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public void setEditInput(BaseController parent, TextInputControl textInput) {
@@ -229,30 +227,6 @@ public class ControlFindReplace extends BaseController {
 
     }
 
-    @Override
-    public boolean controlAltF() {
-        findNextAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAltW() {
-        replaceAllAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAlt1() {
-        findPreviousAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAlt2() {
-        findNextAction();
-        return true;
-    }
-
     protected void checkFindInput(String string) {
         boolean invalid = string.isEmpty() || !validateFind(string);
         countButton.setDisable(invalid);
@@ -371,21 +345,6 @@ public class ControlFindReplace extends BaseController {
     @FXML
     protected void findPreviousAction() {
         findReplace(Operation.FindPrevious);
-    }
-
-    @FXML
-    @Override
-    public void findAction() {
-        findNextAction();
-    }
-
-    @FXML
-    @Override
-    public void replaceAction() {
-        if (replaceArea == null) {
-            return;
-        }
-        findReplace(Operation.ReplaceFirst);
     }
 
     @FXML
@@ -795,6 +754,45 @@ public class ControlFindReplace extends BaseController {
         if (UserConfig.getBoolean(baseName + "ReplaceStringPopWhenMouseHovering", false)) {
             showReplaceHistories(event);
         }
+    }
+
+    @FXML
+    @Override
+    public void findAction() {
+        findNextAction();
+    }
+
+    @FXML
+    @Override
+    public void replaceAction() {
+        if (replaceArea == null) {
+            return;
+        }
+        findReplace(Operation.ReplaceFirst);
+    }
+
+    @Override
+    public boolean controlAltF() {
+        findNextAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltW() {
+        replaceAllAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt1() {
+        findPreviousAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        findNextAction();
+        return true;
     }
 
 }

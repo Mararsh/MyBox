@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -26,9 +27,8 @@ public class DataFileTextFormatController extends BaseChildController {
                 return;
             }
             baseName = fileController.baseName;
-            baseTitle = fileController.baseTitle;
             setFileType(fileController.TargetFileType);
-            setTitle(fileController.getTitle());
+            setTitle(message("Format") + " - " + fileController.getTitle());
 
             optionsController.setControls(baseName + "Read", true, true);
             optionsController.withNamesCheck.setSelected(fileController.dataFileText.isHasHeader());
