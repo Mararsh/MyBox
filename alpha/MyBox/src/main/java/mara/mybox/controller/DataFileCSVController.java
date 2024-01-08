@@ -3,11 +3,14 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.MenuItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
@@ -18,10 +21,12 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -31,11 +36,6 @@ import static mara.mybox.value.Languages.message;
 public class DataFileCSVController extends BaseData2DFileController {
 
     protected DataFileCSV dataFileCSV;
-
-    @FXML
-    protected ControlTextOptions csvReadController, csvWriteController;
-    @FXML
-    protected VBox mainBox;
 
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
@@ -58,28 +58,17 @@ public class DataFileCSVController extends BaseData2DFileController {
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            csvReadController.setControls(baseName + "Read", true, false);
-            csvWriteController.setControls(baseName + "Write", false, false);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
     public void pickRefreshOptions() {
         Charset charset;
-        if (csvReadController.autoDetermine) {
+        if (UserConfig.getBoolean(baseName + "SourceAutoDetermine", true)) {
             charset = TextFileTools.charset(dataFileCSV.getFile());
         } else {
-            charset = csvReadController.charset;
+            charset = Charset.forName(UserConfig.getString(baseName + "SourceCharset", "utf-8"));
         }
-        dataFileCSV.setOptions(csvReadController.withNamesCheck.isSelected(),
-                charset, csvReadController.getDelimiterName());
+        dataFileCSV.setOptions(
+                UserConfig.getBoolean(baseName + "SourceWithNames", true),
+                charset,
+                UserConfig.getString(baseName + "SourceDelimiter", ","));
     }
 
     @Override
@@ -90,9 +79,9 @@ public class DataFileCSVController extends BaseData2DFileController {
         }
         DataFileCSV targetData = new DataFileCSV();
         targetData.initFile(file)
-                .setCharset(csvWriteController.charset)
-                .setDelimiter(csvWriteController.getDelimiterName())
-                .setHasHeader(csvWriteController.withNamesCheck.isSelected());
+                .setCharset(Charset.forName(UserConfig.getString(baseName + "TargetCharset", "utf-8")))
+                .setDelimiter(UserConfig.getString(baseName + "TargetDelimiter", ","))
+                .setHasHeader(UserConfig.getBoolean(baseName + "TargetWithNames", true));
         return targetData;
     }
 
@@ -100,9 +89,6 @@ public class DataFileCSVController extends BaseData2DFileController {
         if (file == null || !checkBeforeNextAction()) {
             return;
         }
-        csvReadController.withNamesCheck.setSelected(withName);
-        csvReadController.setDelimiterName(delimiter);
-        csvReadController.setCharset(charset);
         dataFileCSV.initFile(file);
         dataFileCSV.setOptions(withName, charset, delimiter + "");
         dataController.readDefinition();
@@ -153,6 +139,32 @@ public class DataFileCSVController extends BaseData2DFileController {
 
         };
         start(task);
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        if (!dataFileCSV.hasData() || !dataController.tableController.verifyData()) {
+            return;
+        }
+        DataFileCSVSaveAsController.open(this);
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+
+        if (sourceFile != null) {
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconDelimiter.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                DataFileCSVFormatController.open(this);
+            });
+            items.add(menu);
+        }
+
+        items.addAll(super.fileMenuItems(fevent));
+        return items;
     }
 
     /*

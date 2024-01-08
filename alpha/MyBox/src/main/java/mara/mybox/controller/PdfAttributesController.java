@@ -18,8 +18,8 @@ import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
@@ -365,16 +365,17 @@ public class PdfAttributesController extends BaseController {
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         if (pdfInfo == null) {
-            return;
+            return false;
         }
         try {
             final PdfInformationController controller = (PdfInformationController) openStage(Fxmls.PdfInformationFxml);
             controller.setInformation(pdfInfo);
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 

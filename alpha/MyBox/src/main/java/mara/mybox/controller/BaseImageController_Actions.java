@@ -222,11 +222,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         if (imageInformation == null) {
-            return;
+            return false;
         }
         ImageInformationController.open(imageInformation);
+        return true;
     }
 
     @FXML
@@ -614,6 +615,9 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     @Override
     public void saveAsAction() {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
         ImageConverterController.open((BaseImageController) this);
     }
 

@@ -16,10 +16,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="100.0" prefWidth="240.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileExcelSaveAsController">
+<VBox fx:id="thisPane" prefHeight="100.0" prefWidth="400.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileTextSaveAsController">
       <children>
-      <CheckBox fx:id="targetWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
-      <CheckBox fx:id="currentOnlyCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
+      <fx:include fx:id="options" source="ControlTextWriteOptions.fxml" />
       <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
             <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">

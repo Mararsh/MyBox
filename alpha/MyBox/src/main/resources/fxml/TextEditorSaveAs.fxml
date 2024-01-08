@@ -9,6 +9,8 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -16,10 +18,28 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="100.0" prefWidth="240.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileExcelSaveAsController">
+<VBox fx:id="thisPane" maxHeight="-Infinity" prefHeight="300.0" prefWidth="500.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextEditorSaveAsController">
       <children>
-      <CheckBox fx:id="targetWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
-      <CheckBox fx:id="currentOnlyCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
+      <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Charset" />
+            <ComboBox fx:id="targetCharsetSelector" prefWidth="150.0" />
+            <CheckBox fx:id="targetBomCheck" mnemonicParsing="false" text="BOM" />
+            <Label minHeight="-Infinity" text="%BOMcomments" wrapText="true" />
+         </children>
+      </VBox>
+      <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label prefWidth="400.0" text="%LineBreak" wrapText="true" />
+            <RadioButton fx:id="lfRadio" mnemonicParsing="false" selected="true" text="%LF">
+               <toggleGroup>
+                  <ToggleGroup fx:id="lineBreakGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="crRadio" mnemonicParsing="false" text="%CR" toggleGroup="$lineBreakGroup" />
+            <RadioButton fx:id="crlfRadio" mnemonicParsing="false" text="%CRLF" toggleGroup="$lineBreakGroup" />
+         </children>
+      </VBox>
       <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
             <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">

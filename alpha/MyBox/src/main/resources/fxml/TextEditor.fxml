@@ -11,14 +11,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -39,29 +36,7 @@ License:    Apache License Version 2.0
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                    <children> 
-                                        <TitledPane fx:id="formatPane" maxWidth="1.7976931348623157E308" text="%Format">
-                                            <content>
-                                                <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                    <children>
-                                                        <Label text="%Charset" />
-                                                        <ComboBox fx:id="charsetSelector" prefWidth="150.0" />
-                                                        <Label fx:id="bomLabel" />
-                                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Separator prefWidth="200.0" />
-                                                        <Label minHeight="-Infinity" text="%FileFormatRefreshComments" wrapText="true" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
+                                    <children>
                                         <TitledPane fx:id="savePane" layoutX="10.0" layoutY="266.0" text="%Save">
                                             <content>
                                                 <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
@@ -72,56 +47,6 @@ License:    Apache License Version 2.0
                                                     </children>
                                                 </VBox>
                                             </content>
-                                        </TitledPane>
-                                        <TitledPane fx:id="saveAsPane" layoutX="10.0" layoutY="171.0" text="%SaveAs">
-                                            <content>
-                                                <VBox spacing="2.0">
-                                                    <children>
-                                                        <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                            <children>
-                                                                <Label text="%Charset" />
-                                                                <ComboBox fx:id="targetCharsetSelector" prefWidth="150.0" />
-                                                                <CheckBox fx:id="targetBomCheck" mnemonicParsing="false" text="BOM" />
-                                                            </children>
-                                                        </VBox> 
-                                                        <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                            <children>
-                                                                <Label prefWidth="400.0" text="%LineBreak" wrapText="true" />
-                                                                <RadioButton fx:id="lfRadio" mnemonicParsing="false" selected="true" text="%LF">
-                                                                    <toggleGroup>
-                                                                        <ToggleGroup fx:id="lineBreakGroup" />
-                                                                    </toggleGroup>
-                                                                </RadioButton>
-                                                                <RadioButton fx:id="crRadio" mnemonicParsing="false" text="%CR" toggleGroup="$lineBreakGroup" />
-                                                                <RadioButton fx:id="crlfRadio" mnemonicParsing="false" text="%CRLF" toggleGroup="$lineBreakGroup" />
-                                                            </children>
-                                                        </VBox>
-                                                        <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                            <children>
-                                                                <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
-                                                                    <toggleGroup>
-                                                                        <ToggleGroup fx:id="saveAsGroup" />
-                                                                    </toggleGroup>
-                                                                </RadioButton>
-                                                                <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
-                                                                <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
-                                                            </children>
-                                                            <VBox.margin>
-                                                                <Insets bottom="10.0" top="10.0" />
-                                                            </VBox.margin>
-                                                        </VBox>
-                                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconSaveAs.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </VBox>
-                                            </content> 
                                         </TitledPane>
                                         <TitledPane fx:id="findPane" expanded="false" layoutX="10.0" layoutY="10.0" text="%FindReplace">
                                             <content>
@@ -257,6 +182,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconAdd.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                               <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

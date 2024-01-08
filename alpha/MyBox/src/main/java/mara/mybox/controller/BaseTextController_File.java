@@ -6,7 +6,6 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.data.FileEditInformation;
-import static mara.mybox.data.FileEditInformation.defaultCharset;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
@@ -62,17 +61,7 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
             @Override
             protected void whenSucceeded() {
                 bottomLabel.setText("");
-                isSettingValues = true;
                 sourceInformation.setCharsetDetermined(true);
-                if (charsetSelector != null) {
-                    charsetSelector.getSelectionModel().select(sourceInformation.getCharset().name());
-                    if (sourceInformation.isWithBom()) {
-                        bomLabel.setText(message("WithBom"));
-                    } else {
-                        bomLabel.setText("");
-                    }
-                }
-                isSettingValues = false;
                 loadPage();
             }
 
@@ -118,7 +107,6 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
 
             fileChanged.set(false);
             sourceFile = file;
-            checkSystemMethodButton(sourceFile);
 
             FileEditInformation existedInfo = sourceInformation;
             sourceInformation = FileEditInformation.create(editType, file);
@@ -141,12 +129,6 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
             lineArea.clear();
             bottomLabel.setText("");
             selectionLabel.setText("");
-            if (charsetSelector != null) {
-                charsetSelector.getSelectionModel().select(UserConfig.getString(baseName + "SourceCharset", defaultCharset().name()));
-            }
-            if (bomLabel != null) {
-                bomLabel.setText("");
-            }
             if (filterConditionsLabel != null) {
                 filterConditionsLabel.setText("");
             }

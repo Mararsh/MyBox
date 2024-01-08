@@ -1,28 +1,23 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2023-7-19
  * @License Apache License Version 2.0
  */
-public class DataFileExcelFormatController extends BaseChildController {
+public class BytesEditorSaveAsController extends BaseChildController {
 
-    protected DataFileExcelController fileController;
+    protected BytesEditorController fileController;
 
-    @FXML
-    protected CheckBox sourceWithNamesCheck;
-
-    public void setParameters(DataFileExcelController parent) {
+    public void setParameters(BytesEditorController parent) {
         try {
             fileController = parent;
-            if (fileController == null || fileController.dataFileExcel == null) {
+            if (fileController == null) {
                 close();
                 return;
             }
@@ -31,7 +26,6 @@ public class DataFileExcelFormatController extends BaseChildController {
             setFileType(fileController.TargetFileType);
             setTitle(fileController.getTitle());
 
-            sourceWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "SourceWithNames", true));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -39,11 +33,15 @@ public class DataFileExcelFormatController extends BaseChildController {
 
     @FXML
     @Override
-    public void okAction() {
-        UserConfig.setBoolean(baseName + "SourceWithNames", sourceWithNamesCheck.isSelected());
-        fileController.refreshFile();
-        if (closeAfterCheck.isSelected()) {
-            close();
+    public void saveAsAction() {
+        try {
+            fileController.saveAsType = saveAsType;
+            if (closeAfterCheck.isSelected()) {
+                close();
+            }
+            fileController.saveAs();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -51,13 +49,13 @@ public class DataFileExcelFormatController extends BaseChildController {
     /*
         static methods
      */
-    public static DataFileExcelFormatController open(DataFileExcelController parent) {
+    public static BytesEditorSaveAsController open(BytesEditorController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            DataFileExcelFormatController controller = (DataFileExcelFormatController) WindowTools.branchStage(
-                    parent, Fxmls.DataFileExcelFormatFxml);
+            BytesEditorSaveAsController controller = (BytesEditorSaveAsController) WindowTools.branchStage(
+                    parent, Fxmls.BytesEditorSaveAsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

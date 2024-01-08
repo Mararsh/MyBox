@@ -468,15 +468,17 @@ public class PdfViewController extends PdfViewController_Html {
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         if (pdfInformation == null) {
-            return;
+            return false;
         }
         try {
             PdfInformationController controller = (PdfInformationController) openStage(Fxmls.PdfInformationFxml);
             controller.setInformation(pdfInformation);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 

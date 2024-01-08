@@ -783,12 +783,13 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         Link link = selectedItem();
         if (link == null) {
-            return;
+            return false;
         }
         HtmlReadTools.requestHead(this, link.getAddress());
+        return true;
     }
 
     @FXML

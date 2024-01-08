@@ -34,7 +34,7 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
-            rotateLeftButton, rotateRightButton, turnOverButton, infoAction;
+            rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML
@@ -426,8 +426,8 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     @Override
-    public void infoAction() {
-        imageController.infoAction();
+    public boolean infoAction() {
+        return imageController.infoAction();
     }
 
     @FXML

@@ -48,7 +48,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2D extends BaseFileController {
+public class ControlData2D extends BaseController {
 
     protected BaseData2DController manageController;
     protected Data2D.Type type;
@@ -647,7 +647,6 @@ public class ControlData2D extends BaseFileController {
         interface
      */
     @FXML
-    @Override
     public void popFunctionsMenu(Event event) {
         if (UserConfig.getBoolean("Data2DFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -655,7 +654,6 @@ public class ControlData2D extends BaseFileController {
     }
 
     @FXML
-    @Override
     public void showFunctionsMenu(Event event) {
         try {
             setData(tableController.data2D);

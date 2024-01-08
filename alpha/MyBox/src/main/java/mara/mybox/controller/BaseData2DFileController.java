@@ -132,19 +132,6 @@ public abstract class BaseData2DFileController extends BaseData2DController {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Create") + "    Ctrl+N " + message("Or") + " Alt+N",
-                    StyleTools.getIconImageView("iconAdd.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                createAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                loadContentInSystemClipboard();
-            });
-            items.add(menu);
-
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
@@ -181,17 +168,26 @@ public abstract class BaseData2DFileController extends BaseData2DController {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
-                    StyleTools.getIconImageView("iconSaveAs.png"));
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Create"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent event) -> {
-                saveAsFile();
+                createAction();
             });
             items.add(menu);
 
-            if (sourceFile == null) {
-                return items;
-            }
-            items.add(new SeparatorMenuItem());
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadContentInSystemClipboard();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                    StyleTools.getIconImageView("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                saveAsAction();
+            });
+            items.add(menu);
 
             if (data2D.isTexts() || data2D.isCSV()) {
                 menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
@@ -200,6 +196,11 @@ public abstract class BaseData2DFileController extends BaseData2DController {
                 });
                 items.add(menu);
             }
+
+            if (sourceFile == null) {
+                return items;
+            }
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -228,23 +229,16 @@ public abstract class BaseData2DFileController extends BaseData2DController {
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         String info = data2D.info();
         if (info != null && !info.isBlank()) {
             TextPopController.loadText(info);
+            return true;
         }
+        return false;
     }
 
-    public void saveAsFile() {
-        saveAsAction();
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        if (!dataController.tableController.verifyData()) {
-            return;
-        }
+    public void saveAs() {
         Data2D targetData = saveAsTarget();
         if (targetData == null) {
             return;
@@ -268,6 +262,15 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.sourceFileChanged(dataController.data2D.getFile());
         controller.requestMouse();
+    }
+
+    @Override
+    public boolean controlAltB() {
+        if (dataController == null || data2D == null) {
+            return false;
+        }
+        saveAsAction();
+        return true;
     }
 
 }

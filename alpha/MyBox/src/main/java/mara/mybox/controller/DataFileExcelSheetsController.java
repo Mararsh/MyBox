@@ -7,7 +7,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
@@ -30,15 +29,6 @@ public class DataFileExcelSheetsController extends BaseChildController {
     protected Button plusSheetButton, renameSheetButton, deleteSheetButton,
             nextSheetButton, previousSheetButton;
 
-    public DataFileExcelSheetsController() {
-        baseTitle = message("EditExcel");
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Excel);
-    }
-
     public void setParameters(DataFileExcelController parent) {
         try {
             fileController = parent;
@@ -47,6 +37,9 @@ public class DataFileExcelSheetsController extends BaseChildController {
                 return;
             }
             baseName = fileController.baseName;
+            baseTitle = fileController.baseTitle;
+            setFileType(fileController.TargetFileType);
+            setTitle(fileController.getTitle());
 
             fileController.dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override

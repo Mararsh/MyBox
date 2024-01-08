@@ -392,4 +392,10 @@ public class BaseWebViewController extends BaseFileController {
         return true;
     }
 
+    @Override
+    public boolean controlAltB() {
+        saveAsAction();
+        return true;
+    }
+
 }

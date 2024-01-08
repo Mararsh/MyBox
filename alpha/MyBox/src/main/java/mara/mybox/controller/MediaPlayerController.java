@@ -939,8 +939,12 @@ public class MediaPlayerController extends BaseController {
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
+        if (currentMedia == null) {
+            return false;
+        }
         tableController.popInfo(currentMedia);
+        return true;
     }
 
     @FXML

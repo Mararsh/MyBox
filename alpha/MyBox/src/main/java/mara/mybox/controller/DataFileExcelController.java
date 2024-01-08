@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
@@ -88,8 +89,12 @@ public class DataFileExcelController extends BaseData2DFileController {
         dataController.readDefinition();
     }
 
+    @FXML
     @Override
-    public void saveAsFile() {
+    public void saveAsAction() {
+        if (!dataFileExcel.hasData() || !dataController.tableController.verifyData()) {
+            return;
+        }
         DataFileExcelSaveAsController.open(this);
     }
 
@@ -104,13 +109,13 @@ public class DataFileExcelController extends BaseData2DFileController {
                 DataFileExcelSheetsController.open(this);
             });
             items.add(menu);
-        }
 
-        menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconDelimiter.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            DataFileExcelFormatController.open(this);
-        });
-        items.add(menu);
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconDelimiter.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                DataFileExcelFormatController.open(this);
+            });
+            items.add(menu);
+        }
 
         items.addAll(super.fileMenuItems(fevent));
         return items;

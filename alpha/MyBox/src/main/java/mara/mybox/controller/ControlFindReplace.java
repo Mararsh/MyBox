@@ -450,6 +450,9 @@ public class ControlFindReplace extends BaseController {
             return false;
         }
         String findString = findString();
+        if (findString == null || findString.isEmpty()) {
+            return false;
+        }
         String pageText = textInput.getText();
         if (pageText == null || pageText.isEmpty()) {
             popError(message("EmptyValue"));

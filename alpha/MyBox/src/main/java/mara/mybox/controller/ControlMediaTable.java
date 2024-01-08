@@ -383,12 +383,13 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         MediaInformation info = selectedItem();
         if (info == null) {
-            return;
+            return false;
         }
         popInfo(info);
+        return true;
     }
 
     public void popInfo(MediaInformation info) {

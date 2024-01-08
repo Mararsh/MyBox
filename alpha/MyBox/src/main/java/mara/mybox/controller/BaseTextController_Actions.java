@@ -8,6 +8,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
+import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -44,7 +45,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         try {
             if (!isSettingValues && sourceFile != null) {
                 sourceInformation.setCharsetDetermined(true);
-                sourceInformation.setCharset(Charset.forName(charsetSelector.getSelectionModel().getSelectedItem()));
+                sourceInformation.setCharset(Charset.forName(UserConfig.getString(baseName + "SourceCharset", "utf-8")));
                 openFile(sourceFile);
             }
         } catch (Exception e) {
@@ -153,9 +154,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         start(task, getMyWindow() == null || myWindow.isFocused());
     }
 
-    @FXML
-    @Override
-    public void saveAsAction() {
+    public void saveAs() {
         if (!validateMainArea()) {
             return;
         }
@@ -168,16 +167,17 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         }
         FileEditInformation targetInformation = FileEditInformation.create(editType, file);
         targetInformation.setFile(file);
-        targetInformation.setCharset(Charset.forName(targetCharsetSelector.getSelectionModel().getSelectedItem()));
+        targetInformation.setCharset(Charset.forName(UserConfig.getString(baseName + "TargetCharset", "utf-8")));
         targetInformation.setPageSize(sourceInformation.getPageSize());
         targetInformation.setCurrentPage(sourceInformation.getCurrentPage());
-        if (targetBomCheck != null) {
-            targetInformation.setWithBom(targetBomCheck.isSelected());
-        } else {
-            targetInformation.setWithBom(sourceInformation.isWithBom());
+        targetInformation.setWithBom(UserConfig.getBoolean(baseName + "TargetBOM", sourceInformation.isWithBom()));
+        Line_Break tlk = sourceInformation.getLineBreak();
+        if (tlk == null) {
+            tlk = Line_Break.LF;
         }
-        targetInformation.setLineBreak(lineBreak);
-        targetInformation.setLineBreakValue(TextTools.lineBreakValue(lineBreak));
+        tlk = Line_Break.valueOf(UserConfig.getString(baseName + "TargetLineBreak", tlk.toString()));
+        targetInformation.setLineBreak(tlk);
+        targetInformation.setLineBreakValue(TextTools.lineBreakValue(tlk));
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -516,7 +516,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         if (sourceFile == null) {
             String txt = mainArea.getText();
             if (txt == null || txt.isBlank()) {
-                error = message("NoData");
+                popError(message("NoData"));
                 return;
             }
             TextEditorController.edit(txt);

@@ -6,6 +6,7 @@ import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
@@ -90,9 +91,7 @@ public abstract class BaseTextController extends BaseTextController_Left {
             }
             initPage(null);
 
-            initFormatTab();
             initSaveTab();
-            initSaveAsTab();
             initLocateTab();
             initFilterTab();
             initFindTab();
@@ -118,19 +117,22 @@ public abstract class BaseTextController extends BaseTextController_Left {
                 }
             }
 
-            if (charsetSelector != null) {
-                NodeStyleTools.setTooltip(charsetSelector, new Tooltip(message("EncodeComments")));
-            }
-            if (targetBomCheck != null) {
-                NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(message("BOMcomments")));
-            }
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
+    @FXML
     @Override
+    public boolean infoAction() {
+        String info = fileInfo();
+        if (info != null && !info.isBlank()) {
+            TextPopController.loadText(info);
+            return true;
+        }
+        return false;
+    }
+
     public String fileInfo() {
         try {
             if (!sourceInformation.isTotalNumberRead()) {
@@ -170,6 +172,11 @@ public abstract class BaseTextController extends BaseTextController_Left {
                 s.append(message("CurrentPage"))
                         .append(": ").append(StringTools.format(currentPage + 1)).append(" / ")
                         .append(StringTools.format(pagesNumber)).append("\n");
+                if (editType != Edit_Type.Bytes) {
+                    s.append(message("WithBom"))
+                            .append(": ").append(sourceInformation.isWithBom() ? message("Yes") : message("No"))
+                            .append("\n");
+                }
             }
             s.append(message("LineBreak"))
                     .append(": ").append(sourceInformation.lineBreakName()).append("\n");
@@ -204,29 +211,12 @@ public abstract class BaseTextController extends BaseTextController_Left {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            if (sourceFile != null) {
-                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
-                        StyleTools.getIconImageView("iconInfo.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                items.add(menu);
-            }
-
-            menu = new MenuItem(message("Create") + "    Ctrl+N " + message("Or") + " Alt+N",
-                    StyleTools.getIconImageView("iconAdd.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                createAction();
+            menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                    StyleTools.getIconImageView("iconInfo.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                infoAction();
             });
             items.add(menu);
-
-            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                loadContentInSystemClipboard();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
                     StyleTools.getIconImageView("iconSave.png"));
@@ -236,15 +226,15 @@ public abstract class BaseTextController extends BaseTextController_Left {
             menu.setDisable(saveButton.isDisabled());
             items.add(menu);
 
-            menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
-                    StyleTools.getIconImageView("iconRecover.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                recoverAction();
-            });
-            menu.setDisable(recoverButton.isDisabled());
-            items.add(menu);
-
             if (sourceFile != null) {
+                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                        StyleTools.getIconImageView("iconRecover.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    recoverAction();
+                });
+                menu.setDisable(recoverButton.isDisabled());
+                items.add(menu);
+
                 CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
                 backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
                 backItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -261,6 +251,21 @@ public abstract class BaseTextController extends BaseTextController_Left {
                 });
                 items.add(menu);
             }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Create") + "    Ctrl+N " + message("Or") + " Alt+N",
+                    StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                createAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadContentInSystemClipboard();
+            });
+            items.add(menu);
 
             menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
                     StyleTools.getIconImageView("iconSaveAs.png"));
@@ -366,6 +371,24 @@ public abstract class BaseTextController extends BaseTextController_Left {
                 return false;
             }
         }
+    }
+
+    @Override
+    public boolean controlAltN() {
+        createAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltS() {
+        saveAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltB() {
+        saveAsAction();
+        return true;
     }
 
     @Override

@@ -86,6 +86,8 @@ public class Fxmls {
     public static final String XmlOptionsFxml = "/fxml/XmlOptions.fxml";
 
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
+    public static final String TextEditorSaveAsFxml = "/fxml/TextEditorSaveAs.fxml";
+    public static final String TextEditorFormatFxml = "/fxml/TextEditorFormat.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";
     public static final String TextFindBatchFxml = "/fxml/TextFindBatch.fxml";
@@ -98,6 +100,8 @@ public class Fxmls {
     public static final String TextPopFxml = "/fxml/TextPop.fxml";
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
+    public static final String BytesEditorFormatFxml = "/fxml/BytesEditorFormat.fxml";
+    public static final String BytesEditorSaveAsFxml = "/fxml/BytesEditorSaveAs.fxml";
     public static final String BytesFindBatchFxml = "/fxml/BytesFindBatch.fxml";
     public static final String BytesPopFxml = "/fxml/BytesPop.fxml";
 
@@ -339,6 +343,8 @@ public class Fxmls {
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
+    public static final String DataFileCSVFormatFxml = "/fxml/DataFileCSVFormat.fxml";
+    public static final String DataFileCSVSaveAsFxml = "/fxml/DataFileCSVSaveAs.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
 
@@ -350,6 +356,8 @@ public class Fxmls {
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
     public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
+    public static final String DataFileTextFormatFxml = "/fxml/DataFileTextFormat.fxml";
+    public static final String DataFileTextSaveAsFxml = "/fxml/DataFileTextSaveAs.fxml";
     public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
     public static final String DataFileTextMergeFxml = "/fxml/DataFileTextMerge.fxml";
 

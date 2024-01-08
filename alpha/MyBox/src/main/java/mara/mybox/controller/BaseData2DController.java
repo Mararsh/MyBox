@@ -271,18 +271,6 @@ public abstract class BaseData2DController extends BaseFileController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (dataController != null) {
-                return dataController.keyEventsFilter(event);
-            } else if (loadController != null) {
-                return loadController.keyEventsFilter(event);
-            }
-        }
-        return true;
-    }
-
-    @Override
     public void myBoxClipBoard() {
         if (dataController != null) {
             dataController.myBoxClipBoard();
@@ -530,6 +518,27 @@ public abstract class BaseData2DController extends BaseFileController {
             }
         };
         start(parseTask);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            if (dataController != null) {
+                return dataController.keyEventsFilter(event);
+            } else if (loadController != null) {
+                return loadController.keyEventsFilter(event);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean controlAltS() {
+        if (dataController == null) {
+            return false;
+        }
+        dataController.save();
+        return true;
     }
 
     @Override

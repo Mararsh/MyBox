@@ -1,19 +1,24 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
-import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -30,38 +35,6 @@ public class TextEditorController extends BaseTextController {
     @Override
     public void setFileType() {
         setTextType();
-    }
-
-    @Override
-    protected void initLineBreakGroup() {
-        try {
-            String savedLB = UserConfig.getString(baseName + "LineBreak", Line_Break.LF.toString());
-            if (savedLB.equals(Line_Break.CR.toString())) {
-                crRadio.setSelected(true);
-            } else if (savedLB.equals(Line_Break.CRLF.toString())) {
-                crlfRadio.setSelected(true);
-            } else {
-                lfRadio.setSelected(true);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    protected void checkLineBreakGroup() {
-        try {
-            if (crRadio.isSelected()) {
-                lineBreak = Line_Break.CR;
-            } else if (crlfRadio.isSelected()) {
-                lineBreak = Line_Break.CRLF;
-            } else {
-                lineBreak = Line_Break.LF;
-            }
-            UserConfig.setString(baseName + "LineBreak", lineBreak.toString());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @Override
@@ -158,7 +131,13 @@ public class TextEditorController extends BaseTextController {
             }
 
         };
-        start(pairTask);
+        start(pairTask, rightPane);
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        TextEditorSaveAsController.open(this);
     }
 
     @FXML
@@ -171,6 +150,23 @@ public class TextEditorController extends BaseTextController {
     @FXML
     public void popBytesAction() {
         BytesPopController.open(this, pairArea);
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+
+        if (sourceFile != null) {
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconDelimiter.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextEditorFormatController.open(this);
+            });
+            items.add(menu);
+        }
+
+        items.addAll(super.fileMenuItems(fevent));
+        return items;
     }
 
     /*

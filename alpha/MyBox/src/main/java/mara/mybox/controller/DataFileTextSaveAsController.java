@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -12,17 +11,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-7-19
  * @License Apache License Version 2.0
  */
-public class DataFileExcelSaveAsController extends BaseChildController {
+public class DataFileTextSaveAsController extends BaseChildController {
 
-    protected DataFileExcelController fileController;
+    protected DataFileTextController fileController;
 
     @FXML
-    protected CheckBox targetWithNamesCheck, currentOnlyCheck;
+    protected ControlTextOptions optionsController;
 
-    public void setParameters(DataFileExcelController parent) {
+    public void setParameters(DataFileTextController parent) {
         try {
             fileController = parent;
-            if (fileController == null || fileController.dataFileExcel == null) {
+            if (fileController == null || fileController.dataFileText == null) {
                 close();
                 return;
             }
@@ -31,8 +30,7 @@ public class DataFileExcelSaveAsController extends BaseChildController {
             setFileType(fileController.TargetFileType);
             setTitle(fileController.getTitle());
 
-            targetWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "TargetWithNames", true));
-            currentOnlyCheck.setSelected(UserConfig.getBoolean(baseName + "CurrentOnly", false));
+            optionsController.setControls(baseName + "Write", false, true);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -43,8 +41,9 @@ public class DataFileExcelSaveAsController extends BaseChildController {
     @Override
     public void saveAsAction() {
         try {
-            UserConfig.setBoolean(baseName + "TargetWithNames", targetWithNamesCheck.isSelected());
-            UserConfig.setBoolean(baseName + "CurrentOnly", currentOnlyCheck.isSelected());
+            UserConfig.setBoolean(baseName + "TargetWithNames", optionsController.withNamesCheck.isSelected());
+            UserConfig.setString(baseName + "TargetCharset", optionsController.getCharsetName());
+            UserConfig.setString(baseName + "TargetDelimiter", optionsController.getDelimiterName());
             fileController.saveAsType = saveAsType;
             if (closeAfterCheck.isSelected()) {
                 close();
@@ -59,13 +58,13 @@ public class DataFileExcelSaveAsController extends BaseChildController {
     /*
         static methods
      */
-    public static DataFileExcelSaveAsController open(DataFileExcelController parent) {
+    public static DataFileTextSaveAsController open(DataFileTextController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            DataFileExcelSaveAsController controller = (DataFileExcelSaveAsController) WindowTools.branchStage(
-                    parent, Fxmls.DataFileExcelSaveAsFxml);
+            DataFileTextSaveAsController controller = (DataFileTextSaveAsController) WindowTools.branchStage(
+                    parent, Fxmls.DataFileTextSaveAsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

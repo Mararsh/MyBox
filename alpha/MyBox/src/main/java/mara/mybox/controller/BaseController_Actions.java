@@ -267,8 +267,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public void infoAction() {
-
+    public boolean infoAction() {
+        return false;
     }
 
     @FXML

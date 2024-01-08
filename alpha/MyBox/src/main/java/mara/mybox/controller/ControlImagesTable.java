@@ -352,15 +352,16 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         if (tableData.isEmpty()) {
-            return;
+            return false;
         }
         ImageInformation info = selectedItem();
         if (info == null) {
             info = tableData.get(0);
         }
         ImageInformationController.open(info);
+        return true;
     }
 
     @FXML

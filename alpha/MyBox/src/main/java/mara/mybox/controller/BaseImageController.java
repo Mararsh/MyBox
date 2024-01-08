@@ -726,6 +726,12 @@ public class BaseImageController extends BaseImageController_Actions {
     }
 
     @Override
+    public boolean controlAltN() {
+        createAction();
+        return true;
+    }
+
+    @Override
     public boolean controlAltC() {
         if (imageView == null || imageView.getImage() == null
                 || targetIsTextInput()) {
@@ -790,16 +796,6 @@ public class BaseImageController extends BaseImageController_Actions {
             return false;
         }
         selectPixels();
-        return true;
-    }
-
-    @Override
-    public boolean controlAltI() {
-        if (imageView == null || imageView.getImage() == null
-                || imageInformation == null) {
-            return false;
-        }
-        infoAction();
         return true;
     }
 

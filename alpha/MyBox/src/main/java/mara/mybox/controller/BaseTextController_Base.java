@@ -8,11 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
@@ -49,23 +47,19 @@ public abstract class BaseTextController_Base extends BaseFileController {
     @FXML
     protected TextArea mainArea, lineArea, pairArea;
     @FXML
-    protected ComboBox<String> charsetSelector, targetCharsetSelector, pageSelector, pageSizeSelector;
+    protected ComboBox<String> pageSelector, pageSizeSelector;
     @FXML
-    protected ToggleGroup lineBreakGroup;
-    @FXML
-    protected CheckBox targetBomCheck, autoSaveCheck;
+    protected CheckBox autoSaveCheck;
     @FXML
     protected ControlTimeLength autoSaveDurationController;
     @FXML
-    protected Label bomLabel, pageLabel, charsetLabel, selectionLabel,
+    protected Label pageLabel, charsetLabel, selectionLabel,
             filterConditionsLabel;
     @FXML
     protected Button charactersButton, linesButton, exampleFilterButton,
             filterButton, goObjectButton, goLineButton, goLinesRangeButton, goObjectsRangeButton;
     @FXML
     protected TextField objectNumberInput, lineInput, lineFromInput, lineToInput, objectFromInput, objectToInput;
-    @FXML
-    protected RadioButton crlfRadio, lfRadio, crRadio;
     @FXML
     protected HBox pageBox;
     @FXML

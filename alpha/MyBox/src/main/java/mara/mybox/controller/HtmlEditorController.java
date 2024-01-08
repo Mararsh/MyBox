@@ -210,7 +210,6 @@ public class HtmlEditorController extends WebAddressController {
         return super.keyEventsFilter(event);
     }
 
-
     /*
         static
      */

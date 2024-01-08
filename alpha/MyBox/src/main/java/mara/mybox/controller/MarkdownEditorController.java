@@ -19,7 +19,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
@@ -197,8 +197,8 @@ public class MarkdownEditorController extends TextEditorController {
         if (webViewController == null || !updateHtml && !updateCodes) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (pairTask != null) {
+            pairTask.cancel();
         }
         if (updateHtml) {
             webViewController.loadContents(null);
@@ -211,7 +211,7 @@ public class MarkdownEditorController extends TextEditorController {
         if (mainArea.getText().isEmpty()) {
             return;
         }
-        task = new FxSingletonTask<Void>(this) {
+        pairTask = new FxTask<Void>(this) {
 
             private String html;
 
@@ -260,7 +260,7 @@ public class MarkdownEditorController extends TextEditorController {
             }
 
         };
-        start(task, false);
+        start(pairTask, false);
     }
 
     @FXML
