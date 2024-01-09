@@ -36,8 +36,6 @@ public class TextFilterBatchController extends BaseBatchFileController {
         try {
             super.initControls();
 
-            filterController.sourceLen = Long.MAX_VALUE;
-
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(filterController.valid.not())

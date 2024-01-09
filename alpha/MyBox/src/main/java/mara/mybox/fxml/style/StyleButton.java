@@ -744,10 +744,12 @@ public class StyleButton {
         if (id.startsWith("draw")) {
             return new StyleData(id, message("Draw"), "", "iconDraw.png");
         }
-        if (id.startsWith("typesetting")) {
-            return new StyleData(id, message("Typesetting"), "", "iconTypesetting.png");
+        if (id.startsWith("format")) {
+            return new StyleData(id, message("Typesetting"), "", "iconFormat.png");
         }
-
+        if (id.startsWith("typesetting")) {
+            return new StyleData(id, message("Typesetting"), "", "iconFormat.png");
+        }
         if (id.startsWith("translate")) {
             return new StyleData(id, message("TranslateShape"), "", "iconMove.png");
         }

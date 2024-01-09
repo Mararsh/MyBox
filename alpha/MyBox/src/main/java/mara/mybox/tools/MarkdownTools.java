@@ -19,12 +19,15 @@ import com.vladsch.flexmark.util.sequence.BasedSequence;
 import java.io.File;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.Link;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -169,7 +172,17 @@ public class MarkdownTools {
     }
 
     public static MutableDataHolder htmlOptions() {
-        return htmlOptions("PEGDOWN", 4, false, true, true);
+        try (Connection conn = DerbyBase.getConnection()) {
+            return htmlOptions(UserConfig.getString(conn, "MarkdownEmulation", "PEGDOWN"),
+                    UserConfig.getInt(conn, "MarkdownIndent", 4),
+                    UserConfig.getBoolean(conn, "MarkdownTrim", false),
+                    UserConfig.getBoolean(conn, "MarkdownDiscard", false),
+                    UserConfig.getBoolean(conn, "MarkdownAppend", false));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+
     }
 
     public static String md2html(FxTask task, MutableDataHolder htmlOptions, File mdFile, String style) {

@@ -164,14 +164,13 @@ public class ImageItem {
             icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat",
                     "Clear", "Clipboard", "Close", "Copy",
                     "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
-                    "Edit", "Examples", "Export", "File", "Frame",
+                    "Edit", "Examples", "Export", "File", "Format", "Frame",
                     "Function", "Go", "History", "Import", "Manage", "Menu", "NewItem",
                     "OK", "OpenPath", "Operation", "Options",
                     "Panes", "Play", "Permission", "Polylines", "Pop", "Preview", "Query",
                     "Random", "Recover", "Refresh", "Repeat",
                     "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Shape", "Style",
-                    "SVG", "Tips", "Tree", "Typesetting",
-                    "Undo", "Verify", "View", "Window", "Withdraw"));
+                    "SVG", "Tips", "Tree", "Undo", "Verify", "View", "Window", "Withdraw"));
             for (String name : icons) {
                 item = new ImageItem()
                         .setName("icon" + name + ".png")

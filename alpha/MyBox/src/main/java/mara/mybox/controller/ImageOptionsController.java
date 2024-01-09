@@ -68,7 +68,7 @@ public class ImageOptionsController extends BaseChildController {
     protected Label alphaLabel;
 
     public ImageOptionsController() {
-        baseTitle = message("Options");
+        baseTitle = message("ImageOptions");
     }
 
     public void setParameters(BaseImageController parent) {

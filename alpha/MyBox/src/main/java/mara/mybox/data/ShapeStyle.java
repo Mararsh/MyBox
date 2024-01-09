@@ -51,9 +51,9 @@ public class ShapeStyle {
         }
     }
 
-    final public void init(Connection conn, String name) {
+    final public void init(Connection conn, String inName) {
         try {
-            this.name = name != null ? name : "";
+            name = inName != null ? inName : "";
             try {
                 strokeColor = Color.web(UserConfig.getString(conn, name + "StrokeColor", DefaultStrokeColor));
             } catch (Exception e) {

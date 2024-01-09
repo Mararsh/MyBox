@@ -16,12 +16,12 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -42,12 +42,7 @@ public class MarkdownEditorController extends TextEditorController {
     @FXML
     protected TextArea codesArea;
     @FXML
-    protected ControlMarkdownOptions optionsController;
-    @FXML
-    protected TextField titleInput;
-    @FXML
     protected CheckBox wrapCodesCheck, refreshChangeHtmlCheck, refreshChangeCodesCheck;
-
     @FXML
     protected ControlWebView webViewController;
 
@@ -122,13 +117,6 @@ public class MarkdownEditorController extends TextEditorController {
                 }
             });
 
-            optionsController.changedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    updateHtmlConverter();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -170,7 +158,7 @@ public class MarkdownEditorController extends TextEditorController {
     // https://github.com/vsch/flexmark-java/wiki/Usage
     protected void makeHtmlConverter() {
         try {
-            htmlOptions = optionsController.options();
+            htmlOptions = MarkdownTools.htmlOptions();
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRenderer = HtmlRenderer.builder(htmlOptions).build();
 
@@ -224,7 +212,7 @@ public class MarkdownEditorController extends TextEditorController {
                     Node document = htmlParser.parse(mainArea.getText());
                     html = htmlRenderer.render(document);
 
-                    html = HtmlWriteTools.html(titleInput.getText(), html);
+                    html = HtmlWriteTools.html(null, html);
                     return html != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -268,6 +256,11 @@ public class MarkdownEditorController extends TextEditorController {
     public void createAction() {
         super.createAction();
         clearPairArea();
+    }
+
+    @FXML
+    public void options() {
+        MarkdownOptionsController.open(this);
     }
 
     @FXML

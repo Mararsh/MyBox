@@ -143,50 +143,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
     }
 
     private Menu imageBatchMenu() {
-        MenuItem imageSizeMenu = new MenuItem(message("Size"));
-        imageSizeMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageSizeBatchFxml);
-        });
-
-        MenuItem imageCropMenu = new MenuItem(message("Crop"));
-        imageCropMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageCropBatchFxml);
-        });
-
-        MenuItem imagePasteMenu = new MenuItem(message("Paste"));
-        imagePasteMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImagePasteBatchFxml);
-        });
-
-        MenuItem imageTextMenu = new MenuItem(message("Text"));
-        imageTextMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageTextBatchFxml);
-        });
-
-        MenuItem imageRoundMenu = new MenuItem(message("Round"));
-        imageRoundMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageRoundBatchFxml);
-        });
-
-        MenuItem imageRotateMenu = new MenuItem(message("Rotate"));
-        imageRotateMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageRotateBatchFxml);
-        });
-
-        MenuItem imageMirrorMenu = new MenuItem(message("Mirror"));
-        imageMirrorMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageMirrorBatchFxml);
-        });
-
-        MenuItem imageShearMenu = new MenuItem(message("Shear"));
-        imageShearMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageShearBatchFxml);
-        });
-
-        MenuItem imageMarginsMenu = new MenuItem(message("Margins"));
-        imageMarginsMenu.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageMarginsBatchFxml);
-        });
 
         MenuItem imageAlphaAdd = new MenuItem(message("ImageAlphaAdd"));
         imageAlphaAdd.setOnAction((ActionEvent event) -> {
@@ -215,11 +171,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         Menu imageBatchMenu = new Menu(message("ImageBatch"));
         imageBatchMenu.getItems().addAll(
-                imageColorBatchMenu(), imagePixelsBatchMenu(),
-                imageSizeMenu, imageMarginsMenu, imageRotateMenu, imageMirrorMenu, imageShearMenu,
-                imageRoundMenu, imageCropMenu, imagePasteMenu, imageTextMenu, new SeparatorMenuItem(),
-                imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, new SeparatorMenuItem(),
-                imageOCRBatch);
+                imageColorBatchMenu(), imagePixelsBatchMenu(), imageModifyBatchMenu(), new SeparatorMenuItem(),
+                imageConverterBatch, imageAlphaExtract, imageAlphaAdd, SvgFromImage, imageOCRBatch);
         return imageBatchMenu;
 
     }
@@ -326,6 +279,61 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
                 imageMosaicMenu, imageFrostedGlassMenu, imageShadowMenu,
                 imageSmoothMenu, imageSharpenMenu,
                 imageContrastMenu, imageEdgeMenu, imageEmbossMenu, imageConvolutionMenu);
+        return imagePixelsMenu;
+
+    }
+
+    private Menu imageModifyBatchMenu() {
+        MenuItem imageSizeMenu = new MenuItem(message("Size"));
+        imageSizeMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSizeBatchFxml);
+        });
+
+        MenuItem imageCropMenu = new MenuItem(message("Crop"));
+        imageCropMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageCropBatchFxml);
+        });
+
+        MenuItem imagePasteMenu = new MenuItem(message("Paste"));
+        imagePasteMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImagePasteBatchFxml);
+        });
+
+        MenuItem imageTextMenu = new MenuItem(message("Text"));
+        imageTextMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageTextBatchFxml);
+        });
+
+        MenuItem imageRoundMenu = new MenuItem(message("Round"));
+        imageRoundMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageRoundBatchFxml);
+        });
+
+        MenuItem imageRotateMenu = new MenuItem(message("Rotate"));
+        imageRotateMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageRotateBatchFxml);
+        });
+
+        MenuItem imageMirrorMenu = new MenuItem(message("Mirror"));
+        imageMirrorMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageMirrorBatchFxml);
+        });
+
+        MenuItem imageShearMenu = new MenuItem(message("Shear"));
+        imageShearMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageShearBatchFxml);
+        });
+
+        MenuItem imageMarginsMenu = new MenuItem(message("Margins"));
+        imageMarginsMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageMarginsBatchFxml);
+        });
+
+        Menu imagePixelsMenu = new Menu(message("Pixels"));
+        imagePixelsMenu.getItems().addAll(
+                imageSizeMenu, imageMarginsMenu, imageCropMenu, imageRoundMenu,
+                imageRotateMenu, imageMirrorMenu, imageShearMenu,
+                imagePasteMenu, imageTextMenu);
         return imagePixelsMenu;
 
     }

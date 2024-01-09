@@ -286,6 +286,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.MarkdownEditorFxml);
         });
 
+        MenuItem markdownOptions = new MenuItem(message("MarkdownOptions"));
+        markdownOptions.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.MarkdownOptionsFxml);
+        });
+
         MenuItem MarkdownTypesetting = new MenuItem(message("MarkdownTypesetting"));
         MarkdownTypesetting.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.MarkdownTypesettingFxml);
@@ -307,7 +312,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         markdownMenu.getItems().addAll(
-                markdownEditor, new SeparatorMenuItem(),
+                markdownEditor, markdownOptions, new SeparatorMenuItem(),
                 MarkdownTypesetting, markdownToHtml, MarkdownToText, MarkdownToPdf
         );
 

@@ -122,15 +122,10 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
             sourceInformation.setPageSize(UserConfig.getInt(baseName + "PageSize", defaultPageSize));
             sourceInformation.setFindReplace(null);
 
-            filterConditionsString = "";
-
             mainArea.clear();
             lineArea.clear();
             bottomLabel.setText("");
             selectionLabel.setText("");
-            if (filterConditionsLabel != null) {
-                filterConditionsLabel.setText("");
-            }
             recoverButton.setDisable(file == null);
             clearPairArea();
 
@@ -238,14 +233,6 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
 
         };
         start(task);
-    }
-
-    protected void loadText(String text, boolean changed) {
-        isSettingValues = true;
-        mainArea.setText(text);
-        isSettingValues = false;
-        formatMainArea();
-        updateInterface(changed);
     }
 
     public void setPageSize() {

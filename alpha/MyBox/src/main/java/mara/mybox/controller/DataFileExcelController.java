@@ -110,7 +110,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconDelimiter.png"));
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 DataFileExcelFormatController.open(this);
             });

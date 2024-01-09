@@ -242,6 +242,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void imageOptions(ActionEvent event) {
+        loadScene(Fxmls.ImageShapeOptionsFxml);
+    }
+
+    @FXML
     protected void ImagesInMyBoxClipboard(ActionEvent event) {
         ImageInMyBoxClipboardController.oneOpen();
     }

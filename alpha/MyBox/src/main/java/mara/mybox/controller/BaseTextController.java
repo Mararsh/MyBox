@@ -29,11 +29,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-12-09
  * @License Apache License Version 2.0
  *
- * BaseTextController < BaseTextController_Left < BaseTextController_Actions <
- * BaseTextController_File < BaseTextController_Main < BaseTextController_Pair <
- * BaseTextController_Base
+ * BaseTextController < BaseTextController_Actions < BaseTextController_File <
+ * BaseTextController_Main < BaseTextController_Pair < BaseTextController_Base
  */
-public abstract class BaseTextController extends BaseTextController_Left {
+public abstract class BaseTextController extends BaseTextController_Actions {
 
     public BaseTextController() {
         baseTitle = message("FileEditer");
@@ -98,8 +97,6 @@ public abstract class BaseTextController extends BaseTextController_Left {
             super.initControls();
             initPage(null);
 
-            initLocateTab();
-            initFilterTab();
             initMainBox();
             initPairBox();
             initPageBar();
@@ -107,6 +104,11 @@ public abstract class BaseTextController extends BaseTextController_Left {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public boolean isBytes() {
+        return sourceInformation != null
+                && sourceInformation.getEditType() == Edit_Type.Bytes;
     }
 
     @FXML
@@ -204,6 +206,22 @@ public abstract class BaseTextController extends BaseTextController_Left {
         FindReplaceController.forEditor(this);
     }
 
+    @FXML
+    public void locateAction() {
+        if (sourceInformation.getPagesNumber() > 1 && !checkBeforeNextAction()) {
+            return;
+        }
+        TextLocateController.open(this);
+    }
+
+    @FXML
+    public void filterAction() {
+        if (sourceInformation.getPagesNumber() > 1 && !checkBeforeNextAction()) {
+            return;
+        }
+        TextFilterController.open(this);
+    }
+
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
@@ -222,16 +240,15 @@ public abstract class BaseTextController extends BaseTextController_Left {
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 saveAction();
             });
-            menu.setDisable(saveButton.isDisabled());
+            menu.setDisable(buttonsPane.isDisabled());
             items.add(menu);
 
-            if (sourceFile != null) {
+            if (sourceFile != null && !buttonsPane.isDisable()) {
                 menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
                         StyleTools.getIconImageView("iconRecover.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     recoverAction();
                 });
-                menu.setDisable(recoverButton.isDisabled());
                 items.add(menu);
 
                 CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
@@ -271,6 +288,7 @@ public abstract class BaseTextController extends BaseTextController_Left {
             menu.setOnAction((ActionEvent event) -> {
                 saveAsAction();
             });
+            menu.setDisable(buttonsPane.isDisabled());
             items.add(menu);
 
             if (sourceFile == null) {
@@ -306,29 +324,34 @@ public abstract class BaseTextController extends BaseTextController_Left {
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
+            if (buttonsPane.isDisable()) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            CheckMenuItem backItem = new CheckMenuItem(message("AutoSave"));
-            backItem.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
-            backItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    autoSave = backItem.isSelected();
-                    UserConfig.setBoolean(baseName + "AutoSave", autoSave);
-                    checkAutoSave();
-                }
-            });
-            items.add(backItem);
+            if (sourceFile != null) {
+                CheckMenuItem backItem = new CheckMenuItem(message("AutoSave"));
+                backItem.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
+                backItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        autoSave = backItem.isSelected();
+                        UserConfig.setBoolean(baseName + "AutoSave", autoSave);
+                        checkAutoSave();
+                    }
+                });
+                items.add(backItem);
 
-            menu = new MenuItem(message("CheckIntervalSeconds") + ": " + autoCheckInterval,
-                    StyleTools.getIconImageView("iconInput.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                IntervalInputController.open(this);
-            });
-            items.add(menu);
+                menu = new MenuItem(message("CheckIntervalSeconds") + ": " + autoCheckInterval,
+                        StyleTools.getIconImageView("iconInput.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    TextIntervalInputController.open(this);
+                });
+                items.add(menu);
 
-            items.add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
+            }
 
             menu = new MenuItem(message("Find") + "    Ctrl+F " + message("Or") + " Alt+F",
                     StyleTools.getIconImageView("iconFind.png"));
@@ -341,6 +364,18 @@ public abstract class BaseTextController extends BaseTextController_Left {
                     StyleTools.getIconImageView("iconReplace.png"));
             menu.setOnAction((ActionEvent event) -> {
                 replaceAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Locate"), StyleTools.getIconImageView("iconLocation.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                locateAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Filter"), StyleTools.getIconImageView("iconFilter.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                filterAction();
             });
             items.add(menu);
 

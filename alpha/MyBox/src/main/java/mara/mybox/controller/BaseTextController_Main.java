@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -33,6 +34,8 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
             if (mainArea == null) {
                 return;
             }
+            lastPageFrom = lastPageTo = -1;
+
             mainArea.setStyle("-fx-highlight-fill: dodgerblue; -fx-highlight-text-fill: white;");
 
             mainArea.textProperty().addListener(new ChangeListener<String>() {
@@ -85,8 +88,6 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     adjustLinesArea();
                 }
             });
-
-            lastPageFrom = lastPageTo = -1;
 
             lineArea.scrollTopProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -254,13 +255,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
     }
 
     protected void updateNumbers(boolean changed) {
-        saveButton.setDisable(false);
-        if (saveAsButton != null) {
-            saveAsButton.setDisable(false);
-        }
-        if (locatePane != null) {
-            locatePane.setDisable(false);
-        }
+        buttonsPane.setDisable(false);
         String pageText = mainArea.getText();
         if (pageText == null) {
             pageText = "";
@@ -283,13 +278,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
             writeLineNumbers(pageLineStart, pageLineEnd);
 
             if (!sourceInformation.isTotalNumberRead()) {
-                saveButton.setDisable(true);
-                if (saveAsButton != null) {
-                    saveAsButton.setDisable(true);
-                }
-                if (locatePane != null) {
-                    locatePane.setDisable(true);
-                }
+                buttonsPane.setDisable(true);
             } else {
                 long fileObjectNumber = sourceInformation.getObjectsNumber();
                 long fileLinesNumber = sourceInformation.getLinesNumber();
@@ -325,26 +314,190 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
         pageSelector.getEditor().setStyle(null);
         pageSizeSelector.setValue(StringTools.format(pageSize));
         isSettingValues = false;
+    }
 
-        if (pagesNumber > 1) {
-            locatePane.getContent().setDisable(changed);
-            filterPane.getContent().setDisable(changed);
-        }
-        if (filterController != null) {
-            filterController.isBytes = editType == Edit_Type.Bytes;
-            filterController.maxLen = pageSize;
-            filterController.sourceLen = pageObjectsNumber;
-            filterController.checkFilterStrings();
-        }
+    protected void loadText(String text, boolean changed) {
+        isSettingValues = true;
+        mainArea.setText(text);
+        isSettingValues = false;
+        formatMainArea();
+        updateInterface(changed);
+    }
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    leftPane.setHvalue(0);
-                });
+    protected boolean locateLine(long line) {
+        if (line < 0 || line >= sourceInformation.getLinesNumber()) {
+            popError(message("InvalidParameter") + ": " + message("LineNumber"));
+            return false;
+        }
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectLine(line);
+        } else {
+            if (line >= sourceInformation.getCurrentPageLineStart()
+                    && line < sourceInformation.getCurrentPageLineEnd()) {
+                selectLine(line - sourceInformation.getCurrentPageLineStart());
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return false;
+                }
+                if (task != null) {
+                    task.cancel();
+                }
+                task = new FxSingletonTask<Void>(this) {
+
+                    String text;
+
+                    @Override
+                    protected boolean handle() {
+                        text = sourceInformation.readLine(this, line);
+                        return text != null;
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        loadText(text, false);
+                        selectLine(line - sourceInformation.getCurrentPageLineStart());
+                    }
+
+                };
+                start(task);
             }
-        }, 500);
+        }
+        return true;
+    }
+
+    protected boolean locateObject(long locate) {
+        if (locate < 0 || locate >= sourceInformation.getObjectsNumber()) {
+            popError(message("InvalidParameters"));
+            return false;
+        }
+        int unit = sourceInformation.getObjectUnit();
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectObjects(locate * unit, unit);
+
+        } else {
+            if (locate >= sourceInformation.getCurrentPageObjectStart()
+                    && locate < sourceInformation.getCurrentPageObjectEnd()) {
+                selectObjects((locate - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return false;
+                }
+                if (task != null) {
+                    task.cancel();
+                }
+                task = new FxSingletonTask<Void>(this) {
+
+                    String text;
+
+                    @Override
+                    protected boolean handle() {
+                        text = sourceInformation.readObject(this, locate);
+                        return text != null;
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        loadText(text, false);
+                        selectObjects((locate - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+                    }
+
+                };
+                start(task);
+            }
+        }
+        return true;
+    }
+
+    protected boolean locateLinesRange(long from, long to) {
+        if (from < 0 || from >= sourceInformation.getLinesNumber()) {
+            popError(message("InvalidParameters") + ": " + message("LinesRange"));
+            return false;
+        }
+        if (to < 0 || to > sourceInformation.getLinesNumber() || from > to) {
+            popError(message("InvalidParameters") + ": " + message("LinesRange"));
+            return false;
+        }
+        int number = (int) (to - from);
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectLines(from, number);
+        } else {
+            if (from >= sourceInformation.getCurrentPageLineStart() && to <= sourceInformation.getCurrentPageLineEnd()) {
+                selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return false;
+                }
+                if (task != null) {
+                    task.cancel();
+                }
+                task = new FxSingletonTask<Void>(this) {
+
+                    String text;
+
+                    @Override
+                    protected boolean handle() {
+                        text = sourceInformation.readLines(this, from, number);
+                        return text != null;
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        loadText(text, false);
+                        selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+                    }
+
+                };
+                start(task);
+            }
+        }
+        return true;
+    }
+
+    protected boolean locateObjectsRange(long from, long to) {
+        if (from < 0 || from >= sourceInformation.getObjectsNumber()) {
+            popError(message("InvalidParameters") + ": " + message("From"));
+            return false;
+        }
+        if (to < 0 || to > sourceInformation.getObjectsNumber() || from > to) {
+            popError(message("InvalidParameters") + ": " + message("To"));
+            return false;
+        }
+        int len = (int) (to - from), unit = sourceInformation.getObjectUnit();
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectObjects(from * unit, len * unit);
+
+        } else {
+            if (from >= sourceInformation.getCurrentPageObjectStart() && to <= sourceInformation.getCurrentPageObjectEnd()) {
+                selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
+
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return false;
+                }
+                if (task != null) {
+                    task.cancel();
+                }
+                task = new FxSingletonTask<Void>(this) {
+
+                    String text;
+
+                    @Override
+                    protected boolean handle() {
+                        text = sourceInformation.readObjects(this, from, len);
+                        return text != null;
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        loadText(text, false);
+                        selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
+                    }
+
+                };
+                start(task);
+            }
+        }
+        return true;
     }
 
     // 0-based

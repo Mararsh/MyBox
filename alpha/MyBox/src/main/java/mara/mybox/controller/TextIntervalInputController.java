@@ -12,7 +12,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-23
  * @License Apache License Version 2.0
  */
-public class IntervalInputController extends BaseChildController {
+public class TextIntervalInputController extends BaseChildController {
 
     protected BaseTextController fileController;
 
@@ -50,13 +50,13 @@ public class IntervalInputController extends BaseChildController {
     /*
         static methods
      */
-    public static IntervalInputController open(BaseTextController parent) {
+    public static TextIntervalInputController open(BaseTextController parent) {
         try {
             if (parent == null) {
                 return null;
             }
-            IntervalInputController controller
-                    = (IntervalInputController) WindowTools.branchStage(parent, Fxmls.IntervalInputFxml);
+            TextIntervalInputController controller
+                    = (TextIntervalInputController) WindowTools.branchStage(parent, Fxmls.TextIntervalInputFxml);
             controller.setParameter(parent);
             return controller;
         } catch (Exception e) {

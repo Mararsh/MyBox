@@ -73,6 +73,7 @@ public class Fxmls {
     public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
     public static final String MarkdownPopFxml = "/fxml/MarkdownPop.fxml";
     public static final String MarkdownTypesettingFxml = "/fxml/MarkdownTypesetting.fxml";
+    public static final String MarkdownOptionsFxml = "/fxml/MarkdownOptions.fxml";
 
     public static final String JsonEditorFxml = "/fxml/JsonEditor.fxml";
     public static final String JsonAddFieldFxml = "/fxml/JsonAddField.fxml";
@@ -88,6 +89,10 @@ public class Fxmls {
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextEditorSaveAsFxml = "/fxml/TextEditorSaveAs.fxml";
     public static final String TextEditorFormatFxml = "/fxml/TextEditorFormat.fxml";
+    public static final String TextLocateFxml = "/fxml/TextLocate.fxml";
+    public static final String TextFilterFxml = "/fxml/TextFilter.fxml";
+    public static final String TextIntervalInputFxml = "/fxml/TextIntervalInput.fxml";
+
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";
     public static final String TextFindBatchFxml = "/fxml/TextFindBatch.fxml";
@@ -525,7 +530,6 @@ public class Fxmls {
     public static final String FindReplaceFxml = "/fxml/FindReplace.fxml";
     public static final String FindFxml = "/fxml/Find.fxml";
     public static final String ColorsPickingFxml = "/fxml/ColorsPicking.fxml";
-    public static final String IntervalInputFxml = "/fxml/IntervalInput.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";

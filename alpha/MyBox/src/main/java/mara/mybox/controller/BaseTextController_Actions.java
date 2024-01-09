@@ -2,7 +2,12 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.input.Clipboard;
@@ -14,6 +19,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
@@ -26,6 +32,41 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class BaseTextController_Actions extends BaseTextController_File {
+
+    protected void initPageBar() {
+        try {
+            List<String> values = new ArrayList();
+            if (editType == FileEditInformation.Edit_Type.Bytes) {
+                values.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
+                        "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
+            } else {
+                values.addAll(Arrays.asList("200", "500", "100", "300", "600", "50", "20", "800", "1000", "2000"));
+            }
+            pageSizeSelector.getItems().addAll(values);
+            int pageSize = UserConfig.getInt(baseName + "PageSize", defaultPageSize);
+            if (pageSize <= 0) {
+                pageSize = defaultPageSize;
+            }
+            pageSizeSelector.setValue(StringTools.format(pageSize));
+            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    Platform.runLater(() -> {
+                        setPageSize();
+                    });
+                }
+            });
+
+            pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkCurrentPage();
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     @FXML
     @Override
@@ -224,216 +265,22 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         }
     }
 
-    @FXML
-    protected void locateLine() {
-        if (locateLine < 0 || locateLine >= sourceInformation.getLinesNumber()) {
+    protected boolean filter(ControlTextFilter filterController) {
+        if (sourceInformation == null || filterController == null || !filterController.valid.get()) {
             popError(message("InvalidParameters"));
-            return;
-        }
-        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            selectLine(locateLine);
-        } else {
-            if (locateLine >= sourceInformation.getCurrentPageLineStart()
-                    && locateLine < sourceInformation.getCurrentPageLineEnd()) {
-                selectLine(locateLine - sourceInformation.getCurrentPageLineStart());
-            } else {
-                if (!checkBeforeNextAction()) {
-                    return;
-                }
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new FxSingletonTask<Void>(this) {
-
-                    String text;
-
-                    @Override
-                    protected boolean handle() {
-                        text = sourceInformation.readLine(this, locateLine);
-                        return text != null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        loadText(text, false);
-                        selectLine(locateLine - sourceInformation.getCurrentPageLineStart());
-                    }
-
-                };
-                start(task);
-            }
-        }
-    }
-
-    @FXML
-    protected void locateObject() {
-        if (locateObject < 0 || locateObject >= sourceInformation.getObjectsNumber()) {
-            popError(message("InvalidParameters"));
-            return;
-        }
-        int unit = sourceInformation.getObjectUnit();
-        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            selectObjects(locateObject * unit, unit);
-
-        } else {
-            if (locateObject >= sourceInformation.getCurrentPageObjectStart()
-                    && locateObject < sourceInformation.getCurrentPageObjectEnd()) {
-                selectObjects((locateObject - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
-            } else {
-                if (!checkBeforeNextAction()) {
-                    return;
-                }
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new FxSingletonTask<Void>(this) {
-
-                    String text;
-
-                    @Override
-                    protected boolean handle() {
-                        text = sourceInformation.readObject(this, locateObject);
-                        return text != null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        loadText(text, false);
-                        selectObjects((locateObject - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
-                    }
-
-                };
-                start(task);
-            }
-        }
-    }
-
-    @FXML
-    protected void locateLinesRange() {
-        long from, to;  // 0-based, exlcuded end
-        try {
-            from = Long.parseLong(lineFromInput.getText()) - 1;
-            if (from < 0 || from >= sourceInformation.getLinesNumber()) {
-                popError(message("InvalidParameters") + ": " + message("From"));
-                return;
-            }
-            to = Long.parseLong(lineToInput.getText());
-            if (to < 0 || to > sourceInformation.getLinesNumber() || from > to) {
-                popError(message("InvalidParameters") + ": " + message("To"));
-                return;
-            }
-        } catch (Exception e) {
-            popError(e.toString());
-            return;
-        }
-        int number = (int) (to - from);
-        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            selectLines(from, number);
-        } else {
-            if (from >= sourceInformation.getCurrentPageLineStart() && to <= sourceInformation.getCurrentPageLineEnd()) {
-                selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
-            } else {
-                if (!checkBeforeNextAction()) {
-                    return;
-                }
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new FxSingletonTask<Void>(this) {
-
-                    String text;
-
-                    @Override
-                    protected boolean handle() {
-                        text = sourceInformation.readLines(this, from, number);
-                        return text != null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        loadText(text, false);
-                        selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
-                    }
-
-                };
-                start(task);
-            }
-        }
-    }
-
-    @FXML
-    protected void locateObjectsRange() {
-        long from, to;  // 0-based, exlcuded end
-        try {
-            from = Long.parseLong(objectFromInput.getText()) - 1;
-            if (from < 0 || from >= sourceInformation.getObjectsNumber()) {
-                popError(message("InvalidParameters") + ": " + message("From"));
-                return;
-            }
-            to = Long.parseLong(objectToInput.getText());
-            if (to < 0 || to > sourceInformation.getObjectsNumber() || from > to) {
-                popError(message("InvalidParameters") + ": " + message("To"));
-                return;
-            }
-        } catch (Exception e) {
-            popError(e.toString());
-            return;
-        }
-        int len = (int) (to - from), unit = sourceInformation.getObjectUnit();
-        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            selectObjects(from * unit, len * unit);
-
-        } else {
-            if (from >= sourceInformation.getCurrentPageObjectStart() && to <= sourceInformation.getCurrentPageObjectEnd()) {
-                selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
-
-            } else {
-                if (!checkBeforeNextAction()) {
-                    return;
-                }
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new FxSingletonTask<Void>(this) {
-
-                    String text;
-
-                    @Override
-                    protected boolean handle() {
-                        text = sourceInformation.readObjects(this, from, len);
-                        return text != null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        loadText(text, false);
-                        selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
-                    }
-
-                };
-                start(task);
-            }
-        }
-    }
-
-    @FXML
-    protected void filterAction() {
-        if (isSettingValues || filterButton.isDisabled()
-                || sourceInformation == null || filterController == null) {
-            return;
+            return false;
         }
         if (filterController.filterStrings == null || filterController.filterStrings.length == 0) {
             popError(message("InvalidParameters"));
-            return;
+            return false;
         }
-        if (fileChanged.get() && sourceInformation.getPagesNumber() > 1
-                && !checkBeforeNextAction()) {
-            return;
+        if (sourceInformation.getPagesNumber() > 1 && !checkBeforeNextAction()) {
+            return false;
         }
         FxTask filterTask = new FxTask<Void>(this) {
 
             private File filteredFile;
-            private String finalCondition;
+            private String info;
 
             @Override
             protected boolean handle() {
@@ -443,7 +290,6 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                 } else {
                     File tmpfile = TextFileTools.writeFile(FileTmpTools.getTempFile(".txt"), mainArea.getText(), Charset.forName("utf-8"));
                     filterInfo = FileEditInformation.create(editType, tmpfile);
-                    filterConditionsString = "";
                     if (editType != Edit_Type.Bytes) {
                         filterInfo.setLineBreak(TextTools.checkLineBreak(this, tmpfile));
                         filterInfo.setLineBreakValue(TextTools.lineBreakValue(filterInfo.getLineBreak()));
@@ -456,13 +302,8 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                 }
                 filterInfo.setFilterStrings(filterController.filterStrings);
                 filterInfo.setFilterType(filterController.filterType);
-                String conditions = " (" + filterInfo.filterTypeName() + ": "
-                        + Arrays.asList(filterInfo.getFilterStrings()) + ") ";
-                if (filterConditionsString == null || filterConditionsString.isEmpty()) {
-                    finalCondition = filterInfo.getFile().getAbsolutePath() + "\n" + conditions;
-                } else {
-                    finalCondition = filterConditionsString + "\n" + message("And") + conditions;
-                }
+                info = message("SourceFile") + ":" + filterInfo.getFile().getAbsolutePath() + "\n"
+                        + filterInfo.filterTypeName() + ": " + Arrays.asList(filterInfo.getFilterStrings());
                 filteredFile = filterInfo.filter(this, filterController.filterLineNumberCheck.isSelected());
                 return filteredFile != null;
             }
@@ -473,14 +314,12 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                     popInformation(message("NoData"));
                     return;
                 }
-                TextEditorController c = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-                c.sourceFileChanged(filteredFile);
-                c.filterConditionsLabel.setText(finalCondition);
-                c.filterConditionsString = finalCondition;
-                c.filterPane.setExpanded(true);
+                TextEditorController.open(filteredFile);
+                TextPopController.loadText(info);
             }
         };
-        start(filterTask, false, null);
+        start(filterTask, false);
+        return true;
     }
 
     @FXML

@@ -34,7 +34,7 @@ public class ControlTextFilter extends BaseController {
 
     protected StringFilterType filterType;
     protected String[] filterStrings;
-    protected long maxLen, sourceLen;
+    protected long maxLen;
     protected boolean isBytes;
     protected SimpleBooleanProperty valid;
 
@@ -137,7 +137,7 @@ public class ControlTextFilter extends BaseController {
     protected void checkFilterStrings() {
         filterStrings = null;
         String string = filterInput.getText();
-        if (string.isEmpty() || sourceLen < 1) {
+        if (string.isEmpty()) {
             valid.set(false);
             return;
         }

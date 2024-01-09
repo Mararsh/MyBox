@@ -218,7 +218,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message(lang, "Input"), "", "iconInput.png"));
             tableData.add(new ShortCut("", "", message(lang, "Validate"), "", "iconVerify.png"));
             tableData.add(new ShortCut("", "", message(lang, "Transparent"), "", "iconOpacity.png"));
-            tableData.add(new ShortCut("", "", message(lang, "Typesetting"), "", "iconTypesetting.png"));
+            tableData.add(new ShortCut("", "", message(lang, "Format"), "", "iconFormat.png"));
             tableData.add(new ShortCut("", "", message(lang, "Wrap"), "", "iconWrap.png"));
             tableData.add(new ShortCut("", "", message(lang, "Rulers"), "", "iconXRuler.png"));
             tableData.add(new ShortCut("", "", message(lang, "Yes"), "", "iconYes.png"));

@@ -93,6 +93,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void markdownOptions(ActionEvent event) {
+        loadScene(Fxmls.MarkdownOptionsFxml);
+    }
+
+    @FXML
     protected void MarkdownTypesetting(ActionEvent event) {
         loadScene(Fxmls.MarkdownTypesettingFxml);
     }

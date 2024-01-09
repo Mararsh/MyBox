@@ -158,8 +158,11 @@ public class StyleCheckBox {
         if (id.startsWith("miao")) {
             return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
         }
+        if (id.startsWith("format")) {
+            return new StyleData(id, message("TypesettingWhenWrite"), "", "iconFormat.png");
+        }
         if (id.startsWith("typesetting")) {
-            return new StyleData(id, message("TypesettingWhenWrite"), "", "iconTypesetting.png");
+            return new StyleData(id, message("TypesettingWhenWrite"), "", "iconFormat.png");
         }
         if (id.startsWith("lostFocusCommit")) {
             return new StyleData(id, message("CommitModificationWhenDataCellLoseFocusComments"), "", "iconInput.png");

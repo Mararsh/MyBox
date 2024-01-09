@@ -105,7 +105,7 @@ public class DataFileTextController extends BaseData2DFileController {
         MenuItem menu;
 
         if (sourceFile != null) {
-            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconDelimiter.png"));
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 DataFileTextFormatController.open(this);
             });

@@ -21,7 +21,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.BytesEditInformation;
-import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceMatch;
@@ -97,8 +96,7 @@ public class ControlFindReplace extends BaseController {
             parentController = parent;
             textInput = editerController.mainArea;
             editType = editerController.editType;
-            if (editerController.sourceInformation != null
-                    && editerController.sourceInformation.getEditType() == FileEditInformation.Edit_Type.Bytes) {
+            if (editerController.isBytes()) {
                 NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FindReplaceBytesTips")));
             } else {
                 NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FindReplaceTextsTips")));
@@ -430,7 +428,7 @@ public class ControlFindReplace extends BaseController {
             }
         }
         String selectedText = textInput.getSelectedText();
-        if (editerController != null && editerController.sourceInformation.getEditType() == Edit_Type.Bytes) {
+        if (editerController != null && editerController.isBytes()) {
             pageText = StringTools.replaceLineBreak(pageText);
             findString = StringTools.replaceLineBreak(findString);
             replaceString = StringTools.replaceLineBreak(replaceString);
