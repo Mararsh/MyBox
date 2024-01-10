@@ -7,6 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -25,6 +26,8 @@ public class ImagesEditorController extends BaseController {
     protected ControlImagesTable tableController;
     @FXML
     protected ControlImageView viewController;
+    @FXML
+    protected VBox tableBox, viewBox;
 
     public ImagesEditorController() {
         baseTitle = Languages.message("ImagesEditor");
@@ -140,14 +143,22 @@ public class ImagesEditorController extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (tableController != null) {
-                return tableController.keyEventsFilter(event);
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
             }
-            return false;
-        } else {
+        } else if (tableBox.isFocused() || tableBox.isFocusWithin()) {
+            if (tableController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        if (viewController.keyEventsFilter(event)) {
+            return true;
+        }
+        return tableController.keyEventsFilter(event);
     }
 
     /*

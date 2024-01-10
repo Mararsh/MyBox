@@ -63,9 +63,16 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    public void initControls() {
+    public void setControlsStyle() {
+        super.setControlsStyle();
+        NodeStyleTools.setTooltip(listButton, new Tooltip(message("TableName")));
+        startButton.requestFocus();
+    }
+
+    @Override
+    public void setParameters(InfoTreeManageController treeController) {
         try {
-            super.initControls();
+            super.setParameters(treeController);
 
             wrapOutputsCheck.setSelected(UserConfig.getBoolean(manager.category + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -78,15 +85,8 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
             outputArea.setWrapText(wrapOutputsCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        super.setControlsStyle();
-        NodeStyleTools.setTooltip(listButton, new Tooltip(message("TableName")));
-        startButton.requestFocus();
     }
 
     @FXML

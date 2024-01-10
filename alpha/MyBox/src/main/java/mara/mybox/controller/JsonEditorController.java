@@ -10,6 +10,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -29,6 +31,8 @@ public class JsonEditorController extends BaseDomEditorController {
 
     @FXML
     protected ControlJsonTree domController;
+    @FXML
+    protected VBox treeBox;
 
     public JsonEditorController() {
         baseTitle = message("JsonEditor");
@@ -87,7 +91,8 @@ public class JsonEditorController extends BaseDomEditorController {
     }
 
     @FXML
-    protected void options(Event event) {
+    @Override
+    protected void options() {
         JsonOptionsController.open();
     }
 
@@ -136,11 +141,24 @@ public class JsonEditorController extends BaseDomEditorController {
     }
 
     @FXML
-    protected void example() {
+    protected void exampleAction() {
         File example = HelpTools.jsonExample(Languages.embedFileLang());
         if (example != null && example.exists()) {
             loadTexts(TextFileTools.readTexts(null, example, Charset.forName("utf-8")));
         }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (treeBox.isFocused() || treeBox.isFocusWithin()) {
+            if (domController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return domController.keyEventsFilter(event);
     }
 
     /*

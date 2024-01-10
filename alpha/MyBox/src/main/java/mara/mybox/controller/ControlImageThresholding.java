@@ -81,26 +81,6 @@ public class ControlImageThresholding extends BaseController {
             bigInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    try {
-                        if (newValue) {
-                            return;
-                        }
-                        int v = Integer.parseInt(bigInput.getText());
-                        if (v >= 0 && v <= 255) {
-                            big = v;
-                            bigInput.setStyle(null);
-                            UserConfig.setInt(baseName + "Big", big);
-                        } else {
-                            bigInput.setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        bigInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-            bigInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (!newValue) {
                         checkBig();
                     }

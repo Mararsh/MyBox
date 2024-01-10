@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -26,7 +27,7 @@ public class ImageScopeViewsController extends BaseChildController {
     @FXML
     protected Tab selectedTab, sourceTab, maskTab;
     @FXML
-    protected VBox scopeBox;
+    protected VBox selectedBox, pixelsBox, sourceBox;
 
     public ImageScopeViewsController() {
         baseTitle = message("Scope");
@@ -121,7 +122,26 @@ public class ImageScopeViewsController extends BaseChildController {
             }
 
         };
-        start(task, scopeBox);
+        start(task, selectedBox);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == sourceTab) {
+            if (sourceController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (tab == selectedTab) {
+            if (selectedController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (tab == maskTab) {
+            if (maskController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
     }
 
     /*

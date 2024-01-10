@@ -542,7 +542,13 @@ public class ImagesSpliceController extends BaseController {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        if (viewController.keyEventsFilter(event)) {
+            return true;
+        }
+        return tableController.keyEventsFilter(event);
     }
 
     /*

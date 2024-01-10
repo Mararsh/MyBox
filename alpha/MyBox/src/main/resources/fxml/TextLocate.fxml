@@ -85,7 +85,6 @@ License:    Apache License Version 2.0
             </Button>
          </children>
       </FlowPane>
-      <Label fx:id="infoLabel" text="info " />
       </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

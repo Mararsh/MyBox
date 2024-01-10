@@ -228,7 +228,11 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
                     scope.addColor(ColorConvertTools.converColor(color));
                 }
             }
-            return matchController.pickValues(scope, 50);
+            boolean valid = matchController.pickValues(scope, 50);
+            if (!valid) {
+                popError(message("InvalidParameters"));
+            }
+            return valid;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

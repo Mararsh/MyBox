@@ -228,12 +228,14 @@ public abstract class BaseTextController extends BaseTextController_Actions {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
-                    StyleTools.getIconImageView("iconInfo.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                infoAction();
-            });
-            items.add(menu);
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                        StyleTools.getIconImageView("iconInfo.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
                     StyleTools.getIconImageView("iconSave.png"));
@@ -431,6 +433,12 @@ public abstract class BaseTextController extends BaseTextController_Actions {
     }
 
     @Override
+    public boolean controlAltI() {
+        infoAction();
+        return true;
+    }
+
+    @Override
     public boolean controlAltN() {
         createAction();
         return true;
@@ -445,6 +453,12 @@ public abstract class BaseTextController extends BaseTextController_Actions {
     @Override
     public boolean controlAltB() {
         saveAsAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltR() {
+        recoverAction();
         return true;
     }
 

@@ -9,7 +9,6 @@ import javafx.scene.control.Slider;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -81,13 +80,11 @@ public class ImageRotateController extends BaseImageEditController {
     public void goAction() {
         try {
             rotateAngle = Integer.parseInt(angleSelector.getValue());
-            ValidationTools.setEditorNormal(angleSelector);
             isSettingValues = true;
             angleSlider.setValue(rotateAngle);
             isSettingValues = false;
         } catch (Exception e) {
             popError(message("InvalidParameter") + ": " + message("RotateAngle"));
-            ValidationTools.setEditorBadStyle(angleSelector);
             return;
         }
         rotate(rotateAngle);

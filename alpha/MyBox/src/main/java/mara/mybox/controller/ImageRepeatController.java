@@ -21,7 +21,6 @@ import mara.mybox.bufferedimage.RepeatTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -139,10 +138,8 @@ public class ImageRepeatController extends BaseController {
         }
         if (v > 0) {
             hValue = v;
-            horizontalInput.setStyle(null);
             return true;
         } else {
-            horizontalInput.setStyle(UserConfig.badStyle());
             popError(message("InvalidParameter") + ": " + message("Horizontal"));
             return false;
         }
@@ -157,10 +154,8 @@ public class ImageRepeatController extends BaseController {
         }
         if (v > 0) {
             vValue = v;
-            veriticalInput.setStyle(null);
             return true;
         } else {
-            veriticalInput.setStyle(UserConfig.badStyle());
             popError(message("InvalidParameter") + ": " + message("Vertical"));
             return false;
         }
@@ -169,10 +164,8 @@ public class ImageRepeatController extends BaseController {
     public boolean checkInterval() {
         try {
             interval = Integer.parseInt(intervalSelector.getValue());
-            ValidationTools.setEditorNormal(intervalSelector);
             return true;
         } catch (Exception e) {
-            ValidationTools.setEditorBadStyle(intervalSelector);
             popError(message("InvalidParameter") + ": " + message("Interval"));
             return false;
         }
@@ -181,10 +174,8 @@ public class ImageRepeatController extends BaseController {
     public boolean checkMargins() {
         try {
             margins = Integer.parseInt(marginSelector.getValue());
-            ValidationTools.setEditorNormal(marginSelector);
             return true;
         } catch (Exception e) {
-            ValidationTools.setEditorBadStyle(marginSelector);
             popError(message("InvalidParameter") + ": " + message("Margins"));
             return false;
         }
@@ -296,7 +287,13 @@ public class ImageRepeatController extends BaseController {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        if (targetController.keyEventsFilter(event)) {
+            return true;
+        }
+        return sourceController.keyEventsFilter(event);
     }
 
     @FXML

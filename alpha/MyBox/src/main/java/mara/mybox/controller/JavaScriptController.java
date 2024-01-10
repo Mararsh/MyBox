@@ -74,15 +74,6 @@ public class JavaScriptController extends InfoTreeManageController {
         tabPane.getTabs().remove(htmlTab);
     }
 
-    @Override
-    public void itemClicked() {
-    }
-
-    @Override
-    public void itemDoubleClicked() {
-        editAction();
-    }
-
     @FXML
     protected void showHtmlStyle(Event event) {
         PopTools.popHtmlStyle(event, outputController);

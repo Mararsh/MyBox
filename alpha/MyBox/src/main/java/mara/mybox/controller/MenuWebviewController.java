@@ -187,12 +187,13 @@ public class MenuWebviewController extends MenuController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (webViewController != null) {
-                return webViewController.keyEventsFilter(event);
-            }
+        if (super.keyEventsFilter(event)) {
+            return true;
         }
-        return true;
+        if (webViewController == null) {
+            return false;
+        }
+        return webViewController.keyEventsFilter(event);
     }
 
     @Override

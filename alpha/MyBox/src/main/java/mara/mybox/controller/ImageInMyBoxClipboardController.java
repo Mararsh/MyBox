@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.ImageClipboard;
@@ -28,6 +29,8 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
 
     @FXML
     protected ControlImageView imageController;
+    @FXML
+    protected VBox tableBox, viewBox;
 
     public ImageInMyBoxClipboardController() {
         baseTitle = message("ImagesInMyBoxClipboard");
@@ -152,11 +155,15 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            return imageController.keyEventsFilter(event);
-        } else {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            if (imageController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        return imageController.keyEventsFilter(event);
     }
 
     /*

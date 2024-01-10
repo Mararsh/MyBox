@@ -8,7 +8,6 @@ import javafx.scene.control.ComboBox;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -59,11 +58,9 @@ public class ImageRotateBatchController extends BaseImageEditBatchController {
         }
         try {
             rotateAngle = Integer.parseInt(angleSelector.getValue());
-            ValidationTools.setEditorNormal(angleSelector);
             return true;
         } catch (Exception e) {
             popError(message("InvalidParameter") + ": " + message("RotateAngle"));
-            ValidationTools.setEditorBadStyle(angleSelector);
             return false;
         }
     }

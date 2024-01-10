@@ -104,9 +104,8 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     @FXML
-    @Override
-    public void refreshAction() {
-        editController.refreshAction();
+    public boolean synchronizeViewAction() {
+        return editController.synchronizeViewAction();
     }
 
     @Override
@@ -208,6 +207,18 @@ public class HtmlEditorController extends WebAddressController {
             return true;
         }
         return super.keyEventsFilter(event);
+    }
+
+    @Override
+    public boolean controlAltI() {
+        infoAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltN() {
+        createAction();
+        return true;
     }
 
     /*

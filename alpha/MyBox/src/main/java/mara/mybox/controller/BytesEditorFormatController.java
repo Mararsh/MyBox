@@ -124,12 +124,15 @@ public class BytesEditorFormatController extends BaseChildController {
         int lineBreakWidth = -1;
         if (lbWidthRadio.isSelected()) {
             lineBreak = Line_Break.Width;
-            int v = Integer.parseInt(lbWidthInput.getText());
+            int v;
+            try {
+                v = Integer.parseInt(lbWidthInput.getText());
+            } catch (Exception e) {
+                v = -1;
+            }
             if (v > 0) {
                 lineBreakWidth = v;
-                lbWidthInput.setStyle(null);
             } else {
-                lbWidthInput.setStyle(UserConfig.badStyle());
                 popError(message("InvalidParameter") + ": " + message("BytesNumber"));
                 return;
             }

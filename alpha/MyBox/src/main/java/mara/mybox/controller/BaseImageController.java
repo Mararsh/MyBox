@@ -523,7 +523,7 @@ public class BaseImageController extends BaseImageController_Actions {
             menu = new MenuItem(message("Paste") + "    Ctrl+V " + message("Or") + " Alt+V",
                     StyleTools.getIconImageView("iconPaste.png"));
             menu.setOnAction((ActionEvent event) -> {
-                pasteAction();
+                controlAltV();
             });
             items.add(menu);
 
@@ -698,7 +698,7 @@ public class BaseImageController extends BaseImageController_Actions {
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("ContextMenu") + "    F12", StyleTools.getIconImageView("iconMenu.png"));
+            menu = new MenuItem(message("ContextMenu") + "    F6", StyleTools.getIconImageView("iconMenu.png"));
             menu.setOnAction((ActionEvent event) -> {
                 popContextMenu(event);
             });
@@ -770,6 +770,15 @@ public class BaseImageController extends BaseImageController_Actions {
             return false;
         }
         saveAsAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltI() {
+        if (imageInformation == null) {
+            return false;
+        }
+        infoAction();
         return true;
     }
 

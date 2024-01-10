@@ -15,6 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -300,6 +301,19 @@ public abstract class BaseFileController extends BaseController {
             MyBoxLog.debug(e);
             return null;
         }
+    }
+
+    @FXML
+    @Override
+    public boolean infoAction() {
+        if (sourceFile != null) {
+            String info = FileTools.fileInformation(sourceFile);
+            if (info != null && !info.isBlank()) {
+                TextPopController.loadText(info);
+                return true;
+            }
+        }
+        return false;
     }
 
 }

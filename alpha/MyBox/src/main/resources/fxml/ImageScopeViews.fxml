@@ -14,11 +14,11 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageScopeViewsController">
     <children>
-        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
                 <Tab fx:id="sourceTab" text="%Source">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox fx:id="sourceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
                                 <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
                             </children>
@@ -27,9 +27,9 @@ License:    Apache License Version 2.0
                 </Tab>
                 <Tab fx:id="selectedTab" text="%SelectedPixels">
                     <content>
-                        <VBox fx:id="scopeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                        <VBox fx:id="selectedBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <Label minHeight="-Infinity" text="%SelectedPixelsTips" wrapText="true"  styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" />
+                                <Label minHeight="-Infinity" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%SelectedPixelsTips" wrapText="true" />
                                 <fx:include fx:id="selected" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>
@@ -40,9 +40,9 @@ License:    Apache License Version 2.0
                 </Tab>
                 <Tab fx:id="maskTab" text="%Mask">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                        <VBox fx:id="pixelsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <Label minHeight="-Infinity" text="%MaskImageTips" wrapText="true"  styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" />
+                                <Label minHeight="-Infinity" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%MaskImageTips" wrapText="true" />
                                 <fx:include fx:id="mask" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>

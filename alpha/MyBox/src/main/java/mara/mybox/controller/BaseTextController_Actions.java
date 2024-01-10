@@ -18,7 +18,9 @@ import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -280,7 +282,6 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         FxTask filterTask = new FxTask<Void>(this) {
 
             private File filteredFile;
-            private String info;
 
             @Override
             protected boolean handle() {
@@ -302,9 +303,19 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                 }
                 filterInfo.setFilterStrings(filterController.filterStrings);
                 filterInfo.setFilterType(filterController.filterType);
-                info = message("SourceFile") + ":" + filterInfo.getFile().getAbsolutePath() + "\n"
-                        + filterInfo.filterTypeName() + ": " + Arrays.asList(filterInfo.getFilterStrings());
-                filteredFile = filterInfo.filter(this, filterController.filterLineNumberCheck.isSelected());
+                File tmpFile = filterInfo.filter(this, filterController.filterLineNumberCheck.isSelected());
+                if (tmpFile != null && tmpFile.exists()) {
+                    String prefix = null;
+                    if (filterInfo.getFile() != null) {
+                        prefix = FileNameTools.prefix(filterInfo.getFile().getName());
+                    }
+                    if (prefix == null) {
+                        prefix = baseTitle;
+                    }
+                    prefix += "_" + filterInfo.filterTypeName() + "_" + Arrays.asList(filterInfo.getFilterStrings());
+                    filteredFile = FileTmpTools.generateFile(prefix, "txt");
+                    FileTools.override(tmpFile, filteredFile);
+                }
                 return filteredFile != null;
             }
 
@@ -315,7 +326,6 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                     return;
                 }
                 TextEditorController.open(filteredFile);
-                TextPopController.loadText(info);
             }
         };
         start(filterTask, false);

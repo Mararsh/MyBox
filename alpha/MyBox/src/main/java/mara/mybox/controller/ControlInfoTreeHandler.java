@@ -1,12 +1,10 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.SelectionMode;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -30,7 +28,6 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
             infoTree = nodesController;
 
             viewController.initStyle = HtmlStyles.styleValue("Table");
-            tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -45,25 +42,6 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
         this.category = categroy;
         nodesController.handler = handler;
         setParameters(this);
-    }
-
-    /*
-        table
-     */
-    @Override
-    public void itemClicked() {
-        viewAction();
-    }
-
-    @FXML
-    @Override
-    public void viewAction() {
-        InfoNode item = selectedItem();
-        if (item == null) {
-            popError(message("SelectToHanlde"));
-            return;
-        }
-        viewNode(item);
     }
 
     public void viewNode(InfoNode node) {

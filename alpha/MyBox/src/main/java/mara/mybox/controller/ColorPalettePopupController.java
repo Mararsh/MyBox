@@ -68,14 +68,14 @@ public class ColorPalettePopupController extends BaseChildController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (parentController != null) {
-                return parentController.keyEventsFilter(event);
-            } else {
-                return false;
-            }
+
+        if (super.keyEventsFilter(event)) {
+            return true;
         }
-        return true;
+        if (parentController == null) {
+            return false;
+        }
+        return parentController.keyEventsFilter(event);
     }
 
     @Override

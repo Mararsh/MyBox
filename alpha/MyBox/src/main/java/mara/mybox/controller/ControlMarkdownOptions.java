@@ -10,7 +10,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.MarkdownTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -44,16 +46,10 @@ public class ControlMarkdownOptions extends BaseController {
             }
             indentSelector.getItems().addAll(Arrays.asList("4", "2", "0", "6", "8"));
             indentSelector.setValue(indentSize + "");
-            indentSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            indentSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
-                            indentSize = v;
-                        }
-                    } catch (Exception e) {
-                    }
+                    checkIndents();
                 }
             });
 
@@ -63,10 +59,30 @@ public class ControlMarkdownOptions extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
 
+    public boolean checkIndents() {
+        int v;
+        try {
+            v = Integer.parseInt(indentSelector.getValue());
+        } catch (Exception e) {
+            v = -1;
+        }
+        if (v >= 0) {
+            indentSize = v;
+            ValidationTools.setEditorNormal(indentSelector);
+            return true;
+        } else {
+            ValidationTools.setEditorBadStyle(indentSelector);
+            popError(message("InvalidParameter") + ": " + message("IndentSize"));
+            return false;
+        }
     }
 
     public boolean pickValues() {
+        if (!checkIndents()) {
+            return false;
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             UserConfig.setString(conn, "MarkdownEmulation", emulationSelector.getValue());
             UserConfig.setInt(conn, "MarkdownIndent", indentSize);

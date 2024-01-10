@@ -19,6 +19,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -82,7 +83,7 @@ public class ImagesPlayController extends BaseFileController {
     @FXML
     protected Button goFramesButton;
     @FXML
-    protected VBox fileVBox, pdfBox;
+    protected VBox fileVBox, pdfBox, viewBox, playBox;
     @FXML
     protected TextField fromInput, toInput;
     @FXML
@@ -728,6 +729,26 @@ public class ImagesPlayController extends BaseFileController {
             playController.clear();
             MyBoxLog.debug(e);
         }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (playBox.isFocused() || playBox.isFocusWithin()) {
+            if (playController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        if (viewController.keyEventsFilter(event)) {
+            return true;
+        }
+        return playController.keyEventsFilter(event);
     }
 
     @Override

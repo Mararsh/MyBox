@@ -1,18 +1,13 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -32,8 +27,6 @@ public class TextLocateController extends BaseChildController {
     @FXML
     protected TextField lineNumberInput, objectLocationInput, lineFromInput, lineToInput,
             objectFromInput, objectToInput;
-    @FXML
-    protected Label infoLabel;
 
     public void setParameters(BaseTextController parent) {
         try {
@@ -53,65 +46,13 @@ public class TextLocateController extends BaseChildController {
 
             locateLine = locateObject = from = to = -1;
 
-            lineNumberInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkLineNumber();
-                }
-            });
-
-            objectLocationInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkObjectLocation();
-                }
-            });
-
-            lineFromInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkLinesRange();
-                }
-            });
-
-            lineToInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkLinesRange();
-                }
-            });
-
-            objectFromInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkObjectsRange();
-                }
-            });
-
-            objectToInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkObjectsRange();
-                }
-            });
-
-            locateGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkValues();
-                }
-            });
-
-            checkValues();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     public boolean checkLineNumber() {
-        setInfo(null);
         if (!lineNumberRadio.isSelected()) {
-            lineNumberInput.setStyle(null);
             return true;
         }
         int v;
@@ -122,19 +63,15 @@ public class TextLocateController extends BaseChildController {
         }
         if (v > 0 && v <= fileController.sourceInformation.getLinesNumber()) {
             locateLine = v - 1;  // 0-based
-            lineNumberInput.setStyle(null);
             return true;
         } else {
-            lineNumberInput.setStyle(UserConfig.badStyle());
-            setInfo(message("InvalidParameter") + ": " + message("LineNumber"));
+            popError(message("InvalidParameter") + ": " + message("LineNumber"));
             return false;
         }
     }
 
     public boolean checkObjectLocation() {
-        setInfo(null);
         if (!objectLocationRadio.isSelected()) {
-            objectLocationInput.setStyle(null);
             return true;
         }
         int v;
@@ -145,20 +82,15 @@ public class TextLocateController extends BaseChildController {
         }
         if (v > 0 && v <= fileController.sourceInformation.getObjectsNumber()) {
             locateObject = v - 1;  // 0-based
-            objectLocationInput.setStyle(null);
             return true;
         } else {
-            objectLocationInput.setStyle(UserConfig.badStyle());
-            setInfo(message("InvalidParameter") + ": " + objectLocationRadio.getText());
+            popError(message("InvalidParameter") + ": " + objectLocationRadio.getText());
             return false;
         }
     }
 
     public boolean checkLinesRange() {
-        setInfo(null);
         if (!linesRangeRadio.isSelected()) {
-            lineFromInput.setStyle(null);
-            lineToInput.setStyle(null);
             return true;
         }
         long f, t;
@@ -168,11 +100,9 @@ public class TextLocateController extends BaseChildController {
             f = -1;
         }
         if (f < 0 || f >= fileController.sourceInformation.getLinesNumber()) {
-            lineFromInput.setStyle(UserConfig.badStyle());
-            setInfo(message("InvalidParameters") + ": " + message("LinesRange"));
+            popError(message("InvalidParameters") + ": " + message("LinesRange"));
             return false;
         }
-        lineFromInput.setStyle(null);
 
         try {
             t = Long.parseLong(lineToInput.getText());
@@ -180,11 +110,9 @@ public class TextLocateController extends BaseChildController {
             t = -1;
         }
         if (t < 0 || t > fileController.sourceInformation.getLinesNumber() || f > t) {
-            lineToInput.setStyle(UserConfig.badStyle());
-            setInfo(message("InvalidParameters") + ": " + message("LinesRange"));
+            popError(message("InvalidParameters") + ": " + message("LinesRange"));
             return false;
         }
-        lineToInput.setStyle(null);
 
         from = f;
         to = t;
@@ -192,10 +120,7 @@ public class TextLocateController extends BaseChildController {
     }
 
     public boolean checkObjectsRange() {
-        setInfo(null);
         if (!objectRangeRadio.isSelected()) {
-            objectFromInput.setStyle(null);
-            objectToInput.setStyle(null);
             return true;
         }
         long f, t;
@@ -205,11 +130,9 @@ public class TextLocateController extends BaseChildController {
             f = -1;
         }
         if (f < 0 || f >= fileController.sourceInformation.getObjectsNumber()) {
-            objectFromInput.setStyle(UserConfig.badStyle());
-            setInfo(message("InvalidParameters") + ": " + objectRangeRadio.getText());
+            popError(message("InvalidParameters") + ": " + objectRangeRadio.getText());
             return false;
         }
-        objectFromInput.setStyle(null);
 
         try {
             t = Long.parseLong(objectToInput.getText());
@@ -217,11 +140,9 @@ public class TextLocateController extends BaseChildController {
             t = -1;
         }
         if (t < 0 || t > fileController.sourceInformation.getObjectsNumber() || f > t) {
-            objectToInput.setStyle(UserConfig.badStyle());
-            setInfo(message("InvalidParameters") + ": " + objectRangeRadio.getText());
+            popError(message("InvalidParameters") + ": " + objectRangeRadio.getText());
             return false;
         }
-        objectToInput.setStyle(null);
 
         from = f;
         to = t;
@@ -229,25 +150,18 @@ public class TextLocateController extends BaseChildController {
     }
 
     public boolean checkValues() {
-        setInfo(null);
         return checkLineNumber()
                 && checkObjectLocation()
                 && checkLinesRange()
                 && checkObjectsRange();
     }
 
-    public void setInfo(String info) {
-        infoLabel.setText(info);
-    }
-
     @FXML
     @Override
     public void okAction() {
         if (!checkValues()) {
-            popError(message("InvalidParameters"));
             return;
         }
-        setInfo(null);
         boolean ok;
         if (lineNumberRadio.isSelected()) {
             ok = fileController.locateLine(locateLine);

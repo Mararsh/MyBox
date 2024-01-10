@@ -13,6 +13,8 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -42,6 +44,8 @@ public class SvgEditorController extends XmlEditorController {
     protected ControlSvgHtml htmlController;
     @FXML
     protected ControlSvgViewOptions optionsController;
+    @FXML
+    protected VBox htmlBox;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
@@ -278,6 +282,20 @@ public class SvgEditorController extends XmlEditorController {
     protected List<MenuItem> helpMenus(Event event) {
         return HelpTools.svgHelps(false);
     }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (htmlBox.isFocused() || htmlBox.isFocusWithin()) {
+            if (htmlController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return htmlController.keyEventsFilter(event);
+    }
+
 
     /*
         static

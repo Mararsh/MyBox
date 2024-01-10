@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -55,7 +56,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     @FXML
     protected CheckBox wrapTextsCheck;
     @FXML
-    protected Button backupButton, txtButton;
+    protected Button examplesButton;
 
     public abstract String makeBlank();
 
@@ -68,6 +69,12 @@ public abstract class BaseDomEditorController extends BaseFileController {
     public abstract void clearDom();
 
     public abstract void domMenuAction();
+
+    @FXML
+    protected abstract void exampleAction();
+
+    @FXML
+    protected abstract void options();
 
     public BaseDomEditorController() {
         loadNotify = new SimpleBooleanProperty(false);
@@ -88,7 +95,6 @@ public abstract class BaseDomEditorController extends BaseFileController {
             initTextsTab();
 
             recoverButton.setDisable(true);
-            backupButton.setDisable(true);
 
             tabChanged();
 
@@ -173,7 +179,6 @@ public abstract class BaseDomEditorController extends BaseFileController {
         updateTitle();
         isSettingValues = false;
         recoverButton.setDisable(true);
-        backupButton.setDisable(sourceFile == null);
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -448,6 +453,152 @@ public abstract class BaseDomEditorController extends BaseFileController {
     /*
         buttons
      */
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                        StyleTools.getIconImageView("iconInfo.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
+                    StyleTools.getIconImageView("iconSave.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                saveAction();
+            });
+            items.add(menu);
+
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                        StyleTools.getIconImageView("iconRecover.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    recoverAction();
+                });
+                menu.setDisable(recoverButton.isDisable());
+                items.add(menu);
+
+                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+                backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+                backItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                    }
+                });
+                items.add(backItem);
+
+                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    openBackups();
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Create") + "    Ctrl+N " + message("Or") + " Alt+N",
+                    StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                createAction();
+            });
+            items.add(menu);
+
+            if (examplesButton == null) {
+                menu = new MenuItem(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    exampleAction();
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                    StyleTools.getIconImageView("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                saveAsAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                editTexts();
+            });
+            items.add(menu);
+
+            if (sourceFile == null) {
+                return items;
+            }
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                openSourcePath();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                FileBrowseController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("Synchronize") + "    F10 ", StyleTools.getIconImageView("iconSynchronize.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                synchronizeAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Clear") + "    Ctrl+L " + message("Or") + " Alt+L",
+                    StyleTools.getIconImageView("iconClear.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                clearAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Options"), StyleTools.getIconImageView("iconOptions.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                options();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ContextMenu") + "    F6", StyleTools.getIconImageView("iconMenu.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                menuAction();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     @FXML
     @Override
     public boolean popAction() {
@@ -595,6 +746,42 @@ public abstract class BaseDomEditorController extends BaseFileController {
         }
     }
 
+    @Override
+    public boolean controlAltI() {
+        infoAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltN() {
+        createAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltS() {
+        saveAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltB() {
+        saveAsAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltR() {
+        recoverAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltL() {
+        clearAction();
+        return true;
+    }
+
     /*
         panes
      */
@@ -608,14 +795,12 @@ public abstract class BaseDomEditorController extends BaseFileController {
                 synchronizeButton.setDisable(false);
                 saveButton.setDisable(false);
                 clearButton.setDisable(false);
-                txtButton.setDisable(false);
 
             } else {
                 menuButton.setDisable(true);
                 synchronizeButton.setDisable(true);
                 saveButton.setDisable(true);
                 clearButton.setDisable(true);
-                txtButton.setDisable(true);
 
             }
 

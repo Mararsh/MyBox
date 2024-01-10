@@ -568,14 +568,14 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         if (item == null || infoController == null) {
             return;
         }
-        infoController.loadChildren(item.getValue());
+        infoController.tableController.loadChildren(item.getValue());
     }
 
     protected void listDescentants(TreeItem<InfoNode> item) {
         if (item == null || infoController == null) {
             return;
         }
-        infoController.loadDescendants(item.getValue());
+        infoController.tableController.loadDescendants(item.getValue());
     }
 
     @FXML

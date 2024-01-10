@@ -34,9 +34,12 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
         defaultExt = "txt";
     }
 
-    protected void setParameters(MathFunctionController controller) {
+    @Override
+    public void setParameters(InfoTreeManageController treeController) {
         try {
-            this.functionController = controller;
+            super.setParameters(treeController);
+
+            functionController = (MathFunctionController) treeController;
 
             variablesInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override

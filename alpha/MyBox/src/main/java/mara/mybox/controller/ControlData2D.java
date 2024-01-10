@@ -731,24 +731,23 @@ public class ControlData2D extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (editTab.isSelected()) {
-                return editController.keyEventsFilter(event);
-
-            } else if (viewTab.isSelected()) {
-                return viewController.keyEventsFilter(event);
-
-            } else if (attributesTab.isSelected()) {
-                return attributesController.keyEventsFilter(event);
-
-            } else if (columnsTab.isSelected()) {
-                return columnsController.keyEventsFilter(event);
-
-            }
-            return false;
-        } else {
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        if (editTab.isSelected()) {
+            return editController.keyEventsFilter(event);
+
+        } else if (viewTab.isSelected()) {
+            return viewController.keyEventsFilter(event);
+
+        } else if (attributesTab.isSelected()) {
+            return attributesController.keyEventsFilter(event);
+
+        } else if (columnsTab.isSelected()) {
+            return columnsController.keyEventsFilter(event);
+
+        }
+        return false;
     }
 
     @Override

@@ -31,6 +31,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.db.data.FileBackup;
@@ -84,6 +85,8 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected CheckBox wrapCodesCheck, wrapMarkdownCheck, wrapTextsCheck;
     @FXML
     protected Button menuViewButton, synchronizeViewButton, popViewButton;
+    @FXML
+    protected VBox viewBox;
 
     public ControlHtmlEditor() {
         baseTitle = message("HtmlEditor");
@@ -247,24 +250,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
             MyBoxLog.error(e);
         }
     }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            if (viewTab != null && !tabPane.getTabs().contains(viewTab)) {
-                NodeStyleTools.setTooltip(menuViewButton, message("ContextMenu"));
-                NodeStyleTools.setTooltip(synchronizeViewButton, message("SynchronizeChangesToOtherPanes"));
-                NodeStyleTools.setTooltip(popViewButton, message("Pop"));
-            } else {
-                NodeStyleTools.setTooltip(menuViewButton, message("ContextMenuTips"));
-            }
-            NodeStyleTools.setTooltip(menuButton, message("ContextMenuTips"));
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
 
     /*
         source
@@ -823,7 +808,10 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public boolean popAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == markdownTab) {
+            if (tab == viewTab || viewBox.isFocused() || viewBox.isFocusWithin()) {
+                return popViewAction();
+
+            } else if (tab == markdownTab) {
                 MarkdownPopController.open(this, markdownArea);
                 return true;
 
@@ -839,8 +827,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 TextPopController.openInput(this, textsArea);
                 return true;
 
-            } else {
-                return popViewAction();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -858,7 +844,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public boolean synchronizeAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == codesTab) {
+            if (tab == viewTab || viewBox.isFocused() || viewBox.isFocusWithin()) {
+                synchronizeTexts();
+                return synchronizeViewAction();
+
+            } else if (tab == codesTab) {
                 synchronizeCodes();
                 return true;
 
@@ -878,8 +868,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 synchronizeTexts();
                 return true;
 
-            } else {
-                return synchronizeViewAction();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -962,7 +950,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             closePopup();
 
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == viewTab) {
+            if (tab == viewTab || viewBox.isFocused() || viewBox.isFocusWithin()) {
                 return menuViewAction();
 
             } else if (tab == codesTab) {

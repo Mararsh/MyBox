@@ -281,7 +281,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             items.add(menu);
 
             if (infoButton != null && infoButton.isVisible() && !infoButton.isDisabled()) {
-                menu = new MenuItem(message("Information") + "  CTRL+i", StyleTools.getIconImageView("iconInfo.png"));
+                menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     infoAction();
                 });

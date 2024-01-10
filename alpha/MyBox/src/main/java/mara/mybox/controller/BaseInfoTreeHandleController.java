@@ -36,7 +36,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
     }
 
     public boolean matchManagerSelected(InfoNode node) {
-        List<InfoNode> nodes = manager.selectedItems();
+        List<InfoNode> nodes = manager.tableController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             return false;
         }

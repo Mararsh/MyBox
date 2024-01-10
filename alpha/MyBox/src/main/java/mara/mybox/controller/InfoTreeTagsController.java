@@ -21,8 +21,8 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
 import static mara.mybox.value.Languages.message;
@@ -244,15 +244,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
             popError(message("SelectToHandle"));
             return;
         }
-        infoController.clearQuery();
-        infoController.queryConditions = " category='" + category + "' AND "
-                + tableTreeNode.tagsCondition(selected);
-        infoController.queryConditionsString = message("Tag") + ": ";
-        for (Tag tag : selected) {
-            infoController.queryConditionsString += " " + tag.getTag();
-        }
-        infoController.loadTableData();
-        infoController.showNodesList(true);
+        infoController.tableController.queryTags(selected);
     }
 
     @FXML

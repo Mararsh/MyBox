@@ -6,6 +6,8 @@ import java.util.List;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -26,6 +28,8 @@ public class XmlEditorController extends BaseDomEditorController {
 
     @FXML
     protected ControlXmlTree domController;
+    @FXML
+    protected VBox treeBox;
 
     public XmlEditorController() {
         baseTitle = message("XmlEditor");
@@ -91,7 +95,8 @@ public class XmlEditorController extends BaseDomEditorController {
     }
 
     @FXML
-    protected void options(Event event) {
+    @Override
+    protected void options() {
         XmlOptionsController.open();
     }
 
@@ -106,11 +111,25 @@ public class XmlEditorController extends BaseDomEditorController {
     }
 
     @FXML
-    protected void example() {
+    @Override
+    protected void exampleAction() {
         File example = HelpTools.xmlExample(Languages.embedFileLang());
         if (example != null && example.exists()) {
             loadTexts(TextFileTools.readTexts(null, example, Charset.forName("utf-8")));
         }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (treeBox.isFocused() || treeBox.isFocusWithin()) {
+            if (domController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return domController.keyEventsFilter(event);
     }
 
     /*

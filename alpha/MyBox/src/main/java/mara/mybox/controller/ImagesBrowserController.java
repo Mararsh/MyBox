@@ -1029,7 +1029,10 @@ public class ImagesBrowserController extends ControlImagesTable {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return viewController.keyEventsFilter(event);
     }
 
     /*

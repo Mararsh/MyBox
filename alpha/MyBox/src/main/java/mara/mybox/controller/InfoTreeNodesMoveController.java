@@ -34,7 +34,7 @@ public class InfoTreeNodesMoveController extends BaseInfoTreeHandleController {
         if (!managerRunning()) {
             return;
         }
-        List<InfoNode> sourceNodes = manager.selectedItems();
+        List<InfoNode> sourceNodes = manager.tableController.selectedItems();
         InfoNode targetNode = handlerController.selectedNode;
         if (targetNode == null) {
             popError(message("SelectNodeMoveInto"));

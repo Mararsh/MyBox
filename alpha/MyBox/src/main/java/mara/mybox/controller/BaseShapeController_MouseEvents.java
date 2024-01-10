@@ -148,7 +148,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             });
             items.add(menu);
 
-            menu = new MenuItem(message("ContextMenu"), StyleTools.getIconImageView("iconMenu.png"));
+            menu = new MenuItem(message("ContextMenu") + "    F6", StyleTools.getIconImageView("iconMenu.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {

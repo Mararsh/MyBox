@@ -21,7 +21,6 @@ import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Hue;
 import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Red;
 import static mara.mybox.bufferedimage.ImageScope.ColorScopeType.Saturation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.UserConfig;
 
@@ -221,9 +220,6 @@ public class ControlColorMatch extends BaseController {
         if (valid) {
             distance = v;
             UserConfig.setInt(baseName + "Distance", distance);
-            ValidationTools.setEditorNormal(distanceSelector);
-        } else {
-            ValidationTools.setEditorBadStyle(distanceSelector);
         }
         return valid;
     }
