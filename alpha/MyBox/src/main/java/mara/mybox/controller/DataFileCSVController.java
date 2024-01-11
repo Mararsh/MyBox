@@ -73,7 +73,7 @@ public class DataFileCSVController extends BaseData2DFileController {
 
     @Override
     public Data2D saveAsTarget() {
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(dataFileCSV.dataName());
         if (file == null) {
             return null;
         }

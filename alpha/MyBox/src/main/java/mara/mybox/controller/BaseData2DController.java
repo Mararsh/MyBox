@@ -522,14 +522,20 @@ public abstract class BaseData2DController extends BaseFileController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (dataController != null) {
-                return dataController.keyEventsFilter(event);
-            } else if (loadController != null) {
-                return loadController.keyEventsFilter(event);
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        if (dataController != null) {
+            if (dataController.keyEventsFilter(event)) {
+                return true;
             }
         }
-        return true;
+        if (loadController != null) {
+            if (loadController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

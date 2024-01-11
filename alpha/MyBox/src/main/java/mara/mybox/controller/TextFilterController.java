@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -19,8 +18,6 @@ public class TextFilterController extends BaseChildController {
 
     @FXML
     protected ControlTextFilter filterController;
-    @FXML
-    protected Label filterConditionsLabel;
 
     public void setParameters(BaseTextController parent) {
         try {

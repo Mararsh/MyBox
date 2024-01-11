@@ -1787,7 +1787,7 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(webEngine.getTitle());
         if (file == null) {
             return;
         }

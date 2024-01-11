@@ -118,7 +118,7 @@ public class HtmlCodesPopController extends TextPopController {
     @FXML
     @Override
     public void saveAsAction() {
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(sourceWebView != null ? sourceWebView.getEngine().getTitle() : null);
         if (file == null) {
             return;
         }

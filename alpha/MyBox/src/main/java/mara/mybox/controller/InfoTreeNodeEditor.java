@@ -99,12 +99,13 @@ public class InfoTreeNodeEditor extends BaseController {
         }
     }
 
-    protected void editNode(InfoNode node) {
+    protected boolean editNode(InfoNode node) {
         updateEditorTitle(node);
         editInfo(node);
         attributesController.editNode(node);
         showEditorPane();
         nodeChanged(false);
+        return true;
     }
 
     protected void updateEditorTitle(InfoNode node) {
@@ -194,6 +195,13 @@ public class InfoTreeNodeEditor extends BaseController {
             if (attributesTab != null) {
                 attributesTab.setText(message("Attributes"));
             }
+        }
+    }
+
+    public void newNodeCreated() {
+        popInformation(message("InputNewNode"));
+        if (tabPane != null && attributesTab != null) {
+            tabPane.getSelectionModel().select(attributesTab);
         }
     }
 

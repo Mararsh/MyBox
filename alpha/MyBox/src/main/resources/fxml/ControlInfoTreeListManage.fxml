@@ -29,20 +29,20 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="viewButton" layoutX="596.0" layoutY="10.0" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconView.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
                 <Button fx:id="operationsButton" mnemonicParsing="false" onAction="#showOperationsMenu" onMouseEntered="#popOperationsMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/Red/iconOperation.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="viewButton" layoutX="596.0" layoutY="10.0" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconView.png" />
                             </image>
                         </ImageView>
                     </graphic>

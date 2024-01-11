@@ -376,7 +376,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             return;
         }
         if (sourceFile == null) {
-            targetFile = chooseSaveFile();
+            targetFile = chooseSaveFile(title());
         } else {
             targetFile = sourceFile;
         }

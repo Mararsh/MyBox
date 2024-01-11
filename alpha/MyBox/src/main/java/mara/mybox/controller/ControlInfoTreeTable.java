@@ -394,7 +394,7 @@ public class ControlInfoTreeTable extends BaseSysTableController<InfoNode> {
         if (loadedParent != null) {
             manager.editor.attributesController.parentNode = loadedParent;
         }
-        manager.editNode(null);
+        manager.addNode();
     }
 
     @FXML

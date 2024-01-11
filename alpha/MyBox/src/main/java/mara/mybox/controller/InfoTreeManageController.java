@@ -68,10 +68,10 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         if (super.keyEventsFilter(event)) {
             return true;
         }
-        if (editor != null) {
-            return editor.keyEventsFilter(event); // pass event to editor
+        if (editor == null) {
+            return false;
         }
-        return false;
+        return editor.keyEventsFilter(event); // pass event to editor
     }
 
     /*
@@ -266,11 +266,11 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         }
     }
 
-    public void editNode(InfoNode node) {
+    public boolean editNode(InfoNode node) {
         if (!checkBeforeNextAction()) {
-            return;
+            return false;
         }
-        editor.editNode(node);
+        return editor.editNode(node);
     }
 
     @FXML
@@ -310,7 +310,9 @@ public class InfoTreeManageController extends BaseInfoTreeController {
      */
     @FXML
     protected void addNode() {
-        editNode(null);
+        if (editNode(null)) {
+            editor.newNodeCreated();
+        }
     }
 
     @FXML
@@ -319,6 +321,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             return;
         }
         editor.attributesController.copyNode();
+        editor.newNodeCreated();
     }
 
     @FXML

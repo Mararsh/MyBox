@@ -49,11 +49,11 @@ public class NotesController extends InfoTreeManageController {
     }
 
     @Override
-    public void editNode(InfoNode node) {
+    public boolean editNode(InfoNode node) {
         if (!checkBeforeNextAction()) {
-            return;
+            return false;
         }
-        editorController.editNote(node);
+        return editorController.editNote(node);
     }
 
     @FXML

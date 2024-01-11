@@ -428,7 +428,7 @@ public class ControlData2D extends BaseController {
         Data2D targetData = data2D.cloneAll();
         if (targetData.isDataFile()) {
             if (targetData.getFile() == null) {
-                File file = chooseSaveFile();
+                File file = chooseSaveFile(targetData.dataName());
                 if (file == null) {
                     return;
                 }

@@ -177,9 +177,14 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataTablesFxml);
         });
 
+        MenuItem databaseTableDefinition = new MenuItem(message("TableDefinition"));
+        databaseTableDefinition.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DatabaseTableDefinitionFxml);
+        });
+
         Menu database = new Menu(message("Database"));
         database.getItems().addAll(
-                DatabaseTable, DatabaseSQL
+                DatabaseTable, DatabaseSQL, databaseTableDefinition
         );
 
         MenuItem jshell = new MenuItem(message("JShell"));

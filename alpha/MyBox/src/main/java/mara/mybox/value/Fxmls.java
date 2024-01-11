@@ -371,6 +371,7 @@ public class Fxmls {
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
 
     public static final String DatabaseSqlFxml = "/fxml/DatabaseSql.fxml";
+    public static final String DatabaseTableDefinitionFxml = "/fxml/DatabaseTableDefinition.fxml";
     public static final String DataTablesFxml = "/fxml/DataTables.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";

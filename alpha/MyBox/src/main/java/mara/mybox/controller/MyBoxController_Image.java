@@ -37,24 +37,14 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageEditorFxml);
         });
 
-        MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));
-        imagesBrowser.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImagesBrowserFxml);
-        });
-
-        MenuItem ImageAnalyse = new MenuItem(message("ImageAnalyse"));
-        ImageAnalyse.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageAnalyseFxml);
-        });
-
-        MenuItem ImagesPlay = new MenuItem(message("ImagesPlay"));
-        ImagesPlay.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImagesPlayFxml);
-        });
-
         MenuItem imageScope = new MenuItem(message("ImageScope"));
         imageScope.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImageScopeFxml);
+        });
+
+        MenuItem imageOptions = new MenuItem(message("ImageOptions"));
+        imageOptions.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageShapeOptionsFxml);
         });
 
         MenuItem ManageColors = new MenuItem(message("ManageColors"));
@@ -78,9 +68,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         });
 
         List<MenuItem> items = new ArrayList<>();
-        items.addAll(Arrays.asList(EditImage,
-                imageManufactureMenu(), imageBatchMenu(),
-                imageScope, ImageAnalyse, ImagesPlay, imagesBrowser, svgMenu(), new SeparatorMenuItem(),
+        items.addAll(Arrays.asList(
+                EditImage, imageManufactureMenu(), imageBatchMenu(), svgMenu(), imageOptions, new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
 
@@ -101,6 +90,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
     }
 
     private Menu imageManufactureMenu() {
+
+        MenuItem ImageAnalyse = new MenuItem(message("ImageAnalyse"));
+        ImageAnalyse.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageAnalyseFxml);
+        });
 
         MenuItem ImagesEditor = new MenuItem(message("ImagesEditor"));
         ImagesEditor.setOnAction((ActionEvent event1) -> {
@@ -127,6 +121,16 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageRepeatFxml);
         });
 
+        MenuItem ImagesPlay = new MenuItem(message("ImagesPlay"));
+        ImagesPlay.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImagesPlayFxml);
+        });
+
+        MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));
+        imagesBrowser.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImagesBrowserFxml);
+        });
+
         MenuItem imageOCR = new MenuItem(message("ImageOCR"));
         imageOCR.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImageOCRFxml);
@@ -135,8 +139,9 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         Menu manufactureMenu = new Menu(message("ImageManufacture"));
 
         manufactureMenu.getItems().addAll(
-                ImagesEditor, ImageRepeat, ImagesSplice, ImageSplit, ImageSample, new SeparatorMenuItem(),
-                imageOCR);
+                ImageAnalyse, imageOCR, new SeparatorMenuItem(),
+                ImageRepeat, ImagesSplice, ImageSplit, ImageSample, new SeparatorMenuItem(),
+                ImagesPlay, ImagesEditor, imagesBrowser);
 
         return manufactureMenu;
 

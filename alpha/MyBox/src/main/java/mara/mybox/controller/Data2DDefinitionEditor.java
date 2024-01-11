@@ -41,7 +41,7 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected void editNode(InfoNode node) {
+    protected boolean editNode(InfoNode node) {
         if (task != null) {
             task.cancel();
         }
@@ -75,6 +75,7 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
 
         };
         start(task);
+        return true;
     }
 
     @Override

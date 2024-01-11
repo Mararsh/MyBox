@@ -42,65 +42,60 @@ public class ImageShapeOptionsController extends ImageOptionsController {
     @FXML
     protected RadioButton anchorRectRadio, anchorCircleRadio, anchorNameRadio;
 
-    public void setParameters(BaseShapeController parent, boolean withStroke) {
+    @Override
+    public void initControls() {
         try {
-            super.setParameters(parent);
+            super.initControls();
 
-            shapeController = parent;
-
-            if (withStroke) {
-                strokeWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
-                strokeWidthSelector.setValue(UserConfig.getFloat(baseName + "StrokeWidth", 2) + "");
-                strokeWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        if (isSettingValues || shapeController == null
-                                || newValue == null || newValue.isEmpty()) {
-                            return;
-                        }
-                        try {
-                            float v = Float.parseFloat(newValue);
-                            if (v > 0) {
-                                UserConfig.setFloat(baseName + "StrokeWidth", v);
-                                ValidationTools.setEditorNormal(strokeWidthSelector);
+            strokeWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
+            strokeWidthSelector.setValue(UserConfig.getFloat(baseName + "StrokeWidth", 2) + "");
+            strokeWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (isSettingValues || newValue == null || newValue.isEmpty()) {
+                        return;
+                    }
+                    try {
+                        float v = Float.parseFloat(newValue);
+                        if (v > 0) {
+                            UserConfig.setFloat(baseName + "StrokeWidth", v);
+                            ValidationTools.setEditorNormal(strokeWidthSelector);
+                            if (shapeController != null) {
                                 if (shapeController.shapeStyle != null) {
                                     shapeController.shapeStyle.setStrokeWidth(v);
                                 }
                                 shapeController.setMaskShapesStyle();
-                            } else {
-                                ValidationTools.setEditorBadStyle(strokeWidthSelector);
                             }
-                        } catch (Exception e) {
+                        } else {
                             ValidationTools.setEditorBadStyle(strokeWidthSelector);
                         }
+                    } catch (Exception e) {
+                        ValidationTools.setEditorBadStyle(strokeWidthSelector);
                     }
-                });
+                }
+            });
 
-                strokeColorController.init(this, baseName + "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
-                strokeColorController.asSaved();
-                strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                    @Override
-                    public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
-                        if (isSettingValues || shapeController == null) {
-                            return;
-                        }
-                        if (shapeController.shapeStyle != null) {
-                            shapeController.shapeStyle.setStrokeColor(strokeColorController.color());
-                        }
-                        shapeController.setMaskShapesStyle();
+            strokeColorController.init(this, baseName + "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
+            strokeColorController.asSaved();
+            strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
+                    if (isSettingValues || shapeController == null) {
+                        return;
                     }
-                });
-            } else {
-                shapeBox.getChildren().remove(strokePane);
-            }
+                    if (shapeController.shapeStyle != null) {
+                        shapeController.shapeStyle.setStrokeColor(strokeColorController.color());
+                    }
+                    shapeController.setMaskShapesStyle();
+                }
+            });
 
             anchorSizeSelector.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
             anchorSizeSelector.setValue(UserConfig.getFloat(baseName + "AnchorSize", 10) + "");
             anchorSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (isSettingValues || shapeController == null
-                            || newValue == null || newValue.isEmpty()) {
+                    if (isSettingValues || newValue == null || newValue.isEmpty()) {
                         return;
                     }
                     try {
@@ -108,10 +103,12 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                         if (v > 0) {
                             UserConfig.setFloat(baseName + "AnchorSize", v);
                             ValidationTools.setEditorNormal(anchorSizeSelector);
-                            if (shapeController.shapeStyle != null) {
-                                shapeController.shapeStyle.setAnchorSize(v);
+                            if (shapeController != null) {
+                                if (shapeController.shapeStyle != null) {
+                                    shapeController.shapeStyle.setAnchorSize(v);
+                                }
+                                shapeController.setMaskAnchorsStyle();
                             }
-                            shapeController.setMaskAnchorsStyle();
                         } else {
                             ValidationTools.setEditorBadStyle(anchorSizeSelector);
                         }
@@ -139,33 +136,62 @@ public class ImageShapeOptionsController extends ImageOptionsController {
             String anchorShape = UserConfig.getString(baseName + "AnchorShape", "Rectangle");
             if ("Circle".equals(anchorShape)) {
                 anchorCircleRadio.setSelected(true);
-                shapeController.anchorShape = AnchorShape.Circle;
+                if (shapeController != null) {
+                    shapeController.anchorShape = AnchorShape.Circle;
+                }
             } else if ("Name".equals(anchorShape)) {
                 anchorNameRadio.setSelected(true);
-                shapeController.anchorShape = AnchorShape.Name;
+                if (shapeController != null) {
+                    shapeController.anchorShape = AnchorShape.Name;
+                }
             } else {
                 anchorRectRadio.setSelected(true);
-                shapeController.anchorShape = AnchorShape.Rectangle;
+                if (shapeController != null) {
+                    shapeController.anchorShape = AnchorShape.Rectangle;
+                }
             }
             anchorShapeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue v, Toggle oldValue, Toggle newValue) {
-                    if (isSettingValues || shapeController == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     if (anchorCircleRadio.isSelected()) {
                         UserConfig.setString(baseName + "AnchorShape", "Rectangle");
-                        shapeController.anchorShape = AnchorShape.Circle;
+                        if (shapeController != null) {
+                            shapeController.anchorShape = AnchorShape.Circle;
+                        }
                     } else if (anchorNameRadio.isSelected()) {
                         UserConfig.setString(baseName + "AnchorShape", "Name");
-                        shapeController.anchorShape = AnchorShape.Name;
+                        if (shapeController != null) {
+                            shapeController.anchorShape = AnchorShape.Name;
+                        }
                     } else {
                         UserConfig.setString(baseName + "AnchorShape", "Rectangle");
-                        shapeController.anchorShape = AnchorShape.Rectangle;
+                        if (shapeController != null) {
+                            shapeController.anchorShape = AnchorShape.Rectangle;
+                        }
                     }
-                    shapeController.redrawMaskShape();
+                    if (shapeController != null) {
+                        shapeController.redrawMaskShape();
+                    }
                 }
             });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setParameters(BaseShapeController parent, boolean withStroke) {
+        try {
+            super.setParameters(parent);
+
+            shapeController = parent;
+
+            if (!withStroke) {
+                shapeBox.getChildren().remove(strokePane);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);

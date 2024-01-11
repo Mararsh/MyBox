@@ -42,7 +42,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected void editNode(InfoNode node) {
+    protected boolean editNode(InfoNode node) {
         if (node != null) {
             scope = ImageScopeTools.fromXML(null, myController, node.getInfo());
         } else {
@@ -54,6 +54,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
         valuesController.loadScope(scope);
         nodeChanged(false);
         updateEditorTitle(node);
+        return true;
     }
 
     @Override

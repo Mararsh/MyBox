@@ -55,17 +55,8 @@ public class NoteEditor extends ControlHtmlEditor {
         }
     }
 
-    protected void editNote(InfoNode note) {
-        infoController.editNode(note);
-    }
-
-    protected void addNote() {
-        editNote(null);
-    }
-
-    protected void copyNote() {
-        infoController.attributesController.copyNode();
-        updateFileStatus(true);
+    protected boolean editNote(InfoNode note) {
+        return infoController.editNode(note);
     }
 
     protected void recoverNote() {

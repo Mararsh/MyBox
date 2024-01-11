@@ -14,6 +14,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -39,10 +40,11 @@ public class ImageOptionsController extends BaseChildController {
     protected BaseImageController imageController;
 
     @FXML
+    protected FlowPane stepPane;
+    @FXML
     protected ControlColorSet alphaColorSetController, rulerColorController, gridColorController;
     @FXML
-    protected ComboBox<String> zoomStepSelector,
-            decimalSelector,
+    protected ComboBox<String> zoomStepSelector, decimalSelector,
             gridWidthSelector, gridIntervalSelector, gridOpacitySelector;
     @FXML
     protected ToggleGroup renderGroup, colorRenderGroup, pixelsInterGroup, alphaInterGroup, shapeAntiGroup,
@@ -52,7 +54,7 @@ public class ImageOptionsController extends BaseChildController {
     @FXML
     protected CheckBox renderCheck;
     @FXML
-    protected VBox renderBox;
+    protected VBox viewBox, renderBox;
     @FXML
     protected RadioButton renderDefaultRadio, renderQualityRadio, renderSpeedRadio,
             colorRenderDefaultRadio, colorRenderQualityRadio, colorRenderSpeedRadio,
@@ -71,15 +73,10 @@ public class ImageOptionsController extends BaseChildController {
         baseTitle = message("ImageOptions");
     }
 
-    public void setParameters(BaseImageController parent) {
+    @Override
+    public void initControls() {
         try {
-            if (parent == null) {
-                close();
-                return;
-            }
-            imageController = parent;
-            baseName = imageController.baseName;
-
+            super.initControls();
             initViewOptions();
             initRenderOptions();
 
@@ -88,24 +85,36 @@ public class ImageOptionsController extends BaseChildController {
         }
     }
 
-    public void initViewOptions() {
+    public void setParameters(BaseImageController parent) {
         try {
-            imageController.zoomStep = UserConfig.getInt(baseName + "ZoomStep", 40);
+            if (parent == null) {
+                close();
+                return;
+            }
+            imageController = parent;
+
+            if (!viewBox.getChildren().contains(stepPane)) {
+                viewBox.getChildren().add(0, stepPane);
+            }
+            imageController.zoomStep = UserConfig.getInt(imageController.baseName + "ZoomStep", 40);
             imageController.zoomStep = imageController.zoomStep <= 0 ? 40 : imageController.zoomStep;
             imageController.xZoomStep = imageController.zoomStep;
             imageController.yZoomStep = imageController.zoomStep;
+            zoomStepSelector.setValue(imageController.zoomStep + "");
             zoomStepSelector.getItems().addAll(
                     Arrays.asList("40", "20", "5", "1", "3", "15", "30", "50", "80", "100", "150", "200", "300", "500")
             );
-            zoomStepSelector.setValue(imageController.zoomStep + "");
             zoomStepSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     try {
                         int v = Integer.parseInt(newVal);
                         if (v > 0) {
                             imageController.zoomStep = v;
-                            UserConfig.setInt(baseName + "ZoomStep", imageController.zoomStep);
+                            UserConfig.setInt(imageController.baseName + "ZoomStep", imageController.zoomStep);
                             zoomStepSelector.getEditor().setStyle(null);
                             imageController.zoomStepChanged();
                         } else {
@@ -116,6 +125,15 @@ public class ImageOptionsController extends BaseChildController {
                     }
                 }
             });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initViewOptions() {
+        try {
+            viewBox.getChildren().remove(stepPane);
 
             rulerColorController.init(this, "RulerColor", Color.RED);
             rulerColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {

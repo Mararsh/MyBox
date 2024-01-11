@@ -69,7 +69,7 @@ public class DataFileTextController extends BaseData2DFileController {
 
     @Override
     public Data2D saveAsTarget() {
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(dataFileText.dataName());
         if (file == null) {
             return null;
         }

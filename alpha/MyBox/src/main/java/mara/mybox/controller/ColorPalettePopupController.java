@@ -68,7 +68,6 @@ public class ColorPalettePopupController extends BaseChildController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-
         if (super.keyEventsFilter(event)) {
             return true;
         }

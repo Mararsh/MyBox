@@ -249,10 +249,8 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     }
 
     @FXML
-    protected void popTableDefinition(MouseEvent event) {
-        if (UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false)) {
-            tableDefinition(event);
-        }
+    protected void tableDefinition() {
+        DatabaseTableDefinitionController.open(false);
     }
 
     @FXML

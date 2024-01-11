@@ -146,6 +146,11 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
+    protected void databaseTableDefinition(ActionEvent event) {
+        loadScene(Fxmls.DatabaseTableDefinitionFxml);
+    }
+
+    @FXML
     protected void JShell(ActionEvent event) {
         loadScene(Fxmls.JShellFxml);
     }

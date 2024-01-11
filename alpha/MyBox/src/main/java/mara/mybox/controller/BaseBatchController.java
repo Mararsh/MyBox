@@ -380,14 +380,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (tableController != null) {
-                return tableController.keyEventsFilter(event); // pass event to table pane
-            }
-            return false;
-        } else {
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        if (tableController != null) { // pass event to table pane
+            if (tableController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @FXML

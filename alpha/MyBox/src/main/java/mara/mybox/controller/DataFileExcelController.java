@@ -57,7 +57,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
     @Override
     public Data2D saveAsTarget() {
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(dataFileExcel.dataName());
         if (file == null) {
             return null;
         }

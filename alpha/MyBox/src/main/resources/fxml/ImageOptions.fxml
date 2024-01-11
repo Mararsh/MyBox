@@ -32,9 +32,9 @@ License:    Apache License Version 2.0
                <content>
                   <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                      <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
-                              <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                              <FlowPane fx:id="stepPane" hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
                                  <children>
                                     <Label minHeight="-Infinity" text="%ZoomStep" wrapText="true" />
                                     <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
