@@ -45,10 +45,6 @@ public class TextPopController extends BaseChildController {
         setFileType(FileType.Text);
     }
 
-    @Override
-    public void setStageStatus() {
-    }
-
     public void setControls() {
         try {
             if (parentController != null) {

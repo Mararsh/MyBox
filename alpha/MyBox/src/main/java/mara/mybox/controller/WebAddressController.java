@@ -188,7 +188,7 @@ public class WebAddressController extends BaseWebViewController {
 
     @FXML
     protected void showAddressHistories(Event event) {
-        PopTools.popStringValues(this, addressInput, event, "WebAddressHistories", false, true);
+        PopTools.popStringValues(this, addressInput, event, "WebAddressHistories", false);
     }
 
     @FXML

@@ -35,10 +35,10 @@ License:    Apache License Version 2.0
                             <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" wrapText="true" />
                             <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" wrapText="true" />
                             <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" wrapText="true" />
-                            <RadioButton mnemonicParsing="false" text="%MatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-                            <RadioButton mnemonicParsing="false" text="%NotMatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
                             <RadioButton mnemonicParsing="false" text="%IncludeRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
                             <RadioButton mnemonicParsing="false" text="%NotIncludeRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                            <RadioButton mnemonicParsing="false" text="%MatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                            <RadioButton mnemonicParsing="false" text="%NotMatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
                         </children>
                     </VBox>
                     <TextField fx:id="filterInput" maxWidth="1.7976931348623157E308" />
@@ -59,6 +59,15 @@ License:    Apache License Version 2.0
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../buttons/Red/iconHistory.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconClear.png" />
                                  </image>
                               </ImageView>
                            </graphic>

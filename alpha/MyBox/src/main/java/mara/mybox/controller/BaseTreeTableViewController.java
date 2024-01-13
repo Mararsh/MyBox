@@ -215,26 +215,20 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         treeView.scrollTo(Math.max(0, index - 5));
     }
 
-    public void focusNode(NodeP node) {
+    public boolean focusNode(NodeP node) {
         if (treeView == null || node == null) {
-            return;
+            return false;
         }
+        boolean found = false;
         if (treeView.getRoot() != null) {
-            focusItem(find(node));
+            TreeItem<NodeP> item = find(node);
+            if (item != null) {
+                found = true;
+                focusItem(item);
+            }
         }
         focusNode = null;
-    }
-
-    public void focusNodeAfterLoaded(NodeP node) {
-        try {
-            if (treeView.getRoot() != null) {
-                focusNode(node);
-            } else {
-                focusNode = node;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        return found;
     }
 
     public void nodeAdded(NodeP parent, NodeP newNode) {
@@ -392,6 +386,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         actions
      */
     @FXML
+    @Override
     public void popViewMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true)) {
             showViewMenu(event);
@@ -399,6 +394,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     @FXML
+    @Override
     public void showViewMenu(Event event) {
         TreeItem<NodeP> item = selected();
         if (item == null) {
@@ -477,6 +473,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "TreeFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -484,6 +481,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event event) {
         TreeItem<NodeP> treeItem = selected();
         if (treeItem == null) {

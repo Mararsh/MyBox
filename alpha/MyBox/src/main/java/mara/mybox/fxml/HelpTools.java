@@ -461,6 +461,9 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "ImageAlphaExtract")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageAlphaExtractTips")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message(lang, "ImageToSvg")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "SvgFromImageComments")).append("</PRE>\n");
+
             s.append("    <H3>").append(message(lang, "ImagesInSystemClipboard")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "RecordImagesTips")).append("</PRE>\n");
 
@@ -757,7 +760,7 @@ public class HelpTools {
     }
 
     public static String jsonZhLink() {
-        return "http://www.vue5.com/json/json_quick_guide.html";
+        return "https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Objects/JSON";
     }
 
     public static String jsonSpecification() {
@@ -769,7 +772,7 @@ public class HelpTools {
     }
 
     public static String xmlZhLink() {
-        return "http://www.vue5.com/xml/dom.html";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/XML/XML_introduction";
     }
 
     public static String domSpecification() {
@@ -781,7 +784,7 @@ public class HelpTools {
     }
 
     public static String svgZhLink() {
-        return "http://www.vue5.com/svg/svg_tutorial.html";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial";
     }
 
     public static String svgSpecification() {

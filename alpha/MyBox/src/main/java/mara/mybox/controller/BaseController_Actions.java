@@ -448,6 +448,9 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         PopTools.browseURI(myController, uri);
     }
 
+    /*
+        task
+     */
     public LoadingController handling() {
         return handling(null, Modality.WINDOW_MODAL, null);
     }
@@ -587,6 +590,82 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             MyBoxLog.debug(e);
         }
 
+    }
+
+    /*
+        menu
+     */
+    @FXML
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "FunctionsMenuPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event fevent) {
+        try {
+            List<MenuItem> items = functionsMenuItems(fevent);
+            if (items == null || items.isEmpty()) {
+                return;
+            }
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "FunctionsMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "FunctionsMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public List<MenuItem> functionsMenuItems(Event fevent) {
+        return null;
+    }
+
+    @FXML
+    public void popViewMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "ViewMenuPopWhenMouseHovering", true)) {
+            showViewMenu(event);
+        }
+    }
+
+    @FXML
+    public void showViewMenu(Event fevent) {
+        try {
+            List<MenuItem> items = viewMenuItems(fevent);
+            if (items == null || items.isEmpty()) {
+                return;
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "ViewMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ViewMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public List<MenuItem> viewMenuItems(Event fevent) {
+        return null;
     }
 
     @FXML

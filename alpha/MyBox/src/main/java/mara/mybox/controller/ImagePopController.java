@@ -29,10 +29,6 @@ public class ImagePopController extends BaseImageController {
     @FXML
     protected Button refreshButton;
 
-    @Override
-    public void setStageStatus() {
-    }
-
     public void setControls() {
         try {
             if (parentController != null) {

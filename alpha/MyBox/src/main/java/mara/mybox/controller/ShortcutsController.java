@@ -282,29 +282,28 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
                     task.setInfo(file.getAbsolutePath());
 
-                    boolean isZh = "zh".equals(lang);
                     file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
-                            "data", "ColorsArtPaints.csv", isZh);
+                            "data", "ColorsArtPaints_" + lang + ".csv", true);
                     List<ColorData> colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtPaints"), "art_paints");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv",
-                            "data", "ColorsWeb.csv", isZh);
+                            "data", "ColorsWeb_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "WebCommonColors"), "web");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsChinese.csv",
-                            "data", "ColorsChinese.csv", isZh);
+                            "data", "ColorsChinese_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ChineseTraditionalColors"), "chinese");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsJapanese.csv",
-                            "data", "ColorsJapanese.csv", isZh);
+                            "data", "ColorsJapanese_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "JapaneseTraditionalColors"), "japanese");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsColorhexa.csv",
-                            "data", "ColorsColorhexa.csv", isZh);
+                            "data", "ColorsColorhexa_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "HexaColors"), "colorhexa");
 
@@ -319,12 +318,12 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     colorsDoc(lang, colors, message(lang, "DefaultPalette"), "default");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + lang + ".csv",
-                            "data", "ColorsRYB12_" + lang + ".csv", isZh);
+                            "data", "ColorsRYB12_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtHuesWheel") + "-" + message(lang, "Colors12"), "ryb12");
 
                     file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
-                            "data", "ColorsRYB24_" + lang + ".csv", isZh);
+                            "data", "ColorsRYB24_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtHuesWheel") + "-" + message(" + lang + ", "Colors24"), "ryb24");
 

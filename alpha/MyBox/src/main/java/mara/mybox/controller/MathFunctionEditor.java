@@ -140,7 +140,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
                     "Math.pow(x,2)", "Math.pow(x,3)", "Math.sqrt(x)", "Math.pow(x,1d/3)",
                     "Math.pow(3, x)", "Math.exp(x)",
                     "Math.log(x)", "Math.sin(x)", "Math.cos(x)", "Math.tan(x)"
-            ), 4, menuName);
+            ), 4);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -156,7 +156,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "FunctionScriptHistories", false, true);
+        PopTools.popStringValues(this, valueInput, event, "FunctionScriptHistories", false);
     }
 
     @FXML
@@ -184,7 +184,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
             PopTools.addButtonsPane(controller, moreInput, Arrays.asList(
                     "x > 0", "x >= 0", "x < 0", "x <= 0", "x != 0", "x != 1",
                     "x >= -1 && x <= 1", "( x - Math.PI / 2 ) % Math.PI != 0"
-            ), 4, menuName);
+            ), 4);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -200,7 +200,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected void showDomainHistories(Event event) {
-        PopTools.popStringValues(this, moreInput, event, "FunctionDomainHistories", false, true);
+        PopTools.popStringValues(this, moreInput, event, "FunctionDomainHistories", false);
     }
 
 }

@@ -23,6 +23,12 @@ public class StyleCheckBox {
 
     private static StyleData match(String id) {
         switch (id) {
+            case "popMenuCheck":
+                return new StyleData(id, message("PopWindowWhenMouseHovering"), "", "iconPop.png");
+            case "closeNemuCheck":
+                return new StyleData(id, message("CloseAfterPaste"), "", "iconClose.png");
+            case "clearInputCheck":
+                return new StyleData(id, message("ClearAndPaste"), "", "iconClear.png");
             case "tableThumbCheck":
                 return new StyleData("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");
             case "openCheck":

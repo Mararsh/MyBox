@@ -50,7 +50,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         filterController.checkFilterStrings();
-        if (!filterController.valid.get()) {
+        if (!filterController.pickValue()) {
             return false;
         }
         return super.makeMoreParameters();

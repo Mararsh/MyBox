@@ -158,7 +158,7 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
     protected void showScriptExamples(Event event) {
         try {
             MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
-            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1", interfaceName + "Examples");
+            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -173,7 +173,7 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
+        PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false);
     }
 
     @FXML

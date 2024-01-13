@@ -73,17 +73,17 @@ public class JavaScriptEditor extends InfoTreeNodeEditor {
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "''.search(//ig) >= 0", "''.length > 0", "''.indexOf('') >= 0",
                     "''.startsWith('')", "''.endsWith('')", "''.replace(//ig,'')"
-            ), 4, menuName);
+            ), 4);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "Math.PI", "Math.E", "Math.abs(-5.47)", "Math.random()",
                     "Math.trunc(3.51)", "Math.round(3.51)", "Math.ceil(3.15)", "Math.floor(3.51)",
                     "Math.pow(3, 4)", "Math.sqrt(9)", "Math.exp(2)", "Math.log(5)",
                     "Math.min(1,2,-3)", "Math.max(1,2,-3)", "Math.sin(Math.PI/2)", "Math.cos(0)", "Math.tan(2)"
-            ), 5, menuName);
+            ), 5);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "var array = [ 'A', 'B', 'C', 'D' ];\narray[3]",
                     "var object = { name1:'value1', name2:'value2', name3:'value3'}; \nobject.name2"
-            ), 6, menuName);
+            ), 6);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

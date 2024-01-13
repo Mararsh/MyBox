@@ -44,7 +44,7 @@ public class TextFilterController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        if (!filterController.valid.get()) {
+        if (!filterController.pickValue()) {
             popError(message("InvalidParameters"));
             return;
         }

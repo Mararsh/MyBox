@@ -491,7 +491,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
     @FXML
     protected void showStyleHistories(Event event) {
-        PopTools.popStringValues(this, styleArea, event, "SvgStyleHistories", false, true);
+        PopTools.popStringValues(this, styleArea, event, "SvgStyleHistories", false);
     }
 
     @FXML

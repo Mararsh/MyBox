@@ -71,10 +71,9 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
             alertError(message("SelectNodeAddInto"));
             return;
         }
-        InfoNode node = selectedItem.getValue();
         task = new FxSingletonTask<Void>(this) {
 
-            private InfoNode data;
+            private InfoNode newNode;
 
             @Override
             protected boolean handle() {
@@ -93,13 +92,13 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
                         error = message("NoData");
                         return false;
                     }
-                    data = InfoNode.create()
-                            .setParentid(node.getNodeid())
+                    newNode = InfoNode.create()
+                            .setParentid(selectedItem.getValue().getNodeid())
                             .setCategory(category)
                             .setTitle(title)
                             .setInfo(info);
-                    data = tableTreeNode.insertData(data);
-                    return data != null;
+                    newNode = tableTreeNode.insertData(newNode);
+                    return newNode != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -108,7 +107,10 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
 
             @Override
             protected void whenSucceeded() {
-                WebFavoritesController.oneOpen(node);
+                WebFavoritesController c = WebFavoritesController.oneOpen();
+                if (!c.treeController.focusNode(newNode)) {
+                    c.treeController.loadTree(newNode);
+                }
                 closeStage();
             }
         };

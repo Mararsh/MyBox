@@ -11,8 +11,10 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
@@ -22,7 +24,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
@@ -68,7 +69,7 @@ public class ControlInfoTreeTable extends BaseSysTableController<InfoNode> {
     @FXML
     protected Label conditionLabel;
     @FXML
-    protected HBox buttonsBox;
+    protected Button operationsButton;
 
     @Override
     public void setTableDefinition() {
@@ -87,7 +88,7 @@ public class ControlInfoTreeTable extends BaseSysTableController<InfoNode> {
             }
             if (manager == null) {
                 tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-                thisPane.getChildren().remove(buttonsBox);
+                operationsButton.setVisible(false);
             }
 
             nodeidColumn.setCellValueFactory(new PropertyValueFactory<>("nodeid"));
@@ -299,7 +300,7 @@ public class ControlInfoTreeTable extends BaseSysTableController<InfoNode> {
     }
 
     @Override
-    public List<MenuItem> operationsMenuItems(Event fevent) {
+    public List<MenuItem> viewMenuItems(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -312,54 +313,6 @@ public class ControlInfoTreeTable extends BaseSysTableController<InfoNode> {
                 });
                 items.add(menu);
             }
-
-            if (manager != null) {
-                menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    addAction();
-                });
-                items.add(menu);
-
-                if (selected) {
-                    menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        editAction();
-                    });
-                    items.add(menu);
-
-                    menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        manager.pasteAction();
-                    });
-                    items.add(menu);
-
-                    menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconMove.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        manager.moveAction();
-                    });
-                    items.add(menu);
-
-                    menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        manager.copyAction();
-                    });
-                    items.add(menu);
-
-                    menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        deleteAction();
-                    });
-                    items.add(menu);
-                }
-
-                menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    clearAction();
-                });
-                items.add(menu);
-            }
-
-            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -378,8 +331,80 @@ public class ControlInfoTreeTable extends BaseSysTableController<InfoNode> {
     }
 
     @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        try {
+            if (manager == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+            boolean selected = !isNoneSelected();
+
+            menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                addAction();
+            });
+            items.add(menu);
+
+            if (selected) {
+                menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    editAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    manager.pasteAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconMove.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    manager.moveAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    manager.copyAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    deleteAction();
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                clearAction();
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
     protected List<MenuItem> makeTableContextMenu() {
-        return operationsMenuItems(null);
+        List<MenuItem> items = viewMenuItems(null);
+        List<MenuItem> opItems = operationsMenuItems(null);
+        if (opItems != null && !opItems.isEmpty()) {
+            Menu m = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
+            m.getItems().addAll(items);
+            items.clear();
+            items.addAll(opItems);
+            items.add(new SeparatorMenuItem());
+            items.add(m);
+        }
+        return items;
     }
 
     @FXML

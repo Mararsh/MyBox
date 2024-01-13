@@ -17,6 +17,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data.FileEditInformation.StringFilterType;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ByteTools;
@@ -194,6 +195,15 @@ public class ControlTextFilter extends BaseController {
         });
     }
 
+    public boolean pickValue() {
+        if (valid.get()) {
+            TableStringValues.add(baseName + "FilterString", filterInput.getText());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @FXML
     protected void showFilterExample(Event event) {
         PopTools.popRegexExamples(this, filterInput, event);
@@ -208,7 +218,7 @@ public class ControlTextFilter extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popStringValues(this, filterInput, event, baseName + "FilterString", false, true);
+        PopTools.popStringValues(this, filterInput, event, baseName + "FilterString", false);
     }
 
     @FXML
@@ -216,6 +226,11 @@ public class ControlTextFilter extends BaseController {
         if (UserConfig.getBoolean(baseName + "FilterStringPopWhenMouseHovering", false)) {
             showHistories(event);
         }
+    }
+
+    @FXML
+    public void clearAction(Event event) {
+        filterInput.clear();
     }
 
 }

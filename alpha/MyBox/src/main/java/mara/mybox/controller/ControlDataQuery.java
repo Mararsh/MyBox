@@ -290,7 +290,8 @@ public class ControlDataQuery extends BaseController {
                 buttons.add(button);
             }
 
-            MenuController controller = MenuController.open(this, textArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(this, textArea, mouseEvent,
+                    dataController.viewDefinition.name(), false);
             controller.addFlowPane(buttons);
         } catch (Exception e) {
             MyBoxLog.error(e);

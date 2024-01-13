@@ -568,14 +568,14 @@ public class BaseImageController extends BaseImageController_Actions {
         try {
             Menu copyMenu = new Menu(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
 
-            MenuItem menu = new MenuItem(message("Copy") + "    Ctrl+C " + message("Or") + " Alt+C",
-                    StyleTools.getIconImageView("iconCopy.png"));
+            MenuItem menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageCopyController.open(this);
             });
             copyMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImageView("iconCopySystem.png"));
+            menu = new MenuItem(message("CopyToSystemClipboard") + "    Ctrl+C " + message("Or") + " Alt+C",
+                    StyleTools.getIconImageView("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 copyToSystemClipboard();
             });
@@ -737,7 +737,7 @@ public class BaseImageController extends BaseImageController_Actions {
                 || targetIsTextInput()) {
             return false;
         }
-        copyAction();
+        copyToSystemClipboard();
         return true;
 
     }

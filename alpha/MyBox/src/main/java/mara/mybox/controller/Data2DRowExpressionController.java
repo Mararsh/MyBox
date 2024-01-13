@@ -221,7 +221,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
 
     @FXML
     protected void showNameHistories(Event event) {
-        PopTools.popStringValues(this, nameInput, event, interfaceName + "NameHistories", true, true);
+        PopTools.popStringValues(this, nameInput, event, interfaceName + "NameHistories", true);
     }
 
     /*

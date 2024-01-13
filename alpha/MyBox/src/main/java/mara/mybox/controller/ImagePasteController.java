@@ -345,6 +345,15 @@ public class ImagePasteController extends BaseImageEditController {
                 srcFile());
     }
 
+    @Override
+    public boolean controlAltV() {
+        if (imageView == null || targetIsTextInput()) {
+            return false;
+        }
+        pasteContentInSystemClipboard();
+        return true;
+    }
+
 
     /*
         static methods

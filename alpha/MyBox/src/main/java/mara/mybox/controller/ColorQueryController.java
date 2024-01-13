@@ -120,7 +120,7 @@ public class ColorQueryController extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popStringValues(this, colorInput, event, "ColorQueryColorHistories", false, true);
+        PopTools.popStringValues(this, colorInput, event, "ColorQueryColorHistories", false);
     }
 
     @FXML

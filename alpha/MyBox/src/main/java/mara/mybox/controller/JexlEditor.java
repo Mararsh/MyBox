@@ -10,7 +10,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -19,8 +18,8 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
@@ -155,10 +154,9 @@ public class JexlEditor extends JShellEditor {
 
     protected void jexlScriptExamples(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput, event);
-            controller.setTitleLabel(message("Syntax"));
-
             String menuName = interfaceName + "ScriptExamples";
+            MenuController controller = MenuController.open(this, valueInput, event, menuName, false);
+            controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
@@ -184,30 +182,6 @@ public class JexlEditor extends JShellEditor {
             });
             topButtons.add(clearInputButton);
 
-            CheckBox closeCheck = new CheckBox();
-            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
-            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
-            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
-            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent aevent) {
-                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
-                }
-            });
-            topButtons.add(closeCheck);
-
-            CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
-                }
-            });
-            topButtons.add(popCheck);
-
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
@@ -215,22 +189,22 @@ public class JexlEditor extends JShellEditor {
                     " new('java.math.BigDecimal', 9) ", " new('java.lang.Double', 10d) ",
                     " new('java.lang.Long', 10) ", " new('java.lang.Integer', 10) ",
                     " new('java.lang.String', 'Hello') ", "  new('java.util.Date') "
-            ), menuName);
+            ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " true ", " false ", " null ", " empty(x) ", " size(x) ",
                     " 3 =~ [1,'2',3, 'hello'] ", " 2 !~ {1,'2',3, 'hello'} ",
                     " 'hello'.startsWith('hell') ", " 'hello'.endsWith('ll') ",
                     " not 'hello'.startsWith('hell') "
-            ), menuName);
+            ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " = ", " + ", " - ", " * ", " / ", ";", " , ",
                     "( )", " { } ", "[ ]", "\"\"", "''", " : ", " .. "
-            ), menuName);
+            ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ",
                     " && ", " and ", " || ", " or ", " !", " not ",
                     " =~ ", " !~ "
-            ), menuName);
+            ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "var list = [ 'A', 'B', 'C', 'D' ];\n"
                     + "return list.size();",
@@ -238,7 +212,7 @@ public class JexlEditor extends JShellEditor {
                     + "return set.toString();",
                     "var map = { 'A': 1,'B': 2,'C': 3,'D': 4 };\n"
                     + "return map.toString();"
-            ), menuName);
+            ));
 
             List<Node> buttons = new ArrayList<>();
             Button includeButton = new Button("StringTools.include('abc1233hello','3{2}',caseInsensitive)");
@@ -406,7 +380,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "JexlScriptHistories", false, true);
+        PopTools.popStringValues(this, valueInput, event, "JexlScriptHistories", false);
     }
 
     @FXML
@@ -433,10 +407,9 @@ public class JexlEditor extends JShellEditor {
 
     protected void jexlContextExamples(Event event) {
         try {
-            MenuController controller = MenuController.open(this, moreInput, event);
-            controller.setTitleLabel(message("Syntax"));
-
             String menuName = interfaceName + "ContextExamples";
+            MenuController controller = MenuController.open(this, moreInput, event, menuName, false);
+            controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
@@ -462,30 +435,6 @@ public class JexlEditor extends JShellEditor {
             });
             topButtons.add(clearInputButton);
 
-            CheckBox closeCheck = new CheckBox();
-            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
-            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
-            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
-            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent aevent) {
-                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
-                }
-            });
-            topButtons.add(closeCheck);
-
-            CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
-                }
-            });
-            topButtons.add(popCheck);
-
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
@@ -500,7 +449,7 @@ public class JexlEditor extends JShellEditor {
                     "jexlContext.set(\"x\", 5);\n",
                     "jexlContext.set(\"x\", 5);\n",
                     "jexlContext.set(\"s\", \"hello\");\n"
-            ), menuName);
+            ));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -510,13 +459,13 @@ public class JexlEditor extends JShellEditor {
     @FXML
     protected void popContextHistories(MouseEvent mouseEvent) {
         if (UserConfig.getBoolean("JexlContextHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, moreInput, mouseEvent, "JexlContextHistories", false, true);
+            PopTools.popStringValues(this, moreInput, mouseEvent, "JexlContextHistories", false);
         }
     }
 
     @FXML
     protected void showContextHistories(ActionEvent event) {
-        PopTools.popStringValues(this, moreInput, event, "JexlContextHistories", false, true);
+        PopTools.popStringValues(this, moreInput, event, "JexlContextHistories", false);
     }
 
     @FXML
@@ -527,13 +476,13 @@ public class JexlEditor extends JShellEditor {
     @FXML
     protected void popParametersHistories(MouseEvent mouseEvent) {
         if (UserConfig.getBoolean("JexlParamtersHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, parametersInput, mouseEvent, "JexlParamtersHistories", false, true);
+            PopTools.popStringValues(this, parametersInput, mouseEvent, "JexlParamtersHistories", false);
         }
     }
 
     @FXML
     protected void showParametersHistories(ActionEvent event) {
-        PopTools.popStringValues(this, parametersInput, event, "JexlParamtersHistories", false, true);
+        PopTools.popStringValues(this, parametersInput, event, "JexlParamtersHistories", false);
     }
 
 }

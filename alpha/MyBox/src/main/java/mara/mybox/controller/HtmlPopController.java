@@ -33,10 +33,6 @@ public class HtmlPopController extends BaseWebViewController {
         baseTitle = Languages.message("Html");
     }
 
-    @Override
-    public void setStageStatus() {
-    }
-
     public void openWebView(String baseName, WebView sourceWebView, String address) {
         try {
             this.baseName = baseName;

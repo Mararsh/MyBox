@@ -57,6 +57,7 @@ public class MenuTextBaseController extends MenuController {
                 replaceButton.setDisable(true);
             }
             super.setParameters(parent, node, x, y);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -99,7 +100,8 @@ public class MenuTextBaseController extends MenuController {
         if (parentController == null || node == null) {
             return false;
         }
-        MenuTextEditController.textMenu(parentController, node, initX, initY);
+        MenuTextEditController.textMenu(parentController, node,
+                getMyStage().getX(), getMyStage().getY());
         return true;
     }
 

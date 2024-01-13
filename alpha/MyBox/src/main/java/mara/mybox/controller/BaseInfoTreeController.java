@@ -128,14 +128,6 @@ public abstract class BaseInfoTreeController extends BaseController {
         }
     }
 
-
-    /*
-        tree
-     */
-    public void loadTree() {
-        infoTree.loadTree();
-    }
-
     public void popNode(InfoNode item) {
         if (item == null) {
             return;
@@ -232,7 +224,7 @@ public abstract class BaseInfoTreeController extends BaseController {
 
     @FXML
     protected void showFindHistories(Event event) {
-        PopTools.popStringValues(this, findInput, event, baseName + category + "Histories", false, true);
+        PopTools.popStringValues(this, findInput, event, baseName + category + "Histories", false);
     }
 
     @FXML

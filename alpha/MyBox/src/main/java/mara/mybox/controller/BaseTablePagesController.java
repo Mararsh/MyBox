@@ -467,9 +467,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void clearAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
         if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
             return;
         }

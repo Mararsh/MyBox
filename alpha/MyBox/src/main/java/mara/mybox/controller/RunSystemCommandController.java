@@ -128,7 +128,7 @@ public class RunSystemCommandController extends RunCommandController {
 
     @FXML
     protected void showCmdHistories(Event event) {
-        PopTools.popStringValues(this, cmdInput, event, "RunSystemCommandHistories", true, true);
+        PopTools.popStringValues(this, cmdInput, event, "RunSystemCommandHistories", true);
     }
 
     @FXML

@@ -46,6 +46,21 @@ public class ImageTextController extends BaseImageEditController {
         }
     }
 
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded() || image == null) {
+                return false;
+            }
+            optionsController.centerRadio.setSelected(true);
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     @FXML
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {

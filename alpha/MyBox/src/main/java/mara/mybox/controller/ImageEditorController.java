@@ -28,7 +28,6 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -821,10 +820,6 @@ public class ImageEditorController extends BaseImageController {
         } else {
             ImagePasteController.open(this);
         }
-    }
-
-    public void applyKernel(ConvolutionKernel kernel) {
-        // #####
     }
 
     @Override

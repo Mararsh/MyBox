@@ -126,24 +126,6 @@ License:    Apache License Version 2.0
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
-                <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconSelect.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconManage.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
                 <CheckBox fx:id="scopeExcludeCheck" minHeight="-Infinity" mnemonicParsing="false" wrapText="true">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -162,6 +144,24 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
+                <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectAction" visible="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconSelect.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction" visible="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconManage.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
                         <Label minHeight="-Infinity" text="%Mask" wrapText="true" />

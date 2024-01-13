@@ -522,7 +522,7 @@ public class ControlImageText extends BaseController {
 
     @FXML
     protected void showTextHistories(Event event) {
-        PopTools.popStringValues(this, textArea, event, "ImageTextHistories", false, true);
+        PopTools.popStringValues(this, textArea, event, "ImageTextHistories", false);
     }
 
     @FXML

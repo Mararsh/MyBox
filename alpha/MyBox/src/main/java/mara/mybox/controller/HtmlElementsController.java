@@ -216,7 +216,7 @@ public class HtmlElementsController extends WebAddressController {
                 buttons.add(button);
             }
 
-            MenuController controller = MenuController.open(this, elementInput, event);
+            MenuController controller = MenuController.open(this, elementInput, event, "HtmlElements", true);
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
@@ -246,7 +246,7 @@ public class HtmlElementsController extends WebAddressController {
 
     @FXML
     protected void showElementHistories(Event event) {
-        PopTools.popStringValues(this, elementInput, event, key, true, true);
+        PopTools.popStringValues(this, elementInput, event, key, true);
     }
 
     @FXML

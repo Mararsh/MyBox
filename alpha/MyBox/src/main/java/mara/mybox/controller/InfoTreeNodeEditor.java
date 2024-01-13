@@ -303,7 +303,7 @@ public class InfoTreeNodeEditor extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, editorName() + "Histories", false, true);
+        PopTools.popStringValues(this, valueInput, event, editorName() + "Histories", false);
     }
 
 }

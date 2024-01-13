@@ -16,9 +16,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -247,25 +245,6 @@ public class InfoTreeManageController extends BaseInfoTreeController {
     /*
         tree
      */
-    @Override
-    public void loadTree() {
-        try (Connection conn = DerbyBase.getConnection()) {
-            if (tableTreeNode.categoryEmpty(conn, category)) {
-                File file = InfoNode.exampleFile(category);
-                if (file != null) {
-                    if (AppVariables.isTesting
-                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
-                        treeController.importExamples();
-                        return;
-                    }
-                }
-            }
-            treeController.loadTree();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
     public boolean editNode(InfoNode node) {
         if (!checkBeforeNextAction()) {
             return false;

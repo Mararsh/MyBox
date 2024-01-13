@@ -95,7 +95,7 @@ public class ImageCropController extends BasePixelsController {
             handledImage = ScopeTools.selectedScope(currentTask,
                     inImage, inScope, color,
                     imageMarginsCheck.isSelected(),
-                    excludeScope(), skipTransparent());
+                    !excludeScope(), skipTransparent());
             if (handledImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }

@@ -84,12 +84,4 @@ public class WebFavoritesController extends InfoTreeManageController {
         return controller;
     }
 
-    public static WebFavoritesController oneOpen(InfoNode node) {
-        WebFavoritesController controller = oneOpen();
-        if (controller != null) {
-            controller.treeController.focusNodeAfterLoaded(node);
-        }
-        return controller;
-    }
-
 }

@@ -42,7 +42,7 @@ import mara.mybox.value.UserConfig;
  */
 public class InfoTreeNodeImportController extends BaseBatchFileController {
 
-    protected BaseInfoTreeController treeController;
+    protected BaseInfoTreeController infoController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
@@ -103,11 +103,11 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
     }
 
     public void setCaller(BaseInfoTreeController controller) {
-        this.treeController = controller;
-        tableTreeNode = treeController.tableTreeNode;
-        tableTreeNodeTag = treeController.tableTreeNodeTag;
+        this.infoController = controller;
+        tableTreeNode = infoController.tableTreeNode;
+        tableTreeNodeTag = infoController.tableTreeNodeTag;
         tableTag = new TableTag();
-        category = treeController.category;
+        category = infoController.category;
         isWebFavorite = InfoNode.isWebFavorite(category);
         iconCheck.setVisible(isWebFavorite);
     }
@@ -118,7 +118,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             return;
         }
         isSettingValues = true;
-        updateRadio.setSelected(true);
+        createRadio.setSelected(true);
         iconCheck.setSelected(false);
         isSettingValues = false;
         startFile(file);
@@ -503,15 +503,15 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
 
     @Override
     public void afterTask() {
-        if (treeController != null) {
-            treeController.loadTree();
+        if (infoController != null) {
+            infoController.infoTree.loadTree();
 
             closeStage();
 
-            treeController.refreshTagss();
-            treeController.refreshTimes();
+            infoController.refreshTagss();
+            infoController.refreshTimes();
             if (!AppVariables.isTesting) {
-                treeController.popInformation(message("Imported") + ": " + totalItemsHandled);
+                infoController.popInformation(message("Imported") + ": " + totalItemsHandled);
             }
 
         } else {

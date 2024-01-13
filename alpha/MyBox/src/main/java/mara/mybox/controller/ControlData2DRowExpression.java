@@ -104,13 +104,13 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     }
 
     @Override
-    protected void moreExampleButtons(MenuController controller, String menuName) {
+    protected void moreExampleButtons(MenuController controller) {
         try {
             if (data2D == null || !data2D.isValid()) {
                 return;
             }
             String col1 = data2D.columnNames().get(0);
-            PopTools.rowExpressionButtons(controller, scriptInput, col1, menuName);
+            PopTools.rowExpressionButtons(controller, scriptInput, col1);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -202,7 +202,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     protected void tableNames(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput, event);
+            MenuController controller = MenuController.open(this, valueInput, event, "TableNames", false);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableName")));
@@ -260,7 +260,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     protected void tableDefinition(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput, event);
+            MenuController controller = MenuController.open(this, valueInput, event, "TableDefinition", false);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableDefinition")));
